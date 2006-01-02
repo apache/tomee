@@ -39,7 +39,7 @@
           </execution>
         </executions>
         <configuration>
-          <descriptor>src/assembly/bin.xml</descriptor>
+          <descriptor>src/main/assembly/bin.xml</descriptor>
           <finalName>openejb-3.0-SNAPSHOT</finalName>
         </configuration>
       </plugin>
