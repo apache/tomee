@@ -1,0 +1,189 @@
+#!/bin/sh
+#============================================================
+#   Control script for OpenEJB
+#   --------------------------
+#    
+#   This script is the central entry point to 
+#   all of OpenEJB's functions.
+#  
+#   Contributed by:
+#
+#    - David Blevins <david.blevins@visi.com>
+#    - Daniel S. Haischt <daniel.haischt@daniel-s-haischt.biz>
+#             
+#               
+# ___________________________________________________________
+# $Id: openejb,v 1.6 2005/10/11 17:18:58 jcscoobyrs Exp $
+#============================================================
+
+cygwin=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+esac
+
+if [ -z "$OPENEJB_HOME" -o ! -d "$OPENEJB_HOME" ] ; then
+  # find OpenEJB
+  if [ -d /opt/openejb ] ; then
+    OPENEJB_HOME=/opt/openejb
+  fi
+
+  if [ -d "${HOME}/opt/openejb" ] ; then
+    OPENEJB_HOME="${HOME}/opt/openejb"
+  fi
+
+  ## resolve links - $0 may be a link to openejb's home
+  PRG="$0"
+  progname=`basename "$0"`
+
+  # need this for relative symlinks
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+      PRG="$link"
+    else
+      PRG=`dirname "$PRG"`"/$link"
+    fi
+  done
+
+
+  OPENEJB_HOME=`dirname "$PRG"`/..
+
+  # make it fully qualified
+  OPENEJB_HOME=`cd "$OPENEJB_HOME" && pwd`
+fi
+
+if $cygwin; then
+  OPENEJB_HOME=`cygpath --path --windows "$OPENEJB_HOME"`
+fi
+
+echo OPENEJB_HOME = $OPENEJB_HOME
+
+OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
+
+#============================================================
+_command_help()
+{
+    case $2 in
+        "validate")
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar validate --help
+        ;;
+        "deploy")
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar deploy --help
+        ;;
+        "start")
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar start --help
+        ;;
+        "stop")
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar stop --help
+        ;;
+        "test")
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test --help
+        ;;
+        *)
+            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar
+        ;;
+    esac
+}
+#============================================================
+_command_deploy()
+{
+   shift
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar deploy $@
+}
+#============================================================
+_command_validate()
+{
+   shift
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar validate $@
+}
+#============================================================
+_command_start()
+{
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar start $@
+}
+#============================================================
+_command_stop()
+{
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar stop $@
+}
+#============================================================
+_test_intravm()
+{
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test local
+}
+#============================================================
+_test_server()
+{
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test remote
+}
+#============================================================
+_command_test()
+{
+case $2 in
+    "local")
+        _test_intravm
+    ;;
+    "remote")
+        _test_server
+    ;;
+    "--help")
+        _test_help
+    ;;
+    *)
+        _test_noargs
+    ;;
+esac
+}
+#============================================================
+_test_help()
+{
+   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test --help
+}
+#============================================================
+_test_noargs()
+{
+   _test_intravm
+   _test_server
+}
+#============================================================
+case $1 in
+    "build")
+        _command_build $@
+    ;;
+    "test")
+        _command_test $@
+    ;;
+    "validate")
+        _command_validate $@
+    ;;
+    "deploy")
+        _command_deploy $@
+    ;;
+    "start")
+        _command_start $@
+    ;;
+    "stop")
+        _command_stop $@
+    ;;
+    "corba")
+        _start_corba $@
+    ;;
+    "create_stubs")
+        _create_stubs $@
+    ;;
+    "help")
+        _command_help $@
+    ;;
+    "-help")
+        _command_help $@
+    ;;
+    "--help")
+        _command_help $@
+    ;;
+    *)  _command_help $@
+    ;;
+esac
+
+
+
