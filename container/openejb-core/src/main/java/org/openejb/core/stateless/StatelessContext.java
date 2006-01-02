@@ -8,9 +8,9 @@ import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 
-public class StatelessContext 
-extends org.openejb.core.CoreContext implements javax.ejb.SessionContext{
-    public void checkBeanState(byte methodCategory) throws IllegalStateException{
+public class StatelessContext
+        extends org.openejb.core.CoreContext implements javax.ejb.SessionContext {
+    public void checkBeanState(byte methodCategory) throws IllegalStateException {
         /*  
         SECURITY_METHOD:
         USER_TRANSACTION_METHOD:
@@ -25,7 +25,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.SessionContext{
         ThreadContext callContext = ThreadContext.getThreadContext();
         DeploymentInfo di = callContext.getDeploymentInfo();
 
-        switch(callContext.getCurrentOperation()){
+        switch (callContext.getCurrentOperation()) {
             case Operations.OP_SET_CONTEXT:
                 /* 
                 Allowed Operations: 
@@ -39,7 +39,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.SessionContext{
                     getPrimaryKey
                     getUserTransaction
                 */
-                if(methodCategory != EJBHOME_METHOD)
+                if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
             case Operations.OP_CREATE:
@@ -56,9 +56,9 @@ extends org.openejb.core.CoreContext implements javax.ejb.SessionContext{
                     isCallerInRole
                     setRollbackOnly
                 */
-                if(   methodCategory == EJBHOME_METHOD 
-                   || methodCategory == EJBOBJECT_METHOD
-                   || methodCategory == USER_TRANSACTION_METHOD)
+                if (methodCategory == EJBHOME_METHOD
+                        || methodCategory == EJBOBJECT_METHOD
+                        || methodCategory == USER_TRANSACTION_METHOD)
                     break;
                 else
                     throw new IllegalStateException("Invalid operation attempted");
@@ -80,7 +80,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.SessionContext{
 
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID){
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
         return new StatelessEjbObjectHandler(container, pk, depID);
     }
 

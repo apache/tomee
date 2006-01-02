@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public class MethodPermissionInfo extends InfoObject{
+public class MethodPermissionInfo extends InfoObject {
 
     public String description;
     public String[] roleNames;

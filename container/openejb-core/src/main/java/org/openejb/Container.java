@@ -11,9 +11,9 @@ public interface Container {
     final public static int MESSAGE_DRIVEN = 4;
 
     public void init(Object containerId, HashMap deployments, Properties properties)
-    throws OpenEJBException;
+            throws OpenEJBException;
 
-    public int getContainerType( );
+    public int getContainerType();
 
     public Object getContainerID();
 

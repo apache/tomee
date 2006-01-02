@@ -3,6 +3,7 @@ package org.openejb.server.admin;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.openejb.server.ServerService;
 import org.openejb.server.ServiceManager;
 import org.openejb.server.ServiceException;
@@ -13,7 +14,7 @@ public class AdminDaemon implements ServerService {
     public void init(Properties props) throws Exception {
     }
 
-    public void service(Socket socket) throws ServiceException,IOException {
+    public void service(Socket socket) throws ServiceException, IOException {
         InputStream in = null;
         InetAddress clientIP = null;
 
@@ -21,9 +22,11 @@ public class AdminDaemon implements ServerService {
             in = socket.getInputStream();
             clientIP = socket.getInetAddress();
 
-            byte requestType = (byte)in.read();
+            byte requestType = (byte) in.read();
 
-            if (requestType == -1) {return;}
+            if (requestType == -1) {
+                return;
+            }
 
             switch (requestType) {
                 case RequestMethods.STOP_REQUEST_Quit:
@@ -34,15 +37,15 @@ public class AdminDaemon implements ServerService {
 
             }
 
-        } catch ( SecurityException e ) {
+        } catch (SecurityException e) {
 
-        } catch ( Throwable e ) {
+        } catch (Throwable e) {
 
         } finally {
             try {
-                if ( in     != null ) in.close();
-                if ( socket != null ) socket.close();
-            } catch ( Throwable t ){
+                if (in != null) in.close();
+                if (socket != null) socket.close();
+            } catch (Throwable t) {
 
             }
         }

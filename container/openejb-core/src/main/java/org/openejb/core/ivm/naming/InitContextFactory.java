@@ -15,35 +15,35 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
         }
 
         Context context = org.openejb.OpenEJB.getJNDIContext();
-        context = (Context)context.lookup("java:openejb/ejb");
+        context = (Context) context.lookup("java:openejb/ejb");
         return context;
 
     }
 
-    private void initializeOpenEJB(Hashtable env) throws javax.naming.NamingException{
-        try{ 
-        Properties props = new Properties();
+    private void initializeOpenEJB(Hashtable env) throws javax.naming.NamingException {
+        try {
+            Properties props = new Properties();
 
-        /* DMB: We should get the defaults from the functionality 
-         *      Alan is working on.  This is temporary.
-         *      When that logic is finished, this block should
-         *      probably just be deleted.
-         */
-        props.put(EnvProps.ASSEMBLER, "org.openejb.alt.assembler.classic.Assembler");
-        props.put(EnvProps.CONFIGURATION_FACTORY, "org.openejb.alt.config.ConfigurationFactory");
-        props.put(EnvProps.CONFIGURATION, "conf/default.openejb.conf");
+            /* DMB: We should get the defaults from the functionality
+            *      Alan is working on.  This is temporary.
+            *      When that logic is finished, this block should
+            *      probably just be deleted.
+            */
+            props.put(EnvProps.ASSEMBLER, "org.openejb.alt.assembler.classic.Assembler");
+            props.put(EnvProps.CONFIGURATION_FACTORY, "org.openejb.alt.config.ConfigurationFactory");
+            props.put(EnvProps.CONFIGURATION, "conf/default.openejb.conf");
 
-        props.putAll(System.getProperties());
+            props.putAll(System.getProperties());
 
-        props.putAll( env );
+            props.putAll(env);
 
-        org.openejb.OpenEJB.init( props );
+            org.openejb.OpenEJB.init(props);
 
-        } 
-	catch( org.openejb.OpenEJBException e){
+        }
+        catch (org.openejb.OpenEJBException e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }
-	catch( Exception e){
+        catch (Exception e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }
     }

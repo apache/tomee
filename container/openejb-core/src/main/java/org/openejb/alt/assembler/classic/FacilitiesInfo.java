@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public class FacilitiesInfo extends InfoObject{
+public class FacilitiesInfo extends InfoObject {
 
     public IntraVmServerInfo intraVmServer;
     public JndiContextInfo [] remoteJndiContexts;

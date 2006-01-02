@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public class EntityBeanInfo extends EnterpriseBeanInfo{
+public class EntityBeanInfo extends EnterpriseBeanInfo {
 
     public String primKeyClass;
     public String primKeyField;
@@ -9,7 +9,7 @@ public class EntityBeanInfo extends EnterpriseBeanInfo{
     public String [] cmpFieldNames;
     public QueryInfo [] queries;
 
-    public EntityBeanInfo(){
+    public EntityBeanInfo() {
         type = ENTITY;
     }
 

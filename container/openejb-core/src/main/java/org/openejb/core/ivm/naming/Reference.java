@@ -10,6 +10,7 @@ import javax.naming.NamingException;
   in the implementation object.
 
 */
+
 public interface Reference {
-    public Object getObject( ) throws NamingException;
+    public Object getObject() throws NamingException;
 }

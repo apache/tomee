@@ -19,7 +19,7 @@ public class LoaderServlet extends HttpServlet {
 
     public void init(ServletConfig config) throws ServletException {
         Properties p = new Properties();
-        p.setProperty("openejb.loader","tomcat");
+        p.setProperty("openejb.loader", "tomcat");
 
         Enumeration enum = config.getInitParameterNames();
         System.out.println("OpenEJB init-params:");
@@ -58,9 +58,9 @@ public class LoaderServlet extends HttpServlet {
         openejb.init(properties);
     }
 
-    private Object setPropertyIfNUll(Properties properties, String key, String value){
+    private Object setPropertyIfNUll(Properties properties, String key, String value) {
         String currentValue = properties.getProperty(key);
-        if (currentValue == null){
+        if (currentValue == null) {
             properties.setProperty(key, value);
         }
         return currentValue;

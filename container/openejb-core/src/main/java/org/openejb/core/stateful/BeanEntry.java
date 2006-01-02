@@ -3,16 +3,16 @@ package org.openejb.core.stateful;
 import javax.ejb.SessionBean;
 import javax.transaction.Transaction;
 
-public class BeanEntry implements java.io.Serializable{
+public class BeanEntry implements java.io.Serializable {
     protected final SessionBean bean;
     protected Object primaryKey;
-    protected Object ancillaryState;   
-    protected transient Transaction transaction; 
+    protected Object ancillaryState;
+    protected transient Transaction transaction;
     protected long timeStamp;
     protected long timeOutInterval;
     protected boolean inQue = false;
 
-    protected BeanEntry(SessionBean beanInstance, Object primKey, Object ancillary, long timeOut){
+    protected BeanEntry(SessionBean beanInstance, Object primKey, Object ancillary, long timeOut) {
         bean = beanInstance;
         primaryKey = primKey;
         ancillaryState = ancillary;
@@ -20,15 +20,17 @@ public class BeanEntry implements java.io.Serializable{
         timeStamp = System.currentTimeMillis();
         timeOutInterval = timeOut;
     }
-    protected boolean isTimedOut(){
-        if(timeOutInterval == 0)
+
+    protected boolean isTimedOut() {
+        if (timeOutInterval == 0)
             return false;
         long now = System.currentTimeMillis();
-        return (now - timeStamp)> timeOutInterval;
+        return (now - timeStamp) > timeOutInterval;
     }
-    protected void resetTimeOut( ){
-        if(timeOutInterval > 0) {
-        timeStamp = System.currentTimeMillis();
-    }
+
+    protected void resetTimeOut() {
+        if (timeOutInterval > 0) {
+            timeStamp = System.currentTimeMillis();
+        }
     }
 }         

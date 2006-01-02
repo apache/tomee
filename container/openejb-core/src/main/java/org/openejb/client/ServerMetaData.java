@@ -7,51 +7,51 @@ import java.io.ObjectOutput;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class ServerMetaData implements Externalizable{
+public class ServerMetaData implements Externalizable {
 
     private transient int port;
 
     private transient InetAddress address;
 
-    public ServerMetaData(){
+    public ServerMetaData() {
 
     }
 
-    public ServerMetaData(String host, int port) throws UnknownHostException{
-        this.setAddress(InetAddress.getByName( host ));
+    public ServerMetaData(String host, int port) throws UnknownHostException {
+        this.setAddress(InetAddress.getByName(host));
         this.setPort(port);
     }
 
-    public int getPort(){
+    public int getPort() {
         return port;
     }
 
-    public InetAddress getAddress(){
+    public InetAddress getAddress() {
         return address;
     }
 
-    public void setPort(int port){
+    public void setPort(int port) {
         this.port = port;
     }
 
-    public void setAddress(InetAddress address){
+    public void setAddress(InetAddress address) {
         this.address = address;
     }
 
-    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         StringBuffer IP = new StringBuffer(15);
 
-        IP.append( in.readByte() ).append('.');
-        IP.append( in.readByte() ).append('.');
-        IP.append( in.readByte() ).append('.');
-        IP.append( in.readByte() );
+        IP.append(in.readByte()).append('.');
+        IP.append(in.readByte()).append('.');
+        IP.append(in.readByte()).append('.');
+        IP.append(in.readByte());
 
 //        System.out.println(IP.toString());        
-        try{
-            setAddress(InetAddress.getByName( IP.toString() ));
-        } catch (java.net.UnknownHostException e){
-            throw new IOException("Cannot read in the host address "+IP+": The host is unknown");
+        try {
+            setAddress(InetAddress.getByName(IP.toString()));
+        } catch (java.net.UnknownHostException e) {
+            throw new IOException("Cannot read in the host address " + IP + ": The host is unknown");
         }
 
         setPort(in.readInt());

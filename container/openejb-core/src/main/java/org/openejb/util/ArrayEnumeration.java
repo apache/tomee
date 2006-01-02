@@ -8,18 +8,18 @@ import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
-public final class ArrayEnumeration implements Enumeration, Externalizable{
-    static final long serialVersionUID = -1194966576855523042L;    
+public final class ArrayEnumeration implements Enumeration, Externalizable {
+    static final long serialVersionUID = -1194966576855523042L;
 
     private Object[] elements;
     private int elementsIndex;
 
-    public ArrayEnumeration(Vector elements){
+    public ArrayEnumeration(Vector elements) {
         this.elements = new Object[elements.size()];
         elements.copyInto(this.elements);
     }
 
-    public ArrayEnumeration(java.util.List list){
+    public ArrayEnumeration(java.util.List list) {
         this.elements = new Object[list.size()];
         list.toArray(this.elements);
     }
@@ -39,27 +39,27 @@ public final class ArrayEnumeration implements Enumeration, Externalizable{
         return elements.length;
     }
 
-    public boolean hasMoreElements(){
-        return ( elementsIndex < elements.length );
+    public boolean hasMoreElements() {
+        return (elementsIndex < elements.length);
     }
 
-    public Object nextElement(){
-        if ( !hasMoreElements()) throw new NoSuchElementException("No more elements exist");
+    public Object nextElement() {
+        if (!hasMoreElements()) throw new NoSuchElementException("No more elements exist");
         return elements[elementsIndex++];
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException{
+    public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(elements.length);
         out.writeInt(elementsIndex);
-        for (int i=0; i < elements.length; i++) {
+        for (int i = 0; i < elements.length; i++) {
             out.writeObject(elements[i]);
         }
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         elements = new Object[in.readInt()];
         elementsIndex = in.readInt();
-        for (int i=0; i < elements.length; i++) {
+        for (int i = 0; i < elements.length; i++) {
             elements[i] = in.readObject();
         }
     }

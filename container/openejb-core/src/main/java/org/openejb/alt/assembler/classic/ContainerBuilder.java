@@ -33,7 +33,7 @@ public class ContainerBuilder {
         this.ejbJars = containerSystemInfo.ejbJars;
         this.containerInfos = containerSystemInfo.containers;
         String decorators = props.getProperty("openejb.container.decorators");
-        this.decorators = (decorators == null)? new String[]{}: decorators.split(":");
+        this.decorators = (decorators == null) ? new String[]{} : decorators.split(":");
     }
 
     public Object build() throws OpenEJBException {
@@ -111,14 +111,14 @@ public class ContainerBuilder {
             }
 
             Properties systemProperties = System.getProperties();
-            synchronized(systemProperties) {
+            synchronized (systemProperties) {
                 String userDir = systemProperties.getProperty("user.dir");
-                try{
+                try {
                     File base = SystemInstance.get().getBase().getDirectory();
                     systemProperties.setProperty("user.dir", base.getAbsolutePath());
                     container.init(containerName, deploymentsList, clonedProps);
                 } finally {
-                    systemProperties.setProperty("user.dir",userDir);
+                    systemProperties.setProperty("user.dir", userDir);
                 }
             }
 

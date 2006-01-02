@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import org.exolab.castor.mapping.AccessMode;
@@ -16,8 +15,6 @@ import org.exolab.castor.xml.XMLFieldDescriptor;
 import org.exolab.castor.xml.validators.*;
 
 public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
-
-
 
 
     private java.lang.String nsPrefix;
@@ -29,85 +26,81 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
     private org.exolab.castor.xml.XMLFieldDescriptor identity;
 
 
-
-
     public EjbLocalRefDescriptor() {
         super();
         nsURI = "http://www.openejb.org/ejb-jar/1.1";
         xmlName = "ejb-local-ref";
-        
+
 
         setCompositorAsSequence();
-        org.exolab.castor.xml.util.XMLFieldDescriptorImpl  desc           = null;
-        org.exolab.castor.xml.XMLFieldHandler              handler        = null;
-        org.exolab.castor.xml.FieldValidator               fieldValidator = null;
+        org.exolab.castor.xml.util.XMLFieldDescriptorImpl desc = null;
+        org.exolab.castor.xml.XMLFieldHandler handler = null;
+        org.exolab.castor.xml.FieldValidator fieldValidator = null;
 
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_id", "id", org.exolab.castor.xml.NodeType.Attribute);
         this.identity = desc;
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getId();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setId( (java.lang.String) value);
+                    target.setId((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new java.lang.String();
             }
-        } );
+        });
         desc.setHandler(handler);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
         }
         desc.setValidator(fieldValidator);
 
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_description", "description", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getDescription();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setDescription( (java.lang.String) value);
+                    target.setDescription((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -120,33 +113,33 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_ejbRefName", "ejb-ref-name", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getEjbRefName();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setEjbRefName( (java.lang.String) value);
+                    target.setEjbRefName((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -160,33 +153,33 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_ejbRefType", "ejb-ref-type", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getEjbRefType();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setEjbRefType( (java.lang.String) value);
+                    target.setEjbRefType((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -201,33 +194,33 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_localHome", "local-home", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getLocalHome();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setLocalHome( (java.lang.String) value);
+                    target.setLocalHome((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -242,33 +235,33 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_local", "local", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getLocal();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setLocal( (java.lang.String) value);
+                    target.setLocal((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -283,32 +276,32 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_ejbLink", "ejb-link", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 EjbLocalRef target = (EjbLocalRef) object;
                 return target.getEjbLink();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     EjbLocalRef target = (EjbLocalRef) object;
-                    target.setEjbLink( (java.lang.String) value);
+                    target.setEjbLink((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setNameSpaceURI("http://www.openejb.org/ejb-jar/1.1");
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -320,45 +313,35 @@ public class EjbLocalRefDescriptor extends org.exolab.castor.xml.util.XMLClassDe
     }
 
 
-
-
-    public org.exolab.castor.mapping.AccessMode getAccessMode()
-    {
+    public org.exolab.castor.mapping.AccessMode getAccessMode() {
         return null;
     }
 
-    public org.exolab.castor.mapping.ClassDescriptor getExtends()
-    {
+    public org.exolab.castor.mapping.ClassDescriptor getExtends() {
         return null;
     }
 
-    public org.exolab.castor.mapping.FieldDescriptor getIdentity()
-    {
+    public org.exolab.castor.mapping.FieldDescriptor getIdentity() {
         return identity;
     }
 
-    public java.lang.Class getJavaClass()
-    {
+    public java.lang.Class getJavaClass() {
         return org.openejb.alt.config.ejb11.EjbLocalRef.class;
     }
 
-    public java.lang.String getNameSpacePrefix()
-    {
+    public java.lang.String getNameSpacePrefix() {
         return nsPrefix;
     }
 
-    public java.lang.String getNameSpaceURI()
-    {
+    public java.lang.String getNameSpaceURI() {
         return nsURI;
     }
 
-    public org.exolab.castor.xml.TypeValidator getValidator()
-    {
+    public org.exolab.castor.xml.TypeValidator getValidator() {
         return this;
     }
 
-    public java.lang.String getXMLName()
-    {
+    public java.lang.String getXMLName() {
         return xmlName;
     }
 

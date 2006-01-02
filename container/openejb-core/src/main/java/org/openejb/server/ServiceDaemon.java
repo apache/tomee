@@ -3,6 +3,7 @@ package org.openejb.server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.openejb.*;
 import org.openejb.util.SafeProperties;
 
@@ -44,7 +45,7 @@ public class ServiceDaemon implements ServerService, Runnable {
 
             try {
 //                serverSocket = new ServerSocket(port, 20, InetAddress.getByName(ip));
-                serverSocket = new ServerSocket(port, 20);                
+                serverSocket = new ServerSocket(port, 20);
                 Thread d = new Thread(this);
                 d.setName("service." + next.getName() + "@" + d.hashCode());
                 d.setDaemon(true);
@@ -71,8 +72,8 @@ public class ServiceDaemon implements ServerService, Runnable {
             } catch (Throwable t) {
                 t.printStackTrace();
 
-				// Received exception: "+t.getClass().getName()+" :
-				// "+t.getMessage());
+                // Received exception: "+t.getClass().getName()+" :
+                // "+t.getMessage());
             }
 
             next.stop();
@@ -80,7 +81,7 @@ public class ServiceDaemon implements ServerService, Runnable {
     }
 
     public synchronized void service(final Socket socket)
-        throws ServiceException, IOException {
+            throws ServiceException, IOException {
         Thread d = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -95,7 +96,7 @@ public class ServiceDaemon implements ServerService, Runnable {
                             socket.close();
                     } catch (Throwable t) {
 
-						// connection with client: "+t.getMessage());
+                        // connection with client: "+t.getMessage());
                     }
                 }
             }
@@ -129,7 +130,7 @@ public class ServiceDaemon implements ServerService, Runnable {
 
             } catch (Throwable e) {
 
-            } 
+            }
         }
     }
 }

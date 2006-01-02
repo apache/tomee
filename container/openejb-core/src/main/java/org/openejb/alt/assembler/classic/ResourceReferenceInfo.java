@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public class ResourceReferenceInfo extends InfoObject{
+public class ResourceReferenceInfo extends InfoObject {
 
     public String referenceName;
     public String referenceType;

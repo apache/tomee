@@ -20,27 +20,27 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
 
     protected JDO jdo_ForLocalTransaction = null;
 
-    public CastorCmpEntityTxPolicy(TransactionPolicy policy){
-        this.policy     = policy;
-        this.container  = policy.getContainer();
+    public CastorCmpEntityTxPolicy(TransactionPolicy policy) {
+        this.policy = policy;
+        this.container = policy.getContainer();
         this.policyType = policy.policyType;
 
         this.cmpContainer = getCastorContainer(container);
 
-        this.jdo_ForLocalTransaction  = cmpContainer.jdo_ForLocalTransaction;
+        this.jdo_ForLocalTransaction = cmpContainer.jdo_ForLocalTransaction;
     }
 
     private CastorCMP11_EntityContainer getCastorContainer(TransactionContainer container) {
         if (container instanceof RpcContainerWrapper) {
-            RpcContainerWrapper wrapper = (RpcContainerWrapper)container;
+            RpcContainerWrapper wrapper = (RpcContainerWrapper) container;
             return getCastorContainer((TransactionContainer) wrapper.getContainer());
         } else {
-            return (CastorCMP11_EntityContainer)container;
+            return (CastorCMP11_EntityContainer) container;
         }
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException{
-        policy.beforeInvoke( instance, context );
+    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+        policy.beforeInvoke(instance, context);
 
         DeploymentInfo deploymentInfo = context.callContext.getDeploymentInfo();
         ClassLoader classLoader = deploymentInfo.getBeanClass().getClassLoader();
@@ -48,8 +48,8 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
         cmpContainer.jdo_ForGlobalTransaction.setClassLoader(classLoader);
 
         Database db = null;
-        try{
-            if( context.currentTx == null ) {
+        try {
+            if (context.currentTx == null) {
                 /*
                 * No current transaciton means that a local transaciton is required which 
                 * must be executed on Database object aquired from a JDO object that was not
@@ -76,74 +76,74 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
                 * rollback the Castor's local transaction.
                 */
                 context.callContext.setUnspecified(db);
-            }else{
+            } else {
                 /*
                 * If there is a transaction, that means that context is transaction-managed so
                 * we make the unspecified field of the current ThreadContext null, which will 
                 * be used by the getDatabase() method of this class to determine that a 
                 * transaction-managed database object is needed.
                 */
-                context.callContext.setUnspecified( null );
+                context.callContext.setUnspecified(null);
             }
-        }catch(org.exolab.castor.jdo.DatabaseNotFoundException e){
+        } catch (org.exolab.castor.jdo.DatabaseNotFoundException e) {
             RemoteException re = new RemoteException("Castor JDO DatabaseNotFoundException thrown when attempting to begin a local transaciton", e);
-            handleSystemException( re, instance, context);
+            handleSystemException(re, instance, context);
 
-        }catch(org.exolab.castor.jdo.PersistenceException e){
+        } catch (org.exolab.castor.jdo.PersistenceException e) {
             RemoteException re = new RemoteException("Castor JDO PersistenceException thrown when attempting to begin local transaciton", e);
-            handleSystemException( re, instance, context);
+            handleSystemException(re, instance, context);
 
-        }catch (Throwable e){
+        } catch (Throwable e) {
             RemoteException re = new RemoteException("Encountered and unkown error in Castor JDO when attempting to begin local transaciton", e);
-            handleSystemException( re, instance, context);
+            handleSystemException(re, instance, context);
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException{
+    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
-            if ( context.currentTx == null ) {
-                Database db = (Database)context.callContext.getUnspecified();
-                if ( db != null && db.isActive() ) {
+            if (context.currentTx == null) {
+                Database db = (Database) context.callContext.getUnspecified();
+                if (db != null && db.isActive()) {
                     db.commit();
                 }
             }
-        } catch ( org.exolab.castor.jdo.TransactionAbortedException e ) {
+        } catch (org.exolab.castor.jdo.TransactionAbortedException e) {
             RemoteException ex = new RemoteException("Castor JDO threw a JDO TransactionAbortedException while attempting to commit a local transaciton", e);
-            policy.handleApplicationException( ex, context );
-        } catch ( org.exolab.castor.jdo.TransactionNotInProgressException e ) {
+            policy.handleApplicationException(ex, context);
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException e) {
             RemoteException ex = new RemoteException("Transaction managment problem with Castor JDO, a transaction should be in progress, but this is not the case.", e);
-            policy.handleSystemException( ex, instance, context );
-        } catch ( Throwable e ) {
+            policy.handleSystemException(ex, instance, context);
+        } catch (Throwable e) {
             RemoteException ex = new RemoteException("Encountered and unknown exception while attempting to commit the local castor database transaction", e);
-            policy.handleSystemException( ex, instance, context );
+            policy.handleSystemException(ex, instance, context);
         } finally {
-            policy.afterInvoke( instance, context );
+            policy.afterInvoke(instance, context);
         }
     }
 
-    public void handleApplicationException( Throwable appException, TransactionContext context) throws ApplicationException{
-        try{
-            if( context.currentTx == null ){
-                Database db = (Database)context.callContext.getUnspecified();
+    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+        try {
+            if (context.currentTx == null) {
+                Database db = (Database) context.callContext.getUnspecified();
                 db.rollback();
             }
-        }catch(org.exolab.castor.jdo.TransactionNotInProgressException tnipe){
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException tnipe) {
 
         } finally {
-            policy.handleApplicationException( appException, context );
+            policy.handleApplicationException(appException, context);
         }
     }
 
-    public void handleSystemException( Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException{
-        try{
-            if( context.currentTx == null ){
-                Database db = (Database)context.callContext.getUnspecified();
+    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+        try {
+            if (context.currentTx == null) {
+                Database db = (Database) context.callContext.getUnspecified();
                 db.rollback();
             }
-        }catch(org.exolab.castor.jdo.TransactionNotInProgressException tnipe){
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException tnipe) {
 
         } finally {
-            policy.handleSystemException( sysException, instance, context );
+            policy.handleSystemException(sysException, instance, context);
         }
     }
 

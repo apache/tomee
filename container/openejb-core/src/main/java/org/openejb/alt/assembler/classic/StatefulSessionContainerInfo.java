@@ -1,10 +1,10 @@
 package org.openejb.alt.assembler.classic;
 
-public class StatefulSessionContainerInfo extends ContainerInfo{
+public class StatefulSessionContainerInfo extends ContainerInfo {
 
     public StatefulBeanInfo[] beans;
 
-    public StatefulSessionContainerInfo(){
+    public StatefulSessionContainerInfo() {
         containerType = STATEFUL_SESSION_CONTAINER;
     }
 

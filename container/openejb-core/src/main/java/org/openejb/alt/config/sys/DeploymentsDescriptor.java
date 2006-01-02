@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.sys;
 
-
 //---------------------------------/
 
 import org.exolab.castor.mapping.AccessMode;
@@ -16,8 +15,6 @@ import org.exolab.castor.xml.XMLFieldDescriptor;
 import org.exolab.castor.xml.validators.*;
 
 public class DeploymentsDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
-
-
 
 
     private java.lang.String nsPrefix;
@@ -29,45 +26,42 @@ public class DeploymentsDescriptor extends org.exolab.castor.xml.util.XMLClassDe
     private org.exolab.castor.xml.XMLFieldDescriptor identity;
 
 
-
-
     public DeploymentsDescriptor() {
         super();
         nsURI = "http://www.openejb.org/System/Configuration";
         xmlName = "Deployments";
-        org.exolab.castor.xml.util.XMLFieldDescriptorImpl  desc           = null;
-        org.exolab.castor.xml.XMLFieldHandler              handler        = null;
-        org.exolab.castor.xml.FieldValidator               fieldValidator = null;
+        org.exolab.castor.xml.util.XMLFieldDescriptorImpl desc = null;
+        org.exolab.castor.xml.XMLFieldHandler handler = null;
+        org.exolab.castor.xml.FieldValidator fieldValidator = null;
 
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_jar", "jar", org.exolab.castor.xml.NodeType.Attribute);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Deployments target = (Deployments) object;
                 return target.getJar();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Deployments target = (Deployments) object;
-                    target.setJar( (java.lang.String) value);
+                    target.setJar((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -81,30 +75,30 @@ public class DeploymentsDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_dir", "dir", org.exolab.castor.xml.NodeType.Attribute);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Deployments target = (Deployments) object;
                 return target.getDir();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Deployments target = (Deployments) object;
-                    target.setDir( (java.lang.String) value);
+                    target.setDir((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -114,49 +108,39 @@ public class DeploymentsDescriptor extends org.exolab.castor.xml.util.XMLClassDe
         }
         desc.setValidator(fieldValidator);
 
-        
+
     }
 
 
-
-
-    public org.exolab.castor.mapping.AccessMode getAccessMode()
-    {
+    public org.exolab.castor.mapping.AccessMode getAccessMode() {
         return null;
     }
 
-    public org.exolab.castor.mapping.ClassDescriptor getExtends()
-    {
+    public org.exolab.castor.mapping.ClassDescriptor getExtends() {
         return null;
     }
 
-    public org.exolab.castor.mapping.FieldDescriptor getIdentity()
-    {
+    public org.exolab.castor.mapping.FieldDescriptor getIdentity() {
         return identity;
     }
 
-    public java.lang.Class getJavaClass()
-    {
+    public java.lang.Class getJavaClass() {
         return org.openejb.alt.config.sys.Deployments.class;
     }
 
-    public java.lang.String getNameSpacePrefix()
-    {
+    public java.lang.String getNameSpacePrefix() {
         return nsPrefix;
     }
 
-    public java.lang.String getNameSpaceURI()
-    {
+    public java.lang.String getNameSpaceURI() {
         return nsURI;
     }
 
-    public org.exolab.castor.xml.TypeValidator getValidator()
-    {
+    public org.exolab.castor.xml.TypeValidator getValidator() {
         return this;
     }
 
-    public java.lang.String getXMLName()
-    {
+    public java.lang.String getXMLName() {
         return xmlName;
     }
 

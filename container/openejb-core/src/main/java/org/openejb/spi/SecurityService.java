@@ -1,8 +1,8 @@
 package org.openejb.spi;
 
-public interface SecurityService extends Service{
+public interface SecurityService extends Service {
 
-    public boolean isCallerAuthorized(Object securityIdentity,String [] roleNames);
+    public boolean isCallerAuthorized(Object securityIdentity, String [] roleNames);
 
     public Object translateTo(Object securityIdentity, Class type);
 
@@ -19,5 +19,5 @@ public interface SecurityService extends Service{
     * Obtains the security identity associated with the current thread.
     * If there is no association, then null is returned. 
     */
-    public Object getSecurityIdentity( );
+    public Object getSecurityIdentity();
 }

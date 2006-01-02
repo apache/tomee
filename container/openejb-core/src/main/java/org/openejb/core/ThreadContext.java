@@ -15,19 +15,19 @@ public class ThreadContext implements Cloneable {
     protected Object securityIdentity;
     protected Object unspecified;
 
-    static{
+    static {
         String className = System.getProperty(EnvProps.THREAD_CONTEXT_IMPL);
 
-        if ( className == null ) {
+        if (className == null) {
             className = System.getProperty(EnvProps.THREAD_CONTEXT_IMPL);
         }
 
-        if ( className !=null ) {
+        if (className != null) {
             try {
                 ClassLoader cl = OpenEJB.getContextClassLoader();
                 implClass = Class.forName(className, true, cl);
-            } catch ( Exception e ) {
-                System.out.println("Can not load ThreadContext class. org.openejb.core.threadcontext_class = "+className);
+            } catch (Exception e) {
+                System.out.println("Can not load ThreadContext class. org.openejb.core.threadcontext_class = " + className);
                 e.printStackTrace();
                 implClass = null;
             }
@@ -36,17 +36,17 @@ public class ThreadContext implements Cloneable {
 
     protected static ThreadContext newThreadContext() {
         try {
-            return(ThreadContext)implClass.newInstance();
-        } catch ( Exception e ) {
+            return (ThreadContext) implClass.newInstance();
+        } catch (Exception e) {
 
             e.printStackTrace();
-            throw new RuntimeException("ThreadContext implemenation class could not be instantiated. Class type = "+implClass+" exception message = "+e.getMessage());
+            throw new RuntimeException("ThreadContext implemenation class could not be instantiated. Class type = " + implClass + " exception message = " + e.getMessage());
         }
     }
 
     public static boolean isValid() {
-        ThreadContext tc = (ThreadContext)threadStorage.get();
-        if ( tc!=null )
+        ThreadContext tc = (ThreadContext) threadStorage.get();
+        if (tc != null)
             return tc.valid;
         else
             return false;
@@ -56,40 +56,40 @@ public class ThreadContext implements Cloneable {
         valid = false;
         deploymentInfo = null;
         primaryKey = null;
-        currentOperation = (byte)0;
+        currentOperation = (byte) 0;
         securityIdentity = null;
         unspecified = null;
     }
 
     public static void invalidate() {
-        ThreadContext tc = (ThreadContext)threadStorage.get();
-        if ( tc!=null )
+        ThreadContext tc = (ThreadContext) threadStorage.get();
+        if (tc != null)
             tc.makeInvalid();
     }
 
     public static void setThreadContext(ThreadContext tc) {
-        if ( tc==null ) {
-            tc = (ThreadContext)threadStorage.get();
-            if ( tc!=null )tc.makeInvalid();
+        if (tc == null) {
+            tc = (ThreadContext) threadStorage.get();
+            if (tc != null) tc.makeInvalid();
         } else {
             threadStorage.set(tc);
         }
     }
 
-    public static ThreadContext getThreadContext( ) {
-        ThreadContext tc = (ThreadContext)threadStorage.get();
-        if ( tc==null ) {
+    public static ThreadContext getThreadContext() {
+        ThreadContext tc = (ThreadContext) threadStorage.get();
+        if (tc == null) {
             tc = ThreadContext.newThreadContext();
             threadStorage.set(tc);
         }
         return tc;
     }
 
-    public byte getCurrentOperation( ) {
+    public byte getCurrentOperation() {
         return currentOperation;
     }
 
-    public Object getPrimaryKey( ) {
+    public Object getPrimaryKey() {
         return primaryKey;
     }
 
@@ -97,7 +97,7 @@ public class ThreadContext implements Cloneable {
         return deploymentInfo;
     }
 
-    public Object getSecurityIdentity( ) {
+    public Object getSecurityIdentity() {
         return securityIdentity;
     }
 

@@ -8,18 +8,18 @@ import javax.ejb.EJBHome;
 
 public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externalizable {
 
-    public static final byte STATEFUL = (byte)6;
+    public static final byte STATEFUL = (byte) 6;
 
-    public static final byte STATELESS = (byte)7;
+    public static final byte STATELESS = (byte) 7;
 
-    public static final byte BMP_ENTITY = (byte)8;
+    public static final byte BMP_ENTITY = (byte) 8;
 
-    public static final byte CMP_ENTITY = (byte)9;
+    public static final byte CMP_ENTITY = (byte) 9;
 
     protected transient byte type;
 
     protected transient String deploymentID;
-    protected transient int    deploymentCode;
+    protected transient int deploymentCode;
 
     protected transient Class homeClass;
 
@@ -34,29 +34,30 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, byte typeOfBean) {
-        this.type        = typeOfBean;
-        this.homeClass   = homeInterface;
+        this.type = typeOfBean;
+        this.homeClass = homeInterface;
         this.remoteClass = remoteInterface;
     }
 
     public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean) {
         this(homeInterface, remoteInterface, typeOfBean);
-        if ( type == CMP_ENTITY || type == BMP_ENTITY ) {
+        if (type == CMP_ENTITY || type == BMP_ENTITY) {
             this.keyClass = primaryKeyClass;
         }
     }
 
     public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean, String deploymentID) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean);
-        this.deploymentID   = deploymentID;
+        this.deploymentID = deploymentID;
     }
 
     public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean, String deploymentID, int deploymentCode) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID);
         this.deploymentCode = deploymentCode;
     }
+
     public Class getPrimaryKeyClass() {
-        if ( type != BMP_ENTITY && type != CMP_ENTITY ){
+        if (type != BMP_ENTITY && type != CMP_ENTITY) {
 
             throw new java.lang.UnsupportedOperationException();
         }
@@ -80,7 +81,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public boolean isSession() {
-        return ( type == STATEFUL || type == STATELESS );
+        return (type == STATEFUL || type == STATELESS);
     }
 
     protected void setEJBHomeProxy(EJBHomeProxy home) {
@@ -88,22 +89,22 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject( homeClass );
-        out.writeObject( remoteClass );
-        out.writeObject( keyClass );
-        out.writeObject( ejbHomeProxy );
-        out.writeByte(   type );
-        out.writeUTF(    deploymentID );
-        out.writeShort( (short)deploymentCode );
+        out.writeObject(homeClass);
+        out.writeObject(remoteClass);
+        out.writeObject(keyClass);
+        out.writeObject(ejbHomeProxy);
+        out.writeByte(type);
+        out.writeUTF(deploymentID);
+        out.writeShort((short) deploymentCode);
     }
 
-    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
-        homeClass      = (Class) in.readObject();
-        remoteClass    = (Class) in.readObject();
-        keyClass       = (Class) in.readObject();
-        ejbHomeProxy   = (EJBHomeProxy) in.readObject();
-        type           = in.readByte();
-        deploymentID   = in.readUTF();
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        homeClass = (Class) in.readObject();
+        remoteClass = (Class) in.readObject();
+        keyClass = (Class) in.readObject();
+        ejbHomeProxy = (EJBHomeProxy) in.readObject();
+        type = in.readByte();
+        deploymentID = in.readUTF();
         deploymentCode = in.readShort();
     }
 

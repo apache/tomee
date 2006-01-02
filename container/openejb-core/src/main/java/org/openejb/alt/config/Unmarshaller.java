@@ -36,7 +36,7 @@ public class Unmarshaller {
 
     public Object unmarshal(String location) throws OpenEJBException {
         File file = new File(location);
-        if (file.isDirectory()){
+        if (file.isDirectory()) {
             return unmarshalFromDirectory(file);
         } else {
             return unmarshalFromJar(file);
@@ -79,7 +79,7 @@ public class Unmarshaller {
         InputStream stream = null;
 
         try {
-            File fullPath = new File(directory, xmlFile.getPath() );
+            File fullPath = new File(directory, xmlFile.getPath());
             stream = new FileInputStream(fullPath);
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, directory.getPath());
@@ -133,7 +133,7 @@ public class Unmarshaller {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotParse", file, jarLocation, e.getLocalizedMessage()));
             } else if (e.getException() instanceof IOException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()));
-            } else if (e.getException() instanceof ValidationException){
+            } else if (e.getException() instanceof ValidationException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()));
             } else {
                 e.printStackTrace();

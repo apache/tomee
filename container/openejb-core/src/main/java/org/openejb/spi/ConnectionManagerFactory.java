@@ -13,6 +13,6 @@ public interface ConnectionManagerFactory {
     public void setProperties(Properties props);
 
     public OpenEJBConnectionManager createConnectionManager(
-               String name, ConnectionManagerConfig config,
-               ManagedConnectionFactory factory) throws OpenEJBException;
+            String name, ConnectionManagerConfig config,
+            ManagedConnectionFactory factory) throws OpenEJBException;
 }

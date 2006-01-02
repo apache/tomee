@@ -23,32 +23,32 @@ public class IntraVmArtifact implements Externalizable {
 
     public IntraVmArtifact(Object obj) {
 
-        List list = (List)thread.get();
+        List list = (List) thread.get();
         if (list == null) {
             list = new ArrayList();
             thread.set(list);
         }
         instanceHandle = list.size();
         list.add(obj);
-            }
+    }
 
     public IntraVmArtifact() {
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException{
-        out.write(instanceHandle);                                            
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.write(instanceHandle);
     }
 
-    public void readExternal(ObjectInput in) throws IOException{
+    public void readExternal(ObjectInput in) throws IOException {
         instanceHandle = in.read();
     }
 
-    private Object readResolve() throws ObjectStreamException{
+    private Object readResolve() throws ObjectStreamException {
         List list = (List) thread.get();
         if (list == null) throw new InvalidObjectException(NO_MAP_ERROR);
         Object artifact = list.get(instanceHandle);
-        if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR+instanceHandle);
-        if(list.size()==instanceHandle+1) {
+        if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
+        if (list.size() == instanceHandle + 1) {
             list.clear();
         }
         return artifact;

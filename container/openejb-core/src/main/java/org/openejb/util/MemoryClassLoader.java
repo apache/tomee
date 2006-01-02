@@ -23,30 +23,33 @@ public class MemoryClassLoader extends ClassLoader {
 
     public MemoryClassLoader(ClassLoader parent, JarFile[] file) {
         super(parent);
-        for(int i=0; i<file.length; i++) {
+        for (int i = 0; i < file.length; i++) {
             addJar(file[i]);
             try {
                 file[i].close();
-            } catch(IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
 
     public MemoryClassLoader(ClassLoader parent, JarInputStream stream) {
         this(parent, new JarInputStream[]{stream});
     }
+
     public MemoryClassLoader(ClassLoader parent, JarInputStream[] stream) {
         super(parent);
-        for(int i=0; i<stream.length; i++) {
+        for (int i = 0; i < stream.length; i++) {
             addJar(stream[i]);
         }
     }
 
 /* ********** ClassLoader Overrides ********** */
+
     public InputStream getResourceAsStream(String name) {
         InputStream stream = getParent().getResourceAsStream(name);
-        if(stream == null) {
-            byte[] buf = (byte[])others.get(name);
-            if(buf != null) {
+        if (stream == null) {
+            byte[] buf = (byte[]) others.get(name);
+            if (buf != null) {
                 stream = new ByteArrayInputStream(buf);
             }
         }
@@ -64,8 +67,8 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     public boolean equals(Object o) {
-        if(o instanceof MemoryClassLoader) {
-            return ((MemoryClassLoader)o).getParent() == getParent();
+        if (o instanceof MemoryClassLoader) {
+            return ((MemoryClassLoader) o).getParent() == getParent();
         }
         return false;
     }
@@ -76,7 +79,7 @@ public class MemoryClassLoader extends ClassLoader {
 
     public Class findClass(String name) throws ClassNotFoundException {
         byte[] data = findClassData(name);
-        if(data != null) {
+        if (data != null) {
             return defineClass(name, data, 0, data.length);
         } else {
             throw new ClassNotFoundException();
@@ -87,16 +90,20 @@ public class MemoryClassLoader extends ClassLoader {
 
     public void addJar(JarFile jar) {
         Enumeration entries = jar.entries();
-        while(entries.hasMoreElements()) {
-            JarEntry entry = (JarEntry)entries.nextElement();
-            if(entry.getName().endsWith(".class")) {
+        while (entries.hasMoreElements()) {
+            JarEntry entry = (JarEntry) entries.nextElement();
+            if (entry.getName().endsWith(".class")) {
                 try {
                     addClassFile(jar, entry);
-                } catch(IOException e) {e.printStackTrace();}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 try {
                     addOtherFile(jar, entry);
-                } catch(IOException e) {e.printStackTrace();}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -105,30 +112,29 @@ public class MemoryClassLoader extends ClassLoader {
         byte[] buf = new byte[BUFFER_SIZE];
         int count;
         try {
-            while(true) {
+            while (true) {
                 JarEntry entry = stream.getNextJarEntry();
-                if(entry == null)
+                if (entry == null)
                     break;
                 String name = entry.getName();
-                int size = (int)entry.getSize();
-                ByteArrayOutputStream out =                    size >= 0 ? new ByteArrayOutputStream(size)
-                              : new ByteArrayOutputStream(BUFFER_SIZE);
-                while((count = stream.read(buf)) > -1)
-                    out.write(buf, 0, count);
+                int size = (int) entry.getSize();
+                ByteArrayOutputStream out = size >= 0 ? new ByteArrayOutputStream(size)
+                        : new ByteArrayOutputStream(BUFFER_SIZE);
+                while ((count = stream.read(buf)) > -1) out.write(buf, 0, count);
                 out.close();
-                if(name.endsWith(".class")) {
+                if (name.endsWith(".class")) {
                     classes.put(getClassName(name), out.toByteArray());
                 } else {
                     others.put(name, out.toByteArray());
                 }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private byte[] findClassData(String name) {
-        return (byte[])classes.remove(name);
+        return (byte[]) classes.remove(name);
     }
 
     private void addClassFile(JarFile jar, JarEntry entry) throws IOException {
@@ -136,20 +142,19 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     private void addOtherFile(JarFile jar, JarEntry entry) throws IOException {
-       others.put(entry.getName(), getFileBytes(jar, entry));
+        others.put(entry.getName(), getFileBytes(jar, entry));
     }
 
     private static String getClassName(String fileName) {
-        return fileName.substring(0, fileName.length()-6).replace('/','.');
+        return fileName.substring(0, fileName.length() - 6).replace('/', '.');
     }
 
     private static byte[] getFileBytes(JarFile jar, JarEntry entry) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream((int)entry.getSize());
+        ByteArrayOutputStream stream = new ByteArrayOutputStream((int) entry.getSize());
         byte[] buf = new byte[BUFFER_SIZE];
         BufferedInputStream in = new BufferedInputStream(jar.getInputStream(entry));
         int count;
-        while((count = in.read(buf)) > -1)
-            stream.write(buf, 0, count);
+        while ((count = in.read(buf)) > -1) stream.write(buf, 0, count);
         in.close();
         stream.close();
 

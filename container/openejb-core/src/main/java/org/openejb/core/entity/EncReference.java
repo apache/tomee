@@ -9,9 +9,10 @@ import org.openejb.core.ivm.naming.Reference;
   JNDI ENC of a entity bean.  When the getObject( ) method is invoked the 
   Operation is checked to ensure that its is allowed for the bean's current state.
 */
-public class EncReference extends org.openejb.core.ivm.naming.ENCReference{
 
-    public EncReference(Reference ref){
+public class EncReference extends org.openejb.core.ivm.naming.ENCReference {
+
+    public EncReference(Reference ref) {
         super(ref);
     }
 
@@ -21,7 +22,7 @@ public class EncReference extends org.openejb.core.ivm.naming.ENCReference{
     * method ensures that the entity bean is in the correct state before the super
     * class can return the requested reference object.
     */
-    public void checkOperation(byte operation) throws NameNotFoundException{
+    public void checkOperation(byte operation) throws NameNotFoundException {
 
         /*        if( operation == Operations.OP_SET_CONTEXT || 
             operation == Operations.OP_UNSET_CONTEXT || 

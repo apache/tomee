@@ -7,13 +7,13 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -21,8 +21,6 @@ import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.ContentHandler;
 
 public class EjbLocalRef implements java.io.Serializable {
-
-
 
 
     private java.lang.String _id;
@@ -40,52 +38,40 @@ public class EjbLocalRef implements java.io.Serializable {
     private java.lang.String _ejbLink;
 
 
-
-
     public EjbLocalRef() {
         super();
     }
 
 
-
-
-    public java.lang.String getDescription()
-    {
+    public java.lang.String getDescription() {
         return this._description;
     }
 
-    public java.lang.String getEjbLink()
-    {
+    public java.lang.String getEjbLink() {
         return this._ejbLink;
     }
 
-    public java.lang.String getEjbRefName()
-    {
+    public java.lang.String getEjbRefName() {
         return this._ejbRefName;
     }
 
-    public java.lang.String getEjbRefType()
-    {
+    public java.lang.String getEjbRefType() {
         return this._ejbRefType;
     }
 
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this._id;
     }
 
-    public java.lang.String getLocal()
-    {
+    public java.lang.String getLocal() {
         return this._local;
     }
 
-    public java.lang.String getLocalHome()
-    {
+    public java.lang.String getLocalHome() {
         return this._localHome;
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -96,63 +82,52 @@ public class EjbLocalRef implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void setDescription(java.lang.String description)
-    {
+    public void setDescription(java.lang.String description) {
         this._description = description;
     }
 
-    public void setEjbLink(java.lang.String ejbLink)
-    {
+    public void setEjbLink(java.lang.String ejbLink) {
         this._ejbLink = ejbLink;
     }
 
-    public void setEjbRefName(java.lang.String ejbRefName)
-    {
+    public void setEjbRefName(java.lang.String ejbRefName) {
         this._ejbRefName = ejbRefName;
     }
 
-    public void setEjbRefType(java.lang.String ejbRefType)
-    {
+    public void setEjbRefType(java.lang.String ejbRefType) {
         this._ejbRefType = ejbRefType;
     }
 
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this._id = id;
     }
 
-    public void setLocal(java.lang.String local)
-    {
+    public void setLocal(java.lang.String local) {
         this._local = local;
     }
 
-    public void setLocalHome(java.lang.String localHome)
-    {
+    public void setLocalHome(java.lang.String localHome) {
         this._localHome = localHome;
     }
 
     public static java.lang.Object unmarshalEjbLocalRef(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.ejb11.EjbLocalRef) Unmarshaller.unmarshal(org.openejb.alt.config.ejb11.EjbLocalRef.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

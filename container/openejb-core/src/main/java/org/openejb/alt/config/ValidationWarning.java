@@ -1,9 +1,9 @@
 package org.openejb.alt.config;
 
-public class ValidationWarning extends ValidationException{
+public class ValidationWarning extends ValidationException {
 
-    public ValidationWarning(String message){
-        super( message );
+    public ValidationWarning(String message) {
+        super(message);
     }
 
     public String getPrefix() {

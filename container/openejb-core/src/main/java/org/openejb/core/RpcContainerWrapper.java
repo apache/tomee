@@ -25,7 +25,7 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         container.init(containerId, deployments, properties);
     }
 
-    public int getContainerType( ) {
+    public int getContainerType() {
         return container.getContainerType();
     }
 
@@ -46,7 +46,7 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
     }
 
     public void discardInstance(EnterpriseBean instance, ThreadContext context) {
-        ((TransactionContainer)container).discardInstance(instance, context);
+        ((TransactionContainer) container).discardInstance(instance, context);
     }
 
     public RpcContainer getContainer() {

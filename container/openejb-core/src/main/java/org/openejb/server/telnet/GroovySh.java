@@ -15,7 +15,7 @@ public class GroovySh extends Command {
 
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
 /*        GroovyShell shell = new GroovyShell();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 

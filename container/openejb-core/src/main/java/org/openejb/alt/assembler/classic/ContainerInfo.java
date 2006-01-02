@@ -2,7 +2,7 @@ package org.openejb.alt.assembler.classic;
 
 import java.util.Properties;
 
-public abstract class ContainerInfo extends InfoObject{
+public abstract class ContainerInfo extends InfoObject {
 
     public static final int ENTITY_CONTAINER = 0;
 

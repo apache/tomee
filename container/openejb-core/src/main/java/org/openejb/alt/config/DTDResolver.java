@@ -1,26 +1,36 @@
 package org.openejb.alt.config;
 
-import java.io.BufferedInputStream;import java.io.ByteArrayInputStream;import java.io.ByteArrayOutputStream;import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.HashMap;import org.xml.sax.EntityResolver;import org.xml.sax.InputSource;import org.xml.sax.SAXException;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class DTDResolver implements EntityResolver {
     public static HashMap dtds = new HashMap();
 
     static {
         byte[] bytes = getDtd("ejb-jar_1_1.dtd");
-        if(bytes != null) {
-            dtds.put("ejb-jar.dtd",     bytes);
+        if (bytes != null) {
+            dtds.put("ejb-jar.dtd", bytes);
             dtds.put("ejb-jar_1_1.dtd", bytes);
         }
         bytes = getDtd("ejb-jar_2_0.dtd");
-        if(bytes != null) {
+        if (bytes != null) {
             dtds.put("ejb-jar_2_0.dtd", bytes);
         }
     }
 
     public static byte[] getDtd(String dtdName) {
-        try{
+        try {
 
-            URL dtd = new URL("resource:/openejb/dtds/"+dtdName);
+            URL dtd = new URL("resource:/openejb/dtds/" + dtdName);
             InputStream in = dtd.openStream();
             if (in == null) return null;
 
@@ -30,13 +40,13 @@ public class DTDResolver implements EntityResolver {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             int count;
-            while((count = in.read(buf)) > -1) out.write(buf, 0, count);
+            while ((count = in.read(buf)) > -1) out.write(buf, 0, count);
 
             in.close();
             out.close();
 
             return out.toByteArray();
-        } catch (Throwable e){
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -45,10 +55,10 @@ public class DTDResolver implements EntityResolver {
 
         int pos = systemId.lastIndexOf('/');
         if (pos != -1) {
-            systemId = systemId.substring(pos+1);
+            systemId = systemId.substring(pos + 1);
         }
 
-        byte[] data = (byte[])dtds.get(systemId);
+        byte[] data = (byte[]) dtds.get(systemId);
 
         if (data != null) {
             return new InputSource(new ByteArrayInputStream(data));

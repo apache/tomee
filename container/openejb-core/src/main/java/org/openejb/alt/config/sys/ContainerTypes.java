@@ -7,16 +7,14 @@
 
 package org.openejb.alt.config.sys;
 
-
 //---------------------------------/
 
 import java.io.Serializable;
+
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 
 public class ContainerTypes implements java.io.Serializable {
-
-
 
 
     public ContainerTypes() {

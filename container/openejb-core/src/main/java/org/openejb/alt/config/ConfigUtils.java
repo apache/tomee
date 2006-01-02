@@ -37,10 +37,11 @@ public class ConfigUtils {
         File file = new File(confFile);
         return (Openejb) Unmarshaller.unmarshal(Openejb.class, file.getName(), file.getParent());
     }
+
     /*
-     * TODO: Use the java.net.URL instead of java.io.File so configs
-     * and jars can be located remotely in the network
-     */
+    * TODO: Use the java.net.URL instead of java.io.File so configs
+    * and jars can be located remotely in the network
+    */
     public static Openejb _readConfig(String confFile) throws OpenEJBException {
         Openejb obj = null;
         Reader reader = null;

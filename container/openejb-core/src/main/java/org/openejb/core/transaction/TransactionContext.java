@@ -10,10 +10,10 @@ public class TransactionContext {
     public Transaction currentTx;
     public ThreadContext callContext;
 
-    public TransactionContext(){
+    public TransactionContext() {
     }
 
-    public TransactionContext(ThreadContext callContext){
+    public TransactionContext(ThreadContext callContext) {
         this.callContext = callContext;
     }
 }

@@ -6,7 +6,7 @@ public class WebAppClassPath extends TomcatClassPath {
         this(getContextClassLoader());
     }
 
-    public WebAppClassPath(ClassLoader classLoader){
+    public WebAppClassPath(ClassLoader classLoader) {
         super(classLoader);
     }
 

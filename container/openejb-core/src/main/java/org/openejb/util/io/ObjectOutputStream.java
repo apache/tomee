@@ -28,19 +28,19 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         classDescStack = new ArrayStack();
     }
 
-    public void reset() throws IOException{
+    public void reset() throws IOException {
         resetStream();
         count = 0;
     }
 
-    public void serializeObject(Object obj, OutputStream out) throws NotSerializableException, IOException{
+    public void serializeObject(Object obj, OutputStream out) throws NotSerializableException, IOException {
         this.out = out;
         serializeObject(obj);
     }
 
-    public void serializeObject(Object obj) throws NotSerializableException, IOException{
+    public void serializeObject(Object obj) throws NotSerializableException, IOException {
 
-        if ( !Serializable.class.isAssignableFrom(obj.getClass()) && !Externalizable.class.isAssignableFrom(obj.getClass()) ) {
+        if (!Serializable.class.isAssignableFrom(obj.getClass()) && !Externalizable.class.isAssignableFrom(obj.getClass())) {
             throw new NotSerializableException(obj.getClass().getName());
         }
 
@@ -52,50 +52,51 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
 
     }
 
-    public void writeObject(Object obj) throws IOException{
+    public void writeObject(Object obj) throws IOException {
         try {
-            if ( obj == null ) {
+            if (obj == null) {
                 write(TC_NULL);
                 return;
             }
             Class clazz = obj.getClass();
             ClassDescriptor classDesc = null;
 
-            if ( clazz == ClassDescriptor.class ) classDesc = (ClassDescriptor)obj;
-            else classDesc = ClassDescriptor.lookupInternal(clazz);
+            if (clazz == ClassDescriptor.class) classDesc = (ClassDescriptor) obj;
+            else
+                classDesc = ClassDescriptor.lookupInternal(clazz);
 
-            if ( classDesc == null ) {
+            if (classDesc == null) {
                 write(TC_NULL);
                 return;
             }
 
             int tmpInt = findWireOffset(obj);
-            if ( tmpInt >= 0 ) {
+            if (tmpInt >= 0) {
                 write(TC_REFERENCE);
                 tmpInt += baseWireHandle;
 
                 write((tmpInt >>> 24) & 0xFF);
                 write((tmpInt >>> 16) & 0xFF);
-                write((tmpInt >>>  8) & 0xFF);
-                write((tmpInt >>>  0) & 0xFF);
+                write((tmpInt >>> 8) & 0xFF);
+                write((tmpInt >>> 0) & 0xFF);
 
                 return;
             }
 
-            if ( obj instanceof Class ) {
+            if (obj instanceof Class) {
                 write(TC_CLASS);
                 write(TC_CLASSDESC);
                 writeUTF(classDesc.getName());
                 long value = classDesc.getSerialVersionUID();
 
-                write((int)(value >>> 56) & 0xFF);
-                write((int)(value >>> 48) & 0xFF);
-                write((int)(value >>> 40) & 0xFF);
-                write((int)(value >>> 32) & 0xFF);
-                write((int)(value >>> 24) & 0xFF);
-                write((int)(value >>> 16) & 0xFF);
-                write((int)(value >>>  8) & 0xFF);
-                write((int)(value >>>  0) & 0xFF);
+                write((int) (value >>> 56) & 0xFF);
+                write((int) (value >>> 48) & 0xFF);
+                write((int) (value >>> 40) & 0xFF);
+                write((int) (value >>> 32) & 0xFF);
+                write((int) (value >>> 24) & 0xFF);
+                write((int) (value >>> 16) & 0xFF);
+                write((int) (value >>> 8) & 0xFF);
+                write((int) (value >>> 0) & 0xFF);
 
                 assignWireOffset(classDesc);
                 classDesc.writeClassInfo(this);
@@ -105,195 +106,195 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
                 return;
             }
 
-            if ( obj instanceof ClassDescriptor ) {
+            if (obj instanceof ClassDescriptor) {
                 write(TC_CLASSDESC);
                 writeUTF(classDesc.getName());
                 long value = classDesc.getSerialVersionUID();
 
-                write((int)(value >>> 56) & 0xFF);
-                write((int)(value >>> 48) & 0xFF);
-                write((int)(value >>> 40) & 0xFF);
-                write((int)(value >>> 32) & 0xFF);
-                write((int)(value >>> 24) & 0xFF);
-                write((int)(value >>> 16) & 0xFF);
-                write((int)(value >>>  8) & 0xFF);
-                write((int)(value >>>  0) & 0xFF);
+                write((int) (value >>> 56) & 0xFF);
+                write((int) (value >>> 48) & 0xFF);
+                write((int) (value >>> 40) & 0xFF);
+                write((int) (value >>> 32) & 0xFF);
+                write((int) (value >>> 24) & 0xFF);
+                write((int) (value >>> 16) & 0xFF);
+                write((int) (value >>> 8) & 0xFF);
+                write((int) (value >>> 0) & 0xFF);
 
                 assignWireOffset(classDesc);
                 write(classDesc.flags);
                 tmpInt = classDesc.fields.length;
-                write((tmpInt >>>  8) & 0xFF);
-                write((tmpInt >>>  0) & 0xFF);
+                write((tmpInt >>> 8) & 0xFF);
+                write((tmpInt >>> 0) & 0xFF);
                 FieldDescriptor field;
-                for ( int i=0; i < classDesc.fields.length; i++ ) {
+                for (int i = 0; i < classDesc.fields.length; i++) {
                     field = classDesc.fields[i];
-                    write((int)field.typeCode);
+                    write((int) field.typeCode);
                     writeUTF(field.name);
-                    if ( !field.type.isPrimitive() ) writeObject(field.typeString);
+                    if (!field.type.isPrimitive()) writeObject(field.typeString);
                 }
                 write(TC_ENDBLOCKDATA);
                 writeObject(classDesc.getSuperclass());
                 return;
             }
-            if ( obj instanceof String ) {
+            if (obj instanceof String) {
                 write(TC_STRING);
-                String s = ((String)obj).intern();
+                String s = ((String) obj).intern();
                 assignWireOffset(s);
                 writeUTF(s);
                 return;
             }
-            if ( clazz.isArray() ) {
+            if (clazz.isArray()) {
                 write(TC_ARRAY);
                 writeObject(classDesc);
                 assignWireOffset(obj);
 
                 Class type = clazz.getComponentType();
-                if ( type.isPrimitive() ) {
-                    if ( type == Integer.TYPE ) {
-                        int[] array = (int[])obj;
+                if (type.isPrimitive()) {
+                    if (type == Integer.TYPE) {
+                        int[] array = (int[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         int value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = array[i];
 
                             write((value >>> 24) & 0xFF);
                             write((value >>> 16) & 0xFF);
-                            write((value >>>  8) & 0xFF);
-                            write((value >>>  0) & 0xFF);
+                            write((value >>> 8) & 0xFF);
+                            write((value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Byte.TYPE ) {
-                        byte[] array = (byte[])obj;
+                    } else if (type == Byte.TYPE) {
+                        byte[] array = (byte[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         write(array, 0, tmpInt);
                         return;
-                    } else if ( type == Long.TYPE ) {
-                        long[] array = (long[])obj;
+                    } else if (type == Long.TYPE) {
+                        long[] array = (long[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         long value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = array[i];
 
-                            write((int)(value >>> 56) & 0xFF);
-                            write((int)(value >>> 48) & 0xFF);
-                            write((int)(value >>> 40) & 0xFF);
-                            write((int)(value >>> 32) & 0xFF);
-                            write((int)(value >>> 24) & 0xFF);
-                            write((int)(value >>> 16) & 0xFF);
-                            write((int)(value >>>  8) & 0xFF);
-                            write((int)(value >>>  0) & 0xFF);
+                            write((int) (value >>> 56) & 0xFF);
+                            write((int) (value >>> 48) & 0xFF);
+                            write((int) (value >>> 40) & 0xFF);
+                            write((int) (value >>> 32) & 0xFF);
+                            write((int) (value >>> 24) & 0xFF);
+                            write((int) (value >>> 16) & 0xFF);
+                            write((int) (value >>> 8) & 0xFF);
+                            write((int) (value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Float.TYPE ) {
-                        float[] array = (float[])obj;
+                    } else if (type == Float.TYPE) {
+                        float[] array = (float[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         int value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = Float.floatToIntBits(array[i]);
 
                             write((value >>> 24) & 0xFF);
                             write((value >>> 16) & 0xFF);
-                            write((value >>>  8) & 0xFF);
-                            write((value >>>  0) & 0xFF);
+                            write((value >>> 8) & 0xFF);
+                            write((value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Double.TYPE ) {
-                        double[] array = (double[])obj;
+                    } else if (type == Double.TYPE) {
+                        double[] array = (double[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         long value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = Double.doubleToLongBits(array[i]);
 
-                            write((int)(value >>> 56) & 0xFF);
-                            write((int)(value >>> 48) & 0xFF);
-                            write((int)(value >>> 40) & 0xFF);
-                            write((int)(value >>> 32) & 0xFF);
-                            write((int)(value >>> 24) & 0xFF);
-                            write((int)(value >>> 16) & 0xFF);
-                            write((int)(value >>>  8) & 0xFF);
-                            write((int)(value >>>  0) & 0xFF);
+                            write((int) (value >>> 56) & 0xFF);
+                            write((int) (value >>> 48) & 0xFF);
+                            write((int) (value >>> 40) & 0xFF);
+                            write((int) (value >>> 32) & 0xFF);
+                            write((int) (value >>> 24) & 0xFF);
+                            write((int) (value >>> 16) & 0xFF);
+                            write((int) (value >>> 8) & 0xFF);
+                            write((int) (value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Short.TYPE ) {
-                        short[] array = (short[])obj;
+                    } else if (type == Short.TYPE) {
+                        short[] array = (short[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         short value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = array[i];
 
-                            write((value >>>  8) & 0xFF);
-                            write((value >>>  0) & 0xFF);
+                            write((value >>> 8) & 0xFF);
+                            write((value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Character.TYPE ) {
-                        char[] array = (char[])obj;
+                    } else if (type == Character.TYPE) {
+                        char[] array = (char[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
                         char value;
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             value = array[i];
 
-                            write((value >>>  8) & 0xFF);
-                            write((value >>>  0) & 0xFF);
+                            write((value >>> 8) & 0xFF);
+                            write((value >>> 0) & 0xFF);
 
                         }
                         return;
-                    } else if ( type == Boolean.TYPE ) {
-                        boolean[] array = (boolean[])obj;
+                    } else if (type == Boolean.TYPE) {
+                        boolean[] array = (boolean[]) obj;
                         tmpInt = array.length;
 
                         write((tmpInt >>> 24) & 0xFF);
                         write((tmpInt >>> 16) & 0xFF);
-                        write((tmpInt >>>  8) & 0xFF);
-                        write((tmpInt >>>  0) & 0xFF);
+                        write((tmpInt >>> 8) & 0xFF);
+                        write((tmpInt >>> 0) & 0xFF);
 
-                        for ( int i = 0; i < tmpInt; i++ ) {
+                        for (int i = 0; i < tmpInt; i++) {
                             write(array[i] ? 1 : 0);
                         }
                         return;
@@ -301,15 +302,16 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
                         throw new InvalidClassException(clazz.getName());
                     }
                 } else {
-                    Object[] array = (Object[])obj;
+                    Object[] array = (Object[]) obj;
                     int length = array.length;
 
                     write((length >>> 24) & 0xFF);
                     write((length >>> 16) & 0xFF);
-                    write((length >>>  8) & 0xFF);
-                    write((length >>>  0) & 0xFF);
+                    write((length >>> 8) & 0xFF);
+                    write((length >>> 0) & 0xFF);
 
-                    for ( int i = 0; i < length; i++ ) writeObject(array[i]);
+                    for (int i = 0; i < length; i++)
+                        writeObject(array[i]);
                 }
                 return;
             }
@@ -317,8 +319,8 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
             writeObject(classDesc);
             assignWireOffset(obj);
 
-            if ( classDesc.isExternalizable() ) {
-                writeExternal((Externalizable)obj);
+            if (classDesc.isExternalizable()) {
+                writeExternal((Externalizable) obj);
                 return;
             }
 
@@ -326,13 +328,13 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
             try {
 
                 ClassDescriptor superClassDesc;
-                while ( (superClassDesc = classDesc.getSuperclass()) != null ) {
+                while ((superClassDesc = classDesc.getSuperclass()) != null) {
                     classDescStack.push(classDesc);
                     classDesc = superClassDesc;
                 }
 
                 do {
-                    if ( classDesc.hasWriteObjectMethod() ) {
+                    if (classDesc.hasWriteObjectMethod()) {
                         /* DMB:  NOT COMPLETE - Should start writing in block data format 
                          * and state the size of the data to come. 
                          */
@@ -352,78 +354,79 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
                     } else {
                         FieldDescriptor[] fields = classDesc.getFields();
                         Field field;
-                        if ( fields.length > 0 ) {
-                            for ( int i=0; i< fields.length; i++ ) {
+                        if (fields.length > 0) {
+                            for (int i = 0; i < fields.length; i++) {
                                 field = fields[i].getField();
-                                if ( field == null ) throw new InvalidClassException(clazz.getName(), "Nonexistent field " + fields[i].getName());
+                                if (field == null) throw new InvalidClassException(clazz.getName(), "Nonexistent field " + fields[i].getName());
                                 try {
-                                    switch ( fields[i].getTypeCode() ) {
+                                    switch (fields[i].getTypeCode()) {
                                         case 'B':
                                             write(field.getByte(obj));
                                             break;
                                         case 'C':
                                             char charvalue = field.getChar(obj);
-                                            write((charvalue >>>  8) & 0xFF);
-                                            write((charvalue >>>  0) & 0xFF);
+                                            write((charvalue >>> 8) & 0xFF);
+                                            write((charvalue >>> 0) & 0xFF);
                                             break;
                                         case 'I':
                                             int intvalue = field.getInt(obj);
                                             write((intvalue >>> 24) & 0xFF);
                                             write((intvalue >>> 16) & 0xFF);
-                                            write((intvalue >>>  8) & 0xFF);
-                                            write((intvalue >>>  0) & 0xFF);
+                                            write((intvalue >>> 8) & 0xFF);
+                                            write((intvalue >>> 0) & 0xFF);
                                             break;
                                         case 'Z':
-                                            write((field.getBoolean(obj)?1:0) );
+                                            write((field.getBoolean(obj) ? 1 : 0));
                                             break;
                                         case 'J':
                                             long longvalue = field.getLong(obj);
-                                            write((int)(longvalue >>> 56) & 0xFF);
-                                            write((int)(longvalue >>> 48) & 0xFF);
-                                            write((int)(longvalue >>> 40) & 0xFF);
-                                            write((int)(longvalue >>> 32) & 0xFF);
-                                            write((int)(longvalue >>> 24) & 0xFF);
-                                            write((int)(longvalue >>> 16) & 0xFF);
-                                            write((int)(longvalue >>>  8) & 0xFF);
-                                            write((int)(longvalue >>>  0) & 0xFF);
+                                            write((int) (longvalue >>> 56) & 0xFF);
+                                            write((int) (longvalue >>> 48) & 0xFF);
+                                            write((int) (longvalue >>> 40) & 0xFF);
+                                            write((int) (longvalue >>> 32) & 0xFF);
+                                            write((int) (longvalue >>> 24) & 0xFF);
+                                            write((int) (longvalue >>> 16) & 0xFF);
+                                            write((int) (longvalue >>> 8) & 0xFF);
+                                            write((int) (longvalue >>> 0) & 0xFF);
                                             break;
                                         case 'F':
                                             int floatvalue = Float.floatToIntBits(field.getFloat(obj));
                                             write((floatvalue >>> 24) & 0xFF);
                                             write((floatvalue >>> 16) & 0xFF);
-                                            write((floatvalue >>>  8) & 0xFF);
-                                            write((floatvalue >>>  0) & 0xFF);
+                                            write((floatvalue >>> 8) & 0xFF);
+                                            write((floatvalue >>> 0) & 0xFF);
                                             break;
                                         case 'D':
                                             long doublevalue = Double.doubleToLongBits(field.getDouble(obj));
-                                            write((int)(doublevalue >>> 56) & 0xFF);
-                                            write((int)(doublevalue >>> 48) & 0xFF);
-                                            write((int)(doublevalue >>> 40) & 0xFF);
-                                            write((int)(doublevalue >>> 32) & 0xFF);
-                                            write((int)(doublevalue >>> 24) & 0xFF);
-                                            write((int)(doublevalue >>> 16) & 0xFF);
-                                            write((int)(doublevalue >>>  8) & 0xFF);
-                                            write((int)(doublevalue >>>  0) & 0xFF);
+                                            write((int) (doublevalue >>> 56) & 0xFF);
+                                            write((int) (doublevalue >>> 48) & 0xFF);
+                                            write((int) (doublevalue >>> 40) & 0xFF);
+                                            write((int) (doublevalue >>> 32) & 0xFF);
+                                            write((int) (doublevalue >>> 24) & 0xFF);
+                                            write((int) (doublevalue >>> 16) & 0xFF);
+                                            write((int) (doublevalue >>> 8) & 0xFF);
+                                            write((int) (doublevalue >>> 0) & 0xFF);
                                             break;
                                         case 'S':
                                             short shortvalue = field.getShort(obj);
-                                            write((shortvalue >>>  8) & 0xFF);
-                                            write((shortvalue >>>  0) & 0xFF);
+                                            write((shortvalue >>> 8) & 0xFF);
+                                            write((shortvalue >>> 0) & 0xFF);
                                             break;
                                         case '[':
                                         case 'L':
                                             writeObject(field.get(obj));
                                             break;
-                                        default: throw new InvalidClassException(clazz.getName());
+                                        default:
+                                            throw new InvalidClassException(clazz.getName());
                                     }
-                                } catch ( IllegalAccessException e ) {
+                                } catch (IllegalAccessException e) {
                                     throw new InvalidClassException(clazz.getName(), e.getMessage());
                                 } finally {
                                 }
                             }
                         }
                     }
-                }while ( classDescStack.size() > stackMark &&  (classDesc = (ClassDescriptor)classDescStack.pop()) != null );
+                } while (classDescStack.size() > stackMark && (classDesc = (ClassDescriptor) classDescStack.pop()) != null);
 
             } finally {
                 /* If an error occcured, make sure we set the stack back
@@ -436,13 +439,13 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         }
     }
 
-    public void writeString(String s) throws IOException{
+    public void writeString(String s) throws IOException {
         writeObject(s);
     }
 
-    private void writeExternal(Externalizable ext) throws IOException{
+    private void writeExternal(Externalizable ext) throws IOException {
 //	    if (useDeprecatedExternalizableFormat) {
-        if ( false ) {
+        if (false) {
             /* JDK 1.1 external data format.
              * Don't write in block data mode and no terminator tag.
              */
@@ -468,14 +471,14 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         }
     }
 
-    public void writeException(Throwable th) throws IOException{
+    public void writeException(Throwable th) throws IOException {
         /* DMB:  NOT COMPLETE - Must write exceptions that occur during serialization 
          * to the stream.
          */
 
     }
 
-    public void writeReset() throws IOException{
+    public void writeReset() throws IOException {
         /* DMB:  NOT COMPLETE - Must write the reset byte when the reset() method
          * is called.
          */
@@ -492,21 +495,22 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         }
     }
 */
+
     public void write(int b) {
         try {
-            buf[count++] = (byte)b;
-        } catch ( ArrayIndexOutOfBoundsException e ) {
+            buf[count++] = (byte) b;
+        } catch (ArrayIndexOutOfBoundsException e) {
             byte newbuf[] = new byte[Math.max(buf.length << 1, count)];
-            System.arraycopy(buf, 0, newbuf, 0, count-1);
+            System.arraycopy(buf, 0, newbuf, 0, count - 1);
             buf = newbuf;
         }
     }
 
     public synchronized void write(byte b[], int off, int len) {
-        if ( len == 0 ) return;
+        if (len == 0) return;
 
         int newcount = count + len;
-        if ( newcount > buf.length ) {
+        if (newcount > buf.length) {
             byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
             System.arraycopy(buf, 0, newbuf, 0, count);
             buf = newbuf;
@@ -550,19 +554,19 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
     public final void writeInt(int v) throws IOException {
         write((v >>> 24) & 0xFF);
         write((v >>> 16) & 0xFF);
-        write((v >>>  8) & 0xFF);
-        write((v >>>  0) & 0xFF);
+        write((v >>> 8) & 0xFF);
+        write((v >>> 0) & 0xFF);
     }
 
     public final void writeLong(long v) throws IOException {
-        write((int)(v >>> 56) & 0xFF);
-        write((int)(v >>> 48) & 0xFF);
-        write((int)(v >>> 40) & 0xFF);
-        write((int)(v >>> 32) & 0xFF);
-        write((int)(v >>> 24) & 0xFF);
-        write((int)(v >>> 16) & 0xFF);
-        write((int)(v >>>  8) & 0xFF);
-        write((int)(v >>>  0) & 0xFF);
+        write((int) (v >>> 56) & 0xFF);
+        write((int) (v >>> 48) & 0xFF);
+        write((int) (v >>> 40) & 0xFF);
+        write((int) (v >>> 32) & 0xFF);
+        write((int) (v >>> 24) & 0xFF);
+        write((int) (v >>> 16) & 0xFF);
+        write((int) (v >>> 8) & 0xFF);
+        write((int) (v >>> 0) & 0xFF);
     }
 
     public final void writeFloat(float v) throws IOException {
@@ -575,14 +579,14 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
 
     public final void writeBytes(String s) throws IOException {
         int tmpLen = s.length();
-        for ( int i = 0 ; i < tmpLen ; i++ ) {
-            write((byte)s.charAt(i));
+        for (int i = 0; i < tmpLen; i++) {
+            write((byte) s.charAt(i));
         }
     }
 
     public final void writeChars(String s) throws IOException {
         int tmpLen = s.length();
-        for ( int i = 0 ; i < tmpLen ; i++ ) {
+        for (int i = 0; i < tmpLen; i++) {
             int v = s.charAt(i);
             write((v >>> 8) & 0xFF);
             write((v >>> 0) & 0xFF);
@@ -595,36 +599,37 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
      */
 
     private char[] utfCharBuf = new char[32];
+
     public final void writeUTF(String str) throws IOException {
 
         int len = str.length();
 
-        if ( utfCharBuf.length < len ) utfCharBuf = new char[len];
+        if (utfCharBuf.length < len) utfCharBuf = new char[len];
 
-        str.getChars(0,len,utfCharBuf,0);
+        str.getChars(0, len, utfCharBuf, 0);
 
         int mark = count;
         write(0);
         write(0);
-        for ( int i = 0 ; i < len ; i++ ) {
+        for (int i = 0; i < len; i++) {
             int c = utfCharBuf[i];
-            if ( (c >= 0x0001) && (c <= 0x007F) ) {
+            if ((c >= 0x0001) && (c <= 0x007F)) {
                 write(c);
-            } else if ( c > 0x07FF ) {
+            } else if (c > 0x07FF) {
                 write(0xE0 | ((c >> 12) & 0x0F));
-                write(0x80 | ((c >>  6) & 0x3F));
-                write(0x80 | ((c >>  0) & 0x3F));
+                write(0x80 | ((c >> 6) & 0x3F));
+                write(0x80 | ((c >> 0) & 0x3F));
             } else {
-                write(0xC0 | ((c >>  6) & 0x1F));
-                write(0x80 | ((c >>  0) & 0x3F));
+                write(0xC0 | ((c >> 6) & 0x1F));
+                write(0x80 | ((c >> 0) & 0x3F));
             }
         }
 
 //       	if (tmpUtflen > 65535)throw new UTFDataFormatException();
 
-        len = count-mark-2;
-        buf[mark] = (byte)((len >>> 8) & 0xFF);
-        buf[mark+1] = (byte)((len >>> 0) & 0xFF);
+        len = count - mark - 2;
+        buf[mark] = (byte) ((len >>> 8) & 0xFF);
+        buf[mark + 1] = (byte) ((len >>> 0) & 0xFF);
 
     }
 
@@ -643,9 +648,9 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
     /* the next five members implement an inline hashtable. */
     private int[] wireHash2Handle;
     private int[] wireNextHandle;
-    private int   wireHashSizePower = 2;
-    private int   wireHashLoadFactor = 7;
-    private int   wireHashCapacity = (1 << wireHashSizePower) * wireHashLoadFactor;
+    private int wireHashSizePower = 2;
+    private int wireHashLoadFactor = 7;
+    private int wireHashCapacity = (1 << wireHashSizePower) * wireHashLoadFactor;
 
     /*
      * Insert the specified object into the hash array and link if
@@ -658,20 +663,21 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         wireNextHandle[offset] = wireHash2Handle[index];
         wireHash2Handle[index] = offset;
     }
+
     /*
-     * Locate and return if found the handle for the specified object.
-     * -1 is returned if the object does not occur in the array of
-     * known objects.
-     */
+    * Locate and return if found the handle for the specified object.
+    * -1 is returned if the object does not occur in the array of
+    * known objects.
+    */
     private int findWireOffset(Object obj) {
         int hash = System.identityHashCode(obj);
         int index = (hash & 0x7FFFFFFF) % wireHash2Handle.length;
 
-        for ( int handle = wireHash2Handle[index];
-            handle >= 0;
-            handle = wireNextHandle[handle] ) {
+        for (int handle = wireHash2Handle[index];
+             handle >= 0;
+             handle = wireNextHandle[handle]) {
 
-            if ( wireHandle2Object.get(handle) == obj )
+            if (wireHandle2Object.get(handle) == obj)
                 return handle;
         }
         return -1;
@@ -683,16 +689,15 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
      * Allow caller to specify the hash method for the object.
      */
     private void assignWireOffset(Object obj)
-    throws IOException
-    {
-        if ( nextWireOffset == wireNextHandle.length ) {
+            throws IOException {
+        if (nextWireOffset == wireNextHandle.length) {
             int[] oldnexthandles = wireNextHandle;
-            wireNextHandle = new int[nextWireOffset*2];
+            wireNextHandle = new int[nextWireOffset * 2];
             System.arraycopy(oldnexthandles, 0,
-                             wireNextHandle, 0,
-                             nextWireOffset);
+                    wireNextHandle, 0,
+                    nextWireOffset);
         }
-        if ( nextWireOffset >= wireHashCapacity ) {
+        if (nextWireOffset >= wireHashCapacity) {
             growWireHash2Handle();
         }
         wireHandle2Object.add(obj);
@@ -707,11 +712,11 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
         wireHash2Handle = new int[(1 << wireHashSizePower) - 1];
         Arrays.fill(wireHash2Handle, -1);
 
-        for ( int i = 0; i < nextWireOffset; i++ ) {
+        for (int i = 0; i < nextWireOffset; i++) {
             wireNextHandle[i] = 0;
         }
 
-        for ( int i = 0; i < wireHandle2Object.size(); i++ ) {
+        for (int i = 0; i < wireHandle2Object.size(); i++) {
             hashInsert(wireHandle2Object.get(i), i);
         }
 
@@ -723,23 +728,24 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
      * Reset state of things changed by using the stream.
      */
     private void resetStream() throws IOException {
-        if ( wireHandle2Object == null ) {
+        if (wireHandle2Object == null) {
             wireHandle2Object = new ArrayList();
             wireNextHandle = new int[4];
             wireHash2Handle = new int[ (1 << wireHashSizePower) - 1];
         } else {
 
             wireHandle2Object.clear();
-            for ( int i = 0; i < nextWireOffset; i++ ) {
+            for (int i = 0; i < nextWireOffset; i++) {
                 wireNextHandle[i] = 0;
             }
         }
         nextWireOffset = 0;
         Arrays.fill(wireHash2Handle, -1);
 
-        if ( classDescStack == null )
+        if (classDescStack == null)
             classDescStack = new ArrayStack();
-        else classDescStack.setSize(0);
+        else
+            classDescStack.setSize(0);
 
     }
 }

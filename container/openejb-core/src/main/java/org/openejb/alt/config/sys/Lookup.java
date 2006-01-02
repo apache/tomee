@@ -7,13 +7,13 @@
 
 package org.openejb.alt.config.sys;
 
-
 //---------------------------------/
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -23,13 +23,9 @@ import org.xml.sax.ContentHandler;
 public class Lookup implements java.io.Serializable {
 
 
-
-
     private java.lang.String _jndiName;
 
     private java.lang.String _jndiProviderId;
-
-
 
 
     public Lookup() {
@@ -37,20 +33,15 @@ public class Lookup implements java.io.Serializable {
     }
 
 
-
-
-    public java.lang.String getJndiName()
-    {
+    public java.lang.String getJndiName() {
         return this._jndiName;
     }
 
-    public java.lang.String getJndiProviderId()
-    {
+    public java.lang.String getJndiProviderId() {
         return this._jndiProviderId;
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -61,38 +52,32 @@ public class Lookup implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void setJndiName(java.lang.String jndiName)
-    {
+    public void setJndiName(java.lang.String jndiName) {
         this._jndiName = jndiName;
     }
 
-    public void setJndiProviderId(java.lang.String jndiProviderId)
-    {
+    public void setJndiProviderId(java.lang.String jndiProviderId) {
         this._jndiProviderId = jndiProviderId;
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.sys.Lookup) Unmarshaller.unmarshal(org.openejb.alt.config.sys.Lookup.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

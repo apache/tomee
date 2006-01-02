@@ -9,27 +9,27 @@ public class JNDIResponse implements Response {
     private transient int responseCode = -1;
     private transient Object result;
 
-    public JNDIResponse(){
+    public JNDIResponse() {
     }
 
-    public JNDIResponse(int code, Object obj){
+    public JNDIResponse(int code, Object obj) {
         responseCode = code;
         result = obj;
     }
 
-    public int getResponseCode(){
+    public int getResponseCode() {
         return responseCode;
     }
 
-    public Object getResult(){
+    public Object getResult() {
         return result;
     }
 
-    public void setResponseCode(int responseCode){
+    public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
 
-    public void setResult(Object result){
+    public void setResult(Object result) {
         this.result = result;
     }
 
@@ -56,7 +56,7 @@ public class JNDIResponse implements Response {
 
     public void writeExternal(ObjectOutput out) throws IOException {
 
-        out.writeByte((byte)responseCode);
+        out.writeByte((byte) responseCode);
 
         switch (responseCode) {
             case JNDI_OK:
@@ -69,7 +69,7 @@ public class JNDIResponse implements Response {
             case JNDI_NOT_FOUND:
                 break;
             case JNDI_EJBHOME:
-                EJBMetaDataImpl m = (EJBMetaDataImpl)result;
+                EJBMetaDataImpl m = (EJBMetaDataImpl) result;
                 m.writeExternal(out);
                 break;
 

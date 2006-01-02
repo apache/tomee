@@ -7,13 +7,13 @@
 
 package org.openejb.alt.config.sys;
 
-
 //---------------------------------/
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -23,11 +23,7 @@ import org.xml.sax.ContentHandler;
 public class PropertiesFile implements java.io.Serializable {
 
 
-
-
     private java.lang.String _file;
-
-
 
 
     public PropertiesFile() {
@@ -35,15 +31,11 @@ public class PropertiesFile implements java.io.Serializable {
     }
 
 
-
-
-    public java.lang.String getFile()
-    {
+    public java.lang.String getFile() {
         return this._file;
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -54,33 +46,28 @@ public class PropertiesFile implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void setFile(java.lang.String file)
-    {
+    public void setFile(java.lang.String file) {
         this._file = file;
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.sys.PropertiesFile) Unmarshaller.unmarshal(org.openejb.alt.config.sys.PropertiesFile.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

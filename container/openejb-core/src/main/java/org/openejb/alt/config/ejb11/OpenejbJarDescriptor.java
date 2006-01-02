@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import org.exolab.castor.mapping.AccessMode;
@@ -16,8 +15,6 @@ import org.exolab.castor.xml.XMLFieldDescriptor;
 import org.exolab.castor.xml.validators.*;
 
 public class OpenejbJarDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
-
-
 
 
     private java.lang.String nsPrefix;
@@ -29,51 +26,46 @@ public class OpenejbJarDescriptor extends org.exolab.castor.xml.util.XMLClassDes
     private org.exolab.castor.xml.XMLFieldDescriptor identity;
 
 
-
-
     public OpenejbJarDescriptor() {
         super();
         nsURI = "http://www.openejb.org/openejb-jar/1.1";
         xmlName = "openejb-jar";
-        
+
 
         setCompositorAsSequence();
-        org.exolab.castor.xml.util.XMLFieldDescriptorImpl  desc           = null;
-        org.exolab.castor.xml.XMLFieldHandler              handler        = null;
-        org.exolab.castor.xml.FieldValidator               fieldValidator = null;
+        org.exolab.castor.xml.util.XMLFieldDescriptorImpl desc = null;
+        org.exolab.castor.xml.XMLFieldHandler handler = null;
+        org.exolab.castor.xml.FieldValidator fieldValidator = null;
 
-        
-
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.EjbDeployment.class, "_ejbDeploymentList", "ejb-deployment", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 OpenejbJar target = (OpenejbJar) object;
                 return target.getEjbDeployment();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     OpenejbJar target = (OpenejbJar) object;
-                    target.addEjbDeployment( (org.openejb.alt.config.ejb11.EjbDeployment) value);
+                    target.addEjbDeployment((org.openejb.alt.config.ejb11.EjbDeployment) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.EjbDeployment();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setRequired(true);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -83,45 +75,35 @@ public class OpenejbJarDescriptor extends org.exolab.castor.xml.util.XMLClassDes
     }
 
 
-
-
-    public org.exolab.castor.mapping.AccessMode getAccessMode()
-    {
+    public org.exolab.castor.mapping.AccessMode getAccessMode() {
         return null;
     }
 
-    public org.exolab.castor.mapping.ClassDescriptor getExtends()
-    {
+    public org.exolab.castor.mapping.ClassDescriptor getExtends() {
         return null;
     }
 
-    public org.exolab.castor.mapping.FieldDescriptor getIdentity()
-    {
+    public org.exolab.castor.mapping.FieldDescriptor getIdentity() {
         return identity;
     }
 
-    public java.lang.Class getJavaClass()
-    {
+    public java.lang.Class getJavaClass() {
         return org.openejb.alt.config.ejb11.OpenejbJar.class;
     }
 
-    public java.lang.String getNameSpacePrefix()
-    {
+    public java.lang.String getNameSpacePrefix() {
         return nsPrefix;
     }
 
-    public java.lang.String getNameSpaceURI()
-    {
+    public java.lang.String getNameSpaceURI() {
         return nsURI;
     }
 
-    public org.exolab.castor.xml.TypeValidator getValidator()
-    {
+    public org.exolab.castor.xml.TypeValidator getValidator() {
         return this;
     }
 
-    public java.lang.String getXMLName()
-    {
+    public java.lang.String getXMLName() {
         return xmlName;
     }
 

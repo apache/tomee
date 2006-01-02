@@ -10,15 +10,15 @@ import org.openejb.util.SafeToolkit;
 public class Server implements org.openejb.spi.Service {
 
     private SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB EJB Server");
-    private Messages _messages = new Messages( "org.openejb.server" );
-    private Logger logger = Logger.getInstance( "OpenEJB.server.remote", "org.openejb.server" );
+    private Messages _messages = new Messages("org.openejb.server");
+    private Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.openejb.server");
 
     Properties props;
 
     static Server server;
 
     public static Server getServer() {
-        if ( server == null ) {
+        if (server == null) {
             server = new Server();
         }
 
@@ -30,7 +30,7 @@ public class Server implements org.openejb.spi.Service {
 
         OpenEJB.init(props, new ServerFederation());
 
-        if( System.getProperty( "openejb.nobanner" ) == null ) {
+        if (System.getProperty("openejb.nobanner") == null) {
             System.out.println("[init] OpenEJB Remote Server");
         }
 

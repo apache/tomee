@@ -13,15 +13,15 @@ import org.openejb.util.proxy.ProxyManager;
 
 public abstract class CoreContext implements java.io.Serializable {
 
-    public final static byte SECURITY_METHOD = (byte)1;
+    public final static byte SECURITY_METHOD = (byte) 1;
 
-    public final static byte USER_TRANSACTION_METHOD = (byte)2;
+    public final static byte USER_TRANSACTION_METHOD = (byte) 2;
 
-    public final static byte ROLLBACK_METHOD = (byte)3;
+    public final static byte ROLLBACK_METHOD = (byte) 3;
 
-    public final static byte EJBOBJECT_METHOD = (byte)4;
+    public final static byte EJBOBJECT_METHOD = (byte) 4;
 
-    public final static byte EJBHOME_METHOD = (byte)5;
+    public final static byte EJBHOME_METHOD = (byte) 5;
 
     CoreUserTransaction userTransaction;
 
@@ -34,23 +34,23 @@ public abstract class CoreContext implements java.io.Serializable {
     public java.security.Principal getCallerPrincipal() {
         checkBeanState(SECURITY_METHOD);
         Object securityIdentity = ThreadContext.getThreadContext().getSecurityIdentity();
-        return(java.security.Principal)OpenEJB.getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
+        return (java.security.Principal) OpenEJB.getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
     }
 
     public boolean isCallerInRole(java.lang.String roleName) {
         checkBeanState(SECURITY_METHOD);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo)threadContext.getDeploymentInfo();
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
         String physicalRoles [] = di.getPhysicalRole(roleName);
         Object caller = threadContext.getSecurityIdentity();
-        return  OpenEJB.getSecurityService().isCallerAuthorized(caller,physicalRoles);
+        return OpenEJB.getSecurityService().isCallerAuthorized(caller, physicalRoles);
     }
 
     public EJBHome getEJBHome() {
         checkBeanState(EJBHOME_METHOD);
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo)threadContext.getDeploymentInfo();
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
 
         return di.getEJBHome();
     }
@@ -61,44 +61,45 @@ public abstract class CoreContext implements java.io.Serializable {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
 
-        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer)di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
         Object newProxy = null;
         try {
-            Class[] interfaces = new Class[]{ di.getRemoteInterface(), org.openejb.core.ivm.IntraVmProxy.class };
- newProxy = ProxyManager.newProxyInstance( interfaces , handler );
-        } catch ( IllegalAccessException iae ) {
-            throw new RuntimeException("Could not create IVM proxy for "+di.getRemoteInterface()+" interface");
+            Class[] interfaces = new Class[]{di.getRemoteInterface(), org.openejb.core.ivm.IntraVmProxy.class};
+            newProxy = ProxyManager.newProxyInstance(interfaces, handler);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException("Could not create IVM proxy for " + di.getRemoteInterface() + " interface");
         }
-        return(javax.ejb.EJBObject)newProxy;
+        return (javax.ejb.EJBObject) newProxy;
     }
 
     public EJBLocalObject getEJBLocalObject() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
 
-        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer)di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
         handler.setLocal(true);
         Object newProxy = null;
         try {
-            Class[] interfaces = new Class[]{ di.getLocalInterface(), org.openejb.core.ivm.IntraVmProxy.class };
- newProxy = ProxyManager.newProxyInstance( interfaces , handler );
-        } catch ( IllegalAccessException iae ) {
-            throw new RuntimeException("Could not create IVM proxy for "+di.getLocalInterface()+" interface");
+            Class[] interfaces = new Class[]{di.getLocalInterface(), org.openejb.core.ivm.IntraVmProxy.class};
+            newProxy = ProxyManager.newProxyInstance(interfaces, handler);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException("Could not create IVM proxy for " + di.getLocalInterface() + " interface");
         }
-        return(EJBLocalObject)newProxy;
+        return (EJBLocalObject) newProxy;
     }
 
     public EJBLocalHome getEJBLocalHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo)threadContext.getDeploymentInfo();
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
 
         return di.getEJBLocalHome();
     }
+
     public TimerService getTimerService() {
         return null;
     }
 
-    public Object getPrimaryKey( ) {
+    public Object getPrimaryKey() {
         /*
         * This method is only declared in the EntityContext interface and is therefor
         * unavailable in the SessionContext and doesn't not require a check for bean kind (Entity vs Session).
@@ -113,19 +114,19 @@ public abstract class CoreContext implements java.io.Serializable {
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
-        if ( di.isBeanManagedTransaction() )
+        if (di.isBeanManagedTransaction())
             throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly( ) method");
 
         checkBeanState(ROLLBACK_METHOD);
         try {
             int status = OpenEJB.getTransactionManager().getStatus();
-            if ( status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK )
+            if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK)
                 return true;
-            else if ( status == Status.STATUS_NO_TRANSACTION )// this would be true for Supports tx attribute where no tx was propagated
+            else if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
                 throw new IllegalStateException("No current transaction");
             else
                 return false;
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             throw new RuntimeException("Transaction service has thrown a SystemException");
         }
     }
@@ -133,14 +134,14 @@ public abstract class CoreContext implements java.io.Serializable {
     public void setRollbackOnly() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
-        if ( di.isBeanManagedTransaction() )
+        if (di.isBeanManagedTransaction())
             throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly( ) method");
 
         checkBeanState(ROLLBACK_METHOD);
 
         try {
             OpenEJB.getTransactionManager().setRollbackOnly();
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             throw new RuntimeException("Transaction service has thrown a SystemException");
         }
 
@@ -150,7 +151,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
-        if ( di.isBeanManagedTransaction() ) {
+        if (di.isBeanManagedTransaction()) {
             checkBeanState(USER_TRANSACTION_METHOD);
             return userTransaction;
         } else

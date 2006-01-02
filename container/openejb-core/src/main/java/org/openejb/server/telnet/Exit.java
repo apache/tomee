@@ -10,7 +10,7 @@ public class Exit extends Command {
         Command.register("exit", Exit.class);
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
         throw new UnsupportedOperationException();
     }
 

@@ -8,14 +8,14 @@ import org.openejb.OpenEJBException;
 
 public interface Assembler {
 
-    public void init(Properties props)throws OpenEJBException;
+    public void init(Properties props) throws OpenEJBException;
 
-    public void build()throws OpenEJBException;
+    public void build() throws OpenEJBException;
 
     public ContainerSystem getContainerSystem();
 
-    public TransactionManager getTransactionManager( );
+    public TransactionManager getTransactionManager();
 
-    public SecurityService getSecurityService( );
+    public SecurityService getSecurityService();
 
 }

@@ -75,21 +75,24 @@ public class SystemInstance {
     }
 
     private static SystemInstance system;
+
     static {
         try {
             system = new SystemInstance(System.getProperties());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create default instance of SystemInstance",e);
+            throw new RuntimeException("Failed to create default instance of SystemInstance", e);
         }
     }
+
     private static boolean initialized;
-    public static void init(Properties properties) throws Exception{
+
+    public static void init(Properties properties) throws Exception {
         if (initialized) return;
         system = new SystemInstance(properties);
         initialized = true;
     }
 
-    public static SystemInstance get(){
+    public static SystemInstance get() {
         return system;
     }
 

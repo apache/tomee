@@ -37,15 +37,15 @@ public class ServerFederation implements ApplicationServer {
     }
 
     public static void setApplicationServer(ApplicationServer server) {
-        if ( server != null ) {
+        if (server != null) {
             threadStorage.set(server);
         }
     }
 
-    public static ApplicationServer getApplicationServer( ) {
-        ApplicationServer server = (ApplicationServer)threadStorage.get();
+    public static ApplicationServer getApplicationServer() {
+        ApplicationServer server = (ApplicationServer) threadStorage.get();
 
-        return (server == null)? localServer: server;
+        return (server == null) ? localServer : server;
     }
 
     private static final IntraVmServer localServer = new IntraVmServer();

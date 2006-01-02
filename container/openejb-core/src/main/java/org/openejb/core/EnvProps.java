@@ -32,21 +32,21 @@ public class EnvProps {
     */
     public final static String INTRA_VM_COPY = "org/openejb/core/ivm/BaseEjbProxyHandler/INTRA_VM_COPY";
 
-	
-	public static final String JDBC_DRIVER = "JdbcDriver";
 
-	
-	public static final String JDBC_URL = "JdbcUrl";
+    public static final String JDBC_DRIVER = "JdbcDriver";
 
-	
-	public static final String USER_NAME = "UserName";
 
-	
-	public static final String PASSWORD = "Password";
+    public static final String JDBC_URL = "JdbcUrl";
 
-	
-	public static final String GLOBAL_TX_DATABASE = "Global_TX_Database";
 
-	
-	public static final String LOCAL_TX_DATABASE = "Local_TX_Database";
+    public static final String USER_NAME = "UserName";
+
+
+    public static final String PASSWORD = "Password";
+
+
+    public static final String GLOBAL_TX_DATABASE = "Global_TX_Database";
+
+
+    public static final String LOCAL_TX_DATABASE = "Local_TX_Database";
 }

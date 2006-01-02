@@ -7,16 +7,14 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import java.io.Serializable;
+
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 
 public class EnterpriseBeansItem implements java.io.Serializable {
-
-
 
 
     private org.openejb.alt.config.ejb11.Session _session;
@@ -24,32 +22,24 @@ public class EnterpriseBeansItem implements java.io.Serializable {
     private org.openejb.alt.config.ejb11.Entity _entity;
 
 
-
-
     public EnterpriseBeansItem() {
         super();
     }
 
 
-
-
-    public org.openejb.alt.config.ejb11.Entity getEntity()
-    {
+    public org.openejb.alt.config.ejb11.Entity getEntity() {
         return this._entity;
     }
 
-    public org.openejb.alt.config.ejb11.Session getSession()
-    {
+    public org.openejb.alt.config.ejb11.Session getSession() {
         return this._session;
     }
 
-    public void setEntity(org.openejb.alt.config.ejb11.Entity entity)
-    {
+    public void setEntity(org.openejb.alt.config.ejb11.Entity entity) {
         this._entity = entity;
     }
 
-    public void setSession(org.openejb.alt.config.ejb11.Session session)
-    {
+    public void setSession(org.openejb.alt.config.ejb11.Session session) {
         this._session = session;
     }
 

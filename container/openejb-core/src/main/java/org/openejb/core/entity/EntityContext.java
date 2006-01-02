@@ -5,10 +5,10 @@ import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 
-public class EntityContext 
-extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
+public class EntityContext
+        extends org.openejb.core.CoreContext implements javax.ejb.EntityContext {
 
-    public void checkBeanState(byte methodCategory) throws IllegalStateException{
+    public void checkBeanState(byte methodCategory) throws IllegalStateException {
         /*  
         The methodCategory will be one of the following constants.
 
@@ -30,7 +30,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
         ThreadContext callContext = ThreadContext.getThreadContext();
         org.openejb.DeploymentInfo di = callContext.getDeploymentInfo();
 
-        switch(callContext.getCurrentOperation()){
+        switch (callContext.getCurrentOperation()) {
             case Operations.OP_SET_CONTEXT:
             case Operations.OP_UNSET_CONTEXT:
                 /* 
@@ -45,7 +45,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
                     getPrimaryKey
                     getUserTransaction
                 */
-                if(methodCategory != EJBHOME_METHOD)
+                if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
             case Operations.OP_CREATE:
@@ -63,11 +63,11 @@ extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
                     getPrimaryKey
                     getUserTransaction
                 */
-                if(methodCategory == EJBOBJECT_METHOD)
+                if (methodCategory == EJBOBJECT_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
             case Operations.OP_ACTIVATE:
-            case Operations.OP_PASSIVATE: 
+            case Operations.OP_PASSIVATE:
                 /* 
                 Allowed Operations: 
                     getEJBHome
@@ -80,9 +80,9 @@ extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
                     setRollbackOnly
                     getUserTransaction
                 */
-                if(methodCategory != EJBOBJECT_METHOD && methodCategory != EJBHOME_METHOD)
+                if (methodCategory != EJBOBJECT_METHOD && methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
-                break;    
+                break;
 
             case Operations.OP_POST_CREATE:
             case Operations.OP_REMOVE:
@@ -106,7 +106,7 @@ extends org.openejb.core.CoreContext implements javax.ejb.EntityContext{
 
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID){
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
         return new EntityEjbObjectHandler(container, pk, depID);
     }
 

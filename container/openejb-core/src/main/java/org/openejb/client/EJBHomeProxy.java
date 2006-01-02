@@ -5,13 +5,13 @@ import java.io.Serializable;
 
 import javax.ejb.EJBHome;
 
-public interface EJBHomeProxy extends Serializable, EJBHome{
+public interface EJBHomeProxy extends Serializable, EJBHome {
 
     public EJBHomeHandler getEJBHomeHandler();
 
     public Object writeReplace() throws ObjectStreamException;
 
-    public Object readResolve()  throws ObjectStreamException;
+    public Object readResolve() throws ObjectStreamException;
 
 }
 

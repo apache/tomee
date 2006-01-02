@@ -3,6 +3,7 @@ package org.openejb.server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.openejb.*;
 
 public class ServiceAccessController implements ServerService {
@@ -11,41 +12,41 @@ public class ServiceAccessController implements ServerService {
 
     InetAddress[] allowedHosts;
 
-    public ServiceAccessController(ServerService next){
+    public ServiceAccessController(ServerService next) {
         this.next = next;
     }
 
-    public void init(Properties props) throws Exception{
+    public void init(Properties props) throws Exception {
 
         parseAdminIPs(props);
 
         next.init(props);
     }
 
-    public void start() throws ServiceException{
+    public void start() throws ServiceException {
 
         next.start();
     }
 
-    public void stop() throws ServiceException{
+    public void stop() throws ServiceException {
 
         next.stop();
     }
 
-    public void service(Socket socket) throws ServiceException, IOException{
+    public void service(Socket socket) throws ServiceException, IOException {
 
         next.service(socket);
     }
 
-    public String getName(){
+    public String getName() {
         return next.getName();
     }
 
-    public String getIP(){
+    public String getIP() {
         return next.getIP();
     }
 
-    public int getPort(){
+    public int getPort() {
         return next.getPort();
     }
 
@@ -53,25 +54,25 @@ public class ServiceAccessController implements ServerService {
 
         boolean authorized = false;
 
-        authorized = client.equals( server );
+        authorized = client.equals(server);
 
-        for (int i=0; i < allowedHosts.length && !authorized; i++){
-            authorized = allowedHosts[i].equals( client );
+        for (int i = 0; i < allowedHosts.length && !authorized; i++) {
+            authorized = allowedHosts[i].equals(client);
         }
 
-        if ( !authorized ) {
-            throw new SecurityException("Host "+client.getHostAddress()+" is not authorized to access this service.");
+        if (!authorized) {
+            throw new SecurityException("Host " + client.getHostAddress() + " is not authorized to access this service.");
         }
     }
 
-    private void parseAdminIPs(Properties props){
-        try{
+    private void parseAdminIPs(Properties props) {
+        try {
 
             Vector addresses = new Vector();
 
             InetAddress[] localIps = InetAddress.getAllByName("localhost");
-            for (int i=0; i < localIps.length; i++){
-                addresses.add( localIps[i] );
+            for (int i = 0; i < localIps.length; i++) {
+                addresses.add(localIps[i]);
             }
 
             String ipString = props.getProperty("only_from");
@@ -80,20 +81,20 @@ public class ServiceAccessController implements ServerService {
                 while (st.hasMoreTokens()) {
                     String address = null;
                     InetAddress ip = null;
-                    try{
+                    try {
                         address = st.nextToken();
                         ip = InetAddress.getByName(address);
-                        addresses.add( ip );
-                    } catch (Exception e){
+                        addresses.add(ip);
+                    } catch (Exception e) {
 
                     }
                 }
             }
 
             allowedHosts = new InetAddress[ addresses.size() ];
-            addresses.copyInto( allowedHosts );
+            addresses.copyInto(allowedHosts);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

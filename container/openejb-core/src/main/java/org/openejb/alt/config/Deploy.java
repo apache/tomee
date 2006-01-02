@@ -31,13 +31,13 @@ import org.openejb.util.Logger;
 import org.openejb.util.FileUtils;
 
 public class Deploy {
-	private static final String helpBase = "META-INF/org.openejb.cli/";
+    private static final String helpBase = "META-INF/org.openejb.cli/";
 
     protected static final Messages _messages = new Messages("org.openejb.alt.util.resources");
 
-    private static final String DEPLOYMENT_ID_HELP =    "\nDeployment ID ----- \n\nA name for the ejb that is unique not only in this jar, but \nin all the jars in the container system.  This name will \nallow OpenEJB to place the bean in a global index and \nreference the bean quickly.  OpenEJB will also use this name \nas the global JNDI name for the Remote Server and the Local \nServer.  Clients of the Remote or Local servers can use this\nname to perform JNDI lookups.\n\nThe other EJB Server's using OpenEJB as the EJB Container \nSystem may also use this name to as part of a global JNDI \nnamespace available to remote application clients.\n\nExample: /my/acme/bugsBunnyBean\n\nSee http://www.openejb.org/deploymentids.html for details.\n";
-    private static final String CONTAINER_ID_HELP =    "\nContainer ID ----- \n\nThe name of the container where this ejb should run. \nContainers are declared and configured in the openejb.conf\nfile.\n";
-    private static final String CONNECTOR_ID_HELP =    "\nConnector ID ----- \n\nThe name of the connector or JDBC resource this resoure \nreference should be mapped to. Connectors and JDBC resources \nare declared and configured in the openejb.conf file.\n";
+    private static final String DEPLOYMENT_ID_HELP = "\nDeployment ID ----- \n\nA name for the ejb that is unique not only in this jar, but \nin all the jars in the container system.  This name will \nallow OpenEJB to place the bean in a global index and \nreference the bean quickly.  OpenEJB will also use this name \nas the global JNDI name for the Remote Server and the Local \nServer.  Clients of the Remote or Local servers can use this\nname to perform JNDI lookups.\n\nThe other EJB Server's using OpenEJB as the EJB Container \nSystem may also use this name to as part of a global JNDI \nnamespace available to remote application clients.\n\nExample: /my/acme/bugsBunnyBean\n\nSee http://www.openejb.org/deploymentids.html for details.\n";
+    private static final String CONTAINER_ID_HELP = "\nContainer ID ----- \n\nThe name of the container where this ejb should run. \nContainers are declared and configured in the openejb.conf\nfile.\n";
+    private static final String CONNECTOR_ID_HELP = "\nConnector ID ----- \n\nThe name of the connector or JDBC resource this resoure \nreference should be mapped to. Connectors and JDBC resources \nare declared and configured in the openejb.conf file.\n";
 
     /*=======----------TODO----------=======      Neat options that this Deploy tool
       could support
@@ -73,12 +73,13 @@ public class Deploy {
     /*------------------------------------------------------*/
     /*    Constructors                                      */
     /*------------------------------------------------------*/
-    public Deploy() throws OpenEJBException {}
+    public Deploy() throws OpenEJBException {
+    }
 
     public void init(String openejbConfigFile) throws OpenEJBException {
         try {
 
-            Logger.initialize( System.getProperties() );
+            Logger.initialize(System.getProperties());
 
             if (System.getProperty("openejb.nobanner") == null) {
                 printVersion();
@@ -131,7 +132,7 @@ public class Deploy {
             URL[] classpath = new URL[]{jarFile.toURL()};
             classLoader = new URLClassLoader(classpath, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException("Unable to create a classloader to load classes from '"+jarLocation+"'", e);
+            throw new OpenEJBException("Unable to create a classloader to load classes from '" + jarLocation + "'", e);
         }
 
         EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
@@ -141,8 +142,8 @@ public class Deploy {
             System.out.println();
             System.out.println("Jar not deployable.");
             System.out.println();
-            System.out.println("Use the validator with -vvv option for more details." );
-            System.out.println("See http://www.openejb.org/validate.html for usage." );
+            System.out.println("Use the validator with -vvv option for more details.");
+            System.out.println("See http://www.openejb.org/validate.html for usage.");
             return;
         }
 
@@ -206,7 +207,7 @@ public class Deploy {
             }
 
             out.println(
-                       "\nThese references must be linked to the available resources\ndeclared in your config file.");
+                    "\nThese references must be linked to the available resources\ndeclared in your config file.");
 
             out.println("Available resources are:");
             listResources(resources);
@@ -215,19 +216,19 @@ public class Deploy {
             }
         }
 
-        if (bean.getType().equals("CMP_ENTITY")){
-        	if (bean.getHome() != null){
+        if (bean.getType().equals("CMP_ENTITY")) {
+            if (bean.getHome() != null) {
                 Class tempBean = loadClass(bean.getHome());
-            	if (hasFinderMethods(tempBean)){
+                if (hasFinderMethods(tempBean)) {
                     promptForOQLForEntityBeans(tempBean, deployment);
-            	}
-        	}
-        	if (bean.getLocalHome() != null){
+                }
+            }
+            if (bean.getLocalHome() != null) {
                 Class tempBean = loadClass(bean.getLocalHome());
-            	if (hasFinderMethods(tempBean)){
+                if (hasFinderMethods(tempBean)) {
                     promptForOQLForEntityBeans(tempBean, deployment);
-            	}
-        	}
+                }
+            }
         }
 
         return deployment;
@@ -242,13 +243,13 @@ public class Deploy {
     }
 
     private boolean hasFinderMethods(Class bean)
-    throws OpenEJBException {
+            throws OpenEJBException {
 
         Method[] methods = bean.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().startsWith("find")
-                && !methods[i].getName().equals("findByPrimaryKey")) {
+                    && !methods[i].getName().equals("findByPrimaryKey")) {
                 return true;
             }
         }
@@ -256,7 +257,7 @@ public class Deploy {
     }
 
     private void promptForOQLForEntityBeans(Class bean, EjbDeployment deployment)
-    throws OpenEJBException {
+            throws OpenEJBException {
         org.openejb.alt.config.ejb11.Query query;
         QueryMethod queryMethod;
         MethodParams methodParams;
@@ -272,35 +273,35 @@ public class Deploy {
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().startsWith("find")
-                && !methods[i].getName().equals("findByPrimaryKey")) {
+                    && !methods[i].getName().equals("findByPrimaryKey")) {
 
                 if (!instructionsPrinted) {
                     out.println("\n==--- Step 4 ---==");
                     out.println(
-                               "\nThis part of the application allows you to add OQL (Object\n"
-                        + "Query Language) statements to your CMP Entity find methods.\n"
-                        + "Below is a list of find methods, each of which should get an \n"
-                        + "OQL statement.\n"
-                        + "\n"
-                        + "OQL statements are very similar to SQL statments with the \n"
-                        + "exception that they reference class names rather than table\n"
-                        + "names.  Find method parameters can be referenced in OQL \n"
-                        + "statements as $1, $2, $3, and so on.  \n"
-                        + "\n"
-                        + "If you had a find method in your home interface like this one:\n"
-                        + "\n"
-                        + "  public Employee findByLastName( String lName )\n"
-                        + "\n"
-                        + "Then you could use an OQL method like the following:\n"
-                        + "\n"
-                        + "  SELECT o FROM org.acme.employee.EmployeeBean o WHERE o.lastname = $1\n"
-                        + "\n"
-                        + "In this example, the $1 is referring to the first parameter, \n"
-                        + "which is the String lName.\n"
-                        + "\n"
-                        + "For more information on OQL see:\n"
-                        + "http://www.openejb.org/cmp_guide.html\n"
-                        );
+                            "\nThis part of the application allows you to add OQL (Object\n"
+                                    + "Query Language) statements to your CMP Entity find methods.\n"
+                                    + "Below is a list of find methods, each of which should get an \n"
+                                    + "OQL statement.\n"
+                                    + "\n"
+                                    + "OQL statements are very similar to SQL statments with the \n"
+                                    + "exception that they reference class names rather than table\n"
+                                    + "names.  Find method parameters can be referenced in OQL \n"
+                                    + "statements as $1, $2, $3, and so on.  \n"
+                                    + "\n"
+                                    + "If you had a find method in your home interface like this one:\n"
+                                    + "\n"
+                                    + "  public Employee findByLastName( String lName )\n"
+                                    + "\n"
+                                    + "Then you could use an OQL method like the following:\n"
+                                    + "\n"
+                                    + "  SELECT o FROM org.acme.employee.EmployeeBean o WHERE o.lastname = $1\n"
+                                    + "\n"
+                                    + "In this example, the $1 is referring to the first parameter, \n"
+                                    + "which is the String lName.\n"
+                                    + "\n"
+                                    + "For more information on OQL see:\n"
+                                    + "http://www.openejb.org/cmp_guide.html\n"
+                    );
 
                     instructionsPrinted = true;
                 }
@@ -338,7 +339,7 @@ public class Deploy {
                     methodParams = new MethodParams();
                     queryMethod = new QueryMethod();
 
-                    for (int j=0; j < parameterList.length; j++){
+                    for (int j = 0; j < parameterList.length; j++) {
                         methodParams.addMethodParam(parameterList[j].getName());
                     }
 
@@ -356,8 +357,8 @@ public class Deploy {
     }
 
     private String parsePartialClassName(String className) {
-        if ( className.indexOf('.') < 1 ) return className;
-        return className.substring( className.lastIndexOf('.')+1 );
+        if (className.indexOf('.') < 1) return className;
+        return className.substring(className.lastIndexOf('.') + 1);
     }
 
     /*------------------------------------------------------*/
@@ -427,15 +428,15 @@ public class Deploy {
              * 3) Some combination of 1 and 2.
              */
             out.println(
-                       "!! There are no "
-                       + bean.getType()
-                       + " containers declared in "
-                       + configFile
-                       + " !!");
+                    "!! There are no "
+                            + bean.getType()
+                            + " containers declared in "
+                            + configFile
+                            + " !!");
             out.println(
-                       "A "
-                       + bean.getType()
-                       + " container must be declared and \nconfigured in your configuration file before this jar can\nbe deployed.");
+                    "A "
+                            + bean.getType()
+                            + " container must be declared and \nconfigured in your configuration file before this jar can\nbe deployed.");
             System.exit(-1);
         } else if (cs.length == 0) {
             /* TODO: Automatically assign the bean to the container
@@ -452,7 +453,7 @@ public class Deploy {
 
             while (!replied) {
                 out.println(
-                           "\nType the number of the container\n-options to view the list again\nor -help for more information.");
+                        "\nType the number of the container\n-options to view the list again\nor -help for more information.");
                 out.print("\nContainer: ");
                 answer = in.readLine();
                 if ("-help".equals(answer)) {
@@ -498,15 +499,15 @@ public class Deploy {
              * 3) Some combination of 1 and 2.
              */
             out.println(
-                       "!! There are no "
-                       + bean.getType()
-                       + " containers declared in "
-                       + configFile
-                       + " !!");
+                    "!! There are no "
+                            + bean.getType()
+                            + " containers declared in "
+                            + configFile
+                            + " !!");
             out.println(
-                       "A "
-                       + bean.getType()
-                       + " container must be declared and \nconfigured in your configuration file before this jar can\nbe deployed.");
+                    "A "
+                            + bean.getType()
+                            + " container must be declared and \nconfigured in your configuration file before this jar can\nbe deployed.");
             System.exit(-1);
         }
 
@@ -541,7 +542,7 @@ public class Deploy {
              */
             out.println("!! There are no resources declared in " + configFile + " !!");
             out.println(
-                       "A resource connector must be declared and configured in \nyour configuration file before this jar can be deployed.");
+                    "A resource connector must be declared and configured in \nyour configuration file before this jar can be deployed.");
             System.exit(-2);
         } else if (resources.length == 0) {
             /* TODO: 1, 2 or 3
@@ -555,7 +556,7 @@ public class Deploy {
         try {
             while (!replied) {
                 out.println(
-                           "\nType the number of the resource to link the bean's \nreference to, -options to view the list again, or -help\nfor more information.");
+                        "\nType the number of the resource to link the bean's \nreference to, -options to view the list again, or -help\nfor more information.");
                 out.print("\nResource: ");
                 answer = in.readLine();
                 if ("-help".equals(answer)) {
@@ -618,9 +619,9 @@ public class Deploy {
 
         out.println("\nCongratulations! Your jar is ready to use with OpenEJB.");
         out.println(
-                   "\nIf the OpenEJB remote server is already running, you will\nneed to restart it in order for OpenEJB to recognize your bean.");
+                "\nIf the OpenEJB remote server is already running, you will\nneed to restart it in order for OpenEJB to recognize your bean.");
         out.println(
-                   "\nNOTE: If you move or rename your jar file, you will have to\nupdate the path in this jar's deployment entry in your \nOpenEJB config file.");
+                "\nNOTE: If you move or rename your jar file, you will have to\nupdate the path in this jar's deployment entry in your \nOpenEJB config file.");
 
     }
 
@@ -736,17 +737,17 @@ public class Deploy {
         try {
             JarUtils.setHandlerSystemProperty();
             versionInfo.load(
- new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
         } catch (java.io.IOException e) {
         }
 
         System.out.println(
-                          "OpenEJB Deploy Tool "
-                          + versionInfo.get("version")
-                          + "    build: "
-                          + versionInfo.get("date")
-                          + "-"
-                          + versionInfo.get("time"));
+                "OpenEJB Deploy Tool "
+                        + versionInfo.get("version")
+                        + "    build: "
+                        + versionInfo.get("date")
+                        + "-"
+                        + versionInfo.get("time"));
         System.out.println("" + versionInfo.get("url"));
     }
 
@@ -756,7 +757,7 @@ public class Deploy {
             JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(
- new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }
@@ -781,7 +782,7 @@ public class Deploy {
             JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(
- new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }

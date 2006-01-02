@@ -15,26 +15,25 @@ public class TelnetServer implements org.openejb.server.ServerService {
 
     public void init(Properties props) throws Exception {
     }
-    
+
     public void service(Socket socket) throws ServiceException, IOException {
         InputStream telnetIn = null;
         PrintStream telnetOut = null;
-        
+
         try {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
-            
+
             telnetIn = new TelnetInputStream(in, out);
             telnetOut = new TelnetPrintStream(out);
-            
+
             telnetOut.println("OpenEJB Remote Server Console");
             telnetOut.println("type \'help\' for a list of commands");
 
 
-
             TextConsole shell = new TextConsole();
             shell.exec(telnetIn, telnetOut);
-            
+
         } catch (Throwable t) {
 
         } finally {
@@ -43,9 +42,9 @@ public class TelnetServer implements org.openejb.server.ServerService {
             if (telnetOut != null)
                 telnetOut.close();
             if (socket != null) socket.close();
-            
+
         }
-       }
+    }
 
     public void start() throws ServiceException {
     }

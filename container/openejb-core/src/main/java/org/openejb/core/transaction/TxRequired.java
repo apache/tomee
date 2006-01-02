@@ -7,12 +7,12 @@ import org.openejb.ApplicationException;
 
 public class TxRequired extends TransactionPolicy {
 
-    public TxRequired(TransactionContainer container){
+    public TxRequired(TransactionContainer container) {
         this();
         this.container = container;
     }
 
-    public TxRequired(){
+    public TxRequired() {
         policyType = Required;
     }
 
@@ -20,70 +20,70 @@ public class TxRequired extends TransactionPolicy {
         return "TX_Required: ";
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException{
+    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
 
         try {
 
-            context.clientTx =  getTxMngr().getTransaction();
+            context.clientTx = getTxMngr().getTransaction();
 
-            if ( context.clientTx == null ) {
+            if (context.clientTx == null) {
                 beginTransaction();
-            } 
+            }
 
             context.currentTx = getTxMngr().getTransaction();
 
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             logger.error("Exception during getTransaction()", se);
             throw new org.openejb.SystemException(se);
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException{
+    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
 
         try {
-            if ( context.clientTx != null ) return;
+            if (context.clientTx != null) return;
 
-            if ( context.currentTx.getStatus() == Status.STATUS_ACTIVE ) {
-                commitTransaction( context.currentTx );
+            if (context.currentTx.getStatus() == Status.STATUS_ACTIVE) {
+                commitTransaction(context.currentTx);
             } else {
-                rollbackTransaction( context.currentTx );
+                rollbackTransaction(context.currentTx);
             }
 
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             logger.error("Exception during getTransaction()", se);
             throw new org.openejb.SystemException(se);
         }
     }
 
-    public void handleApplicationException( Throwable appException, TransactionContext context) throws ApplicationException{
+    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
 
-        throw new ApplicationException( appException );
+        throw new ApplicationException(appException);
     }
 
-    public void handleSystemException( Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException{
+    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
 
-            /* [1] Log the system exception or error **********/
-            logSystemException( sysException );
+        /* [1] Log the system exception or error **********/
+        logSystemException(sysException);
 
-        boolean runningInContainerTransaction = (!context.currentTx.equals( context.clientTx ));
+        boolean runningInContainerTransaction = (!context.currentTx.equals(context.clientTx));
         if (runningInContainerTransaction) {
             /* [2] Mark the transaction for rollback. afterInvoke() will roll it back */
-            markTxRollbackOnly( context.currentTx );
+            markTxRollbackOnly(context.currentTx);
 
             /* [3] Discard instance. **************************/
-            discardBeanInstance( instance, context.callContext);
+            discardBeanInstance(instance, context.callContext);
 
             /* [4] Throw RemoteException to client ************/
-            throwExceptionToServer( sysException );
+            throwExceptionToServer(sysException);
         } else {
             /* [2] Mark the transaction for rollback. *********/
-            markTxRollbackOnly( context.clientTx );
+            markTxRollbackOnly(context.clientTx);
 
             /* [3] Discard instance. **************************/
-            discardBeanInstance( instance, context.callContext);
+            discardBeanInstance(instance, context.callContext);
 
             /* [4] Throw TransactionRolledbackException to client ************/
-            throwTxExceptionToServer( sysException );
+            throwTxExceptionToServer(sysException);
         }
     }
 }

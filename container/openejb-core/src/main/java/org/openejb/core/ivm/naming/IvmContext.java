@@ -30,54 +30,58 @@ import com.sun.naming.internal.ResourceManager;
 * name space. This class provides javax.naming.Context specific functionality
 * to the NameNode so that it can be used by beans the JNDI ENC.
 */
-public class IvmContext implements Context, java.io.Serializable{
+
+public class IvmContext implements Context, java.io.Serializable {
     Hashtable myEnv;
     boolean readOnly = false;
     HashMap fastCache = new HashMap();
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
-	return new IvmContext(new NameNode(null,new ParsedName("/"),null));
+        return new IvmContext(new NameNode(null, new ParsedName("/"), null));
     }
 
-    public IvmContext(){
+    public IvmContext() {
         this(new NameNode(null, new ParsedName("root"), null));
     }
-    public IvmContext(NameNode node){
+
+    public IvmContext(NameNode node) {
         mynode = node;
     }
-    public IvmContext(Hashtable environment) throws NamingException{
+
+    public IvmContext(Hashtable environment) throws NamingException {
         this();
-        if(environment ==null)
+        if (environment == null)
             throw new NamingException("Invalid Argument");
         else
-            myEnv = (Hashtable)environment.clone();
+            myEnv = (Hashtable) environment.clone();
 
     }
+
     public Object lookup(String compositName) throws NamingException {
         if (compositName.equals("")) {
             return this;
         }
 
-        if ( compositName.equals("java:comp/UserTransaction") && ThreadContext.getThreadContext().getDeploymentInfo() == null ) {
+        if (compositName.equals("java:comp/UserTransaction") && ThreadContext.getThreadContext().getDeploymentInfo() == null) {
             return new org.openejb.core.CoreUserTransaction();
         }
 
         String compoundName = null;
         int indx = compositName.indexOf(":");
-        if(indx>-1){
+        if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
              'java:'.  We strip the schema off the path before passing it to the node.resolve method.
             */
-            compoundName = compositName.substring(indx+1);
-        }else{
+            compoundName = compositName.substring(indx + 1);
+        } else {
             /*
               the resolve method always starts with the comparison assuming that the first
               component of the name is a context of a peer node or the same node, so we have
               to prepend the current context name to the relative lookup path.
             */
-	    compoundName = mynode.atomicName+'/'+compositName;
+            compoundName = mynode.atomicName + '/' + compositName;
         }
 
         /*
@@ -86,19 +90,19 @@ public class IvmContext implements Context, java.io.Serializable{
            80 ms compared to 300 ms for a full node path search.
         */
         Object obj = fastCache.get(compoundName);
-        if(obj==null){
+        if (obj == null) {
 
-            try{
-            obj = mynode.resolve(new ParsedName(compoundName));
-            }catch(NameNotFoundException nnfe){
+            try {
+                obj = mynode.resolve(new ParsedName(compoundName));
+            } catch (NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
 
-            fastCache.put(compoundName,obj);
+            fastCache.put(compoundName, obj);
         }
-        if(obj.getClass() == IvmContext.class)
-            ((IvmContext)obj).myEnv = myEnv;
-        else if(obj instanceof Reference){
+        if (obj.getClass() == IvmContext.class)
+            ((IvmContext) obj).myEnv = myEnv;
+        else if (obj instanceof Reference) {
             /*
              EJB references and resource references are wrapped in special
              org.openejb.core.ivm.naming.Reference types that check to
@@ -107,53 +111,54 @@ public class IvmContext implements Context, java.io.Serializable{
 
              A Reference type can also carry out dynamic resolution of references if necessary.
             */
-            obj = ((Reference)obj).getObject();
+            obj = ((Reference) obj).getObject();
         }
         return obj;
     }
-    protected Object federate(String compositName)throws NamingException{
-        ObjectFactory factories [] = getFederatedFactories();
-        for(int i =0; i < factories.length; i++){
-            try{
-            javax.naming.CompositeName name = new javax.naming.CompositeName(compositName);
-            Object obj = factories[i].getObjectInstance(null, name, null,null);
 
-            if(obj instanceof Context)
-                return ((Context)obj).lookup(compositName);
-            else if(obj!=null)
-                return obj;
-            }catch(Exception nnfe){
+    protected Object federate(String compositName) throws NamingException {
+        ObjectFactory factories [] = getFederatedFactories();
+        for (int i = 0; i < factories.length; i++) {
+            try {
+                javax.naming.CompositeName name = new javax.naming.CompositeName(compositName);
+                Object obj = factories[i].getObjectInstance(null, name, null, null);
+
+                if (obj instanceof Context)
+                    return ((Context) obj).lookup(compositName);
+                else if (obj != null)
+                    return obj;
+            } catch (Exception nnfe) {
 
             }
         }
 
-        throw new javax.naming.NameNotFoundException("Name \""+compositName+"\" not found.");
+        throw new javax.naming.NameNotFoundException("Name \"" + compositName + "\" not found.");
     }
 
     static ObjectFactory [] federatedFactories = null;
 
-    public static ObjectFactory [] getFederatedFactories( ) throws NamingException{
-        if(federatedFactories == null){
+    public static ObjectFactory [] getFederatedFactories() throws NamingException {
+        if (federatedFactories == null) {
             Set factories = new HashSet();
             Hashtable jndiProps = ResourceManager.getInitialEnvironment(null);
-            String pkgs = (String)jndiProps.get(Context.URL_PKG_PREFIXES);
-	    if( pkgs == null) {
-		return new ObjectFactory[0];
-	    }
+            String pkgs = (String) jndiProps.get(Context.URL_PKG_PREFIXES);
+            if (pkgs == null) {
+                return new ObjectFactory[0];
+            }
             StringTokenizer parser = new StringTokenizer(pkgs, ":");
 
             while (parser.hasMoreTokens()) {
                 String className = parser.nextToken() + ".java.javaURLContextFactory";
-                if(className.equals("org.openejb.core.ivm.naming.java.javaURLContextFactory"))
+                if (className.equals("org.openejb.core.ivm.naming.java.javaURLContextFactory"))
                     continue;
                 try {
                     ClassLoader cl = OpenEJB.getContextClassLoader();
                     Class factoryClass = Class.forName(className, true, cl);
-                    ObjectFactory factoryInstance = (ObjectFactory)factoryClass.newInstance();
+                    ObjectFactory factoryInstance = (ObjectFactory) factoryClass.newInstance();
                     factories.add(factoryInstance);
-                }catch (ClassNotFoundException cnfe){
+                } catch (ClassNotFoundException cnfe) {
 
-                }catch (Throwable e) {
+                } catch (Throwable e) {
                     NamingException ne = new NamingException("Federation failed: Cannot instantiate " + className);
                     ne.setRootCause(e);
                     throw ne;
@@ -169,230 +174,264 @@ public class IvmContext implements Context, java.io.Serializable{
     public Object lookup(Name compositName) throws NamingException {
         return lookup(compositName.toString());
     }
+
     public void bind(String name, Object obj) throws NamingException {
         checkReadOnly();
         int indx = name.indexOf(":");
-        if(indx>-1){
+        if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
              'java:'.  We strip the schema off the path before passing it to the node.resolve method.
             */
-            name = name.substring(indx+1);
+            name = name.substring(indx + 1);
         }
-        if(fastCache.containsKey(name))
+        if (fastCache.containsKey(name))
             throw new javax.naming.NameAlreadyBoundException();
         else
             mynode.bind(new ParsedName(name), obj);
     }
+
     public void bind(Name name, Object obj) throws NamingException {
         bind(name.toString(), obj);
     }
+
     public void rebind(String name, Object obj) throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
+
     public void rebind(Name name, Object obj) throws NamingException {
         rebind(name.toString(), obj);
     }
+
     public void unbind(String name) throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
+
     public void unbind(Name name) throws NamingException {
         unbind(name.toString());
     }
+
     public void rename(String oldname, String newname)
-    throws NamingException {
+            throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
+
     public void rename(Name oldname, Name newname)
-    throws NamingException {
+            throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
+
     public NamingEnumeration list(String name)
-    throws NamingException {
+            throws NamingException {
         Object obj = lookup(name);
-        if(obj.getClass() == IvmContext.class)
-            return new MyListEnumeration(((IvmContext)obj).mynode);
+        if (obj.getClass() == IvmContext.class)
+            return new MyListEnumeration(((IvmContext) obj).mynode);
         else {
             return null;
         }
     }
+
     public NamingEnumeration list(Name name)
-    throws NamingException {
+            throws NamingException {
         return list(name.toString());
     }
+
     public NamingEnumeration listBindings(String name)
-    throws NamingException {
+            throws NamingException {
         Object obj = lookup(name);
-        if(obj.getClass() == IvmContext.class)
-            return new MyListEnumeration(((IvmContext)obj).mynode);
+        if (obj.getClass() == IvmContext.class)
+            return new MyListEnumeration(((IvmContext) obj).mynode);
         else {
             return null;
         }
     }
+
     public NamingEnumeration listBindings(Name name)
-    throws NamingException {
+            throws NamingException {
         return listBindings(name.toString());
     }
+
     public void destroySubcontext(String name) throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
+
     public void destroySubcontext(Name name) throws NamingException {
         destroySubcontext(name.toString());
     }
+
     public Context createSubcontext(String name) throws NamingException {
         checkReadOnly();
         int indx = name.indexOf(":");
-        if(indx>-1){
+        if (indx > -1) {
             /*
 	      The ':' character will be in the path if its an absolute path name starting with the schema
 	      'java:'.  We strip the schema off the path before passing it to the node.resolve method.
             */
-            name = name.substring(indx+1);
+            name = name.substring(indx + 1);
         }
-        if(fastCache.containsKey(name))
+        if (fastCache.containsKey(name))
             throw new javax.naming.NameAlreadyBoundException();
         else
             return mynode.createSubcontext(new ParsedName(name));
     }
+
     public Context createSubcontext(Name name) throws NamingException {
         return createSubcontext(name.toString());
     }
+
     public Object lookupLink(String name) throws NamingException {
         return lookup(name);
     }
+
     public Object lookupLink(Name name) throws NamingException {
         return lookupLink(name.toString());
     }
+
     public NameParser getNameParser(String name)
-    throws NamingException {
+            throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
+
     public NameParser getNameParser(Name name) throws NamingException {
         return getNameParser(name.toString());
     }
+
     public String composeName(String name, String prefix)
-    throws NamingException {
+            throws NamingException {
         Name result = composeName(new CompositeName(name),
- new CompositeName(prefix));
+                new CompositeName(prefix));
         return result.toString();
     }
+
     public Name composeName(Name name, Name prefix)
-    throws NamingException {
-        Name result = (Name)(prefix.clone());
+            throws NamingException {
+        Name result = (Name) (prefix.clone());
         result.addAll(name);
         return result;
     }
+
     public Object addToEnvironment(String propName, Object propVal)
-    throws NamingException {
+            throws NamingException {
         if (myEnv == null) {
             myEnv = new Hashtable(5, 0.75f);
         }
         return myEnv.put(propName, propVal);
     }
+
     public Object removeFromEnvironment(String propName)
-    throws NamingException {
+            throws NamingException {
         if (myEnv == null)
             return null;
         return myEnv.remove(propName);
     }
+
     public Hashtable getEnvironment() throws NamingException {
         if (myEnv == null) {
 
             return new Hashtable(3, 0.75f);
         } else {
-            return (Hashtable)myEnv.clone();
+            return (Hashtable) myEnv.clone();
         }
     }
+
     public String getNameInNamespace() throws NamingException {
         return "";
     }
+
     public void close() throws NamingException {
     }
 
-    protected void checkReadOnly( )throws javax.naming.OperationNotSupportedException{
-        if(readOnly)throw new javax.naming.OperationNotSupportedException();
+    protected void checkReadOnly() throws javax.naming.OperationNotSupportedException {
+        if (readOnly) throw new javax.naming.OperationNotSupportedException();
     }
 
     protected class MyBindingEnumeration extends MyNamingEnumeration {
-         public MyBindingEnumeration(NameNode parentNode){
+        public MyBindingEnumeration(NameNode parentNode) {
             super(parentNode);
-         }
-         protected void buildEnumeration(Vector vect){
-            for(int i = 0; i < vect.size(); i++){
-                NameNode node = (NameNode)vect.elementAt(i);
+        }
+
+        protected void buildEnumeration(Vector vect) {
+            for (int i = 0; i < vect.size(); i++) {
+                NameNode node = (NameNode) vect.elementAt(i);
                 String className = node.getBinding().getClass().getName();
-                vect.setElementAt(new Binding(node.atomicName,className, node.getBinding()), i);
+                vect.setElementAt(new Binding(node.atomicName, className, node.getBinding()), i);
             }
             myEnum = vect.elements();
-         }
+        }
 
     }
 
     protected class MyListEnumeration extends MyNamingEnumeration {
-         public MyListEnumeration(NameNode parentNode){
+        public MyListEnumeration(NameNode parentNode) {
             super(parentNode);
-         }
-         protected void buildEnumeration(Vector vect){
-            for(int i = 0; i < vect.size(); i++){
-                NameNode node = (NameNode)vect.elementAt(i);
+        }
+
+        protected void buildEnumeration(Vector vect) {
+            for (int i = 0; i < vect.size(); i++) {
+                NameNode node = (NameNode) vect.elementAt(i);
                 String className = node.getBinding().getClass().getName();
-                vect.setElementAt(new NameClassPair(node.atomicName,className), i);
+                vect.setElementAt(new NameClassPair(node.atomicName, className), i);
             }
             myEnum = vect.elements();
-         }
+        }
 
     }
-    protected abstract class MyNamingEnumeration implements javax.naming.NamingEnumeration {
-         Enumeration myEnum;
 
-         public MyNamingEnumeration(NameNode parentNode){
+    protected abstract class MyNamingEnumeration implements javax.naming.NamingEnumeration {
+        Enumeration myEnum;
+
+        public MyNamingEnumeration(NameNode parentNode) {
             Vector vect = new Vector();
 
             NameNode node = parentNode.subTree;
 
-            if ( node == null ) {
+            if (node == null) {
                 node = parentNode;
             } else {
                 vect.addElement(node);
             }
 
-            gatherNodes(node,vect);
+            gatherNodes(node, vect);
 
             buildEnumeration(vect);
-         }
-         abstract protected void buildEnumeration(Vector vect);
+        }
 
-         protected void gatherNodes(NameNode node, Vector vect){
-            if(node.lessTree!=null){
+        abstract protected void buildEnumeration(Vector vect);
+
+        protected void gatherNodes(NameNode node, Vector vect) {
+            if (node.lessTree != null) {
                 vect.addElement(node.lessTree);
-                gatherNodes(node.lessTree,vect);
+                gatherNodes(node.lessTree, vect);
             }
-            if(node.grtrTree!=null){
+            if (node.grtrTree != null) {
                 vect.addElement(node.grtrTree);
-                gatherNodes(node.grtrTree,vect);
+                gatherNodes(node.grtrTree, vect);
             }
-         }
+        }
 
-         public void close(){
+        public void close() {
             myEnum = null;
-         }
+        }
 
-         public boolean hasMore() {
+        public boolean hasMore() {
             return hasMoreElements();
-         }
-         public Object next() {
+        }
+
+        public Object next() {
             return nextElement();
-         }
-         public boolean hasMoreElements(){
+        }
+
+        public boolean hasMoreElements() {
             return myEnum.hasMoreElements();
-         }
-         public Object nextElement() {
+        }
+
+        public Object nextElement() {
             return myEnum.nextElement();
-         }
+        }
     }
 
-    protected Object writeReplace() throws ObjectStreamException{
-        if(org.openejb.core.ivm.IntraVmCopyMonitor.isStatefulPassivationOperation()){
+    protected Object writeReplace() throws ObjectStreamException {
+        if (org.openejb.core.ivm.IntraVmCopyMonitor.isStatefulPassivationOperation()) {
 
             return new JndiEncArtifact(this);
         }
@@ -401,7 +440,7 @@ public class IvmContext implements Context, java.io.Serializable{
     }
 
     /* for testing only*/
-    public static void main(String str []) throws Exception{
+    public static void main(String str []) throws Exception {
         String str1 = "root/comp/env/rate/work/doc/lot/pop";
         String str2 = "root/comp/env/rate/work/doc/lot/price";
         String str3 = "root/comp/env/rate/work/doc/lot";
@@ -425,7 +464,7 @@ public class IvmContext implements Context, java.io.Serializable{
         }
         */
 
-        Context subcntx = (Context)context.lookup(str3);
+        Context subcntx = (Context) context.lookup(str3);
         org.openejb.core.ivm.IntraVmCopyMonitor x = null;
         java.io.FileOutputStream fos = new java.io.FileOutputStream("x.ser");
         java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
@@ -438,6 +477,6 @@ public class IvmContext implements Context, java.io.Serializable{
         java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
         Object newObj = ois.readObject();
         ois.close();
-    } 
+    }
 
 }

@@ -24,11 +24,11 @@ public class Start {
 
 //        System.exit(new Start().start()?0:1);
 
- new Start().start();
+        new Start().start();
 
     }
 
-    public boolean start(){
+    public boolean start() {
 
         if (!connect()) {
 
@@ -48,13 +48,13 @@ public class Start {
 
     private void forkServerProcess() {
 
-        try{
+        try {
 
             ArrayList cmd = new ArrayList();
 
             String s = java.io.File.separator;
 
-            String java = System.getProperty("java.home")+s+"bin"+s+"java";
+            String java = System.getProperty("java.home") + s + "bin" + s + "java";
 
             cmd.add(java);
 
@@ -70,7 +70,7 @@ public class Start {
 
             Runtime runtime = Runtime.getRuntime();
 
-            Process server = runtime.exec( command );
+            Process server = runtime.exec(command);
 
             InputStream out = server.getInputStream();
 
@@ -88,7 +88,7 @@ public class Start {
 
             serverErr.start();
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             throw new RuntimeException("Cannot start the server.");
 
@@ -104,17 +104,17 @@ public class Start {
 
             Map.Entry entry = (Map.Entry) iter.next();
 
-            String key = (String)entry.getKey();
+            String key = (String) entry.getKey();
 
-            String value = (String)entry.getValue();
+            String value = (String) entry.getValue();
 
-            if ( key.matches("^-X.*") ){
+            if (key.matches("^-X.*")) {
 
-                cmd.add(key+value);
+                cmd.add(key + value);
 
-            } else if ( !key.matches("^(java|javax|os|sun|user|file|awt|line|path)\\..*") ){
+            } else if (!key.matches("^(java|javax|os|sun|user|file|awt|line|path)\\..*")) {
 
-                cmd.add("-D"+key+"="+value);
+                cmd.add("-D" + key + "=" + value);
 
             }
 
@@ -130,7 +130,7 @@ public class Start {
 
         String antLoader = "org.apache.tools.ant.AntClassLoader";
 
-        if (cl.getClass().getName().equals(antLoader)){
+        if (cl.getClass().getName().equals(antLoader)) {
 
             try {
 
@@ -138,9 +138,9 @@ public class Start {
 
                 Method getClasspath = ant.getMethod("getClasspath", new Class[0]);
 
-                classpath += File.pathSeparator + getClasspath.invoke(cl,new Object[0]);
+                classpath += File.pathSeparator + getClasspath.invoke(cl, new Object[0]);
 
-            } catch (Exception e){
+            } catch (Exception e) {
 
                 e.printStackTrace();
 
@@ -154,31 +154,31 @@ public class Start {
 
     private boolean connect() {
 
-        return connect( 1 );
+        return connect(1);
 
     }
 
     private boolean connect(int tries) {
 
-        try{
+        try {
 
             Socket socket = new Socket("localhost", 4201);
 
             OutputStream out = socket.getOutputStream();
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
-            if ( tries < 2 ) {
+            if (tries < 2) {
 
                 return false;
 
             } else {
 
-                try{
+                try {
 
                     Thread.sleep(2000);
 
-                } catch (Exception e2){
+                } catch (Exception e2) {
 
                     e.printStackTrace();
 
@@ -212,21 +212,21 @@ public class Start {
 
         public void run() {
 
-            try{
+            try {
 
                 int i = is.read();
 
-                out.write( i );
+                out.write(i);
 
-                while ( i != -1 ){
+                while (i != -1) {
 
                     i = is.read();
 
-                    out.write( i );
+                    out.write(i);
 
                 }
 
-            } catch (Exception e){
+            } catch (Exception e) {
 
                 e.printStackTrace();
 

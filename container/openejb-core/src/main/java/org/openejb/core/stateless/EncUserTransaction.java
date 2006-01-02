@@ -10,13 +10,14 @@ import org.openejb.core.ivm.naming.ObjectReference;
   JNDI ENC of a stateless bean.  When the getObject( ) method is invoked the 
   Operation is checked to ensure that its is allowed for the bean's current state.
 */
-public class EncUserTransaction extends org.openejb.core.ivm.naming.ENCReference{
+
+public class EncUserTransaction extends org.openejb.core.ivm.naming.ENCReference {
 
     /*
     * This constructor take a new CoreUserTransaction object as the object reference
     */
-    public EncUserTransaction(org.openejb.core.CoreUserTransaction reference){
-        super( new ObjectReference(reference) );
+    public EncUserTransaction(org.openejb.core.CoreUserTransaction reference) {
+        super(new ObjectReference(reference));
     }
 
     /*
@@ -25,10 +26,10 @@ public class EncUserTransaction extends org.openejb.core.ivm.naming.ENCReference
     * method ensures that the stateless bean is in the correct state before the super
     * class can return the requested reference object.
     */
-    public void checkOperation(byte operation) throws NameNotFoundException{
-        if(operation == Operations.OP_SET_CONTEXT){
+    public void checkOperation(byte operation) throws NameNotFoundException {
+        if (operation == Operations.OP_SET_CONTEXT) {
             throw new NameNotFoundException("Operation Not Allowed");
-        }        
+        }
     }
 
 }

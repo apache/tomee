@@ -6,16 +6,16 @@ public class SystemException extends OpenEJBException {
         super();
     }
 
-    public SystemException(String message){
-	    super(message);
+    public SystemException(String message) {
+        super(message);
     }
 
-    public SystemException(Throwable rootCause){
+    public SystemException(Throwable rootCause) {
         super(rootCause);
     }
 
-    public SystemException(String message, Throwable rootCause){
-	    super(message, rootCause);
+    public SystemException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
 
 }

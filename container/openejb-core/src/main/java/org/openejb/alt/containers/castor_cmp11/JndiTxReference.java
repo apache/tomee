@@ -10,12 +10,13 @@ import org.openejb.core.ivm.naming.Reference;
   and the Reference is being bound to the JNDI name space of the deployment.
   See the init( ) method of the CastorCMP11_EntityContainer. 
 */
+
 public class JndiTxReference implements Reference {
 
     javax.transaction.TransactionManager txMngr;
 
-    public Object getObject( ) throws NamingException{
-        if(txMngr==null)
+    public Object getObject() throws NamingException {
+        if (txMngr == null)
             txMngr = org.openejb.OpenEJB.getTransactionManager();
         return txMngr;
     }

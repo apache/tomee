@@ -12,23 +12,23 @@ public class Version extends Command {
         Command.register("version", Version.class);
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
         /*
          * Output startup message
          */
         Properties versionInfo = new Properties();
 
         try {
-            versionInfo.load( new URL( "resource:/openejb-version.properties" ).openConnection().getInputStream() );
+            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
         } catch (java.io.IOException e) {
         }
-        out.print( "OpenEJB Remote Server " );
-        out.print( versionInfo.getProperty( "version" ) );
+        out.print("OpenEJB Remote Server ");
+        out.print(versionInfo.getProperty("version"));
         out.print("    build: ");
-        out.print(versionInfo.getProperty( "date" ));
+        out.print(versionInfo.getProperty("date"));
         out.print("-");
-        out.println(versionInfo.getProperty( "time" ));
-        out.println(versionInfo.getProperty( "url" ));
+        out.println(versionInfo.getProperty("time"));
+        out.println(versionInfo.getProperty("url"));
     }
 }
 

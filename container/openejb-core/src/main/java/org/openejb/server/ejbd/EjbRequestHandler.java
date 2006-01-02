@@ -18,8 +18,9 @@ import org.openejb.client.RequestMethods;
 import org.openejb.client.ResponseCodes;
 import org.openejb.spi.SecurityService;
 
-class EjbRequestHandler  implements ResponseCodes, RequestMethods {
+class EjbRequestHandler implements ResponseCodes, RequestMethods {
     private final EjbDaemon daemon;
+
     EjbRequestHandler(EjbDaemon daemon) {
         this.daemon = daemon;
 
@@ -30,7 +31,7 @@ class EjbRequestHandler  implements ResponseCodes, RequestMethods {
         EJBResponse res = new EJBResponse();
 
         try {
-            req.readExternal( in );
+            req.readExternal(in);
 
             /*
                 } catch (java.io.WriteAbortedException e){
@@ -49,19 +50,20 @@ class EjbRequestHandler  implements ResponseCodes, RequestMethods {
 
         } catch (Throwable t) {
             replyWithFatalError
-            (out, t, "Error caught during request processing");
+                    (out, t, "Error caught during request processing");
             return;
         }
 
-        CallContext  call = null;
+        CallContext call = null;
         DeploymentInfo di = null;
-        RpcContainer    c = null;;
+        RpcContainer c = null;
+        ;
 
         try {
             di = this.daemon.getDeployment(req);
         } catch (RemoteException e) {
             replyWithFatalError
-            (out, e, "No such deployment");
+                    (out, e, "No such deployment");
             return;
             /*
                 logger.warn( req + "No such deployment: "+e.getMessage());
@@ -69,72 +71,72 @@ class EjbRequestHandler  implements ResponseCodes, RequestMethods {
                 res.writeExternal( out );
                 return;
             */
-        } catch ( Throwable t ) {
+        } catch (Throwable t) {
             replyWithFatalError
-            (out, t, "Unkown error occured while retrieving deployment");
+                    (out, t, "Unkown error occured while retrieving deployment");
             return;
         }
 
         try {
             call = CallContext.getCallContext();
-            call.setEJBRequest( req );
-            call.setDeploymentInfo( di );
-        } catch ( Throwable t ) {
+            call.setEJBRequest(req);
+            call.setDeploymentInfo(di);
+        } catch (Throwable t) {
             replyWithFatalError
-            (out, t, "Unable to set the thread context for this request");
+                    (out, t, "Unable to set the thread context for this request");
             return;
         }
 
         try {
             switch (req.getRequestMethod()) {
 
-            case EJB_OBJECT_BUSINESS_METHOD:
-                doEjbObject_BUSINESS_METHOD( req, res );
-                break;
+                case EJB_OBJECT_BUSINESS_METHOD:
+                    doEjbObject_BUSINESS_METHOD(req, res);
+                    break;
 
-            case EJB_HOME_CREATE:
-                doEjbHome_CREATE( req, res );
-                break;
+                case EJB_HOME_CREATE:
+                    doEjbHome_CREATE(req, res);
+                    break;
 
-            case EJB_HOME_FIND:
-                doEjbHome_FIND( req, res );
-                break;
+                case EJB_HOME_FIND:
+                    doEjbHome_FIND(req, res);
+                    break;
 
-            case EJB_OBJECT_GET_EJB_HOME:
-                doEjbObject_GET_EJB_HOME( req, res );
-                break;
+                case EJB_OBJECT_GET_EJB_HOME:
+                    doEjbObject_GET_EJB_HOME(req, res);
+                    break;
 
-            case EJB_OBJECT_GET_HANDLE:
-                doEjbObject_GET_HANDLE( req, res );
-                break;
+                case EJB_OBJECT_GET_HANDLE:
+                    doEjbObject_GET_HANDLE(req, res);
+                    break;
 
-            case EJB_OBJECT_GET_PRIMARY_KEY:
-                doEjbObject_GET_PRIMARY_KEY( req, res );
-                break;
+                case EJB_OBJECT_GET_PRIMARY_KEY:
+                    doEjbObject_GET_PRIMARY_KEY(req, res);
+                    break;
 
-            case EJB_OBJECT_IS_IDENTICAL:
-                doEjbObject_IS_IDENTICAL( req, res );
-                break;
+                case EJB_OBJECT_IS_IDENTICAL:
+                    doEjbObject_IS_IDENTICAL(req, res);
+                    break;
 
-            case EJB_OBJECT_REMOVE:
-                doEjbObject_REMOVE( req, res );
-                break;
+                case EJB_OBJECT_REMOVE:
+                    doEjbObject_REMOVE(req, res);
+                    break;
 
-            case EJB_HOME_GET_EJB_META_DATA:
-                doEjbHome_GET_EJB_META_DATA( req, res );
-                break;
+                case EJB_HOME_GET_EJB_META_DATA:
+                    doEjbHome_GET_EJB_META_DATA(req, res);
+                    break;
 
-            case EJB_HOME_GET_HOME_HANDLE:
-                doEjbHome_GET_HOME_HANDLE( req, res );
-                break;
+                case EJB_HOME_GET_HOME_HANDLE:
+                    doEjbHome_GET_HOME_HANDLE(req, res);
+                    break;
 
-            case EJB_HOME_REMOVE_BY_HANDLE:
-                doEjbHome_REMOVE_BY_HANDLE( req, res );
-                break;
+                case EJB_HOME_REMOVE_BY_HANDLE:
+                    doEjbHome_REMOVE_BY_HANDLE(req, res);
+                    break;
 
-            case EJB_HOME_REMOVE_BY_PKEY:
-                doEjbHome_REMOVE_BY_PKEY( req, res );
-                break;
+                case EJB_HOME_REMOVE_BY_PKEY:
+                    doEjbHome_REMOVE_BY_PKEY(req, res);
+                    break;
             }
 
         } catch (org.openejb.InvalidateReferenceException e) {
@@ -144,16 +146,16 @@ class EjbRequestHandler  implements ResponseCodes, RequestMethods {
         } catch (org.openejb.SystemException e) {
             res.setResponse(EJB_ERROR, e.getRootCause());
 
-            this.daemon.logger.fatal( req+": OpenEJB encountered an unknown system error in container: ", e);
+            this.daemon.logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
         } catch (java.lang.Throwable t) {
 
             replyWithFatalError
-            (out, t, "Unknown error in container");
+                    (out, t, "Unknown error in container");
             return;
         } finally {
-            this.daemon.logger.info( "EJB RESPONSE: "+res );
+            this.daemon.logger.info("EJB RESPONSE: " + res);
             try {
-                res.writeExternal( out );
+                res.writeExternal(out);
             } catch (java.io.IOException ie) {
                 this.daemon.logger.fatal("Couldn't write EjbResponse to output stream", ie);
             }
@@ -161,191 +163,191 @@ class EjbRequestHandler  implements ResponseCodes, RequestMethods {
         }
     }
 
-    protected void doEjbObject_BUSINESS_METHOD( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
         if (result instanceof ProxyInfo) {
-            ProxyInfo info = (ProxyInfo)result;
+            ProxyInfo info = (ProxyInfo) result;
 
-            if ( EJBObject.class.isAssignableFrom(info.getInterface()) ) {
+            if (EJBObject.class.isAssignableFrom(info.getInterface())) {
                 result = this.daemon.clientObjectFactory._getEJBObject(call, info);
-            } else if ( EJBHome.class.isAssignableFrom(info.getInterface()) ) {
+            } else if (EJBHome.class.isAssignableFrom(info.getInterface())) {
                 result = this.daemon.clientObjectFactory._getEJBHome(call, info);
             } else {
 
-                result = new RemoteException("The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: "+info.getInterface());
-                this.daemon.logger.error( req + "The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: "+info.getInterface());
-                res.setResponse( EJB_SYS_EXCEPTION, result);
+                result = new RemoteException("The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
+                this.daemon.logger.error(req + "The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
+                res.setResponse(EJB_SYS_EXCEPTION, result);
                 return;
             }
         }
 
-        res.setResponse( EJB_OK, result);
+        res.setResponse(EJB_OK, result);
     }
 
-    protected void doEjbHome_CREATE( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbHome_CREATE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
         if (result instanceof ProxyInfo) {
-            ProxyInfo info = (ProxyInfo)result;
+            ProxyInfo info = (ProxyInfo) result;
             res.setResponse(EJB_OK, info.getPrimaryKey());
         } else {
 
             result = new RemoteException("The bean is not EJB compliant.  The should be created or and exception should be thrown.");
-            this.daemon.logger.error( req + "The bean is not EJB compliant.  The should be created or and exception should be thrown.");
-            res.setResponse( EJB_SYS_EXCEPTION, result);
+            this.daemon.logger.error(req + "The bean is not EJB compliant.  The should be created or and exception should be thrown.");
+            res.setResponse(EJB_SYS_EXCEPTION, result);
         }
     }
 
-    protected void doEjbHome_FIND( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbHome_FIND(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
         /* Multiple instances found */
-        if ( result instanceof Collection ) {
+        if (result instanceof Collection) {
 
-            Object [] primaryKeys = ((Collection)result).toArray();
+            Object [] primaryKeys = ((Collection) result).toArray();
 
-            for (int i=0; i < primaryKeys.length; i++) {
-                primaryKeys[i] = ((ProxyInfo)primaryKeys[i]).getPrimaryKey();
+            for (int i = 0; i < primaryKeys.length; i++) {
+                primaryKeys[i] = ((ProxyInfo) primaryKeys[i]).getPrimaryKey();
             }
 
-            res.setResponse( EJB_OK_FOUND_COLLECTION , primaryKeys );
+            res.setResponse(EJB_OK_FOUND_COLLECTION, primaryKeys);
 
-        } else if (result instanceof java.util.Enumeration ) {
+        } else if (result instanceof java.util.Enumeration) {
 
             java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
             java.util.List listOfPKs = new java.util.ArrayList();
-            while ( resultAsEnum.hasMoreElements() ) {
-                listOfPKs.add( ((ProxyInfo)resultAsEnum.nextElement()).getPrimaryKey() );
+            while (resultAsEnum.hasMoreElements()) {
+                listOfPKs.add(((ProxyInfo) resultAsEnum.nextElement()).getPrimaryKey());
             }
 
-            res.setResponse( EJB_OK_FOUND_ENUMERATION , listOfPKs.toArray( new Object[listOfPKs.size()]) );
-        /* Single instance found */
+            res.setResponse(EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
+            /* Single instance found */
         } else if (result instanceof ProxyInfo) {
-            result = ((ProxyInfo)result).getPrimaryKey();
-            res.setResponse( EJB_OK_FOUND , result );
+            result = ((ProxyInfo) result).getPrimaryKey();
+            res.setResponse(EJB_OK_FOUND, result);
 
         } else {
 
             final String message = "The bean is not EJB compliant. " +
-                "The finder method ["+req.getMethodInstance().getName()+"] is declared " +
-                "to return neither Collection nor the Remote Interface, " +
-                "but [" +result.getClass().getName()+ "]";
-            result = new RemoteException( message );
-            this.daemon.logger.error( req + " " + message);
-            res.setResponse( EJB_SYS_EXCEPTION, result);
+                    "The finder method [" + req.getMethodInstance().getName() + "] is declared " +
+                    "to return neither Collection nor the Remote Interface, " +
+                    "but [" + result.getClass().getName() + "]";
+            result = new RemoteException(message);
+            this.daemon.logger.error(req + " " + message);
+            res.setResponse(EJB_SYS_EXCEPTION, result);
         }
     }
 
-    protected void doEjbObject_GET_EJB_HOME( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbObject_GET_EJB_HOME(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_GET_HANDLE( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbObject_GET_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_GET_PRIMARY_KEY( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbObject_GET_PRIMARY_KEY(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_IS_IDENTICAL( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbObject_IS_IDENTICAL(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_REMOVE( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbObject_REMOVE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
-        res.setResponse( EJB_OK, null);
+        res.setResponse(EJB_OK, null);
     }
 
-    protected void doEjbHome_GET_EJB_META_DATA( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbHome_GET_EJB_META_DATA(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbHome_GET_HOME_HANDLE( EJBRequest req, EJBResponse res ) throws Exception {
-        checkMethodAuthorization( req, res );
+    protected void doEjbHome_GET_HOME_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
+        checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbHome_REMOVE_BY_HANDLE( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbHome_REMOVE_BY_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
-        res.setResponse( EJB_OK, null);
+        res.setResponse(EJB_OK, null);
     }
 
-    protected void doEjbHome_REMOVE_BY_PKEY( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void doEjbHome_REMOVE_BY_PKEY(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c   = (RpcContainer)call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
-        Object result = c.invoke( req.getDeploymentId(),
-                                  req.getMethodInstance(),
-                                  req.getMethodParameters(),
-                                  req.getPrimaryKey(),
-                                  req.getClientIdentity());
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
 
-        res.setResponse( EJB_OK, null);
+        res.setResponse(EJB_OK, null);
     }
 
-    protected void checkMethodAuthorization( EJBRequest req, EJBResponse res ) throws Exception {
+    protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
 
         SecurityService sec = OpenEJB.getSecurityService();
-        CallContext caller  = CallContext.getCallContext();
-        DeploymentInfo di   = caller.getDeploymentInfo();
-        String[] authRoles  = di.getAuthorizedRoles( req.getMethodInstance() );
+        CallContext caller = CallContext.getCallContext();
+        DeploymentInfo di = caller.getDeploymentInfo();
+        String[] authRoles = di.getAuthorizedRoles(req.getMethodInstance());
 
-        if (sec.isCallerAuthorized( req.getClientIdentity(), authRoles )) {
-            res.setResponse( EJB_OK, null );
+        if (sec.isCallerAuthorized(req.getClientIdentity(), authRoles)) {
+            res.setResponse(EJB_OK, null);
         } else {
             this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
-            res.setResponse( EJB_APP_EXCEPTION , new RemoteException("Unauthorized Access by Principal Denied") );
+            res.setResponse(EJB_APP_EXCEPTION, new RemoteException("Unauthorized Access by Principal Denied"));
         }
     }
 
-    private void replyWithFatalError(ObjectOutputStream out,Throwable error,String message) {
+    private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {
         this.daemon.logger.fatal(message, error);
         RemoteException re = new RemoteException
-                             ("The server has encountered a fatal error: "+message+" "+error);
+                ("The server has encountered a fatal error: " + message + " " + error);
         EJBResponse res = new EJBResponse();
         res.setResponse(EJB_ERROR, re);
         try {

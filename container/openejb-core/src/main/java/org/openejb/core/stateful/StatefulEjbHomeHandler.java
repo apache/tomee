@@ -11,15 +11,15 @@ import org.openejb.util.proxy.ProxyManager;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(RpcContainer container, Object pk, Object depID){
+    public StatefulEjbHomeHandler(RpcContainer container, Object pk, Object depID) {
         super(container, pk, depID);
     }
 
-    protected Object createProxy(ProxyInfo proxyInfo){
+    protected Object createProxy(ProxyInfo proxyInfo) {
         Object proxy = super.createProxy(proxyInfo);
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler)ProxyManager.getInvocationHandler(proxy);
+        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
-        registerHandler(handler.getRegistryId(),handler);
+        registerHandler(handler.getRegistryId(), handler);
 
         return proxy;
 
@@ -30,7 +30,7 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new RemoteException("Session objects are private resources and do not have primary keys");        
+        throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
     protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {

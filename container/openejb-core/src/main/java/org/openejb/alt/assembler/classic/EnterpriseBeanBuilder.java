@@ -100,16 +100,16 @@ class EnterpriseBeanBuilder {
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
             if (ejbType == EjbType.CMP_ENTITY) {
-                QueryInfo[] queries = (entity.queries == null)? new QueryInfo[]{}:entity.queries;
+                QueryInfo[] queries = (entity.queries == null) ? new QueryInfo[]{} : entity.queries;
                 for (int i = 0; i < queries.length; i++) {
                     QueryInfo query = queries[i];
 
                     Vector finderMethods = new Vector();
 
-                    if (home != null ){
+                    if (home != null) {
                         AssemblerTool.resolveMethods(finderMethods, home, query.method);
                     }
-                    if (localhome != null ){
+                    if (localhome != null) {
                         AssemblerTool.resolveMethods(finderMethods, localhome, query.method);
                     }
                     for (int j = 0; j < finderMethods.size(); j++) {

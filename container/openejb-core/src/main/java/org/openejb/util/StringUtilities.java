@@ -4,86 +4,87 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 public class StringUtilities {
-	
-	public static final String CRLF = "\r\n";
 
-	//we don't want anyone creating new instances
-	private StringUtilities() {}
+    public static final String CRLF = "\r\n";
 
-	public static String getLastToken(String tokenString, String delimeter) {
-		StringTokenizer token = new StringTokenizer(tokenString, delimeter);
+    //we don't want anyone creating new instances
+    private StringUtilities() {
+    }
 
-		String returnValue = null;
-		while (token.hasMoreTokens()) {
-			returnValue = token.nextToken();
-		}
+    public static String getLastToken(String tokenString, String delimeter) {
+        StringTokenizer token = new StringTokenizer(tokenString, delimeter);
 
-		return returnValue;
-	}
+        String returnValue = null;
+        while (token.hasMoreTokens()) {
+            returnValue = token.nextToken();
+        }
 
-	public static String nullToBlankString(String stringToCheckForNull) {
-		return (stringToCheckForNull == null) ? "" : stringToCheckForNull;
-	}
+        return returnValue;
+    }
 
-	public static boolean checkNullBlankString(String stringToCheck) {
-		return (stringToCheck == null || "".equals(stringToCheck.trim()));
-	}
+    public static String nullToBlankString(String stringToCheckForNull) {
+        return (stringToCheckForNull == null) ? "" : stringToCheckForNull;
+    }
 
-	public static String blankToNullString(String stringToCheckForBlank) {
-		if(stringToCheckForBlank != null) stringToCheckForBlank = stringToCheckForBlank.trim();
-		return ("".equals(stringToCheckForBlank)) ? null : stringToCheckForBlank;
-	}
+    public static boolean checkNullBlankString(String stringToCheck) {
+        return (stringToCheck == null || "".equals(stringToCheck.trim()));
+    }
 
-	public static String replaceNullOrBlankStringWithNonBreakingSpace(String stringToCheckForNull) {
-		if ((stringToCheckForNull == null) || (stringToCheckForNull.equals(""))) {
-			return "&nbsp;";
-		} else {
-			return stringToCheckForNull;
-		}
-	}
+    public static String blankToNullString(String stringToCheckForBlank) {
+        if (stringToCheckForBlank != null) stringToCheckForBlank = stringToCheckForBlank.trim();
+        return ("".equals(stringToCheckForBlank)) ? null : stringToCheckForBlank;
+    }
 
-	public static String createMethodString(Method method, String lineBreak) {
-		Class[] parameterList = method.getParameterTypes();
-		Class[] exceptionList = method.getExceptionTypes();
-		StringBuffer methodString = new StringBuffer();
+    public static String replaceNullOrBlankStringWithNonBreakingSpace(String stringToCheckForNull) {
+        if ((stringToCheckForNull == null) || (stringToCheckForNull.equals(""))) {
+            return "&nbsp;";
+        } else {
+            return stringToCheckForNull;
+        }
+    }
 
-		methodString.append(method.getName()).append("(");
+    public static String createMethodString(Method method, String lineBreak) {
+        Class[] parameterList = method.getParameterTypes();
+        Class[] exceptionList = method.getExceptionTypes();
+        StringBuffer methodString = new StringBuffer();
 
-		for (int j = 0; j < parameterList.length; j++) {
-			methodString.append(StringUtilities.getLastToken(parameterList[j].getName(), "."));
+        methodString.append(method.getName()).append("(");
 
-			if (j != (parameterList.length - 1)) {
-				methodString.append(", ");
-			}
-		}
-		methodString.append(") ");
+        for (int j = 0; j < parameterList.length; j++) {
+            methodString.append(StringUtilities.getLastToken(parameterList[j].getName(), "."));
 
-		if (exceptionList.length > 0) {
-			methodString.append(lineBreak);
-			methodString.append("throws ");
-		}
+            if (j != (parameterList.length - 1)) {
+                methodString.append(", ");
+            }
+        }
+        methodString.append(") ");
 
-		for (int j = 0; j < exceptionList.length; j++) {
-			methodString.append(StringUtilities.getLastToken(exceptionList[j].getName(), "."));
+        if (exceptionList.length > 0) {
+            methodString.append(lineBreak);
+            methodString.append("throws ");
+        }
 
-			if (j != (exceptionList.length - 1)) {
-				methodString.append(", ");
-			}
-		}
+        for (int j = 0; j < exceptionList.length; j++) {
+            methodString.append(StringUtilities.getLastToken(exceptionList[j].getName(), "."));
 
-		return methodString.toString();
-	}
+            if (j != (exceptionList.length - 1)) {
+                methodString.append(", ");
+            }
+        }
 
-	public static String stringArrayToCommaDelimitedStringList(String[] stringArray) {
-		StringBuffer stringList = new StringBuffer();
-		for (int i = 0; i < stringArray.length; i++) {
-			stringList.append(stringArray[i]);
-			if (i != (stringArray.length - 1)) {
-				stringList.append(",");
-			}
-		}
+        return methodString.toString();
+    }
 
-		return stringList.toString();
-	}
+    public static String stringArrayToCommaDelimitedStringList(String[] stringArray) {
+        StringBuffer stringList = new StringBuffer();
+        for (int i = 0; i < stringArray.length; i++) {
+            stringList.append(stringArray[i]);
+            if (i != (stringArray.length - 1)) {
+                stringList.append(",");
+            }
+        }
+
+        return stringList.toString();
+    }
 
 }

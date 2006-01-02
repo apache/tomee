@@ -35,8 +35,8 @@ public class EjbJarUtils {
     private OpenejbJar openejbJar;
 
     static {
-    	Properties properties = LocalConfiguration.getInstance().getProperties();
-    	properties.setProperty( Configuration.Property.Indent, "true");
+        Properties properties = LocalConfiguration.getInstance().getProperties();
+        properties.setProperty(Configuration.Property.Indent, "true");
     }
 
     public EjbJarUtils(String jarLocation) throws OpenEJBException {
@@ -46,7 +46,7 @@ public class EjbJarUtils {
         try {
             this.openejbJar = readOpenEjbJar(jarLocation);
         } catch (OpenEJBException e) {
-            logger.warning("Reading openejb-jar.xml.",e);
+            logger.warning("Reading openejb-jar.xml.", e);
         }
     }
 
@@ -55,7 +55,7 @@ public class EjbJarUtils {
     }
 
     private EjbJar readEjbJar(String jarLocation) throws OpenEJBException {
-        return (EjbJar)Unmarshaller.unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", jarLocation);
+        return (EjbJar) Unmarshaller.unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", jarLocation);
     }
 
     public String getJarLocation() {
@@ -144,7 +144,7 @@ public class EjbJarUtils {
         try {
             if (newFile.exists()) {
                 if (overwrite) {
- newFile.delete();
+                    newFile.delete();
                 } else {
                     throw new OpenEJBException(messages.format("deploy.m.061", origFile.getAbsolutePath(), beansDir.getAbsolutePath()));
                 }
@@ -191,7 +191,7 @@ public class EjbJarUtils {
         try {
             if (newFile.exists()) {
                 if (overwrite) {
- newFile.delete();
+                    newFile.delete();
                 } else {
                     throw new OpenEJBException(messages.format("deploy.c.061", origFile.getAbsolutePath(), beansDir.getAbsolutePath()));
                 }

@@ -25,41 +25,42 @@ public class ValidationTable {
     private static final String _insertValidated = "insert into validation (jar_path, last_validated, validator_version) values (?,?,?)";
 
     private static final String jdbcDriver = "org.enhydra.instantdb.jdbc.idbDriver";
-    private static final String jdbcUrl    = "jdbc:idb:conf/registry.properties";
-    private static final String userName   = "system";
-    private static final String password   = "system";
+    private static final String jdbcUrl = "jdbc:idb:conf/registry.properties";
+    private static final String userName = "system";
+    private static final String password = "system";
 
     private Connection conn;
 
-    private ValidationTable(){
-        try{
+    private ValidationTable() {
+        try {
 
             ClassLoader cl = OpenEJB.getContextClassLoader();
-            Class.forName( jdbcDriver, true, cl);
+            Class.forName(jdbcDriver, true, cl);
 
             conn = getConnection();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try{
+        try {
 
             Statement stmt = conn.createStatement();
             stmt.execute(_createTable);
             stmt.close();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         } finally {
-            try{
+            try {
                 conn.close();
-            } catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
     }
 
-    private Connection getConnection() throws SQLException{
+    private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(jdbcUrl, userName, password);
     }
 
-    public static ValidationTable getInstance(){
+    public static ValidationTable getInstance() {
         if (table == null) {
             table = new ValidationTable();
         }
@@ -67,25 +68,25 @@ public class ValidationTable {
         return table;
     }
 
-    public boolean isValidated(String jarFile){
-        try{
+    public boolean isValidated(String jarFile) {
+        try {
             File jar = SystemInstance.get().getBase().getFile(jarFile);
             long lastModified = jar.lastModified();
             long lastValidated = getLastValidated(jar);
 
             return (lastValidated > lastModified);
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public void setValidated(String jarFile){
+    public void setValidated(String jarFile) {
         setLastValidated(jarFile, System.currentTimeMillis());
     }
 
-    public long getLastValidated(File jar){
+    public long getLastValidated(File jar) {
         long validated = 0L;
-        try{
+        try {
             conn = getConnection();
 
             String jarFileURL = jar.toURL().toExternalForm();
@@ -103,17 +104,20 @@ public class ValidationTable {
                 }
             }
             stmt.close();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         } finally {
-            try{conn.close();} catch (Exception e){}
+            try {
+                conn.close();
+            } catch (Exception e) {
+            }
         }
         return validated;
     }
 
-    private long _getLastValidated(String jarFileURL){
+    private long _getLastValidated(String jarFileURL) {
         long validated = 0L;
-        try{
+        try {
             conn = getConnection();
 
             PreparedStatement stmt = conn.prepareStatement(_selectValidated);
@@ -124,16 +128,19 @@ public class ValidationTable {
                 validated = results.getLong(1);
             }
             stmt.close();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         } finally {
-            try{conn.close();} catch (Exception e){}
+            try {
+                conn.close();
+            } catch (Exception e) {
+            }
         }
         return validated;
     }
 
-    public void setLastValidated(String jarFile, long timeValidated){
-        try{
+    public void setLastValidated(String jarFile, long timeValidated) {
+        try {
             conn = getConnection();
             File jar = SystemInstance.get().getBase().getFile(jarFile);
             String jarFileURL = jar.toURL().toExternalForm();
@@ -153,16 +160,19 @@ public class ValidationTable {
 
             stmt.executeUpdate();
             stmt.close();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         } finally {
-            try{conn.close();} catch (Exception e){}
+            try {
+                conn.close();
+            } catch (Exception e) {
+            }
         }
     }
 
     private String version = null;
 
-    private String getVersion(){
+    private String getVersion() {
         if (version == null) {
             /*
              * Output startup message
@@ -171,10 +181,10 @@ public class ValidationTable {
 
             try {
                 JarUtils.setHandlerSystemProperty();
-                versionInfo.load( new URL( "resource:/openejb-version.properties" ).openConnection().getInputStream() );
+                versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             } catch (java.io.IOException e) {
             }
-            version = (String)versionInfo.get( "version" );
+            version = (String) versionInfo.get("version");
         }
         return version;
     }

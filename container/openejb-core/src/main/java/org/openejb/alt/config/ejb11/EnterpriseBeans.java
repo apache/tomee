@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -25,13 +25,9 @@ import org.xml.sax.ContentHandler;
 public class EnterpriseBeans implements java.io.Serializable {
 
 
-
-
     private java.lang.String _id;
 
     private java.util.Vector _items;
-
-
 
 
     public EnterpriseBeans() {
@@ -40,38 +36,31 @@ public class EnterpriseBeans implements java.io.Serializable {
     }
 
 
-
-
     public void addEnterpriseBeansItem(org.openejb.alt.config.ejb11.EnterpriseBeansItem vEnterpriseBeansItem)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _items.addElement(vEnterpriseBeansItem);
     }
 
     public void addEnterpriseBeansItem(int index, org.openejb.alt.config.ejb11.EnterpriseBeansItem vEnterpriseBeansItem)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _items.insertElementAt(vEnterpriseBeansItem, index);
     }
 
-    public java.util.Enumeration enumerateEnterpriseBeansItem()
-    {
+    public java.util.Enumeration enumerateEnterpriseBeansItem() {
         return _items.elements();
     }
 
     public org.openejb.alt.config.ejb11.EnterpriseBeansItem getEnterpriseBeansItem(int index)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _items.size())) {
             throw new IndexOutOfBoundsException();
         }
-        
+
         return (org.openejb.alt.config.ejb11.EnterpriseBeansItem) _items.elementAt(index);
     }
 
-    public org.openejb.alt.config.ejb11.EnterpriseBeansItem[] getEnterpriseBeansItem()
-    {
+    public org.openejb.alt.config.ejb11.EnterpriseBeansItem[] getEnterpriseBeansItem() {
         int size = _items.size();
         org.openejb.alt.config.ejb11.EnterpriseBeansItem[] mArray = new org.openejb.alt.config.ejb11.EnterpriseBeansItem[size];
         for (int index = 0; index < size; index++) {
@@ -80,18 +69,15 @@ public class EnterpriseBeans implements java.io.Serializable {
         return mArray;
     }
 
-    public int getEnterpriseBeansItemCount()
-    {
+    public int getEnterpriseBeansItemCount() {
         return _items.size();
     }
 
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this._id;
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -102,34 +88,29 @@ public class EnterpriseBeans implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void removeAllEnterpriseBeansItem()
-    {
+    public void removeAllEnterpriseBeansItem() {
         _items.removeAllElements();
     }
 
-    public org.openejb.alt.config.ejb11.EnterpriseBeansItem removeEnterpriseBeansItem(int index)
-    {
+    public org.openejb.alt.config.ejb11.EnterpriseBeansItem removeEnterpriseBeansItem(int index) {
         java.lang.Object obj = _items.elementAt(index);
         _items.removeElementAt(index);
         return (org.openejb.alt.config.ejb11.EnterpriseBeansItem) obj;
     }
 
     public void setEnterpriseBeansItem(int index, org.openejb.alt.config.ejb11.EnterpriseBeansItem vEnterpriseBeansItem)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _items.size())) {
             throw new IndexOutOfBoundsException();
@@ -137,8 +118,7 @@ public class EnterpriseBeans implements java.io.Serializable {
         _items.setElementAt(vEnterpriseBeansItem, index);
     }
 
-    public void setEnterpriseBeansItem(org.openejb.alt.config.ejb11.EnterpriseBeansItem[] enterpriseBeansItemArray)
-    {
+    public void setEnterpriseBeansItem(org.openejb.alt.config.ejb11.EnterpriseBeansItem[] enterpriseBeansItemArray) {
 
         _items.removeAllElements();
         for (int i = 0; i < enterpriseBeansItemArray.length; i++) {
@@ -146,20 +126,17 @@ public class EnterpriseBeans implements java.io.Serializable {
         }
     }
 
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this._id = id;
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.ejb11.EnterpriseBeans) Unmarshaller.unmarshal(org.openejb.alt.config.ejb11.EnterpriseBeans.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

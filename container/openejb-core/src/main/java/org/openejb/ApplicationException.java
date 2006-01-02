@@ -2,21 +2,23 @@ package org.openejb;
 
 public class ApplicationException extends OpenEJBException {
 
-    public ApplicationException( ){super();}
+    public ApplicationException() {
+        super();
+    }
 
-    public ApplicationException(String message){
+    public ApplicationException(String message) {
         super(message);
     }
 
-    public ApplicationException(Exception e){
+    public ApplicationException(Exception e) {
         super(e);
     }
 
-    public ApplicationException(Throwable t){
+    public ApplicationException(Throwable t) {
         super(t);
     }
 
-    public ApplicationException(String message, Exception e){
-	super(message,e);
+    public ApplicationException(String message, Exception e) {
+        super(message, e);
     }
 }

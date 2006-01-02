@@ -12,24 +12,25 @@ import org.openejb.core.ThreadContext;
   This class is subclassed by ENCReference in the entity, stateful and stateless packages 
   of org.openejb.core.
 */
-public abstract class ENCReference implements Reference{
+
+public abstract class ENCReference implements Reference {
 
     protected Reference ref = null;
     protected boolean checking = true;
 
-    public ENCReference(Reference ref){
+    public ENCReference(Reference ref) {
         this.ref = ref;
     }
 
-    public void setChecking( boolean value ) {
-	checking = value;
+    public void setChecking(boolean value) {
+        checking = value;
     }
 
     /*
     * Obtains the referenced object.
     */
-    public Object getObject( ) throws javax.naming.NamingException{
-        if( ThreadContext.isValid() ){
+    public Object getObject() throws javax.naming.NamingException {
+        if (ThreadContext.isValid()) {
             ThreadContext cntx = ThreadContext.getThreadContext();
             byte operation = cntx.getCurrentOperation();
             checkOperation(operation);

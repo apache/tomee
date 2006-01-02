@@ -62,6 +62,7 @@ public class OpenEJBInstance {
             }
         }
     }
+
     String NO_HOME = "The openejb.home is not set.";
 
     String BAD_HOME = "Invalid openejb.home: ";

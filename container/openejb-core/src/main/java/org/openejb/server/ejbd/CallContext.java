@@ -14,7 +14,7 @@ public class CallContext {
 
     protected EJBRequest request;
 
-    public CallContext(){
+    public CallContext() {
 
     }
 
@@ -22,7 +22,7 @@ public class CallContext {
 
         deploymentInfo = null;
 
-        request        = null;
+        request = null;
 
     }
 
@@ -38,13 +38,13 @@ public class CallContext {
 
     }
 
-    public EJBRequest getEJBRequest(){
+    public EJBRequest getEJBRequest() {
 
         return request;
 
     }
 
-    public void setEJBRequest(EJBRequest request){
+    public void setEJBRequest(EJBRequest request) {
 
         this.request = request;
 
@@ -52,29 +52,29 @@ public class CallContext {
 
     public static void setCallContext(CallContext ctx) {
 
-        if ( ctx == null ) {
+        if (ctx == null) {
 
-            ctx = (CallContext)threads.get();
+            ctx = (CallContext) threads.get();
 
-            if ( ctx != null ) ctx.reset();
+            if (ctx != null) ctx.reset();
 
         } else {
 
-            threads.set( ctx );
+            threads.set(ctx);
 
         }
 
     }
 
-    public static CallContext getCallContext( ) {
+    public static CallContext getCallContext() {
 
-        CallContext ctx = (CallContext)threads.get();
+        CallContext ctx = (CallContext) threads.get();
 
-        if ( ctx == null ) {
+        if (ctx == null) {
 
             ctx = new CallContext();
 
-            threads.set( ctx );
+            threads.set(ctx);
 
         }
 

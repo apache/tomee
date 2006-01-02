@@ -21,48 +21,50 @@ public abstract class Proxy implements java.io.Serializable {
     protected static final Object[] NO_ARGS_O = new Object[0];
 
     protected final void _proxyMethod$throws_default$returns_void(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException {
-        _proxyMethod$throws_default$returns_Object( methodNumber, methodName, argTypes, args);
+        _proxyMethod$throws_default$returns_Object(methodNumber, methodName, argTypes, args);
         return;
     }
 
     protected final Object _proxyMethod$throws_default$returns_Object(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException {
-        java.lang.reflect.Method method = _proxyMethod$lookupMethod( methodNumber, methodName, argTypes);
-        try{
-            return handler.invoke(this,method,args);
-        }catch(Throwable t){
+        java.lang.reflect.Method method = _proxyMethod$lookupMethod(methodNumber, methodName, argTypes);
+        try {
+            return handler.invoke(this, method, args);
+        } catch (Throwable t) {
 
-            if(t instanceof java.rmi.RemoteException)
-                     throw (java.rmi.RemoteException)t;
-            if(t instanceof java.lang.RuntimeException)
-                     throw (java.lang.RuntimeException)t;
-            else throw _proxyError$(t);
+            if (t instanceof java.rmi.RemoteException)
+                throw (java.rmi.RemoteException) t;
+            if (t instanceof java.lang.RuntimeException)
+                throw (java.lang.RuntimeException) t;
+            else
+                throw _proxyError$(t);
         }
     }
 
     protected final void _proxyMethod$throws_AppException$returns_void(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException, org.openejb.ApplicationException {
-        _proxyMethod$throws_AppException$returns_Object( methodNumber, methodName, argTypes, args);
+        _proxyMethod$throws_AppException$returns_Object(methodNumber, methodName, argTypes, args);
         return;
     }
 
-    protected final Object _proxyMethod$throws_AppException$returns_Object(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException , org.openejb.ApplicationException{
-        java.lang.reflect.Method method = _proxyMethod$lookupMethod( methodNumber, methodName, argTypes);
-        try{
-            return handler.invoke(this,method,args);
-        }catch(Throwable t){
+    protected final Object _proxyMethod$throws_AppException$returns_Object(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException, org.openejb.ApplicationException {
+        java.lang.reflect.Method method = _proxyMethod$lookupMethod(methodNumber, methodName, argTypes);
+        try {
+            return handler.invoke(this, method, args);
+        } catch (Throwable t) {
 
-            if(t instanceof java.rmi.RemoteException)
-                     throw (java.rmi.RemoteException)t;
-            if(t instanceof java.lang.RuntimeException)
-                     throw (java.lang.RuntimeException)t;
-            if(t instanceof org.openejb.ApplicationException)
-                     throw (org.openejb.ApplicationException)t;
-            else throw _proxyError$(t);
+            if (t instanceof java.rmi.RemoteException)
+                throw (java.rmi.RemoteException) t;
+            if (t instanceof java.lang.RuntimeException)
+                throw (java.lang.RuntimeException) t;
+            if (t instanceof org.openejb.ApplicationException)
+                throw (org.openejb.ApplicationException) t;
+            else
+                throw _proxyError$(t);
 
         }
     }
 
     protected final int _proxyMethod$throws_default$returns_int(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException {
-        Integer retval = (Integer)_proxyMethod$throws_default$returns_Object(methodNumber, methodName, argTypes, args);
+        Integer retval = (Integer) _proxyMethod$throws_default$returns_Object(methodNumber, methodName, argTypes, args);
         return retval.intValue();
     }
 
@@ -81,7 +83,7 @@ public abstract class Proxy implements java.io.Serializable {
         return retval.booleanValue();
     }
 
-    protected final float _proxyMethod$throws_default$returns_float(int methodNumber,String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException {
+    protected final float _proxyMethod$throws_default$returns_float(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException {
         Float retval = (Float) _proxyMethod$throws_default$returns_Object(methodNumber, methodName, argTypes, args);
         return retval.floatValue();
     }
@@ -102,7 +104,7 @@ public abstract class Proxy implements java.io.Serializable {
     }
 
     protected final int _proxyMethod$throws_AppException$returns_int(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException, org.openejb.ApplicationException {
-        Integer retval = (Integer)_proxyMethod$throws_AppException$returns_Object(methodNumber, methodName, argTypes, args);
+        Integer retval = (Integer) _proxyMethod$throws_AppException$returns_Object(methodNumber, methodName, argTypes, args);
         return retval.intValue();
     }
 
@@ -121,7 +123,7 @@ public abstract class Proxy implements java.io.Serializable {
         return retval.booleanValue();
     }
 
-    protected final float _proxyMethod$throws_AppException$returns_float(int methodNumber,String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException, org.openejb.ApplicationException {
+    protected final float _proxyMethod$throws_AppException$returns_float(int methodNumber, String methodName, Class[] argTypes, Object[] args) throws java.rmi.RemoteException, org.openejb.ApplicationException {
         Float retval = (Float) _proxyMethod$throws_AppException$returns_Object(methodNumber, methodName, argTypes, args);
         return retval.floatValue();
     }
@@ -143,23 +145,25 @@ public abstract class Proxy implements java.io.Serializable {
 
     protected abstract Method _proxyMethod$lookupMethod(int index, String methodName, Class[] argTypes);
 
-    protected final Method _proxyMethod$lookupMethod(Class interfce, Method [] methodMap, int index, String methodName, Class[] argTypes){
+    protected final Method _proxyMethod$lookupMethod(Class interfce, Method [] methodMap, int index, String methodName, Class[] argTypes) {
 
         java.lang.reflect.Method method = methodMap[index];
-        if(method == null){
-            try{
-                method = interfce.getMethod( methodName, argTypes );
+        if (method == null) {
+            try {
+                method = interfce.getMethod(methodName, argTypes);
                 methodMap[index] = method;
-            }catch(NoSuchMethodException nsme){ throw new RuntimeException("Method not found:  " +nsme.getMessage());}
+            } catch (NoSuchMethodException nsme) {
+                throw new RuntimeException("Method not found:  " + nsme.getMessage());
+            }
         }
         return method;
     }
 
-    protected final java.rmi.RemoteException _proxyError$(Throwable throwable){
-        return new java.rmi.RemoteException("[OpenEJB]  Proxy Error: ",throwable );
+    protected final java.rmi.RemoteException _proxyError$(Throwable throwable) {
+        return new java.rmi.RemoteException("[OpenEJB]  Proxy Error: ", throwable);
     }
 
-    protected final java.rmi.RemoteException _proxyError$(org.openejb.ApplicationException ae){
+    protected final java.rmi.RemoteException _proxyError$(org.openejb.ApplicationException ae) {
         return new java.rmi.RemoteException("[OpenEJB]  Proxy Error: The returned application exception is not defined in the throws clause.  ", ae.getRootCause());
     }
 

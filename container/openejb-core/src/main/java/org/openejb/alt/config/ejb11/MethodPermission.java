@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -23,8 +23,6 @@ import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.ContentHandler;
 
 public class MethodPermission implements java.io.Serializable {
-
-
 
 
     private java.lang.String _id;
@@ -36,8 +34,6 @@ public class MethodPermission implements java.io.Serializable {
     private java.util.Vector _methodList;
 
 
-
-
     public MethodPermission() {
         super();
         _roleNameList = new Vector();
@@ -45,65 +41,53 @@ public class MethodPermission implements java.io.Serializable {
     }
 
 
-
-
     public void addMethod(org.openejb.alt.config.ejb11.Method vMethod)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _methodList.addElement(vMethod);
     }
 
     public void addMethod(int index, org.openejb.alt.config.ejb11.Method vMethod)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _methodList.insertElementAt(vMethod, index);
     }
 
     public void addRoleName(java.lang.String vRoleName)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _roleNameList.addElement(vRoleName);
     }
 
     public void addRoleName(int index, java.lang.String vRoleName)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
         _roleNameList.insertElementAt(vRoleName, index);
     }
 
-    public java.util.Enumeration enumerateMethod()
-    {
+    public java.util.Enumeration enumerateMethod() {
         return _methodList.elements();
     }
 
-    public java.util.Enumeration enumerateRoleName()
-    {
+    public java.util.Enumeration enumerateRoleName() {
         return _roleNameList.elements();
     }
 
-    public java.lang.String getDescription()
-    {
+    public java.lang.String getDescription() {
         return this._description;
     }
 
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this._id;
     }
 
     public org.openejb.alt.config.ejb11.Method getMethod(int index)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _methodList.size())) {
             throw new IndexOutOfBoundsException();
         }
-        
+
         return (org.openejb.alt.config.ejb11.Method) _methodList.elementAt(index);
     }
 
-    public org.openejb.alt.config.ejb11.Method[] getMethod()
-    {
+    public org.openejb.alt.config.ejb11.Method[] getMethod() {
         int size = _methodList.size();
         org.openejb.alt.config.ejb11.Method[] mArray = new org.openejb.alt.config.ejb11.Method[size];
         for (int index = 0; index < size; index++) {
@@ -112,39 +96,34 @@ public class MethodPermission implements java.io.Serializable {
         return mArray;
     }
 
-    public int getMethodCount()
-    {
+    public int getMethodCount() {
         return _methodList.size();
     }
 
     public java.lang.String getRoleName(int index)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _roleNameList.size())) {
             throw new IndexOutOfBoundsException();
         }
-        
-        return (String)_roleNameList.elementAt(index);
+
+        return (String) _roleNameList.elementAt(index);
     }
 
-    public java.lang.String[] getRoleName()
-    {
+    public java.lang.String[] getRoleName() {
         int size = _roleNameList.size();
         java.lang.String[] mArray = new java.lang.String[size];
         for (int index = 0; index < size; index++) {
-            mArray[index] = (String)_roleNameList.elementAt(index);
+            mArray[index] = (String) _roleNameList.elementAt(index);
         }
         return mArray;
     }
 
-    public int getRoleNameCount()
-    {
+    public int getRoleNameCount() {
         return _roleNameList.size();
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -155,56 +134,47 @@ public class MethodPermission implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void removeAllMethod()
-    {
+    public void removeAllMethod() {
         _methodList.removeAllElements();
     }
 
-    public void removeAllRoleName()
-    {
+    public void removeAllRoleName() {
         _roleNameList.removeAllElements();
     }
 
-    public org.openejb.alt.config.ejb11.Method removeMethod(int index)
-    {
+    public org.openejb.alt.config.ejb11.Method removeMethod(int index) {
         java.lang.Object obj = _methodList.elementAt(index);
         _methodList.removeElementAt(index);
         return (org.openejb.alt.config.ejb11.Method) obj;
     }
 
-    public java.lang.String removeRoleName(int index)
-    {
+    public java.lang.String removeRoleName(int index) {
         java.lang.Object obj = _roleNameList.elementAt(index);
         _roleNameList.removeElementAt(index);
-        return (String)obj;
+        return (String) obj;
     }
 
-    public void setDescription(java.lang.String description)
-    {
+    public void setDescription(java.lang.String description) {
         this._description = description;
     }
 
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this._id = id;
     }
 
     public void setMethod(int index, org.openejb.alt.config.ejb11.Method vMethod)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _methodList.size())) {
             throw new IndexOutOfBoundsException();
@@ -212,8 +182,7 @@ public class MethodPermission implements java.io.Serializable {
         _methodList.setElementAt(vMethod, index);
     }
 
-    public void setMethod(org.openejb.alt.config.ejb11.Method[] methodArray)
-    {
+    public void setMethod(org.openejb.alt.config.ejb11.Method[] methodArray) {
 
         _methodList.removeAllElements();
         for (int i = 0; i < methodArray.length; i++) {
@@ -222,8 +191,7 @@ public class MethodPermission implements java.io.Serializable {
     }
 
     public void setRoleName(int index, java.lang.String vRoleName)
-        throws java.lang.IndexOutOfBoundsException
-    {
+            throws java.lang.IndexOutOfBoundsException {
 
         if ((index < 0) || (index > _roleNameList.size())) {
             throw new IndexOutOfBoundsException();
@@ -231,8 +199,7 @@ public class MethodPermission implements java.io.Serializable {
         _roleNameList.setElementAt(vRoleName, index);
     }
 
-    public void setRoleName(java.lang.String[] roleNameArray)
-    {
+    public void setRoleName(java.lang.String[] roleNameArray) {
 
         _roleNameList.removeAllElements();
         for (int i = 0; i < roleNameArray.length; i++) {
@@ -241,14 +208,12 @@ public class MethodPermission implements java.io.Serializable {
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.ejb11.MethodPermission) Unmarshaller.unmarshal(org.openejb.alt.config.ejb11.MethodPermission.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

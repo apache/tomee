@@ -14,56 +14,57 @@ import org.openejb.core.ThreadContext;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.util.Logger;
 
-public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization{
+public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {
 
     private static java.util.HashMap coordinators = new java.util.HashMap();
-    public static Logger logger = Logger.getInstance( "OpenEJB", "org.openejb.util.resources" );
+    public static Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
     private java.util.HashMap sessionSynchronizations = new java.util.HashMap();
 
-    public static void registerSessionSynchronization(SessionSynchronization session, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException{
+    public static void registerSessionSynchronization(SessionSynchronization session, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException {
         SessionSynchronizationCoordinator coordinator = null;
 
-        coordinator = (SessionSynchronizationCoordinator)coordinators.get( context.currentTx );
+        coordinator = (SessionSynchronizationCoordinator) coordinators.get(context.currentTx);
 
         if (coordinator == null) {
             coordinator = new SessionSynchronizationCoordinator();
-            try{
-                context.currentTx.registerSynchronization( coordinator);
-            }catch(Exception e) {
+            try {
+                context.currentTx.registerSynchronization(coordinator);
+            } catch (Exception e) {
 
                 logger.error("", e);
                 return;
             }
-            coordinators.put( context.currentTx, coordinator );
+            coordinators.put(context.currentTx, coordinator);
         }
 
-        coordinator._registerSessionSynchronization( session, context.callContext );
+        coordinator._registerSessionSynchronization(session, context.callContext);
     }
 
-    private void _registerSessionSynchronization(SessionSynchronization session, ThreadContext callContext){
-        boolean registered = sessionSynchronizations.containsKey( callContext.getPrimaryKey() );
+    private void _registerSessionSynchronization(SessionSynchronization session, ThreadContext callContext) {
+        boolean registered = sessionSynchronizations.containsKey(callContext.getPrimaryKey());
 
-        if ( registered ) return;
+        if (registered) return;
 
-        try{
-            callContext = (ThreadContext)callContext.clone();
-        }catch(Exception e) {}
+        try {
+            callContext = (ThreadContext) callContext.clone();
+        } catch (Exception e) {
+        }
         sessionSynchronizations.put(callContext.getPrimaryKey(), callContext);
 
         byte currentOperation = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(Operations.OP_AFTER_BEGIN);        
-        try{
+        callContext.setCurrentOperation(Operations.OP_AFTER_BEGIN);
+        try {
 
             session.afterBegin();
 
-        } catch (Exception e){
-            String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object: "+e.getClass().getName()+" "+e.getMessage();
+        } catch (Exception e) {
+            String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object: " + e.getClass().getName() + " " + e.getMessage();
             logger.error(message, e);
-            throw new RuntimeException( message );
+            throw new RuntimeException(message);
 
         } finally {
-           callContext.setCurrentOperation(currentOperation);
+            callContext.setCurrentOperation(currentOperation);
         }
     }
 
@@ -73,15 +74,15 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
         Object[] contexts = sessionSynchronizations.values().toArray();
 
-        for(int i = 0; i < contexts.length; i++){
+        for (int i = 0; i < contexts.length; i++) {
 
-            ThreadContext callContext  = (ThreadContext)contexts[i];
+            ThreadContext callContext = (ThreadContext) contexts[i];
 
             ThreadContext.setThreadContext(callContext);
             StatefulInstanceManager instanceManager = null;
 
-            try{
-                StatefulContainer container = (StatefulContainer)callContext.getDeploymentInfo().getContainer();
+            try {
+                StatefulContainer container = (StatefulContainer) callContext.getDeploymentInfo().getContainer();
                 instanceManager = container.getInstanceManager();
                 /*
                 * the operation must be set before the instance is obtained from the pool, so 
@@ -89,38 +90,38 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 */
                 callContext.setCurrentOperation(Operations.OP_BEFORE_COMPLETION);
 
-                SessionSynchronization bean = (SessionSynchronization)instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 bean.beforeCompletion();
-                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean)bean);
-            }catch(org.openejb.InvalidateReferenceException inv) {
+                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean) bean);
+            } catch (org.openejb.InvalidateReferenceException inv) {
 
-            }catch(Exception e){
+            } catch (Exception e) {
 
-                String message = "An unexpected system exception occured while invoking the beforeCompletion method on the SessionSynchronization object: "+e.getClass().getName()+" "+e.getMessage();
+                String message = "An unexpected system exception occured while invoking the beforeCompletion method on the SessionSynchronization object: " + e.getClass().getName() + " " + e.getMessage();
 
                 /* [1] Log the exception or error */
-                logger.error( message, e);
+                logger.error(message, e);
 
                 /* [2] If the instance is in a transaction, mark the transaction for rollback. */
                 Transaction tx = null;
-                try{
+                try {
                     tx = getTxMngr().getTransaction();
-                } catch (Throwable t){
-                    logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the beforeCompletion method of bean "+callContext.getPrimaryKey());
+                } catch (Throwable t) {
+                    logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the beforeCompletion method of bean " + callContext.getPrimaryKey());
                 }
-                try{
-                    markTxRollbackOnly( tx );
-                } catch (Throwable t){
-                    logger.error("Could not mark the current transaction for rollback while handling a callback exception from the beforeCompletion method of bean "+callContext.getPrimaryKey());
+                try {
+                    markTxRollbackOnly(tx);
+                } catch (Throwable t) {
+                    logger.error("Could not mark the current transaction for rollback while handling a callback exception from the beforeCompletion method of bean " + callContext.getPrimaryKey());
                 }
 
                 /* [3] Discard the instance */
-                discardInstance( instanceManager, callContext );
+                discardInstance(instanceManager, callContext);
 
                 /* [4] throw the java.rmi.RemoteException to the client */
-                throw new RuntimeException( message );
+                throw new RuntimeException(message);
             } finally {
-                ThreadContext.setThreadContext( originalContext );
+                ThreadContext.setThreadContext(originalContext);
             }
         }
     }
@@ -131,21 +132,21 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
         Object[] contexts = sessionSynchronizations.values().toArray();
 
-        try{
+        try {
             Transaction tx = getTxMngr().getTransaction();
-            coordinators.remove( tx );
-        }catch(Exception e) {
+            coordinators.remove(tx);
+        } catch (Exception e) {
             logger.error("", e);
         }
-        for(int i = 0; i < contexts.length; i++){
+        for (int i = 0; i < contexts.length; i++) {
 
-            ThreadContext callContext  = (ThreadContext)contexts[i];
+            ThreadContext callContext = (ThreadContext) contexts[i];
 
             ThreadContext.setThreadContext(callContext);
             StatefulInstanceManager instanceManager = null;
 
-            try{
-                StatefulContainer container = (StatefulContainer)callContext.getDeploymentInfo().getContainer();
+            try {
+                StatefulContainer container = (StatefulContainer) callContext.getDeploymentInfo().getContainer();
                 instanceManager = container.getInstanceManager();
                 /*
                 * the operation must be set before the instance is obtained from the pool, so 
@@ -153,67 +154,67 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 */
                 callContext.setCurrentOperation(Operations.OP_AFTER_COMPLETION);
 
-                SessionSynchronization bean = (SessionSynchronization)instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
 
-                bean.afterCompletion( status == Status.STATUS_COMMITTED );
-                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean)bean);
-            }catch(org.openejb.InvalidateReferenceException inv) {
+                bean.afterCompletion(status == Status.STATUS_COMMITTED);
+                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean) bean);
+            } catch (org.openejb.InvalidateReferenceException inv) {
 
-            }catch(Exception e){
+            } catch (Exception e) {
 
-                String message = "An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object: "+e.getClass().getName()+" "+e.getMessage();
+                String message = "An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object: " + e.getClass().getName() + " " + e.getMessage();
 
                 /* [1] Log the exception or error */
-                logger.error( message, e);
+                logger.error(message, e);
 
                 /* [2] If the instance is in a transaction, mark the transaction for rollback. */
                 Transaction tx = null;
-                try{
+                try {
                     tx = getTxMngr().getTransaction();
-                } catch (Throwable t){
-                    logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the afterCompletion method of bean "+callContext.getPrimaryKey());
+                } catch (Throwable t) {
+                    logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the afterCompletion method of bean " + callContext.getPrimaryKey());
                 }
-                try{
-                    markTxRollbackOnly( tx );
-                } catch (Throwable t){
-                    logger.error("Could not mark the current transaction for rollback while handling a callback exception from the afterCompletion method of bean "+callContext.getPrimaryKey());
+                try {
+                    markTxRollbackOnly(tx);
+                } catch (Throwable t) {
+                    logger.error("Could not mark the current transaction for rollback while handling a callback exception from the afterCompletion method of bean " + callContext.getPrimaryKey());
                 }
 
                 /* [3] Discard the instance */
-                discardInstance( instanceManager, callContext );
+                discardInstance(instanceManager, callContext);
 
                 /* [4] throw the java.rmi.RemoteException to the client */
 
-                throw new RuntimeException( message );
+                throw new RuntimeException(message);
             } finally {
-                ThreadContext.setThreadContext( originalContext );
+                ThreadContext.setThreadContext(originalContext);
             }
         }
     }
 
-    protected void discardInstance(StatefulInstanceManager instanceManager, ThreadContext callContext){
-        try{
-            instanceManager.freeInstance( callContext.getPrimaryKey() );
-        }catch(org.openejb.OpenEJBException oee){
+    protected void discardInstance(StatefulInstanceManager instanceManager, ThreadContext callContext) {
+        try {
+            instanceManager.freeInstance(callContext.getPrimaryKey());
+        } catch (org.openejb.OpenEJBException oee) {
 
         }
     }
 
-    protected void markTxRollbackOnly( Transaction tx ) throws SystemException{
+    protected void markTxRollbackOnly(Transaction tx) throws SystemException {
         try {
-            if ( tx != null ) tx.setRollbackOnly();
-        } catch ( javax.transaction.SystemException se ) {
+            if (tx != null) tx.setRollbackOnly();
+        } catch (javax.transaction.SystemException se) {
             throw new org.openejb.SystemException(se);
         }
     }
 
-    protected TransactionManager getTxMngr( ) {
+    protected TransactionManager getTxMngr() {
         return OpenEJB.getTransactionManager();
     }
 
-    protected void throwExceptionToServer( Throwable sysException ) throws ApplicationException{
+    protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {
 
-        throw new ApplicationException( sysException );
+        throw new ApplicationException(sysException);
 
     }
 }

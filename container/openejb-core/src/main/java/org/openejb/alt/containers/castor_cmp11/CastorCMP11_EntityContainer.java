@@ -46,7 +46,7 @@ import org.openejb.util.SafeToolkit;
 import org.openejb.util.Stack;
 
 public class CastorCMP11_EntityContainer
-implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
+        implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
 
     /*
      * Bean instances that are currently in use are placed in the txReadyPoolMap indexed
@@ -115,14 +115,14 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
      */
     static {
         try {
-            SET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod( "setEntityContext", new Class[]{javax.ejb.EntityContext.class} );
-            UNSET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod( "unsetEntityContext", null );
-            EJB_REMOVE_METHOD = javax.ejb.EntityBean.class.getMethod( "ejbRemove", null );
-        } catch ( NoSuchMethodException nse ) {
+            SET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod("setEntityContext", new Class[]{javax.ejb.EntityContext.class});
+            UNSET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod("unsetEntityContext", null);
+            EJB_REMOVE_METHOD = javax.ejb.EntityBean.class.getMethod("ejbRemove", null);
+        } catch (NoSuchMethodException nse) {
         }
     }
 
-    public Logger logger = Logger.getInstance( "OpenEJB", "org.openejb.alt.util.resources" );
+    public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.alt.util.resources");
 
     HashMap deploymentRegistry;
 
@@ -142,41 +142,41 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
 
     private Properties props;
 
-    public void init( Object id, HashMap registry, Properties properties ) throws org.openejb.OpenEJBException {
+    public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         containerID = id;
         deploymentRegistry = registry;
 
         this.props = properties;
 
-        SafeToolkit toolkit = SafeToolkit.getToolkit( "CastorCMP11_EntityContainer" );
-        SafeProperties safeProps = toolkit.getSafeProperties( properties );
+        SafeToolkit toolkit = SafeToolkit.getToolkit("CastorCMP11_EntityContainer");
+        SafeProperties safeProps = toolkit.getSafeProperties(properties);
 
-        poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100 );
+        poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
         Global_TX_Database = safeProps.getProperty(EnvProps.GLOBAL_TX_DATABASE);
         Local_TX_Database = safeProps.getProperty(EnvProps.LOCAL_TX_DATABASE);
 
         File gTxDb = null;
         File lTxDb = null;
         try {
-            gTxDb = SystemInstance.get().getBase().getFile( Global_TX_Database );
-        } catch ( Exception e ) {
+            gTxDb = SystemInstance.get().getBase().getFile(Global_TX_Database);
+        } catch (Exception e) {
             throw new OpenEJBException("Cannot locate the " + EnvProps.GLOBAL_TX_DATABASE + " file. " + e.getMessage());
         }
 
         try {
-            lTxDb = SystemInstance.get().getBase().getFile( Local_TX_Database );
-        } catch ( Exception e ) {
+            lTxDb = SystemInstance.get().getBase().getFile(Local_TX_Database);
+        } catch (Exception e) {
             throw new OpenEJBException("Cannot locate the " + EnvProps.LOCAL_TX_DATABASE + " file. " + e.getMessage());
         }
 
         if (!gTxDb.exists()) {
-            throw new OpenEJBException(id+": The "+EnvProps.GLOBAL_TX_DATABASE+" file does not exit: "+gTxDb.getAbsolutePath());
+            throw new OpenEJBException(id + ": The " + EnvProps.GLOBAL_TX_DATABASE + " file does not exit: " + gTxDb.getAbsolutePath());
         }
         if (!lTxDb.exists()) {
-            throw new OpenEJBException(id+": The "+EnvProps.LOCAL_TX_DATABASE+" file does not exit: "+lTxDb.getAbsolutePath());
+            throw new OpenEJBException(id + ": The " + EnvProps.LOCAL_TX_DATABASE + " file does not exit: " + lTxDb.getAbsolutePath());
         }
         if (gTxDb.equals(lTxDb)) {
-            throw new OpenEJBException(id+": The "+EnvProps.LOCAL_TX_DATABASE+" and "+EnvProps.GLOBAL_TX_DATABASE+" files cannot be the same: "+lTxDb.getAbsolutePath());
+            throw new OpenEJBException(id + ": The " + EnvProps.LOCAL_TX_DATABASE + " and " + EnvProps.GLOBAL_TX_DATABASE + " files cannot be the same: " + lTxDb.getAbsolutePath());
         }
 
         /*
@@ -197,20 +197,20 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
          */
         jdo_ForGlobalTransaction = new JDO();
 
-        jdo_ForGlobalTransaction.setDatabasePooling( true );
-        jdo_ForGlobalTransaction.setConfiguration( gTxDb.getAbsolutePath() );
+        jdo_ForGlobalTransaction.setDatabasePooling(true);
+        jdo_ForGlobalTransaction.setConfiguration(gTxDb.getAbsolutePath());
         jdo_ForGlobalTransaction.setDatabaseName(EnvProps.GLOBAL_TX_DATABASE);
-        jdo_ForGlobalTransaction.setCallbackInterceptor( this );
-        jdo_ForGlobalTransaction.setInstanceFactory( this );
-        jdo_ForGlobalTransaction.setLogInterceptor( new CMPLogger(EnvProps.GLOBAL_TX_DATABASE) );
+        jdo_ForGlobalTransaction.setCallbackInterceptor(this);
+        jdo_ForGlobalTransaction.setInstanceFactory(this);
+        jdo_ForGlobalTransaction.setLogInterceptor(new CMPLogger(EnvProps.GLOBAL_TX_DATABASE));
 
         jdo_ForLocalTransaction = new JDO();
 
-        jdo_ForLocalTransaction.setConfiguration( lTxDb.getAbsolutePath() );
+        jdo_ForLocalTransaction.setConfiguration(lTxDb.getAbsolutePath());
         jdo_ForLocalTransaction.setDatabaseName(EnvProps.LOCAL_TX_DATABASE);
-        jdo_ForLocalTransaction.setCallbackInterceptor( this );
-        jdo_ForLocalTransaction.setInstanceFactory( this );
-        jdo_ForLocalTransaction.setLogInterceptor( new CMPLogger(EnvProps.LOCAL_TX_DATABASE) );
+        jdo_ForLocalTransaction.setCallbackInterceptor(this);
+        jdo_ForLocalTransaction.setInstanceFactory(this);
+        jdo_ForLocalTransaction.setLogInterceptor(new CMPLogger(EnvProps.LOCAL_TX_DATABASE));
 
         /*
          * This block of code is necessary to avoid a chicken and egg problem.
@@ -229,36 +229,36 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
          * time it used. The same Reference is shared by all deployments, which is not a problem.
          */
         JndiTxReference txReference = new JndiTxReference();
-        for ( int x = 0; x < deploys.length; x++ ) {
-            org.openejb.core.DeploymentInfo di = ( org.openejb.core.DeploymentInfo ) deploys[x];
-            di.setContainer( this );
+        for (int x = 0; x < deploys.length; x++) {
+            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
+            di.setContainer(this);
 
-            methodReadyPoolMap.put( di.getDeploymentID(), new LinkedListStack( poolsize / 2 ) );
+            methodReadyPoolMap.put(di.getDeploymentID(), new LinkedListStack(poolsize / 2));
             KeyGenerator kg = null;
             try {
-                kg = KeyGeneratorFactory.createKeyGenerator( di );
-                di.setKeyGenerator( kg );
-            } catch ( Exception e ) {
-                logger.error( "Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e );
-                throw new org.openejb.SystemException( "Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e );
+                kg = KeyGeneratorFactory.createKeyGenerator(di);
+                di.setKeyGenerator(kg);
+            } catch (Exception e) {
+                logger.error("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
+                throw new org.openejb.SystemException("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
             }
 
             try {
-                di.getJndiEnc().bind( transactionManagerJndiName, txReference );
-            } catch ( Exception e ) {
-                logger.error( "Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e );
-                throw new org.openejb.SystemException( "Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e );
+                di.getJndiEnc().bind(transactionManagerJndiName, txReference);
+            } catch (Exception e) {
+                logger.error("Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e);
+                throw new org.openejb.SystemException("Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e);
             }
 
             try {
                 StringBuffer findByPrimarKeyQuery = new StringBuffer("SELECT e FROM " + di.getBeanClass().getName() + " e WHERE ");
 
-                if ( kg.isKeyComplex() ) {
+                if (kg.isKeyComplex()) {
 
                     Field[] pkFields = di.getPrimaryKeyClass().getFields();
-                    for ( int i = 1; i <= pkFields.length; i++ ) {
+                    for (int i = 1; i <= pkFields.length; i++) {
                         findByPrimarKeyQuery.append("e." + pkFields[i - 1].getName() + " = $" + i);
-                        if ( ( i + 1 ) <= pkFields.length )
+                        if ((i + 1) <= pkFields.length)
                             findByPrimarKeyQuery.append(" AND ");
                     }
 
@@ -267,26 +267,26 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 }
 
                 if (di.getHomeInterface() != null) {
-                    Method findByPrimaryKeyMethod = di.getHomeInterface().getMethod( "findByPrimaryKey", new Class[]{di.getPrimaryKeyClass()} );
-                    di.addQuery( findByPrimaryKeyMethod, findByPrimarKeyQuery.toString() );
+                    Method findByPrimaryKeyMethod = di.getHomeInterface().getMethod("findByPrimaryKey", new Class[]{di.getPrimaryKeyClass()});
+                    di.addQuery(findByPrimaryKeyMethod, findByPrimarKeyQuery.toString());
                 }
                 if (di.getLocalHomeInterface() != null) {
-                    Method findByPrimaryKeyMethod = di.getLocalHomeInterface().getMethod( "findByPrimaryKey", new Class[]{di.getPrimaryKeyClass()} );
-                    di.addQuery( findByPrimaryKeyMethod, findByPrimarKeyQuery.toString() );
+                    Method findByPrimaryKeyMethod = di.getLocalHomeInterface().getMethod("findByPrimaryKey", new Class[]{di.getPrimaryKeyClass()});
+                    di.addQuery(findByPrimaryKeyMethod, findByPrimarKeyQuery.toString());
                 }
-            } catch ( Exception e ) {
-                throw new org.openejb.SystemException( "Could not generate a query statement for the findByPrimaryKey method of the deployment = " + di.getDeploymentID(), e );
+            } catch (Exception e) {
+                throw new org.openejb.SystemException("Could not generate a query statement for the findByPrimaryKey method of the deployment = " + di.getDeploymentID(), e);
             }
         }
         resetMap = new HashMap();
-        resetMap.put( byte.class, new Byte( ( byte ) 0 ) );
-        resetMap.put( boolean.class, new Boolean( false ) );
-        resetMap.put( char.class, new Character( ( char ) 0 ) );
-        resetMap.put( short.class, new Short( ( short ) 0 ) );
-        resetMap.put( int.class, new Integer( 0 ) );
-        resetMap.put( long.class, new Long( 0 ) );
-        resetMap.put( float.class, new Float( 0 ) );
-        resetMap.put( double.class, new Double( 0.0 ) );
+        resetMap.put(byte.class, new Byte((byte) 0));
+        resetMap.put(boolean.class, new Boolean(false));
+        resetMap.put(char.class, new Character((char) 0));
+        resetMap.put(short.class, new Short((short) 0));
+        resetMap.put(int.class, new Integer(0));
+        resetMap.put(long.class, new Long(0));
+        resetMap.put(float.class, new Float(0));
+        resetMap.put(double.class, new Double(0.0));
     }
 
     boolean initialized;
@@ -295,9 +295,9 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         if (initialized) return;
 
         Properties systemProperties = System.getProperties();
-        synchronized(systemProperties) {
+        synchronized (systemProperties) {
             String userDir = systemProperties.getProperty("user.dir");
-            try{
+            try {
                 File base = SystemInstance.get().getBase().getDirectory();
                 systemProperties.setProperty("user.dir", base.getAbsolutePath());
                 ClassLoader classLoader = deployments()[0].getBeanClass().getClassLoader();
@@ -305,22 +305,22 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 jdo_ForLocalTransaction.getDatabase();
                 jdo_ForGlobalTransaction.setClassLoader(classLoader);
                 jdo_ForGlobalTransaction.getDatabase();
-            } catch (Throwable e){
-                logger.fatal("Castor JDO initialization failed: "+e.getMessage(), e);
+            } catch (Throwable e) {
+                logger.fatal("Castor JDO initialization failed: " + e.getMessage(), e);
                 throw (IllegalStateException) new IllegalStateException("Castor JDO initialization failed").initCause(e);
             } finally {
-                systemProperties.setProperty("user.dir",userDir);
+                systemProperties.setProperty("user.dir", userDir);
             }
             initialized = true;
         }
     }
 
     public DeploymentInfo[] deployments() {
-        return( DeploymentInfo[] ) deploymentRegistry.values().toArray( new DeploymentInfo[deploymentRegistry.size()] );
+        return (DeploymentInfo[]) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo( Object deploymentID ) {
-        return( DeploymentInfo ) deploymentRegistry.get( deploymentID );
+    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        return (DeploymentInfo) deploymentRegistry.get(deploymentID);
     }
 
     public int getContainerType() {
@@ -331,56 +331,56 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         return containerID;
     }
 
-    public void deploy( Object deploymentID, DeploymentInfo info ) throws OpenEJBException {
-        HashMap registry = ( HashMap ) deploymentRegistry.clone();
-        registry.put( deploymentID, info );
+    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+        HashMap registry = (HashMap) deploymentRegistry.clone();
+        registry.put(deploymentID, info);
         deploymentRegistry = registry;
     }
 
-    public Object invoke( Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity )
-    throws org.openejb.OpenEJBException {
+    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity)
+            throws org.openejb.OpenEJBException {
         postInit();
         try {
-            org.openejb.core.DeploymentInfo deployInfo = ( org.openejb.core.DeploymentInfo ) this.getDeploymentInfo( deployID );
+            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
-            callContext.set( deployInfo, primKey, securityIdentity );
+            callContext.set(deployInfo, primKey, securityIdentity);
 
-            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized( securityIdentity, deployInfo.getAuthorizedRoles( callMethod ) );
-            if ( !authorized )
-                throw new org.openejb.ApplicationException( new RemoteException( "Unauthorized Access by Principal Denied" ) );
+            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            if (!authorized)
+                throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
             Class declaringClass = callMethod.getDeclaringClass();
             String methodName = callMethod.getName();
 
-    		if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass) ){
-				if ( declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
+            if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
+                if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
 
-                    if ( methodName.equals( "create" ) ) {
+                    if (methodName.equals("create")) {
 
-                        return createEJBObject( callMethod, args, callContext );
-                    } else if ( methodName.startsWith( "find" ) ) {
+                        return createEJBObject(callMethod, args, callContext);
+                    } else if (methodName.startsWith("find")) {
 
-                        return findEJBObject( callMethod, args, callContext );
+                        return findEJBObject(callMethod, args, callContext);
                     } else {
 
-                        throw new org.openejb.InvalidateReferenceException( new java.rmi.RemoteException( "Invalid method " + methodName + " only find<METHOD>( ) and create( ) method are allowed in EJB 1.1 container-managed persistence" ) );
+                        throw new org.openejb.InvalidateReferenceException(new java.rmi.RemoteException("Invalid method " + methodName + " only find<METHOD>( ) and create( ) method are allowed in EJB 1.1 container-managed persistence"));
                     }
-                } else if ( methodName.equals( "remove" ) ) {
-                    removeEJBObject( callMethod, args, callContext );
+                } else if (methodName.equals("remove")) {
+                    removeEJBObject(callMethod, args, callContext);
                     return null;
                 }
-	        } else if((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove") ) {
-                removeEJBObject( callMethod, args, callContext );
+            } else if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove")) {
+                removeEJBObject(callMethod, args, callContext);
                 return null;
             }
 
-            callContext.setCurrentOperation( Operations.OP_BUSINESS );
-            Method runMethod = deployInfo.getMatchingBeanMethod( callMethod );
+            callContext.setCurrentOperation(Operations.OP_BUSINESS);
+            Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
-            Object retValue = businessMethod( callMethod, runMethod, args, callContext );
+            Object retValue = businessMethod(callMethod, runMethod, args, callContext);
 
-            return deployInfo.convertIfLocalReference( callMethod, retValue );
+            return deployInfo.convertIfLocalReference(callMethod, retValue);
 
         } finally {
             /*
@@ -395,136 +395,136 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 javaContextFactory must return the JNDI ENC of the current enterprise bean which it
                 obtains from the DeploymentInfo object associated with the current thread context.
             */
-            ThreadContext.setThreadContext( null );
+            ThreadContext.setThreadContext(null);
         }
     }
 
-    public void discardInstance( EnterpriseBean bean, ThreadContext threadContext ) {
-        if ( bean != null ) txReadyPoolMap.remove( bean );
+    public void discardInstance(EnterpriseBean bean, ThreadContext threadContext) {
+        if (bean != null) txReadyPoolMap.remove(bean);
     }
 
-    public EntityBean fetchFreeInstance( ThreadContext callContext ) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public EntityBean fetchFreeInstance(ThreadContext callContext) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         /*
         Obtain the stack of instances of this deployment that are in the method ready state.
         */
-        Stack methodReadyPool = ( Stack ) methodReadyPoolMap.get( deploymentInfo.getDeploymentID() );
+        Stack methodReadyPool = (Stack) methodReadyPoolMap.get(deploymentInfo.getDeploymentID());
 
-        if ( methodReadyPool == null ) {
+        if (methodReadyPool == null) {
 
-            throw new java.lang.RuntimeException( "Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container" );
+            throw new java.lang.RuntimeException("Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container");
         }
 
         /*
         Get a method ready instance from the top of the stack.
         */
 
-        EntityBean bean = ( EntityBean ) methodReadyPool.pop();
+        EntityBean bean = (EntityBean) methodReadyPool.pop();
 
-        if ( bean == null ) {
+        if (bean == null) {
             byte currentOperation = callContext.getCurrentOperation();
             try {
-                bean = ( EntityBean ) deploymentInfo.getBeanClass().newInstance();
+                bean = (EntityBean) deploymentInfo.getBeanClass().newInstance();
                 /*
                 setEntityContext executes in an unspecified transactional context.
                 In this case we choose to allow it to have what every transaction
                 context is current. Better then suspending it unnecessarily.
                 */
-                callContext.setCurrentOperation( Operations.OP_SET_CONTEXT );
-                Object[] params = new javax.ejb.EntityContext[]{( javax.ejb.EntityContext ) deploymentInfo.getEJBContext()};
+                callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
+                Object[] params = new javax.ejb.EntityContext[]{(javax.ejb.EntityContext) deploymentInfo.getEJBContext()};
 
-                SET_ENTITY_CONTEXT_METHOD.invoke( bean, params );
+                SET_ENTITY_CONTEXT_METHOD.invoke(bean, params);
             } finally {
-                callContext.setCurrentOperation( currentOperation );
+                callContext.setCurrentOperation(currentOperation);
             }
         } else {
 
-            resetBeanFields( bean, deploymentInfo );
+            resetBeanFields(bean, deploymentInfo);
         }
 
-        txReadyPoolMap.put( bean, methodReadyPool );
+        txReadyPoolMap.put(bean, methodReadyPool);
         return bean;
     }
 
-    protected Object businessMethod( Method callMethod, Method runMethod, Object[] args, ThreadContext callContext )
-    throws org.openejb.OpenEJBException {
+    protected Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext)
+            throws org.openejb.OpenEJBException {
 
         EntityBean bean = null;
 
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
-        TransactionContext txContext = new TransactionContext( callContext );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
+        TransactionContext txContext = new TransactionContext(callContext);
 
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
         Object returnValue = null;
         try {
 
-            Database db = getDatabase( callContext );
+            Database db = getDatabase(callContext);
 
-            bean = fetchAndLoadBean( callContext, db );
+            bean = fetchAndLoadBean(callContext, db);
 
-            if ( OpenEJB.getTransactionManager().getTransaction() != null ) {
+            if (OpenEJB.getTransactionManager().getTransaction() != null) {
                 try {
-                    Key key = new Key( OpenEJB.getTransactionManager().getTransaction(),
-                                       callContext.getDeploymentInfo().getDeploymentID(),
-                                       callContext.getPrimaryKey() );
-                    SynchronizationWrapper sync = new SynchronizationWrapper( ( ( javax.ejb.EntityBean ) bean ), key );
+                    Key key = new Key(OpenEJB.getTransactionManager().getTransaction(),
+                            callContext.getDeploymentInfo().getDeploymentID(),
+                            callContext.getPrimaryKey());
+                    SynchronizationWrapper sync = new SynchronizationWrapper(((javax.ejb.EntityBean) bean), key);
 
-                    OpenEJB.getTransactionManager().getTransaction().registerSynchronization( sync );
+                    OpenEJB.getTransactionManager().getTransaction().registerSynchronization(sync);
 
-                    syncWrappers.put( key, sync );
-                } catch ( Exception ex ) {
+                    syncWrappers.put(key, sync);
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
 
-            returnValue = runMethod.invoke( bean, args );
+            returnValue = runMethod.invoke(bean, args);
 
-        } catch ( java.lang.reflect.InvocationTargetException ite ) {
+        } catch (java.lang.reflect.InvocationTargetException ite) {
 
-            if ( ite.getTargetException() instanceof RuntimeException ) {
+            if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException( ite.getTargetException(), bean, txContext );
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
 
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException( ite.getTargetException(), txContext );
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
-        } catch ( org.exolab.castor.jdo.DuplicateIdentityException e ) {
+        } catch (org.exolab.castor.jdo.DuplicateIdentityException e) {
             /* Application Exception ***********************/
 
-            Exception re = new javax.ejb.DuplicateKeyException( "Attempt to update an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage() );
-            txPolicy.handleSystemException( re, bean, txContext );
+            Exception re = new javax.ejb.DuplicateKeyException("Attempt to update an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage());
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.ClassNotPersistenceCapableException e ) {
+        } catch (org.exolab.castor.jdo.ClassNotPersistenceCapableException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionAbortedException e ) {
+        } catch (org.exolab.castor.jdo.TransactionAbortedException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionNotInProgressException e ) {
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to update an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.DatabaseNotFoundException e ) {
+        } catch (org.exolab.castor.jdo.DatabaseNotFoundException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.PersistenceException e ) {
+        } catch (org.exolab.castor.jdo.PersistenceException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( Throwable e ) {// handle reflection exception
+        } catch (Throwable e) {// handle reflection exception
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -535,67 +535,67 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
         } finally {
-            txPolicy.afterInvoke( bean, txContext );
+            txPolicy.afterInvoke(bean, txContext);
         }
 
         return returnValue;
 
     }
 
-    protected ProxyInfo createEJBObject( Method callMethod, Object[] args, ThreadContext callContext )
-    throws org.openejb.OpenEJBException {
+    protected ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext)
+            throws org.openejb.OpenEJBException {
         org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         EntityBean bean = null;
         Object primaryKey = null;
 
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
-        TransactionContext txContext = new TransactionContext( callContext );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
+        TransactionContext txContext = new TransactionContext(callContext);
 
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
         try {
 
             /*
               Obtain a bean instance from the method ready pool
             */
-            bean = fetchFreeInstance( callContext );
+            bean = fetchFreeInstance(callContext);
 
             /*
                Obtain the proper ejbCreate() method
             */
-            Method ejbCreateMethod = deploymentInfo.getMatchingBeanMethod( callMethod );
+            Method ejbCreateMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
             /*
               Set the context for allowed operations
             */
-            callContext.setCurrentOperation( Operations.OP_CREATE );
+            callContext.setCurrentOperation(Operations.OP_CREATE);
 
             /*
               Invoke the proper ejbCreate() method on the instance
             */
-            ejbCreateMethod.invoke( bean, args );
+            ejbCreateMethod.invoke(bean, args);
 
             int txStatus = OpenEJB.getTransactionManager().getStatus();
-            if ( txStatus == Status.STATUS_ACTIVE || txStatus == Status.STATUS_NO_TRANSACTION ) {
+            if (txStatus == Status.STATUS_ACTIVE || txStatus == Status.STATUS_NO_TRANSACTION) {
 
                 /*
                   Get the JDO database for this deployment
                 */
-                Database db = getDatabase( callContext );
+                Database db = getDatabase(callContext);
 
                 /*
                   Create a Castor Transaction if there isn't one in progress
                 */
-                if ( !db.isActive() ) db.begin();
+                if (!db.isActive()) db.begin();
 
                 /*
                   Use Castor JDO to insert the entity bean into the database
                 */
-                db.create( bean );
+                db.create(bean);
 
             }
 
@@ -612,28 +612,28 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
             The KeyGenerator creates a new primary key and populates its fields with the
             primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
             */
-            primaryKey = kg.getPrimaryKey( bean );
+            primaryKey = kg.getPrimaryKey(bean);
 
             /*
               place the primary key into the current ThreadContext so its available for
               the ejbPostCreate()
             */
-            callContext.setPrimaryKey( primaryKey );
+            callContext.setPrimaryKey(primaryKey);
 
             /*
               Set the current operation for the allowed operations check
             */
-            callContext.setCurrentOperation( Operations.OP_POST_CREATE );
+            callContext.setCurrentOperation(Operations.OP_POST_CREATE);
 
             /*
               Obtain the ejbPostCreate method that matches the ejbCreate method
             */
-            Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod( ejbCreateMethod );
+            Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod(ejbCreateMethod);
 
             /*
               Invoke the ejbPostCreate method on the bean instance
             */
-            ejbPostCreateMethod.invoke( bean, args );
+            ejbPostCreateMethod.invoke(bean, args);
 
             /*
             According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
@@ -647,46 +647,46 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
             /*
               Reset the primary key in the ThreadContext to null, its original value
             */
-            callContext.setPrimaryKey( null );
+            callContext.setPrimaryKey(null);
 
-        } catch ( java.lang.reflect.InvocationTargetException ite ) {// handle enterprise bean exceptions
-            if ( ite.getTargetException() instanceof RuntimeException ) {
+        } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
+            if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException( ite.getTargetException(), bean, txContext );
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException( ite.getTargetException(), txContext );
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
-        } catch ( org.exolab.castor.jdo.DuplicateIdentityException e ) {
+        } catch (org.exolab.castor.jdo.DuplicateIdentityException e) {
             /* Application Exception ***********************/
-            Exception re = new javax.ejb.DuplicateKeyException( "Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage() );
-            txPolicy.handleSystemException( re, bean, txContext );
+            Exception re = new javax.ejb.DuplicateKeyException("Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage());
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.ClassNotPersistenceCapableException e ) {
+        } catch (org.exolab.castor.jdo.ClassNotPersistenceCapableException e) {
             /* System Exception ****************************/
-            RemoteException re = new RemoteException( "Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionAbortedException e ) {
+        } catch (org.exolab.castor.jdo.TransactionAbortedException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionNotInProgressException e ) {
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException e) {
             /* System Exception ****************************/
-            RemoteException re = new RemoteException( "Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to create an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.DatabaseNotFoundException e ) {
+        } catch (org.exolab.castor.jdo.DatabaseNotFoundException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.PersistenceException e ) {
+        } catch (org.exolab.castor.jdo.PersistenceException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( Throwable e ) {// handle reflection exception
+        } catch (Throwable e) {// handle reflection exception
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -697,19 +697,19 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
-            txPolicy.afterInvoke( bean, txContext );
+            txPolicy.afterInvoke(bean, txContext);
         }
         Class callingClass = callMethod.getDeclaringClass();
-		boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
 
-        return new ProxyInfo( deploymentInfo, primaryKey, isLocalInterface, this );
+        return new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
     }
 
     protected static final Object[] noArgs = new Object[0];
 
-    protected Object findEJBObject( Method callMethod, Object[] args, ThreadContext callContext ) throws org.openejb.OpenEJBException {
+    protected Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws org.openejb.OpenEJBException {
 
         org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
@@ -718,51 +718,51 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         EntityBean bean = null;
 
         /* Obtain the OQL statement that matches the find method of the remote interface  */
-        String queryString = deploymentInfo.getQuery( callMethod );
+        String queryString = deploymentInfo.getQuery(callMethod);
 
         /* Get the transaction policy assigned to this method */
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
-        TransactionContext txContext = new TransactionContext( callContext );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
+        TransactionContext txContext = new TransactionContext(callContext);
 
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
         try {
 
             /*
               Get the JDO database for this deployment
             */
-            Database db = getDatabase( callContext );
+            Database db = getDatabase(callContext);
 
             /*
               Create a Castor Transaction if there isn't one in progress
             */
-            if ( !db.isActive() ) db.begin();
+            if (!db.isActive()) db.begin();
 
             /*
               Obtain a OQLQuery object based on the String query
             */
-            OQLQuery query = db.getOQLQuery( queryString );
+            OQLQuery query = db.getOQLQuery(queryString);
 
-            if ( callMethod.getName().equals( "findByPrimaryKey" ) ) {
+            if (callMethod.getName().equals("findByPrimaryKey")) {
 
                 KeyGenerator kg = deploymentInfo.getKeyGenerator();
 
-                if ( kg.isKeyComplex() ) {
+                if (kg.isKeyComplex()) {
                     /*
                     * This code moves the fields of the primary key into a JDO Complex object
                     * which can then be used in the database.bind operation
                     */
-                    org.exolab.castor.persist.spi.Complex c = kg.getJdoComplex( args[0] );
+                    org.exolab.castor.persist.spi.Complex c = kg.getJdoComplex(args[0]);
                     args = new Object[c.size()];
-                    for ( int i = 0; i < args.length; i++ )
-                        args[i] = c.get( i );
+                    for (int i = 0; i < args.length; i++)
+                        args[i] = c.get(i);
                 }
             }
 
-            if ( args == null ) args = noArgs;
+            if (args == null) args = noArgs;
 
-            for ( int i = 0; i < args.length; i++ ) {
-                if ( args[i] instanceof javax.ejb.EJBObject ) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof javax.ejb.EJBObject) {
                     /*
                     Its possible that the finder method's arguments are actually EJBObject reference in
                     which case the EJBObject reference is replaced with the EJB object's primary key.
@@ -778,10 +778,10 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
 
                     */
                     try {
-                        args[i] = ( ( javax.ejb.EJBObject ) args[i] ).getPrimaryKey();
-                    } catch ( java.rmi.RemoteException re ) {
+                        args[i] = ((javax.ejb.EJBObject) args[i]).getPrimaryKey();
+                    } catch (java.rmi.RemoteException re) {
 
-                        throw new javax.ejb.FinderException( "Could not extract primary key from EJBObject reference; argument number " + i );
+                        throw new javax.ejb.FinderException("Could not extract primary key from EJBObject reference; argument number " + i);
                     }
                 }
 
@@ -800,7 +800,7 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 "SELECT t FROM Thing t WHERE t.weight = $2 AND t.type = $3 AND t.name = $1"
                 */
 
-                query.bind( args[i] );
+                query.bind(args[i]);
             }
 
             /*  execute the query */
@@ -815,7 +815,7 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
 
             Object primaryKey = null;
             Class callingClass = callMethod.getDeclaringClass();
-    		boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+            boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
 
             /*
             The following block of code is responsible for returning ProxyInfo object(s) for each
@@ -823,64 +823,64 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
             of ProxyInfo objects will be returned. If its a single-value find operation then a
             single ProxyInfo object is returned.
             */
-            if ( callMethod.getReturnType() == java.util.Collection.class || callMethod.getReturnType() == java.util.Enumeration.class ) {
+            if (callMethod.getReturnType() == java.util.Collection.class || callMethod.getReturnType() == java.util.Enumeration.class) {
                 java.util.Vector proxies = new java.util.Vector();
-                while ( results.hasMore() ) {
+                while (results.hasMore()) {
                     /*  Fetch the next entity bean from the query results */
-                    bean = ( EntityBean ) results.next();
+                    bean = (EntityBean) results.next();
 
                     /*
                     The KeyGenerator creates a new primary key and populates its fields with the
                     primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
                     */
-                    primaryKey = kg.getPrimaryKey( bean );
+                    primaryKey = kg.getPrimaryKey(bean);
                     /*   create a new ProxyInfo based on the deployment info and primary key and add it to the vector */
-                    proxies.addElement( new ProxyInfo( deploymentInfo, primaryKey, isLocalInterface, this ) );
+                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
                 }
-                if ( callMethod.getReturnType() == java.util.Enumeration.class )
-                    returnValue = new org.openejb.util.Enumerator( proxies );
+                if (callMethod.getReturnType() == java.util.Enumeration.class)
+                    returnValue = new org.openejb.util.Enumerator(proxies);
                 else
                     returnValue = proxies;
             } else {
                 /*  Fetch the entity bean from the query results */
-                if ( !results.hasMore() )
-                    throw new javax.ejb.ObjectNotFoundException( "A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist" );
+                if (!results.hasMore())
+                    throw new javax.ejb.ObjectNotFoundException("A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
 
-                bean = ( EntityBean ) results.next();
+                bean = (EntityBean) results.next();
                 /*
                     The KeyGenerator creates a new primary key and populates its fields with the
                     primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
                 */
-                primaryKey = kg.getPrimaryKey( bean );
+                primaryKey = kg.getPrimaryKey(bean);
                 /*   create a new ProxyInfo based on the deployment info and primary key */
-                returnValue = new ProxyInfo( deploymentInfo, primaryKey, isLocalInterface, this );
+                returnValue = new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
             }
 
-        } catch ( javax.ejb.FinderException fe ) {
+        } catch (javax.ejb.FinderException fe) {
             /* Application Exception *********************** thrown when attempting to extract EJBObject argument */
-            txPolicy.handleApplicationException( fe, txContext );
+            txPolicy.handleApplicationException(fe, txContext);
 
-        } catch ( org.exolab.castor.jdo.QueryException qe ) {
+        } catch (org.exolab.castor.jdo.QueryException qe) {
             /* Application Exception ***********************/
-            javax.ejb.FinderException fe = new javax.ejb.FinderException( "Castor JDO could not execute query for this finder method. QueryException: " + qe.getMessage() );
+            javax.ejb.FinderException fe = new javax.ejb.FinderException("Castor JDO could not execute query for this finder method. QueryException: " + qe.getMessage());
 
-            txPolicy.handleApplicationException( fe, txContext );
+            txPolicy.handleApplicationException(fe, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionNotInProgressException e ) {
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.DatabaseNotFoundException e ) {
+        } catch (org.exolab.castor.jdo.DatabaseNotFoundException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.PersistenceException e ) {
+        } catch (org.exolab.castor.jdo.PersistenceException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( Throwable e ) {// handle reflection exception
+        } catch (Throwable e) {// handle reflection exception
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -891,86 +891,86 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
-            if ( results != null ) results.close();
-            txPolicy.afterInvoke( bean, txContext );
+            if (results != null) results.close();
+            txPolicy.afterInvoke(bean, txContext);
         }
         return returnValue;
     }
 
-    protected void removeEJBObject( Method callMethod, Object[] args, ThreadContext callContext )
-    throws org.openejb.OpenEJBException {
+    protected void removeEJBObject(Method callMethod, Object[] args, ThreadContext callContext)
+            throws org.openejb.OpenEJBException {
         EntityBean bean = null;
-        TransactionContext txContext = new TransactionContext( callContext );
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
+        TransactionContext txContext = new TransactionContext(callContext);
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
 
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
         try {
             int status = OpenEJB.getTransactionManager().getStatus();
 
-            if ( status == Status.STATUS_ACTIVE || status == Status.STATUS_NO_TRANSACTION ) {
+            if (status == Status.STATUS_ACTIVE || status == Status.STATUS_NO_TRANSACTION) {
 
                 /*
                   Get the JDO database for this deployment
                 */
-                Database db = getDatabase( callContext );
+                Database db = getDatabase(callContext);
 
                 /*
                   Create a Castor Transaction if there isn't one in progress
                 */
-                if ( !db.isActive() ) db.begin();
+                if (!db.isActive()) db.begin();
 
-                bean = fetchAndLoadBean( callContext, db );
+                bean = fetchAndLoadBean(callContext, db);
 
-                callContext.setCurrentOperation( Operations.OP_REMOVE );
-                EJB_REMOVE_METHOD.invoke( bean, null );
+                callContext.setCurrentOperation(Operations.OP_REMOVE);
+                EJB_REMOVE_METHOD.invoke(bean, null);
 
-                db.remove( bean );
+                db.remove(bean);
             }
-        } catch ( java.lang.reflect.InvocationTargetException ite ) {
+        } catch (java.lang.reflect.InvocationTargetException ite) {
 
-            if ( ite.getTargetException() instanceof RuntimeException ) {
+            if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException( ite.getTargetException(), bean, txContext );
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException( ite.getTargetException(), txContext );
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
-        } catch ( org.exolab.castor.jdo.DuplicateIdentityException e ) {
+        } catch (org.exolab.castor.jdo.DuplicateIdentityException e) {
             /* Application Exception ***********************/
 
-            Exception re = new javax.ejb.DuplicateKeyException( "Attempt to remove an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage() );
-            txPolicy.handleSystemException( re, bean, txContext );
+            Exception re = new javax.ejb.DuplicateKeyException("Attempt to remove an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage());
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.ClassNotPersistenceCapableException e ) {
+        } catch (org.exolab.castor.jdo.ClassNotPersistenceCapableException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") that can not be persisted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionAbortedException e ) {
+        } catch (org.exolab.castor.jdo.TransactionAbortedException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because transaction was aborted.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.TransactionNotInProgressException e ) {
+        } catch (org.exolab.castor.jdo.TransactionNotInProgressException e) {
             /* System Exception ****************************/
 
-            RemoteException re = new RemoteException( "Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e );
-            txPolicy.handleSystemException( re, bean, txContext );
+            RemoteException re = new RemoteException("Attempt to remove an entity bean (DeploymentID=\"" + txContext.callContext.getDeploymentInfo().getDeploymentID() + "\") failed because a transaction didn't exist.", e);
+            txPolicy.handleSystemException(re, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.DatabaseNotFoundException e ) {
+        } catch (org.exolab.castor.jdo.DatabaseNotFoundException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( org.exolab.castor.jdo.PersistenceException e ) {
+        } catch (org.exolab.castor.jdo.PersistenceException e) {
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
 
-        } catch ( Throwable e ) {// handle reflection exception
+        } catch (Throwable e) {// handle reflection exception
             /*
 
               Any exception thrown by reflection; not by the enterprise bean.
@@ -995,17 +995,17 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
 
             */
             /* System Exception ****************************/
-            txPolicy.handleSystemException( e, bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
-            txPolicy.afterInvoke( bean, txContext );
+            txPolicy.afterInvoke(bean, txContext);
         }
     }
 
-    protected EntityBean fetchAndLoadBean( ThreadContext callContext, Database db )
-    throws org.exolab.castor.jdo.PersistenceException, org.exolab.castor.jdo.ObjectNotFoundException,
-    org.exolab.castor.jdo.TransactionNotInProgressException, org.exolab.castor.jdo.LockNotGrantedException,
-    java.lang.InstantiationException, java.lang.reflect.InvocationTargetException,
-    java.lang.IllegalAccessException {
+    protected EntityBean fetchAndLoadBean(ThreadContext callContext, Database db)
+            throws org.exolab.castor.jdo.PersistenceException, org.exolab.castor.jdo.ObjectNotFoundException,
+            org.exolab.castor.jdo.TransactionNotInProgressException, org.exolab.castor.jdo.LockNotGrantedException,
+            java.lang.InstantiationException, java.lang.reflect.InvocationTargetException,
+            java.lang.IllegalAccessException {
         /*
           Each bean deployment has a unique KeyGenerator that is responsible
           for two operations.
@@ -1029,8 +1029,8 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
             key is complex it must be marshalled into a Castor JDO Complex
             object in order to perform a load operation.
         */
-        if ( kg.isKeyComplex() ) {
-            Complex complexIdentity = kg.getJdoComplex( callContext.getPrimaryKey() );
+        if (kg.isKeyComplex()) {
+            Complex complexIdentity = kg.getJdoComplex(callContext.getPrimaryKey());
             /*
              * yip: Castor JDO bases on and maintains one instance of object of
              * the same type and identity in each transaction. fetchFreeInstance
@@ -1039,23 +1039,23 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
              * object will casuses PersistenceException to be thrown. It's why "bean"
              * is commented out.
              */
-            bean = ( EntityBean ) db.load( callContext.getDeploymentInfo().getBeanClass(),
-                                           complexIdentity/*,
-                                       bean*/ );
+            bean = (EntityBean) db.load(callContext.getDeploymentInfo().getBeanClass(),
+                    complexIdentity/*,
+                                       bean*/);
 
         } else {
-            bean = ( EntityBean ) db.load( callContext.getDeploymentInfo().getBeanClass(),
-                                           callContext.getPrimaryKey()/*,
-                                       bean*/ );
+            bean = (EntityBean) db.load(callContext.getDeploymentInfo().getBeanClass(),
+                    callContext.getPrimaryKey()/*,
+                                       bean*/);
         }
 
         return bean;
     }
 
-    protected Database getDatabase( ThreadContext callContext )
-    throws org.exolab.castor.jdo.DatabaseNotFoundException,
-    org.exolab.castor.jdo.PersistenceException,
-    javax.transaction.SystemException {
+    protected Database getDatabase(ThreadContext callContext)
+            throws org.exolab.castor.jdo.DatabaseNotFoundException,
+            org.exolab.castor.jdo.PersistenceException,
+            javax.transaction.SystemException {
         /*
          If their is no transaction the CastorTransactionScopeManager.begin()
          method would have set the unspecified value of the ThreadContext to a
@@ -1068,9 +1068,9 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
          removeEJBObject, busienssMethod) requires transaction-managed
          Database object or a non-transaction managed database object.
          */
-        Database db = ( Database ) callContext.getUnspecified();
+        Database db = (Database) callContext.getUnspecified();
 
-        if ( db != null ) {
+        if (db != null) {
             return db;
         } else {
             /*
@@ -1096,60 +1096,60 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         }
     }
 
-    protected void resetBeanFields( java.lang.Object bean, org.openejb.core.DeploymentInfo info ) {
+    protected void resetBeanFields(java.lang.Object bean, org.openejb.core.DeploymentInfo info) {
         final String[] cmFields = info.getCmrFields();
         final Class beanClass = bean.getClass();
 
         try {
-            for ( int i = 0; i < cmFields.length; i++ ) {
-                Field field = beanClass.getDeclaredField( cmFields[i] );
-                Object value = resetMap.get( field.getType() );
+            for (int i = 0; i < cmFields.length; i++) {
+                Field field = beanClass.getDeclaredField(cmFields[i]);
+                Object value = resetMap.get(field.getType());
 //                System.out.println("Setting field "+cmFields[i]+" to "+value);
-                field.set( bean, value );
+                field.set(bean, value);
             }
-        } catch ( Exception e ) {
+        } catch (Exception e) {
 
-            logger.error( "Internal inconsistency accessing the fields of a CMP entity bean" + bean + ":" + e );
+            logger.error("Internal inconsistency accessing the fields of a CMP entity bean" + bean + ":" + e);
         }
     }
 
-    public Object newInstance( String className, ClassLoader loader ) {
+    public Object newInstance(String className, ClassLoader loader) {
 
         Object obj = null;
 
         try {
-            obj = fetchFreeInstance( ThreadContext.getThreadContext() );
-        } catch ( IllegalAccessException iae ) {
-            throw new RuntimeException( iae.getLocalizedMessage() );
-        } catch ( InvocationTargetException ite ) {
-            throw new RuntimeException( ite.getLocalizedMessage() );
-        } catch ( InstantiationException ie ) {
-            throw new RuntimeException( ie.getLocalizedMessage() );
+            obj = fetchFreeInstance(ThreadContext.getThreadContext());
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae.getLocalizedMessage());
+        } catch (InvocationTargetException ite) {
+            throw new RuntimeException(ite.getLocalizedMessage());
+        } catch (InstantiationException ie) {
+            throw new RuntimeException(ie.getLocalizedMessage());
         }
 
         return obj;
     }
 
-    public Class loaded( Object object, short accessMode ) {
+    public Class loaded(Object object, short accessMode) {
         return null;
     }
 
-    public void storing( Object object, boolean modified ) {
+    public void storing(Object object, boolean modified) {
     }
 
-    public void creating( Object object, Database db ) {
+    public void creating(Object object, Database db) {
     }
 
-    public void created( Object object ) {
+    public void created(Object object) {
     }
 
-    public void removing( Object object ) {
+    public void removing(Object object) {
     }
 
-    public void removed( Object object ) {
+    public void removed(Object object) {
     }
 
-    public void releasing( Object object, boolean committed ) {
+    public void releasing(Object object, boolean committed) {
         /*
         Every time a bean instance is fetched using fetchFreeInstance( ) it is
         automatically added to the txReadyPoolMap indexed by the bean instance
@@ -1160,21 +1160,21 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         longer in use.
         */
 
-        LinkedListStack stack = ( LinkedListStack ) txReadyPoolMap.remove( object );
-        if ( stack != null ) stack.push( object );
+        LinkedListStack stack = (LinkedListStack) txReadyPoolMap.remove(object);
+        if (stack != null) stack.push(object);
     }
 
-    public void using( Object object, Database db ) {
+    public void using(Object object, Database db) {
     }
 
-    public void updated( Object object ) {
+    public void updated(Object object) {
     }
 
     public static class Key {
         Object deploymentID, primaryKey;
         Transaction transaction;
 
-        public Key( Transaction tx, Object depID, Object prKey ) {
+        public Key(Transaction tx, Object depID, Object prKey) {
             transaction = tx;
             deploymentID = depID;
             primaryKey = prKey;
@@ -1184,11 +1184,11 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
             return transaction.hashCode() ^ deploymentID.hashCode() ^ primaryKey.hashCode();
         }
 
-        public boolean equals( Object other ) {
-            if ( other != null && other.getClass() == CastorCMP11_EntityContainer.Key.class ) {
-                Key otherKey = ( Key ) other;
-                if ( otherKey.transaction.equals( transaction ) && otherKey.deploymentID.equals( deploymentID ) && otherKey.primaryKey.equals(
-                                                                                                                                             primaryKey ) )
+        public boolean equals(Object other) {
+            if (other != null && other.getClass() == CastorCMP11_EntityContainer.Key.class) {
+                Key otherKey = (Key) other;
+                if (otherKey.transaction.equals(transaction) && otherKey.deploymentID.equals(deploymentID) && otherKey.primaryKey.equals(
+                        primaryKey))
                     return true;
             }
             return false;
@@ -1196,11 +1196,11 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
     }
 
     public class SynchronizationWrapper
-    implements javax.transaction.Synchronization {
+            implements javax.transaction.Synchronization {
         EntityBean bean;
         Key myIndex;
 
-        public SynchronizationWrapper( EntityBean ebean, Key key ) {
+        public SynchronizationWrapper(EntityBean ebean, Key key) {
             bean = ebean;
             myIndex = key;
         }
@@ -1208,19 +1208,19 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
         public void beforeCompletion() {
             try {
                 bean.ejbStore();
-            } catch ( Exception re ) {
+            } catch (Exception re) {
                 javax.transaction.TransactionManager txmgr = OpenEJB.getTransactionManager();
                 try {
                     txmgr.setRollbackOnly();
-                } catch ( javax.transaction.SystemException se ) {
+                } catch (javax.transaction.SystemException se) {
 
                 }
 
             }
         }
 
-        public void afterCompletion( int status ) {
-            syncWrappers.remove( myIndex );
+        public void afterCompletion(int status) {
+            syncWrappers.remove(myIndex);
         }
 
     }
@@ -1229,8 +1229,8 @@ implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFact
      *  (non-Javadoc)
      * @see org.exolab.castor.persist.spi.CallbackInterceptor#loaded(java.lang.Object, org.exolab.castor.mapping.AccessMode)
      */
-	public Class loaded(Object loaded, AccessMode mode) throws Exception {
-		return loaded(loaded, mode.getId());
-	}
+    public Class loaded(Object loaded, AccessMode mode) throws Exception {
+        return loaded(loaded, mode.getId());
+    }
 
 }

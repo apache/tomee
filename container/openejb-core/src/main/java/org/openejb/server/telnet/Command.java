@@ -28,51 +28,51 @@ public class Command {
 
     protected static final Command unknownCommand = new Command();
 
-    protected static void register( String name, Command cmd ) {
+    protected static void register(String name, Command cmd) {
 
-        commands.put( name, cmd );
-
-    }
-
-    protected static void register( String name, Class cmd ) {
-
-        commands.put( name, cmd );
+        commands.put(name, cmd);
 
     }
 
-    public static Command getCommand( String name ) {
+    protected static void register(String name, Class cmd) {
 
-        Object cmd = commands.get( name );
+        commands.put(name, cmd);
 
-        if ( cmd instanceof Class ) {
+    }
 
-            cmd = loadCommand( ( Class ) cmd );
+    public static Command getCommand(String name) {
 
-            register( name, ( Command ) cmd );
+        Object cmd = commands.get(name);
+
+        if (cmd instanceof Class) {
+
+            cmd = loadCommand((Class) cmd);
+
+            register(name, (Command) cmd);
 
         }
 
-        return( Command ) cmd;
+        return (Command) cmd;
 
     }
 
-    public void exec( Arguments args, DataInputStream in, PrintStream out ) throws IOException
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException
 
     {
 
-        out.println( "not implemented" );
+        out.println("not implemented");
 
     }
 
-    protected static Command loadCommand( Class commandClass ) {
+    protected static Command loadCommand(Class commandClass) {
 
         Command cmd = null;
 
         try {
 
-            cmd = ( Command ) commandClass.newInstance();
+            cmd = (Command) commandClass.newInstance();
 
-        } catch ( Exception e ) {
+        } catch (Exception e) {
 
         }
 
@@ -120,7 +120,7 @@ public class Command {
 
         private boolean alreadyParsed = false;
 
-        Arguments( String args ) {
+        Arguments(String args) {
 
             this.args = args;
 
@@ -132,11 +132,11 @@ public class Command {
 
         }
 
-        String get( int i ) {
+        String get(int i) {
 
             parseArgs();
 
-            return( argsArray != null ? argsArray[i] : null );
+            return (argsArray != null ? argsArray[i] : null);
 
         }
 
@@ -144,7 +144,7 @@ public class Command {
 
             parseArgs();
 
-            return( argsArray != null ? argsArray.length : 0 );
+            return (argsArray != null ? argsArray.length : 0);
 
         }
 
@@ -152,7 +152,7 @@ public class Command {
 
             return new Iterator() {
 
-                StringTokenizer st = new StringTokenizer( args );
+                StringTokenizer st = new StringTokenizer(args);
 
                 public boolean hasNext() {
 
@@ -176,19 +176,19 @@ public class Command {
 
         private void parseArgs() {
 
-            if ( !alreadyParsed ) {
+            if (!alreadyParsed) {
 
                 ArrayList arrayList = new ArrayList();
 
                 Iterator it = iterator();
 
-                while ( it.hasNext() ) {
+                while (it.hasNext()) {
 
-                    arrayList.add( it.next() );
+                    arrayList.add(it.next());
 
                 }
 
-                argsArray = ( String[] ) arrayList.toArray( argsArray );
+                argsArray = (String[]) arrayList.toArray(argsArray);
 
                 alreadyParsed = true;
 

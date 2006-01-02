@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public interface ProxyFactory {
 
-    public void init(Properties props) ;
+    public void init(Properties props);
 
     public InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException;
 

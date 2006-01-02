@@ -8,6 +8,7 @@ public class ConnectionManagerConfig {
 
     public ConnectionManagerConfig() {
     }
+
     public ConnectionManagerConfig(Properties properties, boolean containerManagedSignOn) {
         this.properties = properties;
         this.containerManagedSignOn = containerManagedSignOn;

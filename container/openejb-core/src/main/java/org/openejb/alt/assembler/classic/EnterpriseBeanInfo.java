@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public abstract class EnterpriseBeanInfo extends InfoObject{
+public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public static final int ENTITY = 0;
 

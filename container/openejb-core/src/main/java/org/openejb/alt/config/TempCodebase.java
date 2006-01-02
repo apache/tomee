@@ -42,8 +42,8 @@ public class TempCodebase {
         if (codebase == null) {
             codebase = "CLASSPATH";
         }
-        TempCodebase tempCodebase = (TempCodebase)tempCodebases.get(codebase);
-        if (tempCodebase == null){
+        TempCodebase tempCodebase = (TempCodebase) tempCodebases.get(codebase);
+        if (tempCodebase == null) {
             tempCodebase = new TempCodebase(codebase);
             tempCodebases.put(codebase, tempCodebase);
         }

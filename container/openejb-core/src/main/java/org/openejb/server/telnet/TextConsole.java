@@ -16,9 +16,9 @@ import java.util.Vector;
 
 import org.openejb.util.Logger;
 
-public class TextConsole  {
+public class TextConsole {
 
-    Logger logger = Logger.getInstance( "OpenEJB.admin", "org.openejb.server.util.resources" );
+    Logger logger = Logger.getInstance("OpenEJB.admin", "org.openejb.server.util.resources");
 
     Properties props;
 
@@ -26,7 +26,7 @@ public class TextConsole  {
 
     }
 
-    public void init( Properties props ) throws Exception {
+    public void init(Properties props) throws Exception {
 
         this.props = props;
 
@@ -38,127 +38,127 @@ public class TextConsole  {
 
     PrintStream out = null;
 
-    public static final char ESC = ( char ) 27;
+    public static final char ESC = (char) 27;
 
-    public static final String TTY_Reset      = ESC + "[0m";
+    public static final String TTY_Reset = ESC + "[0m";
 
-    public static final String TTY_Bright     = ESC + "[1m";
+    public static final String TTY_Bright = ESC + "[1m";
 
-    public static final String TTY_Dim        = ESC + "[2m";
+    public static final String TTY_Dim = ESC + "[2m";
 
     public static final String TTY_Underscore = ESC + "[4m";
 
-    public static final String TTY_Blink      = ESC + "[5m";
+    public static final String TTY_Blink = ESC + "[5m";
 
-    public static final String TTY_Reverse    = ESC + "[7m";
+    public static final String TTY_Reverse = ESC + "[7m";
 
-    public static final String TTY_Hidden     = ESC + "[8m";
+    public static final String TTY_Hidden = ESC + "[8m";
 
     /* Foreground Colors */
 
-    public static final String TTY_FG_Black   = ESC + "[30m";
+    public static final String TTY_FG_Black = ESC + "[30m";
 
-    public static final String TTY_FG_Red     = ESC + "[31m";
+    public static final String TTY_FG_Red = ESC + "[31m";
 
-    public static final String TTY_FG_Green   = ESC + "[32m";
+    public static final String TTY_FG_Green = ESC + "[32m";
 
-    public static final String TTY_FG_Yellow  = ESC + "[33m";
+    public static final String TTY_FG_Yellow = ESC + "[33m";
 
-    public static final String TTY_FG_Blue    = ESC + "[34m";
+    public static final String TTY_FG_Blue = ESC + "[34m";
 
     public static final String TTY_FG_Magenta = ESC + "[35m";
 
-    public static final String TTY_FG_Cyan    = ESC + "[36m";
+    public static final String TTY_FG_Cyan = ESC + "[36m";
 
-    public static final String TTY_FG_White   = ESC + "[37m";
+    public static final String TTY_FG_White = ESC + "[37m";
 
     /* Background Colors */
 
-    public static final String TTY_BG_Black   = ESC + "[40m";
+    public static final String TTY_BG_Black = ESC + "[40m";
 
-    public static final String TTY_BG_Red     = ESC + "[41m";
+    public static final String TTY_BG_Red = ESC + "[41m";
 
-    public static final String TTY_BG_Green   = ESC + "[42m";
+    public static final String TTY_BG_Green = ESC + "[42m";
 
-    public static final String TTY_BG_Yellow  = ESC + "[43m";
+    public static final String TTY_BG_Yellow = ESC + "[43m";
 
-    public static final String TTY_BG_Blue    = ESC + "[44m";
+    public static final String TTY_BG_Blue = ESC + "[44m";
 
     public static final String TTY_BG_Magenta = ESC + "[45m";
 
-    public static final String TTY_BG_Cyan    = ESC + "[46m";
+    public static final String TTY_BG_Cyan = ESC + "[46m";
 
-    public static final String TTY_BG_White   = ESC + "[47m";
+    public static final String TTY_BG_White = ESC + "[47m";
 
     static String PROMPT = TTY_Reset + TTY_Bright + "[openejb]$ " + TTY_Reset;
 
-    protected void exec( InputStream input, PrintStream out ) {
+    protected void exec(InputStream input, PrintStream out) {
 
         DataInputStream in = new DataInputStream(input);
 
         while (!stop) {
 
-            prompt(in,out);
+            prompt(in, out);
 
         }
 
     }
 
-    protected void prompt( DataInputStream in, PrintStream out ) {
+    protected void prompt(DataInputStream in, PrintStream out) {
 
         try {
 
-            out.print( PROMPT );
+            out.print(PROMPT);
 
             out.flush();
 
             String commandline = in.readLine();
 
-            logger.debug( "command: " + commandline );
+            logger.debug("command: " + commandline);
 
             commandline = commandline.trim();
 
-            if ( commandline.length() < 1 ) return;
+            if (commandline.length() < 1) return;
 
             String command = commandline;
 
             Command.Arguments args = null;
 
-            int spacePosition = commandline.indexOf( ' ' );
+            int spacePosition = commandline.indexOf(' ');
 
-            int tabPosition = commandline.indexOf( '\t' );
+            int tabPosition = commandline.indexOf('\t');
 
-            if ( spacePosition != -1 || tabPosition != -1 ) {
+            if (spacePosition != -1 || tabPosition != -1) {
 
-                int cutPosition = ( spacePosition > tabPosition ? spacePosition : tabPosition );
+                int cutPosition = (spacePosition > tabPosition ? spacePosition : tabPosition);
 
-                command = commandline.substring( 0, cutPosition );
+                command = commandline.substring(0, cutPosition);
 
-                args = new Command.Arguments( commandline.substring( cutPosition + 1 ) );
+                args = new Command.Arguments(commandline.substring(cutPosition + 1));
 
             }
 
-            Command cmd = Command.getCommand( command );
+            Command cmd = Command.getCommand(command);
 
-            if ( cmd == null ) {
+            if (cmd == null) {
 
-                out.print( command );
+                out.print(command);
 
-                out.println( ": command not found" );
+                out.println(": command not found");
 
             } else {
 
-                cmd.exec( args, in, out );
+                cmd.exec(args, in, out);
 
             }
 
-        } catch ( UnsupportedOperationException e ) {
+        } catch (UnsupportedOperationException e) {
 
             this.stop = true;
 
-        } catch ( Throwable e ) {
+        } catch (Throwable e) {
 
-            e.printStackTrace( new PrintStream( out ) );
+            e.printStackTrace(new PrintStream(out));
 
             this.stop = true;
 
@@ -166,7 +166,7 @@ public class TextConsole  {
 
     }
 
-    protected void badCommand( DataInputStream in, PrintStream out ) throws IOException
+    protected void badCommand(DataInputStream in, PrintStream out) throws IOException
 
     {
 

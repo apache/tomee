@@ -30,7 +30,7 @@ public class AutoDeployer {
 
         /* Load resource list */
         this.resources = config.getConnector();
-        System.out.println("resources "+resources.length);
+        System.out.println("resources " + resources.length);
     }
 
     public void init() throws OpenEJBException {
@@ -60,7 +60,7 @@ public class AutoDeployer {
 
         ResourceRef[] refs = bean.getResourceRef();
 
-        if (refs.length > 1){
+        if (refs.length > 1) {
             throw new OpenEJBException("Beans with more that one resource-ref cannot be autodeployed;  there is no accurate way to determine how the references should be mapped.");
         }
 
@@ -68,19 +68,19 @@ public class AutoDeployer {
             deployment.addResourceLink(autoAssingResourceRef(refs[i]));
         }
 
-        if (bean.getType().equals("CMP_ENTITY")){
-        	if (bean.getHome() != null){
+        if (bean.getType().equals("CMP_ENTITY")) {
+            if (bean.getHome() != null) {
                 Class tempBean = loadClass(bean.getHome());
-                if (hasFinderMethods(tempBean)){
+                if (hasFinderMethods(tempBean)) {
                     throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
-            	}
-        	}
-        	if (bean.getLocalHome() != null){
+                }
+            }
+            if (bean.getLocalHome() != null) {
                 Class tempBean = loadClass(bean.getLocalHome());
-                if (hasFinderMethods(tempBean)){
+                if (hasFinderMethods(tempBean)) {
                     throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
-            	}
-        	}
+                }
+            }
         }
 
         return deployment;
@@ -95,13 +95,13 @@ public class AutoDeployer {
     }
 
     private boolean hasFinderMethods(Class bean)
-    throws OpenEJBException {
+            throws OpenEJBException {
 
         Method[] methods = bean.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().startsWith("find")
-                && !methods[i].getName().equals("findByPrimaryKey")) {
+                    && !methods[i].getName().equals("findByPrimaryKey")) {
                 return true;
             }
         }
@@ -119,21 +119,21 @@ public class AutoDeployer {
         Container[] cs = getUsableContainers(bean);
 
         if (cs.length == 0) {
-            throw new OpenEJBException("A container of type "+bean.getType()+" must be declared in the configuration file.");
-        } 
+            throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file.");
+        }
         return cs[0].getId();
     }
 
-	private ResourceLink autoAssingResourceRef(ResourceRef ref) throws OpenEJBException {
+    private ResourceLink autoAssingResourceRef(ResourceRef ref) throws OpenEJBException {
         if (resources.length == 0) {
-            throw new OpenEJBException("A Connector must be declared in the configuration file to satisfy the resource-ref "+ref.getResRefName());
-        } 
+            throw new OpenEJBException("A Connector must be declared in the configuration file to satisfy the resource-ref " + ref.getResRefName());
+        }
 
         ResourceLink link = new ResourceLink();
         link.setResRefName(ref.getResRefName());
         link.setResId(resources[0].getId());
         return link;
-	}
+    }
 
     private Container[] getUsableContainers(Bean bean) {
         return EjbJarUtils.getUsableContainers(containers, bean);

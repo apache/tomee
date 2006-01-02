@@ -12,8 +12,8 @@ public class Test extends Command {
         Command.register("test", Test.class);
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
-        try{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
+        try {
 
             InputStream file = new FileInputStream("print.txt");
             int b = file.read();
@@ -22,7 +22,7 @@ public class Test extends Command {
                 b = file.read();
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

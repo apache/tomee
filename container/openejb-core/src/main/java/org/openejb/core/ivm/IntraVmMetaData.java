@@ -26,30 +26,30 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
     protected byte type;
 
     public IntraVmMetaData(Class homeInterface, Class remoteInterface, byte typeOfBean) {
-        this(homeInterface,remoteInterface, null, typeOfBean);
+        this(homeInterface, remoteInterface, null, typeOfBean);
     }
 
     public IntraVmMetaData(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean) {
-        if(typeOfBean!=ENTITY && typeOfBean!=STATEFUL && typeOfBean!=STATELESS) {
-            if(typeOfBean==DeploymentInfo.CMP_ENTITY) {
-                typeOfBean=ENTITY;
-            }else {
-                throw new IllegalArgumentException("typeOfBean parameter not in range: "+typeOfBean);
+        if (typeOfBean != ENTITY && typeOfBean != STATEFUL && typeOfBean != STATELESS) {
+            if (typeOfBean == DeploymentInfo.CMP_ENTITY) {
+                typeOfBean = ENTITY;
+            } else {
+                throw new IllegalArgumentException("typeOfBean parameter not in range: " + typeOfBean);
             }
         }
-        if(homeInterface==null || remoteInterface==null) {
+        if (homeInterface == null || remoteInterface == null) {
             throw new IllegalArgumentException();
         }
-        if(typeOfBean==ENTITY && primaryKeyClass==null) {
+        if (typeOfBean == ENTITY && primaryKeyClass == null) {
             throw new IllegalArgumentException();
         }
         type = typeOfBean;
         homeClass = homeInterface;
         remoteClass = remoteInterface;
-            keyClass = primaryKeyClass;
-        }
+        keyClass = primaryKeyClass;
+    }
 
-    public Class getHomeInterfaceClass( ) {
+    public Class getHomeInterfaceClass() {
         return homeClass;
     }
 
@@ -57,15 +57,15 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
         return remoteClass;
     }
 
-    public Class getPrimaryKeyClass( ) {
-        if ( type == ENTITY )
+    public Class getPrimaryKeyClass() {
+        if (type == ENTITY)
             return keyClass;
-        else 
+        else
             throw new UnsupportedOperationException("Session objects are private resources and do not have primary keys");
     }
 
-    public boolean isSession( ) {
-        return(type == STATEFUL || type ==STATELESS);
+    public boolean isSession() {
+        return (type == STATEFUL || type == STATELESS);
     }
 
     public boolean isStatelessSession() {
@@ -80,26 +80,26 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
         return homeStub;
     }
 
-    protected Object writeReplace() throws ObjectStreamException{
+    protected Object writeReplace() throws ObjectStreamException {
 
         /*
          * If the meta data is being  copied between bean instances in a RPC 
          * call we use the IntraVmArtifact 
          */
-        if(IntraVmCopyMonitor.isIntraVmCopyOperation()){
+        if (IntraVmCopyMonitor.isIntraVmCopyOperation()) {
             return new IntraVmArtifact(this);
-        /* 
-         * If the meta data is referenced by a stateful bean that is being
-         * passivated by the container, we allow this object to be serialized. 
-         */
-        }else if(IntraVmCopyMonitor.isStatefulPassivationOperation()){
+            /*
+            * If the meta data is referenced by a stateful bean that is being
+            * passivated by the container, we allow this object to be serialized.
+            */
+        } else if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
             return this;
-        /*  
-         * If the meta data is serialized outside the core container system, 
-         * we allow the application server to handle it. 
-         */
-        }else{
-            BaseEjbProxyHandler handler = (BaseEjbProxyHandler)ProxyManager.getInvocationHandler(homeStub);
+            /*
+            * If the meta data is serialized outside the core container system,
+            * we allow the application server to handle it.
+            */
+        } else {
+            BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
             return org.openejb.OpenEJB.getApplicationServer().getEJBMetaData(handler.getProxyInfo());
         }
     }

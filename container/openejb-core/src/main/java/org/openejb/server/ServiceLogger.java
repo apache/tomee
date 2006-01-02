@@ -3,12 +3,13 @@ package org.openejb.server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.openejb.*;
 import org.openejb.util.*;
 
 public class ServiceLogger implements ServerService {
 
-    Messages messages = new Messages( "org.openejb.server.util.resources" );
+    Messages messages = new Messages("org.openejb.server.util.resources");
     Logger logger;
 
     boolean logOnSuccess;
@@ -16,67 +17,68 @@ public class ServiceLogger implements ServerService {
 
     ServerService next;
 
-    public ServiceLogger(ServerService next){
+    public ServiceLogger(ServerService next) {
         this.next = next;
     }
 
-    public void init(Properties props) throws Exception{
+    public void init(Properties props) throws Exception {
 
-        String logCategory = "OpenEJB.server.service."+getName();
+        String logCategory = "OpenEJB.server.service." + getName();
 
-        logger = Logger.getInstance( logCategory, "org.openejb.server.util.resources" );
+        logger = Logger.getInstance(logCategory, "org.openejb.server.util.resources");
 
         next.init(props);
     }
 
-    public void start() throws ServiceException{
+    public void start() throws ServiceException {
 
         next.start();
     }
 
-    public void stop() throws ServiceException{
+    public void stop() throws ServiceException {
 
         next.stop();
     }
 
-    public void service(Socket socket) throws ServiceException, IOException{
+    public void service(Socket socket) throws ServiceException, IOException {
 
         InetAddress client = socket.getInetAddress();
         org.apache.log4j.MDC.put("HOST", client.getHostName());
         org.apache.log4j.MDC.put("SERVER", getName());
 
-        try{
+        try {
 
 //            logger.info("[request] "+socket.getPort()+" - "+client.getHostName());
             next.service(socket);
 //            logSuccess();
-        } catch (Exception e){
-            logger.error("[failure] "+socket.getPort()+" - "+client.getHostName()+": "+e.getMessage());
+        } catch (Exception e) {
+            logger.error("[failure] " + socket.getPort() + " - " + client.getHostName() + ": " + e.getMessage());
 
             e.printStackTrace();
         }
     }
 
-    private void logIncoming(){
+    private void logIncoming() {
         logger.info("incomming request");
     }
-    private void logSuccess(){
+
+    private void logSuccess() {
         logger.info("successful request");
     }
 
-    private void logFailure(Exception e){
+    private void logFailure(Exception e) {
         logger.error(e.getMessage());
     }
 
-    public String getName(){
+    public String getName() {
         return next.getName();
     }
 
-    public String getIP(){
+    public String getIP() {
         return next.getIP();
     }
 
-    public int getPort(){
+    public int getPort() {
         return next.getPort();
     }
 

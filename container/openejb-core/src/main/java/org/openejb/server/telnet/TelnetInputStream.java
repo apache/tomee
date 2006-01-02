@@ -1,15 +1,17 @@
 package org.openejb.server.telnet;
 
-import java.io.FilterInputStream;import java.io.IOException;import java.io.InputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
-public class TelnetInputStream extends FilterInputStream implements TelnetCodes{
+public class TelnetInputStream extends FilterInputStream implements TelnetCodes {
 
     private TelnetOption[] options = new TelnetOption[256];
 
     private OutputStream out = null;
 
-    public TelnetInputStream(InputStream in, OutputStream out) throws IOException{
+    public TelnetInputStream(InputStream in, OutputStream out) throws IOException {
         super(in);
         this.out = out;
         negotiateOption(DONT, 1);
@@ -17,7 +19,7 @@ public class TelnetInputStream extends FilterInputStream implements TelnetCodes{
         negotiateOption(DONT, 24);
         negotiateOption(DONT, 33);
         negotiateOption(DONT, 34);
-   }
+    }
 
     public int read() throws IOException {
         int b = super.read();
@@ -32,39 +34,49 @@ public class TelnetInputStream extends FilterInputStream implements TelnetCodes{
         return b;
     }
 
-    private void processCommand() throws IOException{
+    private void processCommand() throws IOException {
 
         print("C: IAC ");
 
         int command = super.read();
 
-        switch ( command ) {
-            case WILL: senderWillEnableOption(super.read()); break;
-            case DO:   pleaseDoEnableOption(super.read()); break;
-            case WONT: senderWontEnableOption(super.read()); break;
-            case DONT: pleaseDontEnableOption(super.read()); break;
-            default: unimplementedCommand(command); break;
+        switch (command) {
+            case WILL:
+                senderWillEnableOption(super.read());
+                break;
+            case DO:
+                pleaseDoEnableOption(super.read());
+                break;
+            case WONT:
+                senderWontEnableOption(super.read());
+                break;
+            case DONT:
+                pleaseDontEnableOption(super.read());
+                break;
+            default:
+                unimplementedCommand(command);
+                break;
         }
 
     }
 
-    private void unimplementedCommand(int command){
-        println(command+": command not found");
+    private void unimplementedCommand(int command) {
+        println(command + ": command not found");
     }
 
     private void senderWillEnableOption(int optionID) throws IOException {
 
-        println("WILL "+optionID);
+        println("WILL " + optionID);
         TelnetOption option = getOption(optionID);
 
-        if ( option.hasBeenNegotiated() ) return;
+        if (option.hasBeenNegotiated()) return;
 
-        if ( option.isInNegotiation() ) {
+        if (option.isInNegotiation()) {
             option.enable();
-        } else if ( !option.isInNegotiation() && option.isSupported() ) {
+        } else if (!option.isInNegotiation() && option.isSupported()) {
             negotiateOption(DO, optionID);
             option.enable();
-        } else if ( !option.isInNegotiation() && !option.isSupported() ) {
+        } else if (!option.isInNegotiation() && !option.isSupported()) {
             negotiateOption(DONT, optionID);
             option.disable();
         }
@@ -72,29 +84,29 @@ public class TelnetInputStream extends FilterInputStream implements TelnetCodes{
 
     private void pleaseDoEnableOption(int optionID) throws IOException {
 
-        println("DO "+optionID);
+        println("DO " + optionID);
         TelnetOption option = getOption(optionID);
 
-        if ( option.hasBeenNegotiated() ) return;
+        if (option.hasBeenNegotiated()) return;
 
-        if ( option.isInNegotiation() ) {
+        if (option.isInNegotiation()) {
             option.enable();
-        } else if ( !option.isInNegotiation() && option.isSupported() ) {
+        } else if (!option.isInNegotiation() && option.isSupported()) {
             negotiateOption(WILL, optionID);
             option.enable();
-        } else if ( !option.isInNegotiation() && !option.isSupported() ) {
+        } else if (!option.isInNegotiation() && !option.isSupported()) {
             negotiateOption(WONT, optionID);
             option.disable();
         }
     }
 
     private void senderWontEnableOption(int optionID) throws IOException {
-        println("WONT "+optionID);
+        println("WONT " + optionID);
         TelnetOption option = getOption(optionID);
 
-        if ( option.hasBeenNegotiated() ) return;
+        if (option.hasBeenNegotiated()) return;
 
-        if ( !option.isInNegotiation() ) {
+        if (!option.isInNegotiation()) {
             negotiateOption(DONT, optionID);
         }
         option.disable();
@@ -102,28 +114,28 @@ public class TelnetInputStream extends FilterInputStream implements TelnetCodes{
 
     private void pleaseDontEnableOption(int optionID) throws IOException {
 
-        println("DONT "+optionID);
+        println("DONT " + optionID);
 
         TelnetOption option = getOption(optionID);
 
-        if ( option.hasBeenNegotiated() ) return;
+        if (option.hasBeenNegotiated()) return;
 
-        if ( !option.isInNegotiation() ) {
+        if (!option.isInNegotiation()) {
             negotiateOption(WONT, optionID);
         }
         option.disable();
     }
 
-    private void println(String s){
+    private void println(String s) {
 
     }
 
-    private void print(String s){
+    private void print(String s) {
 
     }
 
     private void negotiateOption(int negotiate, int optionID)
-    throws IOException {
+            throws IOException {
         TelnetOption option = getOption(optionID);
         option.inNegotiation = true;
 

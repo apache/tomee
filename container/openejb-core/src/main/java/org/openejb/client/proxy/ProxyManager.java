@@ -9,30 +9,30 @@ public class ProxyManager {
 
     static {
         String version = null;
-        Class factory  = null;        
+        Class factory = null;
         try {
             version = System.getProperty("java.vm.version");
-        } catch ( Exception e ) {
+        } catch (Exception e) {
 
             throw new RuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
         }
         ClassLoader cl = getContextClassLoader();
 
-        if ( version.startsWith("1.1") ) {
-            throw new RuntimeException("This VM version is not supported: "+version);
-        } else if ( version.startsWith("1.2") ) {
+        if (version.startsWith("1.1")) {
+            throw new RuntimeException("This VM version is not supported: " + version);
+        } else if (version.startsWith("1.2")) {
             defaultFactoryName = "JDK 1.2 ProxyFactory";
 
             try {
                 Class.forName("org.opentools.proxies.Proxy", true, cl);
-            } catch ( Exception e ) {
+            } catch (Exception e) {
 
                 throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.opentools.proxies.Proxy.  This class is needed for generating proxies in JDK 1.2 VMs.");
             }
 
             try {
                 factory = Class.forName("org.openejb.client.proxy.Jdk12ProxyFactory", true, cl);
-            } catch ( Exception e ) {
+            } catch (Exception e) {
 
                 throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.openejb.client.proxy.Jdk12ProxyFactory.");
             }
@@ -41,18 +41,18 @@ public class ProxyManager {
 
             try {
                 factory = Class.forName("org.openejb.client.proxy.Jdk13ProxyFactory", true, cl);
-            } catch ( Exception e ) {
+            } catch (Exception e) {
 
                 throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.openejb.client.proxy.Jdk13ProxyFactory.");
             }
-        } 
+        }
 
         try {
 
-            defaultFactory = (ProxyFactory)factory.newInstance();
-            defaultFactory.init( new Properties() );
+            defaultFactory = (ProxyFactory) factory.newInstance();
+            defaultFactory.init(new Properties());
 
-        } catch ( Exception e ) {
+        } catch (Exception e) {
 
             throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.openejb.client.proxy.Jdk13ProxyFactory.");
         }
@@ -66,6 +66,7 @@ public class ProxyManager {
     public static String getDefaultFactoryName() {
         return defaultFactoryName;
     }
+
     public static InvocationHandler getInvocationHandler(Object proxy) {
         return defaultFactory.getInvocationHandler(proxy);
     }
@@ -74,12 +75,12 @@ public class ProxyManager {
         return defaultFactory.setInvocationHandler(proxy, handler);
     }
 
-    public static Class getProxyClass(Class interfaceType) throws IllegalAccessException{
+    public static Class getProxyClass(Class interfaceType) throws IllegalAccessException {
         return getProxyClass(new Class[]{interfaceType});
     }
 
-    public static Class getProxyClass(Class[] interfaces) throws IllegalAccessException{
-        return defaultFactory.getProxyClass( interfaces);
+    public static Class getProxyClass(Class[] interfaces) throws IllegalAccessException {
+        return defaultFactory.getProxyClass(interfaces);
     }
 
     public static Object newProxyInstance(Class interfaceType, InvocationHandler h) throws IllegalAccessException {
@@ -100,11 +101,11 @@ public class ProxyManager {
 
     public static ClassLoader getContextClassLoader() {
         return (ClassLoader) java.security.AccessController.doPrivileged(
- new java.security.PrivilegedAction() {
-                public Object run() {
-                    return Thread.currentThread().getContextClassLoader();
+                new java.security.PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
                 }
-            }
         );
     }
 }

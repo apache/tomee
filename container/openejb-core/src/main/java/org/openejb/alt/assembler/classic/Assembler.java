@@ -17,19 +17,22 @@ import org.openejb.core.DeploymentInfo;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.OpenEJBErrorHandler;
 import org.openejb.util.SafeToolkit;
-public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler{
+
+public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler {
     private org.openejb.core.ContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private org.openejb.spi.SecurityService securityService;
     private HashMap remoteJndiContexts = null;
 
-    public org.openejb.spi.ContainerSystem getContainerSystem(){
+    public org.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
     }
-    public TransactionManager getTransactionManager(){
+
+    public TransactionManager getTransactionManager() {
         return transactionManager;
     }
-    public SecurityService getSecurityService(){
+
+    public SecurityService getSecurityService() {
         return securityService;
     }
 
@@ -38,10 +41,10 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     private String INVALID_CONNECTION_MANAGER_ERROR = "Invalid connection manager specified for connector identity = ";
 
-    public Assembler(){
+    public Assembler() {
     }
 
-    public void init(Properties props) throws OpenEJBException{
+    public void init(Properties props) throws OpenEJBException {
         this.props = props;
 
         /* Get Configuration
@@ -68,15 +71,15 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
-    public void build() throws OpenEJBException{
-        try{
-        containerSystem = buildContainerSystem(config);
-        }catch(OpenEJBException ae){
+    public void build() throws OpenEJBException {
+        try {
+            containerSystem = buildContainerSystem(config);
+        } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
              * Let the exception pass through to the top and be logged.
              */
-             throw ae;
-        }catch(Exception e){
+            throw ae;
+        } catch (Exception e) {
             /* General Exceptions at this level are too generic and difficult to debug.
              * These exceptions are considered unknown bugs and are fatal.
              * If you get an error at this level, please trap and handle the error
@@ -87,7 +90,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         }
     }
 
-    public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo)throws Exception{
+    public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
         /*[1] Assemble ProxyFactory
 
@@ -138,10 +141,10 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
             }
         }
         /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-        if(configInfo.facilities.remoteJndiContexts!=null){
-            for(int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++){
-                javax.naming.InitialContext cntx = assembleRemoteJndiContext(configInfo.facilities.remoteJndiContexts[i]);   
-                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/"+configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
+        if (configInfo.facilities.remoteJndiContexts != null) {
+            for (int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++) {
+                javax.naming.InitialContext cntx = assembleRemoteJndiContext(configInfo.facilities.remoteJndiContexts[i]);
+                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
             }
 
         }

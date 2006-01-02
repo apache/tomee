@@ -10,47 +10,50 @@ import javax.naming.spi.ObjectFactory;
 
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.ThreadContext;
-public class javaURLContextFactory implements ObjectFactory,  InitialContextFactory {
+
+public class javaURLContextFactory implements ObjectFactory, InitialContextFactory {
 
     public Context getInitialContext(Hashtable env) throws NamingException {
         return getContext();
     }
-    public Object getObjectInstance( Object obj, Name name, Context nameCtx, Hashtable env )
-	throws NamingException {
-	    if(obj == null){
-	        /* 
-	           A null obj ref means the NamingManager is requesting 
-	           a Context that can resolve the 'java:' schema
-	        */
-	        return getContext();
-    	}else if(obj instanceof java.lang.String){
-    	    String string = (String)obj;
-    	    if(string.startsWith("java:comp")||string.startsWith("java:openejb")){
-    	        /*
-    	         If the obj is a URL String with the 'java:' schema 
-    	         resolve the URL in the context of this threads JNDI ENC
-    	         */
-    	        string = string.substring(string.indexOf(':'));
-    	        Context encRoot = getContext();
-    	        return encRoot.lookup(string);
-    	    }
-    	}
-    	return null;
+
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable env)
+            throws NamingException {
+        if (obj == null) {
+            /*
+                  A null obj ref means the NamingManager is requesting
+                  a Context that can resolve the 'java:' schema
+               */
+            return getContext();
+        } else if (obj instanceof java.lang.String) {
+            String string = (String) obj;
+            if (string.startsWith("java:comp") || string.startsWith("java:openejb")) {
+                /*
+                     If the obj is a URL String with the 'java:' schema
+                     resolve the URL in the context of this threads JNDI ENC
+                     */
+                string = string.substring(string.indexOf(':'));
+                Context encRoot = getContext();
+                return encRoot.lookup(string);
+            }
+        }
+        return null;
     }
-    public Object getObjectInstance( Object obj, Hashtable env )
-	throws NamingException {
-	    return getContext();
-	}
-	    
-    public Context getContext(){
+
+    public Object getObjectInstance(Object obj, Hashtable env)
+            throws NamingException {
+        return getContext();
+    }
+
+    public Context getContext() {
         Context jndiCtx = null;
 
-    	if( !ThreadContext.isValid() ){
+        if (!ThreadContext.isValid()) {
             return org.openejb.OpenEJB.getJNDIContext();
         }
-    	    
+
         DeploymentInfo di = ThreadContext.getThreadContext().getDeploymentInfo();
-        if ( di != null ) {
+        if (di != null) {
             return di.getJndiEnc();
         } else {
             return org.openejb.OpenEJB.getJNDIContext();

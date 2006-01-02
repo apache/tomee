@@ -23,7 +23,7 @@ public class EjbServer implements org.openejb.server.ServerService {
         server.init(props);
     }
 
-    public void service(Socket socket) throws ServiceException,IOException {
+    public void service(Socket socket) throws ServiceException, IOException {
         ServerFederation.setApplicationServer(server);
         server.service(socket);
 

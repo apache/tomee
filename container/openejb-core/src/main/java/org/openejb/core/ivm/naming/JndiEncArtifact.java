@@ -12,26 +12,28 @@ import org.openejb.core.ThreadContext;
   ThreadContext which makes it possible to lookup the correct IvmContext and swap in place of 
   this object.
 */
+
 public class JndiEncArtifact implements java.io.Serializable {
     String path = new String();
 
-    public JndiEncArtifact(IvmContext context){
+    public JndiEncArtifact(IvmContext context) {
         NameNode node = context.mynode;
-        do{
-           path = node.atomicName+"/"+path;
-           node = node.parent;
-        }while(node!=null);
+        do {
+            path = node.atomicName + "/" + path;
+            node = node.parent;
+        } while (node != null);
     }
-    public Object readResolve() throws java.io.ObjectStreamException{
+
+    public Object readResolve() throws java.io.ObjectStreamException {
         ThreadContext thrdCntx = ThreadContext.getThreadContext();
         DeploymentInfo deployment = thrdCntx.getDeploymentInfo();
         javax.naming.Context cntx = deployment.getJndiEnc();
-        try{
+        try {
             Object obj = cntx.lookup(path);
-            if(obj==null)
+            if (obj == null)
                 throw new java.io.InvalidObjectException("JNDI ENC context reference could not be properly resolved when bean instance was activated");
             return obj;
-        }catch(javax.naming.NamingException e){
+        } catch (javax.naming.NamingException e) {
             throw new java.io.InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated");
         }
     }

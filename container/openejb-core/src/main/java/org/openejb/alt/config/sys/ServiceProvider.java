@@ -7,13 +7,13 @@
 
 package org.openejb.alt.config.sys;
 
-
 //---------------------------------/
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
@@ -21,8 +21,6 @@ import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.ContentHandler;
 
 public class ServiceProvider implements java.io.Serializable {
-
-
 
 
     private java.lang.String _id;
@@ -42,58 +40,45 @@ public class ServiceProvider implements java.io.Serializable {
     private org.openejb.alt.config.sys.Lookup _lookup;
 
 
-
-
     public ServiceProvider() {
         super();
         setContent("");
     }
 
 
-
-
-    public java.lang.String getClassName()
-    {
+    public java.lang.String getClassName() {
         return this._className;
     }
 
-    public java.lang.String getContent()
-    {
+    public java.lang.String getContent() {
         return this._content;
     }
 
-    public java.lang.String getDescription()
-    {
+    public java.lang.String getDescription() {
         return this._description;
     }
 
-    public java.lang.String getDisplayName()
-    {
+    public java.lang.String getDisplayName() {
         return this._displayName;
     }
 
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this._id;
     }
 
-    public org.openejb.alt.config.sys.Lookup getLookup()
-    {
+    public org.openejb.alt.config.sys.Lookup getLookup() {
         return this._lookup;
     }
 
-    public org.openejb.alt.config.sys.PropertiesFile getPropertiesFile()
-    {
+    public org.openejb.alt.config.sys.PropertiesFile getPropertiesFile() {
         return this._propertiesFile;
     }
 
-    public java.lang.String getProviderType()
-    {
+    public java.lang.String getProviderType() {
         return this._providerType;
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         try {
             validate();
         }
@@ -104,68 +89,56 @@ public class ServiceProvider implements java.io.Serializable {
     }
 
     public void marshal(java.io.Writer out)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, out);
     }
 
     public void marshal(org.xml.sax.ContentHandler handler)
-        throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
-        
+            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
+
         Marshaller.marshal(this, handler);
     }
 
-    public void setClassName(java.lang.String className)
-    {
+    public void setClassName(java.lang.String className) {
         this._className = className;
     }
 
-    public void setContent(java.lang.String content)
-    {
+    public void setContent(java.lang.String content) {
         this._content = content;
     }
 
-    public void setDescription(java.lang.String description)
-    {
+    public void setDescription(java.lang.String description) {
         this._description = description;
     }
 
-    public void setDisplayName(java.lang.String displayName)
-    {
+    public void setDisplayName(java.lang.String displayName) {
         this._displayName = displayName;
     }
 
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this._id = id;
     }
 
-    public void setLookup(org.openejb.alt.config.sys.Lookup lookup)
-    {
+    public void setLookup(org.openejb.alt.config.sys.Lookup lookup) {
         this._lookup = lookup;
     }
 
-    public void setPropertiesFile(org.openejb.alt.config.sys.PropertiesFile propertiesFile)
-    {
+    public void setPropertiesFile(org.openejb.alt.config.sys.PropertiesFile propertiesFile) {
         this._propertiesFile = propertiesFile;
     }
 
-    public void setProviderType(java.lang.String providerType)
-    {
+    public void setProviderType(java.lang.String providerType) {
         this._providerType = providerType;
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
-        throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
         return (org.openejb.alt.config.sys.ServiceProvider) Unmarshaller.unmarshal(org.openejb.alt.config.sys.ServiceProvider.class, reader);
     }
 
     public void validate()
-        throws org.exolab.castor.xml.ValidationException
-    {
+            throws org.exolab.castor.xml.ValidationException {
         org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
         validator.validate(this);
     }

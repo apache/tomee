@@ -15,6 +15,7 @@ import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
+
 public class JNDIContext implements Serializable, InitialContextFactory, Context, RequestMethods, ResponseCodes {
 
     private transient String tail = "/";
@@ -22,34 +23,35 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     private transient ClientMetaData client;
     private transient Hashtable env;
 
-    JNDIContext(Hashtable environment) throws NamingException{
-        init( environment );
+    JNDIContext(Hashtable environment) throws NamingException {
+        init(environment);
     }
 
-    public JNDIContext(){
+    public JNDIContext() {
     }
 
     /*
      * A neater version of clone
      */
-    public JNDIContext(JNDIContext that){
-        this.tail   = that.tail;    
+    public JNDIContext(JNDIContext that) {
+        this.tail = that.tail;
         this.server = that.server;
         this.client = that.client;
-        this.env    = (Hashtable)that.env.clone();
+        this.env = (Hashtable) that.env.clone();
     }
 
-    public void init(Hashtable environment) throws NamingException{
+    public void init(Hashtable environment) throws NamingException {
     }
 
     private JNDIResponse request(JNDIRequest req) throws Exception {
         return (JNDIResponse) Client.request(req, new JNDIResponse(), server);
     }
 
-    public static void print(String s){
+    public static void print(String s) {
 
     }
-    public static void println(String s){
+
+    public static void println(String s) {
 
     }
 
@@ -57,14 +59,14 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
-    public Context getInitialContext(Hashtable environment) throws NamingException{
-        if ( environment == null )
+    public Context getInitialContext(Hashtable environment) throws NamingException {
+        if (environment == null)
             throw new NamingException("Invalid Argument, hashtable cannot be null.");
         else
-            env = (Hashtable)environment.clone();
+            env = (Hashtable) environment.clone();
 
-        String userID    = (String) env.get(Context.SECURITY_PRINCIPAL);
-        String psswrd    = (String) env.get(Context.SECURITY_CREDENTIALS);
+        String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
+        String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         Object serverURL = env.get(Context.PROVIDER_URL);
 
         if (serverURL == null) serverURL = "localhost:4201";
@@ -72,25 +74,25 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         if (psswrd == null) psswrd = "anon";
 
         URL url;
-        if ( serverURL instanceof String ) {
+        if (serverURL instanceof String) {
             try {
-                url = new URL( "http://"+serverURL );
-            } catch (Exception e){
+                url = new URL("http://" + serverURL);
+            } catch (Exception e) {
                 e.printStackTrace();
-                throw new ConfigurationException("Invalid provider URL: "+serverURL);
+                throw new ConfigurationException("Invalid provider URL: " + serverURL);
             }
-        } else if ( serverURL instanceof URL ) {
-            url = (URL)serverURL;
+        } else if (serverURL instanceof URL) {
+            url = (URL) serverURL;
         } else {
-            throw new ConfigurationException("Invalid provider URL: "+serverURL);
+            throw new ConfigurationException("Invalid provider URL: " + serverURL);
         }
 
         try {
             server = new ServerMetaData();
-            server.setAddress(InetAddress.getByName( url.getHost() ));
+            server.setAddress(InetAddress.getByName(url.getHost()));
             server.setPort(url.getPort());
-        } catch (UnknownHostException  e){
-            throw new ConfigurationException("Invalid provider URL:"+serverURL+": host unkown: "+e.getMessage());
+        } catch (UnknownHostException e) {
+            throw new ConfigurationException("Invalid provider URL:" + serverURL + ": host unkown: " + e.getMessage());
         }
 
         authenticate(userID, psswrd);
@@ -98,16 +100,16 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         return this;
     }
 
-    public void authenticate(String userID, String psswrd) throws javax.naming.AuthenticationException{
+    public void authenticate(String userID, String psswrd) throws javax.naming.AuthenticationException {
 
-        AuthenticationRequest  req = new AuthenticationRequest(userID, psswrd);
+        AuthenticationRequest req = new AuthenticationRequest(userID, psswrd);
         AuthenticationResponse res = null;
 
-	try {
-	    res = requestAuthorization(req);
-	} catch (java.rmi.RemoteException e) {
-	    throw new javax.naming.AuthenticationException(e.getLocalizedMessage());
-	}
+        try {
+            res = requestAuthorization(req);
+        } catch (java.rmi.RemoteException e) {
+            throw new javax.naming.AuthenticationException(e.getLocalizedMessage());
+        }
 
         switch (res.getResponseCode()) {
             case AUTH_GRANTED:
@@ -122,7 +124,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
     }
 
-    public EJBHomeProxy createEJBHomeProxy(EJBMetaDataImpl ejbData){
+    public EJBHomeProxy createEJBHomeProxy(EJBMetaDataImpl ejbData) {
 
         EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
         EJBHomeProxy proxy = handler.createEJBHomeProxy();
@@ -134,28 +136,28 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     public Object lookup(String name) throws NamingException {
 
-        if ( name == null ) throw new InvalidNameException("The name cannot be null");
-        else if ( name.equals("") ) return new JNDIContext(this);
-        else if ( !name.startsWith("/") ) name = tail+name;
+        if (name == null) throw new InvalidNameException("The name cannot be null");
+        else if (name.equals("")) return new JNDIContext(this);
+        else if (!name.startsWith("/")) name = tail + name;
 
         JNDIRequest req = new JNDIRequest();
-        req.setRequestMethod( JNDIRequest.JNDI_LOOKUP );
-        req.setRequestString( name );
+        req.setRequestMethod(JNDIRequest.JNDI_LOOKUP);
+        req.setRequestString(name);
 
         JNDIResponse res = null;
-        try{
+        try {
             res = request(req);
-        } catch (Exception e){
+        } catch (Exception e) {
 
-            throw new javax.naming.NamingException("Cannot lookup "+name+": Received error: "+e.getMessage());
+            throw new javax.naming.NamingException("Cannot lookup " + name + ": Received error: " + e.getMessage());
         }
 
-        switch ( res.getResponseCode() ) {
+        switch (res.getResponseCode()) {
             case JNDI_EJBHOME:
 
-                return createEJBHomeProxy( (EJBMetaDataImpl)res.getResult() );
+                return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
 
-            case JNDI_OK:    
+            case JNDI_OK:
                 return res.getResult();
 
             case JNDI_CONTEXT:
@@ -164,7 +166,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 subCtx.tail = name;
                 return subCtx;
 
-            case JNDI_NOT_FOUND:    
+            case JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " not found");
 
             case JNDI_NAMING_EXCEPTION:
@@ -176,7 +178,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             case JNDI_ERROR:
                 throw (Error) res.getResult();
             default:
-                throw new RuntimeException("Invalid response from server :"+res.getResponseCode());
+                throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
         }
     }
 
@@ -233,7 +235,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public Hashtable getEnvironment() throws NamingException {
-        return (Hashtable)env.clone();
+        return (Hashtable) env.clone();
     }
 
     public String getNameInNamespace() throws NamingException {
@@ -270,12 +272,12 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public void rename(String oldname, String newname)
-    throws NamingException {
+            throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
 
     public void rename(Name oldname, Name newname)
-    throws NamingException {
+            throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
 
@@ -288,7 +290,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public Context createSubcontext(String name)
-    throws NamingException {
+            throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
 

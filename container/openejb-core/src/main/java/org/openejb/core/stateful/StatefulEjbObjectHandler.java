@@ -9,25 +9,25 @@ import org.openejb.util.proxy.ProxyManager;
 
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
-    public StatefulEjbObjectHandler(RpcContainer container, Object pk, Object depID){
+    public StatefulEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
         super(container, pk, depID);
     }
 
-    public Object getRegistryId(){
+    public Object getRegistryId() {
         return primaryKey;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable{
-        throw new RemoteException("Session objects are private resources and do not have primary keys");        
+    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+        throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler)ProxyManager.getInvocationHandler(proxy);
-        return new Boolean( primaryKey.equals(handler.primaryKey) );
+        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        return new Boolean(primaryKey.equals(handler.primaryKey));
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
         Object value = container.invoke(deploymentID, method, args, primaryKey, getThreadSpecificSecurityIdentity());
 

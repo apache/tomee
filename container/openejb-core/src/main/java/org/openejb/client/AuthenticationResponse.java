@@ -10,34 +10,34 @@ public class AuthenticationResponse implements Response {
     private transient ClientMetaData identity;
     private transient ServerMetaData server;
 
-    public AuthenticationResponse(){
+    public AuthenticationResponse() {
     }
 
-    public AuthenticationResponse(int code){
+    public AuthenticationResponse(int code) {
         responseCode = code;
     }
 
-    public int getResponseCode(){
+    public int getResponseCode() {
         return responseCode;
     }
 
-    public ClientMetaData getIdentity(){
+    public ClientMetaData getIdentity() {
         return identity;
     }
 
-    public ServerMetaData getServer(){
+    public ServerMetaData getServer() {
         return server;
     }
 
-    public void setResponseCode(int responseCode){
+    public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
 
-    public void setIdentity(ClientMetaData identity){
+    public void setIdentity(ClientMetaData identity) {
         this.identity = identity;
     }
 
-    public void setServer(ServerMetaData server){
+    public void setServer(ServerMetaData server) {
         this.server = server;
     }
 
@@ -51,8 +51,8 @@ public class AuthenticationResponse implements Response {
             case AUTH_REDIRECT:
                 identity = new ClientMetaData();
                 identity.readExternal(in);
-                server   = new ServerMetaData();
-                server.readExternal( in );
+                server = new ServerMetaData();
+                server.readExternal(in);
                 break;
             case AUTH_DENIED:
                 break;
@@ -60,14 +60,14 @@ public class AuthenticationResponse implements Response {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeByte((byte)responseCode);
+        out.writeByte((byte) responseCode);
         switch (responseCode) {
             case AUTH_GRANTED:
                 identity.writeExternal(out);
                 break;
             case AUTH_REDIRECT:
                 identity.writeExternal(out);
-                server.writeExternal( out );
+                server.writeExternal(out);
                 break;
             case AUTH_DENIED:
                 break;

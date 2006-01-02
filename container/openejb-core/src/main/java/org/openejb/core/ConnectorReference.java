@@ -14,19 +14,21 @@ import org.openejb.core.ivm.naming.Reference;
   in the implementation object.
 
 */
-public class ConnectorReference implements Reference{
+
+public class ConnectorReference implements Reference {
     private ConnectionManager conMngr;
     private ManagedConnectionFactory mngedConFactory;
 
-    public ConnectorReference(ConnectionManager cm, ManagedConnectionFactory mcf){
+    public ConnectorReference(ConnectionManager cm, ManagedConnectionFactory mcf) {
         conMngr = cm;
         mngedConFactory = mcf;
     }
-    public Object getObject( ) throws NamingException{
-        try{
-        return mngedConFactory.createConnectionFactory(conMngr);
-        }catch(javax.resource.ResourceException re){
-            throw new javax.naming.NamingException("Could not create ConnectionFactory from "+mngedConFactory.getClass());
+
+    public Object getObject() throws NamingException {
+        try {
+            return mngedConFactory.createConnectionFactory(conMngr);
+        } catch (javax.resource.ResourceException re) {
+            throw new javax.naming.NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass());
         }
 
     }

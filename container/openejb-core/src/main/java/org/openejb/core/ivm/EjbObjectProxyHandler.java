@@ -20,31 +20,41 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getEJBHome", new Integer(5));
     }
 
-    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID){
+    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID) {
         super(container, pk, depID);
     }
 
     public abstract Object getRegistryId();
 
-    public Object _invoke(Object p, Method m, Object[] a) throws Throwable{
-        java.lang.Object retValue=null;
-        java.lang.Throwable exc=null;
+    public Object _invoke(Object p, Method m, Object[] a) throws Throwable {
+        java.lang.Object retValue = null;
+        java.lang.Throwable exc = null;
 
-        try{
+        try {
             if (logger.isInfoEnabled()) {
-                logger.info("invoking method "+m.getName()+" on "+deploymentID+" with identity "+primaryKey);
+                logger.info("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
             }
-            Integer operation = (Integer)dispatchTable.get(m.getName());
+            Integer operation = (Integer) dispatchTable.get(m.getName());
 
-            if(operation==null) {
-                retValue = businessMethod(m,a,p);
-            }else {
-                switch(operation.intValue()) {
-                    case 1: retValue = getHandle(m,a,p); break;
-                    case 2: retValue = getPrimaryKey(m,a,p); break;
-                    case 3: retValue = isIdentical(m,a,p); break;
-                    case 4: retValue = remove(m,a,p); break;
-                    case 5: retValue = getEJBHome(m,a,p); break;
+            if (operation == null) {
+                retValue = businessMethod(m, a, p);
+            } else {
+                switch (operation.intValue()) {
+                    case 1:
+                        retValue = getHandle(m, a, p);
+                        break;
+                    case 2:
+                        retValue = getPrimaryKey(m, a, p);
+                        break;
+                    case 3:
+                        retValue = isIdentical(m, a, p);
+                        break;
+                    case 4:
+                        retValue = remove(m, a, p);
+                        break;
+                    case 5:
+                        retValue = getEJBHome(m, a, p);
+                        break;
                     default:
                         throw new RuntimeException("Inconsistent internal state");
                 }
@@ -66,88 +76,89 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * See Section 2.2.1.2.5 Remote References of the OpenEJB specification.
             */
 
-            if(retValue instanceof SpecialProxyInfo)
-                retValue = ((SpecialProxyInfo)retValue).getProxy();
+            if (retValue instanceof SpecialProxyInfo)
+                retValue = ((SpecialProxyInfo) retValue).getProxy();
 
             return retValue;
 
-        /*
-         * The ire is thrown by the container system and propagated by
-         * the server to the stub.
-         */
-        }catch ( org.openejb.InvalidateReferenceException ire ) {
+            /*
+            * The ire is thrown by the container system and propagated by
+            * the server to the stub.
+            */
+        } catch (org.openejb.InvalidateReferenceException ire) {
             invalidateAllHandlers(getRegistryId());
-            exc = (ire.getRootCause() != null )? ire.getRootCause(): ire;
+            exc = (ire.getRootCause() != null) ? ire.getRootCause() : ire;
             throw exc;
-        /*
-         * Application exceptions must be reported dirctly to the client. They
-         * do not impact the viability of the proxy.
-         */
-        } catch ( org.openejb.ApplicationException ae ) {
-            exc = (ae.getRootCause() != null )? ae.getRootCause(): ae;
+            /*
+            * Application exceptions must be reported dirctly to the client. They
+            * do not impact the viability of the proxy.
+            */
+        } catch (org.openejb.ApplicationException ae) {
+            exc = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
             throw exc;
 
-        /*
-         * A system exception would be highly unusual and would indicate a sever
-         * problem with the container system.
-         */
-        } catch ( org.openejb.SystemException se ) {
+            /*
+            * A system exception would be highly unusual and would indicate a sever
+            * problem with the container system.
+            */
+        } catch (org.openejb.SystemException se) {
             invalidateReference();
-            exc = (se.getRootCause() != null )? se.getRootCause(): se;
+            exc = (se.getRootCause() != null) ? se.getRootCause() : se;
             logger.error("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
-        } catch ( org.openejb.OpenEJBException oe ) {
-            exc = (oe.getRootCause() != null )? oe.getRootCause(): oe;
+        } catch (org.openejb.OpenEJBException oe) {
+            exc = (oe.getRootCause() != null) ? oe.getRootCause() : oe;
             logger.warn("The container received an unexpected exception: ", exc);
-            throw new RemoteException("Unknown Container Exception",oe.getRootCause());
-        }finally {
-            if(logger.isDebugEnabled()) {
-                if(exc==null) {
-                    logger.debug("finished invoking method "+m.getName()+". Return value:"+retValue);
+            throw new RemoteException("Unknown Container Exception", oe.getRootCause());
+        } finally {
+            if (logger.isDebugEnabled()) {
+                if (exc == null) {
+                    logger.debug("finished invoking method " + m.getName() + ". Return value:" + retValue);
                 } else {
-                    logger.debug("finished invoking method "+m.getName()+" with exception "+exc);
-                }                    
+                    logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
+                }
             } else if (logger.isInfoEnabled()) {
-                if(exc==null) {
-                    logger.debug("finished invoking method "+m.getName());
+                if (exc == null) {
+                    logger.debug("finished invoking method " + m.getName());
                 } else {
-                    logger.debug("finished invoking method "+m.getName()+" with exception "+exc);
+                    logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
                 }
             }
-        }            
-    }  
+        }
+    }
 
-    protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
         return deploymentInfo.getEJBHome();
     }
 
-    protected Object getHandle(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object getHandle(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
         return new IntraVmHandle(proxy);
     }
-    public org.openejb.ProxyInfo getProxyInfo(){
+
+    public org.openejb.ProxyInfo getProxyInfo() {
         return new org.openejb.ProxyInfo(deploymentInfo, primaryKey, isLocal(), container);
     }
 
-    protected Object _writeReplace(Object proxy) throws ObjectStreamException{
+    protected Object _writeReplace(Object proxy) throws ObjectStreamException {
         /*
          * If the proxy is being  copied between bean instances in a RPC
          * call we use the IntraVmArtifact
          */
-        if(IntraVmCopyMonitor.isIntraVmCopyOperation()){
-            return new IntraVmArtifact( proxy );
-        /* 
-         * If the proxy is referenced by a stateful bean that is  being
-         * passivated by the container we allow this object to be serialized.
-         */
-        }else if(IntraVmCopyMonitor.isStatefulPassivationOperation()){
+        if (IntraVmCopyMonitor.isIntraVmCopyOperation()) {
+            return new IntraVmArtifact(proxy);
+            /*
+            * If the proxy is referenced by a stateful bean that is  being
+            * passivated by the container we allow this object to be serialized.
+            */
+        } else if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
             return proxy;
-        /*
-         * If the proxy is serialized outside the core container system,
-         * we allow the application server to handle it.
-         */
-        } else{
+            /*
+            * If the proxy is serialized outside the core container system,
+            * we allow the application server to handle it.
+            */
+        } else {
             return org.openejb.OpenEJB.getApplicationServer().getEJBObject(this.getProxyInfo());
         }
     }
@@ -158,7 +169,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected abstract Object remove(Method method, Object[] args, Object proxy) throws Throwable;
 
-    protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
         return container.invoke(deploymentID, method, args, primaryKey, getThreadSpecificSecurityIdentity());
     }

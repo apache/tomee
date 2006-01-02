@@ -19,8 +19,8 @@ import org.openejb.util.Messages;
 
 public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCodes, RequestMethods {
 
-    Messages _messages = new Messages( "org.openejb.server.util.resources" );
-    Logger logger = Logger.getInstance( "OpenEJB.server.remote", "org.openejb.server.util.resources" );
+    Messages _messages = new Messages("org.openejb.server.util.resources");
+    Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.openejb.server.util.resources");
 
     Properties props;
 
@@ -38,26 +38,26 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
     }
 
     public static EjbDaemon getEjbDaemon() {
-        if ( thiss == null ) {
+        if (thiss == null) {
             thiss = new EjbDaemon();
         }
         return thiss;
     }
 
-    public void init(Properties props) throws Exception{
+    public void init(Properties props) throws Exception {
         this.props = props;
 
         deploymentIndex = new DeploymentIndex();
 
         clientObjectFactory = new ClientObjectFactory(this);
 
-        ejbHandler  = new EjbRequestHandler(this);
+        ejbHandler = new EjbRequestHandler(this);
         jndiHandler = new JndiRequestHandler(this);
         authHandler = new AuthRequestHandler(this);
     }
 
-    public void service(Socket socket) throws IOException{
-        InputStream  in  = socket.getInputStream();
+    public void service(Socket socket) throws IOException {
+        InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
         ObjectInputStream ois = null;
@@ -65,45 +65,52 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
 
         try {
 
-            byte requestType = (byte)in.read();
+            byte requestType = (byte) in.read();
 
             if (requestType == -1) {
                 return;
             }
 
-            ois = new ObjectInputStream( in );
-            oos = new ObjectOutputStream( out );
+            ois = new ObjectInputStream(in);
+            oos = new ObjectOutputStream(out);
 
             switch (requestType) {
-            case EJB_REQUEST:  processEjbRequest(ois, oos); break;
-            case JNDI_REQUEST: processJndiRequest(ois, oos);break;
-            case AUTH_REQUEST: processAuthRequest(ois, oos);break;
-            default: logger.error("Unknown request type "+requestType);
+                case EJB_REQUEST:
+                    processEjbRequest(ois, oos);
+                    break;
+                case JNDI_REQUEST:
+                    processJndiRequest(ois, oos);
+                    break;
+                case AUTH_REQUEST:
+                    processAuthRequest(ois, oos);
+                    break;
+                default:
+                    logger.error("Unknown request type " + requestType);
             }
             try {
-                if ( oos != null ) {
+                if (oos != null) {
                     oos.flush();
                 }
-            } catch ( Throwable t ) {
-                logger.error("Encountered problem while communicating with client: "+t.getMessage());
+            } catch (Throwable t) {
+                logger.error("Encountered problem while communicating with client: " + t.getMessage());
             }
 
-        } catch ( SecurityException e ) {
-            logger.error( "Security error: "+ e.getMessage() );
-        } catch ( Throwable e ) {
-            logger.error( "Unexpected error", e );
+        } catch (SecurityException e) {
+            logger.error("Security error: " + e.getMessage());
+        } catch (Throwable e) {
+            logger.error("Unexpected error", e);
 
         } finally {
             try {
-                if ( oos != null ) {
+                if (oos != null) {
                     oos.flush();
                     oos.close();
                 }
-                if ( ois    != null ) ois.close();
-                if ( in     != null ) in.close();
-                if ( socket != null ) socket.close();
-            } catch ( Throwable t ) {
-                logger.error("Encountered problem while closing connection with client: "+t.getMessage());
+                if (ois != null) ois.close();
+                if (in != null) in.close();
+                if (socket != null) socket.close();
+            } catch (Throwable t) {
+                logger.error("Encountered problem while closing connection with client: " + t.getMessage());
             }
         }
     }
@@ -112,16 +119,16 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
         return deploymentIndex.getDeployment(req);
     }
 
-    public void processEjbRequest (ObjectInputStream in, ObjectOutputStream out) {
-        ejbHandler.processRequest(in,out);
+    public void processEjbRequest(ObjectInputStream in, ObjectOutputStream out) {
+        ejbHandler.processRequest(in, out);
     }
 
-    public void processJndiRequest(ObjectInputStream in, ObjectOutputStream out) throws Exception{
-        jndiHandler.processRequest(in,out);
+    public void processJndiRequest(ObjectInputStream in, ObjectOutputStream out) throws Exception {
+        jndiHandler.processRequest(in, out);
     }
 
     public void processAuthRequest(ObjectInputStream in, ObjectOutputStream out) {
-        authHandler.processRequest(in,out);
+        authHandler.processRequest(in, out);
     }
 
     public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {

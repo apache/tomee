@@ -21,7 +21,7 @@ import org.openejb.core.ThreadContext;
 import org.openejb.util.proxy.InvocationHandler;
 import org.openejb.util.proxy.ProxyManager;
 
-public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable  {
+public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
     protected static final Hashtable liveHandleRegistry = new Hashtable();
 
     public final Object deploymentID;
@@ -52,68 +52,72 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected boolean doIntraVmCopy;
     private boolean isLocal;
 
-    public BaseEjbProxyHandler(RpcContainer container, Object pk, Object depID){
-       this.container = container;
-       this.primaryKey = pk;
-       this.deploymentID = depID;
-       this.deploymentInfo = (org.openejb.core.DeploymentInfo)container.getDeploymentInfo(depID);
+    public BaseEjbProxyHandler(RpcContainer container, Object pk, Object depID) {
+        this.container = container;
+        this.primaryKey = pk;
+        this.deploymentID = depID;
+        this.deploymentInfo = (org.openejb.core.DeploymentInfo) container.getDeploymentInfo(depID);
 
-       String value = org.openejb.OpenEJB.getInitProps().getProperty("openejb.localcopy");
-       if ( value == null ) {
-           value = org.openejb.OpenEJB.getInitProps().getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
-       }
-       if(value == null){
-           value = System.getProperty("openejb.localcopy");
-       }
-       if(value == null){
-           value = System.getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
-       }
-       doIntraVmCopy = value==null || !value.equalsIgnoreCase("FALSE");
+        String value = org.openejb.OpenEJB.getInitProps().getProperty("openejb.localcopy");
+        if (value == null) {
+            value = org.openejb.OpenEJB.getInitProps().getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
+        }
+        if (value == null) {
+            value = System.getProperty("openejb.localcopy");
+        }
+        if (value == null) {
+            value = System.getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
+        }
+        doIntraVmCopy = value == null || !value.equalsIgnoreCase("FALSE");
     }
+
     private void readObject(java.io.ObjectInputStream in)
-    throws java.io.IOException,ClassNotFoundException, NoSuchMethodException{
+            throws java.io.IOException, ClassNotFoundException, NoSuchMethodException {
 
         in.defaultReadObject();
 
-        deploymentInfo = (org.openejb.core.DeploymentInfo)OpenEJB.getDeploymentInfo(deploymentID);
-        container = (RpcContainer)deploymentInfo.getContainer();
+        deploymentInfo = (org.openejb.core.DeploymentInfo) OpenEJB.getDeploymentInfo(deploymentID);
+        container = (RpcContainer) deploymentInfo.getContainer();
     }
-    protected void checkAuthorization(Method method) throws org.openejb.OpenEJBException{
+
+    protected void checkAuthorization(Method method) throws org.openejb.OpenEJBException {
         Object caller = getThreadSpecificSecurityIdentity();
         boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(caller, deploymentInfo.getAuthorizedRoles(method));
-        if(!authorized)
+        if (!authorized)
             throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
     }
 
-    protected Object getThreadSpecificSecurityIdentity(){
+    protected Object getThreadSpecificSecurityIdentity() {
         ThreadContext context = ThreadContext.getThreadContext();
-        if(context.valid()){
+        if (context.valid()) {
             return context.getSecurityIdentity();
-        }else{
+        } else {
             return OpenEJB.getSecurityService().getSecurityIdentity();
         }
     }
 
     public void setIntraVmCopyMode(boolean on) {
-        doIntraVmCopy=on;
+        doIntraVmCopy = on;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable{
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (isInvalidReference) throw new NoSuchObjectException("reference is invalid");
 
-        if (method.getDeclaringClass() == Object.class ) {
+        if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
 
-            if ( methodName.equals( "toString" ))       return toString();
-            else if (methodName.equals( "equals" ))     return equals(args[0])?Boolean.TRUE: Boolean.FALSE;
-            else if (methodName.equals("hashCode"))     return new Integer(hashCode());
-            else throw new UnsupportedOperationException("Unkown method: "+method);
-        } else if (method.getDeclaringClass() == IntraVmProxy.class ) {
+            if (methodName.equals("toString")) return toString();
+            else if (methodName.equals("equals")) return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+            else if (methodName.equals("hashCode")) return new Integer(hashCode());
+            else
+                throw new UnsupportedOperationException("Unkown method: " + method);
+        } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
 
-            if (methodName.equals("writeReplace"))      return _writeReplace( proxy );
-            else throw new UnsupportedOperationException("Unkown method: "+method);
-        } 
+            if (methodName.equals("writeReplace")) return _writeReplace(proxy);
+            else
+                throw new UnsupportedOperationException("Unkown method: " + method);
+        }
         /* Preserve the context
             When entering a container the ThreadContext will change to match the context of
             the bean being serviced. That changes the current context of the calling bean,
@@ -130,83 +134,83 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         ThreadContext cntext = null;
         DeploymentInfo depInfo = null;
         Object prmryKey = null;
-        byte crrntOperation = (byte)0;
+        byte crrntOperation = (byte) 0;
         Object scrtyIdentity = null;
         boolean cntextValid = false;
         cntext = ThreadContext.getThreadContext();
-        if(cntext.valid()){
-             depInfo = cntext.getDeploymentInfo();
-             prmryKey = cntext.getPrimaryKey();
-             crrntOperation = cntext.getCurrentOperation();
-             scrtyIdentity = cntext.getSecurityIdentity();
-             cntextValid = true;
+        if (cntext.valid()) {
+            depInfo = cntext.getDeploymentInfo();
+            prmryKey = cntext.getPrimaryKey();
+            crrntOperation = cntext.getCurrentOperation();
+            scrtyIdentity = cntext.getSecurityIdentity();
+            cntextValid = true;
         }
 
         String jndiEnc = System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
 //        System.setProperty(javax.naming.Context.URL_PKG_PREFIXES,"org.openejb.core.ivm.naming");
 
-        try{
-            if(doIntraVmCopy==true){// copy arguments as required by the specification
+        try {
+            if (doIntraVmCopy == true) {// copy arguments as required by the specification
 
-                if(args!=null && args.length > 0) {
+                if (args != null && args.length > 0) {
 
                     IntraVmCopyMonitor.preCopyOperation();
                     args = copyArgs(args);
 
                     IntraVmCopyMonitor.postCopyOperation();
                 }
-                Object returnObj = _invoke(proxy,method,args);
+                Object returnObj = _invoke(proxy, method, args);
 
                 IntraVmCopyMonitor.preCopyOperation();
                 returnObj = copyObj(returnObj);
-                return returnObj;                
+                return returnObj;
 
             } else {
                 try {
-					/*
-					* The EJB 1.1 specification requires that arguments and return values between beans adhere to the
-					* Java RMI copy semantics which requires that the all arguments be passed by value (copied) and 
-					* never passed as references.  However, it is possible for the system administrator to turn off the
-					* copy operation so that arguments and return values are passed by reference as a performance optimization.
-					* Simply setting the org.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause  
-					* IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value. 
-					* This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
-					* or a property of the Property argument when invoking OpenEJB.init(props).  The doIntraVmCopy variable is set to that
-					* property in the static block for this class.
-					*/
-                	
-					return _invoke(proxy,method,args);
-				} catch (RemoteException e) {
-                    if (this.isLocal()){
+                    /*
+                         * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
+                         * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and
+                         * never passed as references.  However, it is possible for the system administrator to turn off the
+                         * copy operation so that arguments and return values are passed by reference as a performance optimization.
+                         * Simply setting the org.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause
+                         * IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value.
+                         * This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
+                         * or a property of the Property argument when invoking OpenEJB.init(props).  The doIntraVmCopy variable is set to that
+                         * property in the static block for this class.
+                         */
+
+                    return _invoke(proxy, method, args);
+                } catch (RemoteException e) {
+                    if (this.isLocal()) {
                         throw new EJBException(e.getMessage()).initCause(e.getCause());
                     } else {
                         throw e;
                     }
-				} catch (Throwable t) {
-					t.printStackTrace();
-					Class[] etypes = method.getExceptionTypes();
-					for (int i = 0; i < etypes.length; i++) {
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    Class[] etypes = method.getExceptionTypes();
+                    for (int i = 0; i < etypes.length; i++) {
 
-						if (etypes[i].isAssignableFrom(t.getClass())){
-							throw t;
-						}						
-					}
-					// Exception is undeclared
-					// Try and find a runtime exception in there
-					while (t.getCause() != null && !(t instanceof RuntimeException)){
-						t = t.getCause();
-					}
-					throw t;
-				}
+                        if (etypes[i].isAssignableFrom(t.getClass())) {
+                            throw t;
+                        }
+                    }
+                    // Exception is undeclared
+                    // Try and find a runtime exception in there
+                    while (t.getCause() != null && !(t instanceof RuntimeException)) {
+                        t = t.getCause();
+                    }
+                    throw t;
+                }
             }
         } finally {
 //            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, jndiEnc);
 
-            if(cntextValid){
+            if (cntextValid) {
                 cntext.set(depInfo, prmryKey, scrtyIdentity);
                 cntext.setCurrentOperation(crrntOperation);
             }
-            if(doIntraVmCopy==true){
+            if (doIntraVmCopy == true) {
 
                 IntraVmCopyMonitor.postCopyOperation();
             }
@@ -214,27 +218,27 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public String toString() {
-        return "proxy="+getProxyInfo().getInterface().getName()+";deployment="+this.deploymentID+";pk="+this.primaryKey;
+        return "proxy=" + getProxyInfo().getInterface().getName() + ";deployment=" + this.deploymentID + ";pk=" + this.primaryKey;
     }
 
     public int hashCode() {
-        if(primaryKey==null) {
+        if (primaryKey == null) {
 
             return deploymentID.hashCode();
-        }else {
+        } else {
             return primaryKey.hashCode();
         }
     }
 
     public boolean equals(Object obj) {
-        try{
+        try {
             obj = ProxyManager.getInvocationHandler(obj);
-        }catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
         BaseEjbProxyHandler other = (BaseEjbProxyHandler) obj;
-        if(primaryKey==null) {
-            return other.primaryKey==null && deploymentID.equals(other.deploymentID);
+        if (primaryKey == null) {
+            return other.primaryKey == null && deploymentID.equals(other.deploymentID);
         } else {
             return primaryKey.equals(other.primaryKey) && deploymentID.equals(other.deploymentID);
         }
@@ -242,7 +246,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected abstract Object _invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
-    protected Object[] copyArgs(Object[] objects) throws IOException, ClassNotFoundException{
+    protected Object[] copyArgs(Object[] objects) throws IOException, ClassNotFoundException {
         /* 
             while copying the arguments is necessary. Its not necessary to copy the array itself,
             because they array is created by the Proxy implementation for the sole purpose of 
@@ -250,7 +254,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             and their for doesn't need to be copied.
         */
 
-        for (int i=0; i < objects.length; i++){
+        for (int i = 0; i < objects.length; i++) {
             objects[i] = copyObj(objects[i]);
         }
 
@@ -263,19 +267,19 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         return obj.get();
     }
 
-    public void invalidateReference(){
+    public void invalidateReference() {
         this.container = null;
         this.deploymentInfo = null;
         this.isInvalidReference = true;
     }
 
-    protected static void invalidateAllHandlers(Object key){
-        HashSet set = (HashSet)liveHandleRegistry.remove(key);
-        if(set==null)return;
-        synchronized(set){
+    protected static void invalidateAllHandlers(Object key) {
+        HashSet set = (HashSet) liveHandleRegistry.remove(key);
+        if (set == null) return;
+        synchronized (set) {
             Iterator handlers = set.iterator();
-            while(handlers.hasNext()){
-                BaseEjbProxyHandler aHandler = (BaseEjbProxyHandler)handlers.next();
+            while (handlers.hasNext()) {
+                BaseEjbProxyHandler aHandler = (BaseEjbProxyHandler) handlers.next();
                 aHandler.invalidateReference();
             }
         }
@@ -283,13 +287,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected abstract Object _writeReplace(Object proxy) throws ObjectStreamException;
 
-    protected static void registerHandler(Object key, BaseEjbProxyHandler handler){
-        HashSet set = (HashSet)liveHandleRegistry.get(key);
-        if(set!=null){
-            synchronized(set){
-                set.add(handler);   
+    protected static void registerHandler(Object key, BaseEjbProxyHandler handler) {
+        HashSet set = (HashSet) liveHandleRegistry.get(key);
+        if (set != null) {
+            synchronized (set) {
+                set.add(handler);
             }
-        }else{
+        } else {
             set = new HashSet();
             set.add(handler);
             liveHandleRegistry.put(key, set);
@@ -298,11 +302,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public abstract org.openejb.ProxyInfo getProxyInfo();
 
-	public boolean isLocal() {
-		return isLocal;
-	}
-	public void setLocal(boolean isLocal) {
-		this.isLocal = isLocal;
-		this.doIntraVmCopy = !isLocal;
-	}
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean isLocal) {
+        this.isLocal = isLocal;
+        this.doIntraVmCopy = !isLocal;
+    }
 }

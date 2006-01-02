@@ -17,33 +17,34 @@ public class JNDIRequest implements Request {
         this.requestString = requestString;
     }
 
-    public byte getRequestType(){
+    public byte getRequestType() {
         return JNDI_REQUEST;
     }
 
-    public int getRequestMethod(){
+    public int getRequestMethod() {
         return requestMethod;
     }
 
-    public String getRequestString(){
+    public String getRequestString() {
         return requestString;
     }
 
-    public void setRequestMethod(int requestMethod){
+    public void setRequestMethod(int requestMethod) {
         this.requestMethod = requestMethod;
     }
 
-    public void setRequestString(String requestString){
+    public void setRequestString(String requestString) {
         this.requestString = requestString;
     }
 
-    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         requestMethod = in.readByte();
         requestString = in.readUTF();
     }
+
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeByte((byte)requestMethod);
-        out.writeUTF (requestString);
+        out.writeByte((byte) requestMethod);
+        out.writeUTF(requestString);
     }
 
 }

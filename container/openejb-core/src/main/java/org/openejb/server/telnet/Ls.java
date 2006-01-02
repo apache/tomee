@@ -16,13 +16,13 @@ public class Ls extends Command {
 
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
 
         Container[] c = OpenEJB.containers();
         out.println("Containers:");
 
-        for (int i=0; i < c.length; i++){
-            out.print(" "+c[i].getContainerID());
+        for (int i = 0; i < c.length; i++) {
+            out.print(" " + c[i].getContainerID());
             out.println("");
         }
         out.println("");
@@ -30,8 +30,8 @@ public class Ls extends Command {
         out.println("Deployments:");
 
         DeploymentInfo[] d = OpenEJB.deployments();
-        for (int i=0; i < d.length; i++){
-            out.print(" "+d[i].getDeploymentID());
+        for (int i = 0; i < d.length; i++) {
+            out.print(" " + d[i].getDeploymentID());
             out.println("");
         }
     }

@@ -8,9 +8,9 @@ public interface PassivationStrategy {
     public void init(Properties props) throws org.openejb.SystemException;
 
     public void passivate(Hashtable stateTable)
-    throws org.openejb.SystemException;
+            throws org.openejb.SystemException;
 
     public Object activate(Object primaryKey)
-    throws org.openejb.SystemException;
+            throws org.openejb.SystemException;
 
 }

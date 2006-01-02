@@ -8,80 +8,72 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
 public class CoreUserTransaction
-    implements javax.transaction.UserTransaction, java.io.Serializable
-{
+        implements javax.transaction.UserTransaction, java.io.Serializable {
 
-    private transient TransactionManager  _txManager;
+    private transient TransactionManager _txManager;
 
     private transient final org.apache.log4j.Category txLogger;
 
-    public CoreUserTransaction(TransactionManager txMngr)
-    {
+    public CoreUserTransaction(TransactionManager txMngr) {
         _txManager = txMngr;
-        txLogger=org.apache.log4j.Category.getInstance("Transaction");
+        txLogger = org.apache.log4j.Category.getInstance("Transaction");
     }
 
-    public CoreUserTransaction( ){
+    public CoreUserTransaction() {
         this(org.openejb.OpenEJB.getTransactionManager());
     }
 
-    private TransactionManager transactionManager(){
-        if(_txManager == null){
+    private TransactionManager transactionManager() {
+        if (_txManager == null) {
             _txManager = org.openejb.OpenEJB.getTransactionManager();
         }
         return _txManager;
     }
 
     public void begin()
-        throws NotSupportedException, SystemException
-    {
+            throws NotSupportedException, SystemException {
         transactionManager().begin();
-        if(txLogger.isInfoEnabled()) {
-            txLogger.info("Started user transaction "+transactionManager().getTransaction());
-        }        
+        if (txLogger.isInfoEnabled()) {
+            txLogger.info("Started user transaction " + transactionManager().getTransaction());
+        }
     }
 
     public void commit()
-        throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
-               SecurityException, IllegalStateException, SystemException
-    {
-        if(txLogger.isInfoEnabled()) {
-            txLogger.info("Committing user transaction "+transactionManager().getTransaction());
+            throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
+            SecurityException, IllegalStateException, SystemException {
+        if (txLogger.isInfoEnabled()) {
+            txLogger.info("Committing user transaction " + transactionManager().getTransaction());
         }
         transactionManager().commit();
     }
 
     public void rollback()
-        throws IllegalStateException, SecurityException, SystemException
-    {
-        if(txLogger.isInfoEnabled()) {
-            txLogger.info("Rolling back user transaction "+transactionManager().getTransaction());
+            throws IllegalStateException, SecurityException, SystemException {
+        if (txLogger.isInfoEnabled()) {
+            txLogger.info("Rolling back user transaction " + transactionManager().getTransaction());
         }
         transactionManager().rollback();
     }
 
     public int getStatus()
-        throws SystemException
-    {
+            throws SystemException {
         int status = transactionManager().getStatus();
-        if(txLogger.isInfoEnabled()) {
-            txLogger.info("User transaction "+transactionManager().getTransaction()+" has status "+org.openejb.core.TransactionManagerWrapper.getStatus(status));
+        if (txLogger.isInfoEnabled()) {
+            txLogger.info("User transaction " + transactionManager().getTransaction() + " has status " + org.openejb.core.TransactionManagerWrapper.getStatus(status));
         }
         return status;
     }
 
-    public void setRollbackOnly()throws javax.transaction.SystemException
-    {
-        if(txLogger.isInfoEnabled()) {
-            txLogger.info("Marking user transaction for rollback: "+transactionManager().getTransaction());
+    public void setRollbackOnly() throws javax.transaction.SystemException {
+        if (txLogger.isInfoEnabled()) {
+            txLogger.info("Marking user transaction for rollback: " + transactionManager().getTransaction());
         }
         transactionManager().setRollbackOnly();
     }
 
-    public void setTransactionTimeout( int seconds  )
-        throws SystemException
-    {
-        transactionManager().setTransactionTimeout( seconds );
+    public void setTransactionTimeout(int seconds)
+            throws SystemException {
+        transactionManager().setTransactionTimeout(seconds);
     }
 
 }

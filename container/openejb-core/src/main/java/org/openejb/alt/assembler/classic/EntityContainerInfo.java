@@ -1,10 +1,10 @@
 package org.openejb.alt.assembler.classic;
 
-public class EntityContainerInfo extends ContainerInfo{
+public class EntityContainerInfo extends ContainerInfo {
 
     public EntityBeanInfo[] beans;
 
-    public EntityContainerInfo(){
+    public EntityContainerInfo() {
         containerType = ENTITY_CONTAINER;
     }
 

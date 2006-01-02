@@ -53,7 +53,7 @@ public class FileUtils {
 
     public boolean equals(Object obj) {
         if (!(obj instanceof FileUtils)) return false;
-        FileUtils that = (FileUtils)obj;
+        FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
     }
 
@@ -69,7 +69,7 @@ public class FileUtils {
                     throw new IOException("Cannot create the directory " + dir.getPath());
             } catch (SecurityException e) {
                 throw new IOException(
-                    "Permission denied: Cannot create the directory " + dir.getPath() + " : " + e.getMessage());
+                        "Permission denied: Cannot create the directory " + dir.getPath() + " : " + e.getMessage());
             }
         } else if (dir.exists() && !dir.isDirectory()) {
             throw new IOException("The path specified is not a valid directory: " + dir.getPath());

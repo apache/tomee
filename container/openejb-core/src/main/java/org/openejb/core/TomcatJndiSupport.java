@@ -29,7 +29,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
         } catch (ClassNotFoundException e) {
             throw new OpenEJBException("Unable to setup Tomcat JNDI support.  Support requires the org.apache.naming.ContextBindings class to be available.");
         } catch (NoSuchMethodException e) {
-            throw new OpenEJBException("Unable to setup Tomcat JNDI support.  Method of org.apache.naming.ContextBindings was not found:"+e.getMessage());
+            throw new OpenEJBException("Unable to setup Tomcat JNDI support.  Method of org.apache.naming.ContextBindings was not found:" + e.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void deploy(Object deploymentID, org.openejb.DeploymentInfo info) throws OpenEJBException {
         super.deploy(deploymentID, info);
-        setupDeployment((DeploymentInfo)info);
+        setupDeployment((DeploymentInfo) info);
     }
 
     public static Map contexts = new HashMap();
@@ -95,14 +95,14 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
     }
 
     private RuntimeException convertToRuntimeException(Throwable e, String methodName) {
-        if (e instanceof InvocationTargetException){
+        if (e instanceof InvocationTargetException) {
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException){
+            if (cause instanceof RuntimeException) {
                 return (RuntimeException) cause;
             } else {
                 e = cause;
             }
         }
-        return new RuntimeException("ContextBindings."+methodName, e);
+        return new RuntimeException("ContextBindings." + methodName, e);
     }
 }

@@ -8,13 +8,14 @@ import java.io.ObjectOutputStream;
 
 public class Serializer {
 
-    public static Object deserialize(byte [] bytes) 
-    throws IOException, ClassNotFoundException{
+    public static Object deserialize(byte [] bytes)
+            throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(bais);
         return ois.readObject();
     }
-    public static byte [] serialize(Object object) throws IOException{
+
+    public static byte [] serialize(Object object) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(object);

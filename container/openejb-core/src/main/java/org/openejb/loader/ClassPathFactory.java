@@ -1,7 +1,7 @@
 package org.openejb.loader;
 
 public class ClassPathFactory {
-    public static ClassPath createClassPath(String name){
+    public static ClassPath createClassPath(String name) {
         if (name.equalsIgnoreCase("tomcat")) {
             return new TomcatClassPath();
         } else if (name.equalsIgnoreCase("tomcat-common")) {

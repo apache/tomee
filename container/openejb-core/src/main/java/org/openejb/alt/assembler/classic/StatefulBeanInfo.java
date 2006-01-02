@@ -1,8 +1,8 @@
 package org.openejb.alt.assembler.classic;
 
-public class StatefulBeanInfo extends EnterpriseBeanInfo{
+public class StatefulBeanInfo extends EnterpriseBeanInfo {
 
-    public StatefulBeanInfo(){
+    public StatefulBeanInfo() {
         type = STATEFUL;
     }
 

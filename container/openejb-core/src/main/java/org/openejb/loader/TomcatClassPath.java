@@ -10,6 +10,7 @@ import java.security.PrivilegedAction;
 /*-------------------------------------------------------*/
 /* Tomcat ClassLoader Support */
 /*-------------------------------------------------------*/
+
 public class TomcatClassPath extends BasicURLClassPath {
 
     private final ClassLoader classLoader;
@@ -21,7 +22,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         this(getCommonLoader(getContextClassLoader()).getParent());
     }
 
-    public TomcatClassPath(ClassLoader classLoader){
+    public TomcatClassPath(ClassLoader classLoader) {
         this.classLoader = classLoader;
         try {
             addRepositoryMethod = getAddRepositoryMethod();
@@ -75,7 +76,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     public void addRepository(String path) throws Exception {
-        if (addRepositoryMethod != null){
+        if (addRepositoryMethod != null) {
             addRepositoryMethod.invoke(getClassLoader(), new Object[]{path});
         } else {
             addURLMethod.invoke(getClassLoader(), new Object[]{new File(path).toURL()});

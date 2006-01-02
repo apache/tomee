@@ -11,19 +11,22 @@ import java.util.HashMap;
 * @author <a href="richard@monson-haefel.com">Richard Monson-Haefel</a>
 * @version $Rev$ $Id: HashThreadLocal.java,v 1.2 2005/06/19 22:40:33 jlaskowski Exp $
 */
+
 public class HashThreadLocal {
     HashMap keyMap = new HashMap();
-    public synchronized void put(Object key, Object value){
-        FastThreadLocal threadLocal = (FastThreadLocal)keyMap.get(key);
-        if(threadLocal==null){
+
+    public synchronized void put(Object key, Object value) {
+        FastThreadLocal threadLocal = (FastThreadLocal) keyMap.get(key);
+        if (threadLocal == null) {
             threadLocal = new FastThreadLocal();
             keyMap.put(key, threadLocal);
         }
         threadLocal.set(value);
     }
-    public synchronized Object get(Object key){
-        FastThreadLocal threadLocal = (FastThreadLocal)keyMap.get(key);
-        if(threadLocal==null)return null;
+
+    public synchronized Object get(Object key) {
+        FastThreadLocal threadLocal = (FastThreadLocal) keyMap.get(key);
+        if (threadLocal == null) return null;
         return threadLocal.get();
     }
 }

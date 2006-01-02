@@ -10,51 +10,57 @@ public class IntraVmCopyMonitor {
 
     boolean statefulPassivationOperation = false;
 
-    IntraVmCopyMonitor(){}
-
-    public static boolean exists(){
-        return (threadStorage.get()!=null);
+    IntraVmCopyMonitor() {
     }
 
-    public static void release( ){
+    public static boolean exists() {
+        return (threadStorage.get() != null);
+    }
+
+    public static void release() {
         threadStorage.set(null);
     }
 
-    static IntraVmCopyMonitor getMonitor( ){
-        IntraVmCopyMonitor monitor = (IntraVmCopyMonitor)threadStorage.get();
-        if(monitor==null){
+    static IntraVmCopyMonitor getMonitor() {
+        IntraVmCopyMonitor monitor = (IntraVmCopyMonitor) threadStorage.get();
+        if (monitor == null) {
             monitor = new IntraVmCopyMonitor();
             threadStorage.set(monitor);
         }
         return monitor;
     }
 
-    public static void preCopyOperation(){
+    public static void preCopyOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         monitor.intraVmCopyOperation = true;
     }
-    public static void postCopyOperation(){
+
+    public static void postCopyOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         monitor.intraVmCopyOperation = false;
     }
-    public static void prePassivationOperation(){
+
+    public static void prePassivationOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         monitor.statefulPassivationOperation = true;
     }
-    public static void postPassivationOperation(){
+
+    public static void postPassivationOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         monitor.statefulPassivationOperation = false;
     }
-    public static boolean isIntraVmCopyOperation(){
+
+    public static boolean isIntraVmCopyOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
-        if(monitor.intraVmCopyOperation)
+        if (monitor.intraVmCopyOperation)
             return true;
         else
             return false;
     }
-    public static boolean isStatefulPassivationOperation(){
+
+    public static boolean isStatefulPassivationOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
-        if(monitor.statefulPassivationOperation)
+        if (monitor.statefulPassivationOperation)
             return true;
         else
             return false;

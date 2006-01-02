@@ -15,29 +15,29 @@ import org.openejb.util.Logger;
 
 public abstract class TransactionPolicy {
 
-    public static final int Mandatory    = 0;
-    public static final int Never 	 = 1;
+    public static final int Mandatory = 0;
+    public static final int Never = 1;
     public static final int NotSupported = 2;
-    public static final int Required     = 3;
-    public static final int RequiresNew  = 4;
-    public static final int Supports     = 5;
-    public static final int BeanManaged  = 6;
+    public static final int Required = 3;
+    public static final int RequiresNew = 4;
+    public static final int Supports = 5;
+    public static final int BeanManaged = 6;
 
     public int policyType;
     private TransactionManager manager;
     protected TransactionContainer container;
 
-    protected final static Logger logger = Logger.getInstance( "OpenEJB", "org.openejb.util.resources" );
-    protected final static Logger txLogger = Logger.getInstance( "Transaction", "org.openejb.util.resources" );
+    protected final static Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
+    protected final static Logger txLogger = Logger.getInstance("Transaction", "org.openejb.util.resources");
 
-    protected TransactionManager getTxMngr( ) {
-        if(manager==null) {
+    protected TransactionManager getTxMngr() {
+        if (manager == null) {
             manager = OpenEJB.getTransactionManager();
         }
         return manager;
     }
 
-    public TransactionContainer getContainer(){
+    public TransactionContainer getContainer() {
         return container;
     }
 
@@ -45,171 +45,174 @@ public abstract class TransactionPolicy {
         return "Internal Error: no such policy";
     }
 
-    public abstract void handleApplicationException( Throwable appException, TransactionContext context ) throws org.openejb.ApplicationException;
-    public abstract void handleSystemException( Throwable sysException, EnterpriseBean instance, TransactionContext context ) throws org.openejb.ApplicationException, org.openejb.SystemException;
-    public abstract void beforeInvoke( EnterpriseBean bean, TransactionContext context ) throws org.openejb.SystemException, org.openejb.ApplicationException;
-    public abstract void afterInvoke(EnterpriseBean bean, TransactionContext context ) throws org.openejb.ApplicationException, org.openejb.SystemException;
+    public abstract void handleApplicationException(Throwable appException, TransactionContext context) throws org.openejb.ApplicationException;
 
-    protected void markTxRollbackOnly( Transaction tx ) throws SystemException{
+    public abstract void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
+
+    public abstract void beforeInvoke(EnterpriseBean bean, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException;
+
+    public abstract void afterInvoke(EnterpriseBean bean, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
+
+    protected void markTxRollbackOnly(Transaction tx) throws SystemException {
         try {
-            if ( tx != null ) {
+            if (tx != null) {
                 tx.setRollbackOnly();
-                if(txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString()+"setRollbackOnly() on transaction "+tx);
+                if (txLogger.isInfoEnabled()) {
+                    txLogger.info(policyToString() + "setRollbackOnly() on transaction " + tx);
                 }
             }
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             logger.error("Exception during setRollbackOnly()", se);
             throw new org.openejb.SystemException(se);
         }
     }
 
-    protected Transaction suspendTransaction() throws SystemException{
+    protected Transaction suspendTransaction() throws SystemException {
         try {
-            Transaction tx = getTxMngr( ).suspend();
-            if(txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString()+"Suspended transaction "+tx);
+            Transaction tx = getTxMngr().suspend();
+            if (txLogger.isInfoEnabled()) {
+                txLogger.info(policyToString() + "Suspended transaction " + tx);
             }
             return tx;
-        } catch ( javax.transaction.SystemException se ) {
+        } catch (javax.transaction.SystemException se) {
             logger.error("Exception during suspend()", se);
             throw new org.openejb.SystemException(se);
         }
     }
 
-    protected void resumeTransaction(Transaction tx) throws SystemException{
+    protected void resumeTransaction(Transaction tx) throws SystemException {
         try {
-            if ( tx == null) {
-                if(txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString()+"No transaction to resume");
+            if (tx == null) {
+                if (txLogger.isInfoEnabled()) {
+                    txLogger.info(policyToString() + "No transaction to resume");
                 }
             } else {
-                if(txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString()+"Resuming transaction "+tx);
+                if (txLogger.isInfoEnabled()) {
+                    txLogger.info(policyToString() + "Resuming transaction " + tx);
                 }
-                getTxMngr( ).resume(tx);
+                getTxMngr().resume(tx);
             }
-        }catch(javax.transaction.InvalidTransactionException ite){
+        } catch (javax.transaction.InvalidTransactionException ite) {
 
-            txLogger.error("Could not resume the client's transaction, the transaction is no longer valid: "+ite.getMessage());
+            txLogger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());
             throw new org.openejb.SystemException(ite);
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
 
-            txLogger.error("Could not resume the client's transaction: "+e.getMessage());
+            txLogger.error("Could not resume the client's transaction: " + e.getMessage());
             throw new org.openejb.SystemException(e);
-        }catch(javax.transaction.SystemException e){
+        } catch (javax.transaction.SystemException e) {
 
-            txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: "+e.getMessage());
+            txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: " + e.getMessage());
             throw new org.openejb.SystemException(e);
         }
     }
 
-    protected void commitTransaction( Transaction tx ) throws SystemException{
+    protected void commitTransaction(Transaction tx) throws SystemException {
         try {
-            if(txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString()+"Committing transaction "+tx);
+            if (txLogger.isInfoEnabled()) {
+                txLogger.info(policyToString() + "Committing transaction " + tx);
             }
-            if(tx.equals(getTxMngr().getTransaction())) {
+            if (tx.equals(getTxMngr().getTransaction())) {
 
                 getTxMngr().commit();
             } else {
                 tx.commit();
             }
-        } catch ( javax.transaction.RollbackException e ) {
+        } catch (javax.transaction.RollbackException e) {
 
-            txLogger.info("The transaction has been rolled back rather than commited: "+e.getMessage());
+            txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
 
-        } catch ( javax.transaction.HeuristicMixedException e ) {
+        } catch (javax.transaction.HeuristicMixedException e) {
 
-            txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: "+e.getMessage());
+            txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
 
-        } catch ( javax.transaction.HeuristicRollbackException e ) {
+        } catch (javax.transaction.HeuristicRollbackException e) {
 
-            txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: "+e.getMessage());
+            txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
 
-        } catch (SecurityException e){
+        } catch (SecurityException e) {
 
-            txLogger.error("The current thread is not allowed to commit the transaction: "+e.getMessage());
-            throw new org.openejb.SystemException( e );
+            txLogger.error("The current thread is not allowed to commit the transaction: " + e.getMessage());
+            throw new org.openejb.SystemException(e);
 
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
 
-            txLogger.error("The current thread is not associated with a transaction: "+e.getMessage());
-            throw new org.openejb.SystemException( e );
+            txLogger.error("The current thread is not associated with a transaction: " + e.getMessage());
+            throw new org.openejb.SystemException(e);
 
-        } catch (javax.transaction.SystemException e){
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: "+e.getMessage());
+        } catch (javax.transaction.SystemException e) {
+            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: " + e.getMessage());
 
-            throw new org.openejb.SystemException( e );
+            throw new org.openejb.SystemException(e);
         }
     }
 
-    protected void rollbackTransaction( Transaction tx ) throws SystemException{
+    protected void rollbackTransaction(Transaction tx) throws SystemException {
         try {
-            if(txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString()+"Rolling back transaction "+tx);
+            if (txLogger.isInfoEnabled()) {
+                txLogger.info(policyToString() + "Rolling back transaction " + tx);
             }
-            if(tx.equals(getTxMngr().getTransaction())) {
+            if (tx.equals(getTxMngr().getTransaction())) {
 
                 getTxMngr().rollback();
             } else {
-            tx.rollback();
+                tx.rollback();
             }
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
 
-            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: "+e.getMessage());
-            throw new org.openejb.SystemException( e );
+            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
+            throw new org.openejb.SystemException(e);
 
-        } catch (javax.transaction.SystemException e){
+        } catch (javax.transaction.SystemException e) {
 
-            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: "+e.getMessage());
-            throw new org.openejb.SystemException( e );
+            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
+            throw new org.openejb.SystemException(e);
         }
     }
 
-    protected void throwAppExceptionToServer( Throwable appException ) throws ApplicationException{
-        throw new ApplicationException( appException );
+    protected void throwAppExceptionToServer(Throwable appException) throws ApplicationException {
+        throw new ApplicationException(appException);
     }
 
-    protected void throwTxExceptionToServer( Throwable sysException ) throws ApplicationException{
+    protected void throwTxExceptionToServer(Throwable sysException) throws ApplicationException {
         /* Throw javax.transaction.TransactionRolledbackException to remote client */
 
-        String message = "The transaction was rolled back because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : "+sysException.getMessage();
+        String message = "The transaction was rolled back because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
         javax.transaction.TransactionRolledbackException txException = new javax.transaction.TransactionRolledbackException(message);
 
-        throw new InvalidateReferenceException( txException );
+        throw new InvalidateReferenceException(txException);
 
     }
 
-    protected void throwExceptionToServer( Throwable sysException ) throws ApplicationException{
+    protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {
 
         RemoteException re = new RemoteException("The bean encountered a non-application exception.", sysException);
 
-        throw new InvalidateReferenceException( re );
+        throw new InvalidateReferenceException(re);
 
     }
 
-    protected void logSystemException(Throwable sysException){
+    protected void logSystemException(Throwable sysException) {
 
-        logger.error( "The bean instances business method encountered a system exception:"+sysException.getMessage(), sysException);
+        logger.error("The bean instances business method encountered a system exception:" + sysException.getMessage(), sysException);
     }
 
-    protected void discardBeanInstance(EnterpriseBean instance, ThreadContext callContext){
-        container.discardInstance( instance, callContext );
+    protected void discardBeanInstance(EnterpriseBean instance, ThreadContext callContext) {
+        container.discardInstance(instance, callContext);
     }
 
-    protected void beginTransaction() throws javax.transaction.SystemException{
+    protected void beginTransaction() throws javax.transaction.SystemException {
         try {
-            getTxMngr( ).begin();
-            if(txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString()+"Started transaction "+getTxMngr( ).getTransaction());
+            getTxMngr().begin();
+            if (txLogger.isInfoEnabled()) {
+                txLogger.info(policyToString() + "Started transaction " + getTxMngr().getTransaction());
             }
-        } catch ( javax.transaction.NotSupportedException nse ) {
+        } catch (javax.transaction.NotSupportedException nse) {
             logger.error("", nse);
         }
     }
 
-    protected void handleCallbackException(){
+    protected void handleCallbackException() {
     }
 }
 

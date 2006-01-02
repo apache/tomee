@@ -7,7 +7,6 @@
 
 package org.openejb.alt.config.ejb11;
 
-
 //---------------------------------/
 
 import org.exolab.castor.mapping.AccessMode;
@@ -16,8 +15,6 @@ import org.exolab.castor.xml.XMLFieldDescriptor;
 import org.exolab.castor.xml.validators.*;
 
 public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
-
-
 
 
     private java.lang.String nsPrefix;
@@ -29,84 +26,80 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
     private org.exolab.castor.xml.XMLFieldDescriptor identity;
 
 
-
-
     public EntityDescriptor() {
         super();
         nsURI = "http://www.openejb.org/ejb-jar/1.1";
         xmlName = "entity";
-        
+
 
         setCompositorAsSequence();
-        org.exolab.castor.xml.util.XMLFieldDescriptorImpl  desc           = null;
-        org.exolab.castor.xml.XMLFieldHandler              handler        = null;
-        org.exolab.castor.xml.FieldValidator               fieldValidator = null;
+        org.exolab.castor.xml.util.XMLFieldDescriptorImpl desc = null;
+        org.exolab.castor.xml.XMLFieldHandler handler = null;
+        org.exolab.castor.xml.FieldValidator fieldValidator = null;
 
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_id", "id", org.exolab.castor.xml.NodeType.Attribute);
         this.identity = desc;
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getId();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setId( (java.lang.String) value);
+                    target.setId((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new java.lang.String();
             }
-        } );
+        });
         desc.setHandler(handler);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
         }
         desc.setValidator(fieldValidator);
 
-        
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_description", "description", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getDescription();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setDescription( (java.lang.String) value);
+                    target.setDescription((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -119,31 +112,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_displayName", "display-name", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getDisplayName();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setDisplayName( (java.lang.String) value);
+                    target.setDisplayName((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -156,31 +149,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_smallIcon", "small-icon", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getSmallIcon();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setSmallIcon( (java.lang.String) value);
+                    target.setSmallIcon((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -194,31 +187,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_largeIcon", "large-icon", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getLargeIcon();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setLargeIcon( (java.lang.String) value);
+                    target.setLargeIcon((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -232,32 +225,32 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_ejbName", "ejb-name", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getEjbName();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setEjbName( (java.lang.String) value);
+                    target.setEjbName((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -271,31 +264,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_home", "home", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getHome();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setHome( (java.lang.String) value);
+                    target.setHome((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -309,31 +302,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_remote", "remote", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getRemote();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setRemote( (java.lang.String) value);
+                    target.setRemote((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -347,31 +340,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_localHome", "local-home", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getLocalHome();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setLocalHome( (java.lang.String) value);
+                    target.setLocalHome((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -385,31 +378,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_local", "local", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getLocal();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setLocal( (java.lang.String) value);
+                    target.setLocal((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -423,31 +416,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_ejbClass", "ejb-class", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getEjbClass();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setEjbClass( (java.lang.String) value);
+                    target.setEjbClass((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -462,32 +455,32 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_persistenceType", "persistence-type", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getPersistenceType();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setPersistenceType( (java.lang.String) value);
+                    target.setPersistenceType((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -502,32 +495,32 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_primKeyClass", "prim-key-class", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getPrimKeyClass();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setPrimKeyClass( (java.lang.String) value);
+                    target.setPrimKeyClass((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -541,37 +534,37 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.Boolean.TYPE, "_reentrant", "reentrant", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
-                if(!target.hasReentrant())
+                if (!target.hasReentrant())
                     return null;
                 return (target.getReentrant() ? java.lang.Boolean.TRUE : java.lang.Boolean.FALSE);
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
 
                     if (value == null) return;
-                    
-                    target.setReentrant( ((java.lang.Boolean)value).booleanValue());
+
+                    target.setReentrant(((java.lang.Boolean) value).booleanValue());
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setRequired(true);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(1);
@@ -583,31 +576,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.CmpField.class, "_cmpFieldList", "cmp-field", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getCmpField();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addCmpField( (org.openejb.alt.config.ejb11.CmpField) value);
+                    target.addCmpField((org.openejb.alt.config.ejb11.CmpField) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.CmpField();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -618,31 +611,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_primkeyField", "primkey-field", org.exolab.castor.xml.NodeType.Element);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getPrimkeyField();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.setPrimkeyField( (java.lang.String) value);
+                    target.setPrimkeyField((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return null;
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(false);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         {
@@ -654,31 +647,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.EnvEntry.class, "_envEntryList", "env-entry", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getEnvEntry();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addEnvEntry( (org.openejb.alt.config.ejb11.EnvEntry) value);
+                    target.addEnvEntry((org.openejb.alt.config.ejb11.EnvEntry) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.EnvEntry();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -688,31 +681,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.EjbRef.class, "_ejbRefList", "ejb-ref", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getEjbRef();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addEjbRef( (org.openejb.alt.config.ejb11.EjbRef) value);
+                    target.addEjbRef((org.openejb.alt.config.ejb11.EjbRef) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.EjbRef();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -722,31 +715,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.EjbLocalRef.class, "_ejbLocalRefList", "ejb-local-ref", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getEjbLocalRef();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addEjbLocalRef( (org.openejb.alt.config.ejb11.EjbLocalRef) value);
+                    target.addEjbLocalRef((org.openejb.alt.config.ejb11.EjbLocalRef) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.EjbLocalRef();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -756,31 +749,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.SecurityRoleRef.class, "_securityRoleRefList", "security-role-ref", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getSecurityRoleRef();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addSecurityRoleRef( (org.openejb.alt.config.ejb11.SecurityRoleRef) value);
+                    target.addSecurityRoleRef((org.openejb.alt.config.ejb11.SecurityRoleRef) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.SecurityRoleRef();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -790,31 +783,31 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
 
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.openejb.alt.config.ejb11.ResourceRef.class, "_resourceRefList", "resource-ref", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
-            public java.lang.Object getValue( java.lang.Object object ) 
-                throws IllegalStateException
-            {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
                 Entity target = (Entity) object;
                 return target.getResourceRef();
             }
-            public void setValue( java.lang.Object object, java.lang.Object value) 
-                throws IllegalStateException, IllegalArgumentException
-            {
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
                 try {
                     Entity target = (Entity) object;
-                    target.addResourceRef( (org.openejb.alt.config.ejb11.ResourceRef) value);
+                    target.addResourceRef((org.openejb.alt.config.ejb11.ResourceRef) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
                 }
             }
-            public java.lang.Object newInstance( java.lang.Object parent ) {
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
                 return new org.openejb.alt.config.ejb11.ResourceRef();
             }
-        } );
+        });
         desc.setHandler(handler);
         desc.setMultivalued(true);
         addFieldDescriptor(desc);
-        
+
 
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         fieldValidator.setMinOccurs(0);
@@ -824,45 +817,35 @@ public class EntityDescriptor extends org.exolab.castor.xml.util.XMLClassDescrip
     }
 
 
-
-
-    public org.exolab.castor.mapping.AccessMode getAccessMode()
-    {
+    public org.exolab.castor.mapping.AccessMode getAccessMode() {
         return null;
     }
 
-    public org.exolab.castor.mapping.ClassDescriptor getExtends()
-    {
+    public org.exolab.castor.mapping.ClassDescriptor getExtends() {
         return null;
     }
 
-    public org.exolab.castor.mapping.FieldDescriptor getIdentity()
-    {
+    public org.exolab.castor.mapping.FieldDescriptor getIdentity() {
         return identity;
     }
 
-    public java.lang.Class getJavaClass()
-    {
+    public java.lang.Class getJavaClass() {
         return org.openejb.alt.config.ejb11.Entity.class;
     }
 
-    public java.lang.String getNameSpacePrefix()
-    {
+    public java.lang.String getNameSpacePrefix() {
         return nsPrefix;
     }
 
-    public java.lang.String getNameSpaceURI()
-    {
+    public java.lang.String getNameSpaceURI() {
         return nsURI;
     }
 
-    public org.exolab.castor.xml.TypeValidator getValidator()
-    {
+    public org.exolab.castor.xml.TypeValidator getValidator() {
         return this;
     }
 
-    public java.lang.String getXMLName()
-    {
+    public java.lang.String getXMLName() {
         return xmlName;
     }
 

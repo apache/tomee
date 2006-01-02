@@ -4,15 +4,15 @@ import javax.naming.NamingException;
 
 import org.openejb.OpenEJB;
 
-public class IntraVmJndiReference implements Reference{
+public class IntraVmJndiReference implements Reference {
 
-    private String    jndiName;
+    private String jndiName;
 
-    public IntraVmJndiReference(String jndiName){
+    public IntraVmJndiReference(String jndiName) {
         this.jndiName = jndiName;
     }
 
-    public Object getObject( ) throws NamingException{
-        return OpenEJB.getJNDIContext().lookup( jndiName );
+    public Object getObject() throws NamingException {
+        return OpenEJB.getJNDIContext().lookup(jndiName);
     }
 }

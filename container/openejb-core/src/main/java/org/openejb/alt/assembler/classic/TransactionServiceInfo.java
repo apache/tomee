@@ -1,8 +1,8 @@
 package org.openejb.alt.assembler.classic;
 
-public class TransactionServiceInfo extends ServiceInfo{
+public class TransactionServiceInfo extends ServiceInfo {
 
-    public TransactionServiceInfo(){
+    public TransactionServiceInfo() {
         serviceType = TRANSACTION_SERVICE;
     }
 

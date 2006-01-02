@@ -51,10 +51,10 @@ public class ServiceManager {
         }
 
         String[] serviceFiles = new String[]{
-            "admin.properties",
-            "ejbd.properties",
-            "telnet.properties",
-            "webadmin.properties"
+                "admin.properties",
+                "ejbd.properties",
+                "telnet.properties",
+                "webadmin.properties"
         };
 
         Vector enabledServers = new Vector();

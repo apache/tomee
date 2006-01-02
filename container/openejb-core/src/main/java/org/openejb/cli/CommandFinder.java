@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Properties;
 
 public class CommandFinder {
-	private String path;
-	private Map classMap = Collections.synchronizedMap(new HashMap());
-	
-	public CommandFinder(String path) {
-		this.path = path;
-	}
-	
+    private String path;
+    private Map classMap = Collections.synchronizedMap(new HashMap());
+
+    public CommandFinder(String path) {
+        this.path = path;
+    }
+
     public Properties doFindCommandProperies(String key) throws IOException {
         String uri = path + key;
 
@@ -44,6 +44,6 @@ public class CommandFinder {
     }
 
     public Enumeration doFindCommands() throws IOException {
-    	return Thread.currentThread().getContextClassLoader().getResources(path);
+        return Thread.currentThread().getContextClassLoader().getResources(path);
     }
 }

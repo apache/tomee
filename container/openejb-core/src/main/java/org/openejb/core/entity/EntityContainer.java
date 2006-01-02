@@ -29,7 +29,7 @@ import org.openejb.util.Logger;
 import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 
-public class EntityContainer implements org.openejb.RpcContainer, TransactionContainer{
+public class EntityContainer implements org.openejb.RpcContainer, TransactionContainer {
 
     protected EntityInstanceManager instanceManager;
 
@@ -37,23 +37,23 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
     protected Object containerID = null;
 
-    public Logger logger = Logger.getInstance( "OpenEJB", "org.openejb.util.resources" );
+    public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
     public void init(Object id, HashMap registry, Properties properties)
-    throws org.openejb.OpenEJBException{
+            throws org.openejb.OpenEJBException {
         containerID = id;
         deploymentRegistry = registry;
 
-        if(properties == null)properties = new Properties();
+        if (properties == null) properties = new Properties();
 
         SafeToolkit toolkit = SafeToolkit.getToolkit("EntityContainer");
         SafeProperties safeProps = toolkit.getSafeProperties(properties);
-        try{
-        String className = safeProps.getProperty(EnvProps.IM_CLASS_NAME, "org.openejb.core.entity.EntityInstanceManager");
-        ClassLoader cl = OpenEJB.getContextClassLoader();
-        instanceManager =(EntityInstanceManager)Class.forName(className, true, cl).newInstance();
-        }catch(Exception e){
-        throw new org.openejb.SystemException("Initialization of InstanceManager for the \""+containerID+"\" entity container failed",e);
+        try {
+            String className = safeProps.getProperty(EnvProps.IM_CLASS_NAME, "org.openejb.core.entity.EntityInstanceManager");
+            ClassLoader cl = OpenEJB.getContextClassLoader();
+            instanceManager = (EntityInstanceManager) Class.forName(className, true, cl).newInstance();
+        } catch (Exception e) {
+            throw new org.openejb.SystemException("Initialization of InstanceManager for the \"" + containerID + "\" entity container failed", e);
         }
         instanceManager.init(this, registry, properties);
 
@@ -64,78 +64,79 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         * deployment info object's their containers.
         */
         org.openejb.DeploymentInfo [] deploys = this.deployments();
-        for(int x = 0; x < deploys.length; x++){
-            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo)deploys[x];
+        for (int x = 0; x < deploys.length; x++) {
+            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
             di.setContainer(this);
         }
 
     }
 
-    public DeploymentInfo [] deployments(){
-        return (DeploymentInfo [])deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
+    public DeploymentInfo [] deployments() {
+        return (DeploymentInfo []) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID){
-        return (DeploymentInfo)deploymentRegistry.get(deploymentID);
+    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        return (DeploymentInfo) deploymentRegistry.get(deploymentID);
     }
-    public int getContainerType( ){
+
+    public int getContainerType() {
         return Container.ENTITY;
     }
 
-    public Object getContainerID(){
+    public Object getContainerID() {
         return containerID;
     }
 
     public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
-        HashMap registry = (HashMap)deploymentRegistry.clone();
+        HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
     }
 
-    public Object invoke(Object deployID, Method callMethod,Object [] args,Object primKey, Object securityIdentity)    throws org.openejb.OpenEJBException{
-        try{
+    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.openejb.OpenEJBException {
+        try {
 
-        org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo)this.getDeploymentInfo(deployID);
+            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
 
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        callContext.set(deployInfo, primKey, securityIdentity);
+            ThreadContext callContext = ThreadContext.getThreadContext();
+            callContext.set(deployInfo, primKey, securityIdentity);
 
-        boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
-        if(!authorized)
-            throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            if (!authorized)
+                throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
-        Class declaringClass = callMethod.getDeclaringClass();
-        String methodName = callMethod.getName();
+            Class declaringClass = callMethod.getDeclaringClass();
+            String methodName = callMethod.getName();
 
-		if(EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass) ){
-			if(declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class){
+            if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
+                if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
 
-                if(methodName.equals("create")){
+                    if (methodName.equals("create")) {
 
-                    return createEJBObject(callMethod, args, callContext);
-                }else if(methodName.startsWith("find")){
+                        return createEJBObject(callMethod, args, callContext);
+                    } else if (methodName.startsWith("find")) {
 
-                    return findMethod(callMethod, args, callContext);
-                }else{
+                        return findMethod(callMethod, args, callContext);
+                    } else {
 
-                    return homeMethod(callMethod, args, callContext);
+                        return homeMethod(callMethod, args, callContext);
+                    }
+                } else if (methodName.equals("remove")) {
+                    removeEJBObject(callMethod, args, callContext);
+                    return null;
                 }
-            }else if(methodName.equals("remove")){
+            } else if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove")) {
                 removeEJBObject(callMethod, args, callContext);
                 return null;
             }
-        } else if((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove") ) {
-            removeEJBObject(callMethod, args, callContext);
-            return null;
-        }
 
-        callContext.setCurrentOperation(Operations.OP_BUSINESS);
-        Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
-        Object retValue = invoke(callMethod, runMethod, args, callContext) ;
+            callContext.setCurrentOperation(Operations.OP_BUSINESS);
+            Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
+            Object retValue = invoke(callMethod, runMethod, args, callContext);
 
-        return deployInfo.convertIfLocalReference(callMethod, retValue);
+            return deployInfo.convertIfLocalReference(callMethod, retValue);
 
-        }finally{
+        } finally {
             /*
                 The thread context must be stripped from the thread before returning or throwing an exception
                 so that an object outside the container does not have access to a
@@ -152,48 +153,48 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         }
     }
 
-    public EntityInstanceManager getInstanceManager( ){
+    public EntityInstanceManager getInstanceManager() {
         return instanceManager;
     }
 
     protected Object invoke(Method callMethod, Method runMethod, Object [] args, ThreadContext callContext)
-    throws org.openejb.OpenEJBException{
+            throws org.openejb.OpenEJBException {
 
-        TransactionPolicy txPolicy   = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext();
         txContext.callContext = callContext;
 
         EntityBean bean = null;
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
         Object returnValue = null;
 
-        try{
+        try {
 
-            try{
+            try {
                 bean = instanceManager.obtainInstance(callContext);
-            }catch(org.openejb.OpenEJBException e){
+            } catch (org.openejb.OpenEJBException e) {
 
                 throw e.getRootCause();
             }
 
-            ejbLoad_If_No_Transaction(callContext,bean);
+            ejbLoad_If_No_Transaction(callContext, bean);
             returnValue = runMethod.invoke(bean, args);
             ejbStore_If_No_Transaction(callContext, bean);
-            instanceManager.poolInstance(callContext,bean);
-        }catch(java.lang.reflect.InvocationTargetException ite){// handle enterprise bean exceptions
-            if ( ite.getTargetException() instanceof RuntimeException ) {
+            instanceManager.poolInstance(callContext, bean);
+        } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
+            if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
 
-                txPolicy.handleSystemException( ite.getTargetException(), bean, txContext );
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext,bean);
-                txPolicy.handleApplicationException( ite.getTargetException(), txContext );
+                instanceManager.poolInstance(callContext, bean);
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
-        }catch(org.openejb.SystemException se){
-            txPolicy.handleSystemException( se.getRootCause(), bean, txContext );
-        }catch(Throwable iae){// handle reflection exception
+        } catch (org.openejb.SystemException se) {
+            txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
+        } catch (Throwable iae) {// handle reflection exception
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -202,35 +203,35 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
                 NullPointerException - if the specified object is null and the method is an instance method.
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
-            txPolicy.handleSystemException( iae, bean, txContext );
-        }finally{
-            txPolicy.afterInvoke( bean, txContext );
+            txPolicy.handleSystemException(iae, bean, txContext);
+        } finally {
+            txPolicy.afterInvoke(bean, txContext);
         }
 
         return returnValue;
     }
 
     public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean)
-    throws org.openejb.SystemException, Exception{
+            throws org.openejb.SystemException, Exception {
         byte orginalOperation = callContext.getCurrentOperation();
-        if(orginalOperation == Operations.OP_BUSINESS || orginalOperation == Operations.OP_REMOVE){
+        if (orginalOperation == Operations.OP_BUSINESS || orginalOperation == Operations.OP_REMOVE) {
 
             Transaction currentTx = null;
-            try{
-            currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
-            }catch(javax.transaction.SystemException se){
-                throw new org.openejb.SystemException("Transaction Manager failure",se);
+            try {
+                currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
+            } catch (javax.transaction.SystemException se) {
+                throw new org.openejb.SystemException("Transaction Manager failure", se);
             }
 
-            if(currentTx ==null){
+            if (currentTx == null) {
                 callContext.setCurrentOperation(org.openejb.core.Operations.OP_LOAD);
-                try{
-                    ((javax.ejb.EntityBean)bean).ejbLoad();
-                }catch(Exception e){
+                try {
+                    ((javax.ejb.EntityBean) bean).ejbLoad();
+                } catch (Exception e) {
 
-                    instanceManager.discardInstance(callContext,(EntityBean)bean);
+                    instanceManager.discardInstance(callContext, (EntityBean) bean);
                     throw e;
-                }finally{
+                } finally {
                     callContext.setCurrentOperation(orginalOperation);
                 }
             }
@@ -239,46 +240,46 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     }
 
     public void ejbStore_If_No_Transaction(ThreadContext callContext, EntityBean bean)
-    throws Exception{
+            throws Exception {
 
         byte currentOp = callContext.getCurrentOperation();
-        if (currentOp == Operations.OP_BUSINESS){
+        if (currentOp == Operations.OP_BUSINESS) {
 
             Transaction currentTx = null;
-            try{
-            currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
-            }catch(javax.transaction.SystemException se){
-                throw new org.openejb.SystemException("Transaction Manager failure",se);
+            try {
+                currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
+            } catch (javax.transaction.SystemException se) {
+                throw new org.openejb.SystemException("Transaction Manager failure", se);
             }
 
-            if (currentTx == null){
+            if (currentTx == null) {
                 callContext.setCurrentOperation(org.openejb.core.Operations.OP_STORE);
-                try{
-                    ((javax.ejb.EntityBean)bean).ejbStore();
-                }catch(Exception e){
+                try {
+                    ((javax.ejb.EntityBean) bean).ejbStore();
+                } catch (Exception e) {
 
-                    instanceManager.discardInstance(callContext,(EntityBean)bean);
+                    instanceManager.discardInstance(callContext, (EntityBean) bean);
                     throw e;
-                }finally{
+                } finally {
                     callContext.setCurrentOperation(currentOp);
                 }
             }
         }
     }
 
-    protected void didCreateBean(ThreadContext callContext, EntityBean bean) throws org.openejb.OpenEJBException{
+    protected void didCreateBean(ThreadContext callContext, EntityBean bean) throws org.openejb.OpenEJBException {
     }
 
     protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
-    throws org.openejb.OpenEJBException {
+            throws org.openejb.OpenEJBException {
 
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo)callContext.getDeploymentInfo();
+        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
 
         callContext.setCurrentOperation(Operations.OP_CREATE);
         EntityBean bean = null;
         Object primaryKey = null;
 
-        TransactionPolicy txPolicy   = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext();
         txContext.callContext = callContext;
 
@@ -296,16 +297,16 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         * super classes afterInvoke( ) method will be executed committing the transaction if its a CMT.
         */
 
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
-        try{
+        try {
 
             bean = instanceManager.obtainInstance(callContext);
             Method ejbCreateMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
             primaryKey = ejbCreateMethod.invoke(bean, args);
 
-            callContext.setPrimaryKey(primaryKey);        
+            callContext.setPrimaryKey(primaryKey);
             didCreateBean(callContext, bean);
             callContext.setCurrentOperation(Operations.OP_POST_CREATE);
 
@@ -315,19 +316,19 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
             primaryKey = callContext.getPrimaryKey();
             callContext.setPrimaryKey(null);
-            instanceManager.poolInstance(callContext,bean);            
-        }catch(java.lang.reflect.InvocationTargetException ite){// handle enterprise bean exceptions
-            if ( ite.getTargetException() instanceof RuntimeException ) {
+            instanceManager.poolInstance(callContext, bean);
+        } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
+            if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException( ite.getTargetException(), bean, txContext);
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext,bean);
-                txPolicy.handleApplicationException( ite.getTargetException(), txContext);
+                instanceManager.poolInstance(callContext, bean);
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
-        }catch(OpenEJBException e){
-            txPolicy.handleSystemException( e.getRootCause(), bean, txContext);
-        }catch(Throwable e){// handle reflection exception
+        } catch (OpenEJBException e) {
+            txPolicy.handleSystemException(e.getRootCause(), bean, txContext);
+        } catch (Throwable e) {// handle reflection exception
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -336,104 +337,105 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
                 NullPointerException - if the specified object is null and the method is an instance method.
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
-            txPolicy.handleSystemException( e, bean, txContext);
-        }finally{
-            txPolicy.afterInvoke( bean, txContext );
+            txPolicy.handleSystemException(e, bean, txContext);
+        } finally {
+            txPolicy.afterInvoke(bean, txContext);
         }
 
         Class callingClass = callMethod.getDeclaringClass();
-		boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
         return new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
 
     }
+
     protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext)
-    throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo)callContext.getDeploymentInfo();
+            throws org.openejb.OpenEJBException {
+        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operations.OP_FIND);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-        Object returnValue = invoke(callMethod,runMethod, args, callContext);
+        Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
         Class callingClass = callMethod.getDeclaringClass();
-		boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
 
         /*
         * Find operations return either a single primary key or a collection of primary keys.
         * The primary keys are converted to ProxyInfo objects.
         */
-        if(returnValue instanceof java.util.Collection){
-            java.util.Iterator keys = ((java.util.Collection)returnValue).iterator();
+        if (returnValue instanceof java.util.Collection) {
+            java.util.Iterator keys = ((java.util.Collection) returnValue).iterator();
             java.util.Vector proxies = new java.util.Vector();
-            while(keys.hasNext()){
+            while (keys.hasNext()) {
                 Object primaryKey = keys.next();
                 proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
             }
             returnValue = proxies;
-        }else if(returnValue instanceof java.util.Enumeration){
-            java.util.Enumeration keys = (java.util.Enumeration)returnValue;
+        } else if (returnValue instanceof java.util.Enumeration) {
+            java.util.Enumeration keys = (java.util.Enumeration) returnValue;
             java.util.Vector proxies = new java.util.Vector();
-            while(keys.hasMoreElements()){
+            while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
                 proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
             }
             returnValue = new org.openejb.util.ArrayEnumeration(proxies);
-        }else
+        } else
             returnValue = new ProxyInfo(deploymentInfo, returnValue, isLocalInterface, this);
 
         return returnValue;
     }
 
     protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext)
-    throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo)callContext.getDeploymentInfo();
+            throws org.openejb.OpenEJBException {
+        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operations.OP_HOME);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-        return invoke(callMethod,runMethod, args, callContext);
+        return invoke(callMethod, runMethod, args, callContext);
     }
 
-    protected void didRemove(EntityBean bean, ThreadContext callContext) throws OpenEJBException{
+    protected void didRemove(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
     }
 
     protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
-    throws org.openejb.OpenEJBException {
+            throws org.openejb.OpenEJBException {
         callContext.setCurrentOperation(Operations.OP_REMOVE);
 
-        TransactionPolicy txPolicy   = callContext.getDeploymentInfo().getTransactionPolicy( callMethod );
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext();
         txContext.callContext = callContext;
 
         EntityBean bean = null;
-        txPolicy.beforeInvoke( bean, txContext );
+        txPolicy.beforeInvoke(bean, txContext);
 
-        try{
+        try {
 
             bean = instanceManager.obtainInstance(callContext);
 
-            ejbLoad_If_No_Transaction(callContext,bean);
+            ejbLoad_If_No_Transaction(callContext, bean);
             bean.ejbRemove();
             didRemove(bean, callContext);
-            instanceManager.poolInstance(callContext,bean);
-        }catch(org.openejb.SystemException se){
-            txPolicy.handleSystemException( se.getRootCause(), bean, txContext );
-        }catch(Exception e){// handle reflection exception
-            if ( e instanceof RuntimeException ) {
+            instanceManager.poolInstance(callContext, bean);
+        } catch (org.openejb.SystemException se) {
+            txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
+        } catch (Exception e) {// handle reflection exception
+            if (e instanceof RuntimeException) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException( e, bean, txContext );
+                txPolicy.handleSystemException(e, bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext,bean);
-                txPolicy.handleApplicationException( e, txContext );
+                instanceManager.poolInstance(callContext, bean);
+                txPolicy.handleApplicationException(e, txContext);
             }
-        }finally{
-            txPolicy.afterInvoke( bean, txContext );
+        } finally {
+            txPolicy.afterInvoke(bean, txContext);
         }
     }
 
     public void discardInstance(EnterpriseBean bean, ThreadContext threadContext) {
-        if ( bean != null ) {
-            try{
-                instanceManager.discardInstance(threadContext,(EntityBean)bean);    
-            } catch (SystemException e){
-                logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key "+threadContext.getPrimaryKey());
+        if (bean != null) {
+            try {
+                instanceManager.discardInstance(threadContext, (EntityBean) bean);
+            } catch (SystemException e) {
+                logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key " + threadContext.getPrimaryKey());
             }
         }
     }

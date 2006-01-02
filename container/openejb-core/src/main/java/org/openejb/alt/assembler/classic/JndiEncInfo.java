@@ -1,6 +1,6 @@
 package org.openejb.alt.assembler.classic;
 
-public class JndiEncInfo extends InfoObject{
+public class JndiEncInfo extends InfoObject {
 
     public EnvEntryInfo[] envEntries;
     public EjbReferenceInfo[] ejbReferences;

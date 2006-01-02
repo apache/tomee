@@ -1,8 +1,8 @@
 package org.openejb.alt.assembler.classic;
 
-public class StatelessBeanInfo extends EnterpriseBeanInfo{
+public class StatelessBeanInfo extends EnterpriseBeanInfo {
 
-    public StatelessBeanInfo(){
+    public StatelessBeanInfo() {
         type = STATELESS;
     }
 }

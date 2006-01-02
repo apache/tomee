@@ -10,13 +10,13 @@ public class Prompt extends Command {
         Command.register("prompt", Prompt.class);
     }
 
-    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException{
-        try{
+    public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
+        try {
             if (args.count() == 0) return;
 
             TextConsole.PROMPT = args.get(0);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

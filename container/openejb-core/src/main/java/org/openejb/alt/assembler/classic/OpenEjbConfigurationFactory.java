@@ -6,9 +6,9 @@ import org.openejb.OpenEJBException;
 
 public interface OpenEjbConfigurationFactory {
 
-    public void init(Properties props)throws OpenEJBException;
+    public void init(Properties props) throws OpenEJBException;
 
-    public OpenEjbConfiguration getOpenEjbConfiguration()throws OpenEJBException;
+    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException;
 
     /*
      * Not used yet.

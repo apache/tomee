@@ -6,31 +6,32 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class JndiReference implements Reference{
+public class JndiReference implements Reference {
 
-    private Context   context;
+    private Context context;
     private Hashtable envProperties;
-    private String    jndiName;
-    private String    contextJndiName;
+    private String jndiName;
+    private String contextJndiName;
+
     /*
     * This constructor is used when the object to be referenced is accessible through 
     * some other JNDI name space. The context is provided and the lookup name, but the 
     * object is not resolved until it's requested. 
     */
-    public JndiReference(javax.naming.Context linkedContext, String jndiName){
-        this.context  = linkedContext;
+    public JndiReference(javax.naming.Context linkedContext, String jndiName) {
+        this.context = linkedContext;
         this.jndiName = jndiName;
     }
 
     /*
     */
-    public JndiReference(String contextJndiName, String jndiName){
+    public JndiReference(String contextJndiName, String jndiName) {
         this.contextJndiName = contextJndiName;
         this.jndiName = jndiName;
     }
 
-    public JndiReference(Hashtable envProperties, String jndiName){
-        if (envProperties == null || envProperties.size() == 0 ) {
+    public JndiReference(Hashtable envProperties, String jndiName) {
+        if (envProperties == null || envProperties.size() == 0) {
             this.envProperties = null;
         } else {
             this.envProperties = envProperties;
@@ -38,9 +39,9 @@ public class JndiReference implements Reference{
         this.jndiName = jndiName;
     }
 
-    public Object getObject( ) throws NamingException{
+    public Object getObject() throws NamingException {
         Context externalContext = getContext();
-        synchronized(externalContext){
+        synchronized (externalContext) {
             /* According to the JNDI SPI specification multiple threads may not access the same JNDI 
             Context *instance* concurrently. Since we don't know the origines of the federated context we must
             synchonrize access to it.  JNDI SPI Sepecifiation 1.2 Section 2.2
@@ -49,10 +50,10 @@ public class JndiReference implements Reference{
         }
     }
 
-    protected Context getContext() throws NamingException{
+    protected Context getContext() throws NamingException {
         if (context == null) {
-            if ( contextJndiName != null ) {
-                context = (Context)org.openejb.OpenEJB.getJNDIContext().lookup(contextJndiName);
+            if (contextJndiName != null) {
+                context = (Context) org.openejb.OpenEJB.getJNDIContext().lookup(contextJndiName);
             } else {
                 context = new InitialContext(envProperties);
             }

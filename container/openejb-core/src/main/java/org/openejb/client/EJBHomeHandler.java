@@ -12,18 +12,18 @@ import javax.ejb.Handle;
 
 import org.openejb.client.proxy.ProxyManager;
 
-public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable  {
+public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
-    protected static final Method GETEJBMETADATA= getMethod(EJBHome.class, "getEJBMetaData", null);
-    protected static final Method GETHOMEHANDLE	= getMethod(EJBHome.class, "getHomeHandle", null);
-    protected static final Method REMOVE_W_KEY  = getMethod(EJBHome.class, "remove", new Class []{Object.class});
+    protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
+    protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
+    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class []{Object.class});
     protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class []{Handle.class});
-    protected static final Method GETHANDLER    = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
+    protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
 
     public EJBHomeHandler() {
     }
 
-    public EJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client){
+    public EJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
         super(ejb, server, client);
     }
 
@@ -49,146 +49,147 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
 //    protected abstract EJBObjectHandler newEJBObjectHandler();
 
-    public EJBHomeProxy createEJBHomeProxy(){
-        try{
-        Class[] interfaces = new Class[]{ EJBHomeProxy.class, ejb.homeClass };
-        return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
-        } catch (IllegalAccessException e){
+    public EJBHomeProxy createEJBHomeProxy() {
+        try {
+            Class[] interfaces = new Class[]{EJBHomeProxy.class, ejb.homeClass};
+            return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
+        } catch (IllegalAccessException e) {
 
             e.printStackTrace();
         }
         return null;
     }
 
-    protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable{
+    protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         String methodName = method.getName();
 
-        try{
+        try {
 
-            if (method.getDeclaringClass() == Object.class ) {
-                if ( method.equals( TOSTRING ) ){
-                    return "proxy="+this;
-                } else if ( method.equals( EQUALS ) ) {
+            if (method.getDeclaringClass() == Object.class) {
+                if (method.equals(TOSTRING)) {
+                    return "proxy=" + this;
+                } else if (method.equals(EQUALS)) {
 
                     return Boolean.FALSE;
 
-                } else if ( method.equals( HASHCODE ) ) {
-                    return new Integer( this.hashCode() );
+                } else if (method.equals(HASHCODE)) {
+                    return new Integer(this.hashCode());
 
                 } else {
-                    throw new UnsupportedOperationException("Unkown method: "+method);
+                    throw new UnsupportedOperationException("Unkown method: " + method);
                 }
-            } else if (method.getDeclaringClass() == EJBHomeProxy.class ) {
-                if ( method.equals( GETHANDLER ) ){
+            } else if (method.getDeclaringClass() == EJBHomeProxy.class) {
+                if (method.equals(GETHANDLER)) {
                     return this;
                 } else if (methodName.equals("writeReplace")) {
                     return new EJBHomeProxyHandle(this);
                 } else if (methodName.equals("readResolve")) {
 
-                    throw new UnsupportedOperationException("Unkown method: "+method);
+                    throw new UnsupportedOperationException("Unkown method: " + method);
 
                 } else {
-                    throw new UnsupportedOperationException("Unkown method: "+method);
+                    throw new UnsupportedOperationException("Unkown method: " + method);
                 }
             }
-        /*-------------------------------------------------------*/
+            /*-------------------------------------------------------*/
 
-        /*-- CREATE ------------- <HomeInterface>.create(<x>) ---*/
-            if ( methodName.equals("create") ) {
+            /*-- CREATE ------------- <HomeInterface>.create(<x>) ---*/
+            if (methodName.equals("create")) {
                 return create(method, args, proxy);
 
-        /*-- FIND X --------------- <HomeInterface>.find<x>() ---*/
-            } else if ( methodName.startsWith("find") ){
+                /*-- FIND X --------------- <HomeInterface>.find<x>() ---*/
+            } else if (methodName.startsWith("find")) {
                 return findX(method, args, proxy);
 
-        /*-- GET EJB METADATA ------ EJBHome.getEJBMetaData() ---*/
+                /*-- GET EJB METADATA ------ EJBHome.getEJBMetaData() ---*/
 
-            } else if ( method.equals( GETEJBMETADATA ) ) {
+            } else if (method.equals(GETEJBMETADATA)) {
                 return getEJBMetaData(method, args, proxy);
 
-        /*-- GET HOME HANDLE -------- EJBHome.getHomeHandle() ---*/
+                /*-- GET HOME HANDLE -------- EJBHome.getHomeHandle() ---*/
 
-            } else if ( method.equals( GETHOMEHANDLE ) ) {
+            } else if (method.equals(GETHOMEHANDLE)) {
                 return getHomeHandle(method, args, proxy);
 
-        /*-- REMOVE ------------------------ EJBHome.remove() ---*/
+                /*-- REMOVE ------------------------ EJBHome.remove() ---*/
 
-            } else if ( method.equals( REMOVE_W_HAND ) ) {
+            } else if (method.equals(REMOVE_W_HAND)) {
                 return removeWithHandle(method, args, proxy);
 
-            } else if ( method.equals( REMOVE_W_KEY ) ) {
+            } else if (method.equals(REMOVE_W_KEY)) {
                 return removeByPrimaryKey(method, args, proxy);
 
-        /*-- UNKOWN ---------------------------------------------*/
+                /*-- UNKOWN ---------------------------------------------*/
             } else {
 
-                throw new UnsupportedOperationException("Unkown method: "+method);
+                throw new UnsupportedOperationException("Unkown method: " + method);
 
             }
 
-        } catch ( org.openejb.SystemException se ) {
+        } catch (org.openejb.SystemException se) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException",se.getRootCause());
-        }  
+            throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
+        }
 
     }
 
     /*-------------------------------------------------*/
-    /*  Home interface methods                         */  
+    /*  Home interface methods                         */
     /*-------------------------------------------------*/
 
-    protected Object create(Method method, Object[] args, Object proxy) throws Throwable{
-        EJBRequest req = new EJBRequest( EJB_HOME_CREATE ); 
+    protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
+        EJBRequest req = new EJBRequest(EJB_HOME_CREATE);
 
-        req.setClientIdentity( client.getClientIdentity() );
-        req.setDeploymentCode( ejb.deploymentCode );
-        req.setDeploymentId(   ejb.deploymentID );
-        req.setMethodInstance( method );
-        req.setMethodParameters( args );
+        req.setClientIdentity(client.getClientIdentity());
+        req.setDeploymentCode(ejb.deploymentCode);
+        req.setDeploymentId(ejb.deploymentID);
+        req.setMethodInstance(method);
+        req.setMethodParameters(args);
 
-        EJBResponse res = request( req );
+        EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
-        case EJB_SYS_EXCEPTION:
-            throw (Throwable)res.getResult();
-        case EJB_APP_EXCEPTION:
-            throw (Throwable)res.getResult();
-        case EJB_ERROR:
-            throw (Throwable)res.getResult();
-        case EJB_OK:
+            case EJB_SYS_EXCEPTION:
+                throw (Throwable) res.getResult();
+            case EJB_APP_EXCEPTION:
+                throw (Throwable) res.getResult();
+            case EJB_ERROR:
+                throw (Throwable) res.getResult();
+            case EJB_OK:
 
-            Object primKey = res.getResult();
-            EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb,server,client,primKey);
-            handler.setEJBHomeProxy((EJBHomeProxy)proxy);
+                Object primKey = res.getResult();
+                EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                handler.setEJBHomeProxy((EJBHomeProxy) proxy);
 
-            return handler.createEJBObjectProxy();
-        default:
-            throw new RemoteException("Received invalid response code from server: "+res.getResponseCode());
+                return handler.createEJBObjectProxy();
+            default:
+                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }
     }
 
     protected abstract Object findX(Method method, Object[] args, Object proxy) throws Throwable;
 
     /*-------------------------------------------------*/
-    /*  EJBHome methods                                */  
+    /*  EJBHome methods                                */
     /*-------------------------------------------------*/
 
-    protected Object getEJBMetaData(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object getEJBMetaData(Method method, Object[] args, Object proxy) throws Throwable {
         return ejb;
     }
 
-    protected Object getHomeHandle(Method method, Object[] args, Object proxy) throws Throwable{
+    protected Object getHomeHandle(Method method, Object[] args, Object proxy) throws Throwable {
 
-        return new EJBHomeHandle((EJBHomeProxy)proxy);
+        return new EJBHomeHandle((EJBHomeProxy) proxy);
     }
 
     protected abstract Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable;
 
     protected abstract Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
 
-    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     }
+
     public void writeExternal(ObjectOutput out) throws IOException {
     }
 

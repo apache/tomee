@@ -14,7 +14,7 @@ public class OpenEJBException extends Exception {
     }
 
     public OpenEJBException(String message) {
-        super( message );
+        super(message);
         this.message = message;
     }
 
@@ -23,7 +23,7 @@ public class OpenEJBException extends Exception {
     }
 
     public OpenEJBException(String message, Throwable rootCause) {
-        this( message );
+        this(message);
         this.rootCause = rootCause;
     }
 
