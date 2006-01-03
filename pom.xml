@@ -28,6 +28,7 @@
     <developerConnection>scm:svn:svn+ssh://openejb/usr/local/repos/openejb</developerConnection>
   </scm>
   <modules>
+    <module>itest/openejb-itests</module>
     <module>container/openejb-core</module>
     <module>server/openejb-admin</module>
     <module>server/openejb-server</module>
