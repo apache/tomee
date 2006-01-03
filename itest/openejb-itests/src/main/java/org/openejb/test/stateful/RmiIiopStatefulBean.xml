@@ -1,0 +1,35 @@
+<!-- 
+########################################################
+ID:  client/tests/stateful/RMI-over-IIOP/EJBHome
+########################################################
+$Id: RmiIiopStatefulBean.xml,v 1.1.1.1 2004/03/26 21:43:35 dblevins Exp $
+-->
+
+<session>
+    <description>
+        The stateful bean for the RMI-IIOP Tests
+    </description>
+    
+    <ejb-name>Stateful RMI-IIOP Bean</ejb-name>
+    
+    <home>org.openejb.test.stateful.RmiIiopStatefulHome</home>
+    <remote>org.openejb.test.stateful.RmiIiopStatefulObject</remote>
+    <ejb-class>org.openejb.test.stateful.RmiIiopStatefulBean</ejb-class>
+    
+    <session-type>Stateful</session-type>
+    <transaction-type>Bean</transaction-type>
+    
+    <ejb-ref> 
+        <ejb-ref-name>stateful/rmi-iiop/home</ejb-ref-name> 
+        <ejb-ref-type>Session</ejb-ref-type>
+        <home>org.openejb.test.stateful.EncStatefulHome</home>
+        <remote>org.openejb.test.stateful.EncStatefulBean</remote>
+        <ejb-link>EncStatefulBean</ejb-link>
+    </ejb-ref> 
+    
+    <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+    </security-role-ref>
+</session>
+

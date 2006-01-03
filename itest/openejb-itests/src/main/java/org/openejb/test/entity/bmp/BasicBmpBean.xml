@@ -1,0 +1,39 @@
+<!-- 
+########################################################
+ID:  client/tests/entity/bmp/BasicBmpHome
+########################################################
+$Id: BasicBmpBean.xml,v 1.1.1.1 2004/03/26 21:43:17 dblevins Exp $
+-->
+
+<entity>
+    
+    <description>
+    The EmployeeRecord entity bean encapsulates access
+    to the employee records.The deployer will use
+    container-managed persistence to integrate the
+    entity bean with the back-end system managing
+    the employee records.
+    </description>
+    
+    <ejb-name>BasicBmpBean</ejb-name>
+    <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
+    <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
+    <ejb-class>org.openejb.test.entity.bmp.BasicBmpBean</ejb-class>
+    
+    <persistence-type>Bean</persistence-type>
+    
+    <prim-key-class>java.lang.Integer</prim-key-class>
+    <reentrant>False</reentrant>
+    <primkey-field>primaryKey</primkey-field>
+    
+    <resource-ref>
+        <description>
+        This is a reference to a JDBC database.
+        </description>
+        <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+</entity>
+

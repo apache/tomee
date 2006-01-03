@@ -1,0 +1,37 @@
+<!-- 
+########################################################
+ID:  client/tests/entity/bmp/RMI-over-IIOP/EJBHome
+########################################################
+$Id: RmiIiopBmpBean.xml,v 1.1.1.1 2004/03/26 21:43:23 dblevins Exp $
+-->
+
+<entity>
+    <description>
+     blah, blah, blah
+    </description>
+    
+    <ejb-name>Bmp RMI-IIOP Bean</ejb-name>
+    
+    <home>org.openejb.test.entity.bmp.RmiIiopBmpHome</home>
+    <remote>org.openejb.test.entity.bmp.RmiIiopBmpObject</remote>
+    <ejb-class>org.openejb.test.entity.bmp.RmiIiopBmpBean</ejb-class>
+    
+    <persistence-type>Bean</persistence-type>
+    
+    <prim-key-class>java.lang.Integer</prim-key-class>
+    <reentrant>False</reentrant>
+    <primkey-field>primaryKey</primkey-field>
+    
+    <ejb-ref> 
+        <ejb-ref-name>bmp/rmi-iiop/home</ejb-ref-name> 
+        <ejb-ref-type>Entity</ejb-ref-type> 
+        <home>org.openejb.test.entity.bmp.EncBmpHome</home>
+        <remote>org.openejb.test.entity.bmp.EncBmpObject</remote>
+        <ejb-link>EncBmpBean</ejb-link>
+    </ejb-ref> 
+    <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+    </security-role-ref>
+</entity>
+

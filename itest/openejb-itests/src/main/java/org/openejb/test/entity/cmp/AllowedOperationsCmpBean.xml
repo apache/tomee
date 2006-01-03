@@ -1,0 +1,34 @@
+<!-- 
+########################################################
+ID:  client/tests/entity/cmp/allowed_operations/EntityHome
+########################################################
+$Id: AllowedOperationsCmpBean.xml,v 1.1.1.1 2004/03/26 21:43:24 dblevins Exp $
+-->
+
+<entity>
+    <description>
+     blah, blah, blah
+    </description>
+    
+    <ejb-name>AOBasicCmpBean</ejb-name>
+    
+    <home>org.openejb.test.entity.cmp.BasicCmpHome</home>
+    <remote>org.openejb.test.entity.cmp.BasicCmpObject</remote>
+    <ejb-class>org.openejb.test.entity.cmp.AllowedOperationsCmpBean</ejb-class>
+    
+    <persistence-type>Container</persistence-type>
+    
+    <prim-key-class>java.lang.Integer</prim-key-class>
+    <reentrant>False</reentrant>
+    <primkey-field>primaryKey</primkey-field>
+    
+    <resource-ref>
+        <description>
+        This is a reference to a JDBC database.
+        </description>
+        <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+</entity>
+
