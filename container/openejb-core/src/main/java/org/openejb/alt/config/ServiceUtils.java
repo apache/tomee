@@ -68,7 +68,7 @@ public class ServiceUtils {
     public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {
         try {
             Unmarshaller unmarshaller = new Unmarshaller(ServicesJar.class, "service-jar.xml");
-            URL serviceURL = new URL("resource:/" + providerName.replace('.', '/') + "/");
+            URL serviceURL = new URL("resource:/META-INF/" + providerName + "/");
             return (ServicesJar) unmarshaller.unmarshal(serviceURL);
         } catch (MalformedURLException e) {
             throw new OpenEJBException(e);
