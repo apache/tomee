@@ -12,7 +12,7 @@ import org.openejb.test.stateless.StatelessTestSuite;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class ClientTestSuite extends junit.framework.TestCase{
+public class ClientTestSuite extends junit.framework.TestCase {
     
     public ClientTestSuite(String name){
         super(name);
