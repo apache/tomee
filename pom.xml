@@ -6,7 +6,27 @@
   <packaging>pom</packaging>
   <version>3.0-SNAPSHOT</version>
   <name>OpenEJB :: Parent POM</name>
-  <url>http://maven.apache.org</url>
+  <url>http://openejb.org</url>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/OPENEJB</url>
+  </issueManagement>
+  <ciManagement>
+    <system>continuum</system>
+    <url>http://ci.gbuild.org/continuum</url>
+    <notifiers>
+      <notifier>
+        <configuration>
+          <address>scm@openejb.org</address>
+        </configuration>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+  <inceptionYear>1999</inceptionYear>
+  <scm>
+    <connection>scm:svn:file:///Users/dblevins/repos/openejb/</connection>
+    <developerConnection>scm:svn:file:///Users/dblevins/repos/openejb/</developerConnection>
+  </scm>
   <modules>
     <module>container/openejb-core</module>
     <module>server/openejb-admin</module>
