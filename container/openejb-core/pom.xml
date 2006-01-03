@@ -58,5 +58,11 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openejb</groupId>
+      <artifactId>openejb-itests</artifactId>
+      <version>3.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

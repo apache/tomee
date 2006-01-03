@@ -14,7 +14,7 @@ public class TestManager {
     private static TestDatabase database;
     private static boolean warn = true;
 
-    protected static void init(String propertiesFileName) throws Exception{
+    public static void init(String propertiesFileName) throws Exception{
         Properties props = null;
 
         try{
@@ -44,7 +44,7 @@ public class TestManager {
         initDatabase(props);
     }
     
-    protected static void start() throws Exception{
+    public static void start() throws Exception{
         try{
             server.start();
         } catch (Exception e){
@@ -59,7 +59,7 @@ public class TestManager {
         }
     }
 
-    protected static void stop() throws Exception{
+    public static void stop() throws Exception{
         try{
             server.stop();
         } catch (Exception e){

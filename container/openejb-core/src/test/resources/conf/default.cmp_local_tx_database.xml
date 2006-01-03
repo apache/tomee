@@ -1,0 +1,53 @@
+<!DOCTYPE jdo-conf PUBLIC "-//EXOLAB/Castor JDO Configuration DTD Version 1.0//EN"
+                           "http://castor.exolab.org/jdo-conf.dtd">
+
+<!--
+	======================================================
+	Local Transaction Database file for Container-Managed
+	Persistence EntityBeans in the Default CMP Container
+	======================================================
+	
+	Referenced By: 
+	conf/default.service-jar.xml 
+	
+	References To:
+	conf/default.cmp_mapping.xml
+	
+	This is the Local_TX_Database file for the Default CMP
+	Container defined in the conf/service-jar.xml file.
+	
+	Other CMP containers can be configured.  Each container
+	will need a Local_TX_Database file like this one, plus
+	a Global_TX_Database file and a mapping file.
+	
+	This configuration is used for local or unspecified 
+	transaction contexts.  This will be used when the 
+	TransactionManager is not managing the transaction, 
+	such as when the tx attribute is Supports (no client 
+	tx), NotSupported, or Never.
+	
+	Specifies the configuration for obtaining database 
+	connections and the mapping.xml schema which describes
+	how beans map to the database.
+	
+	[The Syntax of this file is defined by Castor JDO]
+	
+-->
+<jdo-conf>
+	<database name="Local_TX_Database" engine="instantdb">
+
+		<driver class-name="org.enhydra.instantdb.jdbc.idbDriver"
+			url="jdbc:idb:conf/default.idb_database.conf">
+			<param name="user" value="Admin" />
+			<param name="password" value="pass" />
+		</driver>
+
+		<mapping href="default.cmp_mapping.xml" />
+	</database>
+	
+	<transaction-demarcation mode="local">
+		<transaction-manager name="jndi">
+			<param name="jndiEnc" value="java:openejb/TransactionManager" />
+		</transaction-manager>
+	</transaction-demarcation>
+</jdo-conf>

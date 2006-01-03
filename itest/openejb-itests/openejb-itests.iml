@@ -28,7 +28,9 @@
           <root url="jar:///Users/dblevins/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar:///usr/local/src/junit-3.8.1-src.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -85,7 +87,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="openejb-core" />
     <orderEntryProperties />
   </component>
 </module>

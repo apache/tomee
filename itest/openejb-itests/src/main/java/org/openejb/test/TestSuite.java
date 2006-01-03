@@ -10,7 +10,7 @@ import junit.framework.TestResult;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class TestSuite extends junit.framework.TestSuite{
+public class TestSuite extends junit.framework.TestSuite {
     
     public TestSuite() {
         super();
