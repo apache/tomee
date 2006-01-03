@@ -76,6 +76,11 @@
       <version>1.2.12</version>
     </dependency>
     <dependency>
+      <groupId>idb</groupId>
+      <artifactId>idb</artifactId>
+      <version>3.26</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
