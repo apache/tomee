@@ -39,6 +39,7 @@ import org.openejb.util.FileUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -922,8 +923,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         List jarList = new ArrayList(deploy.length);
 
-        String flag = this.props.getProperty("openejb.loadFromBaseAndHome", "false").toLowerCase();
-        boolean loadFromBoth = flag.equals("true") && !base.equals(home);
+        boolean loadFromBoth = getOption("openejb.loadFromBaseAndHome") && !base.equals(home);
 
         try {
             for (int i = 0; i < deploy.length; i++) {
@@ -936,12 +936,50 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                     loadFrom(d, home, jarList);
                 }
             }
+
+            boolean searchClassPath = getOption("openejb.deployments.classpath");
+            if (searchClassPath) {
+                try {
+                    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                    Enumeration resources = contextClassLoader.getResources("META-INF/ejb-jar.xml");
+                    while (resources.hasMoreElements()) {
+                        URL ejbJar = (URL) resources.nextElement();
+                        File file = new File(ejbJar.getFile());
+                        if (!file.exists()){
+                            continue;
+                        }
+                        
+                        File metainf = file.getParentFile();
+
+                        Deployments deployment = new Deployments();
+                        File ejbPackage = metainf.getParentFile();
+
+                        if (ejbPackage.isDirectory()){
+                            deployment.setDir(ejbPackage.getAbsolutePath());
+                        } else {
+                            deployment.setJar(ejbPackage.getAbsolutePath());
+                        }
+
+                        logger.info("Found ejb in classpath: "+ejbPackage.getAbsolutePath());
+                        loadFrom(deployment, base, jarList);
+                    }
+                } catch (IOException e) {
+                    logger.warning("Unable to search classpath for ejbs: Received Exception: "+e.getClass().getName()+" "+e.getMessage(),e);
+                }
+
+            }
         } catch (SecurityException se) {
 
         }
 
         return (String[]) jarList.toArray(new String[]{});
 
+    }
+
+    private boolean getOption(String option) {
+        String flag = this.props.getProperty(option, "false").toLowerCase();
+        boolean b = flag.equals("true");
+        return b;
     }
 
     private void loadFrom(Deployments d, FileUtils path, List jarList) {
