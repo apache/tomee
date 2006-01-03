@@ -32,6 +32,10 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
+      <directory>src/main/conf</directory>
+      <outputDirectory>conf/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>target/classes/empty</directory>
       <outputDirectory>logs/</outputDirectory>
     </fileSet>
