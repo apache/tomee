@@ -24,8 +24,8 @@
   </ciManagement>
   <inceptionYear>1999</inceptionYear>
   <scm>
-    <connection>scm:svn:file:///Users/dblevins/repos/openejb/</connection>
-    <developerConnection>scm:svn:file:///Users/dblevins/repos/openejb/</developerConnection>
+    <connection>scm:svn:svn+ssh://openejb/usr/local/repos/openejb</connection>
+    <developerConnection>scm:svn:svn+ssh://openejb/usr/local/repos/openejb</developerConnection>
   </scm>
   <modules>
     <module>container/openejb-core</module>
