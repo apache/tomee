@@ -1,0 +1,108 @@
+Usage: openejb start [options]
+
+Example: Simplest scenario
+
+ openejb start
+
+ That's it.  The server will start up and bind to IP 127.0.0.1 and port 4201.
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+        
+   java.naming.factory.initial      = org.openejb.client.JNDIContext
+   java.naming.provider.url         = 127.0.0.1:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+Example: -h
+
+ openejb start -h 10.45.67.8
+
+ This is the most common way to use the OpenEJB Remote Server.  The server will start 
+ up and bind to IP 10.45.67.8 and port 4201.
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+
+   java.naming.factory.initial      = org.openejb.client.JNDIContext
+   java.naming.provider.url         = 10.45.67.8:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+ DNS names can also be used.
+
+ openejb start -h myhost.foo.com
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+
+   java.naming.factory.initial      = org.openejb.client.JNDIContext
+   java.naming.provider.url         = myhost.foo.com:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+Example: -p
+
+ openejb start -p 8765
+ 
+ The server will start up and bind to IP 127.0.0.1 and port 8765.
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+        
+   java.naming.factory.initial      = org.openejb.client.JNDIContext
+   java.naming.provider.url         = 127.0.0.1:8765
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+Example: -conf file   
+
+ openejb start -conf C:\openejb\conf\mytest.conf
+ 
+ Sets the openejb.configuration system variable to the file 
+ C:\openejb\conf\mytest.conf.  When the server starts up and
+ the initializes OpenEJB, this configuration will be
+ used to assemble the container system and load beans. 
+
+Example: --admin-ip addresses   
+
+ openejb start --admin-ip 192.168.1.12
+ 
+ Adds 192.168.1.12 to the list of IP addresses that are 
+ authorized to shutdown the server or access the server
+ via a telnet client.  The host that this server was 
+ started on is always allowed to administer the server.
+ 
+ Multiple hosts can be given administrative access to
+ this server by listing all the host names separated
+ by commas as such:
+
+ openejb start --admin-ip 192.168.1.12,joe.foo.com,robert
+ 
+ The first host in the string names the host explicitly 
+ using an IP address (192.168.1.12). 
+ 
+ The second host in uses a DNS name (joe.foo.com) to refer
+ to the hosts IP address.  The DNS name will be resolved 
+ and the IP will be added to the admin list. 
+ 
+ The third address refers to a the host by a name (robert)
+ that the opperating system is able to resolve into a valid
+ IP address.  This is usually done via a hosts file, interal
+ DNS server, or Windows Domain Server. 
+
+Example: --local-copy
+
+ openejb start --local-copy=true
+            
+ Instructs the container system to marshal (ie, copy) all
+ calls between beans are required by the EJB 1.1 specification.  
+ 
+ openejb start --local-copy=false
+ 
+ Instructs the container system to not marshal (copy) calls 
+ between beans. The container system as will pass parameters 
+ and return values without copying or marshalling as is 
+ required for EJB 2.0 Local interfaces.
+            
+Bug Reports to <user@openejb.org>
