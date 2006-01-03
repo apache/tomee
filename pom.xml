@@ -36,6 +36,7 @@
     <module>server/openejb-telnet</module>
     <module>server/openejb-xfire</module>
     <module>server/openejb-axis</module>
+    <module>server/openejb-corba</module>
     <module>openejb-assembly</module>
   </modules>
   <repositories>
