@@ -18,11 +18,13 @@ import org.openejb.spi.SecurityService;
 import org.openejb.util.OpenEJBErrorHandler;
 import org.openejb.util.SafeToolkit;
 
-public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler{
+public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler {
+
     private org.openejb.core.ContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private org.openejb.spi.SecurityService securityService;
     private HashMap remoteJndiContexts = null;
+    public static final String KEY_TRANSACTION_MANAGER = "TransactionManager";
 
     public org.openejb.spi.ContainerSystem getContainerSystem(){
         return containerSystem;
@@ -78,9 +80,16 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
+    private static ThreadLocal context = new ThreadLocal();
+
+    public static HashMap getContext() {
+        return (HashMap) context.get();
+    }
+
     public void build() throws OpenEJBException{
+        context.set(new HashMap());
         try{
-        containerSystem = buildContainerSystem(config);
+            containerSystem = buildContainerSystem(config);
         }catch(OpenEJBException ae){
             /* OpenEJBExceptions contain useful information and are debbugable.
              * Let the exception pass through to the top and be logged.
@@ -94,6 +103,8 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
              */
             OpenEJBErrorHandler.handleUnknownError(e, "Assembler");
             throw new OpenEJBException(e);
+        } finally {
+            context.set(null);
         }
     }
 
@@ -198,6 +209,9 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         /*[5] Assemble TransactionManager /////////////////////////////////*/
         transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
+
+        getContext().put(KEY_TRANSACTION_MANAGER, transactionManager);
+
         containerSystem.getJNDIContext().bind("java:openejb/TransactionManager",transactionManager);
 
         /*[5]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

@@ -12,6 +12,7 @@ import org.openejb.core.ivm.naming.Reference;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.transaction.UserTransaction;
+import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,7 +49,10 @@ public class JndiEncBuilder {
         HashMap bindings = new HashMap();
 
         if (beanManagedTransactions) {
-            Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction());
+            Object obj = Assembler.getContext().get(Assembler.KEY_TRANSACTION_MANAGER);
+            TransactionManager transactionManager = (TransactionManager) obj;
+
+            Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction(transactionManager));
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
 

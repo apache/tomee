@@ -37,6 +37,7 @@ public class iTest extends org.openejb.test.TestSuite {
      * @throws Exception
      */
     protected void setUp() throws Exception {
+        org.apache.log4j.BasicConfigurator.configure();
         System.setProperty("openejb.test.server", org.openejb.test.IvmTestServer.class.getName());
         System.setProperty("openejb.test.database", org.openejb.test.InstantDbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
