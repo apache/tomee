@@ -17,6 +17,7 @@ import javax.ejb.EnterpriseBean;
 import javax.ejb.EntityBean;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.JDO;
@@ -142,7 +143,10 @@ public class CastorCMP11_EntityContainer
 
     private Properties props;
 
+    public static final String DEP_TRANSACTION_MANAGER = "TransactionManager";
+
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
+        TransactionManager transactionManager = (TransactionManager) properties.get(DEP_TRANSACTION_MANAGER);
         containerID = id;
         deploymentRegistry = registry;
 
@@ -315,6 +319,10 @@ public class CastorCMP11_EntityContainer
         }
     }
 
+    private TransactionManager getTransactionManager() {
+        return OpenEJB.getTransactionManager();
+    }
+
     public DeploymentInfo[] deployments() {
         return (DeploymentInfo[]) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
@@ -465,14 +473,14 @@ public class CastorCMP11_EntityContainer
 
             bean = fetchAndLoadBean(callContext, db);
 
-            if (OpenEJB.getTransactionManager().getTransaction() != null) {
+            if (getTransactionManager().getTransaction() != null) {
                 try {
-                    Key key = new Key(OpenEJB.getTransactionManager().getTransaction(),
+                    Key key = new Key(getTransactionManager().getTransaction(),
                             callContext.getDeploymentInfo().getDeploymentID(),
                             callContext.getPrimaryKey());
                     SynchronizationWrapper sync = new SynchronizationWrapper(((javax.ejb.EntityBean) bean), key);
 
-                    OpenEJB.getTransactionManager().getTransaction().registerSynchronization(sync);
+                    getTransactionManager().getTransaction().registerSynchronization(sync);
 
                     syncWrappers.put(key, sync);
                 } catch (Exception ex) {
@@ -579,7 +587,7 @@ public class CastorCMP11_EntityContainer
             */
             ejbCreateMethod.invoke(bean, args);
 
-            int txStatus = OpenEJB.getTransactionManager().getStatus();
+            int txStatus = getTransactionManager().getStatus();
             if (txStatus == Status.STATUS_ACTIVE || txStatus == Status.STATUS_NO_TRANSACTION) {
 
                 /*
@@ -908,7 +916,7 @@ public class CastorCMP11_EntityContainer
         txPolicy.beforeInvoke(bean, txContext);
 
         try {
-            int status = OpenEJB.getTransactionManager().getStatus();
+            int status = getTransactionManager().getStatus();
 
             if (status == Status.STATUS_ACTIVE || status == Status.STATUS_NO_TRANSACTION) {
 
@@ -1209,7 +1217,7 @@ public class CastorCMP11_EntityContainer
             try {
                 bean.ejbStore();
             } catch (Exception re) {
-                javax.transaction.TransactionManager txmgr = OpenEJB.getTransactionManager();
+                javax.transaction.TransactionManager txmgr = getTransactionManager();
                 try {
                     txmgr.setRollbackOnly();
                 } catch (javax.transaction.SystemException se) {
