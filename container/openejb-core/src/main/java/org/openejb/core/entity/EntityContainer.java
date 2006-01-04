@@ -12,6 +12,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.EntityBean;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
@@ -20,6 +21,7 @@ import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.SystemException;
 import org.openejb.ClassLoaderUtil;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -39,9 +41,10 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     protected Object containerID = null;
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
+    private TransactionManager transactionManager;
 
-    public void init(Object id, HashMap registry, Properties properties)
-            throws org.openejb.OpenEJBException {
+    public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
+        transactionManager = (TransactionManager) properties.get("TransactionManager");
         containerID = id;
         deploymentRegistry = registry;
 
@@ -102,7 +105,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
 
-            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
             if (!authorized)
                 throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
@@ -152,6 +155,10 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             */
             ThreadContext.setThreadContext(null);
         }
+    }
+
+    private SecurityService getSecurityService() {
+        return OpenEJB.getSecurityService();
     }
 
     public EntityInstanceManager getInstanceManager() {
@@ -219,7 +226,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
             Transaction currentTx = null;
             try {
-                currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
+                currentTx = getTransactionManager().getTransaction();
             } catch (javax.transaction.SystemException se) {
                 throw new org.openejb.SystemException("Transaction Manager failure", se);
             }
@@ -240,6 +247,10 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         }
     }
 
+    private TransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
     public void ejbStore_If_No_Transaction(ThreadContext callContext, EntityBean bean)
             throws Exception {
 
@@ -248,7 +259,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
             Transaction currentTx = null;
             try {
-                currentTx = org.openejb.OpenEJB.getTransactionManager().getTransaction();
+                currentTx = getTransactionManager().getTransaction();
             } catch (javax.transaction.SystemException se) {
                 throw new org.openejb.SystemException("Transaction Manager failure", se);
             }

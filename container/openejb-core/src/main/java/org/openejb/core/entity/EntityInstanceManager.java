@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.ejb.EntityBean;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.openejb.ApplicationException;
 import org.openejb.OpenEJB;
@@ -44,13 +45,14 @@ public class EntityInstanceManager {
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("EntityInstanceManager");
+    private TransactionManager transactionManager;
 
     public EntityInstanceManager() {
     }
 
     public void init(EntityContainer myContainer, HashMap deployments, Properties props)
             throws OpenEJBException {
-
+        transactionManager = (TransactionManager) props.get("TransactionManager");
         SafeProperties safeProps = toolkit.getSafeProperties(props);
         poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
         container = myContainer;
@@ -67,7 +69,7 @@ public class EntityInstanceManager {
             throws OpenEJBException {
         Transaction currentTx = null;
         try {
-            currentTx = OpenEJB.getTransactionManager().getTransaction();
+            currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
             throw new org.openejb.SystemException("TransactionManager failure");
@@ -253,7 +255,7 @@ public class EntityInstanceManager {
             } catch (Throwable e) {
                 logger.error("Encountered exception during call to ejbActivate()", e);
                 try {
-                    Transaction tx = OpenEJB.getTransactionManager().getTransaction();
+                    Transaction tx = getTransactionManager().getTransaction();
                     if (tx != null) {
                         tx.setRollbackOnly();
                         throw new ApplicationException(new javax.transaction.TransactionRolledbackException("Reflection exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
@@ -280,7 +282,7 @@ public class EntityInstanceManager {
         Object primaryKey = callContext.getPrimaryKey();// null if servicing a home ejbFind or ejbHome method.
         Transaction currentTx = null;
         try {
-            currentTx = OpenEJB.getTransactionManager().getTransaction();
+            currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
             throw new org.openejb.SystemException("TransactionManager failure");
@@ -353,7 +355,7 @@ public class EntityInstanceManager {
                     bean.ejbPassivate();
                 } catch (Throwable e) {
                     try {
-                        Transaction tx = OpenEJB.getTransactionManager().getTransaction();
+                        Transaction tx = getTransactionManager().getTransaction();
                         if (tx != null) {
                             tx.setRollbackOnly();
                             throw new ApplicationException(new javax.transaction.TransactionRolledbackException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
@@ -417,7 +419,7 @@ public class EntityInstanceManager {
             throws org.openejb.SystemException {
         Transaction currentTx = null;
         try {
-            currentTx = OpenEJB.getTransactionManager().getTransaction();
+            currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
             throw new org.openejb.SystemException("TransactionManager failure");
@@ -452,6 +454,10 @@ public class EntityInstanceManager {
                 wrapper.disassociate();
             }
         }
+    }
+
+    private TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     /*
@@ -559,7 +565,7 @@ public class EntityInstanceManager {
                     bean.ejbStore();
                 } catch (Exception re) {
                     logger.error("Exception occured during ejbStore()", re);
-                    javax.transaction.TransactionManager txmgr = OpenEJB.getTransactionManager();
+                    javax.transaction.TransactionManager txmgr = getTransactionManager();
                     try {
                         txmgr.setRollbackOnly();
                     } catch (javax.transaction.SystemException se) {
