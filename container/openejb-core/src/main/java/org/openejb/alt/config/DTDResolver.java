@@ -30,7 +30,7 @@ public class DTDResolver implements EntityResolver {
     public static byte[] getDtd(String dtdName) {
         try {
 
-            URL dtd = new URL("resource:/openejb/dtds/" + dtdName);
+            URL dtd = new URL("resource:/schema/" + dtdName);
             InputStream in = dtd.openStream();
             if (in == null) return null;
 
