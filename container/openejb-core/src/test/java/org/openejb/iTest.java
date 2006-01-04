@@ -24,13 +24,19 @@ import org.openejb.test.entity.cmp.CmpTestSuite;
 import org.openejb.test.stateful.StatefulTestSuite;
 import org.openejb.test.stateless.StatelessTestSuite;
 
+import java.util.Collections;
+import java.util.Arrays;
+
 /**
  * @version $Revision$ $Date$
  */
 public class iTest extends org.openejb.test.TestSuite {
 
+    /**
+     * To run this from your ide, set -Dopenejb.home=target/test-classes/
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
-
         System.setProperty("openejb.test.server", org.openejb.test.IvmTestServer.class.getName());
         System.setProperty("openejb.test.database", org.openejb.test.InstantDbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
@@ -40,6 +46,7 @@ public class iTest extends org.openejb.test.TestSuite {
 
     protected void tearDown() throws Exception {
         TestManager.stop();
+        OpenEJB.destroy();
     }
 
     public static Test suite() {

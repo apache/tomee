@@ -26,6 +26,7 @@ import org.openejb.test.stateless.StatelessTestSuite;
 import org.openejb.server.Server;
 import org.openejb.server.ServiceDaemon;
 import org.openejb.server.ServiceException;
+import org.openejb.server.ServerFederation;
 import org.openejb.server.ejbd.EjbServer;
 
 import java.util.Properties;
@@ -44,6 +45,7 @@ public class RemoteiTest extends org.openejb.test.TestSuite {
 
     protected void tearDown() throws Exception {
         TestManager.stop();
+        OpenEJB.destroy();
     }
 
     public static Test suite() {
@@ -64,7 +66,7 @@ public class RemoteiTest extends org.openejb.test.TestSuite {
             try {
                 EjbServer ejbServer = new EjbServer();
                 props.put("openejb.deployments.classpath", "true");
-                OpenEJB.init(props, ejbServer);
+                OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
 
                 serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");

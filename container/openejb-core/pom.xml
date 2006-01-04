@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>openejb-parent</artifactId>
     <groupId>org.openejb</groupId>
@@ -14,6 +14,18 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>openejb.home</name>
+              <value>${basedir}/target/test-classes</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
@@ -23,7 +35,7 @@
             </goals>
             <configuration>
               <tasks>
-                <tstamp />
+                <tstamp/>
                 <replace file="target/classes/openejb-version.properties"
                          token="@VERSION-REPLACED-BY-MAVEN@"
                          value="3.0-SNAPSHOT"/>

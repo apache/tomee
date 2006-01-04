@@ -27,6 +27,16 @@ public final class OpenEJB {
     private static Logger logger;
     private static Messages messages = new Messages("org.openejb.util.resources");
 
+    public static void destroy() {
+        // Very un-thread-safe 
+        containerSystem = null;
+        securityService = null;
+        applicationServer = null;
+        transactionManager = null;
+        props = null;
+        initialized = false;
+        logger = null;
+    }
     public static void init(Properties props)
             throws OpenEJBException {
         init(props, null);
