@@ -1,1 +1,2 @@
 r24 = Server boots.  deployment hasn't been tried.
+r38 = Remote tests and local tests work from m2 and are in the correct places

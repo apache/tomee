@@ -1,6 +1,6 @@
 package org.openejb.server;
 
-import org.openejb.OpenEJB;
+import org.openejb.ClassLoaderUtil;
 import org.openejb.loader.SystemInstance;
 import org.openejb.util.Logger;
 import org.openejb.util.Messages;
@@ -238,7 +238,7 @@ public class ServiceManager {
     }
 
     private Class loadClass(String className) throws ServiceException {
-        ClassLoader loader = OpenEJB.getContextClassLoader();
+        ClassLoader loader = ClassLoaderUtil.getContextClassLoader();
         Class clazz = null;
         try {
             clazz = Class.forName(className, true, loader);

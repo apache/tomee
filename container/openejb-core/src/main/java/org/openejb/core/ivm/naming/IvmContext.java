@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 import javax.naming.spi.ObjectFactory;
 
 import org.openejb.core.ThreadContext;
-import org.openejb.OpenEJB;
+import org.openejb.ClassLoaderUtil;
 
 import com.sun.naming.internal.ResourceManager;
 
@@ -152,7 +152,7 @@ public class IvmContext implements Context, java.io.Serializable {
                 if (className.equals("org.openejb.core.ivm.naming.java.javaURLContextFactory"))
                     continue;
                 try {
-                    ClassLoader cl = OpenEJB.getContextClassLoader();
+                    ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
                     Class factoryClass = Class.forName(className, true, cl);
                     ObjectFactory factoryInstance = (ObjectFactory) factoryClass.newInstance();
                     factories.add(factoryInstance);

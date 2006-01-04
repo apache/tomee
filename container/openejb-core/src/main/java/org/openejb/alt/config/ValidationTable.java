@@ -10,9 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.openejb.util.FileUtils;
 import org.openejb.util.JarUtils;
-import org.openejb.OpenEJB;
+import org.openejb.ClassLoaderUtil;
 import org.openejb.loader.SystemInstance;
 
 public class ValidationTable {
@@ -34,7 +33,7 @@ public class ValidationTable {
     private ValidationTable() {
         try {
 
-            ClassLoader cl = OpenEJB.getContextClassLoader();
+            ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
             Class.forName(jdbcDriver, true, cl);
 
             conn = getConnection();

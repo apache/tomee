@@ -28,7 +28,7 @@ public final class OpenEJB {
     private static Messages messages = new Messages("org.openejb.util.resources");
 
     public static void destroy() {
-        // Very un-thread-safe 
+        // Very un-thread-safe
         containerSystem = null;
         securityService = null;
         applicationServer = null;
@@ -291,11 +291,4 @@ public final class OpenEJB {
         return props.getProperty(property);
     }
 
-    public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
 }

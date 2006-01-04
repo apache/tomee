@@ -11,6 +11,7 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 
 import org.openejb.OpenEJB;
+import org.openejb.ClassLoaderUtil;
 import org.openejb.core.ivm.naming.IvmContext;
 
 public class Lookup extends Command {
@@ -95,7 +96,7 @@ public class Lookup extends Command {
                     eClass = IvmContext.class;
                 } else {
                     try {
-                        ClassLoader cl = OpenEJB.getContextClassLoader();
+                        ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
                         eClass = Class.forName(entry.getClassName(), true, cl);
                     }
                     catch (Throwable t) {
