@@ -37,11 +37,19 @@ public final class OpenEJB {
         initialized = false;
         logger = null;
     }
+
+    /**
+     * 1 usage
+     * org.openejb.core.ivm.naming.InitContextFactory
+     */
     public static void init(Properties props)
             throws OpenEJBException {
         init(props, null);
     }
 
+    /**
+     * 2 usages
+     */
     public static void init(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
         try {
             SystemInstance.init(initProps);
@@ -242,30 +250,49 @@ public final class OpenEJB {
         }
     }
 
+    /**
+     * 26 usages
+     */
     public static TransactionManager getTransactionManager() {
         return transactionManager;
     }
 
+    /**
+     * 9 usages
+     */
     public static SecurityService getSecurityService() {
         return securityService;
     }
 
+    /**
+     * 5 usages
+     * all in org.openejb.core.ivm
+     */
     public static ApplicationServer getApplicationServer() {
         return applicationServer;
     }
 
+    /**
+     * 1 usage
+     * org.openejb.core.ivm.BaseEjbProxyHandler
+     */
     public static DeploymentInfo getDeploymentInfo(Object id) {
         return containerSystem.getDeploymentInfo(id);
     }
 
+    /**
+     * 2 usages
+     * org.openejb.server.ejbd.DeploymentIndex
+     * org.openejb.server.telnet.Ls
+     */
     public static DeploymentInfo [] deployments() {
         return containerSystem.deployments();
     }
 
-    public static Container getContainer(Object id) {
-        return containerSystem.getContainer(id);
-    }
-
+    /**
+     * 1 usages
+     * org.openejb.server.telnet.Ls
+     */
     public static Container [] containers() {
         if (containerSystem == null) {// Something went wrong in the configuration.
             logger.i18n.warning("startup.noContainersConfigured");
@@ -275,10 +302,20 @@ public final class OpenEJB {
         }
     }
 
+    /**
+     * 7 usages
+     * org.openejb.core.ivm.naming  (3)
+     * org.openejb.core.ivm.naming.java (2)
+     * org.openejb.core.server.ejbd.JndiRequestHandler (1)
+     * org.openejb.core.server.telnet.Lookup (1)
+     */
     public static javax.naming.Context getJNDIContext() {
         return containerSystem.getJNDIContext();
     }
 
+    /**
+     * 1 usages
+     */
     public static boolean isInitialized() {
         return initialized;
     }
