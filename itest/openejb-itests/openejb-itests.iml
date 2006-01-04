@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -28,17 +29,6 @@
           <root url="jar:///Users/dblevins/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar:///usr/local/src/junit-3.8.1-src.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="xerces">
-        <CLASSES>
-          <root url="jar:///Users/dblevins/.m2/repository/xerces/xerces/2.4.0/xerces-2.4.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
@@ -46,6 +36,15 @@
       <library name="geronimo-j2ee_1.4_spec">
         <CLASSES>
           <root url="jar:///Users/dblevins/.m2/repository/org/apache/geronimo/specs/geronimo-j2ee_1.4_spec/1.0/geronimo-j2ee_1.4_spec-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xerces">
+        <CLASSES>
+          <root url="jar:///Users/dblevins/.m2/repository/xerces/xerces/2.4.0/xerces-2.4.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

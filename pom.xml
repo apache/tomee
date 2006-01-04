@@ -30,6 +30,7 @@
   <modules>
     <module>itest/openejb-itests</module>
     <module>container/openejb-core</module>
+    <module>server/openejb-ejbd</module>
     <module>server/openejb-admin</module>
     <module>server/openejb-server</module>
     <module>server/openejb-client</module>
