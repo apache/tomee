@@ -93,7 +93,7 @@ public class InstantDbTestDatabase implements TestDatabase{
             Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
         } catch (Exception e){
-            throw new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage());
+            throw (IllegalStateException) new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage()).initCause(e);
         }
 
 	Object obj =null;

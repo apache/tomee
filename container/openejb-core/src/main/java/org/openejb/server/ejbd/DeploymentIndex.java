@@ -17,6 +17,7 @@ public class DeploymentIndex {
     HashMap index = null;
 
     public DeploymentIndex() {
+        // TODO: DMB: Naughty naugty, static badness
         DeploymentInfo[] ds = OpenEJB.deployments();
 
         deployments = new DeploymentInfo[ ds.length + 1 ];

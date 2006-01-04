@@ -23,6 +23,12 @@ public class ServiceDaemon implements ServerService, Runnable {
         this.next = next;
     }
 
+    public ServiceDaemon(ServerService next, int port, String ip) {
+        this.port = port;
+        this.ip = ip;
+        this.next = next;
+    }
+
     public void init(Properties props) throws Exception {
 
         this.props = props;
@@ -46,6 +52,9 @@ public class ServiceDaemon implements ServerService, Runnable {
             try {
 //                serverSocket = new ServerSocket(port, 20, InetAddress.getByName(ip));
                 serverSocket = new ServerSocket(port, 20);
+                port = serverSocket.getLocalPort();
+                ip = serverSocket.getInetAddress().getHostAddress();
+
                 Thread d = new Thread(this);
                 d.setName("service." + next.getName() + "@" + d.hashCode());
                 d.setDaemon(true);
@@ -129,7 +138,7 @@ public class ServiceDaemon implements ServerService, Runnable {
             } catch (SecurityException e) {
 
             } catch (Throwable e) {
-
+                e.printStackTrace();
             }
         }
     }

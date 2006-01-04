@@ -16,6 +16,7 @@ public class Server implements org.openejb.spi.Service {
     Properties props;
 
     static Server server;
+    private ServiceManager manager;
 
     public static Server getServer() {
         if (server == null) {
@@ -34,10 +35,16 @@ public class Server implements org.openejb.spi.Service {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        ServiceManager manager = ServiceManager.getManager();
+        manager = ServiceManager.getManager();
         manager.init();
-        manager.start();
+    }
 
+    public void start() throws Exception {
+        manager.start();
+    }
+
+    public void stop() throws Exception {
+        manager.stop();
     }
 }
 

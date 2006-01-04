@@ -102,7 +102,7 @@ public class TestManager {
         } catch (Exception e){
             if (warn) e.printStackTrace();
             if (warn) System.out.println("Cannot instantiate or initialize the test server: "+e.getClass().getName()+" "+e.getMessage());
-            throw new RuntimeException("Cannot instantiate or initialize the test server: "+e.getClass().getName()+" "+e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test server: "+e.getClass().getName()+" "+e.getMessage(),e);
         }
     }
 
@@ -116,7 +116,7 @@ public class TestManager {
             database.init( props );
         } catch (Exception e){
             if (warn) System.out.println("Cannot instantiate or initialize the test database: "+e.getClass().getName()+" "+e.getMessage());
-            throw new RuntimeException("Cannot instantiate or initialize the test database: "+e.getClass().getName()+" "+e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test database: "+e.getClass().getName()+" "+e.getMessage(),e);
         }
     }
 

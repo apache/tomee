@@ -22,7 +22,7 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
     Messages _messages = new Messages("org.openejb.server.util.resources");
     Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.openejb.server.util.resources");
 
-    Properties props;
+    private Properties props;
 
     ClientObjectFactory clientObjectFactory;
     DeploymentIndex deploymentIndex;

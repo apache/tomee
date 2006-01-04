@@ -13,8 +13,15 @@ import org.openejb.util.Logger;
 import org.openejb.server.ServiceException;
 import org.openejb.server.ServerFederation;
 import org.openejb.client.RequestMethods;
+import org.openejb.ProxyInfo;
 
-public class EjbServer implements org.openejb.server.ServerService {
+import javax.ejb.EJBMetaData;
+import javax.ejb.Handle;
+import javax.ejb.HomeHandle;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBHome;
+
+public class EjbServer implements org.openejb.server.ServerService, org.openejb.spi.ApplicationServer {
 
     EjbDaemon server;
 
@@ -47,4 +54,23 @@ public class EjbServer implements org.openejb.server.ServerService {
         return "";
     }
 
+    public EJBMetaData getEJBMetaData(ProxyInfo info) {
+        return server.getEJBMetaData(info);
+    }
+
+    public Handle getHandle(ProxyInfo info) {
+        return server.getHandle(info);
+    }
+
+    public HomeHandle getHomeHandle(ProxyInfo info) {
+        return server.getHomeHandle(info);
+    }
+
+    public EJBObject getEJBObject(ProxyInfo info) {
+        return server.getEJBObject(info);
+    }
+
+    public EJBHome getEJBHome(ProxyInfo info) {
+        return server.getEJBHome(info);
+    }
 }

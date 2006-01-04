@@ -160,8 +160,8 @@ public class Main {
 
     private static void initServer(Properties props) throws Exception {
         Server server = new Server();
-
         server.init(props);
+        server.start();
     }
 }
 

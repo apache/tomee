@@ -70,7 +70,7 @@ public class RemoteTestServer implements org.openejb.test.TestServer {
                 serverErr.setDaemon(true);
                 serverErr.start();
             } catch (Exception e) {
-                throw new RuntimeException("Cannot start the server.");
+                throw (RuntimeException)new RuntimeException("Cannot start the server.").initCause(e);
             }
             connect(10);
         } else {

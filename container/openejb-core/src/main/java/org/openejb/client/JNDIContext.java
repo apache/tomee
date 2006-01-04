@@ -14,6 +14,7 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.AuthenticationException;
 import javax.naming.spi.InitialContextFactory;
 
 public class JNDIContext implements Serializable, InitialContextFactory, Context, RequestMethods, ResponseCodes {
@@ -108,7 +109,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         try {
             res = requestAuthorization(req);
         } catch (java.rmi.RemoteException e) {
-            throw new javax.naming.AuthenticationException(e.getLocalizedMessage());
+            throw new AuthenticationException(e.getLocalizedMessage());
         }
 
         switch (res.getResponseCode()) {
