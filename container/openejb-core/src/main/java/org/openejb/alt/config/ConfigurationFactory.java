@@ -938,32 +938,37 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             }
 
             boolean searchClassPath = getOption("openejb.deployments.classpath");
+
             if (searchClassPath) {
                 try {
                     ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                     Enumeration resources = contextClassLoader.getResources("META-INF/ejb-jar.xml");
                     while (resources.hasMoreElements()) {
                         URL ejbJar = (URL) resources.nextElement();
-                        File file = new File(ejbJar.getFile());
-                        if (!file.exists()){
+
+                        String path = null;
+                        Deployments deployment = new Deployments();
+                        if (ejbJar.getProtocol().equals("jar")){
+                            ejbJar = new URL(ejbJar.getFile().replaceFirst("!.*$", ""));
+                            File file = new File(ejbJar.getFile());
+                            path = file.getAbsolutePath();
+                            deployment.setJar(path);
+                        } else if (ejbJar.getProtocol().equals("file")) {
+                            File file = new File(ejbJar.getFile());
+                            File metainf = file.getParentFile();
+                            File ejbPackage = metainf.getParentFile();
+                            path = ejbPackage.getAbsolutePath();
+                            deployment.setDir(path);
+                        } else {
+                            logger.warning("Not loading ejbs.  Unknown protocol "+ejbJar.getProtocol());
                             continue;
                         }
-                        
-                        File metainf = file.getParentFile();
 
-                        Deployments deployment = new Deployments();
-                        File ejbPackage = metainf.getParentFile();
-
-                        if (ejbPackage.isDirectory()){
-                            deployment.setDir(ejbPackage.getAbsolutePath());
-                        } else {
-                            deployment.setJar(ejbPackage.getAbsolutePath());
-                        }
-
-                        logger.info("Found ejb in classpath: "+ejbPackage.getAbsolutePath());
+                        logger.info("Found ejb in classpath: "+path);
                         loadFrom(deployment, base, jarList);
                     }
                 } catch (IOException e) {
+                    e.printStackTrace();
                     logger.warning("Unable to search classpath for ejbs: Received Exception: "+e.getClass().getName()+" "+e.getMessage(),e);
                 }
 
