@@ -11,11 +11,13 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.ejb.EJBException;
 
 import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
+import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.ThreadContext;
 import org.openejb.util.proxy.InvocationHandler;
@@ -58,15 +60,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.deploymentID = depID;
         this.deploymentInfo = (org.openejb.core.DeploymentInfo) container.getDeploymentInfo(depID);
 
-        String value = org.openejb.OpenEJB.getInitProps().getProperty("openejb.localcopy");
+        Properties properties = SystemInstance.get().getProperties();
+        String value = properties.getProperty("openejb.localcopy");
         if (value == null) {
-            value = org.openejb.OpenEJB.getInitProps().getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
-        }
-        if (value == null) {
-            value = System.getProperty("openejb.localcopy");
-        }
-        if (value == null) {
-            value = System.getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
+            value = properties.getProperty(org.openejb.core.EnvProps.INTRA_VM_COPY);
         }
         doIntraVmCopy = value == null || !value.equalsIgnoreCase("FALSE");
     }

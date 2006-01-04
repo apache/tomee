@@ -279,16 +279,7 @@ public final class OpenEJB {
         return containerSystem.getJNDIContext();
     }
 
-    public static Properties getInitProps() {
-        return (Properties) props.clone();
-    }
-
     public static boolean isInitialized() {
         return initialized;
     }
-
-    public static String getProperty(String property) {
-        return props.getProperty(property);
-    }
-
 }
