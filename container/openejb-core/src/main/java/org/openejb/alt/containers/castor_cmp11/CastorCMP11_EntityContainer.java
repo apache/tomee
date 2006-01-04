@@ -144,9 +144,10 @@ public class CastorCMP11_EntityContainer
     private Properties props;
 
     public static final String DEP_TRANSACTION_MANAGER = "TransactionManager";
+    private TransactionManager transactionManager;
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        TransactionManager transactionManager = (TransactionManager) properties.get(DEP_TRANSACTION_MANAGER);
+        transactionManager = (TransactionManager) properties.get(DEP_TRANSACTION_MANAGER);
         containerID = id;
         deploymentRegistry = registry;
 
@@ -232,7 +233,7 @@ public class CastorCMP11_EntityContainer
          * the JndiTxReference will dynamically obtian a reference to the TransactionManger the first
          * time it used. The same Reference is shared by all deployments, which is not a problem.
          */
-        JndiTxReference txReference = new JndiTxReference();
+        JndiTxReference txReference = new JndiTxReference(transactionManager);
         for (int x = 0; x < deploys.length; x++) {
             org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
             di.setContainer(this);
@@ -320,7 +321,7 @@ public class CastorCMP11_EntityContainer
     }
 
     private TransactionManager getTransactionManager() {
-        return OpenEJB.getTransactionManager();
+        return transactionManager;
     }
 
     public DeploymentInfo[] deployments() {

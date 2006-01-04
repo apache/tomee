@@ -161,6 +161,11 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         org.openejb.core.ContainerSystem containerSystem = new org.openejb.core.ContainerSystem();
 
+        /*[5] Assemble TransactionManager /////////////////////////////////*/
+        transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
+        props.put("TransactionManager", transactionManager);
+        getContext().put(KEY_TRANSACTION_MANAGER, transactionManager);
+
         /*[2] Assemble Containers and Deployments ///////////////////////////////////*/
 
         assembleContainers(containerSystem, containerSystemInfo);
@@ -202,11 +207,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
             }
 
         }
-
-        /*[5] Assemble TransactionManager /////////////////////////////////*/
-        transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
-
-        getContext().put(KEY_TRANSACTION_MANAGER, transactionManager);
 
         containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
 

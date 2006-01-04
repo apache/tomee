@@ -1,8 +1,9 @@
 package org.openejb.alt.containers.castor_cmp11;
 
-import javax.naming.NamingException;
-
 import org.openejb.core.ivm.naming.Reference;
+
+import javax.naming.NamingException;
+import javax.transaction.TransactionManager;
 /*
   This Reference type is used only by the Castor JDO CMP 1.1 container.
   It allows the TransactionManager to be discovered at runtime, which is 
@@ -13,12 +14,14 @@ import org.openejb.core.ivm.naming.Reference;
 
 public class JndiTxReference implements Reference {
 
-    javax.transaction.TransactionManager txMngr;
+    private final TransactionManager transactionManager;
+
+    public JndiTxReference(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     public Object getObject() throws NamingException {
-        if (txMngr == null)
-            txMngr = org.openejb.OpenEJB.getTransactionManager();
-        return txMngr;
+        return transactionManager;
     }
 
 }
