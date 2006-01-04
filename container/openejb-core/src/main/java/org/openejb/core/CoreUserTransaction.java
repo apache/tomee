@@ -18,10 +18,6 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
         transactionLogger = org.apache.log4j.Category.getInstance("Transaction");
     }
 
-    public CoreUserTransaction() {
-        this(org.openejb.OpenEJB.getTransactionManager());
-    }
-
     private TransactionManager transactionManager() {
         if (transactionManager == null) {
             transactionManager = org.openejb.OpenEJB.getTransactionManager();

@@ -23,7 +23,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     private org.openejb.core.ContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private org.openejb.spi.SecurityService securityService;
-    private HashMap remoteJndiContexts = null;
+
     public static final String KEY_TRANSACTION_MANAGER = "TransactionManager";
 
     public org.openejb.spi.ContainerSystem getContainerSystem(){

@@ -63,10 +63,6 @@ public class IvmContext implements Context, java.io.Serializable {
             return this;
         }
 
-        if (compositName.equals("java:comp/UserTransaction") && ThreadContext.getThreadContext().getDeploymentInfo() == null) {
-            return new org.openejb.core.CoreUserTransaction();
-        }
-
         String compoundName = null;
         int indx = compositName.indexOf(":");
         if (indx > -1) {
