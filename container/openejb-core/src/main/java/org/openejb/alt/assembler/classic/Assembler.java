@@ -1,15 +1,5 @@
 package org.openejb.alt.assembler.classic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Properties;
-
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.transaction.TransactionManager;
-
 import org.openejb.EnvProps;
 import org.openejb.OpenEJBException;
 import org.openejb.core.ConnectorReference;
@@ -17,6 +7,15 @@ import org.openejb.core.DeploymentInfo;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.OpenEJBErrorHandler;
 import org.openejb.util.SafeToolkit;
+
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.TransactionManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler {
 
@@ -26,19 +25,20 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     public static final String KEY_TRANSACTION_MANAGER = "TransactionManager";
 
-    public org.openejb.spi.ContainerSystem getContainerSystem(){
+    public org.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
     }
-    public TransactionManager getTransactionManager(){
+
+    public TransactionManager getTransactionManager() {
         return transactionManager;
     }
-    public SecurityService getSecurityService(){
+
+    public SecurityService getSecurityService() {
         return securityService;
     }
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
     protected OpenEjbConfiguration config;
-
 
     //==================================
     // Error messages
@@ -49,25 +49,24 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     //==================================
 
 
-    public Assembler(){
+    public Assembler() {
     }
 
-    public void init(Properties props) throws OpenEJBException{
+    public void init(Properties props) throws OpenEJBException {
         this.props = props;
 
         /* Get Configuration ////////////////////////////*/
         String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
-        if ( className == null ) className = props.getProperty("openejb.configurator","org.openejb.alt.config.ConfigurationFactory");
+        if (className == null) className = props.getProperty("openejb.configurator", "org.openejb.alt.config.ConfigurationFactory");
 
-        OpenEjbConfigurationFactory configFactory = (OpenEjbConfigurationFactory)toolkit.newInstance(className);
+        OpenEjbConfigurationFactory configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
         configFactory.init(props);
         config = configFactory.getOpenEjbConfiguration();
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
-
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
-        synchronized(systemProperties){
+        synchronized (systemProperties) {
             String str = systemProperties.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
             String naming = "org.openejb.core.ivm.naming";
             if (str == null) {
@@ -86,16 +85,16 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         return (HashMap) context.get();
     }
 
-    public void build() throws OpenEJBException{
+    public void build() throws OpenEJBException {
         context.set(new HashMap());
-        try{
+        try {
             containerSystem = buildContainerSystem(config);
-        }catch(OpenEJBException ae){
+        } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
              * Let the exception pass through to the top and be logged.
              */
-             throw ae;
-        }catch(Exception e){
+            throw ae;
+        } catch (Exception e) {
             /* General Exceptions at this level are too generic and difficult to debug.
              * These exceptions are considered unknown bugs and are fatal.
              * If you get an error at this level, please trap and handle the error
@@ -118,15 +117,15 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
      * When given a complete OpenEjbConfiguration graph this method,
      * will construct an entire container system and return a reference to that
      * container system, as ContainerSystem instance.
-     *
+     * <p/>
      * This method leverage the other assemble and apply methods which
      * can be used independently.
-     *
+     * <p/>
      * Assembles and returns the {@link org.openejb.core.ContainerSystem} using the
      * information from the {@link OpenEjbConfiguration} object passed in.
      * <pre>
      * This method performs the following actions(in order):
-     *
+     * <p/>
      * 1  Assembles ProxyFactory
      * 2  Assembles Containers and Deployments
      * 3  Assembles SecurityService
@@ -138,11 +137,11 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
      *
      * @param configInfo
      * @return ContainerSystem
-     * @exception Exception if there was a problem constructing the ContainerSystem.
-     * @exception Exception
+     * @throws Exception if there was a problem constructing the ContainerSystem.
+     * @throws Exception
      * @see OpenEjbConfiguration
      */
-    public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo)throws Exception{
+    public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
         /*[1] Assemble ProxyFactory //////////////////////////////////////////
 
@@ -160,18 +159,16 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
 
-
         org.openejb.core.ContainerSystem containerSystem = new org.openejb.core.ContainerSystem();
 
         /*[2] Assemble Containers and Deployments ///////////////////////////////////*/
 
-        assembleContainers(containerSystem,containerSystemInfo);
+        assembleContainers(containerSystem, containerSystemInfo);
         /*[2]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
 
         /*[3] Assemble SecurityServices ////////////////////////////////////*/
         securityService = assembleSecurityService(configInfo.facilities.securityService);
-        containerSystem.getJNDIContext().bind("java:openejb/SecurityService",securityService);
+        containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
 
         /*[3]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
@@ -180,39 +177,38 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         // roleMapping used later in buildMethodPermissions
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
         org.openejb.DeploymentInfo [] deployments = containerSystem.deployments();
-        for(int i = 0; i < deployments.length; i++){
-            applyMethodPermissions((org.openejb.core.DeploymentInfo)deployments[i], containerSystemInfo.methodPermissions, roleMapping);
-            applyTransactionAttributes((org.openejb.core.DeploymentInfo)deployments[i],containerSystemInfo.methodTransactions);
+        for (int i = 0; i < deployments.length; i++) {
+            applyMethodPermissions((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodPermissions, roleMapping);
+            applyTransactionAttributes((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
         }
 
         ArrayList list = new ArrayList();
-        if(containerSystemInfo.entityContainers!=null)list.addAll(Arrays.asList(containerSystemInfo.entityContainers));
-        if(containerSystemInfo.statefulContainers!=null)list.addAll(Arrays.asList(containerSystemInfo.statefulContainers));
-        if(containerSystemInfo.statelessContainers!=null)list.addAll(Arrays.asList(containerSystemInfo.statelessContainers));
+        if (containerSystemInfo.entityContainers != null) list.addAll(Arrays.asList(containerSystemInfo.entityContainers));
+        if (containerSystemInfo.statefulContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statefulContainers));
+        if (containerSystemInfo.statelessContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statelessContainers));
         Iterator iterator = list.iterator();
-        while(iterator.hasNext()){
-            ContainerInfo container = (ContainerInfo)iterator.next();
-            for(int z = 0; z < container.ejbeans.length; z++){
-                DeploymentInfo deployment= (org.openejb.core.DeploymentInfo)containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
+        while (iterator.hasNext()) {
+            ContainerInfo container = (ContainerInfo) iterator.next();
+            for (int z = 0; z < container.ejbeans.length; z++) {
+                DeploymentInfo deployment = (org.openejb.core.DeploymentInfo) containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
                 applySecurityRoleReference(deployment, container.ejbeans[z], roleMapping);
             }
         }
         /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-        if(configInfo.facilities.remoteJndiContexts!=null){
-            for(int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++){
+        if (configInfo.facilities.remoteJndiContexts != null) {
+            for (int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++) {
                 javax.naming.InitialContext cntx = assembleRemoteJndiContext(configInfo.facilities.remoteJndiContexts[i]);
-                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/"+configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
+                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
             }
 
         }
-
 
         /*[5] Assemble TransactionManager /////////////////////////////////*/
         transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
 
         getContext().put(KEY_TRANSACTION_MANAGER, transactionManager);
 
-        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager",transactionManager);
+        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
 
         /*[5]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
@@ -220,26 +216,26 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         HashMap connectionManagerMap = new HashMap();
         // connectors are optional in the openejb_config.dtd
         if (configInfo.facilities.connectionManagers != null) {
-            for(int i = 0; i < configInfo.facilities.connectionManagers.length;i++){
+            for (int i = 0; i < configInfo.facilities.connectionManagers.length; i++) {
                 ConnectionManagerInfo cmInfo = configInfo.facilities.connectionManagers[i];
                 ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
-                connectionManagerMap.put(cmInfo.connectionManagerId,connectionManager);
+                connectionManagerMap.put(cmInfo.connectionManagerId, connectionManager);
             }
         }
         // connectors are optional in the openejb_config.dtd
         if (configInfo.facilities.connectors != null) {
-            for(int i = 0; i < configInfo.facilities.connectors.length; i++){
+            for (int i = 0; i < configInfo.facilities.connectors.length; i++) {
                 ConnectorInfo conInfo = configInfo.facilities.connectors[i];
 
-                ConnectionManager connectionManager = (ConnectionManager)connectionManagerMap.get(conInfo.connectionManagerId);
-                if(connectionManager == null)
+                ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
+                if (connectionManager == null)
                     throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
 
                 ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
 
                 ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
 
-                containerSystem.getJNDIContext().bind("java:openejb/connector/"+conInfo.connectorId, reference);
+                containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
             }
         }
         /*[6]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
