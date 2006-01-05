@@ -19,9 +19,11 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
     }
 
     private TransactionManager transactionManager() {
-        if (transactionManager == null) {
-            transactionManager = org.openejb.OpenEJB.getTransactionManager();
-        }
+        // DMB: taking this out is fine unless it is serialized as part of a stateful sessionbean passivation
+        // when the bean is activated
+//        if (transactionManager == null) {
+//            transactionManager = org.openejb.OpenEJB.getTransactionManager();
+//        }
         return transactionManager;
     }
 

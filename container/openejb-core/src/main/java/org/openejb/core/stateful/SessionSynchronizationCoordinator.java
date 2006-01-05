@@ -215,7 +215,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
     }
 
     protected TransactionManager getTransactionManager() {
-        return OpenEJB.getTransactionManager();
+        return transactionManager;
     }
 
     protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {

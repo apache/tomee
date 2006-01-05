@@ -10,6 +10,7 @@ import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.openejb.OpenEJB;
 
@@ -52,7 +53,7 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
                 * Synchronization wrappers, which must be handled
                 * before the LocalTransaction objects in this connection manager.
                 */
-                Transaction tx = OpenEJB.getTransactionManager().getTransaction();
+                Transaction tx = getTransactionManager().getTransaction();
                 if (tx != null)
                     tx.registerSynchronization(new Synchronizer(conn.getLocalTransaction()));
             } catch (javax.transaction.SystemException se) {
@@ -68,9 +69,13 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
         return handle;
     }
 
+    private TransactionManager getTransactionManager() {
+        return OpenEJB.getTransactionManager();
+    }
+
     public void connectionClosed(ConnectionEvent event) {
         try {
-            if (OpenEJB.getTransactionManager().getTransaction() == null) {
+            if (getTransactionManager().getTransaction() == null) {
                 ManagedConnection conn = (ManagedConnection) event.getSource();
                 conn.getLocalTransaction().commit();
                 this.cleanup(conn);

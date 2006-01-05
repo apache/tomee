@@ -38,12 +38,13 @@ public class StatefulInstanceManager {
     protected int BULK_PASSIVATION_SIZE = 100;
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
+    private TransactionManager transactionManager;
 
     public StatefulInstanceManager() {
     }
 
-    public void init(Properties props)
-            throws OpenEJBException {
+    public void init(Properties props) throws OpenEJBException {
+        transactionManager = (TransactionManager) props.get("TransactionManager");
 
         SafeProperties safeProps = toolkit.getSafeProperties(props);
 
@@ -266,7 +267,7 @@ public class StatefulInstanceManager {
             return;// don't put in LRU (method ready) pool.
         } else {
             try {
-                entry.transaction = OpenEJB.getTransactionManager().getTransaction();
+                entry.transaction = getTransactionManager().getTransaction();
             } catch (javax.transaction.SystemException se) {
                 throw new org.openejb.SystemException("TransactionManager failure");
             }
@@ -275,6 +276,10 @@ public class StatefulInstanceManager {
                 lruQUE.add(entry);// add it to end of Que; the most reciently used bean
             }
         }
+    }
+
+    private TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     public EnterpriseBean freeInstance(Object primaryKey)
@@ -434,7 +439,7 @@ public class StatefulInstanceManager {
         /* [2] If the instance is in a transaction, mark the transaction for rollback. */
         Transaction tx = null;
         try {
-            tx = getTxMngr().getTransaction();
+            tx = getTransactionManager().getTransaction();
         } catch (Throwable t) {
             logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the " + callBack + " method of bean " + callContext.getPrimaryKey());
         }
@@ -459,10 +464,5 @@ public class StatefulInstanceManager {
             throw new org.openejb.SystemException(se);
         }
     }
-
-    protected TransactionManager getTxMngr() {
-        return OpenEJB.getTransactionManager();
-    }
-
 }
 

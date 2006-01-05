@@ -5,6 +5,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.TimerService;
 import javax.transaction.Status;
+import javax.transaction.TransactionManager;
 
 import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
@@ -26,7 +27,11 @@ public abstract class CoreContext implements java.io.Serializable {
     CoreUserTransaction userTransaction;
 
     public CoreContext() {
-        userTransaction = new CoreUserTransaction(OpenEJB.getTransactionManager());
+        userTransaction = new CoreUserTransaction(getTransactionManager());
+    }
+
+    private TransactionManager getTransactionManager() {
+        return OpenEJB.getTransactionManager();
     }
 
     public abstract void checkBeanState(byte methodCategory) throws IllegalStateException;
@@ -119,7 +124,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
         checkBeanState(ROLLBACK_METHOD);
         try {
-            int status = OpenEJB.getTransactionManager().getStatus();
+            int status = getTransactionManager().getStatus();
             if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK)
                 return true;
             else if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
@@ -140,7 +145,7 @@ public abstract class CoreContext implements java.io.Serializable {
         checkBeanState(ROLLBACK_METHOD);
 
         try {
-            OpenEJB.getTransactionManager().setRollbackOnly();
+            getTransactionManager().setRollbackOnly();
         } catch (javax.transaction.SystemException se) {
             throw new RuntimeException("Transaction service has thrown a SystemException");
         }
