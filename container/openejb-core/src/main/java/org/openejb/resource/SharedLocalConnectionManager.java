@@ -21,9 +21,10 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
     private Set connSet;
     private SpecialHashThreadLocal threadLocal = new SpecialHashThreadLocal();
     private HashMap factoryMap = new HashMap();
+    private TransactionManager transactionManager;
 
     public void init(java.util.Properties props) {
-
+        transactionManager = (TransactionManager) props.get("TransactionManager");
     }
 
     public SharedLocalConnectionManager() throws javax.resource.spi.ApplicationServerInternalException {
@@ -70,7 +71,7 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
     }
 
     private TransactionManager getTransactionManager() {
-        return OpenEJB.getTransactionManager();
+        return transactionManager;
     }
 
     public void connectionClosed(ConnectionEvent event) {
