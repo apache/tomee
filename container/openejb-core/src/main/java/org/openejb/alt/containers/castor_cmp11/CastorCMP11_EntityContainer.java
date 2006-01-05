@@ -144,11 +144,10 @@ public class CastorCMP11_EntityContainer
 
     private Properties props;
 
-    public static final String DEP_TRANSACTION_MANAGER = "TransactionManager";
     private TransactionManager transactionManager;
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get(DEP_TRANSACTION_MANAGER);
+        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
         containerID = id;
         deploymentRegistry = registry;
 

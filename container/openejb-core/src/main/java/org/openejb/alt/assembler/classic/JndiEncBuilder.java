@@ -49,7 +49,7 @@ public class JndiEncBuilder {
         HashMap bindings = new HashMap();
 
         if (beanManagedTransactions) {
-            Object obj = Assembler.getContext().get(Assembler.KEY_TRANSACTION_MANAGER);
+            Object obj = Assembler.getContext().get(TransactionManager.class.getName());
             TransactionManager transactionManager = (TransactionManager) obj;
 
             Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction(transactionManager));

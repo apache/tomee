@@ -56,7 +56,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
      * @see org.openejb.Container
      */
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get("TransactionManager");
+        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
 
         containerID = id;
         deploymentRegistry = registry;

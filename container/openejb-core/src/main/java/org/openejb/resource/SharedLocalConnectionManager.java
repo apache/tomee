@@ -24,7 +24,7 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
     private TransactionManager transactionManager;
 
     public void init(java.util.Properties props) {
-        transactionManager = (TransactionManager) props.get("TransactionManager");
+        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
     }
 
     public SharedLocalConnectionManager() throws javax.resource.spi.ApplicationServerInternalException {

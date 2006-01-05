@@ -23,8 +23,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     private TransactionManager transactionManager;
     private org.openejb.spi.SecurityService securityService;
 
-    public static final String KEY_TRANSACTION_MANAGER = "TransactionManager";
-
     public org.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
     }
@@ -163,16 +161,18 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         /*[5] Assemble TransactionManager /////////////////////////////////*/
         transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
-        props.put("TransactionManager", transactionManager);
-        getContext().put(KEY_TRANSACTION_MANAGER, transactionManager);
+        props.put(TransactionManager.class.getName(), transactionManager);
+        getContext().put(TransactionManager.class.getName(), transactionManager);
+
+        /*[3] Assemble SecurityServices ////////////////////////////////////*/
+        securityService = assembleSecurityService(configInfo.facilities.securityService);
+        props.put(SecurityService.class.getName(), securityService);
 
         /*[2] Assemble Containers and Deployments ///////////////////////////////////*/
 
         assembleContainers(containerSystem, containerSystemInfo);
         /*[2]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
-        /*[3] Assemble SecurityServices ////////////////////////////////////*/
-        securityService = assembleSecurityService(configInfo.facilities.securityService);
         containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
 
         /*[3]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

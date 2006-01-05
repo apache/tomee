@@ -39,7 +39,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
     private TransactionManager transactionManager;
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get("TransactionManager");
+        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
         containerID = id;
         deploymentRegistry = registry;
 

@@ -50,7 +50,7 @@ public class EntityInstanceManager {
     }
 
     public void init(EntityContainer myContainer, HashMap deployments, Properties props) throws OpenEJBException {
-        transactionManager = (TransactionManager) props.get("TransactionManager");
+        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
         SafeProperties safeProps = toolkit.getSafeProperties(props);
         poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
         container = myContainer;

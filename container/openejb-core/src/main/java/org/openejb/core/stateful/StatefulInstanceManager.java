@@ -46,7 +46,7 @@ public class StatefulInstanceManager {
     }
 
     public void init(Properties props) throws OpenEJBException {
-        transactionManager = (TransactionManager) props.get("TransactionManager");
+        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
 
         SafeProperties safeProps = toolkit.getSafeProperties(props);
 
