@@ -1,12 +1,17 @@
 package org.openejb.core.entity;
 
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 
-public class EntityContext
-        extends org.openejb.core.CoreContext implements javax.ejb.EntityContext {
+import javax.transaction.TransactionManager;
+
+public class EntityContext extends org.openejb.core.CoreContext implements javax.ejb.EntityContext {
+    public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
+        super(transactionManager, securityService);
+    }
 
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
         /*  

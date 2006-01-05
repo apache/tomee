@@ -7,7 +7,6 @@ import java.util.Properties;
 import javax.ejb.EJBException;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
-import javax.ejb.EJBContext;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -16,6 +15,7 @@ import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
+import org.openejb.OpenEJB;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -114,7 +114,7 @@ public class StatefulInstanceManager {
         thrdCntx.setCurrentOperation(Operations.OP_SET_CONTEXT);
         try {
             DeploymentInfo deploymentInfo = thrdCntx.getDeploymentInfo();
-            bean.setSessionContext((javax.ejb.SessionContext) new StatefulContext());
+            bean.setSessionContext((javax.ejb.SessionContext) new StatefulContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService()));
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,

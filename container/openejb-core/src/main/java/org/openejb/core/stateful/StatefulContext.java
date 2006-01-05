@@ -1,14 +1,20 @@
 package org.openejb.core.stateful;
 
 import javax.xml.rpc.handler.MessageContext;
+import javax.transaction.TransactionManager;
 
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 
-public class StatefulContext
-        extends org.openejb.core.CoreContext implements javax.ejb.SessionContext {
+public class StatefulContext extends org.openejb.core.CoreContext implements javax.ejb.SessionContext {
+    
+    public StatefulContext(TransactionManager transactionManager, SecurityService securityService) {
+        super(transactionManager, securityService);
+    }
+
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
         /*  
         The methodCategory will be one of the following constants.

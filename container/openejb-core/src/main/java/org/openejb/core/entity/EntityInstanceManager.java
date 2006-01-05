@@ -5,12 +5,12 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.ejb.EntityBean;
-import javax.ejb.EJBContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.openejb.ApplicationException;
 import org.openejb.OpenEJBException;
+import org.openejb.OpenEJB;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
@@ -215,7 +215,7 @@ public class EntityInstanceManager {
                 * to do.
                 */
                 DeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
-                bean.setEntityContext((javax.ejb.EntityContext) new EntityContext());
+                bean.setEntityContext((javax.ejb.EntityContext) new EntityContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService()));
             } catch (java.lang.Exception e) {
                 /*
                 * The EJB 1.1 specification does not specify how exceptions thrown by setEntityContext impact the 

@@ -459,7 +459,7 @@ public class CastorCMP11_EntityContainer
     }
 
     private EJBContext getEJBContext(org.openejb.core.DeploymentInfo deploymentInfo) {
-        return new org.openejb.core.entity.EntityContext();
+        return new org.openejb.core.entity.EntityContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService());
     }
 
     protected Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext)

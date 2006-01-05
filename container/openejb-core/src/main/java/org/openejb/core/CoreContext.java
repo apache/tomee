@@ -9,6 +9,7 @@ import javax.transaction.TransactionManager;
 
 import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 import org.openejb.util.proxy.ProxyManager;
 
@@ -24,14 +25,18 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public final static byte EJBHOME_METHOD = (byte) 5;
 
-    CoreUserTransaction userTransaction;
+    private final CoreUserTransaction userTransaction;
+    private final SecurityService securityService;
+    private final TransactionManager transactionManager;
 
-    public CoreContext() {
-        userTransaction = new CoreUserTransaction(getTransactionManager());
+    public CoreContext(TransactionManager transactionManager, SecurityService securityService) {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.userTransaction = new CoreUserTransaction(transactionManager);
     }
 
     private TransactionManager getTransactionManager() {
-        return OpenEJB.getTransactionManager();
+        return transactionManager;
     }
 
     public abstract void checkBeanState(byte methodCategory) throws IllegalStateException;
@@ -48,7 +53,7 @@ public abstract class CoreContext implements java.io.Serializable {
         org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
         String physicalRoles [] = di.getPhysicalRole(roleName);
         Object caller = threadContext.getSecurityIdentity();
-        return OpenEJB.getSecurityService().isCallerAuthorized(caller, physicalRoles);
+        return securityService.isCallerAuthorized(caller, physicalRoles);
     }
 
     public EJBHome getEJBHome() {
