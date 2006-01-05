@@ -20,6 +20,7 @@ import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.SystemException;
 import org.openejb.ClassLoaderUtil;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -42,6 +43,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
 
     final static protected Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     /*
      * Construct this container with the specified container id, deployments, container manager and properties.
@@ -57,6 +59,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
      */
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+        securityService = (SecurityService) properties.get(SecurityService.class.getName());
 
         containerID = id;
         deploymentRegistry = registry;
@@ -126,7 +129,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
 
-            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
             if (!authorized)
                 throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
@@ -174,6 +177,10 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
             ThreadContext.setThreadContext(null);
         }
 
+    }
+
+    private SecurityService getSecurityService() {
+        return securityService;
     }
 
     protected Object invoke(Method callMethod, Method runMethod, Object [] args, EnterpriseBean bean, ThreadContext callContext)

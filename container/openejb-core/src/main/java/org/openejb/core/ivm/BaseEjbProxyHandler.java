@@ -17,6 +17,7 @@ import javax.ejb.EJBException;
 
 import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.ThreadContext;
@@ -68,8 +69,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         doIntraVmCopy = value == null || !value.equalsIgnoreCase("FALSE");
     }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException, NoSuchMethodException {
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException, NoSuchMethodException {
 
         in.defaultReadObject();
 
@@ -79,9 +79,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected void checkAuthorization(Method method) throws org.openejb.OpenEJBException {
         Object caller = getThreadSpecificSecurityIdentity();
-        boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(caller, deploymentInfo.getAuthorizedRoles(method));
+        boolean authorized = getSecurityService().isCallerAuthorized(caller, deploymentInfo.getAuthorizedRoles(method));
         if (!authorized)
             throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+    }
+
+    private SecurityService getSecurityService() {
+        return OpenEJB.getSecurityService();
     }
 
     protected Object getThreadSpecificSecurityIdentity() {
@@ -89,7 +93,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (context.valid()) {
             return context.getSecurityIdentity();
         } else {
-            return OpenEJB.getSecurityService().getSecurityIdentity();
+            return getSecurityService().getSecurityIdentity();
         }
     }
 

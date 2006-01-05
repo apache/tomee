@@ -17,6 +17,7 @@ import org.openejb.InvalidateReferenceException;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
 import org.openejb.OpenEJB;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -41,12 +42,14 @@ public class StatefulInstanceManager {
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public StatefulInstanceManager() {
     }
 
     public void init(Properties props) throws OpenEJBException {
         transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
+        securityService = (SecurityService) props.get(SecurityService.class.getName());
 
         SafeProperties safeProps = toolkit.getSafeProperties(props);
 
@@ -138,7 +141,7 @@ public class StatefulInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return (SessionContext) new StatefulContext(transactionManager, OpenEJB.getSecurityService());
+        return (SessionContext) new StatefulContext(transactionManager, securityService);
     }
 
     public SessionBean obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {

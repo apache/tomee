@@ -44,7 +44,11 @@ public abstract class CoreContext implements java.io.Serializable {
     public java.security.Principal getCallerPrincipal() {
         checkBeanState(SECURITY_METHOD);
         Object securityIdentity = ThreadContext.getThreadContext().getSecurityIdentity();
-        return (java.security.Principal) OpenEJB.getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
+        return (java.security.Principal) getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
+    }
+
+    private SecurityService getSecurityService() {
+        return securityService;
     }
 
     public boolean isCallerInRole(java.lang.String roleName) {

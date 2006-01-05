@@ -3,6 +3,7 @@ package org.openejb.core.entity;
 import org.openejb.ApplicationException;
 import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
@@ -45,12 +46,15 @@ public class EntityInstanceManager {
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("EntityInstanceManager");
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public EntityInstanceManager() {
     }
 
     public void init(EntityContainer myContainer, HashMap deployments, Properties props) throws OpenEJBException {
         transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
+        securityService = (SecurityService) props.get(SecurityService.class.getName());
+
         SafeProperties safeProps = toolkit.getSafeProperties(props);
         poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
         container = myContainer;
@@ -273,7 +277,7 @@ public class EntityInstanceManager {
     }
 
     private org.openejb.core.entity.EntityContext createEntityContext() {
-        return new EntityContext(transactionManager, OpenEJB.getSecurityService());
+        return new EntityContext(transactionManager, securityService);
     }
 
     public void poolInstance(ThreadContext callContext, EntityBean bean)

@@ -42,9 +42,12 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+        securityService = (SecurityService) properties.get(SecurityService.class.getName());
+
         containerID = id;
         deploymentRegistry = registry;
 
@@ -158,7 +161,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     }
 
     private SecurityService getSecurityService() {
-        return OpenEJB.getSecurityService();
+        return securityService;
     }
 
     public EntityInstanceManager getInstanceManager() {

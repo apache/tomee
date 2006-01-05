@@ -33,6 +33,7 @@ import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -145,9 +146,11 @@ public class CastorCMP11_EntityContainer
     private Properties props;
 
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+        securityService = (SecurityService)properties.get(SecurityService.class.getName());
         containerID = id;
         deploymentRegistry = registry;
 
@@ -355,7 +358,7 @@ public class CastorCMP11_EntityContainer
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
 
-            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
             if (!authorized)
                 throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
@@ -458,7 +461,11 @@ public class CastorCMP11_EntityContainer
     }
 
     private EntityContext createEntityContext() {
-        return new EntityContext(transactionManager, OpenEJB.getSecurityService());
+        return new EntityContext(transactionManager, getSecurityService());
+    }
+
+    private SecurityService getSecurityService() {
+        return securityService;
     }
 
     protected Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext)

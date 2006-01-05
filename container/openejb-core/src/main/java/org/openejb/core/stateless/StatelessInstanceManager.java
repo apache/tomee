@@ -14,6 +14,7 @@ import org.apache.log4j.Category;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
 import org.openejb.OpenEJB;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
@@ -35,14 +36,16 @@ public class StatelessInstanceManager {
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     protected final static Category logger = Category.getInstance("OpenEJB");
     private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public StatelessInstanceManager() {
     }
 
-    public void init(Properties props) throws OpenEJBException {
-        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
+    public void init(Properties properties) throws OpenEJBException {
+        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+        securityService = (SecurityService) properties.get(SecurityService.class.getName());
 
-        SafeProperties safeProps = toolkit.getSafeProperties(props);
+        SafeProperties safeProps = toolkit.getSafeProperties(properties);
 
         poolLimit = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 10);
         strictPooling = safeProps.getPropertyAsBoolean(EnvProps.IM_STRICT_POOLING, new Boolean(false)).booleanValue();
@@ -101,7 +104,7 @@ public class StatelessInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return (SessionContext) new StatelessContext(transactionManager, OpenEJB.getSecurityService());
+        return (SessionContext) new StatelessContext(transactionManager, securityService);
     }
 
     public void poolInstance(ThreadContext callContext, EnterpriseBean bean)
