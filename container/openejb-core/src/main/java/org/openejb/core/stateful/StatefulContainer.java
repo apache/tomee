@@ -11,6 +11,7 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.transaction.TransactionManager;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
@@ -40,6 +41,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
     Method EJB_REMOVE_METHOD = null;
 
     final static protected Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
+    private TransactionManager transactionManager;
 
     /*
      * Construct this container with the specified container id, deployments, container manager and properties.
@@ -53,8 +55,9 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
      * @throws OpenEJBException if there is a problem constructing the container
      * @see org.openejb.Container
      */
-    public void init(Object id, HashMap registry, Properties properties)
-            throws org.openejb.OpenEJBException {
+    public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
+        transactionManager = (TransactionManager) properties.get("TransactionManager");
+
         containerID = id;
         deploymentRegistry = registry;
 
@@ -177,7 +180,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
             throws org.openejb.OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext);
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
 
         try {
             txPolicy.beforeInvoke(bean, txContext);
@@ -222,6 +225,10 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         }
 
         return returnValue;
+    }
+
+    private TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     public StatefulInstanceManager getInstanceManager() {

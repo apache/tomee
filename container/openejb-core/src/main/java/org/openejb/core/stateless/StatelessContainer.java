@@ -11,6 +11,7 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.transaction.TransactionManager;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
@@ -18,6 +19,7 @@ import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.ClassLoaderUtil;
+import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -34,9 +36,10 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
     HashMap deploymentRegistry;
 
     Object containerID = null;
+    private TransactionManager transactionManager;
 
-    public void init(Object id, HashMap registry, Properties properties)
-            throws org.openejb.OpenEJBException {
+    public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
+        transactionManager = (TransactionManager) properties.get("TransactionManager");
         containerID = id;
         deploymentRegistry = registry;
 
@@ -100,7 +103,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
 
-            boolean authorized = OpenEJB.getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
             if (!authorized)
                 throw new org.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
 
@@ -144,6 +147,10 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         }
     }
 
+    private SecurityService getSecurityService() {
+        return OpenEJB.getSecurityService();
+    }
+
     public StatelessInstanceManager getInstanceManager() {
         return instanceManager;
     }
@@ -152,7 +159,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
             throws org.openejb.OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext();
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
         txContext.callContext = callContext;
 
         txPolicy.beforeInvoke(bean, txContext);
@@ -188,6 +195,10 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         }
 
         return returnValue;
+    }
+
+    private TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     protected ProxyInfo createEJBObject(org.openejb.core.DeploymentInfo deploymentInfo, Method callMethod) {

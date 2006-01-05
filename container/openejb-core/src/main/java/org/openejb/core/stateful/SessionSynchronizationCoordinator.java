@@ -14,12 +14,19 @@ import org.openejb.core.ThreadContext;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.util.Logger;
 
+import java.util.HashMap;
+
 public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {
 
     private static java.util.HashMap coordinators = new java.util.HashMap();
     public static Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
-    private java.util.HashMap sessionSynchronizations = new java.util.HashMap();
+    private final HashMap sessionSynchronizations = new java.util.HashMap();
+    private final TransactionManager transactionManager;
+
+    private SessionSynchronizationCoordinator(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     public static void registerSessionSynchronization(SessionSynchronization session, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException {
         SessionSynchronizationCoordinator coordinator = null;
@@ -27,12 +34,11 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         coordinator = (SessionSynchronizationCoordinator) coordinators.get(context.currentTx);
 
         if (coordinator == null) {
-            coordinator = new SessionSynchronizationCoordinator();
+            coordinator = new SessionSynchronizationCoordinator(context.getTransactionManager());
             try {
                 context.currentTx.registerSynchronization(coordinator);
             } catch (Exception e) {
-
-                logger.error("", e);
+                logger.error("Transaction.registerSynchronization failed.", e);
                 return;
             }
             coordinators.put(context.currentTx, coordinator);
@@ -105,7 +111,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 /* [2] If the instance is in a transaction, mark the transaction for rollback. */
                 Transaction tx = null;
                 try {
-                    tx = getTxMngr().getTransaction();
+                    tx = getTransactionManager().getTransaction();
                 } catch (Throwable t) {
                     logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the beforeCompletion method of bean " + callContext.getPrimaryKey());
                 }
@@ -133,7 +139,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         Object[] contexts = sessionSynchronizations.values().toArray();
 
         try {
-            Transaction tx = getTxMngr().getTransaction();
+            Transaction tx = getTransactionManager().getTransaction();
             coordinators.remove(tx);
         } catch (Exception e) {
             logger.error("", e);
@@ -170,7 +176,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 /* [2] If the instance is in a transaction, mark the transaction for rollback. */
                 Transaction tx = null;
                 try {
-                    tx = getTxMngr().getTransaction();
+                    tx = getTransactionManager().getTransaction();
                 } catch (Throwable t) {
                     logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the afterCompletion method of bean " + callContext.getPrimaryKey());
                 }
@@ -208,7 +214,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         }
     }
 
-    protected TransactionManager getTxMngr() {
+    protected TransactionManager getTransactionManager() {
         return OpenEJB.getTransactionManager();
     }
 

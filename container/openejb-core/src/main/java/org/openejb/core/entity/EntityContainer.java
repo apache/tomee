@@ -169,7 +169,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             throws org.openejb.OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext();
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
         txContext.callContext = callContext;
 
         EntityBean bean = null;
@@ -292,7 +292,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         Object primaryKey = null;
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext();
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
         txContext.callContext = callContext;
 
         /*
@@ -412,7 +412,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         callContext.setCurrentOperation(Operations.OP_REMOVE);
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext();
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
         txContext.callContext = callContext;
 
         EntityBean bean = null;

@@ -1,6 +1,7 @@
 package org.openejb.core.transaction;
 
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.openejb.core.ThreadContext;
 
@@ -10,11 +11,15 @@ public class TransactionContext {
     public Transaction currentTx;
     public ThreadContext callContext;
 
-    public TransactionContext() {
+    private final TransactionManager transactionManager;
+
+    public TransactionContext(ThreadContext callContext, TransactionManager transactionManager) {
+        this.callContext = callContext;
+        this.transactionManager = transactionManager;
     }
 
-    public TransactionContext(ThreadContext callContext) {
-        this.callContext = callContext;
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 }
 
