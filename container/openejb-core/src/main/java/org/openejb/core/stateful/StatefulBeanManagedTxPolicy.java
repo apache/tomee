@@ -38,13 +38,13 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
         try {
 
-            context.clientTx = suspendTransaction();
+            context.clientTx = suspendTransaction(context);
 
             Object primaryKey = context.callContext.getPrimaryKey();
             Object possibleBeanTx = statefulContainer.getInstanceManager().getAncillaryState(primaryKey);
             if (possibleBeanTx instanceof Transaction) {
                 context.currentTx = (Transaction) possibleBeanTx;
-                resumeTransaction(context.currentTx);
+                resumeTransaction(context, context.currentTx);
             }
         } catch (org.openejb.OpenEJBException e) {
             handleSystemException(e.getRootCause(), instance, context);
@@ -54,7 +54,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
 
-            context.currentTx = getTxMngr().getTransaction();
+            context.currentTx = context.getTransactionManager().getTransaction();
 
             /*
 
@@ -63,7 +63,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
                     context.currentTx.getStatus() != Status.STATUS_COMMITTED &&
                     context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK) {
 
-                suspendTransaction();
+                suspendTransaction(context);
             }
 
             Object primaryKey = context.callContext.getPrimaryKey();
@@ -76,7 +76,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         } catch (Throwable e) {
             handleSystemException(e, instance, context);
         } finally {
-            resumeTransaction(context.clientTx);
+            resumeTransaction(context, context.clientTx);
         }
     }
 

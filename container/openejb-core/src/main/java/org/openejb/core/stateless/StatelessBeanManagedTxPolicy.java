@@ -32,7 +32,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
     public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
 
-        context.clientTx = suspendTransaction();
+        context.clientTx = suspendTransaction(context);
     }
 
     public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
@@ -41,7 +41,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
             * The Container must detect the case in which a transaction was started, but
             * not completed, in the business method, and handle it as follows:
             */
-            context.currentTx = getTxMngr().getTransaction();
+            context.currentTx = context.getTransactionManager().getTransaction();
 
             if (context.currentTx == null) return;
 
@@ -53,7 +53,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
                 /* [2] Roll back the started transaction *******/
                 try {
-                    rollbackTransaction(context.currentTx);
+                    rollbackTransaction(context, context.currentTx);
                 } catch (Throwable t) {
 
                 }
@@ -65,7 +65,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
         } catch (javax.transaction.SystemException e) {
             throw new org.openejb.SystemException(e);
         } finally {
-            resumeTransaction(context.clientTx);
+            resumeTransaction(context, context.clientTx);
         }
     }
 
@@ -76,7 +76,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
     public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
-            context.currentTx = getTxMngr().getTransaction();
+            context.currentTx = context.getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException e) {
             context.currentTx = null;
         }

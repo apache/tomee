@@ -8,7 +8,6 @@ import javax.transaction.TransactionManager;
 
 import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
-import org.openejb.OpenEJB;
 import org.openejb.SystemException;
 import org.openejb.core.ThreadContext;
 import org.openejb.util.Logger;
@@ -29,13 +28,6 @@ public abstract class TransactionPolicy {
 
     protected final static Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
     protected final static Logger txLogger = Logger.getInstance("Transaction", "org.openejb.util.resources");
-
-    protected TransactionManager getTxMngr() {
-        if (manager == null) {
-            manager = OpenEJB.getTransactionManager();
-        }
-        return manager;
-    }
 
     public TransactionContainer getContainer() {
         return container;
@@ -67,9 +59,9 @@ public abstract class TransactionPolicy {
         }
     }
 
-    protected Transaction suspendTransaction() throws SystemException {
+    protected Transaction suspendTransaction(TransactionContext context) throws SystemException {
         try {
-            Transaction tx = getTxMngr().suspend();
+            Transaction tx = context.getTransactionManager().suspend();
             if (txLogger.isInfoEnabled()) {
                 txLogger.info(policyToString() + "Suspended transaction " + tx);
             }
@@ -80,7 +72,7 @@ public abstract class TransactionPolicy {
         }
     }
 
-    protected void resumeTransaction(Transaction tx) throws SystemException {
+    protected void resumeTransaction(TransactionContext context, Transaction tx) throws SystemException {
         try {
             if (tx == null) {
                 if (txLogger.isInfoEnabled()) {
@@ -90,7 +82,7 @@ public abstract class TransactionPolicy {
                 if (txLogger.isInfoEnabled()) {
                     txLogger.info(policyToString() + "Resuming transaction " + tx);
                 }
-                getTxMngr().resume(tx);
+                context.getTransactionManager().resume(tx);
             }
         } catch (javax.transaction.InvalidTransactionException ite) {
 
@@ -107,14 +99,14 @@ public abstract class TransactionPolicy {
         }
     }
 
-    protected void commitTransaction(Transaction tx) throws SystemException {
+    protected void commitTransaction(TransactionContext context, Transaction tx) throws SystemException {
         try {
             if (txLogger.isInfoEnabled()) {
                 txLogger.info(policyToString() + "Committing transaction " + tx);
             }
-            if (tx.equals(getTxMngr().getTransaction())) {
+            if (tx.equals(context.getTransactionManager().getTransaction())) {
 
-                getTxMngr().commit();
+                context.getTransactionManager().commit();
             } else {
                 tx.commit();
             }
@@ -147,14 +139,14 @@ public abstract class TransactionPolicy {
         }
     }
 
-    protected void rollbackTransaction(Transaction tx) throws SystemException {
+    protected void rollbackTransaction(TransactionContext context, Transaction tx) throws SystemException {
         try {
             if (txLogger.isInfoEnabled()) {
                 txLogger.info(policyToString() + "Rolling back transaction " + tx);
             }
-            if (tx.equals(getTxMngr().getTransaction())) {
+            if (tx.equals(context.getTransactionManager().getTransaction())) {
 
-                getTxMngr().rollback();
+                context.getTransactionManager().rollback();
             } else {
                 tx.rollback();
             }
@@ -201,11 +193,11 @@ public abstract class TransactionPolicy {
         container.discardInstance(instance, callContext);
     }
 
-    protected void beginTransaction() throws javax.transaction.SystemException {
+    protected void beginTransaction(TransactionContext context) throws javax.transaction.SystemException {
         try {
-            getTxMngr().begin();
+            context.getTransactionManager().begin();
             if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "Started transaction " + getTxMngr().getTransaction());
+                txLogger.info(policyToString() + "Started transaction " + context.getTransactionManager().getTransaction());
             }
         } catch (javax.transaction.NotSupportedException nse) {
             logger.error("", nse);

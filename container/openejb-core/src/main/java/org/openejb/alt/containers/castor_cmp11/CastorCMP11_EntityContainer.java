@@ -463,7 +463,7 @@ public class CastorCMP11_EntityContainer
         EntityBean bean = null;
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, OpenEJB.getTransactionManager());
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
 
         txPolicy.beforeInvoke(bean, txContext);
 
@@ -562,7 +562,7 @@ public class CastorCMP11_EntityContainer
         Object primaryKey = null;
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, OpenEJB.getTransactionManager());
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
 
         txPolicy.beforeInvoke(bean, txContext);
 
@@ -731,7 +731,7 @@ public class CastorCMP11_EntityContainer
 
         /* Get the transaction policy assigned to this method */
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, OpenEJB.getTransactionManager());
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
 
         txPolicy.beforeInvoke(bean, txContext);
 
@@ -911,7 +911,7 @@ public class CastorCMP11_EntityContainer
     protected void removeEJBObject(Method callMethod, Object[] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
         EntityBean bean = null;
-        TransactionContext txContext = new TransactionContext(callContext, OpenEJB.getTransactionManager());
+        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
 
         txPolicy.beforeInvoke(bean, txContext);

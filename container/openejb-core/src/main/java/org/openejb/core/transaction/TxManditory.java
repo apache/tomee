@@ -23,7 +23,7 @@ public class TxManditory extends TransactionPolicy {
 
         try {
 
-            context.clientTx = getTxMngr().getTransaction();
+            context.clientTx = context.getTransactionManager().getTransaction();
 
             if (context.clientTx == null) {
 

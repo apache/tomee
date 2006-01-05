@@ -23,7 +23,7 @@ public class TxNotSupported extends TransactionPolicy {
 
         try {
 
-            context.clientTx = getTxMngr().suspend();
+            context.clientTx = context.getTransactionManager().suspend();
         } catch (javax.transaction.SystemException se) {
             throw new org.openejb.SystemException(se);
         }
@@ -35,7 +35,7 @@ public class TxNotSupported extends TransactionPolicy {
 
         if (context.clientTx != null) {
             try {
-                getTxMngr().resume(context.clientTx);
+                context.getTransactionManager().resume(context.clientTx);
             } catch (javax.transaction.InvalidTransactionException ite) {
 
                 logger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());

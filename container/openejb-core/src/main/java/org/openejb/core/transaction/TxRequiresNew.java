@@ -24,9 +24,9 @@ public class TxRequiresNew extends TransactionPolicy {
 
         try {
 
-            context.clientTx = suspendTransaction();
-            beginTransaction();
-            context.currentTx = getTxMngr().getTransaction();
+            context.clientTx = suspendTransaction(context);
+            beginTransaction(context);
+            context.currentTx = context.getTransactionManager().getTransaction();
 
         } catch (javax.transaction.SystemException se) {
             throw new org.openejb.SystemException(se);
@@ -39,16 +39,16 @@ public class TxRequiresNew extends TransactionPolicy {
         try {
 
             if (context.currentTx.getStatus() == Status.STATUS_ACTIVE) {
-                commitTransaction(context.currentTx);
+                commitTransaction(context, context.currentTx);
             } else {
-                rollbackTransaction(context.currentTx);
+                rollbackTransaction(context, context.currentTx);
             }
 
         } catch (javax.transaction.SystemException se) {
             throw new org.openejb.SystemException(se);
         } finally {
             if (context.clientTx != null) {
-                resumeTransaction(context.clientTx);
+                resumeTransaction(context, context.clientTx);
             } else if (txLogger.isInfoEnabled()) {
                 txLogger.info(policyToString() + "No transaction to resume");
             }

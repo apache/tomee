@@ -24,13 +24,13 @@ public class TxRequired extends TransactionPolicy {
 
         try {
 
-            context.clientTx = getTxMngr().getTransaction();
+            context.clientTx = context.getTransactionManager().getTransaction();
 
             if (context.clientTx == null) {
-                beginTransaction();
+                beginTransaction(context);
             }
 
-            context.currentTx = getTxMngr().getTransaction();
+            context.currentTx = context.getTransactionManager().getTransaction();
 
         } catch (javax.transaction.SystemException se) {
             logger.error("Exception during getTransaction()", se);
@@ -44,9 +44,9 @@ public class TxRequired extends TransactionPolicy {
             if (context.clientTx != null) return;
 
             if (context.currentTx.getStatus() == Status.STATUS_ACTIVE) {
-                commitTransaction(context.currentTx);
+                commitTransaction(context, context.currentTx);
             } else {
-                rollbackTransaction(context.currentTx);
+                rollbackTransaction(context, context.currentTx);
             }
 
         } catch (javax.transaction.SystemException se) {

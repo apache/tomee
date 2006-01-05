@@ -23,7 +23,7 @@ public class TxNever extends TransactionPolicy {
 
         try {
 
-            if (getTxMngr().getTransaction() != null) {
+            if (context.getTransactionManager().getTransaction() != null) {
 
                 throw new ApplicationException(new java.rmi.RemoteException("Transactions not supported"));
             }

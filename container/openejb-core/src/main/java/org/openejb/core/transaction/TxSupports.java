@@ -23,7 +23,7 @@ public class TxSupports extends TransactionPolicy {
 
         try {
 
-            context.clientTx = getTxMngr().getTransaction();
+            context.clientTx = context.getTransactionManager().getTransaction();
             context.currentTx = context.clientTx;
 
         } catch (javax.transaction.SystemException se) {
