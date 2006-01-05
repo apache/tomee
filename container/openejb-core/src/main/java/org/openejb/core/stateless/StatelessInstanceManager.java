@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.ejb.EJBContext;
 
 import org.apache.log4j.Category;
 import org.openejb.OpenEJBException;
@@ -77,7 +78,7 @@ public class StatelessInstanceManager {
 
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
                 DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-                bean.setSessionContext((javax.ejb.SessionContext) deploymentInfo.getEJBContext());
+                bean.setSessionContext((javax.ejb.SessionContext) new StatelessContext());
 
                 callContext.setCurrentOperation(Operations.OP_CREATE);
                 Method createMethod = deploymentInfo.getCreateMethod();

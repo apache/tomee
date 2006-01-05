@@ -254,18 +254,6 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         securityRoleReferenceMap.put(securityRoleReference, physicalRoles);
     }
 
-    public EJBContext getEJBContext() {
-        if (componentType == STATEFUL)
-            return new org.openejb.core.stateful.StatefulContext();
-        else if (componentType == STATELESS)
-            return new org.openejb.core.stateless.StatelessContext();
-        else if (componentType == BMP_ENTITY || componentType == CMP_ENTITY)
-            return new org.openejb.core.entity.EntityContext();
-        else
-            return null;
-
-    }
-
     public void setMethodTransactionAttribute(Method method, String transAttribute) {
         Byte byteValue = null;
         TransactionPolicy policy = null;

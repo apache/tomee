@@ -5,11 +5,11 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.ejb.EntityBean;
+import javax.ejb.EJBContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.openejb.ApplicationException;
-import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
@@ -214,7 +214,8 @@ public class EntityInstanceManager {
                 * we don't want the TransactionScopeHandler commiting the transaction in afterInvoke() which is what it would attempt 
                 * to do.
                 */
-                bean.setEntityContext((javax.ejb.EntityContext) callContext.getDeploymentInfo().getEJBContext());
+                DeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
+                bean.setEntityContext((javax.ejb.EntityContext) new EntityContext());
             } catch (java.lang.Exception e) {
                 /*
                 * The EJB 1.1 specification does not specify how exceptions thrown by setEntityContext impact the 
