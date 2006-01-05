@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Category;
 import org.openejb.OpenEJBException;
@@ -32,12 +34,13 @@ public class StatelessInstanceManager {
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     protected final static Category logger = Category.getInstance("OpenEJB");
+    private TransactionManager transactionManager;
 
     public StatelessInstanceManager() {
     }
 
-    public void init(Properties props)
-            throws OpenEJBException {
+    public void init(Properties props) throws OpenEJBException {
+        transactionManager = (TransactionManager) props.get("TransactionManager");
 
         SafeProperties safeProps = toolkit.getSafeProperties(props);
 
@@ -78,7 +81,7 @@ public class StatelessInstanceManager {
 
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
                 DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-                bean.setSessionContext((javax.ejb.SessionContext) new StatelessContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService()));
+                bean.setSessionContext(createSessionContext());
 
                 callContext.setCurrentOperation(Operations.OP_CREATE);
                 Method createMethod = deploymentInfo.getCreateMethod();
@@ -95,6 +98,10 @@ public class StatelessInstanceManager {
             }
         }
         return bean;
+    }
+
+    private SessionContext createSessionContext() {
+        return (SessionContext) new StatelessContext(transactionManager, OpenEJB.getSecurityService());
     }
 
     public void poolInstance(ThreadContext callContext, EnterpriseBean bean)

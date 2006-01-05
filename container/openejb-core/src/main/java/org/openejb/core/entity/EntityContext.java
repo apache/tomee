@@ -9,6 +9,7 @@ import org.openejb.core.ivm.EjbObjectProxyHandler;
 import javax.transaction.TransactionManager;
 
 public class EntityContext extends org.openejb.core.CoreContext implements javax.ejb.EntityContext {
+
     public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }

@@ -1,16 +1,8 @@
 package org.openejb.core.entity;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Properties;
-
-import javax.ejb.EntityBean;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.openejb.ApplicationException;
-import org.openejb.OpenEJBException;
 import org.openejb.OpenEJB;
+import org.openejb.OpenEJBException;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
@@ -20,6 +12,13 @@ import org.openejb.util.Logger;
 import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.Stack;
+
+import javax.ejb.EntityBean;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
 
 public class EntityInstanceManager {
 
@@ -50,8 +49,7 @@ public class EntityInstanceManager {
     public EntityInstanceManager() {
     }
 
-    public void init(EntityContainer myContainer, HashMap deployments, Properties props)
-            throws OpenEJBException {
+    public void init(EntityContainer myContainer, HashMap deployments, Properties props) throws OpenEJBException {
         transactionManager = (TransactionManager) props.get("TransactionManager");
         SafeProperties safeProps = toolkit.getSafeProperties(props);
         poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
@@ -215,7 +213,7 @@ public class EntityInstanceManager {
                 * to do.
                 */
                 DeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
-                bean.setEntityContext((javax.ejb.EntityContext) new EntityContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService()));
+                bean.setEntityContext(createEntityContext());
             } catch (java.lang.Exception e) {
                 /*
                 * The EJB 1.1 specification does not specify how exceptions thrown by setEntityContext impact the 
@@ -272,6 +270,10 @@ public class EntityInstanceManager {
 
         }
         return bean;
+    }
+
+    private org.openejb.core.entity.EntityContext createEntityContext() {
+        return new EntityContext(transactionManager, OpenEJB.getSecurityService());
     }
 
     public void poolInstance(ThreadContext callContext, EntityBean bean)

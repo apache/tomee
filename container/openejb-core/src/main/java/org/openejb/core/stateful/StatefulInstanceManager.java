@@ -7,6 +7,7 @@ import java.util.Properties;
 import javax.ejb.EJBException;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -114,7 +115,7 @@ public class StatefulInstanceManager {
         thrdCntx.setCurrentOperation(Operations.OP_SET_CONTEXT);
         try {
             DeploymentInfo deploymentInfo = thrdCntx.getDeploymentInfo();
-            bean.setSessionContext((javax.ejb.SessionContext) new StatefulContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService()));
+            bean.setSessionContext(createSessionContext());
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -134,6 +135,10 @@ public class StatefulInstanceManager {
         beanINDEX.put(primaryKey, entry);
 
         return entry.bean;
+    }
+
+    private SessionContext createSessionContext() {
+        return (SessionContext) new StatefulContext(transactionManager, OpenEJB.getSecurityService());
     }
 
     public SessionBean obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {

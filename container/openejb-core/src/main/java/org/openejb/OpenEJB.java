@@ -326,10 +326,6 @@ public final class OpenEJB {
         }
     }
 
-    public static TransactionManager getTransactionManager() {
-        return instance.getTransactionManager();
-    }
-
     public static SecurityService getSecurityService() {
         return instance.getSecurityService();
     }

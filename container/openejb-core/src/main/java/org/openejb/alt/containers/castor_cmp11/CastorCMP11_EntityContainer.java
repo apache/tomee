@@ -15,7 +15,6 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.EntityBean;
-import javax.ejb.EJBContext;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -37,6 +36,7 @@ import org.openejb.RpcContainer;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
+import org.openejb.core.entity.EntityContext;
 import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
@@ -443,7 +443,7 @@ public class CastorCMP11_EntityContainer
                 context is current. Better then suspending it unnecessarily.
                 */
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
-                Object[] params = new javax.ejb.EntityContext[]{(javax.ejb.EntityContext) getEJBContext(deploymentInfo)};
+                Object[] params = new javax.ejb.EntityContext[]{(javax.ejb.EntityContext) createEntityContext()};
 
                 SET_ENTITY_CONTEXT_METHOD.invoke(bean, params);
             } finally {
@@ -458,8 +458,8 @@ public class CastorCMP11_EntityContainer
         return bean;
     }
 
-    private EJBContext getEJBContext(org.openejb.core.DeploymentInfo deploymentInfo) {
-        return new org.openejb.core.entity.EntityContext(OpenEJB.getTransactionManager(), OpenEJB.getSecurityService());
+    private EntityContext createEntityContext() {
+        return new EntityContext(transactionManager, OpenEJB.getSecurityService());
     }
 
     protected Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext)
