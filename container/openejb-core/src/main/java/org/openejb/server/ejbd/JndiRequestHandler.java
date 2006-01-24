@@ -8,7 +8,8 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ContainerSystem;
 import org.openejb.client.EJBMetaDataImpl;
 import org.openejb.client.JNDIRequest;
 import org.openejb.client.JNDIResponse;
@@ -21,7 +22,8 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
     javax.naming.Context clientJndi;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
-        clientJndi = (javax.naming.Context) OpenEJB.getJNDIContext().lookup("openejb/ejb");
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        clientJndi = (javax.naming.Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
         this.daemon = daemon;
     }
 

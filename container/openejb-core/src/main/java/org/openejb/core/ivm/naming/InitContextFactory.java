@@ -6,6 +6,8 @@ import java.util.Properties;
 import javax.naming.Context;
 
 import org.openejb.EnvProps;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ContainerSystem;
 
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
@@ -14,7 +16,8 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             initializeOpenEJB(env);
         }
 
-        Context context = org.openejb.OpenEJB.getJNDIContext();
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        Context context = containerSystem.getJNDIContext();
         context = (Context) context.lookup("java:openejb/ejb");
         return context;
 

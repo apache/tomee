@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.MarshalledObject;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -15,9 +14,9 @@ import java.util.Properties;
 
 import javax.ejb.EJBException;
 
-import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
 import org.openejb.spi.SecurityService;
+import org.openejb.spi.ContainerSystem;
 import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.ThreadContext;
@@ -73,7 +72,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         in.defaultReadObject();
 
-        deploymentInfo = (org.openejb.core.DeploymentInfo) OpenEJB.getDeploymentInfo(deploymentID);
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        deploymentInfo = (org.openejb.core.DeploymentInfo) containerSystem.getDeploymentInfo(deploymentID);
         container = (RpcContainer) deploymentInfo.getContainer();
     }
 
@@ -85,7 +85,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     private SecurityService getSecurityService() {
-        return OpenEJB.getSecurityService();
+        return (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
     }
 
     protected Object getThreadSpecificSecurityIdentity() {

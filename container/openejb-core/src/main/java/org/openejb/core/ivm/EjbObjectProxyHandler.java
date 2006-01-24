@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.openejb.RpcContainer;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ApplicationServer;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
@@ -159,7 +161,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            return org.openejb.OpenEJB.getApplicationServer().getEJBObject(this.getProxyInfo());
+            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBObject(this.getProxyInfo());
         }
     }
 

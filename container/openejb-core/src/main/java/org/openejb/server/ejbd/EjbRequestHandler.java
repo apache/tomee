@@ -9,9 +9,9 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
 
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
 import org.openejb.ProxyInfo;
 import org.openejb.RpcContainer;
+import org.openejb.loader.SystemInstance;
 import org.openejb.client.EJBRequest;
 import org.openejb.client.EJBResponse;
 import org.openejb.client.RequestMethods;
@@ -331,7 +331,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
 
     protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
 
-        SecurityService sec = OpenEJB.getSecurityService();
+        SecurityService sec = (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
         CallContext caller = CallContext.getCallContext();
         DeploymentInfo di = caller.getDeploymentInfo();
         String[] authRoles = di.getAuthorizedRoles(req.getMethodInstance());

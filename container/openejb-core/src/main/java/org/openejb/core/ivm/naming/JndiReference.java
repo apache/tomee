@@ -1,5 +1,8 @@
 package org.openejb.core.ivm.naming;
 
+import org.openejb.spi.ContainerSystem;
+import org.openejb.loader.SystemInstance;
+
 import java.util.Hashtable;
 
 import javax.naming.Context;
@@ -53,7 +56,8 @@ public class JndiReference implements Reference {
     protected Context getContext() throws NamingException {
         if (context == null) {
             if (contextJndiName != null) {
-                context = (Context) org.openejb.OpenEJB.getJNDIContext().lookup(contextJndiName);
+                ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+                context = (Context) containerSystem.getJNDIContext().lookup(contextJndiName);
             } else {
                 context = new InitialContext(envProperties);
             }

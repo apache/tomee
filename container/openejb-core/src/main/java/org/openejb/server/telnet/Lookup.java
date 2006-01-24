@@ -10,13 +10,19 @@ import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 
-import org.openejb.OpenEJB;
 import org.openejb.ClassLoaderUtil;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ContainerSystem;
 import org.openejb.core.ivm.naming.IvmContext;
 
 public class Lookup extends Command {
 
-    javax.naming.Context ctx = OpenEJB.getJNDIContext();
+    javax.naming.Context ctx;
+
+    {
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ctx = containerSystem.getJNDIContext();
+    }
 
     public static void register() {
         Lookup cmd = new Lookup();

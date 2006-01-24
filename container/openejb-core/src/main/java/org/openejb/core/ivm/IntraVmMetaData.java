@@ -5,6 +5,8 @@ import java.io.ObjectStreamException;
 import javax.ejb.EJBHome;
 
 import org.openejb.DeploymentInfo;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ApplicationServer;
 import org.openejb.util.proxy.ProxyManager;
 
 public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializable {
@@ -83,8 +85,8 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
     protected Object writeReplace() throws ObjectStreamException {
 
         /*
-         * If the meta data is being  copied between bean instances in a RPC 
-         * call we use the IntraVmArtifact 
+         * If the meta data is being  copied between bean instances in a RPC
+         * call we use the IntraVmArtifact
          */
         if (IntraVmCopyMonitor.isIntraVmCopyOperation()) {
             return new IntraVmArtifact(this);
@@ -100,7 +102,7 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
             */
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
-            return org.openejb.OpenEJB.getApplicationServer().getEJBMetaData(handler.getProxyInfo());
+            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBMetaData(handler.getProxyInfo());
         }
     }
 }

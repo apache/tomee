@@ -10,7 +10,6 @@ import org.openejb.util.Logger;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
 
-import javax.naming.Context;
 import javax.transaction.TransactionManager;
 import java.net.URL;
 import java.util.Date;
@@ -22,11 +21,6 @@ public final class OpenEJB {
 
     public static class Instance {
         private static Messages messages = new Messages("org.openejb.util.resources");
-
-        private final ContainerSystem containerSystem;
-        private final SecurityService securityService;
-        private final ApplicationServer applicationServer;
-        private final Logger logger;
 
         /**
          * 1 usage
@@ -40,21 +34,28 @@ public final class OpenEJB {
          * 2 usages
          */
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
+            JarUtils.setHandlerSystemProperty();
+
+            Logger.initialize(initProps);
+
+            Logger logger = Logger.getInstance("OpenEJB.startup", "org.openejb.util.resources");
+
             try {
                 SystemInstance.init(initProps);
             } catch (Exception e) {
                 throw new OpenEJBException(e);
             }
+            SystemInstance system = SystemInstance.get();
 
-            JarUtils.setHandlerSystemProperty();
-
-            Logger.initialize(initProps);
-
-            logger = Logger.getInstance("OpenEJB.startup", "org.openejb.util.resources");
+            if (appServer == null) {
+                logger.i18n.warning("startup.noApplicationServerSpecified");
+            } else {
+                system.setComponent(ApplicationServer.class, appServer);
+            }
 
             /*
-           * Output startup message
-           */
+            * Output startup message
+            */
             Properties versionInfo = new Properties();
 
             try {
@@ -80,8 +81,6 @@ public final class OpenEJB {
                 props.putAll(initProps);
             }
 
-            if (appServer == null) logger.i18n.warning("startup.noApplicationServerSpecified");
-            applicationServer = appServer;
 
             SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB");
 
@@ -130,12 +129,15 @@ public final class OpenEJB {
                 throw new OpenEJBException(msg, t);
             }
 
-            containerSystem = assembler.getContainerSystem();
+            ContainerSystem containerSystem = assembler.getContainerSystem();
+
             if (containerSystem == null) {
                 String msg = messages.message("startup.assemblerReturnedNullContainer");
                 logger.i18n.fatal(msg);
                 throw new OpenEJBException(msg);
             }
+
+            system.setComponent(ContainerSystem.class, containerSystem);
 
             if (logger.isDebugEnabled()) {
                 logger.i18n.debug("startup.debugContainers", new Integer(containerSystem.containers().length));
@@ -187,7 +189,7 @@ public final class OpenEJB {
                 }
             }
 
-            securityService = assembler.getSecurityService();
+            SecurityService securityService = assembler.getSecurityService();
             if (securityService == null) {
                 String msg = messages.message("startup.assemblerReturnedNullSecurityService");
                 logger.i18n.fatal(msg);
@@ -195,6 +197,7 @@ public final class OpenEJB {
             } else {
                 logger.i18n.debug("startup.securityService", securityService.getClass().getName());
             }
+            system.setComponent(SecurityService.class, securityService);
 
             TransactionManager transactionManager = assembler.getTransactionManager();
             if (transactionManager == null) {
@@ -207,73 +210,12 @@ public final class OpenEJB {
 
             logger.i18n.info("startup.ready");
 
-            String loader = initProps.getProperty("openejb.loader"), nobanner = initProps.getProperty("openejb.nobanner");
+            String loader = initProps.getProperty("openejb.loader");
+            String nobanner = initProps.getProperty("openejb.nobanner");
             if (nobanner == null && (loader == null || (loader != null && loader.startsWith("tomcat")))) {
                 System.out.println(messages.message("startup.ready"));
             }
 
-            SystemInstance system = SystemInstance.get();
-            system.setComponent(SecurityService.class, securityService);
-            system.setComponent(ApplicationServer.class, applicationServer);
-            system.setComponent(ContainerSystem.class, containerSystem);
-
-        }
-
-
-        /**
-         * 9 usages
-         */
-        public SecurityService getSecurityService() {
-            return securityService;
-        }
-
-        /**
-         * 5 usages
-         * all in org.openejb.core.ivm
-         */
-        public ApplicationServer getApplicationServer() {
-            return applicationServer;
-        }
-
-        /**
-         * 1 usage
-         * org.openejb.core.ivm.BaseEjbProxyHandler
-         */
-        public DeploymentInfo getDeploymentInfo(Object id) {
-            return containerSystem.getDeploymentInfo(id);
-        }
-
-        /**
-         * 2 usages
-         * org.openejb.server.ejbd.DeploymentIndex
-         * org.openejb.server.telnet.Ls
-         */
-        public DeploymentInfo [] deployments() {
-            return containerSystem.deployments();
-        }
-
-        /**
-         * 1 usages
-         * org.openejb.server.telnet.Ls
-         */
-        public Container [] containers() {
-            if (containerSystem == null) {// Something went wrong in the configuration.
-                logger.i18n.warning("startup.noContainersConfigured");
-                return null;
-            } else {
-                return containerSystem.containers();
-            }
-        }
-
-        /**
-         * 7 usages
-         * org.openejb.core.ivm.naming  (3)
-         * org.openejb.core.ivm.naming.java (2)
-         * org.openejb.core.server.ejbd.JndiRequestHandler (1)
-         * org.openejb.core.server.telnet.Lookup (1)
-         */
-        public javax.naming.Context getJNDIContext() {
-            return containerSystem.getJNDIContext();
         }
     }
 
@@ -304,34 +246,6 @@ public final class OpenEJB {
         } else {
             instance = new Instance(initProps, appServer);
         }
-    }
-
-    public static SecurityService getSecurityService() {
-        return (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
-    }
-
-    public static ApplicationServer getApplicationServer() {
-        return (ApplicationServer)SystemInstance.get().getComponent(ApplicationServer.class);
-    }
-
-    public static DeploymentInfo getDeploymentInfo(Object id) {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        return containerSystem.getDeploymentInfo(id);
-    }
-
-    public static DeploymentInfo[] deployments() {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        return containerSystem.deployments();
-    }
-
-    public static Container[] containers() {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        return containerSystem.containers();
-    }
-
-    public static Context getJNDIContext() {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        return containerSystem.getJNDIContext();
     }
 
     /**

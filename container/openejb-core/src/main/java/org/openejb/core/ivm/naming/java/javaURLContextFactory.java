@@ -10,6 +10,8 @@ import javax.naming.spi.ObjectFactory;
 
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.ThreadContext;
+import org.openejb.spi.ContainerSystem;
+import org.openejb.loader.SystemInstance;
 
 public class javaURLContextFactory implements ObjectFactory, InitialContextFactory {
 
@@ -49,14 +51,16 @@ public class javaURLContextFactory implements ObjectFactory, InitialContextFacto
         Context jndiCtx = null;
 
         if (!ThreadContext.isValid()) {
-            return org.openejb.OpenEJB.getJNDIContext();
+            ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+            return containerSystem.getJNDIContext();
         }
 
         DeploymentInfo di = ThreadContext.getThreadContext().getDeploymentInfo();
         if (di != null) {
             return di.getJndiEnc();
         } else {
-            return org.openejb.OpenEJB.getJNDIContext();
+            ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+            return containerSystem.getJNDIContext();
         }
     }
 }

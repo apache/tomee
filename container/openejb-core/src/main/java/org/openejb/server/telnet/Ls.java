@@ -6,7 +6,8 @@ import java.io.PrintStream;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ContainerSystem;
 
 public class Ls extends Command {
 
@@ -18,7 +19,8 @@ public class Ls extends Command {
 
     public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
 
-        Container[] c = OpenEJB.containers();
+        ContainerSystem containerSystem1 = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        Container[] c = containerSystem1.containers();
         out.println("Containers:");
 
         for (int i = 0; i < c.length; i++) {
@@ -29,7 +31,8 @@ public class Ls extends Command {
 
         out.println("Deployments:");
 
-        DeploymentInfo[] d = OpenEJB.deployments();
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        DeploymentInfo[] d = containerSystem.deployments();
         for (int i = 0; i < d.length; i++) {
             out.print(" " + d[i].getDeploymentID());
             out.println("");

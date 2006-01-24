@@ -11,7 +11,8 @@ import java.util.Properties;
 
 import org.openejb.DeploymentInfo;
 import org.openejb.ProxyInfo;
-import org.openejb.OpenEJB;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ContainerSystem;
 import org.openejb.client.EJBRequest;
 import org.openejb.client.RequestMethods;
 import org.openejb.client.ResponseCodes;
@@ -49,7 +50,8 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
         this.props = props;
 
         // TODO: DMB: Naughty naugty, static badness
-        deploymentIndex = new DeploymentIndex(OpenEJB.deployments());
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
         clientObjectFactory = new ClientObjectFactory(this);
 

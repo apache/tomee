@@ -9,6 +9,8 @@ import javax.ejb.EJBException;
 
 import org.openejb.ProxyInfo;
 import org.openejb.RpcContainer;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.ApplicationServer;
 import org.openejb.core.ThreadContext;
 import org.openejb.util.proxy.ProxyManager;
 
@@ -213,7 +215,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            return org.openejb.OpenEJB.getApplicationServer().getEJBHome(this.getProxyInfo());
+            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBHome(this.getProxyInfo());
         }
     }
 
