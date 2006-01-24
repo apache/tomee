@@ -10,10 +10,6 @@ import org.openejb.util.proxy.ProxyManager;
 public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle, javax.ejb.Handle {
     protected Object theProxy;
 
-    public IntraVmHandle() {
-        this(null);
-    }
-
     public IntraVmHandle(Object proxy) {
         this.theProxy = proxy;
     }
