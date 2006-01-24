@@ -66,12 +66,30 @@ public class SystemInstance {
         return classLoader;
     }
 
-    public Object getObject(String name) {
-        return components.get(name);
+    /**
+     * I'm not sure how this will play out, but I've used class instances instead of strings
+     * for lookups as class instances are classloader scoped and there is an implicit "namespace"
+     * associated with that.  Theoretically, you can't lookup things that you can't already see
+     * in your classloader.
+     *
+     * @param type
+     * @return the object associated with the class type or null
+     * @throws IllegalStateException of the component isn't found
+     */
+    public Object getComponent(Class type) throws IllegalStateException {
+        Object component = components.get(type);
+        if (component == null){
+            throw new IllegalStateException("No such component exists: "+type.getName() +"(scope: "+type.getClassLoader()+")");
+        }
+        return components.get(type);
     }
 
-    public Object setObject(String name, Object value) {
-        return components.put(name, value);
+    /**
+     *
+     * @param type the class type of the component required
+     */
+    public Object setComponent(Class type, Object value) {
+        return components.put(type, value);
     }
 
     private static SystemInstance system;
