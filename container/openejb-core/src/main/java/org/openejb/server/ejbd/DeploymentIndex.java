@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
 import org.openejb.client.EJBRequest;
 import org.openejb.util.Messages;
 
@@ -16,9 +15,8 @@ public class DeploymentIndex {
 
     HashMap index = null;
 
-    public DeploymentIndex() {
-        // TODO: DMB: Naughty naugty, static badness
-        DeploymentInfo[] ds = OpenEJB.deployments();
+    public DeploymentIndex(DeploymentInfo[] deploymentInfos) {
+        DeploymentInfo[] ds = deploymentInfos;
 
         deployments = new DeploymentInfo[ ds.length + 1 ];
 
