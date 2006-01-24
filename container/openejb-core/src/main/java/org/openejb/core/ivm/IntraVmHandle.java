@@ -14,10 +14,6 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
         this.theProxy = proxy;
     }
 
-    protected void setProxy(Object prxy) {
-        theProxy = prxy;
-    }
-
     public EJBHome getEJBHome() {
         return (EJBHome) theProxy;
     }
