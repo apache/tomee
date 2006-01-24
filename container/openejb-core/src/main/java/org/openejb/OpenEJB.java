@@ -26,8 +26,6 @@ public final class OpenEJB {
         private final ContainerSystem containerSystem;
         private final SecurityService securityService;
         private final ApplicationServer applicationServer;
-        private final TransactionManager transactionManager;
-        private final Properties props;
         private final Logger logger;
 
         /**
@@ -74,25 +72,7 @@ public final class OpenEJB {
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
-            /* DMB: This is causing bug 725781.
-             * I can't even remember why we decided to add a default security manager.
-             * the testsuite runs fine without it, so out it goes for now.
-            SecurityManager sm = System.getSecurityManager();
-            if (sm == null) {
-                try{
-                    logger.i18n.debug( "startup.noSecurityManagerInstalled" );
-                    System.setSecurityManager(new SecurityManager(){
-                        public void checkPermission(Permission perm) {}
-                        public void checkPermission(Permission perm, Object context) {}
-
-                    });
-                } catch (Exception e){
-                    logger.i18n.warning( "startup.couldNotInstalllDefaultSecurityManager", e.getClass().getName(), e.getMessage() );
-                }
-            }
-            */
-
-            props = new Properties(System.getProperties());
+            Properties props = new Properties(System.getProperties());
 
             if (initProps == null) {
                 logger.i18n.debug("startup.noInitializationProperties");
@@ -216,7 +196,7 @@ public final class OpenEJB {
                 logger.i18n.debug("startup.securityService", securityService.getClass().getName());
             }
 
-            transactionManager = assembler.getTransactionManager();
+            TransactionManager transactionManager = assembler.getTransactionManager();
             if (transactionManager == null) {
                 String msg = messages.message("startup.assemblerReturnedNullTransactionManager");
                 logger.i18n.fatal(msg);
@@ -231,14 +211,14 @@ public final class OpenEJB {
             if (nobanner == null && (loader == null || (loader != null && loader.startsWith("tomcat")))) {
                 System.out.println(messages.message("startup.ready"));
             }
+
+            SystemInstance system = SystemInstance.get();
+            system.setComponent(SecurityService.class, securityService);
+            system.setComponent(ApplicationServer.class, applicationServer);
+            system.setComponent(ContainerSystem.class, containerSystem);
+
         }
 
-        /**
-         * 26 usages
-         */
-        public TransactionManager getTransactionManager() {
-            return transactionManager;
-        }
 
         /**
          * 9 usages
@@ -327,27 +307,31 @@ public final class OpenEJB {
     }
 
     public static SecurityService getSecurityService() {
-        return instance.getSecurityService();
+        return (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
     }
 
     public static ApplicationServer getApplicationServer() {
-        return instance.getApplicationServer();
+        return (ApplicationServer)SystemInstance.get().getComponent(ApplicationServer.class);
     }
 
     public static DeploymentInfo getDeploymentInfo(Object id) {
-        return instance.getDeploymentInfo(id);
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        return containerSystem.getDeploymentInfo(id);
     }
 
     public static DeploymentInfo[] deployments() {
-        return instance.deployments();
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        return containerSystem.deployments();
     }
 
     public static Container[] containers() {
-        return instance.containers();
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        return containerSystem.containers();
     }
 
     public static Context getJNDIContext() {
-        return instance.getJNDIContext();
+        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        return containerSystem.getJNDIContext();
     }
 
     /**
