@@ -4,9 +4,13 @@ import org.openejb.EnvProps;
 import org.openejb.OpenEJBException;
 import org.openejb.core.ConnectorReference;
 import org.openejb.core.DeploymentInfo;
+import org.openejb.core.TransactionManagerWrapper;
 import org.openejb.spi.SecurityService;
+import org.openejb.spi.TransactionService;
 import org.openejb.util.OpenEJBErrorHandler;
 import org.openejb.util.SafeToolkit;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -159,23 +163,14 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         org.openejb.core.ContainerSystem containerSystem = new org.openejb.core.ContainerSystem();
 
-        /*[5] Assemble TransactionManager /////////////////////////////////*/
-        transactionManager = assembleTransactionManager(configInfo.facilities.transactionService);
-        props.put(TransactionManager.class.getName(), transactionManager);
-        getContext().put(TransactionManager.class.getName(), transactionManager);
+        createTransactionManager(configInfo);
 
-        /*[3] Assemble SecurityServices ////////////////////////////////////*/
-        securityService = assembleSecurityService(configInfo.facilities.securityService);
-        props.put(SecurityService.class.getName(), securityService);
-
-        /*[2] Assemble Containers and Deployments ///////////////////////////////////*/
+        createSecurityService(configInfo);
 
         assembleContainers(containerSystem, containerSystemInfo);
-        /*[2]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
 
         containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
-
-        /*[3]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
         /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
 
@@ -240,5 +235,24 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         }
         /*[6]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
         return containerSystem;
+    }
+
+    private void createSecurityService(OpenEjbConfiguration configInfo) throws Exception {
+        securityService = assembleSecurityService(configInfo.facilities.securityService);
+        props.put(SecurityService.class.getName(), securityService);
+    }
+
+    private void createTransactionManager(OpenEjbConfiguration configInfo) throws Exception {
+        TransactionServiceInfo service = configInfo.facilities.transactionService;
+
+        ObjectRecipe txServiceRecipe = new ObjectRecipe(service.factoryClassName, service.properties);
+        ObjectRecipe txManagerWrapperRecipe = new ObjectRecipe(TransactionManagerWrapper.class, new String[]{"transactionManager"},new Class[]{TransactionManager.class});
+
+        txManagerWrapperRecipe.setProperty("transactionManager", new StaticRecipe(txServiceRecipe.create()));
+
+        transactionManager = (TransactionManager) txManagerWrapperRecipe.create();
+
+        props.put(TransactionManager.class.getName(), transactionManager);
+        getContext().put(TransactionManager.class.getName(), transactionManager);
     }
 }

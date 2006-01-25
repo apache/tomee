@@ -141,25 +141,6 @@ public class AssemblerTool {
         return securityService;
     }
 
-    public javax.transaction.TransactionManager assembleTransactionManager(TransactionServiceInfo txInfo)
-            throws org.openejb.OpenEJBException, java.lang.Exception {
-        /*TODO: Add better exception handling, this method throw java.lang.Exception,
-         which is not very specific.  If something is wrong, we should at least say
-         "Cannot initialize the TransactionManager, because X happened."
-         */
-
-        Class serviceClass = SafeToolkit.loadClass(txInfo.factoryClassName, txInfo.codebase);
-
-        checkImplementation(TRANSACTION_SERVICE, serviceClass, "TransactionService", txInfo.serviceName);
-
-        TransactionService txService = (TransactionService) toolkit.newInstance(serviceClass);
-
-        if (txInfo.properties != null)
-            applyProperties(txService, txInfo.properties);
-
-        return (javax.transaction.TransactionManager) (new org.openejb.core.TransactionManagerWrapper(txService.getTransactionManager()));
-    }
-
     public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {
         Class factoryClass = SafeToolkit.loadClass(ivmInfo.proxyFactoryClassName, ivmInfo.codebase);
 
@@ -173,9 +154,7 @@ public class AssemblerTool {
 
     }
 
-    public void applyProperties(Object target, Properties props)
-            throws java.lang.reflect.InvocationTargetException,
-            java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
+    public void applyProperties(Object target, Properties props) throws java.lang.reflect.InvocationTargetException, java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
         if (props != null /*&& props.size()>0*/) {
             Method method = target.getClass().getMethod("init", new Class[]{Properties.class});
             method.invoke(target, new Object[]{props});
