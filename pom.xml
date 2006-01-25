@@ -38,7 +38,6 @@
       </plugin>
     </plugins>
   </build>
-
   <modules>
     <module>xbean-reflect</module>
     <module>itest/openejb-itests</module>
