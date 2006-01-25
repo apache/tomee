@@ -27,7 +27,20 @@
     <connection>scm:svn:svn+ssh://openejb/usr/local/repos/openejb</connection>
     <developerConnection>scm:svn:svn+ssh://openejb/usr/local/repos/openejb</developerConnection>
   </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <modules>
+    <module>xbean-reflect</module>
     <module>itest/openejb-itests</module>
     <module>container/openejb-core</module>
     <module>server/openejb-ejbd</module>
