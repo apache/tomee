@@ -13,7 +13,7 @@ public class AssemblerFactory {
 
         toolkit.getSafeProperties(props);
 
-        String className = props.getProperty(EnvProps.ASSEMBLER, "org.openejb.alt.assembler.classic.Assembler");
+        String className = props.getProperty(EnvProps.ASSEMBLER, "org.openejb.assembler.classic.Assembler");
 
         Assembler asse = (Assembler) toolkit.newInstance(className);
         asse.init(props);

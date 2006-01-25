@@ -1,7 +1,7 @@
 package org.openejb.alt.config;
 
 import org.openejb.OpenEJBException;
-import org.openejb.alt.assembler.classic.*;
+import org.openejb.assembler.classic.*;
 import org.openejb.alt.config.ejb11.ContainerTransaction;
 import org.openejb.alt.config.ejb11.EjbDeployment;
 import org.openejb.alt.config.ejb11.EjbJar;

@@ -32,7 +32,7 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             *      When that logic is finished, this block should
             *      probably just be deleted.
             */
-            props.put(EnvProps.ASSEMBLER, "org.openejb.alt.assembler.classic.Assembler");
+            props.put(EnvProps.ASSEMBLER, "org.openejb.assembler.classic.Assembler");
             props.put(EnvProps.CONFIGURATION_FACTORY, "org.openejb.alt.config.ConfigurationFactory");
             props.put(EnvProps.CONFIGURATION, "conf/default.openejb.conf");
 

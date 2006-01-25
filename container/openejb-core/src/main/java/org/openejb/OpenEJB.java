@@ -85,10 +85,10 @@ public final class OpenEJB {
             SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB");
 
             /* Uses the EnvProps.ASSEMBLER property to obtain the Assembler impl.
-               Default is org.openejb.alt.assembler.classic.Assembler */
+               Default is org.openejb.assembler.classic.Assembler */
             String className = props.getProperty(EnvProps.ASSEMBLER);
             if (className == null) {
-                className = props.getProperty("openejb.assembler", "org.openejb.alt.assembler.classic.Assembler");
+                className = props.getProperty("openejb.assembler", "org.openejb.assembler.classic.Assembler");
             } else {
                 logger.i18n.warning("startup.deprecatedPropertyName", EnvProps.ASSEMBLER);
             }
