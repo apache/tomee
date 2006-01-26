@@ -64,10 +64,10 @@ public class CastorCMP11_EntityContainer
      * instance OR in the TransactionScopeHandler.discardBeanInstance(), which is called when a
      * transaction fails due to a runtime exception.
      */
-    protected Hashtable txReadyPoolMap = new Hashtable();
+    private Hashtable txReadyPoolMap = new Hashtable();
 
-    protected Hashtable pooledInstancesMap = new Hashtable();
-    protected Hashtable readyInstancesMap = new Hashtable();
+    private Hashtable pooledInstancesMap = new Hashtable();
+    private Hashtable readyInstancesMap = new Hashtable();
 
     /*
      * Contains all the KeyGenerator objects for each Deployment, indexed by deployment id.
@@ -82,10 +82,10 @@ public class CastorCMP11_EntityContainer
      * contains a collection of LinkListStacks indexed by deployment id. Each
      * indexed stack represents the method ready pool of for that class.
      */
-    protected HashMap methodReadyPoolMap = new HashMap();
+    private HashMap methodReadyPoolMap = new HashMap();
 
     /* The default size of the method ready bean pools. Every bean class gets its own pool of this size */
-    protected int poolsize = 0;
+    private int poolsize = 0;
 
     /*
      * The javax.ejb.EntityBean.setEntityContext(...) method is used for
@@ -93,7 +93,7 @@ public class CastorCMP11_EntityContainer
      * This variable is esbalished in the contructor so that it doesn't
      * have to be re-obtained every time we want to passivate an entity instance.
      */
-    protected static Method SET_ENTITY_CONTEXT_METHOD;
+    private static Method SET_ENTITY_CONTEXT_METHOD;
 
     /*
      * The javax.ejb.EntityBean.unsetEntityContext(...) method is used for
@@ -102,7 +102,7 @@ public class CastorCMP11_EntityContainer
      * have to be re-obtained every time we want to passivate an entity instance.
      * DMB: This isn't being called anywhere.
      */
-    protected static Method UNSET_ENTITY_CONTEXT_METHOD;
+    private static Method UNSET_ENTITY_CONTEXT_METHOD;
 
     /*
      * The javax.ejb.EntityBean.ejbRemove() method is used for processing bean
@@ -110,7 +110,7 @@ public class CastorCMP11_EntityContainer
      * is esbalished in the contructor so that it doesn't have to be re-obtained
      * every time we want to passivate an entity instance.
      */
-    protected static Method EJB_REMOVE_METHOD;
+    private static Method EJB_REMOVE_METHOD;
 
     /*
      * This static block sets up the EJB_PASSIVATE_METHOD, EJB_LOAD_METHOD, SET_ENTITY_CONTEXT_METHOD static methods, which are used
@@ -127,9 +127,9 @@ public class CastorCMP11_EntityContainer
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.alt.util.resources");
 
-    HashMap deploymentRegistry;
+    private HashMap deploymentRegistry;
 
-    Object containerID = null;
+    private Object containerID = null;
 
     private String Global_TX_Database = null;
 
@@ -139,9 +139,9 @@ public class CastorCMP11_EntityContainer
 
     protected JDO jdo_ForLocalTransaction;
 
-    java.util.Hashtable syncWrappers = new java.util.Hashtable();
+    private java.util.Hashtable syncWrappers = new java.util.Hashtable();
 
-    protected HashMap resetMap;
+    private HashMap resetMap;
 
     private Properties props;
 
