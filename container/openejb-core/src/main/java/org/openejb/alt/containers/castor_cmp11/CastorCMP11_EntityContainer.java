@@ -1,24 +1,5 @@
 package org.openejb.alt.containers.castor_cmp11;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Properties;
-
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.EnterpriseBean;
-import javax.ejb.EntityBean;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.JDO;
 import org.exolab.castor.jdo.OQLQuery;
@@ -29,11 +10,9 @@ import org.exolab.castor.persist.spi.Complex;
 import org.exolab.castor.persist.spi.InstanceFactory;
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.RpcContainer;
-import org.openejb.spi.SecurityService;
 import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
@@ -42,11 +21,30 @@ import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
 import org.openejb.loader.SystemInstance;
+import org.openejb.spi.SecurityService;
 import org.openejb.util.LinkedListStack;
 import org.openejb.util.Logger;
 import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.Stack;
+
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.EnterpriseBean;
+import javax.ejb.EntityBean;
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
 
 public class CastorCMP11_EntityContainer
         implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
@@ -65,9 +63,6 @@ public class CastorCMP11_EntityContainer
      * transaction fails due to a runtime exception.
      */
     private Hashtable txReadyPoolMap = new Hashtable();
-
-    private Hashtable pooledInstancesMap = new Hashtable();
-    private Hashtable readyInstancesMap = new Hashtable();
 
     /*
      * Contains all the KeyGenerator objects for each Deployment, indexed by deployment id.
@@ -150,7 +145,7 @@ public class CastorCMP11_EntityContainer
 
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
-        securityService = (SecurityService)properties.get(SecurityService.class.getName());
+        securityService = (SecurityService) properties.get(SecurityService.class.getName());
         containerID = id;
         deploymentRegistry = registry;
 
