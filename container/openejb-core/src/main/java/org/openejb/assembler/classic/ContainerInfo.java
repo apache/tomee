@@ -17,6 +17,7 @@ public abstract class ContainerInfo extends InfoObject {
     public String className;
     public EnterpriseBeanInfo[] ejbeans;
     public Properties properties;
+    public String[] constructorArgs;
 
     public int containerType;
 }

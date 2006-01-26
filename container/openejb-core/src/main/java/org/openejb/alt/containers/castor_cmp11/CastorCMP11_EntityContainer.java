@@ -131,9 +131,9 @@ public class CastorCMP11_EntityContainer
 
     Object containerID = null;
 
-    protected String Global_TX_Database = null;
+    private String Global_TX_Database = null;
 
-    protected String Local_TX_Database = null;
+    private String Local_TX_Database = null;
 
     protected JDO jdo_ForGlobalTransaction;
 

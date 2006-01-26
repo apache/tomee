@@ -7,6 +7,7 @@ import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.util.Logger;
 import org.openejb.util.SafeToolkit;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -77,10 +78,37 @@ public class ContainerBuilder {
         return containers;
     }
 
+//    private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
+//        String containerName = containerInfo.containerName;
+//        ContainerInfo service = containerInfo;
+//
+//
+//
+//            Container container = null;
+//            Properties systemProperties = System.getProperties();
+//            synchronized (systemProperties) {
+//                String userDir = systemProperties.getProperty("user.dir");
+//                try {
+//                    File base = SystemInstance.get().getBase().getDirectory();
+//                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
+//
+//                    ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
+//                    containerRecipe.setAllProperties(service.properties);
+//                    return (Container) containerRecipe.create();
+////                    container.init(containerName, deploymentsList, service.properties);
+//                } catch (Exception e) {
+//                    throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()));
+//                } finally {
+//                    systemProperties.setProperty("user.dir", userDir);
+//                }
+//            }
+//    }
     private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
         String className = containerInfo.className;
         String codebase = containerInfo.codebase;
         String containerName = containerInfo.containerName;
+        ContainerInfo service = containerInfo;
+
 
         try {
             Class factory = SafeToolkit.loadClass(className, codebase);

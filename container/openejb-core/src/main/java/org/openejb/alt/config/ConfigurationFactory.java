@@ -415,7 +415,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                     c.getContent(),
                     configLocation,
                     service);
-
+            ci.constructorArgs = parseConstructorArgs(service);
             if (containerIds.contains(c.getId())) {
                 handleException("conf.0101", configLocation, c.getId());
             }
@@ -442,6 +442,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             containerTable.put(this.containers[i].containerName, this.containers[i]);
         }
 
+    }
+
+    private String[] parseConstructorArgs(ServiceProvider service) {
+        String constructor = service.getConstructor();
+        if (constructor == null) {
+            return null;
+        }
+        return constructor.split("[ ,]+");
     }
 
     private Map getDeployments(OpenejbJar j) throws OpenEJBException {

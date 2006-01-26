@@ -42,20 +42,6 @@ public class AssemblerTool {
         System.setProperty("noBanner", "true");
     }
 
-    public void assembleContainers(ContainerSystem containerSystem, ContainerSystemInfo containerSystemInfo) throws Exception {
-
-        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo, this.props);
-        List containers = (List) containerBuilder.build();
-        for (int i = 0; i < containers.size(); i++) {
-            Container container = (Container) containers.get(i);
-            containerSystem.addContainer(container.getContainerID(), container);
-            org.openejb.DeploymentInfo[] deployments = container.deployments();
-            for (int j = 0; j < deployments.length; j++) {
-                containerSystem.addDeployment((org.openejb.core.DeploymentInfo) deployments[j]);
-            }
-        }
-    }
-
     /*
     TODO: The Exception Handling here isn't up-to-date and doesn't
     use a message number. Message numbers allow the message text to
@@ -121,24 +107,6 @@ public class AssemblerTool {
         }
 
         return managedConnectionFactory;
-    }
-
-    public SecurityService assembleSecurityService(SecurityServiceInfo securityInfo)
-            throws org.openejb.OpenEJBException, java.lang.Exception {
-        /*TODO: Add better exception handling, this method throws java.lang.Exception,
-         which is not very specific. Only a very specific OpenEJBException should be
-         thrown.
-         */
-        Class serviceClass = SafeToolkit.loadClass(securityInfo.factoryClassName, securityInfo.codebase);
-
-        checkImplementation(SECURITY_SERVICE, serviceClass, "SecurityService", securityInfo.serviceName);
-
-        SecurityService securityService = (SecurityService) toolkit.newInstance(serviceClass);
-
-        if (securityInfo.properties != null)
-            applyProperties(securityService, securityInfo.properties);
-
-        return securityService;
     }
 
     public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {

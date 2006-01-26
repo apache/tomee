@@ -2,11 +2,11 @@ package org.openejb.assembler.classic;
 
 import org.openejb.EnvProps;
 import org.openejb.OpenEJBException;
+import org.openejb.Container;
 import org.openejb.core.ConnectorReference;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.TransactionManagerWrapper;
 import org.openejb.spi.SecurityService;
-import org.openejb.spi.TransactionService;
 import org.openejb.util.OpenEJBErrorHandler;
 import org.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.List;
 
 public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler {
 
@@ -167,7 +168,16 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         createSecurityService(configInfo);
 
-        assembleContainers(containerSystem, containerSystemInfo);
+        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo, ((AssemblerTool)this).props);
+        List containers = (List) containerBuilder.build();
+        for (int i1 = 0; i1 < containers.size(); i1++) {
+            Container container1 = (Container) containers.get(i1);
+            containerSystem.addContainer(container1.getContainerID(), container1);
+            org.openejb.DeploymentInfo[] deployments1 = container1.deployments();
+            for (int j = 0; j < deployments1.length; j++) {
+                containerSystem.addDeployment((DeploymentInfo) deployments1[j]);
+            }
+        }
 
 
         containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
@@ -238,7 +248,10 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     }
 
     private void createSecurityService(OpenEjbConfiguration configInfo) throws Exception {
-        securityService = assembleSecurityService(configInfo.facilities.securityService);
+        SecurityServiceInfo service = configInfo.facilities.securityService;
+        ObjectRecipe securityServiceRecipe = new ObjectRecipe(service.factoryClassName, service.properties);
+        securityService = (SecurityService) securityServiceRecipe.create();
+
         props.put(SecurityService.class.getName(), securityService);
     }
 

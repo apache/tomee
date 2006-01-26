@@ -9,16 +9,8 @@ package org.openejb.alt.config.sys;
 
 //---------------------------------/
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.Writer;
-
-import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
-import org.exolab.castor.xml.ValidationException;
-import org.xml.sax.ContentHandler;
 
 public class ServiceProvider implements java.io.Serializable {
 
@@ -33,6 +25,8 @@ public class ServiceProvider implements java.io.Serializable {
 
     private java.lang.String _className;
 
+    private java.lang.String _constructor;
+
     private java.lang.String _content = "";
 
     private org.openejb.alt.config.sys.PropertiesFile _propertiesFile;
@@ -45,6 +39,10 @@ public class ServiceProvider implements java.io.Serializable {
         setContent("");
     }
 
+
+    public String getConstructor() {
+        return _constructor;
+    }
 
     public java.lang.String getClassName() {
         return this._className;
@@ -98,6 +96,10 @@ public class ServiceProvider implements java.io.Serializable {
             throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
 
         Marshaller.marshal(this, handler);
+    }
+
+    public void setConstructor(String constructor) {
+        this._constructor = constructor;
     }
 
     public void setClassName(java.lang.String className) {

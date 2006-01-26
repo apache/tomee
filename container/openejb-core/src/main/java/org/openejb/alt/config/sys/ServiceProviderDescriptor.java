@@ -223,6 +223,42 @@ public class ServiceProviderDescriptor extends org.exolab.castor.xml.util.XMLCla
         }
         desc.setValidator(fieldValidator);
 
+        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_constructor", "constructor", org.exolab.castor.xml.NodeType.Attribute);
+        desc.setImmutable(true);
+        handler = (new org.exolab.castor.xml.XMLFieldHandler() {
+            public java.lang.Object getValue(java.lang.Object object)
+                    throws IllegalStateException {
+                ServiceProvider target = (ServiceProvider) object;
+                return target.getConstructor();
+            }
+
+            public void setValue(java.lang.Object object, java.lang.Object value)
+                    throws IllegalStateException, IllegalArgumentException {
+                try {
+                    ServiceProvider target = (ServiceProvider) object;
+                    target.setConstructor((java.lang.String) value);
+                }
+                catch (java.lang.Exception ex) {
+                    throw new IllegalStateException(ex.toString());
+                }
+            }
+
+            public java.lang.Object newInstance(java.lang.Object parent) {
+                return null;
+            }
+        });
+        desc.setHandler(handler);
+        addFieldDescriptor(desc);
+
+
+        fieldValidator = new org.exolab.castor.xml.FieldValidator();
+        {
+            StringValidator typeValidator = new StringValidator();
+            typeValidator.setWhiteSpace("preserve");
+            fieldValidator.setValidator(typeValidator);
+        }
+        desc.setValidator(fieldValidator);
+
         desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_className", "class-name", org.exolab.castor.xml.NodeType.Attribute);
         desc.setImmutable(true);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {

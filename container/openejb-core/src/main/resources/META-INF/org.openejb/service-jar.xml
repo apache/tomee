@@ -32,6 +32,7 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
+                   constructor="PoolSize, Global_TX_Database, Local_TX_Database"
                    class-name="org.openejb.alt.containers.castor_cmp11.CastorCMP11_EntityContainer">
 
     # The default size of the method ready bean pools.
