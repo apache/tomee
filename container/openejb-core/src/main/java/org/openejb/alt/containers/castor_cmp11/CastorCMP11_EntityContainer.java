@@ -46,8 +46,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 
-public class CastorCMP11_EntityContainer
-        implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
+public class CastorCMP11_EntityContainer implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
 
     /*
      * Bean instances that are currently in use are placed in the txReadyPoolMap indexed
@@ -79,9 +78,6 @@ public class CastorCMP11_EntityContainer
      */
     private HashMap methodReadyPoolMap = new HashMap();
 
-    /* The default size of the method ready bean pools. Every bean class gets its own pool of this size */
-    private int poolsize = 0;
-
     /*
      * The javax.ejb.EntityBean.setEntityContext(...) method is used for
      * processing bean instances returing to the method ready pool
@@ -89,15 +85,6 @@ public class CastorCMP11_EntityContainer
      * have to be re-obtained every time we want to passivate an entity instance.
      */
     private static Method SET_ENTITY_CONTEXT_METHOD;
-
-    /*
-     * The javax.ejb.EntityBean.unsetEntityContext(...) method is used for
-     * processing bean instances that are being evicted from memory.
-     * This variable is esbalished in the contructor so that it doesn't
-     * have to be re-obtained every time we want to passivate an entity instance.
-     * DMB: This isn't being called anywhere.
-     */
-    private static Method UNSET_ENTITY_CONTEXT_METHOD;
 
     /*
      * The javax.ejb.EntityBean.ejbRemove() method is used for processing bean
@@ -114,7 +101,6 @@ public class CastorCMP11_EntityContainer
     static {
         try {
             SET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod("setEntityContext", new Class[]{javax.ejb.EntityContext.class});
-            UNSET_ENTITY_CONTEXT_METHOD = javax.ejb.EntityBean.class.getMethod("unsetEntityContext", null);
             EJB_REMOVE_METHOD = javax.ejb.EntityBean.class.getMethod("ejbRemove", null);
         } catch (NoSuchMethodException nse) {
         }
@@ -126,19 +112,13 @@ public class CastorCMP11_EntityContainer
 
     private Object containerID = null;
 
-    private String Global_TX_Database = null;
-
-    private String Local_TX_Database = null;
-
     private JDO jdo_ForGlobalTransaction;
 
     private JDO jdo_ForLocalTransaction;
 
-    private java.util.Hashtable syncWrappers = new java.util.Hashtable();
+    private final Hashtable syncWrappers = new Hashtable();
 
     private HashMap resetMap;
-
-    private Properties props;
 
     private TransactionManager transactionManager;
     private SecurityService securityService;
@@ -149,25 +129,23 @@ public class CastorCMP11_EntityContainer
         containerID = id;
         deploymentRegistry = registry;
 
-        this.props = properties;
-
         SafeToolkit toolkit = SafeToolkit.getToolkit("CastorCMP11_EntityContainer");
         SafeProperties safeProps = toolkit.getSafeProperties(properties);
 
-        poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
-        Global_TX_Database = safeProps.getProperty(EnvProps.GLOBAL_TX_DATABASE);
-        Local_TX_Database = safeProps.getProperty(EnvProps.LOCAL_TX_DATABASE);
+        int poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
+        String global_TX_Database = safeProps.getProperty(EnvProps.GLOBAL_TX_DATABASE);
+        String local_TX_Database = safeProps.getProperty(EnvProps.LOCAL_TX_DATABASE);
 
         File gTxDb = null;
         File lTxDb = null;
         try {
-            gTxDb = SystemInstance.get().getBase().getFile(Global_TX_Database);
+            gTxDb = SystemInstance.get().getBase().getFile(global_TX_Database);
         } catch (Exception e) {
             throw new OpenEJBException("Cannot locate the " + EnvProps.GLOBAL_TX_DATABASE + " file. " + e.getMessage());
         }
 
         try {
-            lTxDb = SystemInstance.get().getBase().getFile(Local_TX_Database);
+            lTxDb = SystemInstance.get().getBase().getFile(local_TX_Database);
         } catch (Exception e) {
             throw new OpenEJBException("Cannot locate the " + EnvProps.LOCAL_TX_DATABASE + " file. " + e.getMessage());
         }
@@ -292,7 +270,7 @@ public class CastorCMP11_EntityContainer
         resetMap.put(double.class, new Double(0.0));
     }
 
-    boolean initialized;
+    private boolean initialized;
 
     protected void postInit() {
         if (initialized) return;
