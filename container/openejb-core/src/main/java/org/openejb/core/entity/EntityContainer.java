@@ -34,11 +34,11 @@ import org.openejb.util.SafeToolkit;
 
 public class EntityContainer implements org.openejb.RpcContainer, TransactionContainer {
 
-    protected EntityInstanceManager instanceManager;
+    private EntityInstanceManager instanceManager;
 
-    protected HashMap deploymentRegistry;
+    private HashMap deploymentRegistry;
 
-    protected Object containerID = null;
+    private Object containerID = null;
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
     private TransactionManager transactionManager;

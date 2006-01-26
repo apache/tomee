@@ -31,11 +31,11 @@ import org.openejb.util.SafeToolkit;
 
 public class StatelessContainer implements org.openejb.RpcContainer, TransactionContainer {
 
-    StatelessInstanceManager instanceManager;
+    private StatelessInstanceManager instanceManager;
 
-    HashMap deploymentRegistry;
+    private HashMap deploymentRegistry;
 
-    Object containerID = null;
+    private Object containerID = null;
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
@@ -213,4 +213,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         instanceManager.discardInstance(context, instance);
     }
 
+    public HashMap getDeploymentRegistry() {
+        return deploymentRegistry;
+    }
 }

@@ -33,13 +33,13 @@ import org.openejb.util.SafeToolkit;
 
 public class StatefulContainer implements org.openejb.RpcContainer, TransactionContainer {
 
-    StatefulInstanceManager instanceManager;
+    private StatefulInstanceManager instanceManager;
 
-    HashMap deploymentRegistry;
+    private HashMap deploymentRegistry;
 
-    Object containerID = null;
+    private Object containerID = null;
 
-    Method EJB_REMOVE_METHOD = null;
+    private Method EJB_REMOVE_METHOD = null;
 
     final static protected Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
     private TransactionManager transactionManager;

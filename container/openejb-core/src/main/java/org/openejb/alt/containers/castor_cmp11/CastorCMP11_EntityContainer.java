@@ -135,9 +135,9 @@ public class CastorCMP11_EntityContainer
 
     private String Local_TX_Database = null;
 
-    protected JDO jdo_ForGlobalTransaction;
+    private JDO jdo_ForGlobalTransaction;
 
-    protected JDO jdo_ForLocalTransaction;
+    private JDO jdo_ForLocalTransaction;
 
     private java.util.Hashtable syncWrappers = new java.util.Hashtable();
 
@@ -1188,6 +1188,14 @@ public class CastorCMP11_EntityContainer
     }
 
     public void updated(Object object) {
+    }
+
+    public JDO getGlobalTxJDO() {
+        return jdo_ForGlobalTransaction;
+    }
+
+    public JDO getLocalTxJDO() {
+        return jdo_ForLocalTransaction;
     }
 
     public static class Key {

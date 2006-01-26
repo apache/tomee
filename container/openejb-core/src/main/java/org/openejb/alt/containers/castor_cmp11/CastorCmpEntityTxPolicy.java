@@ -27,7 +27,7 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
 
         this.cmpContainer = getCastorContainer(container);
 
-        this.jdo_ForLocalTransaction = cmpContainer.jdo_ForLocalTransaction;
+        this.jdo_ForLocalTransaction = cmpContainer.getLocalTxJDO();
     }
 
     private CastorCMP11_EntityContainer getCastorContainer(TransactionContainer container) {
@@ -44,8 +44,8 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
 
         DeploymentInfo deploymentInfo = context.callContext.getDeploymentInfo();
         ClassLoader classLoader = deploymentInfo.getBeanClass().getClassLoader();
-        cmpContainer.jdo_ForLocalTransaction.setClassLoader(classLoader);
-        cmpContainer.jdo_ForGlobalTransaction.setClassLoader(classLoader);
+        cmpContainer.getLocalTxJDO().setClassLoader(classLoader);
+        cmpContainer.getGlobalTxJDO().setClassLoader(classLoader);
 
         Database db = null;
         try {
