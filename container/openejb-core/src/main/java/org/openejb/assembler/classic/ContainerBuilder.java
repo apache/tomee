@@ -10,6 +10,7 @@ import org.openejb.util.Logger;
 import org.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
+import org.apache.xbean.recipe.ConstructionException;
 
 import javax.transaction.TransactionManager;
 import java.io.File;
@@ -77,16 +78,13 @@ public class ContainerBuilder {
             }
 
             Container container = buildContainer(containerInfo, deploymentsList);
+            container = wrapContainer(container);
+
             org.openejb.DeploymentInfo [] deploys = container.deployments();
             for (int x = 0; x < deploys.length; x++) {
                 org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
                 di.setContainer(container);
             }
-//            for (int z = 0; z < containerInfo.ejbeans.length; z++) {
-//                String ejbDeploymentId = containerInfo.ejbeans[z].ejbDeploymentId;
-//                DeploymentInfo deployment = (DeploymentInfo) deployments.get(ejbDeploymentId);
-//                container.deploy(deployment.getDeploymentID(), deployment);
-//            }
             containers.add(container);
         }
         return containers;
@@ -111,7 +109,6 @@ public class ContainerBuilder {
                     containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList) );
 
                     return (Container) containerRecipe.create();
-//                    container.init(containerName, deploymentsList, service.properties);
                 } catch (Exception e) {
                     throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()), e);
                 } finally {
@@ -119,60 +116,18 @@ public class ContainerBuilder {
                 }
             }
     }
-    private Container _buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
-        String className = containerInfo.className;
-        String codebase = containerInfo.codebase;
-        String containerName = containerInfo.containerName;
-        ContainerInfo service = containerInfo;
 
-
-        try {
-            Class factory = SafeToolkit.loadClass(className, codebase);
-            if (!Container.class.isAssignableFrom(factory)) {
-                throw new OpenEJBException(AssemblerTool.messages.format("init.0100", "Container", containerName, factory.getName(), Container.class.getName()));
+    private Container wrapContainer(Container container) {
+        for (int i = 0; i < decorators.length && container instanceof RpcContainer; i++) {
+            try {
+                String decoratorName = decorators[i];
+                ObjectRecipe decoratorRecipe = new ObjectRecipe(decoratorName);
+                decoratorRecipe.setProperty("container", new StaticRecipe(container));
+                container = (Container) decoratorRecipe.create();
+            } catch (ConstructionException e) {
+                logger.error("Container wrapper class " + decorators[i] + " could not be constructed and will be skipped.", e);
             }
-
-            Properties clonedProps = (Properties) (props.clone());
-            clonedProps.putAll(containerInfo.properties);
-
-            Container container = (Container) factory.newInstance();
-
-            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            for (int i = 0; i < decorators.length && container instanceof RpcContainer; i++) {
-                try {
-                    String decoratorName = decorators[i];
-                    Class decorator = contextClassLoader.loadClass(decoratorName);
-                    Constructor constructor = decorator.getConstructor(new Class[]{RpcContainer.class});
-                    container = (Container) constructor.newInstance(new Object[]{container});
-                } catch (NoSuchMethodException e) {
-                    String name = decorators[i].replaceAll(".*\\.", "");
-                    logger.error("Container wrapper " + decorators[i] + " does not have the required constructor 'public " + name + "(RpcContainer container)'");
-                } catch (InvocationTargetException e) {
-                    logger.error("Container wrapper " + decorators[i] + " could not be constructed and will be skipped.  Received message: " + e.getCause().getMessage(), e.getCause());
-                } catch (ClassNotFoundException e) {
-                    logger.error("Container wrapper class " + decorators[i] + " could not be loaded and will be skipped.");
-                }
-            }
-
-            Properties systemProperties = System.getProperties();
-            synchronized (systemProperties) {
-                String userDir = systemProperties.getProperty("user.dir");
-                try {
-                    File base = SystemInstance.get().getBase().getDirectory();
-                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
-                    container.init(containerName, deploymentsList, clonedProps);
-                } finally {
-                    systemProperties.setProperty("user.dir", userDir);
-                }
-            }
-
-            return container;
-        } catch (OpenEJBException e) {
-            throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()));
-        } catch (InstantiationException e) {
-            throw new OpenEJBException(AssemblerTool.messages.format("as0003", containerName, e.getMessage()));
-        } catch (IllegalAccessException e) {
-            throw new OpenEJBException(AssemblerTool.messages.format("as0003", containerName, e.getMessage()));
         }
+        return container;
     }
 }
