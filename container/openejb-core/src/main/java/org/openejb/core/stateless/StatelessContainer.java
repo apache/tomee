@@ -39,6 +39,15 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
+    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int timeout, int poolSize, boolean strictPooling) throws OpenEJBException {
+        this.deploymentRegistry = registry;
+        this.containerID = id;
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+
+        instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeout, poolSize, strictPooling);
+    }
+
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
         securityService = (SecurityService) properties.get(SecurityService.class.getName());
@@ -94,6 +103,8 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity)

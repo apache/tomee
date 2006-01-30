@@ -32,7 +32,7 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
-                   constructor="PoolSize, Global_TX_Database, Local_TX_Database"
+                   constructor="id, transactionManager, securityService, deployments, Global_TX_Database, Local_TX_Database, PoolSize"
                    class-name="org.openejb.alt.containers.castor_cmp11.CastorCMP11_EntityContainer">
 
     # The default size of the method ready bean pools.
@@ -74,7 +74,17 @@
   <ServiceProvider
           id="Default BMP Container"
           provider-type="Container"
-          class-name="org.openejb.core.entity.EntityContainer"/>
+          constructor="id, transactionManager, securityService, deployments, PoolSize"
+          class-name="org.openejb.core.entity.EntityContainer">
+
+    # Specifies the size of the bean pools for this
+    # bmp entity container.
+
+    PoolSize 10
+
+</ServiceProvider>
+
+
 
   <!--
   # ==========================================================
@@ -84,6 +94,7 @@
   <ServiceProvider
           id="Default Stateless Container"
           provider-type="Container"
+          constructor="id, transactionManager, securityService, deployments, TimeOut, PoolSize, StrictPooling"
           class-name="org.openejb.core.stateless.StatelessContainer">
 
     # Specifies the time to wait between invocations. This
@@ -124,6 +135,7 @@
   <ServiceProvider
           id="Default Stateful Container"
           provider-type="Container"
+          constructor="id, transactionManager, securityService, deployments, Passivator, TimeOut, PoolSize, BulkPassivate"
           class-name="org.openejb.core.stateful.StatefulContainer">
 
     # The passivator is responsible for writing beans to disk

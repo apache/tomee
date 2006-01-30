@@ -1,7 +1,6 @@
 package org.openejb.core.entity;
 
 import org.openejb.ApplicationException;
-import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.spi.SecurityService;
 import org.openejb.core.DeploymentInfo;
@@ -48,7 +47,18 @@ public class EntityInstanceManager {
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public EntityInstanceManager() {
+    public EntityInstanceManager(EntityContainer container, TransactionManager transactionManager, SecurityService securityService, int poolSize) {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.poolsize = poolSize;
+        this.container = container;
+        poolMap = new HashMap();// put size in later
+
+        org.openejb.DeploymentInfo[] deploymentInfos = this.container.deployments();
+        for (int i = 0; i < deploymentInfos.length; i++) {
+            org.openejb.DeploymentInfo deploymentInfo = deploymentInfos[i];
+            poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
+        }
     }
 
     public void init(EntityContainer myContainer, HashMap deployments, Properties props) throws OpenEJBException {

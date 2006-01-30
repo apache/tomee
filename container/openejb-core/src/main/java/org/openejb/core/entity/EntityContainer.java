@@ -44,37 +44,46 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
+    public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolSize) throws OpenEJBException {
+        this.deploymentRegistry = registry;
+        this.containerID = id;
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+
+        instanceManager = new EntityInstanceManager(this, transactionManager, securityService, poolSize);
+    }
+
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
-        securityService = (SecurityService) properties.get(SecurityService.class.getName());
-
-        containerID = id;
-        deploymentRegistry = registry;
-
-        if (properties == null) properties = new Properties();
-
-        SafeToolkit toolkit = SafeToolkit.getToolkit("EntityContainer");
-        SafeProperties safeProps = toolkit.getSafeProperties(properties);
-        try {
-            String className = safeProps.getProperty(EnvProps.IM_CLASS_NAME, "org.openejb.core.entity.EntityInstanceManager");
-            ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
-            instanceManager = (EntityInstanceManager) Class.forName(className, true, cl).newInstance();
-        } catch (Exception e) {
-            throw new org.openejb.SystemException("Initialization of InstanceManager for the \"" + containerID + "\" entity container failed", e);
-        }
-        instanceManager.init(this, registry, properties);
-
-        /*
-        * This block of code is necessary to avoid a chicken and egg problem. The DeploymentInfo
-        * objects must have a reference to their container during this assembly process, but the
-        * container is created after the DeploymentInfo necessitating this loop to assign all
-        * deployment info object's their containers.
-        */
-        org.openejb.DeploymentInfo [] deploys = this.deployments();
-        for (int x = 0; x < deploys.length; x++) {
-            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
-            di.setContainer(this);
-        }
+//        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+//        securityService = (SecurityService) properties.get(SecurityService.class.getName());
+//
+//        containerID = id;
+//        deploymentRegistry = registry;
+//
+//        if (properties == null) properties = new Properties();
+//
+//        SafeToolkit toolkit = SafeToolkit.getToolkit("EntityContainer");
+//        SafeProperties safeProps = toolkit.getSafeProperties(properties);
+//        try {
+//            String className = safeProps.getProperty(EnvProps.IM_CLASS_NAME, "org.openejb.core.entity.EntityInstanceManager");
+//            ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
+//            instanceManager = (EntityInstanceManager) Class.forName(className, true, cl).newInstance();
+//        } catch (Exception e) {
+//            throw new org.openejb.SystemException("Initialization of InstanceManager for the \"" + containerID + "\" entity container failed", e);
+//        }
+//        instanceManager.init(this, registry, properties);
+//
+//        /*
+//        * This block of code is necessary to avoid a chicken and egg problem. The DeploymentInfo
+//        * objects must have a reference to their container during this assembly process, but the
+//        * container is created after the DeploymentInfo necessitating this loop to assign all
+//        * deployment info object's their containers.
+//        */
+//        org.openejb.DeploymentInfo [] deploys = this.deployments();
+//        for (int x = 0; x < deploys.length; x++) {
+//            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
+//            di.setContainer(this);
+//        }
 
     }
 
@@ -98,6 +107,8 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.openejb.OpenEJBException {

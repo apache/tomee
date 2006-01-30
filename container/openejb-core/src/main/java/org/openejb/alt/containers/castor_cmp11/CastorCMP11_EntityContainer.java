@@ -123,11 +123,13 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
+    public CastorCMP11_EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, String global_TX_Database, String local_TX_Database, int poolsize) throws OpenEJBException {
+        init(id, transactionManager, securityService, registry, global_TX_Database, local_TX_Database, poolsize);
+    }
+
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
-        securityService = (SecurityService) properties.get(SecurityService.class.getName());
-        containerID = id;
-        deploymentRegistry = registry;
+        TransactionManager transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
+        SecurityService securityService = (SecurityService) properties.get(SecurityService.class.getName());
 
         SafeToolkit toolkit = SafeToolkit.getToolkit("CastorCMP11_EntityContainer");
         SafeProperties safeProps = toolkit.getSafeProperties(properties);
@@ -135,6 +137,15 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         int poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
         String global_TX_Database = safeProps.getProperty(EnvProps.GLOBAL_TX_DATABASE);
         String local_TX_Database = safeProps.getProperty(EnvProps.LOCAL_TX_DATABASE);
+
+        init(id, transactionManager, securityService, registry, global_TX_Database, local_TX_Database, poolsize);
+    }
+
+    private void init(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, String global_TX_Database, String local_TX_Database, int poolsize) throws OpenEJBException {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.containerID = id;
+        this.deploymentRegistry = registry;
 
         File gTxDb = null;
         File lTxDb = null;
@@ -161,21 +172,21 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         }
 
         /*
-         * Castor JDO obtains a reference to the TransactionManager throught the InitialContext.
-         * The new InitialContext will use the deployment's JNDI Context, which is normal inside
-         * the container system, so we need to bind the TransactionManager to the deployment's name space
-         * The biggest problem with this is that the bean itself may access the TransactionManager if it
-         * knows the JNDI name, so we bind the TransactionManager into dynamically created transient name
-         * space based every time the container starts. It nearly impossible for the bean to anticipate
-         * and use the binding directly.  It may be possible, however, to locate it using a Context listing method.
-         */
+        * Castor JDO obtains a reference to the TransactionManager throught the InitialContext.
+        * The new InitialContext will use the deployment's JNDI Context, which is normal inside
+        * the container system, so we need to bind the TransactionManager to the deployment's name space
+        * The biggest problem with this is that the bean itself may access the TransactionManager if it
+        * knows the JNDI name, so we bind the TransactionManager into dynamically created transient name
+        * space based every time the container starts. It nearly impossible for the bean to anticipate
+        * and use the binding directly.  It may be possible, however, to locate it using a Context listing method.
+        */
 
         String transactionManagerJndiName = "java:openejb/TransactionManager";
 
         /*
-         * This container uses two different JDO objects. One whose transactions are managed by a tx manager
-         * and which is not. The following code configures both.
-         */
+        * This container uses two different JDO objects. One whose transactions are managed by a tx manager
+        * and which is not. The following code configures both.
+        */
         jdo_ForGlobalTransaction = new JDO();
 
         jdo_ForGlobalTransaction.setDatabasePooling(true);
@@ -194,22 +205,22 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         jdo_ForLocalTransaction.setLogInterceptor(new CMPLogger(EnvProps.LOCAL_TX_DATABASE));
 
         /*
-         * This block of code is necessary to avoid a chicken and egg problem.
-         * The DeploymentInfo objects must have a reference to their container
-         * during this assembly process, but the container is created after the
-         * DeploymentInfo necessitating this loop to assign all deployment info
-         * object's their containers.
-         *
-         * In addition the loop is leveraged for other oprations like creating
-         * the method ready pool and the keyGenerator pool.
-         */
-        org.openejb.DeploymentInfo[] deploys = this.deployments();
+        * This block of code is necessary to avoid a chicken and egg problem.
+        * The DeploymentInfo objects must have a reference to their container
+        * during this assembly process, but the container is created after the
+        * DeploymentInfo necessitating this loop to assign all deployment info
+        * object's their containers.
+        *
+        * In addition the loop is leveraged for other oprations like creating
+        * the method ready pool and the keyGenerator pool.
+        */
+        DeploymentInfo[] deploys = this.deployments();
 
         /*
-         * the JndiTxReference will dynamically obtian a reference to the TransactionManger the first
-         * time it used. The same Reference is shared by all deployments, which is not a problem.
-         */
-        JndiTxReference txReference = new JndiTxReference(transactionManager);
+        * the JndiTxReference will dynamically obtian a reference to the TransactionManger the first
+        * time it used. The same Reference is shared by all deployments, which is not a problem.
+        */
+        JndiTxReference txReference = new JndiTxReference(this.transactionManager);
         for (int x = 0; x < deploys.length; x++) {
             org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
             di.setContainer(this);
@@ -320,6 +331,8 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity)

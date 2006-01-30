@@ -13,7 +13,6 @@ import javax.transaction.TransactionManager;
 import org.apache.log4j.Category;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
-import org.openejb.OpenEJB;
 import org.openejb.spi.SecurityService;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.EnvProps;
@@ -38,7 +37,15 @@ public class StatelessInstanceManager {
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessInstanceManager() {
+    public StatelessInstanceManager(TransactionManager transactionManager, SecurityService securityService, int timeout, int poolSize, boolean strictPooling) {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.poolLimit = poolSize;
+        this.strictPooling = strictPooling;
+
+        if (this.strictPooling) {
+            poolQueue = new PoolQueue(timeout);
+        }
     }
 
     public void init(Properties properties) throws OpenEJBException {

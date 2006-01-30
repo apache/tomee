@@ -12,10 +12,15 @@ import java.util.Properties;
 import org.openejb.core.EnvProps;
 import org.openejb.util.FileUtils;
 import org.openejb.loader.SystemInstance;
+import org.openejb.SystemException;
 
 public class SimplePassivater implements PassivationStrategy {
     private File sessionDirectory;
     final static protected org.apache.log4j.Category logger = org.apache.log4j.Category.getInstance("OpenEJB");
+
+    public SimplePassivater() throws SystemException {
+        init(null);
+    }
 
     public void init(Properties props) throws org.openejb.SystemException {
         if (props == null) {

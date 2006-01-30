@@ -3,12 +3,15 @@ package org.openejb.assembler.classic;
 import org.openejb.Container;
 import org.openejb.OpenEJBException;
 import org.openejb.RpcContainer;
+import org.openejb.spi.SecurityService;
 import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.util.Logger;
 import org.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 
+import javax.transaction.TransactionManager;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -73,37 +76,50 @@ public class ContainerBuilder {
                 deploymentsList.put(ejbDeploymentId, deployment);
             }
 
-            containers.add(buildContainer(containerInfo, deploymentsList));
+            Container container = buildContainer(containerInfo, deploymentsList);
+            org.openejb.DeploymentInfo [] deploys = container.deployments();
+            for (int x = 0; x < deploys.length; x++) {
+                org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
+                di.setContainer(container);
+            }
+//            for (int z = 0; z < containerInfo.ejbeans.length; z++) {
+//                String ejbDeploymentId = containerInfo.ejbeans[z].ejbDeploymentId;
+//                DeploymentInfo deployment = (DeploymentInfo) deployments.get(ejbDeploymentId);
+//                container.deploy(deployment.getDeploymentID(), deployment);
+//            }
+            containers.add(container);
         }
         return containers;
     }
 
-//    private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
-//        String containerName = containerInfo.containerName;
-//        ContainerInfo service = containerInfo;
-//
-//
-//
-//            Container container = null;
-//            Properties systemProperties = System.getProperties();
-//            synchronized (systemProperties) {
-//                String userDir = systemProperties.getProperty("user.dir");
-//                try {
-//                    File base = SystemInstance.get().getBase().getDirectory();
-//                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
-//
-//                    ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
-//                    containerRecipe.setAllProperties(service.properties);
-//                    return (Container) containerRecipe.create();
-////                    container.init(containerName, deploymentsList, service.properties);
-//                } catch (Exception e) {
-//                    throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()));
-//                } finally {
-//                    systemProperties.setProperty("user.dir", userDir);
-//                }
-//            }
-//    }
     private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
+        String containerName = containerInfo.containerName;
+        ContainerInfo service = containerInfo;
+
+            Properties systemProperties = System.getProperties();
+            synchronized (systemProperties) {
+                String userDir = systemProperties.getProperty("user.dir");
+                try {
+                    File base = SystemInstance.get().getBase().getDirectory();
+                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
+
+                    ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
+                    containerRecipe.setAllProperties(service.properties);
+                    containerRecipe.setProperty("id", new StaticRecipe(containerName) );
+                    containerRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())) );
+                    containerRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())) );
+                    containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList) );
+
+                    return (Container) containerRecipe.create();
+//                    container.init(containerName, deploymentsList, service.properties);
+                } catch (Exception e) {
+                    throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()), e);
+                } finally {
+                    systemProperties.setProperty("user.dir", userDir);
+                }
+            }
+    }
+    private Container _buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
         String className = containerInfo.className;
         String codebase = containerInfo.codebase;
         String containerName = containerInfo.containerName;

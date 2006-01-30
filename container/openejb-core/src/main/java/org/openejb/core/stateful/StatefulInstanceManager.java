@@ -44,7 +44,19 @@ public class StatefulInstanceManager {
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatefulInstanceManager() {
+    public StatefulInstanceManager(TransactionManager transactionManager, SecurityService securityService, Class passivatorClass, int timeout, int poolSize, int bulkPassivate) throws OpenEJBException {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.lruQUE = new BeanEntryQue(poolSize);
+        this.BULK_PASSIVATION_SIZE = (bulkPassivate > poolSize) ? poolSize : bulkPassivate;
+        this.timeOUT = timeout * 60 * 1000;
+
+        try {
+            passivator = (PassivationStrategy) passivatorClass.newInstance();
+        } catch (Exception e) {
+            throw new OpenEJBException("Could not create the passivator "+passivatorClass.getName(), e);
+        }
+
     }
 
     public void init(Properties props) throws OpenEJBException {

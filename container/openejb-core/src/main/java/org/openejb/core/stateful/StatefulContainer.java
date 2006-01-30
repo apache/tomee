@@ -45,18 +45,33 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
+    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, Class passivatorClass, int timeout, int poolSize, int bulkPassivate) throws OpenEJBException {
+        this.deploymentRegistry = registry;
+        this.containerID = id;
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+
+        instanceManager = new StatefulInstanceManager(transactionManager, securityService, passivatorClass, timeout, poolSize, bulkPassivate);
+
+        try {
+            EJB_REMOVE_METHOD = javax.ejb.SessionBean.class.getMethod("ejbRemove", new Class [0]);
+        } catch (NoSuchMethodException nse) {
+            throw new SystemException("Fixed remove method can not be initated", nse);
+        }
+    }
+
     /*
-     * Construct this container with the specified container id, deployments, container manager and properties.
-     * The properties can include the class name of the preferred InstanceManager, org.openejb.core.entity.EntityInstanceManager
-     * is the default. The properties should also include the properties for the instance manager.
-     *
-     * @param id the unique id to identify this container in the ContainerSystem
-     * @param registry a hashMap of bean delpoyments that this container will be responsible for
-     * @param mngr the ContainerManager for this container
-     * @param properties the properties this container needs to initialize and run
-     * @throws OpenEJBException if there is a problem constructing the container
-     * @see org.openejb.Container
-     */
+    * Construct this container with the specified container id, deployments, container manager and properties.
+    * The properties can include the class name of the preferred InstanceManager, org.openejb.core.entity.EntityInstanceManager
+    * is the default. The properties should also include the properties for the instance manager.
+    *
+    * @param id the unique id to identify this container in the ContainerSystem
+    * @param registry a hashMap of bean delpoyments that this container will be responsible for
+    * @param mngr the ContainerManager for this container
+    * @param properties the properties this container needs to initialize and run
+    * @throws OpenEJBException if there is a problem constructing the container
+    * @see org.openejb.Container
+    */
     public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
         transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
         securityService = (SecurityService) properties.get(SecurityService.class.getName());
@@ -119,6 +134,8 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
+        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.openejb.OpenEJBException {
