@@ -59,41 +59,6 @@ public class StatefulInstanceManager {
 
     }
 
-    public void init(Properties props) throws OpenEJBException {
-        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
-        securityService = (SecurityService) props.get(SecurityService.class.getName());
-
-        SafeProperties safeProps = toolkit.getSafeProperties(props);
-
-        String passivatorClass = null;
-        try {
-            passivatorClass = safeProps.getProperty(EnvProps.IM_PASSIVATOR);
-        } catch (org.openejb.OpenEJBException e) {
-
-            try {
-                passivatorClass = safeProps.getProperty("org/openejb/core/InstanceManager/PASSIVATOR");
-            } catch (org.openejb.OpenEJBException e1) {
-
-                throw e;
-            }
-        }
-
-        try {
-            passivator = (PassivationStrategy) toolkit.newInstance(passivatorClass);
-        } catch (Exception e) {
-            OpenEJBErrorHandler.propertyValueIsIllegal(EnvProps.IM_PASSIVATOR, passivatorClass, e.getLocalizedMessage());
-        }
-        passivator.init(props);
-
-        int poolSize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
-        int timeOutInMinutes = safeProps.getPropertyAsInt(EnvProps.IM_TIME_OUT, 5);
-        int bulkPassivationSize = safeProps.getPropertyAsInt(EnvProps.IM_PASSIVATE_SIZE, (int) (poolSize * .25));
-
-        lruQUE = new BeanEntryQue(poolSize);
-        BULK_PASSIVATION_SIZE = (bulkPassivationSize > poolSize) ? poolSize : bulkPassivationSize;
-        timeOUT = timeOutInMinutes * 60 * 1000;
-    }
-
     public Object getAncillaryState(Object primaryKey)
             throws OpenEJBException {
         return this.getBeanEntry(primaryKey).ancillaryState;

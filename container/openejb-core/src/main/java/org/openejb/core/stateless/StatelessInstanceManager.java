@@ -48,20 +48,6 @@ public class StatelessInstanceManager {
         }
     }
 
-    public void init(Properties properties) throws OpenEJBException {
-        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
-        securityService = (SecurityService) properties.get(SecurityService.class.getName());
-
-        SafeProperties safeProps = toolkit.getSafeProperties(properties);
-
-        poolLimit = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 10);
-        strictPooling = safeProps.getPropertyAsBoolean(EnvProps.IM_STRICT_POOLING, new Boolean(false)).booleanValue();
-        if (strictPooling) {
-            int waitTime = safeProps.getPropertyAsInt(EnvProps.IM_TIME_OUT, 0);
-            poolQueue = new PoolQueue(waitTime);
-        }
-    }
-
     public EnterpriseBean getInstance(ThreadContext callContext)
             throws OpenEJBException {
         SessionBean bean = null;

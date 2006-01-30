@@ -61,22 +61,6 @@ public class EntityInstanceManager {
         }
     }
 
-    public void init(EntityContainer myContainer, HashMap deployments, Properties props) throws OpenEJBException {
-        transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
-        securityService = (SecurityService) props.get(SecurityService.class.getName());
-
-        SafeProperties safeProps = toolkit.getSafeProperties(props);
-        poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
-        container = myContainer;
-
-        poolMap = new HashMap();// put size in later
-        java.util.Iterator iterator = deployments.values().iterator();
-        while (iterator.hasNext()) {
-            poolMap.put(((DeploymentInfo) iterator.next()).getDeploymentID(), new LinkedListStack(poolsize / 2));
-        }
-
-    }
-
     public EntityBean obtainInstance(ThreadContext callContext)
             throws OpenEJBException {
         Transaction currentTx = null;

@@ -60,60 +60,6 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         }
     }
 
-    /*
-    * Construct this container with the specified container id, deployments, container manager and properties.
-    * The properties can include the class name of the preferred InstanceManager, org.openejb.core.entity.EntityInstanceManager
-    * is the default. The properties should also include the properties for the instance manager.
-    *
-    * @param id the unique id to identify this container in the ContainerSystem
-    * @param registry a hashMap of bean delpoyments that this container will be responsible for
-    * @param mngr the ContainerManager for this container
-    * @param properties the properties this container needs to initialize and run
-    * @throws OpenEJBException if there is a problem constructing the container
-    * @see org.openejb.Container
-    */
-    public void init(Object id, HashMap registry, Properties properties) throws org.openejb.OpenEJBException {
-        transactionManager = (TransactionManager) properties.get(TransactionManager.class.getName());
-        securityService = (SecurityService) properties.get(SecurityService.class.getName());
-
-        containerID = id;
-        deploymentRegistry = registry;
-
-        if (properties == null) properties = new Properties();
-
-        SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulContainer");
-        SafeProperties safeProps = toolkit.getSafeProperties(properties);
-        try {
-            String className = safeProps.getProperty(EnvProps.IM_CLASS_NAME, "org.openejb.core.stateful.StatefulInstanceManager");
-            ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
-            instanceManager = (StatefulInstanceManager) Class.forName(className, true, cl).newInstance();
-        } catch (Exception e) {
-            throw new org.openejb.SystemException("Initialization of InstanceManager for the \"" + containerID + "\" stateful container failed", e);
-        }
-        instanceManager.init(properties);
-
-//         txScopeHandle = new StatefulTransactionScopeHandler(this,instanceManager);
-
-        /*
-        * This block of code is necessary to avoid a chicken and egg problem. The DeploymentInfo
-        * objects must have a reference to their container during this assembly process, but the
-        * container is created after the DeploymentInfo necessitating this loop to assign all
-        * deployment info object's their containers.
-        */
-        org.openejb.DeploymentInfo [] deploys = this.deployments();
-        for (int x = 0; x < deploys.length; x++) {
-            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
-            di.setContainer(this);
-        }
-
-        try {
-            EJB_REMOVE_METHOD = javax.ejb.SessionBean.class.getMethod("ejbRemove", new Class [0]);
-        } catch (NoSuchMethodException nse) {
-            throw new SystemException("Fixed remove method can not be initated", nse);
-        }
-
-    }
-
     public DeploymentInfo [] deployments() {
         return (DeploymentInfo []) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }

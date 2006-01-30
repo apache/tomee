@@ -1,14 +1,11 @@
 package org.openejb.core;
 
-import org.openejb.OpenEJBException;
-import org.openejb.RpcContainer;
+import org.openejb.*;
 
 import javax.naming.Context;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Map;
 
@@ -31,16 +28,14 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
         } catch (NoSuchMethodException e) {
             throw new OpenEJBException("Unable to setup Tomcat JNDI support.  Method of org.apache.naming.ContextBindings was not found:" + e.getMessage());
         }
+        org.openejb.DeploymentInfo[] deploymentInfos = container.deployments();
+        for (int i = 0; i < deploymentInfos.length; i++) {
+            DeploymentInfo deployment = (DeploymentInfo) deploymentInfos[i];
+            setupDeployment(deployment);
+        }
     }
 
     public void init(Object containerId, HashMap deployments, Properties properties) throws OpenEJBException {
-        super.init(containerId, deployments, properties);
-        Collection collection = deployments.values();
-        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-            DeploymentInfo deployment = (DeploymentInfo) iterator.next();
-
-            setupDeployment(deployment);
-        }
     }
 
     public void deploy(Object deploymentID, org.openejb.DeploymentInfo info) throws OpenEJBException {

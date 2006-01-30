@@ -21,10 +21,6 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         return container.invoke(deployID, callMethod, args, primKey, securityIdentity);
     }
 
-    public void init(Object containerId, HashMap deployments, Properties properties) throws OpenEJBException {
-        container.init(containerId, deployments, properties);
-    }
-
     public int getContainerType() {
         return container.getContainerType();
     }
