@@ -39,7 +39,7 @@
     </plugins>
   </build>
   <modules>
-    <module>xbean-reflect</module>
+<!--    <module>xbean-reflect</module> -->
     <module>itest/openejb-itests</module>
     <module>container/openejb-core</module>
     <module>server/openejb-ejbd</module>
