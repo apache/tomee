@@ -39,18 +39,9 @@
     </plugins>
   </build>
   <modules>
-<!--    <module>xbean-reflect</module> -->
-    <module>itest/openejb-itests</module>
-    <module>container/openejb-core</module>
-    <module>server/openejb-ejbd</module>
-    <module>server/openejb-admin</module>
-    <module>server/openejb-server</module>
-    <module>server/openejb-client</module>
-    <module>server/openejb-http</module>
-    <module>server/openejb-telnet</module>
-    <module>server/openejb-xfire</module>
-    <module>server/openejb-axis</module>
-    <module>server/openejb-corba</module>
+    <module>openejb-itests</module>
+    <module>container</module>
+    <module>server</module>
     <module>openejb-assembly</module>
   </modules>
   <repositories>
