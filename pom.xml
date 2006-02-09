@@ -32,8 +32,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>
     </plugins>
@@ -41,8 +41,9 @@
   <modules>
     <module>openejb-itests</module>
     <module>container</module>
-    <module>server</module>
+    <module>server</module> 
     <module>openejb-assembly</module>
+<!--    <module>jee5_exp_specs</module>-->
   </modules>
   <repositories>
     <repository>
@@ -67,7 +68,17 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee_1.4_spec</artifactId>
+      <artifactId>geronimo-ejb_3.0_spec</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+      <version>1.0</version>
+    </dependency>                        
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_2.4_spec</artifactId>
       <version>1.0</version>
     </dependency>
     <dependency>

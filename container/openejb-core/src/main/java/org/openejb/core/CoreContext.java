@@ -172,6 +172,11 @@ public abstract class CoreContext implements java.io.Serializable {
             throw new java.lang.IllegalStateException("container-managed transaction beans can not access the UserTransaction");
     }
 
+    public Object lookup(String name){
+        throw new UnsupportedOperationException("lookup");
+    }
+
+    
     /*----------------------------------------------------*/
     /* UNSUPPORTED DEPRICATED METHODS                     */
     /*----------------------------------------------------*/

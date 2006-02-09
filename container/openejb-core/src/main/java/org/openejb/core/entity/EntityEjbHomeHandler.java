@@ -43,17 +43,17 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             }
             return proxies;
         } else if (retValue instanceof org.openejb.util.ArrayEnumeration) {
-            org.openejb.util.ArrayEnumeration enum = (org.openejb.util.ArrayEnumeration) retValue;
-            for (int i = enum.size() - 1; i >= 0; --i) {
-                enum.set(i, createProxy((ProxyInfo) enum.get(i)));
+            org.openejb.util.ArrayEnumeration enumeration = (org.openejb.util.ArrayEnumeration) retValue;
+            for (int i = enumeration.size() - 1; i >= 0; --i) {
+                enumeration.set(i, createProxy((ProxyInfo) enumeration.get(i)));
             }
-            return enum;
+            return enumeration;
         } else if (retValue instanceof java.util.Enumeration) {
-            java.util.Enumeration enum = (java.util.Enumeration) retValue;
+            java.util.Enumeration enumeration = (java.util.Enumeration) retValue;
 
             java.util.List proxies = new java.util.ArrayList();
-            while (enum.hasMoreElements()) {
-                proxies.add(createProxy((ProxyInfo) enum.nextElement()));
+            while (enumeration.hasMoreElements()) {
+                proxies.add(createProxy((ProxyInfo) enumeration.nextElement()));
             }
             return new org.openejb.util.ArrayEnumeration(proxies);
         } else {

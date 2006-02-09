@@ -36,10 +36,10 @@ public class RAFPassivater implements PassivationStrategy {
             fileID++;
 
             RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw");
-            Enumeration enum = stateTable.keys();
+            Enumeration enumeration = stateTable.keys();
             Pointer lastPointer = null;
-            while (enum.hasMoreElements()) {
-                Object id = enum.nextElement();
+            while (enumeration.hasMoreElements()) {
+                Object id = enumeration.nextElement();
                 Object obj = stateTable.get(id);
                 byte [] bytes = Serializer.serialize(obj);
                 long filepointer = ras.getFilePointer();

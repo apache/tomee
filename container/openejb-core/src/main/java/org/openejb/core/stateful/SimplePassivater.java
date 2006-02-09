@@ -70,9 +70,9 @@ public class SimplePassivater implements PassivationStrategy {
     }
 
     public void passivate(Hashtable hash) throws org.openejb.SystemException {
-        Enumeration enum = hash.keys();
-        while (enum.hasMoreElements()) {
-            Object id = enum.nextElement();
+        Enumeration enumeration = hash.keys();
+        while (enumeration.hasMoreElements()) {
+            Object id = enumeration.nextElement();
             passivate(id, hash.get(id));
         }
     }

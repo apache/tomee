@@ -91,7 +91,14 @@ public class StatelessContext
     }
 
     public MessageContext getMessageContext() {
-        return null;
+        throw new UnsupportedOperationException("not implemented");
     }
 
+    public Object getBusinessObject(Class businessInterface) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    public Class getInvokedBusinessInterface() {
+        throw new UnsupportedOperationException("not implemented");
+    }
 }
