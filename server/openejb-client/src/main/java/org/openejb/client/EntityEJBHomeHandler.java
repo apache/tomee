@@ -33,11 +33,11 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
 
         switch (res.getResponseCode()) {
             case EJB_ERROR:
-                throw (Throwable) res.getResult();
+                throw new SystemError((ThrowableArtifact) res.getResult());
             case EJB_SYS_EXCEPTION:
-                throw (Throwable) res.getResult();
+                throw new SystemException((ThrowableArtifact) res.getResult());
             case EJB_APP_EXCEPTION:
-                throw (Throwable) res.getResult();
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
 
             case EJB_OK_FOUND:
                 primKey = res.getResult();
@@ -69,7 +69,8 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                     registerHandler(ejb.deploymentID + ":" + primKey, handler);
                     primaryKeys[i] = handler.createEJBObjectProxy();
                 }
-                return new org.openejb.util.ArrayEnumeration(java.util.Arrays.asList(primaryKeys));
+
+                return new ArrayEnumeration(java.util.Arrays.asList(primaryKeys));
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }

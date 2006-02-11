@@ -23,10 +23,7 @@ public class StatelessEJBObjectHandler extends EJBObjectHandler {
     }
 
     public Object getRegistryId() {
-//      if(registryId== null)
-//          registryId= createRegistryId(primaryKey, deploymentID, container);
-//      return registryId;
-        return null;
+        return this.ejb.deploymentID;
     }
 
     protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {

@@ -129,28 +129,24 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 throw new UnsupportedOperationException("Unkown method: " + m);
             }
 
-            /*
-            * The ire is thrown by the container system and propagated by
-            * the server to the stub.
-            */
-        } catch (org.openejb.InvalidateReferenceException ire) {
+        } catch (SystemException e) {
             invalidateAllHandlers(getRegistryId());
-            return ire.getRootCause();
+            throw e.getCause();
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (org.openejb.ApplicationException ae) {
-            throw ae.getRootCause();
+        } catch (ApplicationException ae) {
+            throw ae.getCause();
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (org.openejb.SystemException se) {
+        } catch (SystemError se) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
-        } catch (org.openejb.OpenEJBException oe) {
-            throw new RemoteException("Unknown Container Exception", oe.getRootCause());
+            throw new RemoteException("Container has suffered a SystemException", se.getCause());
+        } catch (Throwable oe) {
+            throw new RemoteException("Unknown Container Exception", oe.getCause());
         }
         return retValue;
     }
@@ -201,18 +197,16 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 //        }
         switch (res.getResponseCode()) {
             case EJB_ERROR:
-//            System.out.println("ERROR "+res.getResult());
-                throw (Throwable) res.getResult();
+                throw new SystemError((ThrowableArtifact) res.getResult());
             case EJB_SYS_EXCEPTION:
-//            System.out.println("SYS EXEPTION "+res.getResult());
-                throw (Throwable) res.getResult();
+                throw new SystemException((ThrowableArtifact) res.getResult());
             case EJB_APP_EXCEPTION:
-//            System.out.println("APP EXEPTION "+res.getResult());
-                throw (Throwable) res.getResult();
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
             case EJB_OK:
                 return res.getResult();
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }
     }
+
 }

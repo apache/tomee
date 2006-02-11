@@ -32,6 +32,10 @@ import org.openejb.server.ejbd.EjbServer;
 import java.util.Properties;
 
 /**
+ * To run from intellij or another IDE add
+ *
+ * -Dopenejb.home=/Users/dblevins/work/openejb3/server/openejb-ejbd/target/test-classes
+ *
  * @version $Revision$ $Date$
  */
 public class RemoteiTest extends org.openejb.test.TestSuite {

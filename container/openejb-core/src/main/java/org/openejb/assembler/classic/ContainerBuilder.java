@@ -1,21 +1,18 @@
 package org.openejb.assembler.classic;
 
+import org.apache.xbean.recipe.ConstructionException;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 import org.openejb.Container;
 import org.openejb.OpenEJBException;
 import org.openejb.RpcContainer;
-import org.openejb.spi.SecurityService;
-import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentInfo;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.SecurityService;
 import org.openejb.util.Logger;
-import org.openejb.util.SafeToolkit;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
-import org.apache.xbean.recipe.ConstructionException;
 
 import javax.transaction.TransactionManager;
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -94,27 +91,28 @@ public class ContainerBuilder {
         String containerName = containerInfo.containerName;
         ContainerInfo service = containerInfo;
 
-            Properties systemProperties = System.getProperties();
-            synchronized (systemProperties) {
-                String userDir = systemProperties.getProperty("user.dir");
-                try {
-                    File base = SystemInstance.get().getBase().getDirectory();
-                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
+        Properties systemProperties = System.getProperties();
+        synchronized (systemProperties) {
+            String userDir = systemProperties.getProperty("user.dir");
+            try {
+                File base = SystemInstance.get().getBase().getDirectory();
+                systemProperties.setProperty("user.dir", base.getAbsolutePath());
 
-                    ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
-                    containerRecipe.setAllProperties(service.properties);
-                    containerRecipe.setProperty("id", new StaticRecipe(containerName) );
-                    containerRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())) );
-                    containerRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())) );
-                    containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList) );
+                ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
+                containerRecipe.setAllProperties(service.properties);
+                containerRecipe.setProperty("id", new StaticRecipe(containerName));
+                containerRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
+                containerRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())));
+                containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList));
 
-                    return (Container) containerRecipe.create();
-                } catch (Exception e) {
-                    throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, e.getMessage()), e);
-                } finally {
-                    systemProperties.setProperty("user.dir", userDir);
-                }
+                return (Container) containerRecipe.create();
+            } catch (Exception e) {
+                Throwable cause = (e.getCause() != null) ? e.getCause() : e;
+                throw new OpenEJBException(AssemblerTool.messages.format("as0002", containerName, cause.getMessage()), cause);
+            } finally {
+                systemProperties.setProperty("user.dir", userDir);
             }
+        }
     }
 
     private Container wrapContainer(Container container) {

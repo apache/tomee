@@ -51,11 +51,11 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
 
         switch (res.getResponseCode()) {
             case EJB_ERROR:
-                throw (Throwable) res.getResult();
+                throw new SystemError((ThrowableArtifact) res.getResult());
             case EJB_SYS_EXCEPTION:
-                throw (Throwable) res.getResult();
+                throw new SystemException((ThrowableArtifact) res.getResult());
             case EJB_APP_EXCEPTION:
-                throw (Throwable) res.getResult();
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
             case EJB_OK:
                 invalidateAllHandlers(getRegistryId());
                 return null;

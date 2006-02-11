@@ -127,9 +127,12 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
             }
 
-        } catch (org.openejb.SystemException se) {
+        } catch (SystemException se) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
+            throw new RemoteException("Container has suffered a SystemException", se.getCause());
+        } catch (SystemError se) {
+            invalidateReference();
+            throw new RemoteException("Container has suffered a SystemException", se.getCause());
         }
 
     }
@@ -150,12 +153,12 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
-            case EJB_SYS_EXCEPTION:
-                throw (Throwable) res.getResult();
-            case EJB_APP_EXCEPTION:
-                throw (Throwable) res.getResult();
             case EJB_ERROR:
-                throw (Throwable) res.getResult();
+                throw new SystemError((ThrowableArtifact) res.getResult());
+            case EJB_SYS_EXCEPTION:
+                throw new SystemException((ThrowableArtifact) res.getResult());
+            case EJB_APP_EXCEPTION:
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
             case EJB_OK:
 
                 Object primKey = res.getResult();

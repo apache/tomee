@@ -16,6 +16,7 @@ import org.openejb.client.EJBRequest;
 import org.openejb.client.EJBResponse;
 import org.openejb.client.RequestMethods;
 import org.openejb.client.ResponseCodes;
+import org.openejb.client.ThrowableArtifact;
 import org.openejb.spi.SecurityService;
 
 class EjbRequestHandler implements ResponseCodes, RequestMethods {
@@ -140,11 +141,11 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
             }
 
         } catch (org.openejb.InvalidateReferenceException e) {
-            res.setResponse(EJB_SYS_EXCEPTION, e.getRootCause());
+            res.setResponse(EJB_SYS_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.openejb.ApplicationException e) {
-            res.setResponse(EJB_APP_EXCEPTION, e.getRootCause());
+            res.setResponse(EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.openejb.SystemException e) {
-            res.setResponse(EJB_ERROR, e.getRootCause());
+            res.setResponse(EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
 
             this.daemon.logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
         } catch (java.lang.Throwable t) {
