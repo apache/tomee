@@ -12,6 +12,11 @@
   <name>OpenEJB :: Server :: Admin</name>
   <dependencies>
     <dependency>
+      <groupId>org.openejb</groupId>
+      <artifactId>openejb-server</artifactId>
+      <version>3.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
