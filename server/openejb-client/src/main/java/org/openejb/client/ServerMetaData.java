@@ -6,67 +6,43 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class ServerMetaData implements Externalizable {
 
-    private transient int port;
-
-    private transient InetAddress address;
+    private transient URI location;
 
     public ServerMetaData() {
-
     }
 
-    public ServerMetaData(String host, int port) throws UnknownHostException {
-        this.setAddress(InetAddress.getByName(host));
-        this.setPort(port);
+    public ServerMetaData(String host, int port) throws URISyntaxException {
+        this.location = new URI("foo://"+host+":"+port);
+    }
+
+    public ServerMetaData(URI location)  {
+        this.location = location;
     }
 
     public int getPort() {
-        return port;
+        return location.getPort();
     }
 
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setAddress(InetAddress address) {
-        this.address = address;
+    public String getHost() {
+        return location.getHost();
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-        StringBuffer IP = new StringBuffer(15);
-
-        IP.append(in.readByte()).append('.');
-        IP.append(in.readByte()).append('.');
-        IP.append(in.readByte()).append('.');
-        IP.append(in.readByte());
-
-//        System.out.println(IP.toString());        
+        String uri = (String) in.readObject();
         try {
-            setAddress(InetAddress.getByName(IP.toString()));
-        } catch (java.net.UnknownHostException e) {
-            throw new IOException("Cannot read in the host address " + IP + ": The host is unknown");
+            location = new URI(uri);
+        } catch (URISyntaxException e) {
+            throw (IOException)new IOException("cannot create uri from '"+uri+"'").initCause(e);
         }
-
-        setPort(in.readInt());
-
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        byte[] addr = getAddress().getAddress();
-
-        out.writeByte(addr[0]);
-        out.writeByte(addr[1]);
-        out.writeByte(addr[2]);
-        out.writeByte(addr[3]);
-
-        out.writeInt(getPort());
+        out.writeObject(location.toString());
     }
 
 }

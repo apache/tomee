@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.URISyntaxException;
 import java.util.Hashtable;
 
 import javax.naming.ConfigurationException;
@@ -89,10 +90,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
 
         try {
-            server = new ServerMetaData();
-            server.setAddress(InetAddress.getByName(url.getHost()));
-            server.setPort(url.getPort());
-        } catch (UnknownHostException e) {
+            server = new ServerMetaData(url.getHost(), url.getPort());
+        } catch (URISyntaxException e) {
             throw new ConfigurationException("Invalid provider URL:" + serverURL + ": host unkown: " + e.getMessage());
         }
 

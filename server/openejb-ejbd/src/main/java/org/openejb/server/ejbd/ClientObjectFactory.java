@@ -21,7 +21,7 @@ class ClientObjectFactory implements org.openejb.spi.ApplicationServer {
 
         try {
             this.sMetaData = new ServerMetaData("127.0.0.1", 4201);
-        } catch (UnknownHostException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
         }

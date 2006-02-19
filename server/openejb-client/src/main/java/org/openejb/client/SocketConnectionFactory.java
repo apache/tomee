@@ -29,16 +29,16 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Open socket to server */
             /*-----------------------*/
             try {
-                socket = new Socket(server.getAddress(), server.getPort());
+                socket = new Socket(server.getHost(), server.getPort());
                 socket.setTcpNoDelay(true);
             } catch (IOException e) {
-                throw new IOException("Cannot access server: " + server.getAddress() + ":" + server.getPort() + " Exception: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " Exception: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (SecurityException e) {
-                throw new IOException("Cannot access server: " + server.getAddress() + ":" + server.getPort() + " due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (Throwable e) {
-                throw new IOException("Cannot access server: " + server.getAddress() + ":" + server.getPort() + " due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
             }
 
         }
