@@ -1,6 +1,6 @@
 package org.openejb.server.ejbd;
 
-import java.net.UnknownHostException;
+import java.net.URI;
 
 import org.openejb.DeploymentInfo;
 import org.openejb.ProxyInfo;
@@ -20,7 +20,7 @@ class ClientObjectFactory implements org.openejb.spi.ApplicationServer {
     public ClientObjectFactory(EjbDaemon daemon) {
 
         try {
-            this.sMetaData = new ServerMetaData("127.0.0.1", 4201);
+            this.sMetaData = new ServerMetaData(new URI("foo://"+"127.0.0.1" +":"+4201));
         } catch (Exception e) {
 
             e.printStackTrace();

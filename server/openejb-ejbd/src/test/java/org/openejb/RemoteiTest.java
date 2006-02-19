@@ -100,7 +100,7 @@ public class RemoteiTest extends org.openejb.test.TestSuite {
         public Properties getContextEnvironment() {
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "127.0.0.1:"+port);
+            props.put("java.naming.provider.url", "foo://127.0.0.1:"+port);
             props.put("java.naming.security.principal", "testuser");
             props.put("java.naming.security.credentials", "testpassword");
             return props;

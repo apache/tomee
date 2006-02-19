@@ -231,12 +231,12 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected void writeMessage(OutputStream output) throws IOException{
         DataOutput out = new DataOutputStream(output);
-        DataOutput log = new DataOutputStream(System.out);
+        //DataOutput log = new DataOutputStream(System.out);
         //System.out.println("\nRESPONSE");
         closeMessage();
-        writeResponseLine(log);
-        writeHeaders(log);
-        writeBody(log);
+//        writeResponseLine(log);
+//        writeHeaders(log);
+//        writeBody(log);
         writeResponseLine(out);
         writeHeaders(out);
         writeBody(out);

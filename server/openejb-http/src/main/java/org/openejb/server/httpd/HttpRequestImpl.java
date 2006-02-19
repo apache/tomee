@@ -222,7 +222,7 @@ public class HttpRequestImpl implements HttpRequest {
     private void readRequestLine(DataInput in) throws IOException {
         try {
             line = in.readLine();
-            System.out.println(line);
+//            System.out.println(line);
         } catch (Exception e) {
             throw new IOException("Could not read the HTTP Request Line :"
                     + e.getClass().getName()
@@ -338,7 +338,7 @@ public class HttpRequestImpl implements HttpRequest {
 
             try {
                 hf = in.readLine();
-                System.out.println(hf);
+                //System.out.println(hf);
             } catch (Exception e) {
                 throw new IOException("Could not read the HTTP Request Header Field :"
                         + e.getClass().getName()

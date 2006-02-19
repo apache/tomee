@@ -2,6 +2,7 @@ package org.openejb.client;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.net.URI;
 
 public class ConnectionManager {
 
@@ -18,7 +19,12 @@ public class ConnectionManager {
     }
 
     public static Connection getConnection(ServerMetaData server) throws IOException {
-        return factory.getConnection(server);
+        URI location = server.getLocation();
+        if (location.getScheme().equals("http")){
+            return new HttpConnectionFactory().getConnection(server);
+        } else {
+            return factory.getConnection(server);
+        }
     }
 
     public static void setFactory(String factoryName) throws IOException {

@@ -16,10 +16,6 @@ public class ServerMetaData implements Externalizable {
     public ServerMetaData() {
     }
 
-    public ServerMetaData(String host, int port) throws URISyntaxException {
-        this.location = new URI("foo://"+host+":"+port);
-    }
-
     public ServerMetaData(URI location)  {
         this.location = location;
     }
@@ -30,6 +26,11 @@ public class ServerMetaData implements Externalizable {
 
     public String getHost() {
         return location.getHost();
+    }
+
+
+    public URI getLocation() {
+        return location;
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
