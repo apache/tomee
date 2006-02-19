@@ -46,6 +46,10 @@ public class TelnetServer implements org.openejb.server.ServerService {
         }
     }
 
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
+    }
+    
     public void start() throws ServiceException {
     }
 

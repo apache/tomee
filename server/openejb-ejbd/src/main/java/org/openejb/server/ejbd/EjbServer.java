@@ -30,12 +30,6 @@ public class EjbServer implements org.openejb.server.ServerService, org.openejb.
         server.init(props);
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
-        ServerFederation.setApplicationServer(server);
-        server.service(socket);
-
-    }
-
     public void start() throws ServiceException {
     }
 
@@ -48,6 +42,15 @@ public class EjbServer implements org.openejb.server.ServerService, org.openejb.
 
     public int getPort() {
         return 0;
+    }
+
+    public void service(Socket socket) throws ServiceException, IOException {
+        ServerFederation.setApplicationServer(server);
+        server.service(socket);
+    }
+
+    public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
+        server.service(inputStream, outputStream);
     }
 
     public String getIP() {

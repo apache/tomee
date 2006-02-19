@@ -38,6 +38,11 @@ public class ServiceAccessController implements ServerService {
         next.service(socket);
     }
 
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        throw new UnsupportedOperationException("service(in,out)");
+    }
+
+    
     public String getName() {
         return next.getName();
     }

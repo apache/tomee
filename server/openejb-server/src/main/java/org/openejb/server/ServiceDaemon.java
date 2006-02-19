@@ -89,6 +89,10 @@ public class ServiceDaemon implements ServerService, Runnable {
         }
     }
 
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        throw new UnsupportedOperationException("service(in,out)");
+    }
+
     public synchronized void service(final Socket socket)
             throws ServiceException, IOException {
         Thread d = new Thread(new Runnable() {

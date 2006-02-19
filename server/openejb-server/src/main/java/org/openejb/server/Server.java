@@ -1,6 +1,8 @@
 package org.openejb.server;
 
 import java.util.Properties;
+import java.net.URI;
+import java.io.IOException;
 
 import org.openejb.OpenEJB;
 import org.openejb.util.Logger;
@@ -46,5 +48,20 @@ public class Server implements org.openejb.spi.Service {
     public void stop() throws Exception {
         manager.stop();
     }
+
+    public void addService(URI uri) {
+
+    }
+
+//    public void addService(ServerService )
+
+    public static class ServerServiceFactory {
+        public ServerService createService(URI location) throws IOException {
+            String scheme = location.getScheme();
+            
+            return null;
+        }
+    }
+
 }
 

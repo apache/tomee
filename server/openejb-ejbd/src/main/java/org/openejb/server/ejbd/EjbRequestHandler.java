@@ -95,6 +95,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
                     doEjbObject_BUSINESS_METHOD(req, res);
                     break;
 
+                // Home interface methods
                 case EJB_HOME_CREATE:
                     doEjbHome_CREATE(req, res);
                     break;
@@ -103,6 +104,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
                     doEjbHome_FIND(req, res);
                     break;
 
+                // javax.ejb.EJBObject methods
                 case EJB_OBJECT_GET_EJB_HOME:
                     doEjbObject_GET_EJB_HOME(req, res);
                     break;
@@ -123,6 +125,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
                     doEjbObject_REMOVE(req, res);
                     break;
 
+                // javax.ejb.EJBHome methods
                 case EJB_HOME_GET_EJB_META_DATA:
                     doEjbHome_GET_EJB_META_DATA(req, res);
                     break;

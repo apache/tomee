@@ -64,6 +64,18 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
+        try {
+            service(in, out);
+        } finally {
+            try {
+                if (socket != null) socket.close();
+            } catch (Throwable t) {
+                logger.error("Encountered problem while closing connection with client: " + t.getMessage());
+            }
+        }
+    }
+
+    public void service(InputStream in, OutputStream out) throws IOException {
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
 
@@ -103,18 +115,13 @@ public class EjbDaemon implements org.openejb.spi.ApplicationServer, ResponseCod
             logger.error("Security error: " + e.getMessage());
         } catch (Throwable e) {
             logger.error("Unexpected error", e);
-
         } finally {
             try {
                 if (oos != null) {
                     oos.flush();
-                    oos.close();
                 }
-                if (ois != null) ois.close();
-                if (in != null) in.close();
-                if (socket != null) socket.close();
             } catch (Throwable t) {
-                logger.error("Encountered problem while closing connection with client: " + t.getMessage());
+                logger.error("Encountered problem while flushing connection with client: " + t.getMessage());
             }
         }
     }

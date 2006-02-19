@@ -29,6 +29,10 @@ public class ServicePool implements ServerService {
         next.stop();
     }
 
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        throw new UnsupportedOperationException("service(in,out)");
+    }
+
     public void service(Socket socket) throws ServiceException, IOException {
 
         next.service(socket);

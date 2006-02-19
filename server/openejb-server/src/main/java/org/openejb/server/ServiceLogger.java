@@ -40,6 +40,11 @@ public class ServiceLogger implements ServerService {
         next.stop();
     }
 
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        throw new UnsupportedOperationException("service(in,out)");
+    }
+
+    
     public void service(Socket socket) throws ServiceException, IOException {
 
         InetAddress client = socket.getInetAddress();
