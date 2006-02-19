@@ -14,15 +14,16 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.openejb.loader.SystemClassPath;
+import org.openejb.util.ResourceFinder;
 
 public class Main {
-    private static CommandFinder finder = null;
+    private static ResourceFinder finder = null;
     private static String basePath = "META-INF/org.openejb.cli/";
     private static String locale = "";
     private static String descriptionBase = "description";
 
     public static void init() {
-        finder = new CommandFinder(basePath);
+        finder = new ResourceFinder(basePath);
         locale = Locale.getDefault().getLanguage();
 
         setupClasspath();
@@ -76,7 +77,7 @@ public class Main {
                 Class clazz = null;
 
                 try {
-                    props = finder.doFindCommandProperies(args[0]);
+                    props = finder.findProperties(args[0]);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -148,7 +149,7 @@ public class Main {
                             JarEntry je = (JarEntry) commands.nextElement();
 
                             if (je.getName().indexOf(basePath) > -1 && !je.getName().equals(basePath) && !je.getName().endsWith(".help") && !je.getName().endsWith(".examples")) {
-                                Properties props = finder.doFindCommandProperies(je.getName().substring(je.getName().lastIndexOf("/") + 1));
+                                Properties props = finder.findProperties(je.getName().substring(je.getName().lastIndexOf("/") + 1));
 
                                 String key = locale.equals("en") ? descriptionBase : descriptionBase + "." + locale;
 
