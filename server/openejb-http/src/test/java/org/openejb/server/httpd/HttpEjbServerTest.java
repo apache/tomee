@@ -54,8 +54,8 @@ public class HttpEjbServerTest extends org.openejb.test.TestSuite {
     public static Test suite() {
         TestSuite suite = new HttpEjbServerTest();
         suite.addTest(StatelessTestSuite.suite());
-//        suite.addTest(StatefulTestSuite.suite());
-//        suite.addTest(BmpTestSuite.suite());
+        suite.addTest(StatefulTestSuite.suite());
+        suite.addTest(BmpTestSuite.suite());
         // TODO: The CmpTestSuite deadlocks intellij for some reason.
 //        suite.addTest(CmpTestSuite.suite());
         return suite;

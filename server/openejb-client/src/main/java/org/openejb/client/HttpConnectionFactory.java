@@ -45,7 +45,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             String host = "localhost";
 //            String host = server.getLocation().getHost();
             // TODO: Use the URI for making the URL
-            URL url = new URL("http", host, server.getPort(), "rjp");
+            URL url = server.getLocation().toURL();
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setDoOutput(true);
             httpURLConnection.connect();

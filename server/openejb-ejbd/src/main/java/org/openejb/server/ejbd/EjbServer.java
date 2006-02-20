@@ -50,6 +50,7 @@ public class EjbServer implements org.openejb.server.ServerService, org.openejb.
     }
 
     public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
+        ServerFederation.setApplicationServer(server);
         server.service(inputStream, outputStream);
     }
 
