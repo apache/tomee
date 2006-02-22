@@ -47,6 +47,12 @@
   </modules>
   <repositories>
     <repository>
+      <id>apache</id>
+      <name>Apache Repository</name>
+      <url>http://cvs.apache.org/repository</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
       <releases>
         <enabled>false</enabled>
       </releases>
