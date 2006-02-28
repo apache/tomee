@@ -1,6 +1,8 @@
-package org.openejb.core;
+package org.openejb.tomcat;
 
 import org.openejb.*;
+import org.openejb.DeploymentInfo;
+import org.openejb.core.*;
 
 import javax.naming.Context;
 import java.lang.reflect.Method;
@@ -30,7 +32,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
         }
         org.openejb.DeploymentInfo[] deploymentInfos = container.deployments();
         for (int i = 0; i < deploymentInfos.length; i++) {
-            DeploymentInfo deployment = (DeploymentInfo) deploymentInfos[i];
+            org.openejb.core.DeploymentInfo deployment = (org.openejb.core.DeploymentInfo) deploymentInfos[i];
             setupDeployment(deployment);
         }
     }
@@ -40,12 +42,12 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void deploy(Object deploymentID, org.openejb.DeploymentInfo info) throws OpenEJBException {
         super.deploy(deploymentID, info);
-        setupDeployment((DeploymentInfo) info);
+        setupDeployment((org.openejb.core.DeploymentInfo) info);
     }
 
     public static Map contexts = new HashMap();
 
-    private void setupDeployment(DeploymentInfo deployment) {
+    private void setupDeployment(org.openejb.core.DeploymentInfo deployment) {
 
         deployment.setContainer(this);
 

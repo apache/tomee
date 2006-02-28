@@ -3,6 +3,10 @@ package org.openejb.core.ivm;
 import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.rmi.MarshalledObject;
 import java.rmi.NoSuchObjectException;
@@ -264,8 +268,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     /* change dereference to copy */
     protected Object copyObj(Object object) throws IOException, ClassNotFoundException {
-        MarshalledObject obj = new MarshalledObject(object);
-        return obj.get();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
+        ObjectOutputStream out = new ObjectOutputStream(baos);
+        out.writeObject(object);
+        out.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bais);
+        Object obj = in.readObject();
+        return obj;
     }
 
     public void invalidateReference() {

@@ -1,4 +1,8 @@
-package org.openejb.loader;
+package org.openejb.tomcat;
+
+import org.openejb.loader.Embedder;
+import org.openejb.loader.Loader;
+import org.openejb.loader.SystemInstance;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

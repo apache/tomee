@@ -71,15 +71,11 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     public void _addJarToPath(URL jar) throws Exception {
-        String path = jar.toExternalForm();
-        this.addRepository(path);
-    }
-
-    public void addRepository(String path) throws Exception {
         if (addRepositoryMethod != null) {
+            String path = jar.toExternalForm();
             addRepositoryMethod.invoke(getClassLoader(), new Object[]{path});
         } else {
-            addURLMethod.invoke(getClassLoader(), new Object[]{new File(path).toURL()});
+            addURLMethod.invoke(getClassLoader(), new Object[]{jar});
         }
     }
 

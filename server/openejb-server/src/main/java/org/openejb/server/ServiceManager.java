@@ -4,6 +4,8 @@ import org.openejb.ClassLoaderUtil;
 import org.openejb.loader.SystemInstance;
 import org.openejb.util.Logger;
 import org.openejb.util.Messages;
+import org.openejb.util.FileUtils;
+import org.openejb.util.ResourceFinder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +17,11 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.Map;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 public class ServiceManager {
 
     static Messages messages = new Messages("org.openejb.server.util.resources");
@@ -30,8 +35,10 @@ public class ServiceManager {
     private static ServerService[] daemons;
 
     private boolean stop = false;
+    private final ResourceFinder resourceFinder;
 
     private ServiceManager() {
+        resourceFinder = new ResourceFinder("META-INF/");
     }
 
     public static ServiceManager getManager() {
@@ -42,6 +49,70 @@ public class ServiceManager {
         return manager;
     }
 
+    // Have properties files (like xinet.d) that specifies what daemons to 
+    // Look into the xinet.d file structure again
+    // conf/server.d/
+    //    admin.properties
+    //    ejbd.properties
+    //    webadmin.properties
+    //    telnet.properties
+    //    corba.properties
+    //    soap.properties
+    //    xmlrpc.properties
+    //    httpejb.properties
+    //    webejb.properties
+    //    xmlejb.properties
+    // Each contains the class name of the daemon implamentation
+    // The port to use
+    // whether it's turned on
+
+
+    // May be reusable elsewhere, move if another use occurs
+    public static class ServiceFinder {
+        private final ResourceFinder resourceFinder;
+        private ClassLoader classLoader;
+
+        public ServiceFinder(String basePath) {
+            this(basePath, Thread.currentThread().getContextClassLoader());
+        }
+
+        public ServiceFinder(String basePath, ClassLoader classLoader) {
+            this.resourceFinder = new ResourceFinder(basePath, classLoader);
+            this.classLoader = classLoader;
+        }
+
+        public Map mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
+            Map services = resourceFinder.mapAvailableProperties(ServerService.class.getName());
+
+            for (Iterator iterator = services.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String name = (String) entry.getKey();
+                Properties properties = (Properties) entry.getValue();
+
+                String className = properties.getProperty("className");
+                if (className == null) {
+                    className = properties.getProperty("classname");
+                    if (className == null) {
+                        className = properties.getProperty("server");
+                    }
+                }
+
+                Class impl = classLoader.loadClass(className);
+
+                if (!interfase.isAssignableFrom(impl)) {
+                    services.remove(name);
+                    continue;
+                }
+
+                properties.put(interfase, impl);
+                String rawProperties = resourceFinder.findString(interfase.getName() + "/" + name);
+                properties.put(Properties.class, rawProperties);
+
+            }
+            return services;
+        }
+    }
+
     public void init() throws Exception {
         try {
             org.apache.log4j.MDC.put("SERVER", "main");
@@ -50,115 +121,97 @@ public class ServiceManager {
         } catch (Exception e) {
         }
 
-        String[] serviceFiles = new String[]{
-                "admin.properties",
-                "ejbd.properties",
-                "telnet.properties",
-                "webadmin.properties"
-        };
+        ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
 
-        Vector enabledServers = new Vector();
+        Map availableServices = serviceFinder.mapAvailableServices(ServerService.class);
+        List enabledServers = new ArrayList();
 
-        for (int i = 0; i < serviceFiles.length; i++) {
-            try {
+        for (Iterator iterator = availableServices.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String serviceName = (String) entry.getKey();
+            Properties serviceProperties = (Properties) entry.getValue();
 
-                Properties props = getProperties(serviceFiles[i]);
-                if (isEnabled(props)) {
-                    ServerService server = createService(props);
-                    server = wrapService(server);
-                    server.init(props);
-                    enabledServers.add(server);
-                }
-            } catch (Throwable e) {
-                logger.i18n.error("service.not.loaded", serviceFiles[i], e.getMessage());
-            }
-        }
+            overrideProperties(serviceName, serviceProperties);
+            serviceProperties.setProperty("name", serviceName);
 
-        daemons = new ServerService[enabledServers.size()];
-        enabledServers.copyInto(daemons);
+            if (isEnabled(serviceProperties)) {
 
-//        daemons = new Service[]{
-//            new AdminService(),
-//            new EjbService(),
-//            new TelnetService(),
-//            new WebAdminService()
-//            new XmlRpcService(),
-//            new EjbXmlService(),
-//            new WebEjbService(),
-//        };
+                // Create Service
+                ServerService service = null;
 
-    }
+                Class serviceClass = (Class) serviceProperties.get(ServerService.class);
 
-    private static Properties getProperties(String file) throws ServiceException {
-        Properties props = (Properties) propsByFile.get(file);
-
-        if (props == null) {
-            props = loadProperties(file);
-            propsByFile.put(file, props);
-            fileByProps.put(props, file);
-        }
-
-        return props;
-    }
-
-    private static Properties loadProperties(String file) throws ServiceException {
-
-        Properties props = new Properties();
         try {
-            File propFile = SystemInstance.get().getBase().getFile("conf/" + file);
-            props.load(new FileInputStream(propFile));
-        } catch (IOException e) {
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                URL url = new URL("resource:/" + file);
-                in = url.openStream();
-                props.load(in);
-                in.close();
-
-                File propFile = SystemInstance.get().getBase().getFile("conf/" + file, false);
-                out = new FileOutputStream(propFile);
-                in = url.openStream();
-
-                int b;
-                while ((b = in.read()) != -1) {
-                    out.write(b);
+                    service = (ServerService) serviceClass.newInstance();
+                } catch (Throwable t) {
+                    String msg1 = messages.format("service.instantiation.err", serviceClass.getName(), t.getClass().getName(), t.getMessage());
+                    throw new ServiceException(msg1, t);
                 }
-            } catch (Exception e2) {
-                throw new ServiceException("Cannot load properties", e2);
+
+                // Wrap Service
+                service = new ServiceLogger(service);
+                service = new ServiceAccessController(service);
+                service = new ServiceDaemon(service);
+
+                // Initialize it
+                service.init(serviceProperties);
+                enabledServers.add(service);
+            }
+
+        }
+
+        daemons = (ServerService[]) enabledServers.toArray(new ServerService[]{});
+    }
+
+    private void overrideProperties(String serviceName, Properties serviceProperties) throws IOException {
+        FileUtils base = SystemInstance.get().getBase();
+
+        // Override with file from conf dir
+        File conf = base.getDirectory("conf");
+        if (conf.exists()) {
+            File serviceConfig = new File(conf, serviceName + ".properties");
+            if (serviceConfig.exists()){
+                FileInputStream in = new FileInputStream(serviceConfig);
+            try {
+                    serviceProperties.load(in);
             } finally {
-                try {
-                    if (in != null) {
                         in.close();
                     }
-                    if (out != null) {
+            } else {
+                FileOutputStream out = new FileOutputStream(serviceConfig);
+                try {
+                    String rawPropsContent = (String) serviceProperties.get(Properties.class);
+                    out.write(rawPropsContent.getBytes());
+                } finally {
                         out.close();
                     }
-                } catch (IOException e1) {
-
-                }
             }
         }
 
-        return props;
+        // Override with system properties
+        String prefix = serviceName + ".";
+        Properties sysProps = System.getProperties();
+        for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
+            Map.Entry entry1 = (Map.Entry) iterator1.next();
+            String key = (String) entry1.getKey();
+            String value = (String) entry1.getValue();
+            if (key.startsWith(prefix)){
+                key = key.replaceFirst(prefix, "");
+                serviceProperties.setProperty(key, value);
+            }
+        }
+
     }
 
-    private ServerService createService(Properties props) throws ServiceException {
-        ServerService service = null;
+    private boolean isEnabled(Properties props) throws ServiceException {
+        // if it should be started, continue
+        String disabled = props.getProperty("disabled", "");
 
-        String serviceClassName = getRequiredProperty("server", props);
-        Class serviceClass = loadClass(serviceClassName);
-        checkImplementation(serviceClass);
-        service = instantiateService(serviceClass);
-
-        return service;
-    }
-
-    private ServerService wrapService(ServerService service) {
-        service = new ServiceLogger(service);
-        service = new ServiceAccessController(service);
-        service = new ServiceDaemon(service);
-        return service;
+        if (disabled.equalsIgnoreCase("yes") || disabled.equalsIgnoreCase("true")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public synchronized void start() throws ServiceException {
@@ -218,7 +271,7 @@ public class ServiceManager {
         notifyAll();
     }
 
-    public void printRow(String col1, String col2, String col3) {
+    private void printRow(String col1, String col2, String col3) {
 
         col1 += "                    ";
         col1 = col1.substring(0, 20);
@@ -236,67 +289,4 @@ public class ServiceManager {
 
         System.out.println(sb.toString());
     }
-
-    private Class loadClass(String className) throws ServiceException {
-        ClassLoader loader = ClassLoaderUtil.getContextClassLoader();
-        Class clazz = null;
-        try {
-            clazz = Class.forName(className, true, loader);
-        } catch (ClassNotFoundException cnfe) {
-            String msg = messages.format("service.no.class", className);
-            throw new ServiceException(msg);
-        }
-        return clazz;
-    }
-
-    private void checkImplementation(Class clazz) throws ServiceException {
-        Class intrfce = org.openejb.server.ServerService.class;
-
-        if (!intrfce.isAssignableFrom(clazz)) {
-            String msg = messages.format("service.bad.impl", clazz.getName(), intrfce.getName());
-            throw new ServiceException(msg);
-        }
-    }
-
-    private ServerService instantiateService(Class clazz) throws ServiceException {
-        ServerService service = null;
-
-        try {
-            service = (ServerService) clazz.newInstance();
-        } catch (Throwable t) {
-            String msg = messages.format("service.instantiation.err",
-                    clazz.getName(),
-                    t.getClass().getName(),
-                    t.getMessage());
-
-            throw new ServiceException(msg, t);
-        }
-
-        return service;
-    }
-
-    private boolean isEnabled(Properties props) throws ServiceException {
-
-        String dissabled = props.getProperty("dissabled", "");
-
-        if (dissabled.equalsIgnoreCase("yes") || dissabled.equalsIgnoreCase("true")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public static String getRequiredProperty(String name, Properties props) throws ServiceException {
-
-        String value = props.getProperty(name);
-        if (value == null) {
-            String msg = messages.format("service.missing.property",
-                    name, fileByProps.get(props));
-
-            throw new ServiceException(msg);
-        }
-
-        return value;
-    }
-
 }

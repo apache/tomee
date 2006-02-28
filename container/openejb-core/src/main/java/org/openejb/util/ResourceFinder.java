@@ -339,6 +339,9 @@ public class ResourceFinder {
         String basePath = path + key;
 
         Map<String, URL> resources = new HashMap<String, URL>();
+        if (!basePath.endsWith("/")){
+            basePath += "/";
+        }
         Enumeration<URL> urls = classLoader.getResources(basePath);
 
         while (urls.hasMoreElements()) {

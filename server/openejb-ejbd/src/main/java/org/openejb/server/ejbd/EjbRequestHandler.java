@@ -90,7 +90,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
 
         try {
             switch (req.getRequestMethod()) {
-
+            // Remote interface methods
                 case EJB_OBJECT_BUSINESS_METHOD:
                     doEjbObject_BUSINESS_METHOD(req, res);
                     break;
