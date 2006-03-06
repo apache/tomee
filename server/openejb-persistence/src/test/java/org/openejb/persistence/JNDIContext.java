@@ -19,34 +19,81 @@ package org.openejb.persistence;
 import java.util.Hashtable;
 
 import javax.naming.Binding;
+import javax.naming.CompositeName;
 import javax.naming.Context;
 import javax.naming.Name;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 public class JNDIContext implements Context {
-    
-    private static Hashtable<String, Object> db = new Hashtable<String,Object>();
 
+    private Hashtable<String, Object> db = new Hashtable<String, Object>();
+
+    private int level = 0;
+
+    protected JNDIContext() {
+    }
+
+    private JNDIContext(int nextLevel) {
+        level = nextLevel;
+    }
+    
+    public void clear(){
+       db.clear(); 
+    }
+    
     public Object lookup(Name arg0) throws NamingException {
         return null;
     }
 
-    public Object lookup(String arg0) throws NamingException {
-        Object value = db.get(arg0);
+    public Object lookup(String name) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+
+        CompositeName composite = new CompositeName(name);
+
+        String segment = composite.get(0);
+        Object value = db.get(segment);
+        if (value instanceof JNDIContext) {
+            if (composite.size() > 1)
+                return ((JNDIContext) value).lookup(composite.getSuffix(1)
+                        .toString());
+        }
+
         if (value == null)
-            throw new NamingException(arg0 + " not found.");
-        
+            throw new NameNotFoundException();
+
         return value;
     }
 
     public void bind(Name arg0, Object arg1) throws NamingException {
     }
 
-    public void bind(String arg0, Object arg1) throws NamingException {
-        db.put(arg0, arg1);
+    public void bind(String name, Object arg1) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+
+        if (name.equals(""))
+            throw new NamingException(name + "is not valid.");
+
+        CompositeName composite = new CompositeName(name);
+
+        String segment = composite.get(0);
+        Object value = db.get(segment);
+        if (value instanceof JNDIContext) {
+            if (composite.size() > 1)
+                ((JNDIContext) value).bind(composite.getSuffix(1).toString(),
+                        arg1);
+        }
+
+        if (value != null)
+            throw new NameAlreadyBoundException();
+
+        db.put(name, arg1);
     }
 
     public void rebind(Name arg0, Object arg1) throws NamingException {
@@ -59,8 +106,28 @@ public class JNDIContext implements Context {
     public void unbind(Name arg0) throws NamingException {
     }
 
-    public void unbind(String arg0) throws NamingException {
-        db.remove(arg0);
+    public void unbind(String name) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+
+        if (name.equals(""))
+            throw new NamingException(name + "is not valid.");
+
+        CompositeName composite = new CompositeName(name);
+        String segment = composite.get(0);
+        Object value = db.get(segment);
+        if (value == null)
+            throw new NameNotFoundException();
+
+        if (value instanceof JNDIContext) {
+            if (composite.size() > 1){
+                ((JNDIContext) value).unbind(composite.getSuffix(1).toString());
+                return;
+            }else
+                throw new NameNotFoundException("Cannot unbind a subcontext.");
+        }
+
+        db.remove(segment);
     }
 
     public void rename(Name arg0, Name arg1) throws NamingException {
@@ -92,15 +159,31 @@ public class JNDIContext implements Context {
     public void destroySubcontext(Name arg0) throws NamingException {
     }
 
-    public void destroySubcontext(String arg0) throws NamingException {
+    public void destroySubcontext(String name) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+        Object value = db.get(name);
+        if (value instanceof Context)
+            db.remove(name);
+        else
+            throw new NameNotFoundException();
     }
 
     public Context createSubcontext(Name arg0) throws NamingException {
         return null;
     }
 
-    public Context createSubcontext(String arg0) throws NamingException {
-        return null;
+    public Context createSubcontext(String name) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+
+        Object value = db.get(name);
+        if (value != null)
+            throw new NameAlreadyBoundException();
+
+        Context ctx = new JNDIContext(level + 1);
+        db.put(name, ctx);
+        return ctx;
     }
 
     public Object lookupLink(Name arg0) throws NamingException {

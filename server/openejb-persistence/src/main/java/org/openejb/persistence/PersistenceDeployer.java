@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.naming.CompositeName;
+import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
@@ -47,7 +50,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 public class PersistenceDeployer {
-    
+
     public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
 
     public static final String PROVIDER_PROP = "javax.persistence.provider";
@@ -57,8 +60,8 @@ public class PersistenceDeployer {
     public static final String JTADATASOURCE_PROP = "javax.persistence.jtaDataSource";
 
     public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
-    
-    public static final String FACTORY_JNDI_ROOT = "java://openejb/PersistenceFactories";
+
+    public static final String FACTORY_JNDI_ROOT = "java:openejb/PersistenceFactories";
 
     private Properties jndiProperties = null;
 
@@ -96,8 +99,8 @@ public class PersistenceDeployer {
         nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
     }
 
-    public void loadPersistence(ClassLoader cl,
-            URL url) throws PersistenceDeployerException {
+    public void loadPersistence(ClassLoader cl, URL url)
+            throws PersistenceDeployerException {
 
         try {
 
@@ -202,10 +205,11 @@ public class PersistenceDeployer {
                         .newInstance();
                 EntityManagerFactory emf = persistenceProvider
                         .createContainerManagerFactory(unitInfo);
-                
-                //Store EntityManagerFactory in the JNDI
-                initialContext.bind(FACTORY_JNDI_ROOT + "/" + unitInfo.getPersistenceUnitName(), emf);
-                
+
+                // Store EntityManagerFactory in the JNDI
+                bind(FACTORY_JNDI_ROOT + "/"
+                        + unitInfo.getPersistenceUnitName(), emf);
+
             }
         } catch (Exception e) {
             throw new PersistenceDeployerException(e);
@@ -243,7 +247,7 @@ public class PersistenceDeployer {
                     persistenceDescriptor));
 
             return (org.openejb.persistence.Persistence) u.unmarshal(source);
-            
+
         } finally {
             if (persistenceDescriptor != null)
                 persistenceDescriptor.close();
@@ -268,6 +272,30 @@ public class PersistenceDeployer {
         }
 
         return factoryList;
+    }
+
+    private void bind(String name, Object obj) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
+        
+        CompositeName composite = new CompositeName(name);
+        Context ctx = initialContext;
+        if (composite.size() > 1) {
+            for (int i = 0; i < composite.size() - 1; i++) {
+                try {
+                    Object ctxObj = ctx.lookup(composite.get(i));
+                    if (!(ctxObj instanceof Context)) {
+                        throw new NamingException("Invalid JNDI path.");
+                    }
+                    ctx = (Context) ctxObj;
+                } catch (NameNotFoundException e) {
+                    //Name was not found, so add a new subcontext
+                    ctx = ctx.createSubcontext(composite.get(i));
+                }
+            }
+        }
+        
+        ctx.bind(composite.get(composite.size() -1 ), obj);
     }
 
     // Inject the proper namespace

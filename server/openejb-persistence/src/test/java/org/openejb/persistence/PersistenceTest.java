@@ -21,8 +21,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import javax.naming.CompositeName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -34,7 +36,7 @@ public class PersistenceTest extends TestCase {
 
     private static final String DATASOURCE_NAME = "jdbc/MyDataSource";
 
-    private DataSource ds = new FakeDataSource(); 
+    private DataSource ds = new FakeDataSource();
 
     private Context ctx = null;
 
@@ -58,7 +60,7 @@ public class PersistenceTest extends TestCase {
 
             assertEntityManagerFactory(emf);
         } finally {
-            ctx.unbind(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+            cleanupJNDI(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
         }
     }
 
@@ -76,7 +78,7 @@ public class PersistenceTest extends TestCase {
 
             assertEntityManagerFactory(emf);
         } finally {
-            ctx.unbind(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+            cleanupJNDI(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
         }
     }
 
@@ -108,6 +110,25 @@ public class PersistenceTest extends TestCase {
 
     }
 
+    private void cleanupJNDI(String jndi) throws Exception {
+        CompositeName composite = new CompositeName(jndi);
+        for (int i = composite.size(); i > 0; i--) {
+            try {
+                Object value = ctx.lookup(composite.getPrefix(i).toString());
+                if (value instanceof Context) {
+                    Object parent = ctx;
+                    if (i > 1)
+                        parent = ctx.lookup(composite.getPrefix(i - 1)
+                                .toString());
+                    ((Context) parent).destroySubcontext(composite.get(i - 1));
+                } else
+                    ctx.unbind(composite.getPrefix(i).toString());
+            } catch (NamingException e) {
+                // Just ignore it
+            }
+        }
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -121,16 +142,17 @@ public class PersistenceTest extends TestCase {
 
         ctx = new InitialContext(env);
 
-        ctx.bind(DATASOURCE_NAME, ds);
-
+        ctx.createSubcontext("jdbc").bind("MyDataSource", ds);
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
 
+        cleanupJNDI("jdbc/MyDataSource");
         if (previousFactory != null)
-            System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+            System
+                    .setProperty(Context.INITIAL_CONTEXT_FACTORY,
                             previousFactory);
     }
 
