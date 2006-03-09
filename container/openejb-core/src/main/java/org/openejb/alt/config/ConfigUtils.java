@@ -21,6 +21,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.URLClassLoader;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -29,56 +31,8 @@ public class ConfigUtils {
     public static Messages messages = new Messages("org.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
-    public static Openejb readConfig() throws OpenEJBException {
-        return readConfig(searchForConfiguration());
-    }
-
     public static Openejb readConfig(String confFile) throws OpenEJBException {
-        File file = new File(confFile);
-        return (Openejb) Unmarshaller.unmarshal(Openejb.class, file.getName(), file.getParent());
-    }
-
-    /*
-    * TODO: Use the java.net.URL instead of java.io.File so configs
-    * and jars can be located remotely in the network
-    */
-    public static Openejb _readConfig(String confFile) throws OpenEJBException {
-        Openejb obj = null;
-        Reader reader = null;
-        try {
-            reader = new FileReader(confFile);
-            org.exolab.castor.xml.Unmarshaller unmarshaller = new org.exolab.castor.xml.Unmarshaller(Openejb.class);
-            unmarshaller.setWhitespacePreserve(true);
-            obj = (Openejb) unmarshaller.unmarshal(reader);
-        } catch (FileNotFoundException e) {
-            throw new OpenEJBException(messages.format("conf.1900", confFile, e.getLocalizedMessage()));
-        } catch (MarshalException e) {
-            if (e.getException() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.1110", confFile, e.getLocalizedMessage()));
-            } else if (e.getException() instanceof UnknownHostException) {
-                throw new OpenEJBException(messages.format("conf.1121", confFile, e.getLocalizedMessage()));
-            } else {
-                throw new OpenEJBException(messages.format("conf.1120", confFile, e.getLocalizedMessage()));
-            }
-        } catch (ValidationException e) {
-            /* TODO: Implement informative error handling here. 
-               The exception will say "X doesn't match the regular 
-               expression Y" 
-               This should be checked and more relevant information
-               should be given -- not everyone understands regular 
-               expressions. 
-             */
-            /*
-            NOTE: This doesn't seem to ever happen, anyone know why?
-            */
-            throw new OpenEJBException(messages.format("conf.1130", confFile, e.getLocalizedMessage()));
-        }
-        try {
-            reader.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", confFile, e.getLocalizedMessage()));
-        }
-        return obj;
+        return (Openejb) Unmarshaller.unmarshal(Openejb.class, confFile);
     }
 
     public static void writeConfig(String confFile, Openejb confObject) throws OpenEJBException {
@@ -166,14 +120,25 @@ public class ConfigUtils {
             } catch (IOException ignored) {
             }
 
+            logger.warning("Cannot find the configuration file [" + path + "], Trying conf/openejb.xml instead.");
         }
 
-        logger.warning("Cannot find the configuration file [" + path + "], Trying conf/openejb.conf instead.");
 
         try {
             /*
-             * [4] Try finding the standard openejb.conf file relative to the
+             * [4] Try finding the standard openejb.xml file relative to the
              * openejb.base directory
+             */
+            try {
+                file = SystemInstance.get().getBase().getFile("conf/openejb.xml");
+                if (file != null && file.exists() && file.isFile()) {
+                    return file.getAbsolutePath();
+                }
+            } catch (java.io.FileNotFoundException e) {
+            }
+
+            /*
+             * [5] Try finding the standard openejb.conf file relative to the
              */
             try {
                 file = SystemInstance.get().getBase().getFile("conf/openejb.conf");
@@ -183,28 +148,24 @@ public class ConfigUtils {
             } catch (java.io.FileNotFoundException e) {
             }
 
-            /*
-             * [5] Try finding the standard openejb.conf file relative to the
-             * openejb.home directory
-             */
-            try {
-                file = SystemInstance.get().getHome().getFile("conf/openejb.conf");
-                if (file != null && file.exists() && file.isFile()) {
-                    return file.getAbsolutePath();
-                }
-            } catch (java.io.FileNotFoundException e) {
-            }
-
-            logger.warning("Cannot find the configuration file [conf/openejb.conf], Creating one.");
 
             /* [6] No config found! Create a config for them
              *     using the default.openejb.conf file from 
              *     the openejb-x.x.x.jar
              */
 
-            File confDir = SystemInstance.get().getBase().getDirectory("conf", true);
+            File confDir = SystemInstance.get().getBase().getDirectory("conf", false);
 
-            file = createConfig(new File(confDir, "openejb.conf"));
+            if (confDir.exists()) {
+                File config = new File(confDir, "openejb.xml");
+                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
+                file = createConfig(config);
+            } else {
+                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Using the default configuration.");
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                URL resource = classLoader.getResource("default.openejb.conf");
+                return resource.toExternalForm();
+            }
 
         } catch (java.io.IOException e) {
             e.printStackTrace();

@@ -34,6 +34,35 @@ public class Unmarshaller {
         return new Unmarshaller(clazz, xmlFile).unmarshal(jarLocation);
     }
 
+
+    public static Object unmarshal(Class clazz, String xmlFile) throws OpenEJBException {
+        try {
+            if (xmlFile.startsWith("jar:")) {
+                URL url = new URL(xmlFile);
+                xmlFile = url.getFile();
+            }
+            if (xmlFile.startsWith("file:")){
+                URL url = new URL(xmlFile);
+                xmlFile = url.getFile();
+            }
+        } catch (MalformedURLException e) {
+            throw new OpenEJBException("Unable to resolve location "+xmlFile,e);
+        }
+
+        String jarLocation = null;
+        int jarSeparator = xmlFile.indexOf("!");
+        if (jarSeparator > 0) {
+            jarLocation = xmlFile.substring(0, jarSeparator);
+            xmlFile = xmlFile.substring(jarSeparator + 2);
+        } else {
+            File file = new File(xmlFile);
+            xmlFile = file.getName();
+            jarLocation = file.getParent();
+        }
+
+        return new Unmarshaller(clazz, xmlFile).unmarshal(jarLocation);
+    }
+
     public Object unmarshal(String location) throws OpenEJBException {
         File file = new File(location);
         if (file.isDirectory()) {

@@ -1,20 +1,24 @@
 package org.openejb.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.Properties;
-import java.net.URL;
-
+import org.openejb.loader.SystemInstance;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
-import org.openejb.loader.SystemInstance;
-import org.openejb.OpenEJBException;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class Logger {
 
@@ -616,155 +620,127 @@ public class Logger {
         }
 
         public void configure() {
+            Properties properties = null;
+
             String config = props.getProperty("log4j.configuration");
-            if (config == null) {
-                config = "conf/logging.conf";
-            }
-            try {
+            String[] search = {config, "logging.properties", "logging.conf"};
 
-                config = getAbsolutePath(config, "conf/default.logging.conf", false);
+            FileUtils base = SystemInstance.get().getBase();
+            File conf = new File(base.getDirectory(), "conf");
 
-                Properties log4jProps = loadProperties(config);
+            for (int i = 0; i < search.length && properties == null; i++) {
+                String fileName = search[i];
+                if (fileName == null) {
+                    continue;
+                }
+                File configFile = new File(conf, fileName);
 
-                PropertyConfigurator.configure(filterProperties(log4jProps));
-            } catch (Exception e) {
-                System.err.println("Failed to configure log4j. " + e.getMessage());
-            }
-        }
+                if (configFile.exists()) {
 
-        public Properties loadProperties(String file) throws Exception {
-            Properties props = new Properties();
-            FileInputStream fin = null;
-
-            try {
-                fin = new FileInputStream(file);
-                props.load(fin);
-            } finally {
-                if (fin != null) fin.close();
-            }
-            return props;
-        }
-
-        public Properties filterProperties(Properties log4jProps) {
-            Object[] names = log4jProps.keySet().toArray();
-            for (int i = 0; i < names.length; i++) {
-                String name = (String) names[i];
-                if (name.endsWith(".File")) {
-                    String path = log4jProps.getProperty(name);
+                    InputStream in = null;
                     try {
-                        File file = SystemInstance.get().getBase().getFile(path, false);
-                        if (!file.getParentFile().exists()) {
-                            file = SystemInstance.get().getHome().getFile(path, false);
+                        in = new FileInputStream(configFile);
+                        in = new BufferedInputStream(in);
+                        properties = new Properties();
+                        properties.load(in);
+                    } catch (IOException e) {
+                        org.apache.log4j.Logger logger = doFallbackConfiguration();
+                        logger.error("Unable to read logging config file " + configFile.getAbsolutePath(), e);
+                    } finally {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
                         }
-                        path = file.getPath();
-                    } catch (IOException ignored) {
-
                     }
-                    log4jProps.setProperty(name, path);
                 }
             }
-            return log4jProps;
+
+            if (properties == null) {
+                String configData = null;
+                try {
+                    ResourceFinder finder = new ResourceFinder("");
+                    configData = finder.findString("default.logging.conf");
+                    properties = new Properties();
+                    properties.load(new ByteArrayInputStream(configData.getBytes()));
+                } catch (IOException e) {
+                    org.apache.log4j.Logger logger = doFallbackConfiguration();
+                    logger.error("Unable to read default logging config file.", e);
+                    return;
+                }
+
+                if (conf.exists()) {
+                    OutputStream out = null;
+                    File configFile = new File(conf, "logging.properties");
+                    try {
+                        out = new FileOutputStream(configFile);
+                        out.write(configData.getBytes());
+                    } catch (IOException e) {
+                        org.apache.log4j.Logger logger = doFallbackConfiguration();
+                        logger.warn("Unable write default logging config file to " + configFile.getAbsolutePath(), e);
+                    } finally {
+                        try {
+                            out.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+
+            File baseDir = base.getDirectory();
+            File userDir = new File("foo").getParentFile();
+
+            File[] paths = {baseDir, userDir};
+
+            List missing = new ArrayList();
+
+            for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+
+
+                if (key.endsWith(".File")) {
+
+                    boolean found = false;
+                    for (int i = 0; i < paths.length && !found; i++) {
+                        File path = paths[i];
+                        File logfile = new File(path, value);
+                        if (logfile.getParentFile().exists()) {
+                            properties.setProperty(key, logfile.getAbsolutePath());
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        File logfile = new File(paths[0], value);
+                        missing.add(logfile);
+                    }
+                }
+            }
+
+            if (missing.size() > 0) {
+                org.apache.log4j.Logger logger = doFallbackConfiguration();
+
+                logger.warn("Unable use logging config as there are "+missing.size()+" file references containing directories which have not been created.  See the list below.");
+                for (int i = 0; i < missing.size(); i++) {
+                    File file = (File) missing.get(i);
+                    logger.warn("["+i+"] "+file.getAbsolutePath());
+                }
+            } else {
+                PropertyConfigurator.configure(properties);
+            }
+
         }
 
-        public String getAbsolutePath(String path, String secondaryPath, boolean create)
-                throws OpenEJBException {
-            File file = null;
-
-            if (path != null) {
-                /*
-                 * [1] Try finding the file relative to the current working
-                 * directory
-                 */
-                file = new File(path);
-                if (file != null && file.exists() && file.isFile()) {
-                    return file.getAbsolutePath();
-                }
-
-                /*
-                 * [2] Try finding the file relative to the openejb.base directory
-                 */
-                try {
-                    file = SystemInstance.get().getBase().getFile(path);
-                    if (file != null && file.exists() && file.isFile()) {
-                        return file.getAbsolutePath();
-                    }
-                } catch (FileNotFoundException ignored) {
-                } catch (IOException ignored) {
-                }
-
-                /*
-                 * [3] Try finding the file relative to the openejb.home directory
-                 */
-                try {
-                    file = SystemInstance.get().getHome().getFile(path);
-                    if (file != null && file.exists() && file.isFile()) {
-                        return file.getAbsolutePath();
-                    }
-                } catch (FileNotFoundException ignored) {
-                } catch (IOException ignored) {
-                }
-
-            }
-
-            try {
-                /*
-                 * [4] Try finding the secondaryPath file relative to the
-                 * openejb.base directory
-                 */
-                try {
-                    file = SystemInstance.get().getBase().getFile(secondaryPath);
-                    if (file != null && file.exists() && file.isFile()) {
-                        return file.getAbsolutePath();
-                    }
-                } catch (java.io.FileNotFoundException ignored) {
-                }
-
-                /*
-                 * [5] Try finding the secondaryPath file relative to the
-                 * openejb.home directory
-                 */
-                try {
-                    file = SystemInstance.get().getHome().getFile(secondaryPath);
-                    if (file != null && file.exists() && file.isFile()) {
-                        return file.getAbsolutePath();
-                    }
-                } catch (java.io.FileNotFoundException ignored) {
-                }
-
-                if (create) {
-                    File confDir = SystemInstance.get().getBase().getDirectory("conf", true);
-
-                    file = createConfig(new File(confDir, secondaryPath));
-                }
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-                throw new OpenEJBException("Could not locate config file: ", e);
-            }
-
-            return (file == null) ? null : file.getAbsolutePath();
-        }
-
-        private static File createConfig(File file) throws java.io.IOException {
-            try {
-                URL defaultConfig = new URL("resource:/" + file.getName());
-                InputStream in = defaultConfig.openStream();
-                FileOutputStream out = new FileOutputStream(file);
-
-                int b = in.read();
-
-                while (b != -1) {
-                    out.write(b);
-                    b = in.read();
-                }
-
-                in.close();
-                out.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return file;
+        private org.apache.log4j.Logger doFallbackConfiguration() {
+            org.apache.log4j.Logger.getLogger("CastorCMP").setLevel(Level.ERROR);
+            org.apache.log4j.Logger.getLogger("org.exolab.castor").setLevel(Level.ERROR);
+            org.apache.log4j.Logger.getLogger("org.castor").setLevel(Level.ERROR);
+            org.apache.log4j.Logger.getLogger("org.openejb").setLevel(Level.WARN);
+            org.apache.log4j.Logger.getLogger("Transaction").setLevel(Level.WARN);
+            org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB");
+            logger.setLevel(Level.WARN);
+            return logger;
         }
 
     }
