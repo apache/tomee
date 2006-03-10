@@ -41,6 +41,19 @@
     <!--   Setup/cleanup      -->
     <!--======================-->
 
+    <goal name="setup:openejb">
+      <j:set var="targetDir" value="${basedir}/target/"/>
+      <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
+      <j:set var="openejb.dist" value="${targetDir}/openejb-${openejb.version}-bin.zip" />
+
+      <!-- Download tomcat if it isn't in the repo -->
+      <u:file var="fileAsFile" name="${openejb.home}"/>
+      <j:if test="${!(fileAsFile.exists())}">
+        <unjar src="${openejb.dist}" dest="${targetDir}"/>
+        <copy file="${targetDir}/openejb-${openejb.version}-test.jar" todir="${openejb.home}/beans" />
+      </j:if>
+    </goal>
+
     <goal name="setup:tomcat">
       <j:set var="targetDir" value="${basedir}/target/"/>
 
@@ -167,28 +180,34 @@
     <!--   Testing profiles   -->
     <!--======================-->
 
-    <goal name="test:local">
-      <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+    <goal name="test:local" prereqs="setup:openejb">
+      <java classname="org.openejb.test.Main" fork="yes">
+        <classpath>
+          <pathelement location="${basedir}/target/openejb-${openejb.version}-test.jar"/>
+          <fileset dir="${basedir}/target/openejb-${openejb.version}/lib">
+            <include name="**/*.jar"/>
+          </fileset>
+        </classpath>
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <arg value="local"/>
       </java>
     </goal>
 
-    <goal name="test:remote">
+    <goal name="test:remote" prereqs="setup:openejb">
       <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
+        <sysproperty key="openejb.home" value="${basedir}/target/openejb-${openejb.version}"/>
         <arg value="remote"/>
       </java>
     </goal>
 
-    <goal name="test:http">
+    <goal name="test:http" prereqs="setup:openejb">
       <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <arg value="http"/>
       </java>
     </goal>
 
-    <goal name="test:tomcat">
+    <goal name="test:tomcat" prereqs="setup:openejb">
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
       <!--<attainGoal name="start:tomcat"/>-->
@@ -201,7 +220,7 @@
       <!--<attainGoal name="stop:tomcat"/>-->
     </goal>
 
-    <goal name="test:tomcat-webapp">
+    <goal name="test:tomcat-webapp" prereqs="setup:openejb">
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:itests-webapp"/>
       <!--<attainGoal name="start:tomcat"/>-->
