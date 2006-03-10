@@ -4,6 +4,7 @@ import org.openejb.loader.SystemInstance;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -735,6 +736,9 @@ public class Logger {
         private org.apache.log4j.Logger doFallbackConfiguration() {
             org.apache.log4j.Logger.getLogger("CastorCMP").setLevel(Level.ERROR);
             org.apache.log4j.Logger.getLogger("org.exolab.castor").setLevel(Level.ERROR);
+            java.util.logging.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(java.util.logging.Level.SEVERE);
+            org.apache.log4j.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(Level.ERROR);
+            //org/exolab/castor.jdo.engine.DatabaseImpl
             org.apache.log4j.Logger.getLogger("org.castor").setLevel(Level.ERROR);
             org.apache.log4j.Logger.getLogger("org.openejb").setLevel(Level.WARN);
             org.apache.log4j.Logger.getLogger("Transaction").setLevel(Level.WARN);
