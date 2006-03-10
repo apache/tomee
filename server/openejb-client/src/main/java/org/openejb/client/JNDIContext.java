@@ -74,27 +74,23 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         if (userID == null) userID = "anonymous";
         if (psswrd == null) psswrd = "anon";
 
-//        URL url;
-//        if (serverURI instanceof String) {
-//            try {
-//                url = new URL("http://" + serverURI);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                throw new ConfigurationException("Invalid provider URL: " + serverURI);
-//            }
-//        } else if (serverURI instanceof URL) {
-//            url = (URL) serverURI;
-//        } else {
-//            throw new ConfigurationException("Invalid provider URL: " + serverURI);
-//        }
-
+        String uriString = (String) serverURI;
+        URI location = null;
         try {
-            URI location = new URI((String) serverURI);
-            server = new ServerMetaData(location);
-        } catch (URISyntaxException e) {
-            throw new ConfigurationException("Invalid provider URL:" + serverURI + ": host unkown: " + e.getMessage());
+            location = new URI(uriString);
+        } catch (Exception e) {
+            if (uriString.indexOf("://") == -1) {
+                try {
+                    location = new URI("foo://"+uriString);
+                } catch (URISyntaxException giveUp) {
+                    // Was worth a try, let's give up and throw the original exception.
+                    throw (ConfigurationException)new ConfigurationException("Context property value error for "+Context.PROVIDER_URL + " :"+e.getMessage()).initCause(e);
+                }
+            }
         }
-
+        this.server = new ServerMetaData(location);
+        //TODO:1: Either aggressively initiate authentication or wait for the 
+        //        server to send us an authentication challange.
         authenticate(userID, psswrd);
 
         return this;
