@@ -14,7 +14,6 @@
     <module>openejb-ejbd</module>
     <module>openejb-admin</module>
     <module>openejb-server</module>
-    <module>openejb-persistence</module>
     <module>openejb-client</module>
     <module>openejb-http</module>
     <module>openejb-telnet</module>
