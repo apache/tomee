@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -51,6 +53,10 @@ public class TestRunner extends junit.textui.TestRunner {
                 runLocalTests();
             } else if (args[0].equals("remote")) {
                 runRemoteTests();
+            } else if (args[0].equals("http")) {
+                runRemoteHttpTests();
+            } else if (args[0].equals("tomcat")) {
+                runTomcatRemoteHttpTests();
             } else {
                 printHelp();
 
@@ -61,6 +67,19 @@ public class TestRunner extends junit.textui.TestRunner {
                 TestRunner aTestRunner = new TestRunner();
                 TestResult r = aTestRunner
                         .start(new String[]{"org.openejb.test.ClientTestSuite"});
+
+                System.out.println("");
+                System.out.println("_________________________________________________");
+                System.out.println("CLIENT JNDI PROPERTIES");
+                Properties env = TestManager.getServer().getContextEnvironment();
+                for (Iterator iterator = env.entrySet().iterator(); iterator.hasNext();) {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    String key = (String) entry.getKey();
+                    Object value = entry.getValue();
+                    System.out.println(key+" = "+value);
+                }
+                System.out.println("_________________________________________________");
+
                 if (!r.wasSuccessful())
                     System.exit(FAILURE_EXIT);
                 System.exit(SUCCESS_EXIT);
@@ -94,6 +113,30 @@ public class TestRunner extends junit.textui.TestRunner {
         System.out
                 .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
         System.out.println("Running EJB compliance tests on Remote Server");
+        System.out.println("_________________________________________________");
+    }
+
+    private static void runRemoteHttpTests() {
+        System.setProperty("openejb.test.server",
+                "org.openejb.test.RemoteHttpTestServer");
+        System.setProperty("openejb.test.database",
+                "org.openejb.test.InstantDbTestDatabase");
+
+        System.out.println("_________________________________________________");
+        System.out
+                .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
+        System.out.println("Running EJB compliance tests on HTTP/Remote Server");
+        System.out.println("_________________________________________________");
+    }
+
+    private static void runTomcatRemoteHttpTests() {
+        System.setProperty("openejb.test.server", TomcatRemoteTestServer.class.getName());
+        System.setProperty("openejb.test.database", "org.openejb.test.InstantDbTestDatabase");
+
+        System.out.println("_________________________________________________");
+        System.out
+                .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
+        System.out.println("Running EJB compliance tests on HTTP/Tomcat Server");
         System.out.println("_________________________________________________");
     }
 
@@ -133,7 +176,7 @@ public class TestRunner extends junit.textui.TestRunner {
         } catch (Exception e) {
             System.out.println("Cannot initialize the test environment: "
                     + e.getClass().getName() + " " + e.getMessage());
-            // e.printStackTrace();
+             e.printStackTrace();
             // System.exit(-1);
             throw e;
         }

@@ -29,13 +29,15 @@ public class RemoteTestServer implements org.openejb.test.TestServer {
     public void init(Properties props) {
         properties = props;
 
-        props.put("test.server.class", "org.openejb.test.RemoteTestServer");
+//        props.put("test.server.class","org.openejb.test.RemoteTestServer");
         props.put("java.naming.factory.initial", "org.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "127.0.0.1:4201");
         props.put("java.naming.security.principal", "testuser");
         props.put("java.naming.security.credentials", "testpassword");
+    }
 
-
+    public Properties getProperties() {
+        return properties;
     }
 
     public void destroy() {
@@ -45,16 +47,37 @@ public class RemoteTestServer implements org.openejb.test.TestServer {
         if (!connect()) {
             try {
                 System.out.println("[] START SERVER");
+
+                String openejbHome = System.getProperty("openejb.home");
+
+                File home = new File(openejbHome);
+                System.out.println("OPENEJB_HOME = "+home.getAbsolutePath());
+                String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                System.out.println("SYSTEM_INFO  = "+systemInfo);
+
                 serverHasAlreadyBeenStarted = false;
                 String version = null;
 
-                URL resource = this.getClass().getResource("openejb-version.properties");
+                File openejbJar = null;
+                File lib = new File(home, "lib");
+                File[] files = lib.listFiles();
+                for (int i = 0; i < files.length && openejbJar == null; i++) {
+                    File file = files[i];
+                    if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
+                        openejbJar = file;
+                    }
+                }
 
-                Properties versionInfo = new Properties();
-                versionInfo.load(resource.openConnection().getInputStream());
-                version = (String) versionInfo.get("version");
+                if (openejbJar == null){
+                    throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
+                }
+                
+                //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
-                Process server = Runtime.getRuntime().exec("java -jar lib" + File.separator + "openejb-core-" + version + ".jar start -nowait");
+                //DMB: If you don't use an array, you get problems with jar paths containing spaces
+                // the command won't parse correctly
+                String[] args = {"java", "-jar", openejbJar.getAbsolutePath(), "start"};
+                Process server = Runtime.getRuntime().exec(args);
 
                 // Pipe the processes STDOUT to ours
                 InputStream out = server.getInputStream();
@@ -187,45 +210,28 @@ public class RemoteTestServer implements org.openejb.test.TestServer {
     }
 
     private static final class Pipe implements Runnable {
-
-
         private final InputStream is;
-
         private final OutputStream out;
 
         private Pipe(InputStream is, OutputStream out) {
-
             super();
-
             this.is = is;
-
             this.out = out;
-
         }
 
         public void run() {
-
             try {
-
                 int i = is.read();
-
                 out.write(i);
 
                 while (i != -1) {
-
                     i = is.read();
-
                     out.write(i);
-
                 }
 
             } catch (Exception e) {
-
                 e.printStackTrace();
-
             }
-
         }
-
     }
 }
