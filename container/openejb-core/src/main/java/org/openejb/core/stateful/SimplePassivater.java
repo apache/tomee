@@ -10,7 +10,6 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.openejb.core.EnvProps;
-import org.openejb.util.FileUtils;
 import org.openejb.loader.SystemInstance;
 import org.openejb.SystemException;
 

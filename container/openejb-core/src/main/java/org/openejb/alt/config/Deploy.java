@@ -10,12 +10,10 @@ import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.HashMap;
 
 import org.openejb.OpenEJBException;
 import org.openejb.loader.SystemInstance;
 import org.openejb.alt.config.ejb11.EjbDeployment;
-import org.openejb.alt.config.ejb11.EjbJar;
 import org.openejb.alt.config.ejb11.MethodParams;
 import org.openejb.alt.config.ejb11.OpenejbJar;
 import org.openejb.alt.config.ejb11.QueryMethod;
@@ -28,7 +26,6 @@ import org.openejb.util.JarUtils;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.Logger;
-import org.openejb.util.FileUtils;
 
 public class Deploy {
     private static final String helpBase = "META-INF/org.openejb.cli/";

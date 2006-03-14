@@ -1,10 +1,10 @@
 package org.openejb.util;
 
 import org.openejb.loader.SystemInstance;
+import org.openejb.loader.FileUtils;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

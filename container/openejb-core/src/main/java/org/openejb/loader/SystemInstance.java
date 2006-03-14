@@ -3,8 +3,6 @@ package org.openejb.loader;
 import java.util.Properties;
 import java.util.HashMap;
 
-import org.openejb.util.FileUtils;
-
 /**
  * This class aims to be the one and only static in the entire system
  * A static, singleton, instance of this class can be created with the init(props) method

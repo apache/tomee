@@ -35,7 +35,7 @@ import org.openejb.alt.config.sys.TransactionService;
 import org.openejb.loader.SystemInstance;
 import org.openejb.util.Logger;
 import org.openejb.util.Messages;
-import org.openejb.util.FileUtils;
+import org.openejb.loader.FileUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;

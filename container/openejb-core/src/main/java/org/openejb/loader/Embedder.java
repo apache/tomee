@@ -16,8 +16,6 @@
  */
 package org.openejb.loader;
 
-import org.openejb.util.FileUtils;
-
 import java.io.File;
 
 /**

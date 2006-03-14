@@ -2,9 +2,7 @@ package org.openejb.loader;
 
 import org.openejb.loader.ClassPath;
 import org.openejb.loader.SystemInstance;
-import org.openejb.util.FileUtils;
 
-import javax.servlet.ServletException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;

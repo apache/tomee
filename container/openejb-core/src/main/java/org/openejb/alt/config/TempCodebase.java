@@ -1,8 +1,8 @@
 package org.openejb.alt.config;
 
 import org.openejb.OpenEJBException;
+import org.openejb.loader.FileUtils;
 import org.openejb.util.SafeToolkit;
-import org.openejb.util.FileUtils;
 
 import java.util.HashMap;
 import java.net.URL;
