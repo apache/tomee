@@ -12,5 +12,6 @@
   <name>OpenEJB :: Container POM</name>
   <modules>
     <module>openejb-core</module>
+    <module>openejb-loader</module>
   </modules>
 </project>
