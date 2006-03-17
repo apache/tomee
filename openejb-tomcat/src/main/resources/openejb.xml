@@ -1,0 +1,4 @@
+<Context docBase="${catalina.home}/server/webapps/openejb"
+         privileged="false" antiResourceLocking="false" antiJARLocking="false">
+
+</Context>

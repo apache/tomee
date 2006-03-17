@@ -1,0 +1,32 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>openejb</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>openejb/lib</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+          <exclude>junit:junit</exclude>
+          <exclude>org.apache.geronimo.specs:geronimo-servlet_2.4_spec</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>openejb/WEB-INF/lib</outputDirectory>
+      <scope>runtime</scope>
+      <includes>
+          <include>org.openejb:openejb-loader</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
+
