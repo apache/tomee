@@ -627,30 +627,39 @@ public class Logger {
             String[] search = {config, "logging.properties", "logging.conf"};
 
             FileUtils base = SystemInstance.get().getBase();
-            File conf = new File(base.getDirectory(), "conf");
+            File confDir = new File(base.getDirectory(), "conf");
+            File baseDir = base.getDirectory();
+            File userDir = new File("foo").getParentFile();
+
+            File[] paths = {confDir, baseDir, userDir};
 
             for (int i = 0; i < search.length && properties == null; i++) {
                 String fileName = search[i];
                 if (fileName == null) {
                     continue;
                 }
-                File configFile = new File(conf, fileName);
 
-                if (configFile.exists()) {
+                for (int j = 0; j < paths.length; j++) {
+                    File path = paths[j];
 
-                    InputStream in = null;
-                    try {
-                        in = new FileInputStream(configFile);
-                        in = new BufferedInputStream(in);
-                        properties = new Properties();
-                        properties.load(in);
-                    } catch (IOException e) {
-                        org.apache.log4j.Logger logger = doFallbackConfiguration();
-                        logger.error("Unable to read logging config file " + configFile.getAbsolutePath(), e);
-                    } finally {
+                    File configFile = new File(path, fileName);
+
+                    if (configFile.exists()) {
+
+                        InputStream in = null;
                         try {
-                            in.close();
+                            in = new FileInputStream(configFile);
+                            in = new BufferedInputStream(in);
+                            properties = new Properties();
+                            properties.load(in);
                         } catch (IOException e) {
+                            org.apache.log4j.Logger logger = doFallbackConfiguration();
+                            logger.error("Unable to read logging config file " + configFile.getAbsolutePath(), e);
+                        } finally {
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                            }
                         }
                     }
                 }
@@ -669,9 +678,9 @@ public class Logger {
                     return;
                 }
 
-                if (conf.exists()) {
+                if (confDir.exists()) {
                     OutputStream out = null;
-                    File configFile = new File(conf, "logging.properties");
+                    File configFile = new File(confDir, "logging.properties");
                     try {
                         out = new FileOutputStream(configFile);
                         out.write(configData.getBytes());
@@ -687,10 +696,6 @@ public class Logger {
                 }
             }
 
-            File baseDir = base.getDirectory();
-            File userDir = new File("foo").getParentFile();
-
-            File[] paths = {baseDir, userDir};
 
             List missing = new ArrayList();
 
