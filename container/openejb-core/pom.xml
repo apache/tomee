@@ -45,6 +45,13 @@
                 <replace file="target/classes/openejb-version.properties"
                          token="@TIME-REPLACED-BY-MAVEN@"
                          value="${TSTAMP}"/>
+
+                <!-- Add *.properties files -->
+                <copy todir="target/classes">
+                  <fileset dir="src/main/java">
+                    <include name="**/*.properties"/>
+                  </fileset>
+                </copy>
               </tasks>
             </configuration>
           </execution>
