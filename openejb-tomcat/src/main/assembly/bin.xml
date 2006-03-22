@@ -9,6 +9,16 @@
     <fileSet>
       <directory>target/classes</directory>
       <outputDirectory>openejb</outputDirectory>
+      <excludes>
+          <exclude>org/**</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>openejb/lib</outputDirectory>
+      <includes>
+        <include>openejb-tomcat*.jar</include>
+      </includes>
     </fileSet>
   </fileSets>
   <dependencySets>

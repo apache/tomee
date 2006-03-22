@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- $Revision: 2513 $ $Date: 2006-02-25 21:53:47 -0800 (Sat, 25 Feb 2006) $ -->
+<!-- $Revision$ $Date$ -->
 
 <project default="default"
     xmlns:j="jelly:core"
@@ -138,94 +138,21 @@
     <!--   Deploy             -->
     <!--======================-->
 
-    <goal name="setup:loader-webapp">
-      <!-- Unzip webapp and set openejb.home -->
-      <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}-bin.zip" dest="${tomcat.home}/server/webapps"/>
-      <u:file var="fileAsFile" name="${tomcat.dist}/conf/Catalina/localhost"/>
-      <j:if test="${!(fileAsFile.exists())}">
-        <move file="${tomcat.home}/server/webapps/openejb/openejb.xml" todir="${tomcat.home}/conf/Catalina/localhost"/>
-      </j:if>
-    </goal>
-
     <goal name="setup:itests-webapp">
       <!-- Unzip webapp and set openejb.home -->
       <mkdir dir="${tomcat.home}/webapps/itests"/>
-      <unjar src="${basedir}/modules/itests-webapp/target/openejb-itests-webapp.war" dest="${tomcat.home}/webapps/itests"/>
-      <replace file="${tomcat.home}/webapps/itests/WEB-INF/web.xml" token="@OPENEJB_HOME@" value="${openejb.home}"/>
+      <unjar src="${basedir}/target/openejb-itests-webapp-${openejb.version}.war" dest="${tomcat.home}/webapps/itests"/>
     </goal>
-
-    <goal name="setup:webapp-example">
-      <j:set var="targetDir" value="${basedir}/target/"/>
-      <j:set var="tomcat.home" value="${targetDir}/${tomcat.prefix}-tomcat-${tomcat.version}"/>
-      <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
-      <!-- Unzip webapp and set openejb.home -->
-      <mkdir dir="${tomcat.home}/webapps/openejb"/>
-      <unjar src="${openejb.home}/war/openejb-webapp-examples-${openejb.version}.war" dest="${tomcat.home}/webapps/movies"/>
-      <replace file="${tomcat.home}/webapps/movies/WEB-INF/web.xml" token="@OPENEJB_HOME@" value="${openejb.home}"/>
-    </goal>
-
-    <goal name="setup:itests">
-      <j:set var="targetDir" value="${basedir}/target/"/>
-      <j:set var="itests.jar" value="openejb-tomcat-${openejb.version}-test.jar"/>
-      <mkdir dir="${tomcat.home}/beans"/>
-
-      <u:file var="fileAsFile" name="${tomcat.home}/beans/${itests.jar}"/>
-      <j:if test="${!(fileAsFile.exists())}">
-        <copy file="${targetDir}/${itests.jar}" todir="${tomcat.home}/beans" />
-      </j:if>
-    </goal>
-
 
     <!--======================-->
     <!--   Testing profiles   -->
     <!--======================-->
 
-    <goal name="test:local" prereqs="setup:openejb">
-      <java classname="org.openejb.test.Main" fork="yes">
-        <classpath>
-          <pathelement location="${basedir}/target/openejb-tomcat-${openejb.version}-test.jar"/>
-          <fileset dir="${basedir}/target/openejb-${openejb.version}/lib">
-            <include name="**/*.jar"/>
-          </fileset>
-        </classpath>
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
-        <arg value="local"/>
-      </java>
-    </goal>
-
-    <goal name="test:remote" prereqs="setup:openejb">
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
-        <sysproperty key="openejb.home" value="${basedir}/target/openejb-${openejb.version}"/>
-        <arg value="remote"/>
-      </java>
-    </goal>
-
-    <goal name="test:http" prereqs="setup:openejb">
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
-        <arg value="http"/>
-      </java>
-    </goal>
-
-    <goal name="test:tomcat">
-      <attainGoal name="setup:tomcat"/>
-      <attainGoal name="setup:loader-webapp"/>
-      <attainGoal name="setup:itests"/>
-      <!--<attainGoal name="start:tomcat"/>-->
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
-        <sysproperty key="tomcat.home" value="${tomcat.home}"/>
-        <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
-        <arg value="tomcat"/>
-      </java>
-      <!--<attainGoal name="stop:tomcat"/>-->
-    </goal>
-
-    <goal name="test:tomcat-webapp" prereqs="setup:openejb">
+    <goal name="test:tomcat-webapp">
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:itests-webapp"/>
       <!--<attainGoal name="start:tomcat"/>-->
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
+      <java jar="target/openejb-itests-client-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.serlvet.url" value="http://127.0.0.1:8080/itests/remote"/>
@@ -236,29 +163,20 @@
 
     <goal name="test:tomcat-all">
       <attainGoal name="tomcat4"/>
-      <attainGoal name="test:tomcat"/>
-      <attainGoal name="delete:tomcat"/>
       <attainGoal name="test:tomcat-webapp"/>
       <attainGoal name="delete:tomcat"/>
 
       <attainGoal name="tomcat50"/>
-      <attainGoal name="test:tomcat"/>
-      <attainGoal name="delete:tomcat"/>
       <attainGoal name="test:tomcat-webapp"/>
       <attainGoal name="delete:tomcat"/>
       <j:if test="${systemScope['java.version'].startsWith('1.5')}">
         <attainGoal name="tomcat55"/>
-        <attainGoal name="test:tomcat"/>
-        <attainGoal name="delete:tomcat"/>
         <attainGoal name="test:tomcat-webapp"/>
         <attainGoal name="delete:tomcat"/>
       </j:if>
     </goal>
 
     <goal name="test:all">
-      <attainGoal name="test:local"/>
-      <attainGoal name="test:remote"/>
-      <attainGoal name="test:http"/>
       <attainGoal name="test:tomcat-all"/>
     </goal>
 <!-- Try this if things get rough

@@ -37,6 +37,16 @@ public class LoaderServlet extends HttpServlet {
 //            setPropertyIfNUll(p, "openejb.configuration", "META-INF/openejb.xml");
 //            setPropertyIfNUll(p, "openejb.container.decorators", "org.openejb.tomcat.TomcatJndiSupport");
 //            setPropertyIfNUll(p, "log4j.configuration", "META-INF/log4j.properties");
+        } else if (embeddingStyle.endsWith("tomcat-system")){
+            String webappPath = getWebappPath(config);
+            File webappDir = new File(webappPath);
+            File libDir = new File(webappDir, "lib");
+            String catalinaHome = System.getProperty("catalina.home");
+            p.setProperty("openejb.home", catalinaHome);
+            String catalinaBase = System.getProperty("catalina.base");
+            p.setProperty("openejb.base", catalinaBase);
+            String libPath = libDir.getAbsolutePath();
+            p.setProperty("openejb.libs", libPath);
         }
 
         try {

@@ -4,12 +4,12 @@
     <artifactId>openejb-parent</artifactId>
     <groupId>org.openejb</groupId>
     <version>3.0-SNAPSHOT</version>
-  </parent>
+    </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>openejb-tomcat</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>openejb-itests-webapp</artifactId>
+  <packaging>war</packaging>
   <version>3.0-SNAPSHOT</version>
-  <name>OpenEJB :: Assembly :: Tomcat</name>
+  <name>OpenEJB :: iTest Webapp</name>
   <build>
     <plugins>
       <plugin>
@@ -23,7 +23,6 @@
         </executions>
         <configuration>
           <descriptors>
-            <descriptor>src/main/assembly/bin.xml</descriptor>
             <descriptor>src/main/assembly/test.xml</descriptor>
           </descriptors>
           <archive>
@@ -31,6 +30,7 @@
               <mainClass>org.openejb.test.Main</mainClass>
             </manifest>
           </archive>
+          <finalName>openejb-itests-client</finalName>
         </configuration>
       </plugin>
     </plugins>
@@ -38,17 +38,17 @@
   <dependencies>
     <dependency>
       <groupId>org.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
-      <version>3.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openejb</groupId>
-      <artifactId>openejb-client</artifactId>
+      <artifactId>openejb-loader</artifactId>
+      <version>3.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openejb</groupId>
+      <artifactId>openejb-tomcat</artifactId>
       <version>3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -62,30 +62,24 @@
       <version>3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
-      <version>3.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>idb</groupId>
-      <artifactId>idb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <artifactId>geronimo-ejb_3.0_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openejb</groupId>
       <artifactId>openejb-itests</artifactId>
       <version>3.0-SNAPSHOT</version>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_2.4_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>

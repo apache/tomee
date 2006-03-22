@@ -41,9 +41,17 @@ public class Embedder {
 
     private Class forcefulLoad(ClassPath classPath, ClassLoader classLoader) throws Exception {
         try {
-            checkOpenEjbHome(SystemInstance.get().getHome().getDirectory());
-            FileUtils home = SystemInstance.get().getHome();
-            classPath.addJarsToPath(home.getDirectory("lib"));
+            File libsDir;
+
+            String libsPath = SystemInstance.get().getProperty("openejb.libs");
+            if (libsPath != null){
+                libsDir = new File(libsPath);
+            } else {
+                checkOpenEjbHome(SystemInstance.get().getHome().getDirectory());
+                FileUtils home = SystemInstance.get().getHome();
+                libsDir = home.getDirectory("lib");
+            }
+            classPath.addJarsToPath(libsDir);
         } catch (Exception e2) {
             throw new Exception("Could not load OpenEJB libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
         }

@@ -6,6 +6,8 @@ public class ClassPathFactory {
             return new TomcatClassPath();
         } else if (name.equalsIgnoreCase("tomcat-common")) {
             return new TomcatClassPath();
+        } else if (name.equalsIgnoreCase("tomcat-system")) {
+            return new TomcatClassPath();
         } else if (name.equalsIgnoreCase("tomcat-webapp")) {
             return new WebAppClassPath();
         } else if (name.equalsIgnoreCase("bootstrap")) {

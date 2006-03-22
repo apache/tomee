@@ -43,6 +43,7 @@
     <module>container</module>
     <module>server</module> 
     <module>openejb-assembly</module>
+    <module>openejb-tomcat</module>
 <!--    <module>jee5_exp_specs</module>-->
   </modules>
   <repositories>
