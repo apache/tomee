@@ -46,7 +46,6 @@
       <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
       <j:set var="openejb.dist" value="${targetDir}/openejb-${openejb.version}-bin.zip" />
 
-      <!-- Download tomcat if it isn't in the repo -->
       <u:file var="fileAsFile" name="${openejb.home}"/>
       <j:if test="${!(fileAsFile.exists())}">
         <unjar src="${openejb.dist}" dest="${targetDir}"/>

@@ -4,17 +4,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.net.URL;
 
-import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.SessionSynchronization;
-import javax.naming.Context;
 
 import org.openejb.Container;
 import org.openejb.RpcContainer;
-import org.openejb.alt.containers.castor_cmp11.CastorCMP11_EntityContainer;
 import org.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
 import org.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.openejb.core.entity.EntityEjbHomeHandler;
@@ -49,7 +47,7 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private boolean isBeanManagedTransaction;
     private boolean isReentrant;
     private Container container;
-
+    private URL archiveURL;
     private EJBHome ejbHomeRef;
 
     private final DeploymentContext context;
@@ -66,8 +64,9 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private HashMap securityRoleReferenceMap = new HashMap();
     private HashSet methodsWithRemoteReturnTypes = null;
     private EJBLocalHome ejbLocalHomeRef;
+    private String jarPath;
 
-    public DeploymentInfo(DeploymentContext context, Class homeClass, Class remoteClass, Class localHomeClass, Class localClass, Class beanClass, Class pkClass, byte componentType)
+    public DeploymentInfo(DeploymentContext context, Class homeClass, Class remoteClass, Class localHomeClass, Class localClass, Class beanClass, Class pkClass, byte componentType, URL archiveURL)
             throws org.openejb.SystemException {
         this.context = context;
         this.pkClass = pkClass;
@@ -80,7 +79,7 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         this.beanClass = beanClass;
         this.pkClass = pkClass;
         this.componentType = componentType;
-
+        this.archiveURL = archiveURL;
         createMethodMap();
 
     }
@@ -555,4 +554,11 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         return (String) queryMethodMap.get(queryMethod);
     }
 
+    public void setJarPath(String jarPath) {
+        this.jarPath = jarPath;
+    }
+
+    public String getJarPath() {
+        return jarPath;
+    }
 }

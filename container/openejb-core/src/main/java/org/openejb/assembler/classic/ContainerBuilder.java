@@ -59,6 +59,7 @@ public class ContainerBuilder {
                 EnterpriseBeanInfo ejbInfo = ejbs[j];
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
                 DeploymentInfo deployment = (DeploymentInfo) deploymentBuilder.build();
+                deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
             }
         }

@@ -88,7 +88,7 @@ class EnterpriseBeanBuilder {
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
-        DeploymentInfo deployment = new DeploymentInfo(deploymentContext, home, remote, localhome, local, ejbClass, primaryKey, ejbType.getType());
+        DeploymentInfo deployment = new DeploymentInfo(deploymentContext, home, remote, localhome, local, ejbClass, primaryKey, ejbType.getType(), null);
 
         if (ejbType.isSession()) {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));

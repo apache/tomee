@@ -3,6 +3,7 @@ package org.openejb.assembler.classic;
 import org.openejb.EnvProps;
 import org.openejb.OpenEJBException;
 import org.openejb.Container;
+import org.openejb.loader.SystemInstance;
 import org.openejb.core.ConnectorReference;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.core.TransactionManagerWrapper;
@@ -162,12 +163,41 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
 
-        org.openejb.core.ContainerSystem containerSystem = new org.openejb.core.ContainerSystem();
+        containerSystem = new org.openejb.core.ContainerSystem();
+        SystemInstance.get().setComponent(org.openejb.spi.ContainerSystem.class, containerSystem);
 
         createTransactionManager(configInfo);
 
         createSecurityService(configInfo);
 
+        /*[6] Assemble Connector(s) //////////////////////////////////////////*/
+        HashMap connectionManagerMap = new HashMap();
+        // connectors are optional in the openejb_config.dtd
+        if (configInfo.facilities.connectionManagers != null) {
+            for (int i = 0; i < configInfo.facilities.connectionManagers.length; i++) {
+                ConnectionManagerInfo cmInfo = configInfo.facilities.connectionManagers[i];
+                ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
+                connectionManagerMap.put(cmInfo.connectionManagerId, connectionManager);
+            }
+        }
+        // connectors are optional in the openejb_config.dtd
+        if (configInfo.facilities.connectors != null) {
+            for (int i = 0; i < configInfo.facilities.connectors.length; i++) {
+                ConnectorInfo conInfo = configInfo.facilities.connectors[i];
+
+                ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
+                if (connectionManager == null)
+                    throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
+
+                ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
+
+                ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
+
+                containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
+            }
+        }
+
+        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
         ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo, ((AssemblerTool)this).props);
         List containers = (List) containerBuilder.build();
         for (int i1 = 0; i1 < containers.size(); i1++) {
@@ -178,11 +208,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
                 containerSystem.addDeployment((DeploymentInfo) deployments1[j]);
             }
         }
-
-
-        containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
-
-        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
 
         // roleMapping used later in buildMethodPermissions
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
@@ -213,37 +238,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         }
 
-        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
-
-        /*[5]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
-        /*[6] Assemble Connector(s) //////////////////////////////////////////*/
-        HashMap connectionManagerMap = new HashMap();
-        // connectors are optional in the openejb_config.dtd
-        if (configInfo.facilities.connectionManagers != null) {
-            for (int i = 0; i < configInfo.facilities.connectionManagers.length; i++) {
-                ConnectionManagerInfo cmInfo = configInfo.facilities.connectionManagers[i];
-                ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
-                connectionManagerMap.put(cmInfo.connectionManagerId, connectionManager);
-            }
-        }
-        // connectors are optional in the openejb_config.dtd
-        if (configInfo.facilities.connectors != null) {
-            for (int i = 0; i < configInfo.facilities.connectors.length; i++) {
-                ConnectorInfo conInfo = configInfo.facilities.connectors[i];
-
-                ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
-                if (connectionManager == null)
-                    throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
-
-                ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
-
-                ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
-
-                containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
-            }
-        }
-        /*[6]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
         return containerSystem;
     }
 
@@ -253,6 +247,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         securityService = (SecurityService) securityServiceRecipe.create();
 
         props.put(SecurityService.class.getName(), securityService);
+        containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
     }
 
     private void createTransactionManager(OpenEjbConfiguration configInfo) throws Exception {
@@ -267,5 +262,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
         props.put(TransactionManager.class.getName(), transactionManager);
         getContext().put(TransactionManager.class.getName(), transactionManager);
+        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
+        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
     }
 }
