@@ -11,6 +11,11 @@ import java.util.Vector;
 import org.openejb.OpenEJBException;
 import org.openejb.loader.SystemInstance;
 import org.openejb.alt.config.ejb11.EjbJar;
+import org.openejb.alt.config.ejb11.EjbRef;
+import org.openejb.alt.config.ejb11.EjbLocalRef;
+import org.openejb.alt.config.ejb11.EnvEntry;
+import org.openejb.alt.config.ejb11.ResourceRef;
+import org.openejb.alt.config.ejb11.SecurityRoleRef;
 import org.openejb.alt.config.rules.CheckClasses;
 import org.openejb.alt.config.rules.CheckMethods;
 import org.openejb.util.JarUtils;
@@ -20,7 +25,7 @@ import org.openejb.util.Logger;
 public class EjbValidator {
     private static final String helpBase = "META-INF/org.openejb.cli/";
 
-    protected static final Messages _messages = new Messages("org.openejb.util.resources");
+    protected static final Messages _messages = new Messages("org.openejb.alt.config.rules");
 
     int LEVEL = 2;
     boolean PRINT_DETAILS = false;
@@ -47,7 +52,7 @@ public class EjbValidator {
         return ejbSets;
     }
 
-    public EjbSet validateJar(EjbJarUtils ejbJarUtils, ClassLoader classLoader) {
+    public EjbSet validateJar(final EjbJarUtils ejbJarUtils, ClassLoader classLoader) {
         EjbSet set = null;
 
         try {
@@ -59,6 +64,70 @@ public class EjbValidator {
         } catch (Throwable e) {
             e.printStackTrace(System.out);
             ValidationError err = new ValidationError("cannot.validate");
+            err.setCause(e);
+            err.setBean(new Bean(){
+
+                public String getType() {
+                    return "Ejb-jar";
+                }
+
+                public Object getBean() {
+                    return null;
+                }
+
+                public String getEjbName() {
+                    String name = ejbJarUtils.getEjbJar().getDisplayName();
+                    if (name == null){
+                        File jar = new File(ejbJarUtils.getJarLocation());
+                        jar = jar.getAbsoluteFile();
+                        name = jar.getName();
+                        if (name.equals(".")){
+                            name = jar.getParentFile().getName();
+                        }
+                    }
+                    return name;
+                }
+
+                public String getEjbClass() {
+                    return null;
+                }
+
+                public String getHome() {
+                    return null;
+                }
+
+                public String getRemote() {
+                    return null;
+                }
+
+                public String getLocalHome() {
+                    return null;
+                }
+
+                public String getLocal() {
+                    return null;
+                }
+
+                public EjbRef[] getEjbRef() {
+                    return new EjbRef[0];
+                }
+
+                public EjbLocalRef[] getEjbLocalRef() {
+                    return new EjbLocalRef[0];
+                }
+
+                public EnvEntry[] getEnvEntry() {
+                    return new EnvEntry[0];
+                }
+
+                public ResourceRef[] getResourceRef() {
+                    return new ResourceRef[0];
+                }
+
+                public SecurityRoleRef[] getSecurityRoleRef() {
+                    return new SecurityRoleRef[0];
+                }
+            });
             err.setDetails(e.getMessage());
             set.addError(err);
         }

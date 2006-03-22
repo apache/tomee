@@ -9,6 +9,7 @@ import org.openejb.util.SafeToolkit;
 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
+import java.lang.reflect.Method;
 
 public class CheckClasses implements ValidationRule {
 
@@ -25,21 +26,65 @@ public class CheckClasses implements ValidationRule {
                 b = beans[i];
                 check_hasEjbClass(b);
                 check_isEjbClass(b);
+                check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
                 if (b.getHome() != null) {
                     check_hasHomeClass(b);
                     check_hasRemoteClass(b);
                     check_isHomeInterface(b);
                     check_isRemoteInterface(b);
+                    check_hasDependentClasses(b, b.getHome(), "<home>");
+                    check_hasDependentClasses(b, b.getRemote(), "<remote>");
                 }
                 if (b.getLocalHome() != null) {
                     check_hasLocalHomeClass(b);
                     check_hasLocalClass(b);
                     check_isLocalHomeInterface(b);
                     check_isLocalInterface(b);
+                    check_hasDependentClasses(b, b.getLocalHome(), "<local-home>");
+                    check_hasDependentClasses(b, b.getLocal(), "<local>");
                 }
             }
         } catch (RuntimeException e) {
             throw new RuntimeException(b.getEjbName(), e);
+        }
+    }
+
+    private void check_hasDependentClasses(Bean b, String className, String type) {
+        try {
+            ClassLoader cl = set.getClassLoader();
+            Class clazz = cl.loadClass(className);
+            for (Object item : clazz.getFields()) { item.toString(); }
+            for (Object item : clazz.getMethods()) { item.toString(); }
+            for (Object item : clazz.getConstructors()) { item.toString(); }
+            for (Object item : clazz.getAnnotations()) { item.toString(); }
+            for (Object item : clazz.getEnumConstants()) { item.toString(); }
+        } catch (NullPointerException e) {
+            // Don't know why I get these from clazz.getEnumConstants() 
+        } catch (ClassNotFoundException e) {
+            /*
+            # 0 - Referring Class name
+            # 1 - Dependent Class name
+            # 2 - Element (home, ejb-class, remote)
+            # 3 - Bean name
+            */
+            ValidationFailure failure = new ValidationFailure("missing.dependent.class");
+            failure.setDetails(className, e.getMessage(), type, b.getEjbName());
+            failure.setBean(b);
+
+            set.addFailure(failure);
+        } catch (NoClassDefFoundError e) {
+            /*
+            # 0 - Referring Class name
+            # 1 - Dependent Class name
+            # 2 - Element (home, ejb-class, remote)
+            # 3 - Bean name
+            */
+
+            ValidationFailure failure = new ValidationFailure("missing.dependent.class");
+            failure.setDetails(className, e.getMessage(), type, b.getEjbName());
+            failure.setBean(b);
+
+            set.addFailure(failure);
         }
     }
 
@@ -162,6 +207,5 @@ public class CheckClasses implements ValidationRule {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()));
         }
     }
-
 }
 

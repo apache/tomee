@@ -56,8 +56,8 @@ import java.util.List;
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
     public static final String DEFAULT_SECURITY_ROLE = "openejb.default.security.role";
-    protected static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.openejb.util.resources");
-    protected static final Messages messages = new Messages("org.openejb.util.resources");
+    protected static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.openejb.alt.config.rules");
+    protected static final Messages messages = new Messages("org.openejb.alt.config.rules");
 
     private AutoDeployer deployer;
     private Openejb openejb;
@@ -1086,7 +1086,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                     ValidationError[] errors = set.getErrors();
                     for (int j = 0; j < errors.length; j++) {
                         ValidationError e = errors[j];
-                        logger.error(e.getPrefix() + " ... " + e.getBean().getEjbName() + ":\t" + e.getMessage(2));
+                        String ejbName = (e.getBean() != null)? e.getBean().getEjbName(): "null";
+                        logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
                     }
                     ValidationFailure[] failures = set.getFailures();
                     for (int j = 0; j < failures.length; j++) {
