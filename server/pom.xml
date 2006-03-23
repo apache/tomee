@@ -20,6 +20,5 @@
     <module>openejb-xfire</module>
     <module>openejb-axis</module>
     <module>openejb-corba</module>
-    <module>openejb-tomcat</module>
   </modules>
 </project>
