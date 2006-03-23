@@ -64,7 +64,11 @@
           <archive>
             <manifest>
               <mainClass>org.openejb.cli.Main</mainClass>
+              <!--<addClasspath>true</addClasspath>-->
             </manifest>
+            <manifestEntries>
+              <Class-Path>openejb-loader-3.0-SNAPSHOT.jar</Class-Path>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
