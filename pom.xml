@@ -42,9 +42,7 @@
     <module>openejb-itests</module>
     <module>container</module>
     <module>server</module> 
-    <module>openejb-assembly</module>
-    <module>openejb-tomcat</module>
-<!--    <module>jee5_exp_specs</module>-->
+    <module>assembly</module>
   </modules>
   <repositories>
     <repository>
