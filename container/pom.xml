@@ -13,5 +13,6 @@
   <modules>
     <module>openejb-core</module>
     <module>openejb-loader</module>
+    <module>openejb-persistence</module>
   </modules>
 </project>
