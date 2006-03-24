@@ -157,28 +157,32 @@
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.serlvet.url" value="http://127.0.0.1:8080/itests/remote"/>
         <arg value="tomcat"/>
+        <!--<jvmarg value="-Xdebug"/>-->
+        <!--<jvmarg value="-Xnoagent"/>-->
+        <!--<jvmarg value="-Djava.compiler=NONE"/>-->
+        <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>-->
       </java>
       <!--<attainGoal name="stop:tomcat"/>-->
     </goal>
 
-    <goal name="test:tomcat-all">
-      <attainGoal name="tomcat4"/>
-      <attainGoal name="test:tomcat-webapp"/>
-      <attainGoal name="delete:tomcat"/>
+  <goal name="itest:all">
+    <attainGoal name="tomcat4"/>
+    <attainGoal name="test:tomcat-webapp"/>
 
-      <attainGoal name="tomcat50"/>
-      <attainGoal name="test:tomcat-webapp"/>
-      <attainGoal name="delete:tomcat"/>
-      <j:if test="${systemScope['java.version'].startsWith('1.5')}">
-        <attainGoal name="tomcat55"/>
-        <attainGoal name="test:tomcat-webapp"/>
-        <attainGoal name="delete:tomcat"/>
-      </j:if>
-    </goal>
+    <attainGoal name="tomcat50"/>
+    <attainGoal name="test:tomcat-webapp"/>
 
-    <goal name="test:all">
-      <attainGoal name="test:tomcat-all"/>
-    </goal>
+    <j:if test="${systemScope['java.version'].startsWith('1.5')}">
+      <attainGoal name="tomcat55"/>
+      <attainGoal name="test:tomcat-webapp"/>
+    </j:if>
+  </goal>
+
+  <goal name="itest">
+    <attainGoal name="tomcat55"/>
+    <attainGoal name="test:tomcat-webapp"/>
+  </goal>
+
 <!-- Try this if things get rough
 java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -jar target/openejb-1.0-SNAPSHOT/lib/openejb-core-1.0-SNAPSHOT.jar start
 -->
