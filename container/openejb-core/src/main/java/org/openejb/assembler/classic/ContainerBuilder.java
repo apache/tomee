@@ -120,7 +120,7 @@ public class ContainerBuilder {
         for (int i = 0; i < decorators.length && container instanceof RpcContainer; i++) {
             try {
                 String decoratorName = decorators[i];
-                ObjectRecipe decoratorRecipe = new ObjectRecipe(decoratorName);
+                ObjectRecipe decoratorRecipe = new ObjectRecipe(decoratorName,new String[]{"container"}, null);
                 decoratorRecipe.setProperty("container", new StaticRecipe(container));
                 container = (Container) decoratorRecipe.create();
             } catch (ConstructionException e) {
