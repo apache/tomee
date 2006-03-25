@@ -54,6 +54,12 @@ public class JNDIContext implements Context {
         if (name.startsWith("java:"))
             name = name.substring(5);
 
+        if (name.startsWith("/"))
+            name = name.substring(1);
+
+        if (name.length() == 0)
+            return this;
+        
         CompositeName composite = new CompositeName(name);
 
         String segment = composite.get(0);
@@ -109,6 +115,9 @@ public class JNDIContext implements Context {
     public void unbind(String name) throws NamingException {
         if (name.startsWith("java:"))
             name = name.substring(5);
+
+        if (name.startsWith("/"))
+            name = name.substring(1);
 
         if (name.equals(""))
             throw new NamingException(name + "is not valid.");

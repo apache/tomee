@@ -110,6 +110,7 @@ public class PersistenceTest extends TestCase {
 
     }
 
+    
     private void cleanupJNDI(String jndi) throws Exception {
         CompositeName composite = new CompositeName(jndi);
         for (int i = composite.size(); i > 0; i--) {
