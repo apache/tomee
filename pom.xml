@@ -52,6 +52,12 @@
       <layout>legacy</layout>
     </repository>
     <repository>
+      <id>codehaus</id>
+      <name>Codehaus Repository</name>
+      <url>http://dist.codehaus.org</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
       <releases>
         <enabled>false</enabled>
       </releases>

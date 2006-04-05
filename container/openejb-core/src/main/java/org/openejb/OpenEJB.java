@@ -19,6 +19,10 @@ public final class OpenEJB {
 
     private static Instance instance;
 
+    public static ApplicationServer getApplicationServer() {
+        return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class));
+    }
+
     public static class Instance {
         private static Messages messages = new Messages("org.openejb.util.resources");
 
