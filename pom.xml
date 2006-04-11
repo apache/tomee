@@ -65,6 +65,17 @@
       <name>Maven Snapshot Development Repository</name>
       <url>http://snapshots.maven.codehaus.org/maven2</url>
     </repository>
+    <repository>
+      <id>maven-legacy-on-ibiblio</id>
+      <name>Maven1 Repository on iBiblio</name>
+      <url>http://www.ibiblio.org/maven</url>
+      <layout>legacy</layout>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -94,6 +105,11 @@
         <version>1.0</version>
       </dependency>
       <dependency>
+        <groupId>geronimo</groupId>
+        <artifactId>geronimo-kernel</artifactId>
+        <version>1.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
         <version>2.3-SNAPSHOT</version>
@@ -101,7 +117,7 @@
       <dependency>
         <groupId>castor</groupId>
         <artifactId>castor</artifactId>
-        <version>1.0M3</version>
+        <version>1.0</version>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
@@ -118,6 +134,11 @@
         <artifactId>junit</artifactId>
         <version>3.8.1</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.0.4</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

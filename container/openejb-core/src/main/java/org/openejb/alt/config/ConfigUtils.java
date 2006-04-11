@@ -50,7 +50,7 @@ public class ConfigUtils {
         } catch (IOException e) {
             throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()));
         } catch (MarshalException e) {
-            if (e.getException() instanceof IOException) {
+            if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()));
             } else {
                 throw new OpenEJBException(messages.format("conf.1050", confFile, e.getLocalizedMessage()));

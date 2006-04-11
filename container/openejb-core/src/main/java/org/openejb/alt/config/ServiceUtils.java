@@ -92,7 +92,7 @@ public class ServiceUtils {
         } catch (IOException e) {
             throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()));
         } catch (MarshalException e) {
-            if (e.getException() instanceof IOException) {
+            if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()));
             } else {
                 throw new OpenEJBException(messages.format("conf.4050", xmlFile, e.getLocalizedMessage()));

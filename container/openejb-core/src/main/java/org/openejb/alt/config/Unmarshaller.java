@@ -156,13 +156,13 @@ public class Unmarshaller {
             unmarshaller.setEntityResolver(resolver);
             return unmarshaller.unmarshal(reader);
         } catch (MarshalException e) {
-            if (e.getException() instanceof UnknownHostException) {
+            if (e.getCause() instanceof UnknownHostException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.unkownHost", file, jarLocation, e.getLocalizedMessage()));
-            } else if (e.getException() instanceof org.xml.sax.SAXException) {
+            } else if (e.getCause() instanceof org.xml.sax.SAXException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotParse", file, jarLocation, e.getLocalizedMessage()));
-            } else if (e.getException() instanceof IOException) {
+            } else if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()));
-            } else if (e.getException() instanceof ValidationException) {
+            } else if (e.getCause() instanceof ValidationException) {
                 throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()));
             } else {
                 e.printStackTrace();

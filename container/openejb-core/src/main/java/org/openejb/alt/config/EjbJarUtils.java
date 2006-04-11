@@ -89,7 +89,7 @@ public class EjbJarUtils {
         } catch (IOException e) {
             throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
         } catch (MarshalException e) {
-            if (e.getException() instanceof IOException) {
+            if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
             } else {
                 throw new OpenEJBException(messages.format("conf.3050", xmlFile, e.getLocalizedMessage()));
@@ -292,7 +292,7 @@ public class EjbJarUtils {
         } catch (IOException e) {
             throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
         } catch (MarshalException e) {
-            if (e.getException() instanceof IOException) {
+            if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
             } else {
                 throw new OpenEJBException(messages.format("conf.2050", xmlFile, e.getLocalizedMessage()));
