@@ -155,7 +155,7 @@
       <version>1.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openejb</groupId>
+      <groupId>openejb</groupId>
       <artifactId>xstream</artifactId>
       <version>PATCH-300-309</version>
     </dependency>
