@@ -16,8 +16,8 @@
  */
 package org.openejb.jee.webservice;
 
-import org.openejb.jee.javaee.Icon;
-import org.openejb.jee.javaee.InitParam;
+import org.openejb.jee.common.Icon;
+import org.openejb.jee.common.InitParam;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -27,11 +27,13 @@ import java.util.ArrayList;
  * @version $Revision$ $Date$
  */
 public class Handler {
+
     private String id;
     private List<String> description = new ArrayList<String>();
     private List<String> displayName = new ArrayList<String>();
     private List<Icon> icons = new ArrayList<Icon>();
     private String handlerClass;
+    private String handlerName;
     private List<InitParam> initParams = new ArrayList<InitParam>();
     private List<QName> soapHeaders = new ArrayList<QName>();
     private List<String> soapRoles = new ArrayList<String>();
@@ -74,6 +76,14 @@ public class Handler {
 
     public void setIcons(List<Icon> icons) {
         this.icons = icons;
+    }
+
+    public String getHandlerName() {
+        return handlerName;
+    }
+
+    public void setHandlerName(String handlerName) {
+        this.handlerName = handlerName;
     }
 
     public String getHandlerClass() {

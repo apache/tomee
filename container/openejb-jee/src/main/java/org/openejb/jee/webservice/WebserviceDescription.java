@@ -16,7 +16,7 @@
  */
 package org.openejb.jee.webservice;
 
-import org.openejb.jee.javaee.Icon;
+import org.openejb.jee.common.Icon;
 import org.openejb.jee.webservice.PortComponent;
 
 import java.util.List;

@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.jee.javaee;
+package org.openejb.jee.common;
 
 /**
  * @version $Revision$ $Date$
@@ -22,8 +22,6 @@ package org.openejb.jee.javaee;
 public abstract class AbstractEjbRef extends JndiEnvironmentRef {
     private String ejbRefName;
     private EjbRefType ejbRefType;
-    private String localHome;
-    private String local;
     private String ejbLink;
 
     public String getEjbRefName() {
@@ -40,22 +38,6 @@ public abstract class AbstractEjbRef extends JndiEnvironmentRef {
 
     public void setEjbRefType(EjbRefType ejbRefType) {
         this.ejbRefType = ejbRefType;
-    }
-
-    public String getLocalHome() {
-        return localHome;
-    }
-
-    public void setLocalHome(String localHome) {
-        this.localHome = localHome;
-    }
-
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
     }
 
     public String getEjbLink() {

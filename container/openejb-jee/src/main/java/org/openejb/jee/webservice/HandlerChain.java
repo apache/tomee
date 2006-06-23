@@ -28,6 +28,7 @@ public class HandlerChain {
     private String id;
     // TODO
     private Target target;
+    
     private List<Handler> handlers = new ArrayList<Handler>();
 
     public String getId() {

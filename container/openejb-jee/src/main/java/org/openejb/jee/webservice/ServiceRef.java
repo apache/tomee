@@ -18,8 +18,8 @@ package org.openejb.jee.webservice;
 
 import org.openejb.jee.webservice.Handler;
 import org.openejb.jee.webservice.HandlerChain;
-import org.openejb.jee.javaee.Icon;
-import org.openejb.jee.javaee.JndiEnvironmentRef;
+import org.openejb.jee.common.Icon;
+import org.openejb.jee.common.JndiEnvironmentRef;
 
 import java.util.List;
 import java.util.ArrayList;

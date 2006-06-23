@@ -16,13 +16,16 @@
  */
 package org.openejb.jee.ejbjar;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @version $Revision$ $Date$
  */
 public class QueryMethod {
     private String id;
     private String methodName;
-    private MethodParams methodParams;
+    private MethodParams methodParams = new MethodParams();
 
     public QueryMethod() {
     }
@@ -47,11 +50,11 @@ public class QueryMethod {
         this.methodName = methodName;
     }
 
-    public MethodParams getMethodParams() {
-        return methodParams;
+    public List<String> getMethodParams() {
+        return methodParams.getMethodParams();
     }
 
-    public void setMethodParams(MethodParams methodParams) {
-        this.methodParams = methodParams;
+    public void setMethodParams(List<String> methodParams) {
+        this.methodParams.setMethodParams(methodParams);
     }
 }

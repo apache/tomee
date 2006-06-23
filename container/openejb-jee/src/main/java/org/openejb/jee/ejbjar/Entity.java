@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class Entity extends EnterpriseBean {
     private PersistenceType persistenceType;
     private String primaryKeyClass;
-    private boolean reenterant;
+    private boolean reentrant;
     private String cmpVersion;
     private String abstractSchemaName;
     private List<CmpField> cmpFields = new ArrayList<CmpField>();
@@ -61,12 +61,12 @@ public class Entity extends EnterpriseBean {
         this.primaryKeyClass = primaryKeyClass;
     }
 
-    public boolean isReenterant() {
-        return reenterant;
+    public boolean isReentrant() {
+        return reentrant;
     }
 
-    public void setReenterant(boolean reenterant) {
-        this.reenterant = reenterant;
+    public void setReentrant(boolean reentrant) {
+        this.reentrant = reentrant;
     }
 
     public String getCmpVersion() {

@@ -16,8 +16,8 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.MessageDestination;
-import org.openejb.jee.javaee.SecurityRole;
+import org.openejb.jee.common.MessageDestination;
+import org.openejb.jee.common.SecurityRole;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class AssemblyDescriptor {
     private List<ContainerTransaction> containerTransactions = new ArrayList<ContainerTransaction>();
     private List<InterceptorBinding> interceptorBindings = new ArrayList<InterceptorBinding>();
     private List<MessageDestination> messageDestinations = new ArrayList<MessageDestination>();
-    private List<ExcludeList> excludeLists = new ArrayList<ExcludeList>();
+    private ExcludeList excludeList;
     private List<ApplicationException> applicationExceptions = new ArrayList<ApplicationException>();
 
     public String getId() {
@@ -83,12 +83,12 @@ public class AssemblyDescriptor {
         this.messageDestinations = messageDestinations;
     }
 
-    public List<ExcludeList> getExcludeLists() {
-        return excludeLists;
+    public ExcludeList getExcludeList() {
+        return excludeList;
     }
 
-    public void setExcludeLists(List<ExcludeList> excludeLists) {
-        this.excludeLists = excludeLists;
+    public void setExcludeList(ExcludeList excludeList) {
+        this.excludeList = excludeList;
     }
 
     public List<ApplicationException> getApplicationExceptions() {

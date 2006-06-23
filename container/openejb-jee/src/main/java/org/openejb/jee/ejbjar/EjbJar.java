@@ -16,7 +16,7 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.Icon;
+import org.openejb.jee.common.Icon;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class EjbJar {
     private List<Icon> icons = new ArrayList<Icon>();
     private List<EnterpriseBean> enterpriseBeans = new ArrayList<EnterpriseBean>();
     private List<Interceptor> interceptors = new ArrayList<Interceptor>();
-    private List<Relationships> relationships = new ArrayList<Relationships>();
+    private List<EjbRelation> relationships = new ArrayList<EjbRelation>();
     private AssemblyDescriptor assemblyDescriptor;
     private String ejbClientJar;
     private String version;
@@ -78,11 +78,11 @@ public class EjbJar {
         this.interceptors = interceptors;
     }
 
-    public List<Relationships> getRelationships() {
+    public List<EjbRelation> getRelationships() {
         return relationships;
     }
 
-    public void setRelationships(List<Relationships> relationships) {
+    public void setRelationships(List<EjbRelation> relationships) {
         this.relationships = relationships;
     }
 

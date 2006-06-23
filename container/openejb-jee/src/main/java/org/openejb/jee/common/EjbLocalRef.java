@@ -14,9 +14,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.jee.javaee;
+package org.openejb.jee.common;
 
-import org.openejb.jee.javaee.AbstractEjbRef;
+import org.openejb.jee.common.AbstractEjbRef;
 
 /**
  * @version $Revision$ $Date$

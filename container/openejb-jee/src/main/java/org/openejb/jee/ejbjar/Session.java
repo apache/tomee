@@ -24,6 +24,7 @@ import java.util.ArrayList;
  */
 public class Session extends EnterpriseBean {
     private List<String> businessLocal = new ArrayList<String>();
+    private List<String> businessRemote = new ArrayList<String>();
     private String serviceEndpoint;
     private SessionType sessionType;
     private NamedMethod timeoutMethod;

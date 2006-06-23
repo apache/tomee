@@ -16,8 +16,8 @@
  */
 package org.openejb.jee.app;
 
-import org.openejb.jee.javaee.Icon;
-import org.openejb.jee.javaee.SecurityRole;
+import org.openejb.jee.common.Icon;
+import org.openejb.jee.common.SecurityRole;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,19 +16,19 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.EjbLocalRef;
-import org.openejb.jee.javaee.EjbRef;
-import org.openejb.jee.javaee.EnvEntry;
-import org.openejb.jee.javaee.Icon;
-import org.openejb.jee.javaee.JndiEnvironmentRef;
-import org.openejb.jee.javaee.MessageDestinationRef;
-import org.openejb.jee.javaee.PersistenceUnitRef;
-import org.openejb.jee.javaee.PersistenceContextRef;
-import org.openejb.jee.javaee.PostConstruct;
-import org.openejb.jee.javaee.PreDestroy;
-import org.openejb.jee.javaee.ResourceEnvRef;
-import org.openejb.jee.javaee.ResourceRef;
-import org.openejb.jee.javaee.SecurityRoleRef;
+import org.openejb.jee.common.EjbLocalRef;
+import org.openejb.jee.common.EjbRef;
+import org.openejb.jee.common.EnvEntry;
+import org.openejb.jee.common.Icon;
+import org.openejb.jee.common.JndiEnvironmentRef;
+import org.openejb.jee.common.MessageDestinationRef;
+import org.openejb.jee.common.PersistenceUnitRef;
+import org.openejb.jee.common.PersistenceContextRef;
+import org.openejb.jee.common.PostConstruct;
+import org.openejb.jee.common.PreDestroy;
+import org.openejb.jee.common.ResourceEnvRef;
+import org.openejb.jee.common.ResourceRef;
+import org.openejb.jee.common.SecurityRoleRef;
 import org.openejb.jee.webservice.ServiceRef;
 
 import java.util.List;
@@ -58,9 +58,6 @@ public class EnterpriseBean {
     private List<MessageDestinationRef> messageDestinationRefs = new ArrayList<MessageDestinationRef>();
     private List<PersistenceContextRef> persistenceContextRefs = new ArrayList<PersistenceContextRef>();
     private List<PersistenceUnitRef> persistenceUnitRefs = new ArrayList<PersistenceUnitRef>();
-
-    // For aggregation
-    private List<JndiEnvironmentRef> jndiEnvironmentRefs = new ArrayList<JndiEnvironmentRef>();
 
     private List<PostConstruct> postConstructs = new ArrayList<PostConstruct>();
     private List<PreDestroy> preDestroys = new ArrayList<PreDestroy>();
@@ -237,11 +234,17 @@ public class EnterpriseBean {
     }
 
     public List<JndiEnvironmentRef> getJndiEnvironmentRefs() {
-        return jndiEnvironmentRefs;
-    }
-
-    public void setJndiEnvironmentRefs(List<JndiEnvironmentRef> jndiEnvironmentRefs) {
-        this.jndiEnvironmentRefs = jndiEnvironmentRefs;
+        List<JndiEnvironmentRef> jndi = new ArrayList<JndiEnvironmentRef>();
+        jndi.addAll(this.ejbLocalRefs);
+        jndi.addAll(this.ejbRefs);
+        jndi.addAll(this.envEntries);
+        jndi.addAll(this.messageDestinationRefs);
+        jndi.addAll(this.persistenceContextRefs);
+        jndi.addAll(this.persistenceUnitRefs);
+        jndi.addAll(this.resourceEnvRefs);
+        jndi.addAll(this.resourceRefs);
+        jndi.addAll(this.serviceRefs);
+        return jndi;
     }
 
     public List<PostConstruct> getPostConstructs() {

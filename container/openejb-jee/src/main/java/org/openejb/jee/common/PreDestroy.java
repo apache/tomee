@@ -14,9 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.jee.javaee;
-
-import org.openejb.jee.javaee.LifecycleCallback;
+package org.openejb.jee.common;
 
 /**
  * @version $Revision$ $Date$

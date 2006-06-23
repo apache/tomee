@@ -16,17 +16,17 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.EjbLocalRef;
-import org.openejb.jee.javaee.EjbRef;
-import org.openejb.jee.javaee.EnvEntry;
-import org.openejb.jee.javaee.JndiEnvironmentRef;
-import org.openejb.jee.javaee.MessageDestinationRef;
-import org.openejb.jee.javaee.PersistenceUnitRef;
-import org.openejb.jee.javaee.PersistenceContextRef;
-import org.openejb.jee.javaee.PostConstruct;
-import org.openejb.jee.javaee.PreDestroy;
-import org.openejb.jee.javaee.ResourceEnvRef;
-import org.openejb.jee.javaee.ResourceRef;
+import org.openejb.jee.common.EjbLocalRef;
+import org.openejb.jee.common.EjbRef;
+import org.openejb.jee.common.EnvEntry;
+import org.openejb.jee.common.JndiEnvironmentRef;
+import org.openejb.jee.common.MessageDestinationRef;
+import org.openejb.jee.common.PersistenceUnitRef;
+import org.openejb.jee.common.PersistenceContextRef;
+import org.openejb.jee.common.PostConstruct;
+import org.openejb.jee.common.PreDestroy;
+import org.openejb.jee.common.ResourceEnvRef;
+import org.openejb.jee.common.ResourceRef;
 import org.openejb.jee.webservice.ServiceRef;
 
 import java.util.List;

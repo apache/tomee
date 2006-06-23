@@ -16,12 +16,15 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.RunAs;
+import org.openejb.jee.common.RunAs;
+
+import java.util.List;
 
 /**
  * @version $Revision$ $Date$
  */
 public class SecurityIdentity {
+    private List<String> description;
     private String id;
     private boolean useCallerIdentity;
     private RunAs runAs;
@@ -59,5 +62,13 @@ public class SecurityIdentity {
 
     public void setRunAs(RunAs runAs) {
         this.runAs = runAs;
+    }
+
+    public List<String> getDescription() {
+        return description;
+    }
+
+    public void setDescription(List<String> description) {
+        this.description = description;
     }
 }

@@ -5,9 +5,9 @@ package org.openejb.jee.ejbjar;
 
 import junit.framework.*;
 import org.openejb.jee.ejbjar.EjbJarMarshaller;
-import org.openejb.jee.javaee.EnvEntry;
-import org.openejb.jee.javaee.Icon;
-import org.openejb.jee.javaee.PersistenceUnitRef;
+import org.openejb.jee.common.EnvEntry;
+import org.openejb.jee.common.Icon;
+import org.openejb.jee.common.PersistenceUnitRef;
 import com.thoughtworks.xstream.XStream;
 
 import java.lang.reflect.Array;
@@ -81,7 +81,7 @@ public class EjbJarMarshallerTest extends TestCase {
                 "      <ejb-class>org.acme.FooEjb</ejb-class>\n" +
                 "    </session>\n" +
                 "    <entity>\n" +
-                "      <reenterant>false</reenterant>\n" +
+                "      <reentrant>false</reentrant>\n" +
                 "      <ejb-name>Bar</ejb-name>\n" +
                 "      <home>org.acme.BarHome</home>\n" +
                 "      <remote>org.acme.Bar</remote>\n" +
@@ -101,10 +101,10 @@ public class EjbJarMarshallerTest extends TestCase {
         ejbJar.getEnterpriseBeans().add(session);
 
         EnvEntry envEntry = new EnvEntry("fruit","java.lang.String","orange");
-        session.getJndiEnvironmentRefs().add(envEntry);
+        session.getEnvEntries().add(envEntry);
 
         PersistenceUnitRef persistenceUnitRef = new PersistenceUnitRef("puRefName", "puName");
-        session.getJndiEnvironmentRefs().add(persistenceUnitRef);
+        session.getPersistenceUnitRefs().add(persistenceUnitRef);
 
         String expected = "<ejb-jar>\n" +
                 "  <enterprise-beans>\n" +
@@ -220,7 +220,7 @@ public class EjbJarMarshallerTest extends TestCase {
         if (a.getId() != null ? !a.getId().equals(b.getId()) : b.getId() != null) return false;
         if (!equals(a.getApplicationExceptions(), b.getApplicationExceptions())) return false;
         if (!equals(a.getContainerTransactions(), b.getContainerTransactions())) return false;
-        if (!equals(a.getExcludeLists(), b.getExcludeLists())) return false;
+//        if (!equals(a.getExcludeList(), b.getExcludeList())) return false;
         if (!equals(a.getInterceptorBindings(), b.getInterceptorBindings())) return false;
         if (!equals(a.getMessageDestinations(), b.getMessageDestinations())) return false;
         if (!equals(a.getMethodPermissions(), b.getMethodPermissions())) return false;

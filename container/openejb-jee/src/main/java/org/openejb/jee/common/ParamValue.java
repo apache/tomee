@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.jee.javaee;
+package org.openejb.jee.common;
 
 import java.util.List;
 
@@ -25,14 +25,14 @@ public class ParamValue {
     private String id;
     private List<String> description;
     private String paramName;
-    private String paramType;
+    private String paramValue;
 
     public ParamValue() {
     }
 
     public ParamValue(String paramName, String paramType) {
         this.paramName = paramName;
-        this.paramType = paramType;
+        this.paramValue = paramType;
     }
 
     public String getId() {
@@ -59,11 +59,11 @@ public class ParamValue {
         this.paramName = paramName;
     }
 
-    public String getParamType() {
-        return paramType;
+    public String getParamValue() {
+        return paramValue;
     }
 
-    public void setParamType(String paramType) {
-        this.paramType = paramType;
+    public void setParamValue(String paramValue) {
+        this.paramValue = paramValue;
     }
 }

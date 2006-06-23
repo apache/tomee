@@ -25,8 +25,16 @@ import java.util.ArrayList;
 public class ContainerTransaction {
     private String id;
     private List<String> description = new ArrayList<String>();
-    private String method;
+    private Method method;
     private TransactionAttributeType transactionAttribute;
+
+    public ContainerTransaction() {
+    }
+
+    public ContainerTransaction(Method method, TransactionAttributeType transactionAttribute) {
+        this.method = method;
+        this.transactionAttribute = transactionAttribute;
+    }
 
     public String getId() {
         return id;
@@ -44,11 +52,11 @@ public class ContainerTransaction {
         this.description = description;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(Method method) {
         this.method = method;
     }
 

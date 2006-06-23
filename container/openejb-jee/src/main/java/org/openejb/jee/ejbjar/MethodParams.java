@@ -24,5 +24,31 @@ import java.util.ArrayList;
  */
 public class MethodParams {
     private String id;
-    private List<String> methodParam = new ArrayList<String>();
+    private List<String> methodParams = new ArrayList<String>();
+
+    public MethodParams() {
+    }
+
+    public MethodParams(List<String> methodParams) {
+        this.methodParams = methodParams;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<String> getMethodParams() {
+        return methodParams;
+    }
+
+    public void setMethodParams(List<String> methodParams) {
+        this.methodParams = methodParams;
+    }
+
+
+    
 }

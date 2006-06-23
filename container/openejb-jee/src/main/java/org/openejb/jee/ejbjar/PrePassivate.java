@@ -16,7 +16,7 @@
  */
 package org.openejb.jee.ejbjar;
 
-import org.openejb.jee.javaee.LifecycleCallback;
+import org.openejb.jee.common.LifecycleCallback;
 
 /**
  * @version $Revision$ $Date$
