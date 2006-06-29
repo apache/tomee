@@ -17,14 +17,9 @@
 package org.openejb.resource.jdbc;
 
 import org.openejb.loader.SystemInstance;
-import org.openejb.util.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.ResourceException;
-import javax.security.auth.Subject;
-import java.util.Properties;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

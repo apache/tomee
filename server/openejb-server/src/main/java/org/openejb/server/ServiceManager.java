@@ -4,7 +4,7 @@ import org.openejb.loader.SystemInstance;
 import org.openejb.loader.FileUtils;
 import org.openejb.util.Logger;
 import org.openejb.util.Messages;
-import org.openejb.util.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.FileInputStream;

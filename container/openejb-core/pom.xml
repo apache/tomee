@@ -134,6 +134,10 @@
       <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder</artifactId>
+    </dependency>
+    <dependency>
       <groupId>geronimo</groupId>
       <artifactId>geronimo-interceptor</artifactId>
       <version>1.2-SNAPSHOT</version>

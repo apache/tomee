@@ -5,6 +5,7 @@ import org.openejb.loader.FileUtils;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

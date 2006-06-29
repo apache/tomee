@@ -1,7 +1,7 @@
 package org.openejb.cli;
 
 import org.openejb.loader.SystemClassPath;
-import org.openejb.util.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.IOException;
