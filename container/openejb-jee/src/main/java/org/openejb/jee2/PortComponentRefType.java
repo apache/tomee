@@ -61,7 +61,7 @@ public class PortComponentRefType {
     @XmlElement(name = "service-endpoint-interface", required = true)
     protected String serviceEndpointInterface;
     @XmlElement(name = "enable-mtom")
-    protected TrueFalseType enableMtom;
+    protected boolean enableMtom;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
     @XmlAttribute
@@ -98,10 +98,10 @@ public class PortComponentRefType {
      * 
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public TrueFalseType getEnableMtom() {
+    public boolean getEnableMtom() {
         return enableMtom;
     }
 
@@ -110,10 +110,10 @@ public class PortComponentRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public void setEnableMtom(TrueFalseType value) {
+    public void setEnableMtom(boolean value) {
         this.enableMtom = value;
     }
 

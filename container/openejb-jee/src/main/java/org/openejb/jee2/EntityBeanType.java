@@ -210,7 +210,7 @@ public class EntityBeanType {
     @XmlElement(name = "prim-key-class", required = true)
     protected String primKeyClass;
     @XmlElement(required = true)
-    protected TrueFalseType reentrant;
+    protected boolean reentrant;
     @XmlElement(name = "cmp-version")
     protected CmpVersionType cmpVersion;
     @XmlElement(name = "abstract-schema-name")
@@ -571,10 +571,10 @@ public class EntityBeanType {
      *
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *
      */
-    public TrueFalseType getReentrant() {
+    public boolean getReentrant() {
         return reentrant;
     }
 
@@ -583,10 +583,10 @@ public class EntityBeanType {
      *
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *
      */
-    public void setReentrant(TrueFalseType value) {
+    public void setReentrant(boolean value) {
         this.reentrant = value;
     }
 

@@ -65,7 +65,7 @@ public class ApplicationExceptionType {
 
     @XmlElement(name = "exception-class", required = true)
     protected String exceptionClass;
-    protected TrueFalseType rollback;
+    protected boolean rollback;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -100,10 +100,10 @@ public class ApplicationExceptionType {
      * 
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public TrueFalseType getRollback() {
+    public boolean getRollback() {
         return rollback;
     }
 
@@ -112,10 +112,10 @@ public class ApplicationExceptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public void setRollback(TrueFalseType value) {
+    public void setRollback(boolean value) {
         this.rollback = value;
     }
 

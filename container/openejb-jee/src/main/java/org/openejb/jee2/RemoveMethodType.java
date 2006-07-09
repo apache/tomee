@@ -49,7 +49,7 @@ public class RemoveMethodType {
     @XmlElement(name = "bean-method", required = true)
     protected NamedMethodType beanMethod;
     @XmlElement(name = "retain-if-exception", required = true)
-    protected TrueFalseType retainIfException;
+    protected boolean retainIfException;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -84,10 +84,10 @@ public class RemoveMethodType {
      * 
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public TrueFalseType getRetainIfException() {
+    public boolean getRetainIfException() {
         return retainIfException;
     }
 
@@ -96,10 +96,10 @@ public class RemoveMethodType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public void setRetainIfException(TrueFalseType value) {
+    public void setRetainIfException(boolean value) {
         this.retainIfException = value;
     }
 

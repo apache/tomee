@@ -168,9 +168,9 @@ public class InterceptorBindingType {
     @XmlElement(name = "interceptor-order")
     protected InterceptorOrderType interceptorOrder;
     @XmlElement(name = "exclude-default-interceptors")
-    protected TrueFalseType excludeDefaultInterceptors;
+    protected boolean excludeDefaultInterceptors;
     @XmlElement(name = "exclude-class-interceptors")
-    protected TrueFalseType excludeClassInterceptors;
+    protected boolean excludeClassInterceptors;
     protected NamedMethodType method;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -288,10 +288,10 @@ public class InterceptorBindingType {
      * 
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public TrueFalseType getExcludeDefaultInterceptors() {
+    public boolean getExcludeDefaultInterceptors() {
         return excludeDefaultInterceptors;
     }
 
@@ -300,10 +300,10 @@ public class InterceptorBindingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public void setExcludeDefaultInterceptors(TrueFalseType value) {
+    public void setExcludeDefaultInterceptors(boolean value) {
         this.excludeDefaultInterceptors = value;
     }
 
@@ -312,10 +312,10 @@ public class InterceptorBindingType {
      * 
      * @return
      *     possible object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public TrueFalseType getExcludeClassInterceptors() {
+    public boolean getExcludeClassInterceptors() {
         return excludeClassInterceptors;
     }
 
@@ -324,10 +324,10 @@ public class InterceptorBindingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TrueFalseType }
+     *     {@link boolean }
      *     
      */
-    public void setExcludeClassInterceptors(TrueFalseType value) {
+    public void setExcludeClassInterceptors(boolean value) {
         this.excludeClassInterceptors = value;
     }
 
