@@ -61,7 +61,7 @@ public class RelationshipRoleSourceType {
     @XmlElement(required = true)
     protected List<Text> description;
     @XmlElement(name = "ejb-name", required = true)
-    protected EjbNameType ejbName;
+    protected String ejbName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -101,22 +101,33 @@ public class RelationshipRoleSourceType {
      * 
      * @return
      *     possible object is
-     *     {@link EjbNameType }
+     *     {@link String }
      *     
      */
-    public EjbNameType getEjbName() {
+    public String getEjbName() {
         return ejbName;
     }
 
     /**
-     * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbNameType }
-     *     
+     * 	  The ejb-nameType specifies an enterprise bean's name. It is
+     * 	  used by ejb-name elements. This name is assigned by the
+     * 	  ejb-jar file producer to name the enterprise bean in the
+     * 	  ejb-jar file's deployment descriptor. The name must be
+     * 	  unique among the names of the enterprise beans in the same
+     * 	  ejb-jar file.
+     *
+     * 	  There is no architected relationship between the used
+     * 	  ejb-name in the deployment descriptor and the JNDI name that
+     * 	  the Deployer will assign to the enterprise bean's home.
+     *
+     * 	  The name for an entity bean must conform to the lexical
+     * 	  rules for an NMTOKEN.
+     *
+     * 	  Example:
+     *
+     * 	  <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(EjbNameType value) {
+    public void setEjbName(String value) {
         this.ejbName = value;
     }
 
