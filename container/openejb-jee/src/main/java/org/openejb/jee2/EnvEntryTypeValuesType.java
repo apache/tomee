@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entry-type-valuesType")
 public class EnvEntryTypeValuesType
-    extends String
+    extends JeeString
 {
 
 

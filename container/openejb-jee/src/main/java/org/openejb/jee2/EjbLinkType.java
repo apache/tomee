@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-linkType")
 public class EjbLinkType
-    extends String
+    extends JeeString
 {
 
 

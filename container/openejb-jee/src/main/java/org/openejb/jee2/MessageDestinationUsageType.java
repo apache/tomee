@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-usageType")
 public class MessageDestinationUsageType
-    extends String
+    extends JeeString
 {
 
 

@@ -100,14 +100,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link String }
-     * 
-     */
-    public String createString() {
-        return new String();
-    }
-
-    /**
      * Create an instance of {@link MessageDestinationUsageType }
      * 
      */
@@ -845,12 +837,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link JeeString }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relation-name", scope = EjbRelationType.class)
-    public JAXBElement<String> createEjbRelationTypeEjbRelationName(String value) {
-        return new JAXBElement<String>(_EjbRelationTypeEjbRelationName_QNAME, String.class, EjbRelationType.class, value);
+    public JAXBElement<java.lang.String> createEjbRelationTypeEjbRelationName(java.lang.String value) {
+        return new JAXBElement<java.lang.String>(_EjbRelationTypeEjbRelationName_QNAME, java.lang.String.class, EjbRelationType.class, value);
     }
 
     /**

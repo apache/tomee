@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "pathType")
 public class PathType
-    extends String
+    extends JeeString
 {
 
 

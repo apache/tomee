@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-ref-typeType")
 public class EjbRefTypeType
-    extends String
+    extends JeeString
 {
 
 

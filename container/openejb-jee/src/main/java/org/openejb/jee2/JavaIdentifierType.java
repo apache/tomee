@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "java-identifierType")
 public class JavaIdentifierType
-    extends String
+    extends JeeString
 {
 
 

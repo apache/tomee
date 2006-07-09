@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "res-sharing-scopeType")
 public class ResSharingScopeType
-    extends String
+    extends JeeString
 {
 
 

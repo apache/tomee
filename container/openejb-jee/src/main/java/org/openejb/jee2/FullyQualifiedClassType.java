@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "fully-qualified-classType")
 public class FullyQualifiedClassType
-    extends String
+    extends JeeString
 {
 
 

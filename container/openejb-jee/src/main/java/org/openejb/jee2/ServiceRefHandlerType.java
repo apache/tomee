@@ -85,7 +85,7 @@ public class ServiceRefHandlerType {
     @XmlElement(name = "init-param", required = true)
     protected List<ParamValueType> initParam;
     @XmlElement(name = "soap-header", required = true)
-    protected List<String> soapHeader;
+    protected List<java.lang.String> soapHeader;
     @XmlElement(name = "soap-role", required = true)
     protected List<java.lang.String> soapRole;
     @XmlElement(name = "port-name", required = true)
@@ -277,9 +277,9 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      */
-    public List<String> getSoapHeader() {
+    public List<java.lang.String> getSoapHeader() {
         if (soapHeader == null) {
-            soapHeader = new ArrayList<String>();
+            soapHeader = new ArrayList<java.lang.String>();
         }
         return this.soapHeader;
     }

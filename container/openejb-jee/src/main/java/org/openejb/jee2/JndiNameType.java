@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jndi-nameType")
 public class JndiNameType
-    extends String
+    extends JeeString
 {
 
 

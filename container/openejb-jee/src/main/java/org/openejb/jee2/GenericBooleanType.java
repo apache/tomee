@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "generic-booleanType")
 public class GenericBooleanType
-    extends String
+    extends JeeString
 {
 
 

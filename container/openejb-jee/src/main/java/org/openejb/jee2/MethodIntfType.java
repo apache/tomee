@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-intfType")
 public class MethodIntfType
-    extends String
+    extends JeeString
 {
 
 

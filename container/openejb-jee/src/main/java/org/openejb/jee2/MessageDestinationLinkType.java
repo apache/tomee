@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-linkType")
 public class MessageDestinationLinkType
-    extends String
+    extends JeeString
 {
 
 

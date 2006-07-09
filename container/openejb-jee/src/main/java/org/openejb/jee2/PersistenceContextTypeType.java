@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-typeType")
 public class PersistenceContextTypeType
-    extends String
+    extends JeeString
 {
 
 

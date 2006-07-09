@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "result-type-mappingType")
 public class ResultTypeMappingType
-    extends String
+    extends JeeString
 {
 
 

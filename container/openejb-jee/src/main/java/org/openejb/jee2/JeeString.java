@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "string", propOrder = {
     "value"
 })
-public class String {
+public class JeeString {
 
     @XmlValue
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -61,11 +61,11 @@ public class String {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public java.lang.String getValue() {
         return value;
@@ -73,11 +73,11 @@ public class String {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public void setValue(java.lang.String value) {
         this.value = value;
@@ -85,11 +85,11 @@ public class String {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public java.lang.String getId() {
         return id;
@@ -97,11 +97,11 @@ public class String {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public void setId(java.lang.String value) {
         this.id = value;

@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "trans-attributeType")
 public class TransAttributeType
-    extends String
+    extends JeeString
 {
 
 

@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmr-field-typeType")
 public class CmrFieldTypeType
-    extends String
+    extends JeeString
 {
 
 

@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.namespace.QName;
 
 
 /**
@@ -101,7 +100,7 @@ public class ServiceRefType {
     @XmlElement(name = "jaxrpc-mapping-file")
     protected PathType jaxrpcMappingFile;
     @XmlElement(name = "service-qname")
-    protected String serviceQname;
+    protected java.lang.String serviceQname;
     @XmlElement(name = "port-component-ref", required = true)
     protected List<PortComponentRefType> portComponentRef;
     @XmlElement(required = true)
@@ -327,14 +326,14 @@ public class ServiceRefType {
     /**
      * Gets the value of the serviceQname property.
      */
-    public String getServiceQname() {
+    public java.lang.String getServiceQname() {
         return serviceQname;
     }
 
     /**
      * Sets the value of the serviceQname property.
      */
-    public void setServiceQname(String value) {
+    public void setServiceQname(java.lang.String value) {
         this.serviceQname = value;
     }
 

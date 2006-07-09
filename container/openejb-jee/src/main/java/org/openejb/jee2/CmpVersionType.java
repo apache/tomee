@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmp-versionType")
 public class CmpVersionType
-    extends String
+    extends JeeString
 {
 
 

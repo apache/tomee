@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "res-authType")
 public class ResAuthType
-    extends String
+    extends JeeString
 {
 
 

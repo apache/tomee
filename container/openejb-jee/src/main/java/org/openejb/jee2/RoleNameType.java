@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "role-nameType")
 public class RoleNameType
-    extends String
+    extends JeeString
 {
 
 

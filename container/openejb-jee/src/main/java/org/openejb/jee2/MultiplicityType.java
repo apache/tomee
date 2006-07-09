@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "multiplicityType")
 public class MultiplicityType
-    extends String
+    extends JeeString
 {
 
 

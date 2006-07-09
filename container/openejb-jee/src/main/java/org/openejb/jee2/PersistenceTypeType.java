@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-typeType")
 public class PersistenceTypeType
-    extends String
+    extends JeeString
 {
 
 

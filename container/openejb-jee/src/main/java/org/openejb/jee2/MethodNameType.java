@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-nameType")
 public class MethodNameType
-    extends String
+    extends JeeString
 {
 
 
