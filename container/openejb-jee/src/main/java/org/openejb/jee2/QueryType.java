@@ -87,122 +87,42 @@ public class QueryType {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Text }
-     *     
-     */
     public Text getDescription() {
         return description;
     }
 
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Text }
-     *     
-     */
     public void setDescription(Text value) {
         this.description = value;
     }
 
-    /**
-     * Gets the value of the queryMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QueryMethodType }
-     *     
-     */
     public QueryMethodType getQueryMethod() {
         return queryMethod;
     }
 
-    /**
-     * Sets the value of the queryMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QueryMethodType }
-     *     
-     */
     public void setQueryMethod(QueryMethodType value) {
         this.queryMethod = value;
     }
 
-    /**
-     * Gets the value of the resultTypeMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResultTypeMappingType }
-     *     
-     */
     public ResultTypeMappingType getResultTypeMapping() {
         return resultTypeMapping;
     }
 
-    /**
-     * Sets the value of the resultTypeMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResultTypeMappingType }
-     *     
-     */
     public void setResultTypeMapping(ResultTypeMappingType value) {
         this.resultTypeMapping = value;
     }
 
-    /**
-     * Gets the value of the ejbQl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbQl() {
         return ejbQl;
     }
 
-    /**
-     * Sets the value of the ejbQl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbQl(String value) {
         this.ejbQl = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

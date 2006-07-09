@@ -139,122 +139,42 @@ public class ResourceRefType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the resRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getResRefName() {
         return resRefName;
     }
 
-    /**
-     * Sets the value of the resRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setResRefName(String value) {
         this.resRefName = value;
     }
 
-    /**
-     * Gets the value of the resType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getResType() {
         return resType;
     }
 
-    /**
-     * Sets the value of the resType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setResType(String value) {
         this.resType = value;
     }
 
-    /**
-     * Gets the value of the resAuth property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResAuthType }
-     *     
-     */
     public ResAuthType getResAuth() {
         return resAuth;
     }
 
-    /**
-     * Sets the value of the resAuth property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResAuthType }
-     *     
-     */
     public void setResAuth(ResAuthType value) {
         this.resAuth = value;
     }
 
-    /**
-     * Gets the value of the resSharingScope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResSharingScopeType }
-     *     
-     */
     public ResSharingScopeType getResSharingScope() {
         return resSharingScope;
     }
 
-    /**
-     * Sets the value of the resSharingScope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResSharingScopeType }
-     *     
-     */
     public void setResSharingScope(ResSharingScopeType value) {
         this.resSharingScope = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -288,26 +208,10 @@ public class ResourceRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

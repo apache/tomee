@@ -244,26 +244,10 @@ public class AssemblyDescriptorType {
         return this.messageDestination;
     }
 
-    /**
-     * Gets the value of the excludeList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExcludeListType }
-     *     
-     */
     public ExcludeListType getExcludeList() {
         return excludeList;
     }
 
-    /**
-     * Sets the value of the excludeList property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExcludeListType }
-     *     
-     */
     public void setExcludeList(ExcludeListType value) {
         this.excludeList = value;
     }
@@ -297,26 +281,10 @@ public class AssemblyDescriptorType {
         return this.applicationException;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

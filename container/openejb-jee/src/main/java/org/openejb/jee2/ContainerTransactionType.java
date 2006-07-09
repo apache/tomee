@@ -130,50 +130,18 @@ public class ContainerTransactionType {
         return this.method;
     }
 
-    /**
-     * Gets the value of the transAttribute property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransAttributeType }
-     *     
-     */
     public TransAttributeType getTransAttribute() {
         return transAttribute;
     }
 
-    /**
-     * Sets the value of the transAttribute property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransAttributeType }
-     *     
-     */
     public void setTransAttribute(TransAttributeType value) {
         this.transAttribute = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

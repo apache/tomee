@@ -69,98 +69,34 @@ public class PortComponentRefType {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the serviceEndpointInterface property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceEndpointInterface() {
         return serviceEndpointInterface;
     }
 
-    /**
-     * Sets the value of the serviceEndpointInterface property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceEndpointInterface(String value) {
         this.serviceEndpointInterface = value;
     }
 
-    /**
-     * Gets the value of the enableMtom property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
-     */
     public boolean getEnableMtom() {
         return enableMtom;
     }
 
-    /**
-     * Sets the value of the enableMtom property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
-     */
     public void setEnableMtom(boolean value) {
         this.enableMtom = value;
     }
 
-    /**
-     * Gets the value of the portComponentLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPortComponentLink() {
         return portComponentLink;
     }
 
-    /**
-     * Sets the value of the portComponentLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPortComponentLink(String value) {
         this.portComponentLink = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

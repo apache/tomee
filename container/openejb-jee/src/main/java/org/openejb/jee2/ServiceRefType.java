@@ -203,122 +203,42 @@ public class ServiceRefType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the serviceRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceRefName() {
         return serviceRefName;
     }
 
-    /**
-     * Sets the value of the serviceRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceRefName(String value) {
         this.serviceRefName = value;
     }
 
-    /**
-     * Gets the value of the serviceInterface property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceInterface() {
         return serviceInterface;
     }
 
-    /**
-     * Sets the value of the serviceInterface property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceInterface(String value) {
         this.serviceInterface = value;
     }
 
-    /**
-     * Gets the value of the serviceRefType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceRefType() {
         return serviceRefType;
     }
 
-    /**
-     * Sets the value of the serviceRefType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceRefType(String value) {
         this.serviceRefType = value;
     }
 
-    /**
-     * Gets the value of the wsdlFile property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getWsdlFile() {
         return wsdlFile;
     }
 
-    /**
-     * Sets the value of the wsdlFile property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setWsdlFile(String value) {
         this.wsdlFile = value;
     }
 
-    /**
-     * Gets the value of the jaxrpcMappingFile property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getJaxrpcMappingFile() {
         return jaxrpcMappingFile;
     }
 
-    /**
-     * Sets the value of the jaxrpcMappingFile property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setJaxrpcMappingFile(String value) {
         this.jaxrpcMappingFile = value;
     }
@@ -395,50 +315,18 @@ public class ServiceRefType {
         return this.handler;
     }
 
-    /**
-     * Gets the value of the handlerChains property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ServiceRefHandlerChainsType }
-     *     
-     */
     public ServiceRefHandlerChainsType getHandlerChains() {
         return handlerChains;
     }
 
-    /**
-     * Sets the value of the handlerChains property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ServiceRefHandlerChainsType }
-     *     
-     */
     public void setHandlerChains(ServiceRefHandlerChainsType value) {
         this.handlerChains = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -472,26 +360,10 @@ public class ServiceRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

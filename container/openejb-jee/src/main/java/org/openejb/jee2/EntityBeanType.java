@@ -339,14 +339,6 @@ public class EntityBeanType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getEjbName() {
         return ejbName;
     }
@@ -374,266 +366,90 @@ public class EntityBeanType {
         this.ejbName = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
 
-    /**
-     * Gets the value of the home property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getHome() {
         return home;
     }
 
-    /**
-     * Sets the value of the home property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setHome(String value) {
         this.home = value;
     }
 
-    /**
-     * Gets the value of the remote property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getRemote() {
         return remote;
     }
 
-    /**
-     * Sets the value of the remote property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setRemote(String value) {
         this.remote = value;
     }
 
-    /**
-     * Gets the value of the localHome property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getLocalHome() {
         return localHome;
     }
 
-    /**
-     * Sets the value of the localHome property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setLocalHome(String value) {
         this.localHome = value;
     }
 
-    /**
-     * Gets the value of the local property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getLocal() {
         return local;
     }
 
-    /**
-     * Sets the value of the local property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setLocal(String value) {
         this.local = value;
     }
 
-    /**
-     * Gets the value of the ejbClass property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getEjbClass() {
         return ejbClass;
     }
 
-    /**
-     * Sets the value of the ejbClass property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 
-    /**
-     * Gets the value of the persistenceType property.
-     *
-     * @return
-     *     possible object is
-     *     {@link PersistenceTypeType }
-     *
-     */
     public PersistenceTypeType getPersistenceType() {
         return persistenceType;
     }
 
-    /**
-     * Sets the value of the persistenceType property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceTypeType }
-     *
-     */
     public void setPersistenceType(PersistenceTypeType value) {
         this.persistenceType = value;
     }
 
-    /**
-     * Gets the value of the primKeyClass property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getPrimKeyClass() {
         return primKeyClass;
     }
 
-    /**
-     * Sets the value of the primKeyClass property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setPrimKeyClass(String value) {
         this.primKeyClass = value;
     }
 
-    /**
-     * Gets the value of the reentrant property.
-     *
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *
-     */
     public boolean getReentrant() {
         return reentrant;
     }
 
-    /**
-     * Sets the value of the reentrant property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *
-     */
     public void setReentrant(boolean value) {
         this.reentrant = value;
     }
 
-    /**
-     * Gets the value of the cmpVersion property.
-     *
-     * @return
-     *     possible object is
-     *     {@link CmpVersionType }
-     *
-     */
     public CmpVersionType getCmpVersion() {
         return cmpVersion;
     }
 
-    /**
-     * Sets the value of the cmpVersion property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link CmpVersionType }
-     *
-     */
     public void setCmpVersion(CmpVersionType value) {
         this.cmpVersion = value;
     }
 
-    /**
-     * Gets the value of the abstractSchemaName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getAbstractSchemaName() {
         return abstractSchemaName;
     }
 
-    /**
-     * Sets the value of the abstractSchemaName property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setAbstractSchemaName(String value) {
         this.abstractSchemaName = value;
     }
@@ -667,26 +483,10 @@ public class EntityBeanType {
         return this.cmpField;
     }
 
-    /**
-     * Gets the value of the primkeyField property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPrimkeyField() {
         return primkeyField;
     }
 
-    /**
-     * Sets the value of the primkeyField property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPrimkeyField(String value) {
         this.primkeyField = value;
     }
@@ -1039,26 +839,10 @@ public class EntityBeanType {
         return this.securityRoleRef;
     }
 
-    /**
-     * Gets the value of the securityIdentity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public SecurityIdentityType getSecurityIdentity() {
         return securityIdentity;
     }
 
-    /**
-     * Sets the value of the securityIdentity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public void setSecurityIdentity(SecurityIdentityType value) {
         this.securityIdentity = value;
     }
@@ -1092,26 +876,10 @@ public class EntityBeanType {
         return this.query;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

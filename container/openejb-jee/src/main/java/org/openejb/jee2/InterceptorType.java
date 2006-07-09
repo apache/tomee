@@ -150,26 +150,10 @@ public class InterceptorType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the interceptorClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getInterceptorClass() {
         return interceptorClass;
     }
 
-    /**
-     * Sets the value of the interceptorClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setInterceptorClass(String value) {
         this.interceptorClass = value;
     }
@@ -580,26 +564,10 @@ public class InterceptorType {
         return this.prePassivate;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

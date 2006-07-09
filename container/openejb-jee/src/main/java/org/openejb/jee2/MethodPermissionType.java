@@ -141,26 +141,10 @@ public class MethodPermissionType {
         return this.roleName;
     }
 
-    /**
-     * Gets the value of the unchecked property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
-     */
     public EmptyType getUnchecked() {
         return unchecked;
     }
 
-    /**
-     * Sets the value of the unchecked property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
-     */
     public void setUnchecked(EmptyType value) {
         this.unchecked = value;
     }
@@ -194,26 +178,10 @@ public class MethodPermissionType {
         return this.method;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

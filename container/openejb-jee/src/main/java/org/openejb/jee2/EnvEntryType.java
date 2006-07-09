@@ -125,26 +125,10 @@ public class EnvEntryType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the envEntryName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEnvEntryName() {
         return envEntryName;
     }
 
-    /**
-     * Sets the value of the envEntryName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEnvEntryName(String value) {
         this.envEntryName = value;
     }
@@ -161,50 +145,18 @@ public class EnvEntryType {
         this.envEntryType = value;
     }
 
-    /**
-     * Gets the value of the envEntryValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEnvEntryValue() {
         return envEntryValue;
     }
 
-    /**
-     * Sets the value of the envEntryValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEnvEntryValue(String value) {
         this.envEntryValue = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -238,26 +190,10 @@ public class EnvEntryType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

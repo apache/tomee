@@ -128,74 +128,26 @@ public class PersistenceUnitRefType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the persistenceUnitRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPersistenceUnitRefName() {
         return persistenceUnitRefName;
     }
 
-    /**
-     * Sets the value of the persistenceUnitRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPersistenceUnitRefName(String value) {
         this.persistenceUnitRefName = value;
     }
 
-    /**
-     * Gets the value of the persistenceUnitName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
-    /**
-     * Sets the value of the persistenceUnitName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPersistenceUnitName(String value) {
         this.persistenceUnitName = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -229,26 +181,10 @@ public class PersistenceUnitRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

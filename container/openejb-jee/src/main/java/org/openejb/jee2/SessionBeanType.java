@@ -319,14 +319,6 @@ public class SessionBeanType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbName() {
         return ejbName;
     }
@@ -354,122 +346,42 @@ public class SessionBeanType {
         this.ejbName = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
 
-    /**
-     * Gets the value of the home property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getHome() {
         return home;
     }
 
-    /**
-     * Sets the value of the home property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setHome(String value) {
         this.home = value;
     }
 
-    /**
-     * Gets the value of the remote property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRemote() {
         return remote;
     }
 
-    /**
-     * Sets the value of the remote property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRemote(String value) {
         this.remote = value;
     }
 
-    /**
-     * Gets the value of the localHome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLocalHome() {
         return localHome;
     }
 
-    /**
-     * Sets the value of the localHome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLocalHome(String value) {
         this.localHome = value;
     }
 
-    /**
-     * Gets the value of the local property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLocal() {
         return local;
     }
 
-    /**
-     * Sets the value of the local property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLocal(String value) {
         this.local = value;
     }
@@ -532,98 +444,34 @@ public class SessionBeanType {
         return this.businessRemote;
     }
 
-    /**
-     * Gets the value of the serviceEndpoint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceEndpoint() {
         return serviceEndpoint;
     }
 
-    /**
-     * Sets the value of the serviceEndpoint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceEndpoint(String value) {
         this.serviceEndpoint = value;
     }
 
-    /**
-     * Gets the value of the ejbClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbClass() {
         return ejbClass;
     }
 
-    /**
-     * Sets the value of the ejbClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 
-    /**
-     * Gets the value of the sessionType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SessionTypeType }
-     *     
-     */
     public SessionTypeType getSessionType() {
         return sessionType;
     }
 
-    /**
-     * Sets the value of the sessionType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SessionTypeType }
-     *     
-     */
     public void setSessionType(SessionTypeType value) {
         this.sessionType = value;
     }
 
-    /**
-     * Gets the value of the timeoutMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public NamedMethodType getTimeoutMethod() {
         return timeoutMethod;
     }
 
-    /**
-     * Sets the value of the timeoutMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public void setTimeoutMethod(NamedMethodType value) {
         this.timeoutMethod = value;
     }
@@ -686,26 +534,10 @@ public class SessionBeanType {
         return this.removeMethod;
     }
 
-    /**
-     * Gets the value of the transactionType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransactionTypeType }
-     *     
-     */
     public TransactionTypeType getTransactionType() {
         return transactionType;
     }
 
-    /**
-     * Sets the value of the transactionType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransactionTypeType }
-     *     
-     */
     public void setTransactionType(TransactionTypeType value) {
         this.transactionType = value;
     }
@@ -1145,50 +977,18 @@ public class SessionBeanType {
         return this.securityRoleRef;
     }
 
-    /**
-     * Gets the value of the securityIdentity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public SecurityIdentityType getSecurityIdentity() {
         return securityIdentity;
     }
 
-    /**
-     * Sets the value of the securityIdentity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public void setSecurityIdentity(SecurityIdentityType value) {
         this.securityIdentity = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

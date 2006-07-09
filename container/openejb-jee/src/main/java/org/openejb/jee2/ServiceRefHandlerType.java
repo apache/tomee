@@ -182,50 +182,18 @@ public class ServiceRefHandlerType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the handlerName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getHandlerName() {
         return handlerName;
     }
 
-    /**
-     * Sets the value of the handlerName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setHandlerName(String value) {
         this.handlerName = value;
     }
 
-    /**
-     * Gets the value of the handlerClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getHandlerClass() {
         return handlerClass;
     }
 
-    /**
-     * Sets the value of the handlerClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setHandlerClass(String value) {
         this.handlerClass = value;
     }
@@ -342,26 +310,10 @@ public class ServiceRefHandlerType {
         return this.portName;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

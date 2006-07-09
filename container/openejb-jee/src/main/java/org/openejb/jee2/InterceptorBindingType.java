@@ -206,26 +206,10 @@ public class InterceptorBindingType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbName() {
         return ejbName;
     }
 
-    /**
-     * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbName(String value) {
         this.ejbName = value;
     }
@@ -259,122 +243,42 @@ public class InterceptorBindingType {
         return this.interceptorClass;
     }
 
-    /**
-     * Gets the value of the interceptorOrder property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InterceptorOrderType }
-     *     
-     */
     public InterceptorOrderType getInterceptorOrder() {
         return interceptorOrder;
     }
 
-    /**
-     * Sets the value of the interceptorOrder property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InterceptorOrderType }
-     *     
-     */
     public void setInterceptorOrder(InterceptorOrderType value) {
         this.interceptorOrder = value;
     }
 
-    /**
-     * Gets the value of the excludeDefaultInterceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
-     */
     public boolean getExcludeDefaultInterceptors() {
         return excludeDefaultInterceptors;
     }
 
-    /**
-     * Sets the value of the excludeDefaultInterceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
-     */
     public void setExcludeDefaultInterceptors(boolean value) {
         this.excludeDefaultInterceptors = value;
     }
 
-    /**
-     * Gets the value of the excludeClassInterceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
-     */
     public boolean getExcludeClassInterceptors() {
         return excludeClassInterceptors;
     }
 
-    /**
-     * Sets the value of the excludeClassInterceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
-     */
     public void setExcludeClassInterceptors(boolean value) {
         this.excludeClassInterceptors = value;
     }
 
-    /**
-     * Gets the value of the method property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public NamedMethodType getMethod() {
         return method;
     }
 
-    /**
-     * Sets the value of the method property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public void setMethod(NamedMethodType value) {
         this.method = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

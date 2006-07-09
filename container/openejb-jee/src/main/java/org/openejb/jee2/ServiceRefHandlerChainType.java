@@ -86,50 +86,18 @@ public class ServiceRefHandlerChainType {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the serviceNamePattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getServiceNamePattern() {
         return serviceNamePattern;
     }
 
-    /**
-     * Sets the value of the serviceNamePattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setServiceNamePattern(String value) {
         this.serviceNamePattern = value;
     }
 
-    /**
-     * Gets the value of the portNamePattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPortNamePattern() {
         return portNamePattern;
     }
 
-    /**
-     * Sets the value of the portNamePattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPortNamePattern(String value) {
         this.portNamePattern = value;
     }
@@ -192,26 +160,10 @@ public class ServiceRefHandlerChainType {
         return this.handler;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

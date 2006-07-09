@@ -145,74 +145,26 @@ public class MessageDestinationRefType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the messageDestinationRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMessageDestinationRefName() {
         return messageDestinationRefName;
     }
 
-    /**
-     * Sets the value of the messageDestinationRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationRefName(String value) {
         this.messageDestinationRefName = value;
     }
 
-    /**
-     * Gets the value of the messageDestinationType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMessageDestinationType() {
         return messageDestinationType;
     }
 
-    /**
-     * Sets the value of the messageDestinationType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationType(String value) {
         this.messageDestinationType = value;
     }
 
-    /**
-     * Gets the value of the messageDestinationUsage property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MessageDestinationUsageType }
-     *     
-     */
     public MessageDestinationUsageType getMessageDestinationUsage() {
         return messageDestinationUsage;
     }
 
-    /**
-     * Sets the value of the messageDestinationUsage property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MessageDestinationUsageType }
-     *     
-     */
     public void setMessageDestinationUsage(MessageDestinationUsageType value) {
         this.messageDestinationUsage = value;
     }
@@ -238,38 +190,14 @@ public class MessageDestinationRefType {
         return messageDestinationLink;
     }
 
-    /**
-     * Sets the value of the messageDestinationLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationLink(String value) {
         this.messageDestinationLink = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -303,26 +231,10 @@ public class MessageDestinationRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

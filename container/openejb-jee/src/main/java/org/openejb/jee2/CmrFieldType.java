@@ -103,74 +103,26 @@ public class CmrFieldType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the cmrFieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getCmrFieldName() {
         return cmrFieldName;
     }
 
-    /**
-     * Sets the value of the cmrFieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setCmrFieldName(String value) {
         this.cmrFieldName = value;
     }
 
-    /**
-     * Gets the value of the cmrFieldType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CmrFieldTypeType }
-     *     
-     */
     public CmrFieldTypeType getCmrFieldType() {
         return cmrFieldType;
     }
 
-    /**
-     * Sets the value of the cmrFieldType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CmrFieldTypeType }
-     *     
-     */
     public void setCmrFieldType(CmrFieldTypeType value) {
         this.cmrFieldType = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

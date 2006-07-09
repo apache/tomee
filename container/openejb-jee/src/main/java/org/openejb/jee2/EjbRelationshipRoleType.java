@@ -145,146 +145,50 @@ public class EjbRelationshipRoleType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the ejbRelationshipRoleName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbRelationshipRoleName() {
         return ejbRelationshipRoleName;
     }
 
-    /**
-     * Sets the value of the ejbRelationshipRoleName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbRelationshipRoleName(String value) {
         this.ejbRelationshipRoleName = value;
     }
 
-    /**
-     * Gets the value of the multiplicity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MultiplicityType }
-     *     
-     */
     public MultiplicityType getMultiplicity() {
         return multiplicity;
     }
 
-    /**
-     * Sets the value of the multiplicity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MultiplicityType }
-     *     
-     */
     public void setMultiplicity(MultiplicityType value) {
         this.multiplicity = value;
     }
 
-    /**
-     * Gets the value of the cascadeDelete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
-     */
     public EmptyType getCascadeDelete() {
         return cascadeDelete;
     }
 
-    /**
-     * Sets the value of the cascadeDelete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
-     */
     public void setCascadeDelete(EmptyType value) {
         this.cascadeDelete = value;
     }
 
-    /**
-     * Gets the value of the relationshipRoleSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RelationshipRoleSourceType }
-     *     
-     */
     public RelationshipRoleSourceType getRelationshipRoleSource() {
         return relationshipRoleSource;
     }
 
-    /**
-     * Sets the value of the relationshipRoleSource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RelationshipRoleSourceType }
-     *     
-     */
     public void setRelationshipRoleSource(RelationshipRoleSourceType value) {
         this.relationshipRoleSource = value;
     }
 
-    /**
-     * Gets the value of the cmrField property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CmrFieldType }
-     *     
-     */
     public CmrFieldType getCmrField() {
         return cmrField;
     }
 
-    /**
-     * Sets the value of the cmrField property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CmrFieldType }
-     *     
-     */
     public void setCmrField(CmrFieldType value) {
         this.cmrField = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

@@ -62,50 +62,18 @@ public class AroundInvokeType {
     @XmlElement(name = "method-name", required = true)
     protected String methodName;
 
-    /**
-     * Gets the value of the clazz property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getClazz() {
         return clazz;
     }
 
-    /**
-     * Sets the value of the clazz property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setClazz(String value) {
         this.clazz = value;
     }
 
-    /**
-     * Gets the value of the methodName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getMethodName() {
         return methodName;
     }
 
-    /**
-     * Sets the value of the methodName property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setMethodName(String value) {
         this.methodName = value;
     }

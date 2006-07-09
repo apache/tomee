@@ -96,14 +96,6 @@ public class RelationshipRoleSourceType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbName() {
         return ejbName;
     }
@@ -131,26 +123,10 @@ public class RelationshipRoleSourceType {
         this.ejbName = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

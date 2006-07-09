@@ -192,182 +192,62 @@ public class EjbJarType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the enterpriseBeans property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnterpriseBeansType }
-     *     
-     */
     public EnterpriseBeansType getEnterpriseBeans() {
         return enterpriseBeans;
     }
 
-    /**
-     * Sets the value of the enterpriseBeans property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnterpriseBeansType }
-     *     
-     */
     public void setEnterpriseBeans(EnterpriseBeansType value) {
         this.enterpriseBeans = value;
     }
 
-    /**
-     * Gets the value of the interceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InterceptorsType }
-     *     
-     */
     public InterceptorsType getInterceptors() {
         return interceptors;
     }
 
-    /**
-     * Sets the value of the interceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InterceptorsType }
-     *     
-     */
     public void setInterceptors(InterceptorsType value) {
         this.interceptors = value;
     }
 
-    /**
-     * Gets the value of the relationships property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RelationshipsType }
-     *     
-     */
     public RelationshipsType getRelationships() {
         return relationships;
     }
 
-    /**
-     * Sets the value of the relationships property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RelationshipsType }
-     *     
-     */
     public void setRelationships(RelationshipsType value) {
         this.relationships = value;
     }
 
-    /**
-     * Gets the value of the assemblyDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AssemblyDescriptorType }
-     *     
-     */
     public AssemblyDescriptorType getAssemblyDescriptor() {
         return assemblyDescriptor;
     }
 
-    /**
-     * Sets the value of the assemblyDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AssemblyDescriptorType }
-     *     
-     */
     public void setAssemblyDescriptor(AssemblyDescriptorType value) {
         this.assemblyDescriptor = value;
     }
 
-    /**
-     * Gets the value of the ejbClientJar property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbClientJar() {
         return ejbClientJar;
     }
 
-    /**
-     * Sets the value of the ejbClientJar property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbClientJar(String value) {
         this.ejbClientJar = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }
 
-    /**
-     * Gets the value of the metadataComplete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
     public Boolean isMetadataComplete() {
         return metadataComplete;
     }
 
-    /**
-     * Sets the value of the metadataComplete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
     public void setMetadataComplete(Boolean value) {
         this.metadataComplete = value;
     }
 
-    /**
-     * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getVersion() {
         if (version == null) {
             return "3.0";
@@ -376,14 +256,6 @@ public class EjbJarType {
         }
     }
 
-    /**
-     * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setVersion(String value) {
         this.version = value;
     }

@@ -97,74 +97,26 @@ public class ParamValueType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the paramName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getParamName() {
         return paramName;
     }
 
-    /**
-     * Sets the value of the paramName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setParamName(String value) {
         this.paramName = value;
     }
 
-    /**
-     * Gets the value of the paramValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getParamValue() {
         return paramValue;
     }
 
-    /**
-     * Sets the value of the paramValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setParamValue(String value) {
         this.paramValue = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

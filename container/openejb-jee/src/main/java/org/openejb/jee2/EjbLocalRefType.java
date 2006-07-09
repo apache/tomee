@@ -153,86 +153,30 @@ public class EjbLocalRefType {
         this.ejbRefName = value;
     }
 
-    /**
-     * Gets the value of the ejbRefType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRefTypeType }
-     *     
-     */
     public EjbRefTypeType getEjbRefType() {
         return ejbRefType;
     }
 
-    /**
-     * Sets the value of the ejbRefType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRefTypeType }
-     *     
-     */
     public void setEjbRefType(EjbRefTypeType value) {
         this.ejbRefType = value;
     }
 
-    /**
-     * Gets the value of the localHome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLocalHome() {
         return localHome;
     }
 
-    /**
-     * Sets the value of the localHome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLocalHome(String value) {
         this.localHome = value;
     }
 
-    /**
-     * Gets the value of the local property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLocal() {
         return local;
     }
 
-    /**
-     * Sets the value of the local property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLocal(String value) {
         this.local = value;
     }
 
-    /**
-     * Gets the value of the ejbLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbLink() {
         return ejbLink;
     }
@@ -262,26 +206,10 @@ public class EjbLocalRefType {
         this.ejbLink = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -315,26 +243,10 @@ public class EjbLocalRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

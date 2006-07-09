@@ -274,14 +274,6 @@ public class MessageDrivenBeanType {
         return this.icon;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbName() {
         return ejbName;
     }
@@ -309,146 +301,50 @@ public class MessageDrivenBeanType {
         this.ejbName = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
 
-    /**
-     * Gets the value of the ejbClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEjbClass() {
         return ejbClass;
     }
 
-    /**
-     * Sets the value of the ejbClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 
-    /**
-     * Gets the value of the messagingType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMessagingType() {
         return messagingType;
     }
 
-    /**
-     * Sets the value of the messagingType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessagingType(String value) {
         this.messagingType = value;
     }
 
-    /**
-     * Gets the value of the timeoutMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public NamedMethodType getTimeoutMethod() {
         return timeoutMethod;
     }
 
-    /**
-     * Sets the value of the timeoutMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NamedMethodType }
-     *     
-     */
     public void setTimeoutMethod(NamedMethodType value) {
         this.timeoutMethod = value;
     }
 
-    /**
-     * Gets the value of the transactionType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransactionTypeType }
-     *     
-     */
     public TransactionTypeType getTransactionType() {
         return transactionType;
     }
 
-    /**
-     * Sets the value of the transactionType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransactionTypeType }
-     *     
-     */
     public void setTransactionType(TransactionTypeType value) {
         this.transactionType = value;
     }
 
-    /**
-     * Gets the value of the messageDestinationType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMessageDestinationType() {
         return messageDestinationType;
     }
 
-    /**
-     * Sets the value of the messageDestinationType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationType(String value) {
         this.messageDestinationType = value;
     }
@@ -474,38 +370,14 @@ public class MessageDrivenBeanType {
         return messageDestinationLink;
     }
 
-    /**
-     * Sets the value of the messageDestinationLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationLink(String value) {
         this.messageDestinationLink = value;
     }
 
-    /**
-     * Gets the value of the activationConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ActivationConfigType }
-     *     
-     */
     public ActivationConfigType getActivationConfig() {
         return activationConfig;
     }
 
-    /**
-     * Sets the value of the activationConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ActivationConfigType }
-     *     
-     */
     public void setActivationConfig(ActivationConfigType value) {
         this.activationConfig = value;
     }
@@ -858,50 +730,18 @@ public class MessageDrivenBeanType {
         return this.preDestroy;
     }
 
-    /**
-     * Gets the value of the securityIdentity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public SecurityIdentityType getSecurityIdentity() {
         return securityIdentity;
     }
 
-    /**
-     * Sets the value of the securityIdentity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityIdentityType }
-     *     
-     */
     public void setSecurityIdentity(SecurityIdentityType value) {
         this.securityIdentity = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

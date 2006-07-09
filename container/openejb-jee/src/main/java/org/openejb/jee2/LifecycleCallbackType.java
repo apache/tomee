@@ -61,50 +61,18 @@ public class LifecycleCallbackType {
     @XmlElement(name = "lifecycle-callback-method", required = true)
     protected String lifecycleCallbackMethod;
 
-    /**
-     * Gets the value of the lifecycleCallbackClass property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getLifecycleCallbackClass() {
         return lifecycleCallbackClass;
     }
 
-    /**
-     * Sets the value of the lifecycleCallbackClass property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setLifecycleCallbackClass(String value) {
         this.lifecycleCallbackClass = value;
     }
 
-    /**
-     * Gets the value of the lifecycleCallbackMethod property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getLifecycleCallbackMethod() {
         return lifecycleCallbackMethod;
     }
 
-    /**
-     * Sets the value of the lifecycleCallbackMethod property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setLifecycleCallbackMethod(String value) {
         this.lifecycleCallbackMethod = value;
     }

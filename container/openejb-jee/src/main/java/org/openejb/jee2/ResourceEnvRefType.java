@@ -130,74 +130,26 @@ public class ResourceEnvRefType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the resourceEnvRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getResourceEnvRefName() {
         return resourceEnvRefName;
     }
 
-    /**
-     * Sets the value of the resourceEnvRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setResourceEnvRefName(String value) {
         this.resourceEnvRefName = value;
     }
 
-    /**
-     * Gets the value of the resourceEnvRefType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getResourceEnvRefType() {
         return resourceEnvRefType;
     }
 
-    /**
-     * Sets the value of the resourceEnvRefType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setResourceEnvRefType(String value) {
         this.resourceEnvRefType = value;
     }
 
-    /**
-     * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMappedName() {
         return mappedName;
     }
 
-    /**
-     * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMappedName(String value) {
         this.mappedName = value;
     }
@@ -231,26 +183,10 @@ public class ResourceEnvRefType {
         return this.injectionTarget;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

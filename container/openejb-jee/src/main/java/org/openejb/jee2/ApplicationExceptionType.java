@@ -71,74 +71,26 @@ public class ApplicationExceptionType {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the exceptionClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getExceptionClass() {
         return exceptionClass;
     }
 
-    /**
-     * Sets the value of the exceptionClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setExceptionClass(String value) {
         this.exceptionClass = value;
     }
 
-    /**
-     * Gets the value of the rollback property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
-     */
     public boolean getRollback() {
         return rollback;
     }
 
-    /**
-     * Sets the value of the rollback property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
-     */
     public void setRollback(boolean value) {
         this.rollback = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }

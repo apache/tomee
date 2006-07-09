@@ -68,50 +68,18 @@ public class InjectionTargetType {
     @XmlElement(name = "injection-target-name", required = true)
     protected String injectionTargetName;
 
-    /**
-     * Gets the value of the injectionTargetClass property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getInjectionTargetClass() {
         return injectionTargetClass;
     }
 
-    /**
-     * Sets the value of the injectionTargetClass property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setInjectionTargetClass(String value) {
         this.injectionTargetClass = value;
     }
 
-    /**
-     * Gets the value of the injectionTargetName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getInjectionTargetName() {
         return injectionTargetName;
     }
 
-    /**
-     * Sets the value of the injectionTargetName property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setInjectionTargetName(String value) {
         this.injectionTargetName = value;
     }

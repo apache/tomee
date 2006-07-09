@@ -279,14 +279,6 @@ public class MethodType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the ejbName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getEjbName() {
         return ejbName;
     }
@@ -314,38 +306,14 @@ public class MethodType {
         this.ejbName = value;
     }
 
-    /**
-     * Gets the value of the methodIntf property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MethodIntfType }
-     *
-     */
     public MethodIntfType getMethodIntf() {
         return methodIntf;
     }
 
-    /**
-     * Sets the value of the methodIntf property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MethodIntfType }
-     *
-     */
     public void setMethodIntf(MethodIntfType value) {
         this.methodIntf = value;
     }
 
-    /**
-     * Gets the value of the methodName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getMethodName() {
         return methodName;
     }
@@ -360,50 +328,18 @@ public class MethodType {
         this.methodName = value;
     }
 
-    /**
-     * Gets the value of the methodParams property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MethodParamsType }
-     *     
-     */
     public MethodParamsType getMethodParams() {
         return methodParams;
     }
 
-    /**
-     * Sets the value of the methodParams property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodParamsType }
-     *     
-     */
     public void setMethodParams(MethodParamsType value) {
         this.methodParams = value;
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
     }
