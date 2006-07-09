@@ -109,7 +109,7 @@ public class ServiceRefType {
     @XmlElement(name = "handler-chains")
     protected ServiceRefHandlerChainsType handlerChains;
     @XmlElement(name = "mapped-name")
-    protected XsdStringType mappedName;
+    protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
@@ -326,11 +326,6 @@ public class ServiceRefType {
 
     /**
      * Gets the value of the serviceQname property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdQNameType }
-     *     
      */
     public String getServiceQname() {
         return serviceQname;
@@ -338,11 +333,6 @@ public class ServiceRefType {
 
     /**
      * Sets the value of the serviceQname property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdQNameType }
-     *     
      */
     public void setServiceQname(String value) {
         this.serviceQname = value;
@@ -435,10 +425,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getMappedName() {
+    public java.lang.String getMappedName() {
         return mappedName;
     }
 
@@ -447,10 +437,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setMappedName(XsdStringType value) {
+    public void setMappedName(java.lang.String value) {
         this.mappedName = value;
     }
 

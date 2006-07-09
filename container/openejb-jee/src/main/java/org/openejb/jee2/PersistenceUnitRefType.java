@@ -91,7 +91,7 @@ public class PersistenceUnitRefType {
     @XmlElement(name = "persistence-unit-name")
     protected java.lang.String persistenceUnitName;
     @XmlElement(name = "mapped-name")
-    protected XsdStringType mappedName;
+    protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
@@ -181,10 +181,10 @@ public class PersistenceUnitRefType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getMappedName() {
+    public java.lang.String getMappedName() {
         return mappedName;
     }
 
@@ -193,10 +193,10 @@ public class PersistenceUnitRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setMappedName(XsdStringType value) {
+    public void setMappedName(java.lang.String value) {
         this.mappedName = value;
     }
 

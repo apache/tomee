@@ -86,9 +86,9 @@ public class EnvEntryType {
     @XmlElement(name = "env-entry-type")
     protected EnvEntryTypeValuesType envEntryType;
     @XmlElement(name = "env-entry-value")
-    protected XsdStringType envEntryValue;
+    protected java.lang.String envEntryValue;
     @XmlElement(name = "mapped-name")
-    protected XsdStringType mappedName;
+    protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
@@ -178,10 +178,10 @@ public class EnvEntryType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getEnvEntryValue() {
+    public java.lang.String getEnvEntryValue() {
         return envEntryValue;
     }
 
@@ -190,10 +190,10 @@ public class EnvEntryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setEnvEntryValue(XsdStringType value) {
+    public void setEnvEntryValue(java.lang.String value) {
         this.envEntryValue = value;
     }
 
@@ -202,10 +202,10 @@ public class EnvEntryType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getMappedName() {
+    public java.lang.String getMappedName() {
         return mappedName;
     }
 
@@ -214,10 +214,10 @@ public class EnvEntryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setMappedName(XsdStringType value) {
+    public void setMappedName(java.lang.String value) {
         this.mappedName = value;
     }
 

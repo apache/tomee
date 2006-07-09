@@ -53,9 +53,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class PropertyType {
 
     @XmlElement(required = true)
-    protected XsdStringType name;
+    protected java.lang.String name;
     @XmlElement(required = true)
-    protected XsdStringType value;
+    protected java.lang.String value;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -66,10 +66,10 @@ public class PropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getName() {
+    public java.lang.String getName() {
         return name;
     }
 
@@ -78,10 +78,10 @@ public class PropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setName(XsdStringType value) {
+    public void setName(java.lang.String value) {
         this.name = value;
     }
 
@@ -90,10 +90,10 @@ public class PropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getValue() {
+    public java.lang.String getValue() {
         return value;
     }
 
@@ -102,10 +102,10 @@ public class PropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setValue(XsdStringType value) {
+    public void setValue(java.lang.String value) {
         this.value = value;
     }
 

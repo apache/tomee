@@ -62,7 +62,7 @@ public class ParamValueType {
     @XmlElement(name = "param-name", required = true)
     protected java.lang.String paramName;
     @XmlElement(name = "param-value", required = true)
-    protected XsdStringType paramValue;
+    protected java.lang.String paramValue;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -126,10 +126,10 @@ public class ParamValueType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getParamValue() {
+    public java.lang.String getParamValue() {
         return paramValue;
     }
 
@@ -138,10 +138,10 @@ public class ParamValueType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setParamValue(XsdStringType value) {
+    public void setParamValue(java.lang.String value) {
         this.paramValue = value;
     }
 

@@ -92,14 +92,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link XsdQNameType }
-     * 
-     */
-    public XsdQNameType createXsdQNameType() {
-        return new XsdQNameType();
-    }
-
-    /**
      * Create an instance of {@link MethodType }
      * 
      */
@@ -713,14 +705,6 @@ public class ObjectFactory {
      */
     public InjectionTargetType createInjectionTargetType() {
         return new InjectionTargetType();
-    }
-
-    /**
-     * Create an instance of {@link XsdStringType }
-     * 
-     */
-    public XsdStringType createXsdStringType() {
-        return new XsdStringType();
     }
 
     /**

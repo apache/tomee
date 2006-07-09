@@ -81,7 +81,7 @@ public class QueryType {
     @XmlElement(name = "result-type-mapping")
     protected ResultTypeMappingType resultTypeMapping;
     @XmlElement(name = "ejb-ql", required = true)
-    protected XsdStringType ejbQl;
+    protected java.lang.String ejbQl;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -164,10 +164,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getEjbQl() {
+    public java.lang.String getEjbQl() {
         return ejbQl;
     }
 
@@ -176,10 +176,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setEjbQl(XsdStringType value) {
+    public void setEjbQl(java.lang.String value) {
         this.ejbQl = value;
     }
 

@@ -57,9 +57,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ActivationConfigPropertyType {
 
     @XmlElement(name = "activation-config-property-name", required = true)
-    protected XsdStringType activationConfigPropertyName;
+    protected java.lang.String activationConfigPropertyName;
     @XmlElement(name = "activation-config-property-value", required = true)
-    protected XsdStringType activationConfigPropertyValue;
+    protected java.lang.String activationConfigPropertyValue;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -70,10 +70,10 @@ public class ActivationConfigPropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getActivationConfigPropertyName() {
+    public java.lang.String getActivationConfigPropertyName() {
         return activationConfigPropertyName;
     }
 
@@ -82,10 +82,10 @@ public class ActivationConfigPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setActivationConfigPropertyName(XsdStringType value) {
+    public void setActivationConfigPropertyName(java.lang.String value) {
         this.activationConfigPropertyName = value;
     }
 
@@ -94,10 +94,10 @@ public class ActivationConfigPropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getActivationConfigPropertyValue() {
+    public java.lang.String getActivationConfigPropertyValue() {
         return activationConfigPropertyValue;
     }
 
@@ -106,10 +106,10 @@ public class ActivationConfigPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setActivationConfigPropertyValue(XsdStringType value) {
+    public void setActivationConfigPropertyValue(java.lang.String value) {
         this.activationConfigPropertyValue = value;
     }
 

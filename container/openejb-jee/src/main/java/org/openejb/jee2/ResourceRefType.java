@@ -102,7 +102,7 @@ public class ResourceRefType {
     @XmlElement(name = "res-sharing-scope")
     protected ResSharingScopeType resSharingScope;
     @XmlElement(name = "mapped-name")
-    protected XsdStringType mappedName;
+    protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
@@ -240,10 +240,10 @@ public class ResourceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public XsdStringType getMappedName() {
+    public java.lang.String getMappedName() {
         return mappedName;
     }
 
@@ -252,10 +252,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdStringType }
+     *     {@link java.lang.String }
      *     
      */
-    public void setMappedName(XsdStringType value) {
+    public void setMappedName(java.lang.String value) {
         this.mappedName = value;
     }
 

@@ -276,10 +276,6 @@ public class ServiceRefHandlerType {
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link XsdQNameType }
-     * 
-     * 
      */
     public List<String> getSoapHeader() {
         if (soapHeader == null) {
