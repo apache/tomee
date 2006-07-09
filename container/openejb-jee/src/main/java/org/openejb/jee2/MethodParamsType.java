@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class MethodParamsType {
 
     @XmlElement(name = "method-param", required = true)
-    protected List<JavaTypeType> methodParam;
+    protected List<String> methodParam;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -62,29 +62,29 @@ public class MethodParamsType {
 
     /**
      * Gets the value of the methodParam property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the methodParam property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMethodParam().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JavaTypeType }
-     * 
-     * 
+     * {@link String }
+     *
+     *
      */
-    public List<JavaTypeType> getMethodParam() {
+    public List<String> getMethodParam() {
         if (methodParam == null) {
-            methodParam = new ArrayList<JavaTypeType>();
+            methodParam = new ArrayList<String>();
         }
         return this.methodParam;
     }

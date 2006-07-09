@@ -74,7 +74,7 @@ public class MethodPermissionType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "role-name", required = true)
-    protected List<RoleNameType> roleName;
+    protected List<String> roleName;
     protected EmptyType unchecked;
     @XmlElement(required = true)
     protected List<MethodType> method;
@@ -85,25 +85,25 @@ public class MethodPermissionType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -114,29 +114,29 @@ public class MethodPermissionType {
 
     /**
      * Gets the value of the roleName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the roleName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRoleName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RoleNameType }
-     * 
-     * 
+     * {@link String }
+     *
+     *
      */
-    public List<RoleNameType> getRoleName() {
+    public List<String> getRoleName() {
         if (roleName == null) {
-            roleName = new ArrayList<RoleNameType>();
+            roleName = new ArrayList<String>();
         }
         return this.roleName;
     }

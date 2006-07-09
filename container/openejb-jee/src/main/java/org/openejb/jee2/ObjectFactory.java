@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link String }
-     * 
+     *
      */
     public String createString() {
         return new String();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRefType }
-     * 
+     *
      */
     public ServiceRefType createServiceRefType() {
         return new ServiceRefType();
@@ -141,7 +141,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionTypeType }
-     * 
+     *
      */
     public TransactionTypeType createTransactionTypeType() {
         return new TransactionTypeType();
@@ -149,7 +149,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InterceptorOrderType }
-     * 
+     *
      */
     public InterceptorOrderType createInterceptorOrderType() {
         return new InterceptorOrderType();
@@ -157,7 +157,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRefHandlerChainsType }
-     * 
+     *
      */
     public ServiceRefHandlerChainsType createServiceRefHandlerChainsType() {
         return new ServiceRefHandlerChainsType();
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XsdNMTOKENType }
-     * 
+     *
      */
     public XsdNMTOKENType createXsdNMTOKENType() {
         return new XsdNMTOKENType();
@@ -173,40 +173,23 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbNameType }
-     * 
+     *
      */
     public EjbNameType createEjbNameType() {
         return new EjbNameType();
     }
 
     /**
-     * Create an instance of {@link JavaIdentifierType }
-     * 
-     */
-    public JavaIdentifierType createJavaIdentifierType() {
-        return new JavaIdentifierType();
-    }
-
-    /**
      * Create an instance of {@link MessageDrivenBeanType }
-     * 
+     *
      */
     public MessageDrivenBeanType createMessageDrivenBeanType() {
         return new MessageDrivenBeanType();
     }
 
-
-    /**
-     * Create an instance of {@link RoleNameType }
-     * 
-     */
-    public RoleNameType createRoleNameType() {
-        return new RoleNameType();
-    }
-
     /**
      * Create an instance of {@link XsdAnyURIType }
-     * 
+     *
      */
     public XsdAnyURIType createXsdAnyURIType() {
         return new XsdAnyURIType();
@@ -214,7 +197,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodParamsType }
-     * 
+     *
      */
     public MethodParamsType createMethodParamsType() {
         return new MethodParamsType();
@@ -222,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodIntfType }
-     * 
+     *
      */
     public MethodIntfType createMethodIntfType() {
         return new MethodIntfType();
@@ -230,7 +213,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InterceptorsType }
-     * 
+     *
      */
     public InterceptorsType createInterceptorsType() {
         return new InterceptorsType();
@@ -238,7 +221,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InterceptorBindingType }
-     * 
+     *
      */
     public InterceptorBindingType createInterceptorBindingType() {
         return new InterceptorBindingType();
@@ -246,7 +229,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SessionTypeType }
-     * 
+     *
      */
     public SessionTypeType createSessionTypeType() {
         return new SessionTypeType();
@@ -254,7 +237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortComponentRefType }
-     * 
+     *
      */
     public PortComponentRefType createPortComponentRefType() {
         return new PortComponentRefType();
@@ -262,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DisplayNameType }
-     * 
+     *
      */
     public DisplayNameType createDisplayNameType() {
         return new DisplayNameType();
@@ -270,7 +253,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AssemblyDescriptorType }
-     * 
+     *
      */
     public AssemblyDescriptorType createAssemblyDescriptorType() {
         return new AssemblyDescriptorType();
@@ -278,7 +261,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersistenceUnitRefType }
-     * 
+     *
      */
     public PersistenceUnitRefType createPersistenceUnitRefType() {
         return new PersistenceUnitRefType();
@@ -286,7 +269,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SessionBeanType }
-     * 
+     *
      */
     public SessionBeanType createSessionBeanType() {
         return new SessionBeanType();
@@ -294,7 +277,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoveMethodType }
-     * 
+     *
      */
     public RemoveMethodType createRemoveMethodType() {
         return new RemoveMethodType();
@@ -302,7 +285,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XsdPositiveIntegerType }
-     * 
+     *
      */
     public XsdPositiveIntegerType createXsdPositiveIntegerType() {
         return new XsdPositiveIntegerType();
@@ -310,7 +293,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedMethodType }
-     * 
+     *
      */
     public NamedMethodType createNamedMethodType() {
         return new NamedMethodType();
@@ -318,7 +301,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbLocalRefType }
-     * 
+     *
      */
     public EjbLocalRefType createEjbLocalRefType() {
         return new EjbLocalRefType();
@@ -326,7 +309,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiplicityType }
-     * 
+     *
      */
     public MultiplicityType createMultiplicityType() {
         return new MultiplicityType();
@@ -334,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecurityIdentityType }
-     * 
+     *
      */
     public SecurityIdentityType createSecurityIdentityType() {
         return new SecurityIdentityType();
@@ -342,7 +325,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AroundInvokeType }
-     * 
+     *
      */
     public AroundInvokeType createAroundInvokeType() {
         return new AroundInvokeType();
@@ -350,7 +333,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRefHandlerChainType }
-     * 
+     *
      */
     public ServiceRefHandlerChainType createServiceRefHandlerChainType() {
         return new ServiceRefHandlerChainType();
@@ -358,7 +341,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRefHandlerType }
-     * 
+     *
      */
     public ServiceRefHandlerType createServiceRefHandlerType() {
         return new ServiceRefHandlerType();
@@ -366,7 +349,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RunAsType }
-     * 
+     *
      */
     public RunAsType createRunAsType() {
         return new RunAsType();
@@ -374,7 +357,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodPermissionType }
-     * 
+     *
      */
     public MethodPermissionType createMethodPermissionType() {
         return new MethodPermissionType();
@@ -382,7 +365,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationType }
-     * 
+     *
      */
     public EjbRelationType createEjbRelationType() {
         return new EjbRelationType();
@@ -390,7 +373,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescriptionType }
-     * 
+     *
      */
     public DescriptionType createDescriptionType() {
         return new DescriptionType();
@@ -398,7 +381,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParamValueType }
-     * 
+     *
      */
     public ParamValueType createParamValueType() {
         return new ParamValueType();
@@ -406,7 +389,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyType }
-     * 
+     *
      */
     public PropertyType createPropertyType() {
         return new PropertyType();
@@ -414,7 +397,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmpVersionType }
-     * 
+     *
      */
     public CmpVersionType createCmpVersionType() {
         return new CmpVersionType();
@@ -422,7 +405,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecurityRoleRefType }
-     * 
+     *
      */
     public SecurityRoleRefType createSecurityRoleRefType() {
         return new SecurityRoleRefType();
@@ -430,7 +413,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRefType }
-     * 
+     *
      */
     public EjbRefType createEjbRefType() {
         return new EjbRefType();
@@ -438,7 +421,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmrFieldType }
-     * 
+     *
      */
     public CmrFieldType createCmrFieldType() {
         return new CmrFieldType();
@@ -446,7 +429,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType }
-     * 
+     *
      */
     public QueryType createQueryType() {
         return new QueryType();
@@ -454,7 +437,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryMethodType }
-     * 
+     *
      */
     public QueryMethodType createQueryMethodType() {
         return new QueryMethodType();
@@ -462,7 +445,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbJarType }
-     * 
+     *
      */
     public EjbJarType createEjbJarType() {
         return new EjbJarType();
@@ -470,7 +453,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecurityRoleType }
-     * 
+     *
      */
     public SecurityRoleType createSecurityRoleType() {
         return new SecurityRoleType();
@@ -478,7 +461,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmpFieldType }
-     * 
+     *
      */
     public CmpFieldType createCmpFieldType() {
         return new CmpFieldType();
@@ -486,7 +469,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityBeanType }
-     * 
+     *
      */
     public EntityBeanType createEntityBeanType() {
         return new EntityBeanType();
@@ -494,7 +477,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListenerType }
-     * 
+     *
      */
     public ListenerType createListenerType() {
         return new ListenerType();
@@ -502,7 +485,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersistenceContextTypeType }
-     * 
+     *
      */
     public PersistenceContextTypeType createPersistenceContextTypeType() {
         return new PersistenceContextTypeType();
@@ -510,7 +493,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceEnvRefType }
-     * 
+     *
      */
     public ResourceEnvRefType createResourceEnvRefType() {
         return new ResourceEnvRefType();
@@ -518,7 +501,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodNameType }
-     * 
+     *
      */
     public MethodNameType createMethodNameType() {
         return new MethodNameType();
@@ -526,7 +509,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RelationshipsType }
-     * 
+     *
      */
     public RelationshipsType createRelationshipsType() {
         return new RelationshipsType();
@@ -534,7 +517,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GenericBooleanType }
-     * 
+     *
      */
     public GenericBooleanType createGenericBooleanType() {
         return new GenericBooleanType();
@@ -542,7 +525,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TrueFalseType }
-     * 
+     *
      */
     public TrueFalseType createTrueFalseType() {
         return new TrueFalseType();
@@ -550,7 +533,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XsdNonNegativeIntegerType }
-     * 
+     *
      */
     public XsdNonNegativeIntegerType createXsdNonNegativeIntegerType() {
         return new XsdNonNegativeIntegerType();
@@ -558,7 +541,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnterpriseBeansType }
-     * 
+     *
      */
     public EnterpriseBeansType createEnterpriseBeansType() {
         return new EnterpriseBeansType();
@@ -566,7 +549,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDestinationType }
-     * 
+     *
      */
     public MessageDestinationType createMessageDestinationType() {
         return new MessageDestinationType();
@@ -574,7 +557,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PathType }
-     * 
+     *
      */
     public PathType createPathType() {
         return new PathType();
@@ -582,7 +565,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XsdBooleanType }
-     * 
+     *
      */
     public XsdBooleanType createXsdBooleanType() {
         return new XsdBooleanType();
@@ -590,7 +573,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTypeMappingType }
-     * 
+     *
      */
     public ResultTypeMappingType createResultTypeMappingType() {
         return new ResultTypeMappingType();
@@ -598,7 +581,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerTransactionType }
-     * 
+     *
      */
     public ContainerTransactionType createContainerTransactionType() {
         return new ContainerTransactionType();
@@ -606,7 +589,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExcludeListType }
-     * 
+     *
      */
     public ExcludeListType createExcludeListType() {
         return new ExcludeListType();
@@ -614,7 +597,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InjectionTargetType }
-     * 
+     *
      */
     public InjectionTargetType createInjectionTargetType() {
         return new InjectionTargetType();
@@ -622,7 +605,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersistenceContextRefType }
-     * 
+     *
      */
     public PersistenceContextRefType createPersistenceContextRefType() {
         return new PersistenceContextRefType();
@@ -630,7 +613,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnvEntryType }
-     * 
+     *
      */
     public EnvEntryType createEnvEntryType() {
         return new EnvEntryType();
@@ -638,7 +621,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActivationConfigPropertyType }
-     * 
+     *
      */
     public ActivationConfigPropertyType createActivationConfigPropertyType() {
         return new ActivationConfigPropertyType();
@@ -646,7 +629,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LifecycleCallbackType }
-     * 
+     *
      */
     public LifecycleCallbackType createLifecycleCallbackType() {
         return new LifecycleCallbackType();
@@ -654,7 +637,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRefTypeType }
-     * 
+     *
      */
     public EjbRefTypeType createEjbRefTypeType() {
         return new EjbRefTypeType();
@@ -662,7 +645,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceRefType }
-     * 
+     *
      */
     public ResourceRefType createResourceRefType() {
         return new ResourceRefType();
@@ -670,18 +653,10 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InterceptorType }
-     * 
+     *
      */
     public InterceptorType createInterceptorType() {
         return new InterceptorType();
-    }
-
-    /**
-     * Create an instance of {@link JavaTypeType }
-     * 
-     */
-    public JavaTypeType createJavaTypeType() {
-        return new JavaTypeType();
     }
 
     /**

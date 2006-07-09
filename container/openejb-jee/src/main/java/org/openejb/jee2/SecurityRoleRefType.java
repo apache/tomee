@@ -65,9 +65,9 @@ public class SecurityRoleRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "role-name", required = true)
-    protected RoleNameType roleName;
+    protected String roleName;
     @XmlElement(name = "role-link")
-    protected RoleNameType roleLink;
+    protected String roleLink;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -75,25 +75,25 @@ public class SecurityRoleRefType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -104,49 +104,49 @@ public class SecurityRoleRefType {
 
     /**
      * Gets the value of the roleName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link RoleNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public RoleNameType getRoleName() {
+    public String getRoleName() {
         return roleName;
     }
 
     /**
      * Sets the value of the roleName property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link RoleNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public void setRoleName(RoleNameType value) {
+    public void setRoleName(String value) {
         this.roleName = value;
     }
 
     /**
      * Gets the value of the roleLink property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link RoleNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public RoleNameType getRoleLink() {
+    public String getRoleLink() {
         return roleLink;
     }
 
     /**
      * Sets the value of the roleLink property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link RoleNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public void setRoleLink(RoleNameType value) {
+    public void setRoleLink(String value) {
         this.roleLink = value;
     }
 

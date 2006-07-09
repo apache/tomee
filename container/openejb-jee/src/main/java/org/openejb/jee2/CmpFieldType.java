@@ -59,7 +59,7 @@ public class CmpFieldType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "field-name", required = true)
-    protected JavaIdentifierType fieldName;
+    protected String fieldName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -67,25 +67,25 @@ public class CmpFieldType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -96,25 +96,25 @@ public class CmpFieldType {
 
     /**
      * Gets the value of the fieldName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public JavaIdentifierType getFieldName() {
+    public String getFieldName() {
         return fieldName;
     }
 
     /**
      * Sets the value of the fieldName property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public void setFieldName(JavaIdentifierType value) {
+    public void setFieldName(String value) {
         this.fieldName = value;
     }
 

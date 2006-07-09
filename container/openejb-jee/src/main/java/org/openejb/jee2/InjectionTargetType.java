@@ -66,15 +66,15 @@ public class InjectionTargetType {
     @XmlElement(name = "injection-target-class", required = true)
     protected String injectionTargetClass;
     @XmlElement(name = "injection-target-name", required = true)
-    protected JavaIdentifierType injectionTargetName;
+    protected String injectionTargetName;
 
     /**
      * Gets the value of the injectionTargetClass property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInjectionTargetClass() {
         return injectionTargetClass;
@@ -82,11 +82,11 @@ public class InjectionTargetType {
 
     /**
      * Sets the value of the injectionTargetClass property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInjectionTargetClass(String value) {
         this.injectionTargetClass = value;
@@ -94,25 +94,25 @@ public class InjectionTargetType {
 
     /**
      * Gets the value of the injectionTargetName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public JavaIdentifierType getInjectionTargetName() {
+    public String getInjectionTargetName() {
         return injectionTargetName;
     }
 
     /**
      * Sets the value of the injectionTargetName property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public void setInjectionTargetName(JavaIdentifierType value) {
+    public void setInjectionTargetName(String value) {
         this.injectionTargetName = value;
     }
 

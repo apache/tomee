@@ -214,7 +214,7 @@ public class EntityBeanType {
     @XmlElement(name = "cmp-version")
     protected CmpVersionType cmpVersion;
     @XmlElement(name = "abstract-schema-name")
-    protected JavaIdentifierType abstractSchemaName;
+    protected String abstractSchemaName;
     @XmlElement(name = "cmp-field", required = true)
     protected List<CmpFieldType> cmpField;
     @XmlElement(name = "primkey-field")
@@ -254,25 +254,25 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -283,25 +283,25 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the displayName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DisplayNameType }
-     * 
-     * 
+     *
+     *
      */
     public List<DisplayNameType> getDisplayName() {
         if (displayName == null) {
@@ -312,25 +312,25 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the icon property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IconType }
-     * 
-     * 
+     *
+     *
      */
     public List<IconType> getIcon() {
         if (icon == null) {
@@ -341,11 +341,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the ejbName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EjbNameType }
-     *     
+     *
      */
     public EjbNameType getEjbName() {
         return ejbName;
@@ -353,11 +353,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the ejbName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EjbNameType }
-     *     
+     *
      */
     public void setEjbName(EjbNameType value) {
         this.ejbName = value;
@@ -365,11 +365,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the mappedName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public java.lang.String getMappedName() {
         return mappedName;
@@ -377,11 +377,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the mappedName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public void setMappedName(java.lang.String value) {
         this.mappedName = value;
@@ -389,11 +389,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the home property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHome() {
         return home;
@@ -401,11 +401,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the home property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHome(String value) {
         this.home = value;
@@ -413,11 +413,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the remote property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemote() {
         return remote;
@@ -425,11 +425,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the remote property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemote(String value) {
         this.remote = value;
@@ -437,11 +437,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the localHome property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocalHome() {
         return localHome;
@@ -449,11 +449,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the localHome property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalHome(String value) {
         this.localHome = value;
@@ -461,11 +461,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the local property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocal() {
         return local;
@@ -473,11 +473,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the local property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocal(String value) {
         this.local = value;
@@ -485,11 +485,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the ejbClass property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEjbClass() {
         return ejbClass;
@@ -497,11 +497,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the ejbClass property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEjbClass(String value) {
         this.ejbClass = value;
@@ -509,11 +509,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the persistenceType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PersistenceTypeType }
-     *     
+     *
      */
     public PersistenceTypeType getPersistenceType() {
         return persistenceType;
@@ -521,11 +521,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the persistenceType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PersistenceTypeType }
-     *     
+     *
      */
     public void setPersistenceType(PersistenceTypeType value) {
         this.persistenceType = value;
@@ -533,11 +533,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the primKeyClass property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPrimKeyClass() {
         return primKeyClass;
@@ -545,11 +545,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the primKeyClass property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPrimKeyClass(String value) {
         this.primKeyClass = value;
@@ -557,11 +557,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the reentrant property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TrueFalseType }
-     *     
+     *
      */
     public TrueFalseType getReentrant() {
         return reentrant;
@@ -569,11 +569,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the reentrant property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TrueFalseType }
-     *     
+     *
      */
     public void setReentrant(TrueFalseType value) {
         this.reentrant = value;
@@ -581,11 +581,11 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the cmpVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CmpVersionType }
-     *     
+     *
      */
     public CmpVersionType getCmpVersion() {
         return cmpVersion;
@@ -593,11 +593,11 @@ public class EntityBeanType {
 
     /**
      * Sets the value of the cmpVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CmpVersionType }
-     *     
+     *
      */
     public void setCmpVersion(CmpVersionType value) {
         this.cmpVersion = value;
@@ -605,25 +605,25 @@ public class EntityBeanType {
 
     /**
      * Gets the value of the abstractSchemaName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public JavaIdentifierType getAbstractSchemaName() {
+    public String getAbstractSchemaName() {
         return abstractSchemaName;
     }
 
     /**
      * Sets the value of the abstractSchemaName property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link JavaIdentifierType }
-     *     
+     *     {@link String }
+     *
      */
-    public void setAbstractSchemaName(JavaIdentifierType value) {
+    public void setAbstractSchemaName(String value) {
         this.abstractSchemaName = value;
     }
 
