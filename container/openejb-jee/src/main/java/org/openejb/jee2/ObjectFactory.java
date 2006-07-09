@@ -203,13 +203,6 @@ public class ObjectFactory {
         return new MessageDrivenBeanType();
     }
 
-    /**
-     * Create an instance of {@link EjbLinkType }
-     * 
-     */
-    public EjbLinkType createEjbLinkType() {
-        return new EjbLinkType();
-    }
 
     /**
      * Create an instance of {@link RoleNameType }
@@ -441,14 +434,6 @@ public class ObjectFactory {
      */
     public CmpVersionType createCmpVersionType() {
         return new CmpVersionType();
-    }
-
-    /**
-     * Create an instance of {@link MessageDestinationLinkType }
-     * 
-     */
-    public MessageDestinationLinkType createMessageDestinationLinkType() {
-        return new MessageDestinationLinkType();
     }
 
     /**

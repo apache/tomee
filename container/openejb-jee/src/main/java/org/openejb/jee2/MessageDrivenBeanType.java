@@ -153,7 +153,7 @@ public class MessageDrivenBeanType {
     @XmlElement(name = "message-destination-type")
     protected String messageDestinationType;
     @XmlElement(name = "message-destination-link")
-    protected MessageDestinationLinkType messageDestinationLink;
+    protected String messageDestinationLink;
     @XmlElement(name = "activation-config")
     protected ActivationConfigType activationConfig;
     @XmlElement(name = "around-invoke", required = true)
@@ -443,14 +443,23 @@ public class MessageDrivenBeanType {
     }
 
     /**
-     * Gets the value of the messageDestinationLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MessageDestinationLinkType }
-     *     
+     * 	The Assembler sets the value to reflect the flow of messages
+     * 	between producers and consumers in the application.
+     *
+     * 	The value must be the message-destination-name of a message
+     * 	destination in the same Deployment File or in another
+     * 	Deployment File in the same Java EE application unit.
+     *
+     * 	Alternatively, the value may be composed of a path name
+     * 	specifying a Deployment File containing the referenced
+     * 	message destination with the message-destination-name of the
+     * 	destination appended and separated from the path name by
+     * 	"#". The path name is relative to the Deployment File
+     * 	containing Deployment Component that is referencing the
+     * 	message destination.  This allows multiple message
+     * 	destinations with the same name to be uniquely identified.
      */
-    public MessageDestinationLinkType getMessageDestinationLink() {
+    public String getMessageDestinationLink() {
         return messageDestinationLink;
     }
 
@@ -459,10 +468,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link MessageDestinationLinkType }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationLink(MessageDestinationLinkType value) {
+    public void setMessageDestinationLink(String value) {
         this.messageDestinationLink = value;
     }
 

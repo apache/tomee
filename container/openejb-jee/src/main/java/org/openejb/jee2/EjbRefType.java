@@ -93,7 +93,7 @@ public class EjbRefType {
     protected String home;
     protected String remote;
     @XmlElement(name = "ejb-link")
-    protected EjbLinkType ejbLink;
+    protected String ejbLink;
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
@@ -229,14 +229,27 @@ public class EjbRefType {
     }
 
     /**
-     * Gets the value of the ejbLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbLinkType }
-     *     
+     * 	  The value of the ejb-link element must be the ejb-name of an
+     * 	  enterprise bean in the same ejb-jar file or in another ejb-jar
+     * 	  file in the same Java EE application unit.
+     *
+     * 	  Alternatively, the name in the ejb-link element may be
+     * 	  composed of a path name specifying the ejb-jar containing the
+     * 	  referenced enterprise bean with the ejb-name of the target
+     * 	  bean appended and separated from the path name by "#".  The
+     * 	  path name is relative to the Deployment File containing
+     * 	  Deployment Component that is referencing the enterprise
+     * 	  bean.  This allows multiple enterprise beans with the same
+     * 	  ejb-name to be uniquely identified.
+     *
+     * 	  Examples:
+     *
+     * 	      <ejb-link>EmployeeRecord</ejb-link>
+     *
+     * 	      <ejb-link>../products/product.jar#ProductEJB</ejb-link>
+     *
      */
-    public EjbLinkType getEjbLink() {
+    public String getEjbLink() {
         return ejbLink;
     }
 
@@ -245,10 +258,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EjbLinkType }
+     *     {@link String }
      *     
      */
-    public void setEjbLink(EjbLinkType value) {
+    public void setEjbLink(String value) {
         this.ejbLink = value;
     }
 
