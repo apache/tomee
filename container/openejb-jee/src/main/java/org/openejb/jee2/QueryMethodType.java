@@ -78,7 +78,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class QueryMethodType {
 
     @XmlElement(name = "method-name", required = true)
-    protected MethodNameType methodName;
+    protected String methodName;
     @XmlElement(name = "method-params", required = true)
     protected MethodParamsType methodParams;
     @XmlAttribute
@@ -88,25 +88,23 @@ public class QueryMethodType {
 
     /**
      * Gets the value of the methodName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link MethodNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public MethodNameType getMethodName() {
+    public String getMethodName() {
         return methodName;
     }
 
     /**
-     * Sets the value of the methodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodNameType }
-     *     
+     *  contains a name of an enterprise
+     * 	bean method or the asterisk (*) character. The asterisk is
+     * 	used when the element denotes all the methods of an
+     * 	enterprise bean's client view interfaces.
      */
-    public void setMethodName(MethodNameType value) {
+    public void setMethodName(String value) {
         this.methodName = value;
     }
 

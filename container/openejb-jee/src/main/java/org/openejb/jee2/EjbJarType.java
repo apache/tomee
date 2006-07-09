@@ -94,7 +94,7 @@ public class EjbJarType {
     @XmlElement(name = "assembly-descriptor")
     protected AssemblyDescriptorType assemblyDescriptor;
     @XmlElement(name = "ejb-client-jar")
-    protected PathType ejbClientJar;
+    protected String ejbClientJar;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -293,10 +293,10 @@ public class EjbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getEjbClientJar() {
+    public String getEjbClientJar() {
         return ejbClientJar;
     }
 
@@ -305,10 +305,10 @@ public class EjbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setEjbClientJar(PathType value) {
+    public void setEjbClientJar(String value) {
         this.ejbClientJar = value;
     }
 

@@ -61,9 +61,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class IconType {
 
     @XmlElement(name = "small-icon")
-    protected PathType smallIcon;
+    protected String smallIcon;
     @XmlElement(name = "large-icon")
-    protected PathType largeIcon;
+    protected String largeIcon;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -76,10 +76,10 @@ public class IconType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getSmallIcon() {
+    public String getSmallIcon() {
         return smallIcon;
     }
 
@@ -88,10 +88,10 @@ public class IconType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setSmallIcon(PathType value) {
+    public void setSmallIcon(String value) {
         this.smallIcon = value;
     }
 
@@ -100,10 +100,10 @@ public class IconType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getLargeIcon() {
+    public String getLargeIcon() {
         return largeIcon;
     }
 
@@ -112,10 +112,10 @@ public class IconType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setLargeIcon(PathType value) {
+    public void setLargeIcon(String value) {
         this.largeIcon = value;
     }
 

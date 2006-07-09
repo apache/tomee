@@ -98,7 +98,7 @@ public class ServiceRefType {
     @XmlElement(name = "wsdl-file")
     protected XsdAnyURIType wsdlFile;
     @XmlElement(name = "jaxrpc-mapping-file")
-    protected PathType jaxrpcMappingFile;
+    protected String jaxrpcMappingFile;
     @XmlElement(name = "service-qname")
     protected java.lang.String serviceQname;
     @XmlElement(name = "port-component-ref", required = true)
@@ -304,10 +304,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getJaxrpcMappingFile() {
+    public String getJaxrpcMappingFile() {
         return jaxrpcMappingFile;
     }
 
@@ -316,10 +316,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setJaxrpcMappingFile(PathType value) {
+    public void setJaxrpcMappingFile(String value) {
         this.jaxrpcMappingFile = value;
     }
 

@@ -124,14 +124,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link String }
-     *
-     */
-    public String createString() {
-        return new String();
-    }
-
-    /**
      * Create an instance of {@link ServiceRefType }
      *
      */
@@ -500,14 +492,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MethodNameType }
-     *
-     */
-    public MethodNameType createMethodNameType() {
-        return new MethodNameType();
-    }
-
-    /**
      * Create an instance of {@link RelationshipsType }
      *
      */
@@ -556,11 +540,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PathType }
+     * Create an instance of {@link String }
      *
      */
-    public PathType createPathType() {
-        return new PathType();
+    public String createString() {
+        return new String();
     }
 
     /**

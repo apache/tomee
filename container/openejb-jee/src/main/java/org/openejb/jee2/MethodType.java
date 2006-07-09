@@ -242,7 +242,7 @@ public class MethodType {
     @XmlElement(name = "method-intf")
     protected MethodIntfType methodIntf;
     @XmlElement(name = "method-name", required = true)
-    protected MethodNameType methodName;
+    protected String methodName;
     @XmlElement(name = "method-params")
     protected MethodParamsType methodParams;
     @XmlAttribute
@@ -252,25 +252,25 @@ public class MethodType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -281,11 +281,11 @@ public class MethodType {
 
     /**
      * Gets the value of the ejbName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EjbNameType }
-     *     
+     *
      */
     public EjbNameType getEjbName() {
         return ejbName;
@@ -293,11 +293,11 @@ public class MethodType {
 
     /**
      * Sets the value of the ejbName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EjbNameType }
-     *     
+     *
      */
     public void setEjbName(EjbNameType value) {
         this.ejbName = value;
@@ -305,11 +305,11 @@ public class MethodType {
 
     /**
      * Gets the value of the methodIntf property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MethodIntfType }
-     *     
+     *
      */
     public MethodIntfType getMethodIntf() {
         return methodIntf;
@@ -317,11 +317,11 @@ public class MethodType {
 
     /**
      * Sets the value of the methodIntf property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MethodIntfType }
-     *     
+     *
      */
     public void setMethodIntf(MethodIntfType value) {
         this.methodIntf = value;
@@ -329,25 +329,23 @@ public class MethodType {
 
     /**
      * Gets the value of the methodName property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link MethodNameType }
-     *     
+     *     {@link String }
+     *
      */
-    public MethodNameType getMethodName() {
+    public String getMethodName() {
         return methodName;
     }
 
     /**
-     * Sets the value of the methodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodNameType }
-     *     
+     *  contains a name of an enterprise
+     * 	bean method or the asterisk (*) character. The asterisk is
+     * 	used when the element denotes all the methods of an
+     * 	enterprise bean's client view interfaces.
      */
-    public void setMethodName(MethodNameType value) {
+    public void setMethodName(String value) {
         this.methodName = value;
     }
 
