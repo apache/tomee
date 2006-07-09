@@ -82,7 +82,7 @@ public class EnvEntryType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "env-entry-name", required = true)
-    protected JndiNameType envEntryName;
+    protected String envEntryName;
     @XmlElement(name = "env-entry-type")
     protected String envEntryType;
     @XmlElement(name = "env-entry-value")
@@ -130,10 +130,10 @@ public class EnvEntryType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getEnvEntryName() {
+    public String getEnvEntryName() {
         return envEntryName;
     }
 
@@ -142,10 +142,10 @@ public class EnvEntryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setEnvEntryName(JndiNameType value) {
+    public void setEnvEntryName(String value) {
         this.envEntryName = value;
     }
 

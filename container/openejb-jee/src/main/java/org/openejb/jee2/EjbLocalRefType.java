@@ -86,7 +86,7 @@ public class EjbLocalRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "ejb-ref-name", required = true)
-    protected EjbRefNameType ejbRefName;
+    protected String ejbRefName;
     @XmlElement(name = "ejb-ref-type")
     protected EjbRefTypeType ejbRefType;
     @XmlElement(name = "local-home")
@@ -132,27 +132,24 @@ public class EjbLocalRefType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the ejbRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRefNameType }
-     *     
-     */
-    public EjbRefNameType getEjbRefName() {
+    public String getEjbRefName() {
         return ejbRefName;
     }
 
     /**
-     * Sets the value of the ejbRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRefNameType }
-     *     
+     * 	  The ejb-ref-name element contains the name of an EJB
+     * 	  reference. The EJB reference is an entry in the
+     * 	  Deployment Component's environment and is relative to the
+     * 	  java:comp/env context.  The name must be unique within the
+     * 	  Deployment Component.
+     *
+     * 	  It is recommended that name is prefixed with "ejb/".
+     *
+     * 	  Example:
+     *
+     * 	  <ejb-ref-name>ejb/Payroll</ejb-ref-name>
      */
-    public void setEjbRefName(EjbRefNameType value) {
+    public void setEjbRefName(String value) {
         this.ejbRefName = value;
     }
 

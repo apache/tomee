@@ -100,7 +100,7 @@ public class MessageDestinationRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "message-destination-ref-name", required = true)
-    protected JndiNameType messageDestinationRefName;
+    protected String messageDestinationRefName;
     @XmlElement(name = "message-destination-type")
     protected String messageDestinationType;
     @XmlElement(name = "message-destination-usage")
@@ -150,10 +150,10 @@ public class MessageDestinationRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getMessageDestinationRefName() {
+    public String getMessageDestinationRefName() {
         return messageDestinationRefName;
     }
 
@@ -162,10 +162,10 @@ public class MessageDestinationRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationRefName(JndiNameType value) {
+    public void setMessageDestinationRefName(String value) {
         this.messageDestinationRefName = value;
     }
 

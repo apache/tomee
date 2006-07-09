@@ -90,7 +90,7 @@ public class ServiceRefType {
     @XmlElement(required = true)
     protected List<IconType> icon;
     @XmlElement(name = "service-ref-name", required = true)
-    protected JndiNameType serviceRefName;
+    protected String serviceRefName;
     @XmlElement(name = "service-interface", required = true)
     protected String serviceInterface;
     @XmlElement(name = "service-ref-type")
@@ -208,10 +208,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getServiceRefName() {
+    public String getServiceRefName() {
         return serviceRefName;
     }
 
@@ -220,10 +220,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setServiceRefName(JndiNameType value) {
+    public void setServiceRefName(String value) {
         this.serviceRefName = value;
     }
 

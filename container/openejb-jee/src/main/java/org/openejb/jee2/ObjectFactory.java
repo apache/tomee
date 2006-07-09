@@ -84,14 +84,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JndiNameType }
-     * 
-     */
-    public JndiNameType createJndiNameType() {
-        return new JndiNameType();
-    }
-
-    /**
      * Create an instance of {@link MethodType }
      * 
      */
@@ -354,14 +346,6 @@ public class ObjectFactory {
      */
     public AroundInvokeType createAroundInvokeType() {
         return new AroundInvokeType();
-    }
-
-    /**
-     * Create an instance of {@link EjbRefNameType }
-     * 
-     */
-    public EjbRefNameType createEjbRefNameType() {
-        return new EjbRefNameType();
     }
 
     /**

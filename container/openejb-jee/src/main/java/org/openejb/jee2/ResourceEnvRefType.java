@@ -89,7 +89,7 @@ public class ResourceEnvRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "resource-env-ref-name", required = true)
-    protected JndiNameType resourceEnvRefName;
+    protected String resourceEnvRefName;
     @XmlElement(name = "resource-env-ref-type")
     protected String resourceEnvRefType;
     @XmlElement(name = "mapped-name")
@@ -135,10 +135,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getResourceEnvRefName() {
+    public String getResourceEnvRefName() {
         return resourceEnvRefName;
     }
 
@@ -147,10 +147,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setResourceEnvRefName(JndiNameType value) {
+    public void setResourceEnvRefName(String value) {
         this.resourceEnvRefName = value;
     }
 

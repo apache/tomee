@@ -87,7 +87,7 @@ public class PersistenceUnitRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "persistence-unit-ref-name", required = true)
-    protected JndiNameType persistenceUnitRefName;
+    protected String persistenceUnitRefName;
     @XmlElement(name = "persistence-unit-name")
     protected java.lang.String persistenceUnitName;
     @XmlElement(name = "mapped-name")
@@ -133,10 +133,10 @@ public class PersistenceUnitRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getPersistenceUnitRefName() {
+    public String getPersistenceUnitRefName() {
         return persistenceUnitRefName;
     }
 
@@ -145,10 +145,10 @@ public class PersistenceUnitRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setPersistenceUnitRefName(JndiNameType value) {
+    public void setPersistenceUnitRefName(String value) {
         this.persistenceUnitRefName = value;
     }
 

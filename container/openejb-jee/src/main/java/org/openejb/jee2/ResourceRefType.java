@@ -94,7 +94,7 @@ public class ResourceRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "res-ref-name", required = true)
-    protected JndiNameType resRefName;
+    protected String resRefName;
     @XmlElement(name = "res-type")
     protected String resType;
     @XmlElement(name = "res-auth")
@@ -144,10 +144,10 @@ public class ResourceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getResRefName() {
+    public String getResRefName() {
         return resRefName;
     }
 
@@ -156,10 +156,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setResRefName(JndiNameType value) {
+    public void setResRefName(String value) {
         this.resRefName = value;
     }
 

@@ -96,7 +96,7 @@ public class PersistenceContextRefType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "persistence-context-ref-name", required = true)
-    protected JndiNameType persistenceContextRefName;
+    protected String persistenceContextRefName;
     @XmlElement(name = "persistence-unit-name")
     protected java.lang.String persistenceUnitName;
     @XmlElement(name = "persistence-context-type")
@@ -146,10 +146,10 @@ public class PersistenceContextRefType {
      * 
      * @return
      *     possible object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public JndiNameType getPersistenceContextRefName() {
+    public String getPersistenceContextRefName() {
         return persistenceContextRefName;
     }
 
@@ -158,10 +158,10 @@ public class PersistenceContextRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JndiNameType }
+     *     {@link String }
      *     
      */
-    public void setPersistenceContextRefName(JndiNameType value) {
+    public void setPersistenceContextRefName(String value) {
         this.persistenceContextRefName = value;
     }
 
