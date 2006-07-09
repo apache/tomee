@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 public class LifecycleCallbackType {
 
     @XmlElement(name = "lifecycle-callback-class")
-    protected FullyQualifiedClassType lifecycleCallbackClass;
+    protected String lifecycleCallbackClass;
     @XmlElement(name = "lifecycle-callback-method", required = true)
     protected JavaIdentifierType lifecycleCallbackMethod;
 
@@ -66,10 +66,10 @@ public class LifecycleCallbackType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getLifecycleCallbackClass() {
+    public String getLifecycleCallbackClass() {
         return lifecycleCallbackClass;
     }
 
@@ -78,10 +78,10 @@ public class LifecycleCallbackType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setLifecycleCallbackClass(FullyQualifiedClassType value) {
+    public void setLifecycleCallbackClass(String value) {
         this.lifecycleCallbackClass = value;
     }
 

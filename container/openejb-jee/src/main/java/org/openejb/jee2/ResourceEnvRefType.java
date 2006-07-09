@@ -91,7 +91,7 @@ public class ResourceEnvRefType {
     @XmlElement(name = "resource-env-ref-name", required = true)
     protected JndiNameType resourceEnvRefName;
     @XmlElement(name = "resource-env-ref-type")
-    protected FullyQualifiedClassType resourceEnvRefType;
+    protected String resourceEnvRefType;
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)
@@ -159,10 +159,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getResourceEnvRefType() {
+    public String getResourceEnvRefType() {
         return resourceEnvRefType;
     }
 
@@ -171,10 +171,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setResourceEnvRefType(FullyQualifiedClassType value) {
+    public void setResourceEnvRefType(String value) {
         this.resourceEnvRefType = value;
     }
 

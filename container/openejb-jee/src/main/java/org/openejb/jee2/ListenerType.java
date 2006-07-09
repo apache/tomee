@@ -64,7 +64,7 @@ public class ListenerType {
     @XmlElement(required = true)
     protected List<IconType> icon;
     @XmlElement(name = "listener-class", required = true)
-    protected FullyQualifiedClassType listenerClass;
+    protected String listenerClass;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -162,10 +162,10 @@ public class ListenerType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getListenerClass() {
+    public String getListenerClass() {
         return listenerClass;
     }
 
@@ -174,10 +174,10 @@ public class ListenerType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setListenerClass(FullyQualifiedClassType value) {
+    public void setListenerClass(String value) {
         this.listenerClass = value;
     }
 

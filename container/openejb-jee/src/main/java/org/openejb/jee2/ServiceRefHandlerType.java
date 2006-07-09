@@ -81,7 +81,7 @@ public class ServiceRefHandlerType {
     @XmlElement(name = "handler-name", required = true)
     protected java.lang.String handlerName;
     @XmlElement(name = "handler-class", required = true)
-    protected FullyQualifiedClassType handlerClass;
+    protected String handlerClass;
     @XmlElement(name = "init-param", required = true)
     protected List<ParamValueType> initParam;
     @XmlElement(name = "soap-header", required = true)
@@ -211,10 +211,10 @@ public class ServiceRefHandlerType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getHandlerClass() {
+    public String getHandlerClass() {
         return handlerClass;
     }
 
@@ -223,10 +223,10 @@ public class ServiceRefHandlerType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setHandlerClass(FullyQualifiedClassType value) {
+    public void setHandlerClass(String value) {
         this.handlerClass = value;
     }
 

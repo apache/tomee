@@ -102,7 +102,7 @@ public class MessageDestinationRefType {
     @XmlElement(name = "message-destination-ref-name", required = true)
     protected JndiNameType messageDestinationRefName;
     @XmlElement(name = "message-destination-type")
-    protected MessageDestinationTypeType messageDestinationType;
+    protected String messageDestinationType;
     @XmlElement(name = "message-destination-usage")
     protected MessageDestinationUsageType messageDestinationUsage;
     @XmlElement(name = "message-destination-link")
@@ -174,10 +174,10 @@ public class MessageDestinationRefType {
      * 
      * @return
      *     possible object is
-     *     {@link MessageDestinationTypeType }
+     *     {@link String }
      *     
      */
-    public MessageDestinationTypeType getMessageDestinationType() {
+    public String getMessageDestinationType() {
         return messageDestinationType;
     }
 
@@ -186,10 +186,10 @@ public class MessageDestinationRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link MessageDestinationTypeType }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationType(MessageDestinationTypeType value) {
+    public void setMessageDestinationType(String value) {
         this.messageDestinationType = value;
     }
 

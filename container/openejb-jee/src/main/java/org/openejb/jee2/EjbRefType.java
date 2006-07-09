@@ -90,8 +90,8 @@ public class EjbRefType {
     protected EjbRefNameType ejbRefName;
     @XmlElement(name = "ejb-ref-type")
     protected EjbRefTypeType ejbRefType;
-    protected HomeType home;
-    protected RemoteType remote;
+    protected String home;
+    protected String remote;
     @XmlElement(name = "ejb-link")
     protected EjbLinkType ejbLink;
     @XmlElement(name = "mapped-name")
@@ -185,10 +185,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public HomeType getHome() {
+    public String getHome() {
         return home;
     }
 
@@ -197,10 +197,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public void setHome(HomeType value) {
+    public void setHome(String value) {
         this.home = value;
     }
 
@@ -209,10 +209,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public RemoteType getRemote() {
+    public String getRemote() {
         return remote;
     }
 
@@ -221,10 +221,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public void setRemote(RemoteType value) {
+    public void setRemote(String value) {
         this.remote = value;
     }
 

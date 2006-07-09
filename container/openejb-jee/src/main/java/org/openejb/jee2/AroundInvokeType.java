@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 public class AroundInvokeType {
 
     @XmlElement(name = "class")
-    protected FullyQualifiedClassType clazz;
+    protected String clazz;
     @XmlElement(name = "method-name", required = true)
     protected JavaIdentifierType methodName;
 
@@ -67,10 +67,10 @@ public class AroundInvokeType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getClazz() {
+    public String getClazz() {
         return clazz;
     }
 
@@ -79,10 +79,10 @@ public class AroundInvokeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setClazz(FullyQualifiedClassType value) {
+    public void setClazz(String value) {
         this.clazz = value;
     }
 

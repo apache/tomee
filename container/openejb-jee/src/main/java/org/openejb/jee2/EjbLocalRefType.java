@@ -90,8 +90,8 @@ public class EjbLocalRefType {
     @XmlElement(name = "ejb-ref-type")
     protected EjbRefTypeType ejbRefType;
     @XmlElement(name = "local-home")
-    protected LocalHomeType localHome;
-    protected LocalType local;
+    protected String localHome;
+    protected String local;
     @XmlElement(name = "ejb-link")
     protected EjbLinkType ejbLink;
     @XmlElement(name = "mapped-name")
@@ -185,10 +185,10 @@ public class EjbLocalRefType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public LocalHomeType getLocalHome() {
+    public String getLocalHome() {
         return localHome;
     }
 
@@ -197,10 +197,10 @@ public class EjbLocalRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public void setLocalHome(LocalHomeType value) {
+    public void setLocalHome(String value) {
         this.localHome = value;
     }
 
@@ -209,10 +209,10 @@ public class EjbLocalRefType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public LocalType getLocal() {
+    public String getLocal() {
         return local;
     }
 
@@ -221,10 +221,10 @@ public class EjbLocalRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public void setLocal(LocalType value) {
+    public void setLocal(String value) {
         this.local = value;
     }
 

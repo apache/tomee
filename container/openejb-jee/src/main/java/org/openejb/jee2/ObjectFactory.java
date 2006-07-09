@@ -132,11 +132,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FullyQualifiedClassType }
+     * Create an instance of {@link String }
      * 
      */
-    public FullyQualifiedClassType createFullyQualifiedClassType() {
-        return new FullyQualifiedClassType();
+    public String createString() {
+        return new String();
     }
 
     /**
@@ -420,14 +420,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EjbClassType }
-     * 
-     */
-    public EjbClassType createEjbClassType() {
-        return new EjbClassType();
-    }
-
-    /**
      * Create an instance of {@link ParamValueType }
      * 
      */
@@ -492,14 +484,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LocalType }
-     * 
-     */
-    public LocalType createLocalType() {
-        return new LocalType();
-    }
-
-    /**
      * Create an instance of {@link QueryMethodType }
      * 
      */
@@ -508,35 +492,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LocalHomeType }
-     * 
-     */
-    public LocalHomeType createLocalHomeType() {
-        return new LocalHomeType();
-    }
-
-    /**
-     * Create an instance of {@link HomeType }
-     * 
-     */
-    public HomeType createHomeType() {
-        return new HomeType();
-    }
-
-    /**
      * Create an instance of {@link EjbJarType }
      * 
      */
     public EjbJarType createEjbJarType() {
         return new EjbJarType();
-    }
-
-    /**
-     * Create an instance of {@link RemoteType }
-     * 
-     */
-    public RemoteType createRemoteType() {
-        return new RemoteType();
     }
 
     /**
@@ -609,14 +569,6 @@ public class ObjectFactory {
      */
     public GenericBooleanType createGenericBooleanType() {
         return new GenericBooleanType();
-    }
-
-    /**
-     * Create an instance of {@link MessageDestinationTypeType }
-     * 
-     */
-    public MessageDestinationTypeType createMessageDestinationTypeType() {
-        return new MessageDestinationTypeType();
     }
 
     /**
@@ -769,14 +721,6 @@ public class ObjectFactory {
      */
     public ResSharingScopeType createResSharingScopeType() {
         return new ResSharingScopeType();
-    }
-
-    /**
-     * Create an instance of {@link EnvEntryTypeValuesType }
-     * 
-     */
-    public EnvEntryTypeValuesType createEnvEntryTypeValuesType() {
-        return new EnvEntryTypeValuesType();
     }
 
     /**

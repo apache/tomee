@@ -96,7 +96,7 @@ public class ResourceRefType {
     @XmlElement(name = "res-ref-name", required = true)
     protected JndiNameType resRefName;
     @XmlElement(name = "res-type")
-    protected FullyQualifiedClassType resType;
+    protected String resType;
     @XmlElement(name = "res-auth")
     protected ResAuthType resAuth;
     @XmlElement(name = "res-sharing-scope")
@@ -168,10 +168,10 @@ public class ResourceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getResType() {
+    public String getResType() {
         return resType;
     }
 
@@ -180,10 +180,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setResType(FullyQualifiedClassType value) {
+    public void setResType(String value) {
         this.resType = value;
     }
 

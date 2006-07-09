@@ -172,19 +172,19 @@ public class SessionBeanType {
     protected EjbNameType ejbName;
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
-    protected HomeType home;
-    protected RemoteType remote;
+    protected String home;
+    protected String remote;
     @XmlElement(name = "local-home")
-    protected LocalHomeType localHome;
-    protected LocalType local;
+    protected String localHome;
+    protected String local;
     @XmlElement(name = "business-local", required = true)
-    protected List<FullyQualifiedClassType> businessLocal;
+    protected List<String> businessLocal;
     @XmlElement(name = "business-remote", required = true)
-    protected List<FullyQualifiedClassType> businessRemote;
+    protected List<String> businessRemote;
     @XmlElement(name = "service-endpoint")
-    protected FullyQualifiedClassType serviceEndpoint;
+    protected String serviceEndpoint;
     @XmlElement(name = "ejb-class")
-    protected EjbClassType ejbClass;
+    protected String ejbClass;
     @XmlElement(name = "session-type")
     protected SessionTypeType sessionType;
     @XmlElement(name = "timeout-method")
@@ -372,10 +372,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public HomeType getHome() {
+    public String getHome() {
         return home;
     }
 
@@ -384,10 +384,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public void setHome(HomeType value) {
+    public void setHome(String value) {
         this.home = value;
     }
 
@@ -396,10 +396,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public RemoteType getRemote() {
+    public String getRemote() {
         return remote;
     }
 
@@ -408,10 +408,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public void setRemote(RemoteType value) {
+    public void setRemote(String value) {
         this.remote = value;
     }
 
@@ -420,10 +420,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public LocalHomeType getLocalHome() {
+    public String getLocalHome() {
         return localHome;
     }
 
@@ -432,10 +432,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public void setLocalHome(LocalHomeType value) {
+    public void setLocalHome(String value) {
         this.localHome = value;
     }
 
@@ -444,10 +444,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public LocalType getLocal() {
+    public String getLocal() {
         return local;
     }
 
@@ -456,10 +456,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public void setLocal(LocalType value) {
+    public void setLocal(String value) {
         this.local = value;
     }
 
@@ -481,13 +481,13 @@ public class SessionBeanType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FullyQualifiedClassType }
+     * {@link String }
      * 
      * 
      */
-    public List<FullyQualifiedClassType> getBusinessLocal() {
+    public List<String> getBusinessLocal() {
         if (businessLocal == null) {
-            businessLocal = new ArrayList<FullyQualifiedClassType>();
+            businessLocal = new ArrayList<String>();
         }
         return this.businessLocal;
     }
@@ -510,13 +510,13 @@ public class SessionBeanType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FullyQualifiedClassType }
+     * {@link String }
      * 
      * 
      */
-    public List<FullyQualifiedClassType> getBusinessRemote() {
+    public List<String> getBusinessRemote() {
         if (businessRemote == null) {
-            businessRemote = new ArrayList<FullyQualifiedClassType>();
+            businessRemote = new ArrayList<String>();
         }
         return this.businessRemote;
     }
@@ -526,10 +526,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getServiceEndpoint() {
+    public String getServiceEndpoint() {
         return serviceEndpoint;
     }
 
@@ -538,10 +538,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setServiceEndpoint(FullyQualifiedClassType value) {
+    public void setServiceEndpoint(String value) {
         this.serviceEndpoint = value;
     }
 
@@ -550,10 +550,10 @@ public class SessionBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public EjbClassType getEjbClass() {
+    public String getEjbClass() {
         return ejbClass;
     }
 
@@ -562,10 +562,10 @@ public class SessionBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public void setEjbClass(EjbClassType value) {
+    public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 

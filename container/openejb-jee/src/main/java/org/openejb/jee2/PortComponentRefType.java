@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class PortComponentRefType {
 
     @XmlElement(name = "service-endpoint-interface", required = true)
-    protected FullyQualifiedClassType serviceEndpointInterface;
+    protected String serviceEndpointInterface;
     @XmlElement(name = "enable-mtom")
     protected TrueFalseType enableMtom;
     @XmlElement(name = "port-component-link")
@@ -74,10 +74,10 @@ public class PortComponentRefType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getServiceEndpointInterface() {
+    public String getServiceEndpointInterface() {
         return serviceEndpointInterface;
     }
 
@@ -86,10 +86,10 @@ public class PortComponentRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setServiceEndpointInterface(FullyQualifiedClassType value) {
+    public void setServiceEndpointInterface(String value) {
         this.serviceEndpointInterface = value;
     }
 

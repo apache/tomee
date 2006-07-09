@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ApplicationExceptionType {
 
     @XmlElement(name = "exception-class", required = true)
-    protected FullyQualifiedClassType exceptionClass;
+    protected String exceptionClass;
     protected TrueFalseType rollback;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -76,10 +76,10 @@ public class ApplicationExceptionType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getExceptionClass() {
+    public String getExceptionClass() {
         return exceptionClass;
     }
 
@@ -88,10 +88,10 @@ public class ApplicationExceptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setExceptionClass(FullyQualifiedClassType value) {
+    public void setExceptionClass(String value) {
         this.exceptionClass = value;
     }
 

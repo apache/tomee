@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
 public class InjectionTargetType {
 
     @XmlElement(name = "injection-target-class", required = true)
-    protected FullyQualifiedClassType injectionTargetClass;
+    protected String injectionTargetClass;
     @XmlElement(name = "injection-target-name", required = true)
     protected JavaIdentifierType injectionTargetName;
 
@@ -73,10 +73,10 @@ public class InjectionTargetType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getInjectionTargetClass() {
+    public String getInjectionTargetClass() {
         return injectionTargetClass;
     }
 
@@ -85,10 +85,10 @@ public class InjectionTargetType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setInjectionTargetClass(FullyQualifiedClassType value) {
+    public void setInjectionTargetClass(String value) {
         this.injectionTargetClass = value;
     }
 

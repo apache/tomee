@@ -198,17 +198,17 @@ public class EntityBeanType {
     protected EjbNameType ejbName;
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
-    protected HomeType home;
-    protected RemoteType remote;
+    protected String home;
+    protected String remote;
     @XmlElement(name = "local-home")
-    protected LocalHomeType localHome;
-    protected LocalType local;
+    protected String localHome;
+    protected String local;
     @XmlElement(name = "ejb-class", required = true)
-    protected EjbClassType ejbClass;
+    protected String ejbClass;
     @XmlElement(name = "persistence-type", required = true)
     protected PersistenceTypeType persistenceType;
     @XmlElement(name = "prim-key-class", required = true)
-    protected FullyQualifiedClassType primKeyClass;
+    protected String primKeyClass;
     @XmlElement(required = true)
     protected TrueFalseType reentrant;
     @XmlElement(name = "cmp-version")
@@ -392,10 +392,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public HomeType getHome() {
+    public String getHome() {
         return home;
     }
 
@@ -404,10 +404,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link HomeType }
+     *     {@link String }
      *     
      */
-    public void setHome(HomeType value) {
+    public void setHome(String value) {
         this.home = value;
     }
 
@@ -416,10 +416,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public RemoteType getRemote() {
+    public String getRemote() {
         return remote;
     }
 
@@ -428,10 +428,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link RemoteType }
+     *     {@link String }
      *     
      */
-    public void setRemote(RemoteType value) {
+    public void setRemote(String value) {
         this.remote = value;
     }
 
@@ -440,10 +440,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public LocalHomeType getLocalHome() {
+    public String getLocalHome() {
         return localHome;
     }
 
@@ -452,10 +452,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalHomeType }
+     *     {@link String }
      *     
      */
-    public void setLocalHome(LocalHomeType value) {
+    public void setLocalHome(String value) {
         this.localHome = value;
     }
 
@@ -464,10 +464,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public LocalType getLocal() {
+    public String getLocal() {
         return local;
     }
 
@@ -476,10 +476,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link LocalType }
+     *     {@link String }
      *     
      */
-    public void setLocal(LocalType value) {
+    public void setLocal(String value) {
         this.local = value;
     }
 
@@ -488,10 +488,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public EjbClassType getEjbClass() {
+    public String getEjbClass() {
         return ejbClass;
     }
 
@@ -500,10 +500,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public void setEjbClass(EjbClassType value) {
+    public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 
@@ -536,10 +536,10 @@ public class EntityBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getPrimKeyClass() {
+    public String getPrimKeyClass() {
         return primKeyClass;
     }
 
@@ -548,10 +548,10 @@ public class EntityBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setPrimKeyClass(FullyQualifiedClassType value) {
+    public void setPrimKeyClass(String value) {
         this.primKeyClass = value;
     }
 

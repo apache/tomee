@@ -84,7 +84,7 @@ public class EnvEntryType {
     @XmlElement(name = "env-entry-name", required = true)
     protected JndiNameType envEntryName;
     @XmlElement(name = "env-entry-type")
-    protected EnvEntryTypeValuesType envEntryType;
+    protected String envEntryType;
     @XmlElement(name = "env-entry-value")
     protected java.lang.String envEntryValue;
     @XmlElement(name = "mapped-name")
@@ -152,24 +152,12 @@ public class EnvEntryType {
     /**
      * Gets the value of the envEntryType property.
      * 
-     * @return
-     *     possible object is
-     *     {@link EnvEntryTypeValuesType }
-     *     
      */
-    public EnvEntryTypeValuesType getEnvEntryType() {
+    public String getEnvEntryType() {
         return envEntryType;
     }
 
-    /**
-     * Sets the value of the envEntryType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnvEntryTypeValuesType }
-     *     
-     */
-    public void setEnvEntryType(EnvEntryTypeValuesType value) {
+    public void setEnvEntryType(String value) {
         this.envEntryType = value;
     }
 

@@ -164,7 +164,7 @@ public class InterceptorBindingType {
     @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;
     @XmlElement(name = "interceptor-class", required = true)
-    protected List<FullyQualifiedClassType> interceptorClass;
+    protected List<String> interceptorClass;
     @XmlElement(name = "interceptor-order")
     protected InterceptorOrderType interceptorOrder;
     @XmlElement(name = "exclude-default-interceptors")
@@ -248,13 +248,13 @@ public class InterceptorBindingType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FullyQualifiedClassType }
+     * {@link String }
      * 
      * 
      */
-    public List<FullyQualifiedClassType> getInterceptorClass() {
+    public List<String> getInterceptorClass() {
         if (interceptorClass == null) {
-            interceptorClass = new ArrayList<FullyQualifiedClassType>();
+            interceptorClass = new ArrayList<String>();
         }
         return this.interceptorClass;
     }

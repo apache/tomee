@@ -87,7 +87,7 @@ public class InterceptorType {
     @XmlElement(required = true)
     protected List<DescriptionType> description;
     @XmlElement(name = "interceptor-class", required = true)
-    protected FullyQualifiedClassType interceptorClass;
+    protected String interceptorClass;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvokeType> aroundInvoke;
     @XmlElement(name = "env-entry", required = true)
@@ -155,10 +155,10 @@ public class InterceptorType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getInterceptorClass() {
+    public String getInterceptorClass() {
         return interceptorClass;
     }
 
@@ -167,10 +167,10 @@ public class InterceptorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setInterceptorClass(FullyQualifiedClassType value) {
+    public void setInterceptorClass(String value) {
         this.interceptorClass = value;
     }
 

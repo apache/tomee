@@ -143,15 +143,15 @@ public class MessageDrivenBeanType {
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
     @XmlElement(name = "ejb-class")
-    protected EjbClassType ejbClass;
+    protected String ejbClass;
     @XmlElement(name = "messaging-type")
-    protected FullyQualifiedClassType messagingType;
+    protected String messagingType;
     @XmlElement(name = "timeout-method")
     protected NamedMethodType timeoutMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionTypeType transactionType;
     @XmlElement(name = "message-destination-type")
-    protected MessageDestinationTypeType messageDestinationType;
+    protected String messageDestinationType;
     @XmlElement(name = "message-destination-link")
     protected MessageDestinationLinkType messageDestinationLink;
     @XmlElement(name = "activation-config")
@@ -327,10 +327,10 @@ public class MessageDrivenBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public EjbClassType getEjbClass() {
+    public String getEjbClass() {
         return ejbClass;
     }
 
@@ -339,10 +339,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EjbClassType }
+     *     {@link String }
      *     
      */
-    public void setEjbClass(EjbClassType value) {
+    public void setEjbClass(String value) {
         this.ejbClass = value;
     }
 
@@ -351,10 +351,10 @@ public class MessageDrivenBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getMessagingType() {
+    public String getMessagingType() {
         return messagingType;
     }
 
@@ -363,10 +363,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setMessagingType(FullyQualifiedClassType value) {
+    public void setMessagingType(String value) {
         this.messagingType = value;
     }
 
@@ -423,10 +423,10 @@ public class MessageDrivenBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link MessageDestinationTypeType }
+     *     {@link String }
      *     
      */
-    public MessageDestinationTypeType getMessageDestinationType() {
+    public String getMessageDestinationType() {
         return messageDestinationType;
     }
 
@@ -435,10 +435,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link MessageDestinationTypeType }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationType(MessageDestinationTypeType value) {
+    public void setMessageDestinationType(String value) {
         this.messageDestinationType = value;
     }
 

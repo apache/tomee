@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class InterceptorOrderType {
 
     @XmlElement(name = "interceptor-class", required = true)
-    protected List<FullyQualifiedClassType> interceptorClass;
+    protected List<String> interceptorClass;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -76,13 +76,13 @@ public class InterceptorOrderType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FullyQualifiedClassType }
+     * {@link String }
      * 
      * 
      */
-    public List<FullyQualifiedClassType> getInterceptorClass() {
+    public List<String> getInterceptorClass() {
         if (interceptorClass == null) {
-            interceptorClass = new ArrayList<FullyQualifiedClassType>();
+            interceptorClass = new ArrayList<String>();
         }
         return this.interceptorClass;
     }

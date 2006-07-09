@@ -92,9 +92,9 @@ public class ServiceRefType {
     @XmlElement(name = "service-ref-name", required = true)
     protected JndiNameType serviceRefName;
     @XmlElement(name = "service-interface", required = true)
-    protected FullyQualifiedClassType serviceInterface;
+    protected String serviceInterface;
     @XmlElement(name = "service-ref-type")
-    protected FullyQualifiedClassType serviceRefType;
+    protected String serviceRefType;
     @XmlElement(name = "wsdl-file")
     protected XsdAnyURIType wsdlFile;
     @XmlElement(name = "jaxrpc-mapping-file")
@@ -232,10 +232,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getServiceInterface() {
+    public String getServiceInterface() {
         return serviceInterface;
     }
 
@@ -244,10 +244,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setServiceInterface(FullyQualifiedClassType value) {
+    public void setServiceInterface(String value) {
         this.serviceInterface = value;
     }
 
@@ -256,10 +256,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public FullyQualifiedClassType getServiceRefType() {
+    public String getServiceRefType() {
         return serviceRefType;
     }
 
@@ -268,10 +268,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link FullyQualifiedClassType }
+     *     {@link String }
      *     
      */
-    public void setServiceRefType(FullyQualifiedClassType value) {
+    public void setServiceRefType(String value) {
         this.serviceRefType = value;
     }
 
