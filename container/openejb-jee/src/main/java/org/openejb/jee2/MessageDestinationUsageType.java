@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The message-destination-usageType specifies the use of the
  * 	message destination indicated by the reference.  The value
  * 	indicates whether messages are consumed from the message
@@ -28,29 +27,9 @@ import javax.xml.bind.annotation.XmlType;
  * 	    Consumes
  * 	    Produces
  * 	    ConsumesProduces
- * 
- *       
- * 
- * <p>Java class for message-destination-usageType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="message-destination-usageType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "message-destination-usageType")
-public class MessageDestinationUsageType
-    extends JeeString
-{
-
-
+public enum MessageDestinationUsageType {
+    @XmlEnumValue("Consumes") CONSUMES,
+    @XmlEnumValue("Produces") PRODUCES,
+    @XmlEnumValue("ConsumesProduces") CONSUMES_PRODUCES,
 }

@@ -11,6 +11,7 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
@@ -25,29 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  * 	    Unshareable
  * 
  * 	The default value is Shareable.
- * 
- *       
- * 
- * <p>Java class for res-sharing-scopeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="res-sharing-scopeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "res-sharing-scopeType")
-public class ResSharingScopeType
-    extends JeeString
-{
-
-
+public enum ResSharingScopeType {
+    @XmlEnumValue("Shareable") SHAREABLE,
+    @XmlEnumValue("Unshareable") UNSHAREABLE;
 }

@@ -11,42 +11,9 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
-
-/**
- * 
- * 
- * 	The cmp-versionType specifies the version of an entity bean
- * 	with container-managed persistence. It is used by
- * 	cmp-version elements.
- * 
- * 	The value must be one of the two following:
- * 
- * 	    1.x
- * 	    2.x
- * 
- *       
- * 
- * <p>Java class for cmp-versionType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="cmp-versionType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cmp-versionType")
-public class CmpVersionType
-    extends JeeString
-{
-
-
+public enum CmpVersionType {
+    @XmlEnumValue("1.x") CMP1,
+    @XmlEnumValue("2.x") CMP2
 }

@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The result-type-mappingType is used in the query element to
  * 	specify whether an abstract schema type returned by a query
  * 	for a select method is to be mapped to an EJBLocalObject or
@@ -25,29 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 	    Local
  * 	    Remote
- * 
- *       
- * 
- * <p>Java class for result-type-mappingType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="result-type-mappingType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "result-type-mappingType")
-public class ResultTypeMappingType
-    extends JeeString
-{
-
-
+public enum ResultTypeMappingType {
+    @XmlEnumValue("Local") LOCAL,
+    @XmlEnumValue("Remote") REMOTE;
 }

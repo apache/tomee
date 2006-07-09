@@ -11,41 +11,20 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The persistence-context-typeType specifies the transactional
  * 	nature of a persistence context reference.
  * 
  * 	The value of the persistence-context-type element must be
  * 	one of the following:
  * 	    Transaction
- *             Extended
- * 
- *       
- * 
- * <p>Java class for persistence-context-typeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="persistence-context-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
+ *      Extended
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "persistence-context-typeType")
-public class PersistenceContextTypeType
-    extends JeeString
-{
-
-
+public enum PersistenceContextTypeType {
+    @XmlEnumValue("Transaction") TRANSACTION,
+    @XmlEnumValue("Extended") EXTENDED;
 }

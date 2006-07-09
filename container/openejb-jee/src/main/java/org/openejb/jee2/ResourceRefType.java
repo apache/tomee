@@ -100,7 +100,7 @@ public class ResourceRefType {
     @XmlElement(name = "res-auth")
     protected ResAuthType resAuth;
     @XmlElement(name = "res-sharing-scope")
-    protected ResSharingScopeType resSharingScope;
+    protected ResSharingScopeType resSharingScope = ResSharingScopeType.SHAREABLE;
     @XmlElement(name = "mapped-name")
     protected java.lang.String mappedName;
     @XmlElement(name = "injection-target", required = true)

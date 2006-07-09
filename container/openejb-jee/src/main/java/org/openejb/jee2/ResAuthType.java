@@ -11,6 +11,7 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
@@ -28,28 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  * 	    Application
  * 	    Container
  * 
- *       
- * 
- * <p>Java class for res-authType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="res-authType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "res-authType")
-public class ResAuthType
-    extends JeeString
-{
-
-
+public enum ResAuthType {
+    @XmlEnumValue("Application") APPLICATION,
+    @XmlEnumValue("Container") CONTAINER;
 }

@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The persistence-typeType specifies an entity bean's persistence
  * 	management type.
  * 
@@ -23,29 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 	    Bean
  * 	    Container
- * 
- *       
- * 
- * <p>Java class for persistence-typeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="persistence-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "persistence-typeType")
-public class PersistenceTypeType
-    extends JeeString
-{
-
-
+public enum PersistenceTypeType {
+    @XmlEnumValue("Bean") BEAN,
+    @XmlEnumValue("Container") CONTAINER;
 }

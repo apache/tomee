@@ -11,38 +11,16 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The cmr-field-type element specifies the class of a
  * 	collection-valued logical relationship field in the entity
  * 	bean class. The value of an element using cmr-field-typeType
  * 	must be either: java.util.Collection or java.util.Set.
- * 
- *       
- * 
- * <p>Java class for cmr-field-typeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="cmr-field-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cmr-field-typeType")
-public class CmrFieldTypeType
-    extends JeeString
-{
-
-
+public enum CmrFieldTypeType {
+    @XmlEnumValue("java.util.Collection") COLLECTION,
+    @XmlEnumValue("java.util.Set") SET
 }

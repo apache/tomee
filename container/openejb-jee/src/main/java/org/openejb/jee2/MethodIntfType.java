@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The method-intf element allows a method element to
  * 	differentiate between the methods with the same name and
  * 	signature that are multiply defined across the home and
@@ -34,29 +33,11 @@ import javax.xml.bind.annotation.XmlType;
  * 	    LocalHome
  * 	    Local
  * 	    ServiceEndpoint
- * 
- *       
- * 
- * <p>Java class for method-intfType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="method-intfType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "method-intfType")
-public class MethodIntfType
-    extends JeeString
-{
-
-
+public enum MethodIntfType {
+    @XmlEnumValue("Home") HOME,
+    @XmlEnumValue("Remote") REMOTE,
+    @XmlEnumValue("LocalHome") LOCALHOME,
+    @XmlEnumValue("Local") LOCAL,
+    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT;
 }

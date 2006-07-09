@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The transaction-typeType specifies an enterprise bean's
  * 	transaction management type.
  * 
@@ -23,29 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 	    Bean
  * 	    Container
- * 
- *       
- * 
- * <p>Java class for transaction-typeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="transaction-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "transaction-typeType")
-public class TransactionTypeType
-    extends JeeString
-{
-
-
+public enum TransactionTypeType {
+    @XmlEnumValue("Bean") BEAN,
+    @XmlEnumValue("Container") CONTAINER;
 }

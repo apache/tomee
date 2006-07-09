@@ -11,11 +11,10 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * 
- * 
  * 	The trans-attributeType specifies how the container must
  * 	manage the transaction boundaries when delegating a method
  * 	invocation to an enterprise bean's business method.
@@ -28,29 +27,12 @@ import javax.xml.bind.annotation.XmlType;
  * 	    RequiresNew
  * 	    Mandatory
  * 	    Never
- * 
- *       
- * 
- * <p>Java class for trans-attributeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="trans-attributeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "trans-attributeType")
-public class TransAttributeType
-    extends JeeString
-{
-
-
+public enum TransAttributeType {
+    @XmlEnumValue("NotSupported") NOT_SUPPORTED,
+    @XmlEnumValue("Supports") SUPPORTS,
+    @XmlEnumValue("Required") REQUIRED,
+    @XmlEnumValue("RequiresNew") REQUIRES_NEW,
+    @XmlEnumValue("Mandatory") MANDATORY,
+    @XmlEnumValue("Never") NEVER;
 }

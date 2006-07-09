@@ -11,42 +11,9 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
-
-/**
- * 
- * 
- * 	The session-typeType describes whether the session bean is a
- * 	stateful session or stateless session. It is used by
- * 	session-type elements.
- * 
- * 	The value must be one of the two following:
- * 
- * 	    Stateful
- * 	    Stateless
- * 
- *       
- * 
- * <p>Java class for session-typeType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="session-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "session-typeType")
-public class SessionTypeType
-    extends JeeString
-{
-
-
+public enum SessionTypeType {
+    @XmlEnumValue("Stateful") STATEFUL,
+    @XmlEnumValue("Stateless") STATELESS
 }

@@ -11,41 +11,9 @@ package org.openejb.jee2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnumValue;
 
-
-/**
- * 
- * 
- * 	The multiplicityType describes the multiplicity of the
- * 	role that participates in a relation.
- * 
- * 	The value must be one of the two following:
- * 
- * 	    One
- * 	    Many
- * 
- *       
- * 
- * <p>Java class for multiplicityType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="multiplicityType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "multiplicityType")
-public class MultiplicityType
-    extends JeeString
-{
-
-
+public enum MultiplicityType {
+    @XmlEnumValue("One") ONE,
+    @XmlEnumValue("Many") MANY;
 }
