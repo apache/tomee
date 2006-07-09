@@ -75,27 +75,27 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 public class QueryType {
 
-    protected DescriptionType description;
+    protected Text description;
     @XmlElement(name = "query-method", required = true)
     protected QueryMethodType queryMethod;
     @XmlElement(name = "result-type-mapping")
     protected ResultTypeMappingType resultTypeMapping;
     @XmlElement(name = "ejb-ql", required = true)
-    protected java.lang.String ejbQl;
+    protected String ejbQl;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
      * 
      * @return
      *     possible object is
-     *     {@link DescriptionType }
+     *     {@link Text }
      *     
      */
-    public DescriptionType getDescription() {
+    public Text getDescription() {
         return description;
     }
 
@@ -104,10 +104,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link DescriptionType }
+     *     {@link Text }
      *     
      */
-    public void setDescription(DescriptionType value) {
+    public void setDescription(Text value) {
         this.description = value;
     }
 
@@ -164,10 +164,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbQl() {
+    public String getEjbQl() {
         return ejbQl;
     }
 
@@ -176,10 +176,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbQl(java.lang.String value) {
+    public void setEjbQl(String value) {
         this.ejbQl = value;
     }
 
@@ -188,10 +188,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -200,10 +200,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

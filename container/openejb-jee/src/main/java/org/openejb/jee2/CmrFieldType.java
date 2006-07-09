@@ -64,15 +64,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class CmrFieldType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "cmr-field-name", required = true)
-    protected java.lang.String cmrFieldName;
+    protected String cmrFieldName;
     @XmlElement(name = "cmr-field-type")
     protected CmrFieldTypeType cmrFieldType;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -92,13 +92,13 @@ public class CmrFieldType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -108,10 +108,10 @@ public class CmrFieldType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getCmrFieldName() {
+    public String getCmrFieldName() {
         return cmrFieldName;
     }
 
@@ -120,10 +120,10 @@ public class CmrFieldType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setCmrFieldName(java.lang.String value) {
+    public void setCmrFieldName(String value) {
         this.cmrFieldName = value;
     }
 
@@ -156,10 +156,10 @@ public class CmrFieldType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -168,10 +168,10 @@ public class CmrFieldType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

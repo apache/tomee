@@ -100,9 +100,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class EjbRelationshipRoleType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "ejb-relationship-role-name")
-    protected java.lang.String ejbRelationshipRoleName;
+    protected String ejbRelationshipRoleName;
     @XmlElement(required = true)
     protected MultiplicityType multiplicity;
     @XmlElement(name = "cascade-delete")
@@ -114,7 +114,7 @@ public class EjbRelationshipRoleType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -134,13 +134,13 @@ public class EjbRelationshipRoleType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -150,10 +150,10 @@ public class EjbRelationshipRoleType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbRelationshipRoleName() {
+    public String getEjbRelationshipRoleName() {
         return ejbRelationshipRoleName;
     }
 
@@ -162,10 +162,10 @@ public class EjbRelationshipRoleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbRelationshipRoleName(java.lang.String value) {
+    public void setEjbRelationshipRoleName(String value) {
         this.ejbRelationshipRoleName = value;
     }
 
@@ -270,10 +270,10 @@ public class EjbRelationshipRoleType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -282,10 +282,10 @@ public class EjbRelationshipRoleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

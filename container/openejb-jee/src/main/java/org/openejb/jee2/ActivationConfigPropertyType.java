@@ -57,23 +57,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ActivationConfigPropertyType {
 
     @XmlElement(name = "activation-config-property-name", required = true)
-    protected java.lang.String activationConfigPropertyName;
+    protected String activationConfigPropertyName;
     @XmlElement(name = "activation-config-property-value", required = true)
-    protected java.lang.String activationConfigPropertyValue;
+    protected String activationConfigPropertyValue;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the activationConfigPropertyName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getActivationConfigPropertyName() {
+    public String getActivationConfigPropertyName() {
         return activationConfigPropertyName;
     }
 
@@ -82,10 +82,10 @@ public class ActivationConfigPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setActivationConfigPropertyName(java.lang.String value) {
+    public void setActivationConfigPropertyName(String value) {
         this.activationConfigPropertyName = value;
     }
 
@@ -94,10 +94,10 @@ public class ActivationConfigPropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getActivationConfigPropertyValue() {
+    public String getActivationConfigPropertyValue() {
         return activationConfigPropertyValue;
     }
 
@@ -106,10 +106,10 @@ public class ActivationConfigPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setActivationConfigPropertyValue(java.lang.String value) {
+    public void setActivationConfigPropertyValue(String value) {
         this.activationConfigPropertyValue = value;
     }
 
@@ -118,10 +118,10 @@ public class ActivationConfigPropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -130,10 +130,10 @@ public class ActivationConfigPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

@@ -63,11 +63,11 @@ public class PortComponentRefType {
     @XmlElement(name = "enable-mtom")
     protected TrueFalseType enableMtom;
     @XmlElement(name = "port-component-link")
-    protected java.lang.String portComponentLink;
+    protected String portComponentLink;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the serviceEndpointInterface property.
@@ -122,10 +122,10 @@ public class PortComponentRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPortComponentLink() {
+    public String getPortComponentLink() {
         return portComponentLink;
     }
 
@@ -134,10 +134,10 @@ public class PortComponentRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPortComponentLink(java.lang.String value) {
+    public void setPortComponentLink(String value) {
         this.portComponentLink = value;
     }
 
@@ -146,10 +146,10 @@ public class PortComponentRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -158,10 +158,10 @@ public class PortComponentRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

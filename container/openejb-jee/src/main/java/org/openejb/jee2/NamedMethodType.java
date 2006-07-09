@@ -47,23 +47,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class NamedMethodType {
 
     @XmlElement(name = "method-name", required = true)
-    protected java.lang.String methodName;
+    protected String methodName;
     @XmlElement(name = "method-params")
     protected MethodParamsType methodParams;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the methodName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMethodName() {
+    public String getMethodName() {
         return methodName;
     }
 
@@ -72,10 +72,10 @@ public class NamedMethodType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMethodName(java.lang.String value) {
+    public void setMethodName(String value) {
         this.methodName = value;
     }
 
@@ -108,10 +108,10 @@ public class NamedMethodType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -120,10 +120,10 @@ public class NamedMethodType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

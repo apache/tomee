@@ -58,15 +58,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ParamValueType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "param-name", required = true)
-    protected java.lang.String paramName;
+    protected String paramName;
     @XmlElement(name = "param-value", required = true)
-    protected java.lang.String paramValue;
+    protected String paramValue;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -86,13 +86,13 @@ public class ParamValueType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -102,10 +102,10 @@ public class ParamValueType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getParamName() {
+    public String getParamName() {
         return paramName;
     }
 
@@ -114,10 +114,10 @@ public class ParamValueType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setParamName(java.lang.String value) {
+    public void setParamName(String value) {
         this.paramName = value;
     }
 
@@ -126,10 +126,10 @@ public class ParamValueType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getParamValue() {
+    public String getParamValue() {
         return paramValue;
     }
 
@@ -138,10 +138,10 @@ public class ParamValueType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setParamValue(java.lang.String value) {
+    public void setParamValue(String value) {
         this.paramValue = value;
     }
 
@@ -150,10 +150,10 @@ public class ParamValueType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -162,10 +162,10 @@ public class ParamValueType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

@@ -160,9 +160,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class InterceptorBindingType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "ejb-name", required = true)
-    protected java.lang.String ejbName;
+    protected String ejbName;
     @XmlElement(name = "interceptor-class", required = true)
     protected List<String> interceptorClass;
     @XmlElement(name = "interceptor-order")
@@ -175,7 +175,7 @@ public class InterceptorBindingType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -195,13 +195,13 @@ public class InterceptorBindingType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -211,10 +211,10 @@ public class InterceptorBindingType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbName() {
+    public String getEjbName() {
         return ejbName;
     }
 
@@ -223,10 +223,10 @@ public class InterceptorBindingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbName(java.lang.String value) {
+    public void setEjbName(String value) {
         this.ejbName = value;
     }
 
@@ -360,10 +360,10 @@ public class InterceptorBindingType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -372,10 +372,10 @@ public class InterceptorBindingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

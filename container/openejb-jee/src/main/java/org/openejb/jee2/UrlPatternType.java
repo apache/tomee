@@ -49,17 +49,17 @@ import javax.xml.bind.annotation.XmlValue;
 public class UrlPatternType {
 
     @XmlValue
-    protected java.lang.String value;
+    protected String value;
 
     /**
      * Gets the value of the value property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -68,10 +68,10 @@ public class UrlPatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

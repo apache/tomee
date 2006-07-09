@@ -73,7 +73,7 @@ public class EjbRelationType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the rest of the content model. 
@@ -104,8 +104,8 @@ public class EjbRelationType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link EjbRelationshipRoleType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DescriptionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link java.lang.String }{@code >}
+     * {@link JAXBElement }{@code <}{@link Text }{@code >}
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
      * 
      * 
      */
@@ -121,10 +121,10 @@ public class EjbRelationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -133,10 +133,10 @@ public class EjbRelationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

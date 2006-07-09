@@ -60,13 +60,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class InterceptorsType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(required = true)
     protected List<InterceptorType> interceptor;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -86,13 +86,13 @@ public class InterceptorsType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -131,10 +131,10 @@ public class InterceptorsType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -143,10 +143,10 @@ public class InterceptorsType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

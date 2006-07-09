@@ -94,23 +94,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class PersistenceContextRefType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "persistence-context-ref-name", required = true)
     protected String persistenceContextRefName;
     @XmlElement(name = "persistence-unit-name")
-    protected java.lang.String persistenceUnitName;
+    protected String persistenceUnitName;
     @XmlElement(name = "persistence-context-type")
     protected PersistenceContextTypeType persistenceContextType;
     @XmlElement(name = "persistence-property", required = true)
     protected List<PropertyType> persistenceProperty;
     @XmlElement(name = "mapped-name")
-    protected java.lang.String mappedName;
+    protected String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -130,13 +130,13 @@ public class PersistenceContextRefType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -170,10 +170,10 @@ public class PersistenceContextRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPersistenceUnitName() {
+    public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
@@ -182,10 +182,10 @@ public class PersistenceContextRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPersistenceUnitName(java.lang.String value) {
+    public void setPersistenceUnitName(String value) {
         this.persistenceUnitName = value;
     }
 
@@ -247,10 +247,10 @@ public class PersistenceContextRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMappedName() {
+    public String getMappedName() {
         return mappedName;
     }
 
@@ -259,10 +259,10 @@ public class PersistenceContextRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMappedName(java.lang.String value) {
+    public void setMappedName(String value) {
         this.mappedName = value;
     }
 
@@ -300,10 +300,10 @@ public class PersistenceContextRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -312,10 +312,10 @@ public class PersistenceContextRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

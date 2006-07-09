@@ -53,12 +53,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link JeeString }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relation-name", scope = EjbRelationType.class)
-    public JAXBElement<java.lang.String> createEjbRelationTypeEjbRelationName(java.lang.String value) {
-        return new JAXBElement<java.lang.String>(_EjbRelationTypeEjbRelationName_QNAME, java.lang.String.class, EjbRelationType.class, value);
+    public JAXBElement<String> createEjbRelationTypeEjbRelationName(String value) {
+        return new JAXBElement<String>(_EjbRelationTypeEjbRelationName_QNAME, String.class, EjbRelationType.class, value);
     }
 
     /**
@@ -71,12 +71,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DescriptionType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Text }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "description", scope = EjbRelationType.class)
-    public JAXBElement<DescriptionType> createEjbRelationTypeDescription(DescriptionType value) {
-        return new JAXBElement<DescriptionType>(_EjbRelationTypeDescription_QNAME, DescriptionType.class, EjbRelationType.class, value);
+    public JAXBElement<Text> createEjbRelationTypeDescription(Text value) {
+        return new JAXBElement<Text>(_EjbRelationTypeDescription_QNAME, Text.class, EjbRelationType.class, value);
     }
 
 }

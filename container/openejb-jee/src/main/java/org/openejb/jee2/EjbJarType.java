@@ -82,9 +82,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class EjbJarType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "display-name", required = true)
-    protected List<DisplayNameType> displayName;
+    protected List<Text> displayName;
     @XmlElement(required = true)
     protected List<IconType> icon;
     @XmlElement(name = "enterprise-beans")
@@ -98,12 +98,12 @@ public class EjbJarType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String version;
+    protected String version;
 
     /**
      * Gets the value of the description property.
@@ -123,13 +123,13 @@ public class EjbJarType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -152,13 +152,13 @@ public class EjbJarType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DisplayNameType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DisplayNameType> getDisplayName() {
+    public List<Text> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<DisplayNameType>();
+            displayName = new ArrayList<Text>();
         }
         return this.displayName;
     }
@@ -317,10 +317,10 @@ public class EjbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -329,10 +329,10 @@ public class EjbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -365,10 +365,10 @@ public class EjbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getVersion() {
+    public String getVersion() {
         if (version == null) {
             return "3.0";
         } else {
@@ -381,10 +381,10 @@ public class EjbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setVersion(java.lang.String value) {
+    public void setVersion(String value) {
         this.version = value;
     }
 

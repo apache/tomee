@@ -73,27 +73,27 @@ import javax.xml.namespace.QName;
 public class ServiceRefHandlerType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "display-name", required = true)
-    protected List<DisplayNameType> displayName;
+    protected List<Text> displayName;
     @XmlElement(required = true)
     protected List<IconType> icon;
     @XmlElement(name = "handler-name", required = true)
-    protected java.lang.String handlerName;
+    protected String handlerName;
     @XmlElement(name = "handler-class", required = true)
     protected String handlerClass;
     @XmlElement(name = "init-param", required = true)
     protected List<ParamValueType> initParam;
     @XmlElement(name = "soap-header", required = true)
-    protected List<java.lang.String> soapHeader;
+    protected List<String> soapHeader;
     @XmlElement(name = "soap-role", required = true)
-    protected List<java.lang.String> soapRole;
+    protected List<String> soapRole;
     @XmlElement(name = "port-name", required = true)
-    protected List<java.lang.String> portName;
+    protected List<String> portName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -113,13 +113,13 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -142,13 +142,13 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DisplayNameType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DisplayNameType> getDisplayName() {
+    public List<Text> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<DisplayNameType>();
+            displayName = new ArrayList<Text>();
         }
         return this.displayName;
     }
@@ -187,10 +187,10 @@ public class ServiceRefHandlerType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getHandlerName() {
+    public String getHandlerName() {
         return handlerName;
     }
 
@@ -199,10 +199,10 @@ public class ServiceRefHandlerType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setHandlerName(java.lang.String value) {
+    public void setHandlerName(String value) {
         this.handlerName = value;
     }
 
@@ -277,9 +277,9 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      */
-    public List<java.lang.String> getSoapHeader() {
+    public List<String> getSoapHeader() {
         if (soapHeader == null) {
-            soapHeader = new ArrayList<java.lang.String>();
+            soapHeader = new ArrayList<String>();
         }
         return this.soapHeader;
     }
@@ -302,13 +302,13 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getSoapRole() {
+    public List<String> getSoapRole() {
         if (soapRole == null) {
-            soapRole = new ArrayList<java.lang.String>();
+            soapRole = new ArrayList<String>();
         }
         return this.soapRole;
     }
@@ -331,13 +331,13 @@ public class ServiceRefHandlerType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getPortName() {
+    public List<String> getPortName() {
         if (portName == null) {
-            portName = new ArrayList<java.lang.String>();
+            portName = new ArrayList<String>();
         }
         return this.portName;
     }
@@ -347,10 +347,10 @@ public class ServiceRefHandlerType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -359,10 +359,10 @@ public class ServiceRefHandlerType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

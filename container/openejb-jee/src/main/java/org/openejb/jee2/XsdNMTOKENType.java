@@ -49,21 +49,21 @@ public class XsdNMTOKENType {
 
     @XmlValue
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String value;
+    protected String value;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the value property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -72,10 +72,10 @@ public class XsdNMTOKENType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -84,10 +84,10 @@ public class XsdNMTOKENType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -96,10 +96,10 @@ public class XsdNMTOKENType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

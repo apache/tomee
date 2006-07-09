@@ -72,29 +72,29 @@ public class ServiceRefHandlerChainType {
 
     @XmlElement(name = "service-name-pattern")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String serviceNamePattern;
+    protected String serviceNamePattern;
     @XmlElement(name = "port-name-pattern")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String portNamePattern;
+    protected String portNamePattern;
     @XmlList
     @XmlElement(name = "protocol-bindings")
-    protected List<java.lang.String> protocolBindings;
+    protected List<String> protocolBindings;
     @XmlElement(required = true)
     protected List<ServiceRefHandlerType> handler;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the serviceNamePattern property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getServiceNamePattern() {
+    public String getServiceNamePattern() {
         return serviceNamePattern;
     }
 
@@ -103,10 +103,10 @@ public class ServiceRefHandlerChainType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setServiceNamePattern(java.lang.String value) {
+    public void setServiceNamePattern(String value) {
         this.serviceNamePattern = value;
     }
 
@@ -115,10 +115,10 @@ public class ServiceRefHandlerChainType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPortNamePattern() {
+    public String getPortNamePattern() {
         return portNamePattern;
     }
 
@@ -127,10 +127,10 @@ public class ServiceRefHandlerChainType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPortNamePattern(java.lang.String value) {
+    public void setPortNamePattern(String value) {
         this.portNamePattern = value;
     }
 
@@ -152,13 +152,13 @@ public class ServiceRefHandlerChainType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getProtocolBindings() {
+    public List<String> getProtocolBindings() {
         if (protocolBindings == null) {
-            protocolBindings = new ArrayList<java.lang.String>();
+            protocolBindings = new ArrayList<String>();
         }
         return this.protocolBindings;
     }
@@ -197,10 +197,10 @@ public class ServiceRefHandlerChainType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -209,10 +209,10 @@ public class ServiceRefHandlerChainType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

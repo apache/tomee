@@ -67,9 +67,9 @@ public class IconType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
-    protected java.lang.String lang;
+    protected String lang;
 
     /**
      * Gets the value of the smallIcon property.
@@ -124,10 +124,10 @@ public class IconType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -136,10 +136,10 @@ public class IconType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -148,10 +148,10 @@ public class IconType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getLang() {
+    public String getLang() {
         return lang;
     }
 
@@ -160,10 +160,10 @@ public class IconType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setLang(java.lang.String value) {
+    public void setLang(String value) {
         this.lang = value;
     }
 

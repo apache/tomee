@@ -87,19 +87,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ResourceEnvRefType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "resource-env-ref-name", required = true)
     protected String resourceEnvRefName;
     @XmlElement(name = "resource-env-ref-type")
     protected String resourceEnvRefType;
     @XmlElement(name = "mapped-name")
-    protected java.lang.String mappedName;
+    protected String mappedName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -119,13 +119,13 @@ public class ResourceEnvRefType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -183,10 +183,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMappedName() {
+    public String getMappedName() {
         return mappedName;
     }
 
@@ -195,10 +195,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMappedName(java.lang.String value) {
+    public void setMappedName(String value) {
         this.mappedName = value;
     }
 
@@ -236,10 +236,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -248,10 +248,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

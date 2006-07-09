@@ -133,15 +133,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class MessageDrivenBeanType {
 
     @XmlElement(required = true)
-    protected List<DescriptionType> description;
+    protected List<Text> description;
     @XmlElement(name = "display-name", required = true)
-    protected List<DisplayNameType> displayName;
+    protected List<Text> displayName;
     @XmlElement(required = true)
     protected List<IconType> icon;
     @XmlElement(name = "ejb-name", required = true)
     protected EjbNameType ejbName;
     @XmlElement(name = "mapped-name")
-    protected java.lang.String mappedName;
+    protected String mappedName;
     @XmlElement(name = "ejb-class")
     protected String ejbClass;
     @XmlElement(name = "messaging-type")
@@ -185,7 +185,7 @@ public class MessageDrivenBeanType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the description property.
@@ -205,13 +205,13 @@ public class MessageDrivenBeanType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DescriptionType> getDescription() {
+    public List<Text> getDescription() {
         if (description == null) {
-            description = new ArrayList<DescriptionType>();
+            description = new ArrayList<Text>();
         }
         return this.description;
     }
@@ -234,13 +234,13 @@ public class MessageDrivenBeanType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DisplayNameType }
+     * {@link Text }
      * 
      * 
      */
-    public List<DisplayNameType> getDisplayName() {
+    public List<Text> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<DisplayNameType>();
+            displayName = new ArrayList<Text>();
         }
         return this.displayName;
     }
@@ -303,10 +303,10 @@ public class MessageDrivenBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMappedName() {
+    public String getMappedName() {
         return mappedName;
     }
 
@@ -315,10 +315,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMappedName(java.lang.String value) {
+    public void setMappedName(String value) {
         this.mappedName = value;
     }
 
@@ -876,10 +876,10 @@ public class MessageDrivenBeanType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -888,10 +888,10 @@ public class MessageDrivenBeanType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
