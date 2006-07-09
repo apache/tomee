@@ -96,7 +96,7 @@ public class ServiceRefType {
     @XmlElement(name = "service-ref-type")
     protected String serviceRefType;
     @XmlElement(name = "wsdl-file")
-    protected XsdAnyURIType wsdlFile;
+    protected String wsdlFile;
     @XmlElement(name = "jaxrpc-mapping-file")
     protected String jaxrpcMappingFile;
     @XmlElement(name = "service-qname")
@@ -280,10 +280,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link XsdAnyURIType }
+     *     {@link String }
      *     
      */
-    public XsdAnyURIType getWsdlFile() {
+    public String getWsdlFile() {
         return wsdlFile;
     }
 
@@ -292,10 +292,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link XsdAnyURIType }
+     *     {@link String }
      *     
      */
-    public void setWsdlFile(XsdAnyURIType value) {
+    public void setWsdlFile(String value) {
         this.wsdlFile = value;
     }
 
