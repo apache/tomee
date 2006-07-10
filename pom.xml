@@ -28,6 +28,7 @@
     <developerConnection>scm:svn:https://svn.codehaus.org/openejb/trunk/openejb3</developerConnection>
   </scm>
   <build>
+    <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
