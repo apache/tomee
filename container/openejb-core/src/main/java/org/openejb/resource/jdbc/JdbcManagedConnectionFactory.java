@@ -44,9 +44,11 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
                     + "\n\to JDBC driver classes are not available to OpenEJB"
                     + "\n\to Relative paths are not resolved properly");
         } finally {
-            try {
-                connection.destroy();
-            } catch (ResourceException dontCare) {
+            if (connection != null) {
+                try {
+                    connection.destroy();
+                } catch (ResourceException dontCare) {
+                }
             }
         }
     }
