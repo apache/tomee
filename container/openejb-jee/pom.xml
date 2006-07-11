@@ -10,8 +10,16 @@
   <packaging>jar</packaging>
   <version>3.0-SNAPSHOT</version>
   <name>OpenEJB :: Container :: Java EE</name>
-  <!--<build>-->
-      <!--<plugins>-->
+  <build>
+      <plugins>
+          <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                  <excludes>
+                      <exclude>org/openejb/jee2/EjbJarTest.*</exclude>
+                  </excludes>
+              </configuration>
+          </plugin>
           <!--<plugin>-->
               <!--<groupId>org.codehaus.mojo</groupId>-->
               <!--<artifactId>jaxb2-maven-plugin</artifactId>-->
@@ -27,8 +35,8 @@
                   <!--<packageName>org.openejb.jee2</packageName>-->
               <!--</configuration>-->
           <!--</plugin>-->
-      <!--</plugins>-->
-  <!--</build>-->
+      </plugins>
+  </build>
   <dependencies>
     <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
