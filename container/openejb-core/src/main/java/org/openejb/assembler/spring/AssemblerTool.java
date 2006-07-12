@@ -4,17 +4,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 import javax.naming.InitialContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
 
 import org.openejb.OpenEJBException;
-import org.openejb.assembler.classic.ConnectionManagerInfo;
 import org.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.openejb.assembler.classic.IntraVmServerInfo;
 import org.openejb.assembler.classic.JndiContextInfo;
-import org.openejb.assembler.classic.ManagedConnectionFactoryInfo;
 import org.openejb.assembler.classic.MethodInfo;
 import org.openejb.assembler.classic.MethodPermissionInfo;
 import org.openejb.assembler.classic.MethodTransactionInfo;
@@ -23,11 +19,8 @@ import org.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.openejb.core.DeploymentInfo;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
-import org.openejb.util.proxy.ProxyFactory;
-import org.openejb.util.proxy.ProxyManager;
 
 public class AssemblerTool {
-
     public static final Class PROXY_FACTORY = org.openejb.util.proxy.ProxyFactory.class;
     public static final Class SECURITY_SERVICE = org.openejb.spi.SecurityService.class;
     public static final Class TRANSACTION_SERVICE = org.openejb.spi.TransactionService.class;
@@ -36,7 +29,7 @@ public class AssemblerTool {
 
     protected static final Messages messages = new Messages("org.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
-    protected static final HashMap codebases = new HashMap();
+    protected static final HashMap<String, ClassLoader> codebases = new HashMap<String, ClassLoader>();
 
     protected Properties props;
 
@@ -63,77 +56,6 @@ public class AssemblerTool {
         }
     }
 
-    public ConnectionManager assembleConnectionManager(ConnectionManagerInfo cmInfo)
-            throws OpenEJBException, java.lang.Exception {
-        /*TODO: Add better exception handling, this method throws java.lang.Exception,
-         which is not very specific. Only a very specific OpenEJBException should be
-         thrown.
-         */
-        Class managerClass = SafeToolkit.loadClass(cmInfo.className, cmInfo.codebase);
-
-        checkImplementation(CONNECTION_MANAGER, managerClass, "ConnectionManager", cmInfo.connectionManagerId);
-
-        ConnectionManager connectionManager = (ConnectionManager) toolkit.newInstance(managerClass);
-
-        if (cmInfo.properties != null) {
-            Properties clonedProps = (Properties) (this.props.clone());
-            clonedProps.putAll(cmInfo.properties);
-            applyProperties(connectionManager, clonedProps);
-        }
-
-        return connectionManager;
-    }
-
-    public ManagedConnectionFactory assembleManagedConnectionFactory(ManagedConnectionFactoryInfo mngedConFactInfo)
-            throws org.openejb.OpenEJBException, java.lang.Exception {
-
-        ManagedConnectionFactory managedConnectionFactory = null;
-        try {
-            Class factoryClass = SafeToolkit.loadClass(mngedConFactInfo.className, mngedConFactInfo.codebase);
-            checkImplementation(CONNECTOR, factoryClass, "Connector", mngedConFactInfo.id);
-
-            managedConnectionFactory = (ManagedConnectionFactory) toolkit.newInstance(factoryClass);
-        } catch (Exception e) {
-            throw new OpenEJBException("Could not instantiate Connector '" + mngedConFactInfo.id + "'.", e);
-        }
-
-        try {
-
-            if (mngedConFactInfo.properties != null) {
-                Properties clonedProps = (Properties) (this.props.clone());
-                clonedProps.putAll(mngedConFactInfo.properties);
-                applyProperties(managedConnectionFactory, clonedProps);
-            }
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            throw new OpenEJBException("Could not initialize Connector '" + mngedConFactInfo.id + "'.", ite.getTargetException());
-        } catch (Exception e) {
-
-            throw new OpenEJBException("Could not initialize Connector '" + mngedConFactInfo.id + "'.", e);
-        }
-
-        return managedConnectionFactory;
-    }
-
-    public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {
-        Class factoryClass = SafeToolkit.loadClass(ivmInfo.proxyFactoryClassName, ivmInfo.codebase);
-
-        checkImplementation(PROXY_FACTORY, factoryClass, "ProxyFactory", ivmInfo.factoryName);
-
-        ProxyFactory factory = (ProxyFactory) toolkit.newInstance(factoryClass);
-
-        factory.init(ivmInfo.properties);
-        ProxyManager.registerFactory("ivm_server", factory);
-        ProxyManager.setDefaultFactory("ivm_server");
-
-    }
-
-    public void applyProperties(Object target, Properties props) throws java.lang.reflect.InvocationTargetException, java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
-        if (props != null /*&& props.size()>0*/) {
-            Method method = target.getClass().getMethod("init", new Class[]{Properties.class});
-            method.invoke(target, new Object[]{props});
-        }
-    }
-
     public void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
@@ -149,7 +71,7 @@ public class AssemblerTool {
                 if (mis[z].ejbDeploymentId == null || mis[z].ejbDeploymentId.equals(deploymentInfo.getDeploymentID())) {
                     if (!deploymentInfo.isBeanManagedTransaction()) {
 
-                        Vector methodVect = new Vector();
+                        List<Method> methodVect = new ArrayList<Method>();
 
                         if (methodInfo.methodIntf == null) {
 
@@ -164,11 +86,11 @@ public class AssemblerTool {
                         }
 
                         for (int x = 0; x < methodVect.size(); x++) {
-                            Method method = (Method) methodVect.elementAt(x);
+                            Method method = methodVect.get(x);
 
                             if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
                                     method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
-                                    method.getName().equals("remove") == false) {
+                                    !method.getName().equals("remove")) {
                                 continue;
                             }
                             deploymentInfo.setMethodTransactionAttribute(method, transInfo.transAttribute);
@@ -245,7 +167,7 @@ public class AssemblerTool {
          At the very least, log a warning or two.
          */
 
-        HashSet physicalRoles = new HashSet();
+        HashSet<String> physicalRoles = new HashSet<String>();
 
         for (int z = 0; z < methodPermission.roleNames.length; z++) {
             String[] physicals = roleMapping.getPhysicalRoles(methodPermission.roleNames[z]);
@@ -264,7 +186,7 @@ public class AssemblerTool {
     }
 
     public static class RoleMapping {
-        private HashMap map = new HashMap();
+        private HashMap<String, String[]> map = new HashMap<String, String[]>();
 
         public RoleMapping(RoleMappingInfo[] roleMappingInfos) {
             for (int i = 0; i < roleMappingInfos.length; i++) {
@@ -280,7 +202,7 @@ public class AssemblerTool {
         }
 
         public String[] getPhysicalRoles(String logicalRole) {
-            String[] roles = (String[]) map.get(logicalRole);
+            String[] roles = map.get(logicalRole);
             return roles != null ? (String[]) roles.clone() : null;
         }
 
@@ -293,7 +215,7 @@ public class AssemblerTool {
          At the very least, log a warning or two.
          */
 
-        Vector methodVect = new Vector();
+        List<Method> methodVect = new ArrayList<Method>();
 
         Class remote = di.getRemoteInterface();
         Class home = di.getHomeInterface();
@@ -305,10 +227,10 @@ public class AssemblerTool {
         } else {
             resolveMethods(methodVect, home, methodInfo);
         }
-        return (java.lang.reflect.Method[]) methodVect.toArray(new java.lang.reflect.Method[methodVect.size()]);
+        return methodVect.toArray(new Method[methodVect.size()]);
     }
 
-    protected static void resolveMethods(Vector methods, Class intrface, MethodInfo mi)
+    protected static void resolveMethods(List<Method> methods, Class intrface, MethodInfo mi)
             throws SecurityException {
         /*TODO: Add better exception handling. There is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -347,12 +269,6 @@ public class AssemblerTool {
             }
         }
 
-    }
-
-    protected void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
-        if (!intrfce.isAssignableFrom(factory)) {
-            handleException("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName());
-        }
     }
 
     private static java.lang.Class getClassForParam(java.lang.String className, ClassLoader cl) throws ClassNotFoundException {

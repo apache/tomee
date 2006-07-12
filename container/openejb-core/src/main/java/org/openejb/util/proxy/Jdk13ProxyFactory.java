@@ -9,6 +9,10 @@ import org.openejb.OpenEJBException;
 
 public class Jdk13ProxyFactory implements ProxyFactory {
     public void init(Properties props) throws OpenEJBException {
+        start();
+    }
+
+    private void start() throws OpenEJBException {
         String version = "";
         String badVersion = "1.3.0-";
         try {

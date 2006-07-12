@@ -38,9 +38,9 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
         ManagedConnection conn = (ManagedConnection) threadLocal.get(factory);
         if (conn == null) {
             conn = factory.matchManagedConnections(connSet, null, cxRequestInfo);
-            if (conn != null)
+            if (conn != null) {
                 connSet.remove(conn);
-            else {
+            } else {
                 conn = factory.createManagedConnection(null, cxRequestInfo);
                 conn.addConnectionEventListener(this);
             }
@@ -55,8 +55,9 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
                 * before the LocalTransaction objects in this connection manager.
                 */
                 Transaction tx = getTransactionManager().getTransaction();
-                if (tx != null)
+                if (tx != null) {
                     tx.registerSynchronization(new Synchronizer(conn.getLocalTransaction()));
+                }
             } catch (javax.transaction.SystemException se) {
                 throw new javax.resource.spi.ApplicationServerInternalException("Can not obtain a Transaction object from TransactionManager. " + se.getMessage());
             } catch (javax.transaction.RollbackException re) {
@@ -72,6 +73,10 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
 
     private TransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public void connectionClosed(ConnectionEvent event) {
@@ -94,7 +99,9 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
         ManagedConnectionFactory mcf = (ManagedConnectionFactory) threadLocal.getKey(conn);
         try {
             conn.destroy();
-            if (threadLocal.get(mcf) == conn) threadLocal.put(mcf, null);
+            if (threadLocal.get(mcf) == conn) {
+                threadLocal.put(mcf, null);
+            }
         } catch (javax.resource.ResourceException re) {
 
         }
@@ -169,7 +176,9 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
         HashMap keyMap = new HashMap();
 
         public synchronized void put(Object key, Object value) {
-            if (!keyMap.containsKey(key)) keyMap.put(value, key);
+            if (!keyMap.containsKey(key)) {
+                keyMap.put(value, key);
+            }
             super.put(key, value);
         }
 

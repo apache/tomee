@@ -212,5 +212,14 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
+
+    <!-- Spring dependencies -->
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+      <version>2.5-colossus</version>
+    </dependency>
+    <!-- END: Spring dependencies -->
+
   </dependencies>
 </project>

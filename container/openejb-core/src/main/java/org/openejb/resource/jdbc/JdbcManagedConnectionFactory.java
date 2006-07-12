@@ -14,16 +14,56 @@ import java.io.PrintWriter;
 import java.util.Set;
 
 public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedConnectionFactory, java.io.Serializable {
-
+    private static final long serialVersionUID = 8797357228901190014L;
     protected Logger logger = Logger.getInstance("OpenEJB.connector", "org.openejb.alt.util.resources");
     private ManagedConnectionFactory factory;
+    private String defaultUserName;
+    private String defaultPassword;
+    private String url;
+    private String driver;
 
     public void init(java.util.Properties props) throws javax.resource.spi.ResourceAdapterInternalException {
-        String defaultUserName = props.getProperty(EnvProps.USER_NAME);
-        String defaultPassword = props.getProperty(EnvProps.PASSWORD);
-        String url = props.getProperty(EnvProps.JDBC_URL);
-        String driver = props.getProperty(EnvProps.JDBC_DRIVER);
+        defaultUserName = props.getProperty(EnvProps.USER_NAME);
+        defaultPassword = props.getProperty(EnvProps.PASSWORD);
+        url = props.getProperty(EnvProps.JDBC_URL);
+        driver = props.getProperty(EnvProps.JDBC_DRIVER);
 
+        start();
+    }
+
+    public String getDefaultUserName() {
+        return defaultUserName;
+    }
+
+    public void setDefaultUserName(String defaultUserName) {
+        this.defaultUserName = defaultUserName;
+    }
+
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public void setDefaultPassword(String defaultPassword) {
+        this.defaultPassword = defaultPassword;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public void start() throws ResourceAdapterInternalException {
         loadDriver(driver);
 
         factory = new BasicManagedConnectionFactory(this, driver, url, defaultUserName, defaultPassword);
