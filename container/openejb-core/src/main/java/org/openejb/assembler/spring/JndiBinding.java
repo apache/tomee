@@ -49,6 +49,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 /**
+ * @org.apache.xbean.XBean element="jndiBinding"
  * @version $Revision$ $Date$
  */
 public class JndiBinding {
@@ -71,6 +72,9 @@ public class JndiBinding {
         this.bindings = bindings;
     }
 
+    /**
+     * @org.apache.xbean.InitMethod
+     */
     public void start() throws NamingException {
         if (context == null && bindings != null) throw new NullPointerException("Naming context has not been set");
         if (bindings == null) return;
@@ -86,6 +90,9 @@ public class JndiBinding {
         }
     }
 
+    /**
+     * @org.apache.xbean.DestroyMethod
+     */
     public void stop() {
         if (context == null) return;
         if (bindings == null) return;

@@ -13,6 +13,9 @@ import javax.security.auth.Subject;
 import java.io.PrintWriter;
 import java.util.Set;
 
+/**
+ * @org.apache.xbean.XBean element="jdbcConnectionFactory"
+ */
 public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedConnectionFactory, java.io.Serializable {
     private static final long serialVersionUID = 8797357228901190014L;
     protected Logger logger = Logger.getInstance("OpenEJB.connector", "org.openejb.alt.util.resources");
@@ -63,6 +66,9 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
         this.driver = driver;
     }
 
+    /**
+     * @org.apache.xbean.InitMethod
+     */
     public void start() throws ResourceAdapterInternalException {
         loadDriver(driver);
 

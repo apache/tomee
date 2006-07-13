@@ -4,36 +4,34 @@
 <beans xmlns:o="http://openejb.org/schemas/core">
   <bean id="proxyFactory" class="org.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
 
-  <bean id="containerSystem" class="org.openejb.core.ContainerSystem"/>
+  <o:containerSystem id="containerSystem"/>
 
   <bean id="jndiContext" factory-bean="containerSystem" factory-method="getJNDIContext"/>
 
-  <bean id="transactionManager" class="org.openejb.core.TransactionManagerWrapper">
-    <constructor-arg index="0">
-      <bean class="org.openejb.ri.sp.PseudoTransactionService"/>
-    </constructor-arg>
-  </bean>
+  <o:transactionManagerWrapper id="transactionManager">
+    <property name="transactionManager">
+      <o:pseudoTransactionService/>
+    </property>
+  </o:transactionManagerWrapper>
 
-  <bean id="securityService" class="org.openejb.ri.sp.PseudoSecurityService"/>
+  <o:pseudoSecurityService id="securityService"/>
 
-  <bean id="defaultLocalTxConnectionManager" class="org.openejb.resource.SharedLocalConnectionManager">
-    <property name="transactionManager" ref="transactionManager"/>
-  </bean>
+  <o:sharedLocalConnectionManager id="defaultConnectionManager"
+      transactionManager="#transactionManager"/>
 
-  <bean id="defaultJdbcDatabase" class="org.openejb.resource.jdbc.JdbcManagedConnectionFactory" init-method="start">
-    <property name="defaultUserName" value="Admin"/>
-    <property name="defaultPassword" value="pass"/>
-    <property name="url" value="jdbc:idb:conf/instantdb.properties"/>
-    <property name="driver" value="org.enhydra.instantdb.jdbc.idbDriver"/>
-  </bean>
+  <o:jdbcConnectionFactory id="defaultJdbcDatabase"
+      defaultUserName="Admin"
+      defaultPassword="pass"
+      url="jdbc:idb:conf/instantdb.properties"
+      driver="org.enhydra.instantdb.jdbc.idbDriver"/>
 
-  <o:jndi-binding context="#jndiContext">
+  <o:jndiBinding context="#jndiContext">
     <property name="bindings">
       <map>
         <entry key="java:openejb/connector/Default JDBC Database">
-          <o:connectorReference manager="#defaultLocalTxConnectionManager" factory="#defaultJdbcDatabase"/>
+          <o:connectorRef manager="#defaultConnectionManager" factory="#defaultJdbcDatabase"/>
         </entry>
       </map>
     </property>
-  </o:jndi-binding>
+  </o:jndiBinding>
 </beans>

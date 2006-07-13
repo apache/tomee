@@ -5,6 +5,9 @@ import java.security.Principal;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.FastThreadLocal;
 
+/**
+ * @org.apache.xbean.XBean element="pseudoSecurityService"
+ */
 public class PseudoSecurityService implements SecurityService {
 
     private FastThreadLocal threadStorage = new FastThreadLocal();

@@ -85,7 +85,7 @@
           </execution>
         </executions>
         <configuration>
-          <namespace>http://openejb.org/schemas/test</namespace>
+          <namespace>http://openejb.org/schemas/core</namespace>
         </configuration>
       </plugin>
     </plugins>

@@ -14,6 +14,9 @@ import javax.transaction.TransactionManager;
 
 import org.openejb.OpenEJB;
 
+/**
+ * @org.apache.xbean.XBean element="sharedLocalConnectionManager"
+ */
 public class SharedLocalConnectionManager implements javax.resource.spi.ConnectionManager,
         javax.resource.spi.ConnectionEventListener,
         java.io.Serializable {

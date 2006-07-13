@@ -14,7 +14,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * @org.apache.xbean.XBean element="pseudo-transaction-manager"
+ * @org.apache.xbean.XBean element="pseudoTransactionService"
  */
 public class PseudoTransactionService implements TransactionService, TransactionManager {
     Hashtable map = new Hashtable();

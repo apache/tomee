@@ -8,6 +8,9 @@ import org.openejb.core.ivm.naming.IvmContext;
 import org.openejb.core.ivm.naming.ObjectReference;
 import org.openejb.core.ivm.naming.Reference;
 
+/**
+ * @org.apache.xbean.XBean element="containerSystem"
+ */
 public class ContainerSystem implements org.openejb.spi.ContainerSystem {
 
     HashMap deployments = new HashMap();

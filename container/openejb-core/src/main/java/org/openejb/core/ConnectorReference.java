@@ -15,6 +15,9 @@ import org.openejb.core.ivm.naming.Reference;
 
 */
 
+/**
+ * @org.apache.xbean.XBean element="connectorRef"
+ */
 public class ConnectorReference implements Reference {
     private ConnectionManager conMngr;
     private ManagedConnectionFactory mngedConFactory;

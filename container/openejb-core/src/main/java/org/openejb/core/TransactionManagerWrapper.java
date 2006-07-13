@@ -9,6 +9,9 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
+/**
+ * @org.apache.xbean.XBean element="transactionManagerWrapper"
+ */
 public class TransactionManagerWrapper implements TransactionManager {
     final private TransactionManager transactionManager;
     final private Hashtable wrapperMap = new Hashtable();
