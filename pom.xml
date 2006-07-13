@@ -73,14 +73,6 @@
       <name>Dain's Development Repository</name>
       <url>http://people.apache.org/~dain/repository/m2-dev</url>
     </pluginRepository>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <id>snapshots</id>
-      <name>Maven Central Plugins Development Repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2</url>
-    </pluginRepository>
   </pluginRepositories>  
   <dependencyManagement>
     <dependencies>
