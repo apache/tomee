@@ -19,9 +19,9 @@ public class ConnectorReference implements Reference {
     private ConnectionManager conMngr;
     private ManagedConnectionFactory mngedConFactory;
 
-    public ConnectorReference(ConnectionManager cm, ManagedConnectionFactory mcf) {
-        conMngr = cm;
-        mngedConFactory = mcf;
+    public ConnectorReference(ConnectionManager manager, ManagedConnectionFactory factory) {
+        conMngr = manager;
+        mngedConFactory = factory;
     }
 
     public Object getObject() throws NamingException {

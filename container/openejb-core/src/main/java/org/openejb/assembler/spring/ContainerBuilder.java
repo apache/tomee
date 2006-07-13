@@ -29,21 +29,22 @@ public class ContainerBuilder {
 
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
-    private final Properties props;
     private final EjbJarInfo[] ejbJars;
     private final ContainerInfo[] containerInfos;
     private final String[] decorators;
+    private final TransactionManager transactionManager;
+    private final SecurityService securityService;
 
-    public ContainerBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
-        this.props = props;
+    public ContainerBuilder(ContainerSystemInfo containerSystemInfo, String decorators, TransactionManager transactionManager, SecurityService securityService) {
         this.ejbJars = containerSystemInfo.ejbJars;
         this.containerInfos = containerSystemInfo.containers;
-        String decorators = props.getProperty("openejb.container.decorators");
         this.decorators = (decorators == null) ? new String[]{} : decorators.split(":");
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
     }
 
     public Object build() throws OpenEJBException {
-        HashMap deployments = new HashMap();
+        HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
         URL[] jars = new URL[this.ejbJars.length];
         for (int i = 0; i < this.ejbJars.length; i++) {
             try {
@@ -68,14 +69,14 @@ public class ContainerBuilder {
             }
         }
 
-        List containers = new ArrayList();
+        List<Container> containers = new ArrayList<Container>();
         for (int i = 0; i < containerInfos.length; i++) {
             ContainerInfo containerInfo = containerInfos[i];
 
-            HashMap deploymentsList = new HashMap();
+            HashMap<String, DeploymentInfo> deploymentsList = new HashMap<String, DeploymentInfo>();
             for (int z = 0; z < containerInfo.ejbeans.length; z++) {
                 String ejbDeploymentId = containerInfo.ejbeans[z].ejbDeploymentId;
-                DeploymentInfo deployment = (DeploymentInfo) deployments.get(ejbDeploymentId);
+                DeploymentInfo deployment = deployments.get(ejbDeploymentId);
                 deploymentsList.put(ejbDeploymentId, deployment);
             }
 
@@ -106,8 +107,8 @@ public class ContainerBuilder {
                 ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
                 containerRecipe.setAllProperties(service.properties);
                 containerRecipe.setProperty("id", new StaticRecipe(containerName));
-                containerRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
-                containerRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())));
+                containerRecipe.setProperty("transactionManager", new StaticRecipe(transactionManager));
+                containerRecipe.setProperty("securityService", new StaticRecipe(securityService));
                 containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList));
 
                 return (Container) containerRecipe.create();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
+<beans xmlns:o="http://openejb.org/schemas/core">
   <bean id="proxyFactory" class="org.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
 
   <bean id="containerSystem" class="org.openejb.core.ContainerSystem"/>
@@ -27,19 +27,13 @@
     <property name="driver" value="org.enhydra.instantdb.jdbc.idbDriver"/>
   </bean>
 
-  <bean id="jndiBinder" class="org.openejb.assembler.spring.JndiBinder" init-method="start" destroy-method="stop">
-    <property name="context">
-      <bean factory-bean="containerSystem" factory-method="getJNDIContext"/>
-    </property>
+  <o:jndi-binding context="#jndiContext">
     <property name="bindings">
       <map>
         <entry key="java:openejb/connector/Default JDBC Database">
-          <bean class="org.openejb.core.ConnectorReference">
-            <constructor-arg ref="defaultLocalTxConnectionManager"/>
-            <constructor-arg ref="defaultJdbcDatabase"/>
-          </bean>
+          <o:connectorReference manager="#defaultLocalTxConnectionManager" factory="#defaultJdbcDatabase"/>
         </entry>
       </map>
     </property>
-  </bean>
+  </o:jndi-binding>
 </beans>

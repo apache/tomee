@@ -15,8 +15,8 @@ public class TransactionManagerWrapper implements TransactionManager {
 
     final static protected org.apache.log4j.Category logger = org.apache.log4j.Category.getInstance("Transaction");
 
-    public TransactionManagerWrapper(TransactionManager txMngr) {
-        transactionManager = txMngr;
+    public TransactionManagerWrapper(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public javax.transaction.TransactionManager getTxManager() {

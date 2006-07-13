@@ -51,7 +51,7 @@ import javax.naming.NamingException;
 /**
  * @version $Revision$ $Date$
  */
-public class JndiBinder {
+public class JndiBinding {
     private Context context;
     private Map<String, Object> bindings;
 

@@ -35,7 +35,13 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     private final SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
     private OpenEjbConfiguration config;
 
-    public Assembler() {
+    // todo eliminate this.. only used by jndi binding builder and should be injected
+    private static ThreadLocal<HashMap<String, Object>> context = new ThreadLocal<HashMap<String, Object>>();
+    private String decorators;
+
+    // todo eliminate this.. only used by jndi binding builder and should be injected
+    public static HashMap<String, Object> getContext() {
+        return context.get();
     }
 
     public ProxyFactory getProxyFactory() {
@@ -58,7 +64,8 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     private void setSecurityService(SecurityService securityService) throws NamingException {
         this.securityService = securityService;
-        props.put(SecurityService.class.getName(), securityService);
+        
+        // todo move binding to spring.xml file
         containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
     }
 
@@ -68,14 +75,19 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     private void setTransactionManager(TransactionManager transactionManager) throws Exception {
         this.transactionManager = transactionManager;
-        props.put(TransactionManager.class.getName(), transactionManager);
-        getContext().put(TransactionManager.class.getName(), transactionManager);
-        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
+
+        // todo move binding to spring.xml file
         containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
+
+        // todo eliminate this.. only used by jndi binding builder and should be injected
+        getContext().put(TransactionManager.class.getName(), transactionManager);
+
+        // todo push this out to OpenEJB object
+        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
     }
 
     public void init(Properties props) throws OpenEJBException {
-        this.props = props;
+        decorators = props.getProperty("openejb.container.decorators");
 
         /* Get Configuration ////////////////////////////*/
         String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
@@ -101,12 +113,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
             systemProperties.setProperty(javax.naming.Context.URL_PKG_PREFIXES, str);
         }
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-    }
-
-    private static ThreadLocal<HashMap<String, Object>> context = new ThreadLocal<HashMap<String, Object>>();
-
-    public static HashMap<String, Object> getContext() {
-        return context.get();
     }
 
     public void build() throws OpenEJBException {
@@ -166,23 +172,24 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
         SpringApplicationContext factory = new ClassPathXmlApplicationContext("META-INF/org.openejb/spring.xml");
 
-        /*[1] Assemble ProxyFactory //////////////////////////////////////////
-
-            This operation must take place first because of interdependencies.
-            As DeploymentInfo objects are registered with the ContainerSystem using the
-            ContainerSystem.addDeploymentInfo() method, they are also added to the JNDI
-            Naming Service for OpenEJB.  This requires that a proxy for the deployed bean's
-            EJBHome be created. The proxy requires that the default proxy factory is set.
-        */
-
+        //
+        // Proxy factory
+        //
+        //  This operation must take place first because of interdependencies.
+        //  As DeploymentInfo objects are registered with the ContainerSystem using the
+        //  ContainerSystem.addDeploymentInfo() method, they are also added to the JNDI
+        //  Naming Service for OpenEJB.  This requires that a proxy for the deployed bean's
+        //  EJBHome be created. The proxy requires that the default proxy factory is set.
+        //
         ProxyFactory proxyFactory = getBean(factory, ProxyFactory.class);
         setProxyFactory(proxyFactory);
-        /*[1]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
         //
         // Container system
         //
         containerSystem = getBean(factory, org.openejb.core.ContainerSystem.class);
+
+        // todo this is set in OpenEJB also so should be safe to remove
         SystemInstance.get().setComponent(org.openejb.spi.ContainerSystem.class, containerSystem);
 
         //
@@ -194,22 +201,29 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         //
         // Security system
         //
-        SecurityService securityService1 = getBean(factory, SecurityService.class);
-        setSecurityService(securityService1);
+        SecurityService securityService = getBean(factory, SecurityService.class);
+        setSecurityService(securityService);
 
-        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
+        //
+        // Create the containers
+        //
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
-        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo, ((AssemblerTool) this).props);
+        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo,
+                decorators,
+                transactionManager,
+                securityService);
+
         List<Container> containers = (List<Container>) containerBuilder.build();
         for (int i1 = 0; i1 < containers.size(); i1++) {
-            Container container1 = containers.get(i1);
-            containerSystem.addContainer(container1.getContainerID(), container1);
-            org.openejb.DeploymentInfo[] deployments1 = container1.deployments();
+            Container container = containers.get(i1);
+            containerSystem.addContainer(container.getContainerID(), container);
+            org.openejb.DeploymentInfo[] deployments1 = container.deployments();
             for (int j = 0; j < deployments1.length; j++) {
                 containerSystem.addDeployment((DeploymentInfo) deployments1[j]);
             }
         }
 
+        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
         // roleMapping used later in buildMethodPermissions
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
         org.openejb.DeploymentInfo [] deployments = containerSystem.deployments();

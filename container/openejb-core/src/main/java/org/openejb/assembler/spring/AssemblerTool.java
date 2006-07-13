@@ -3,7 +3,6 @@ package org.openejb.assembler.spring;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 import javax.naming.InitialContext;
@@ -21,22 +20,10 @@ import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
 
 public class AssemblerTool {
-    public static final Class PROXY_FACTORY = org.openejb.util.proxy.ProxyFactory.class;
-    public static final Class SECURITY_SERVICE = org.openejb.spi.SecurityService.class;
-    public static final Class TRANSACTION_SERVICE = org.openejb.spi.TransactionService.class;
-    public static final Class CONNECTION_MANAGER = javax.resource.spi.ConnectionManager.class;
-    public static final Class CONNECTOR = javax.resource.spi.ManagedConnectionFactory.class;
-
     protected static final Messages messages = new Messages("org.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
-    protected static final HashMap<String, ClassLoader> codebases = new HashMap<String, ClassLoader>();
-
-    protected Properties props;
 
     static {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        codebases.put("CLASSPATH", cl);
-
         System.setProperty("noBanner", "true");
     }
 
@@ -45,7 +32,7 @@ public class AssemblerTool {
     use a message number. Message numbers allow the message text to
     be internationalized.
     */
-    public InitialContext assembleRemoteJndiContext(JndiContextInfo context)
+    public static InitialContext assembleRemoteJndiContext(JndiContextInfo context)
             throws org.openejb.OpenEJBException {
         try {
             InitialContext ic = new InitialContext(context.properties);
@@ -56,7 +43,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
+    public static void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -102,7 +89,7 @@ public class AssemblerTool {
 
     }
 
-    public void applySecurityRoleReference(DeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
+    public static void applySecurityRoleReference(DeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
         if (beanInfo.securityRoleReferences != null) {
             for (int l = 0; l < beanInfo.securityRoleReferences.length; l++) {
                 SecurityRoleReferenceInfo roleRef = beanInfo.securityRoleReferences[l];
@@ -112,7 +99,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions) {
+    public static void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -136,7 +123,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions, AssemblerTool.RoleMapping roleMapping) {
+    public static void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions, AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -159,7 +146,7 @@ public class AssemblerTool {
     * @see org.openejb.assembler.classic.MethodPermissionInfo
     * @see org.openejb.assembler.classic.AssemblerTool.RoleMapping
     */
-    public MethodPermissionInfo applyRoleMappings(MethodPermissionInfo methodPermission,
+    public static MethodPermissionInfo applyRoleMappings(MethodPermissionInfo methodPermission,
                                                   AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
@@ -208,7 +195,7 @@ public class AssemblerTool {
 
     }
 
-    protected java.lang.reflect.Method[] resolveMethodInfo(MethodInfo methodInfo, org.openejb.core.DeploymentInfo di) {
+    protected static java.lang.reflect.Method[] resolveMethodInfo(MethodInfo methodInfo, org.openejb.core.DeploymentInfo di) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -300,23 +287,23 @@ public class AssemblerTool {
     /*------------------------------------------------------*/
     /*    Methods for easy exception handling               */
     /*------------------------------------------------------*/
-    public void handleException(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) throws OpenEJBException {
+    public static void handleException(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2, arg3));
     }
 
-    public void handleException(String errorCode, Object arg0, Object arg1, Object arg2) throws OpenEJBException {
+    public static void handleException(String errorCode, Object arg0, Object arg1, Object arg2) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2));
     }
 
-    public void handleException(String errorCode, Object arg0, Object arg1) throws OpenEJBException {
+    public static void handleException(String errorCode, Object arg0, Object arg1) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, arg0, arg1));
     }
 
-    public void handleException(String errorCode, Object arg0) throws OpenEJBException {
+    public static void handleException(String errorCode, Object arg0) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, arg0));
     }
 
-    public void handleException(String errorCode) throws OpenEJBException {
+    public static void handleException(String errorCode) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode));
     }
 
@@ -324,23 +311,23 @@ public class AssemblerTool {
     /*  Methods for logging exceptions that are noteworthy  */
     /*  but not bad enough to stop the container system.    */
     /*------------------------------------------------------*/
-    public void logWarning(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) {
+    public static void logWarning(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) {
         System.out.println("Warning: " + messages.format(errorCode, arg0, arg1, arg2, arg3));
     }
 
-    public void logWarning(String errorCode, Object arg0, Object arg1, Object arg2) {
+    public static void logWarning(String errorCode, Object arg0, Object arg1, Object arg2) {
         System.out.println("Warning: " + messages.format(errorCode, arg0, arg1, arg2));
     }
 
-    public void logWarning(String errorCode, Object arg0, Object arg1) {
+    public static void logWarning(String errorCode, Object arg0, Object arg1) {
         System.out.println("Warning: " + messages.format(errorCode, arg0, arg1));
     }
 
-    public void logWarning(String errorCode, Object arg0) {
+    public static void logWarning(String errorCode, Object arg0) {
         System.out.println("Warning: " + messages.format(errorCode, arg0));
     }
 
-    public void logWarning(String errorCode) {
+    public static void logWarning(String errorCode) {
         System.out.println("Warning: " + messages.format(errorCode));
     }
 }

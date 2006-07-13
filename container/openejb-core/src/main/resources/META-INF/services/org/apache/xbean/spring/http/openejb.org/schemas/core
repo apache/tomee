@@ -1,0 +1,10 @@
+
+jndi-binding = org.openejb.assembler.spring.JndiBinding
+jndi-binding.initMethod = start
+jndi-binding.destroyMethod = stop
+
+connectorReference = org.openejb.core.ConnectorReference
+org.openejb.core.ConnectorReference(javax.resource.spi.ConnectionManager,javax.resource.spi.ManagedConnectionFactory).parameterNames = manager factory
+
+org.openejb.core.TransactionManagerWrapper(javax.transaction.TransactionManager).parameterNames = transactionManager
+

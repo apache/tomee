@@ -47,50 +47,22 @@
   </modules>
   <repositories>
     <repository>
-      <id>apache</id>
-      <name>Apache Repository</name>
-      <url>http://cvs.apache.org/repository</url>
-      <layout>legacy</layout>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus Repository</name>
-      <url>http://dist.codehaus.org</url>
+      <id>apache-snapshot</id>
+      <name>Apache monkey Repository</name>
+      <url>http://people.apache.org/repository</url>
       <layout>legacy</layout>
     </repository>
     <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <id>snapshots</id>
-      <name>Maven Snapshot Development Repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2</url>
-    </repository>
-    <repository>
-      <id>maven-legacy-on-ibiblio</id>
-      <name>Maven1 Repository on iBiblio</name>
-      <url>http://www.ibiblio.org/maven</url>
-      <layout>legacy</layout>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
+      <id>DainDevRepo</id>
+      <name>Dain's Development Repository</name>
+      <url>http://people.apache.org/~dain/repository/m2-dev</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <id>snapshots</id>
-      <name>Maven Central Plugins Development Repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2</url>
+      <id>DainDevRepo</id>
+      <name>Dain's Development Repository</name>
+      <url>http://people.apache.org/~dain/repository/m2-dev</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>
@@ -103,12 +75,12 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
-        <version>1.0</version>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>geronimo</groupId>

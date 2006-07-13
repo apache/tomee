@@ -72,6 +72,21 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>maven-xbean-plugin</artifactId>
+        <version>COL-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>mapping</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <namespace>http://openejb.org/schemas/test</namespace>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -217,7 +232,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
-      <version>2.5-colossus</version>
+      <version>COL-SNAPSHOT</version>
     </dependency>
     <!-- END: Spring dependencies -->
 
