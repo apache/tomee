@@ -51,6 +51,9 @@
       <name>Codehaus Repository</name>
       <url>http://dist.codehaus.org</url>
       <layout>legacy</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>apache-snapshot</id>
