@@ -37,14 +37,12 @@ import org.xml.sax.InputSource;
  */
 public class EjbJarTest extends TestCase {
 
-    public void testDummy() {}
-    
     /**
      * TODO: What does the test test out? The comparision using assertEquals doesn't seem to work well with xml files.
      * 
      * @throws Exception
      */
-    public void XtestAll() throws Exception {
+    public void testAll() throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(EjbJarType.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
