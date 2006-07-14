@@ -25,10 +25,13 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 /**
@@ -69,13 +72,8 @@ public class EjbJarType {
     @XmlElement(required = true)
     protected List<IconType> icon;
 
-    @XmlElementWrapper(name = "enterprise-beans")
-    @XmlElements({
-    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
-    @XmlElement(name = "session", required = true, type = SessionBeanType.class),
-    @XmlElement(name = "entity", required = true, type = EntityBeanType.class)
-            })
-    protected List<EnterpriseBean> enterpriseBeans;
+    @XmlTransient
+    protected Map<String,EnterpriseBean> enterpriseBeans = new LinkedHashMap<String,EnterpriseBean>();
 
     protected InterceptorsType interceptors;
     protected RelationshipsType relationships;
@@ -93,22 +91,6 @@ public class EjbJarType {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -116,22 +98,6 @@ public class EjbJarType {
         return this.description;
     }
 
-    /**
-     * Gets the value of the displayName property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDisplayName().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDisplayName() {
         if (displayName == null) {
             displayName = new ArrayList<Text>();
@@ -139,22 +105,6 @@ public class EjbJarType {
         return this.displayName;
     }
 
-    /**
-     * Gets the value of the icon property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getIcon().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link IconType }
-     */
     public List<IconType> getIcon() {
         if (icon == null) {
             icon = new ArrayList<IconType>();
@@ -162,11 +112,27 @@ public class EjbJarType {
         return this.icon;
     }
 
-    public List<EnterpriseBean> getEnterpriseBeans() {
-        if (enterpriseBeans == null) {
-            enterpriseBeans = new ArrayList<EnterpriseBean>();
-        }
-        return this.enterpriseBeans;
+    @XmlElementWrapper(name = "enterprise-beans")
+    @XmlElements({
+    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
+    @XmlElement(name = "session", required = true, type = SessionBeanType.class),
+    @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
+    public EnterpriseBean[] getEnterpriseBeans() {
+        return enterpriseBeans.values().toArray(new EnterpriseBean[]{});
+    }
+
+    public void setEnterpriseBeans(EnterpriseBean[] v) {
+        enterpriseBeans.clear();
+        for (EnterpriseBean e : v) enterpriseBeans.put(e.getEjbName(), e);
+    }
+
+    public EnterpriseBean addEnterpriseBean(EnterpriseBean bean){
+        enterpriseBeans.put(bean.getEjbName(), bean);
+        return bean;
+    }
+
+    public EnterpriseBean getEnterpriseBean(String ejbName){
+        return enterpriseBeans.get(ejbName);    
     }
 
     public InterceptorsType getInterceptors() {

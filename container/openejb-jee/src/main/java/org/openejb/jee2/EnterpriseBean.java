@@ -16,8 +16,60 @@
  */
 package org.openejb.jee2;
 
+import java.util.List;
+
 /**
  * @version $Revision$ $Date$
  */
 public interface EnterpriseBean {
+    public List<Text> getDescription();
+
+    public List<Text> getDisplayName();
+
+    public List<IconType> getIcon();
+
+    public String getEjbName();
+
+    public void setEjbName(String value);
+
+    public String getMappedName();
+
+    public void setMappedName(String value);
+
+    public String getEjbClass();
+
+    public void setEjbClass(String value);
+
+    public List<AroundInvokeType> getAroundInvoke();
+
+    public List<EnvEntryType> getEnvEntry();
+
+    public List<EjbRefType> getEjbRef();
+
+    public List<EjbLocalRefType> getEjbLocalRef();
+
+    public List<ServiceRefType> getServiceRef();
+
+    public List<ResourceRefType> getResourceRef();
+
+    public List<ResourceEnvRefType> getResourceEnvRef();
+
+    public List<MessageDestinationRefType> getMessageDestinationRef();
+
+    public List<PersistenceContextRefType> getPersistenceContextRef();
+
+    public List<PersistenceUnitRefType> getPersistenceUnitRef();
+
+    public List<LifecycleCallbackType> getPostConstruct();
+
+    public List<LifecycleCallbackType> getPreDestroy();
+
+    public SecurityIdentityType getSecurityIdentity();
+
+    public void setSecurityIdentity(SecurityIdentityType value);
+
+    public String getId();
+
+    public void setId(String value);
+
 }
