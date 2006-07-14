@@ -19,7 +19,17 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The transaction-typeType specifies an enterprise bean's
+ * transaction management type.
+ * <p/>
+ * The transaction-type must be one of the two following:
+ * <p/>
+ * Bean
+ * Container
+ */
+public enum TransactionType {
+    @XmlEnumValue("Bean") BEAN,
+    @XmlEnumValue("Container") CONTAINER;
 }

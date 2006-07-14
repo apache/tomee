@@ -19,7 +19,21 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The res-authType specifies whether the Deployment Component
+ * code signs on programmatically to the resource manager, or
+ * whether the Container will sign on to the resource manager
+ * on behalf of the Deployment Component. In the latter case,
+ * the Container uses information that is supplied by the
+ * Deployer.
+ * <p/>
+ * The value must be one of the two following:
+ * <p/>
+ * Application
+ * Container
+ */
+public enum ResAuth {
+    @XmlEnumValue("Application") APPLICATION,
+    @XmlEnumValue("Container") CONTAINER;
 }

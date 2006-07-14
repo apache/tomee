@@ -19,7 +19,19 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The res-sharing-scope type specifies whether connections
+ * obtained through the given resource manager connection
+ * factory reference can be shared. The value, if specified,
+ * must be one of the two following:
+ * <p/>
+ * Shareable
+ * Unshareable
+ * <p/>
+ * The default value is Shareable.
+ */
+public enum ResSharingScope {
+    @XmlEnumValue("Shareable") SHAREABLE,
+    @XmlEnumValue("Unshareable") UNSHAREABLE;
 }

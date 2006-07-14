@@ -19,7 +19,7 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+public enum Multiplicity {
+    @XmlEnumValue("One") ONE,
+    @XmlEnumValue("Many") MANY;
 }

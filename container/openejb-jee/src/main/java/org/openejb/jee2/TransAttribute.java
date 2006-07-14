@@ -19,7 +19,26 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The trans-attributeType specifies how the container must
+ * manage the transaction boundaries when delegating a method
+ * invocation to an enterprise bean's business method.
+ * <p/>
+ * The value must be one of the following:
+ * <p/>
+ * NotSupported
+ * Supports
+ * Required
+ * RequiresNew
+ * Mandatory
+ * Never
+ */
+public enum TransAttribute {
+    @XmlEnumValue("NotSupported") NOT_SUPPORTED,
+    @XmlEnumValue("Supports") SUPPORTS,
+    @XmlEnumValue("Required") REQUIRED,
+    @XmlEnumValue("RequiresNew") REQUIRES_NEW,
+    @XmlEnumValue("Mandatory") MANDATORY,
+    @XmlEnumValue("Never") NEVER;
 }

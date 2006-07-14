@@ -26,7 +26,7 @@ public interface EnterpriseBean {
 
     public List<Text> getDisplayName();
 
-    public List<IconType> getIcon();
+    public List<Icon> getIcon();
 
     public String getEjbName();
 
@@ -40,33 +40,33 @@ public interface EnterpriseBean {
 
     public void setEjbClass(String value);
 
-    public List<AroundInvokeType> getAroundInvoke();
+    public List<AroundInvoke> getAroundInvoke();
 
-    public List<EnvEntryType> getEnvEntry();
+    public List<EnvEntry> getEnvEntry();
 
-    public List<EjbRefType> getEjbRef();
+    public List<EjbRef> getEjbRef();
 
-    public List<EjbLocalRefType> getEjbLocalRef();
+    public List<EjbLocalRef> getEjbLocalRef();
 
-    public List<ServiceRefType> getServiceRef();
+    public List<ServiceRef> getServiceRef();
 
-    public List<ResourceRefType> getResourceRef();
+    public List<ResourceRef> getResourceRef();
 
-    public List<ResourceEnvRefType> getResourceEnvRef();
+    public List<ResourceEnvRef> getResourceEnvRef();
 
-    public List<MessageDestinationRefType> getMessageDestinationRef();
+    public List<MessageDestinationRef> getMessageDestinationRef();
 
-    public List<PersistenceContextRefType> getPersistenceContextRef();
+    public List<PersistenceContextRef> getPersistenceContextRef();
 
-    public List<PersistenceUnitRefType> getPersistenceUnitRef();
+    public List<PersistenceUnitRef> getPersistenceUnitRef();
 
-    public List<LifecycleCallbackType> getPostConstruct();
+    public List<LifecycleCallback> getPostConstruct();
 
-    public List<LifecycleCallbackType> getPreDestroy();
+    public List<LifecycleCallback> getPreDestroy();
 
-    public SecurityIdentityType getSecurityIdentity();
+    public SecurityIdentity getSecurityIdentity();
 
-    public void setSecurityIdentity(SecurityIdentityType value);
+    public void setSecurityIdentity(SecurityIdentity value);
 
     public String getId();
 

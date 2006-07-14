@@ -19,7 +19,17 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The persistence-context-typeType specifies the transactional
+ * nature of a persistence context reference.
+ * <p/>
+ * The value of the persistence-context-type element must be
+ * one of the following:
+ * Transaction
+ * Extended
+ */
+public enum PersistenceContextType {
+    @XmlEnumValue("Transaction") TRANSACTION,
+    @XmlEnumValue("Extended") EXTENDED;
 }

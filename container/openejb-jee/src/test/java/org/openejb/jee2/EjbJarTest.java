@@ -30,8 +30,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 
-import org.xml.sax.InputSource;
-
 /**
  * @version $Revision$ $Date$
  */
@@ -43,7 +41,7 @@ public class EjbJarTest extends TestCase {
      * @throws Exception
      */
     public void testAll() throws Exception {
-        JAXBContext ctx = JAXBContext.newInstance(EjbJarType.class);
+        JAXBContext ctx = JAXBContext.newInstance(EjbJar.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("ejb-jar-example1.xml");
@@ -51,7 +49,7 @@ public class EjbJarTest extends TestCase {
 
         JAXBElement element =  (JAXBElement) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
         unmarshaller.setEventHandler(new TestValidationEventHandler());
-        EjbJarType ejbJarType = (EjbJarType) element.getValue();
+        EjbJar ejbJar = (EjbJar) element.getValue();
         System.out.println("unmarshalled");
 
         Marshaller marshaller = ctx.createMarshaller();

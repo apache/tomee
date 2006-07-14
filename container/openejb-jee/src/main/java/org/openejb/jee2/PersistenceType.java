@@ -19,7 +19,17 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The persistence-typeType specifies an entity bean's persistence
+ * management type.
+ * <p/>
+ * The persistence-type element must be one of the two following:
+ * <p/>
+ * Bean
+ * Container
+ */
+public enum PersistenceType {
+    @XmlEnumValue("Bean") BEAN,
+    @XmlEnumValue("Container") CONTAINER;
 }

@@ -19,7 +19,19 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The result-type-mappingType is used in the query element to
+ * specify whether an abstract schema type returned by a query
+ * for a select method is to be mapped to an EJBLocalObject or
+ * EJBObject type.
+ * <p/>
+ * The value must be one of the following:
+ * <p/>
+ * Local
+ * Remote
+ */
+public enum ResultTypeMapping {
+    @XmlEnumValue("Local") LOCAL,
+    @XmlEnumValue("Remote") REMOTE;
 }

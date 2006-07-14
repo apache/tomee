@@ -19,7 +19,23 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+
+/**
+ * The message-destination-usageType specifies the use of the
+ * message destination indicated by the reference.  The value
+ * indicates whether messages are consumed from the message
+ * destination, produced for the destination, or both.  The
+ * Assembler makes use of this information in linking producers
+ * of a destination with its consumers.
+ * <p/>
+ * The value of the message-destination-usage element must be
+ * one of the following:
+ * Consumes
+ * Produces
+ * ConsumesProduces
+ */
+public enum MessageDestinationUsage {
+    @XmlEnumValue("Consumes") CONSUMES,
+    @XmlEnumValue("Produces") PRODUCES,
+    @XmlEnumValue("ConsumesProduces") CONSUMES_PRODUCES,
 }

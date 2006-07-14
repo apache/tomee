@@ -51,35 +51,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link EjbJarType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link EjbJar }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-jar")
-    public JAXBElement<EjbJarType> createEjbJar(EjbJarType value) {
-        return new JAXBElement<EjbJarType>(_EjbJar_QNAME, EjbJarType.class, null, value);
+    public JAXBElement<EjbJar> createEjbJar(EjbJar value) {
+        return new JAXBElement<EjbJar>(_EjbJar_QNAME, EjbJar.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relation-name", scope = EjbRelationType.class)
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relation-name", scope = EjbRelation.class)
     public JAXBElement<String> createEjbRelationTypeEjbRelationName(String value) {
-        return new JAXBElement<String>(_EjbRelationTypeEjbRelationName_QNAME, String.class, EjbRelationType.class, value);
+        return new JAXBElement<String>(_EjbRelationTypeEjbRelationName_QNAME, String.class, EjbRelation.class, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link EjbRelationshipRoleType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link EjbRelationshipRole }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relationship-role", scope = EjbRelationType.class)
-    public JAXBElement<EjbRelationshipRoleType> createEjbRelationTypeEjbRelationshipRole(EjbRelationshipRoleType value) {
-        return new JAXBElement<EjbRelationshipRoleType>(_EjbRelationTypeEjbRelationshipRole_QNAME, EjbRelationshipRoleType.class, EjbRelationType.class, value);
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relationship-role", scope = EjbRelation.class)
+    public JAXBElement<EjbRelationshipRole> createEjbRelationTypeEjbRelationshipRole(EjbRelationshipRole value) {
+        return new JAXBElement<EjbRelationshipRole>(_EjbRelationTypeEjbRelationshipRole_QNAME, EjbRelationshipRole.class, EjbRelation.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Text }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "description", scope = EjbRelationType.class)
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "description", scope = EjbRelation.class)
     public JAXBElement<Text> createEjbRelationTypeDescription(Text value) {
-        return new JAXBElement<Text>(_EjbRelationTypeDescription_QNAME, Text.class, EjbRelationType.class, value);
+        return new JAXBElement<Text>(_EjbRelationTypeDescription_QNAME, Text.class, EjbRelation.class, value);
     }
 
 }

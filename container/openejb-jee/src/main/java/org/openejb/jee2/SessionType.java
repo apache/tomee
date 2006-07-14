@@ -19,7 +19,7 @@ package org.openejb.jee2;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum EjbRefType {
-    @XmlEnumValue("Entity") ENTITY,
-    @XmlEnumValue("Session") SESSION
+public enum SessionType {
+    @XmlEnumValue("Stateful") STATEFUL,
+    @XmlEnumValue("Stateless") STATELESS
 }

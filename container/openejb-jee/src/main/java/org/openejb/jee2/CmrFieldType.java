@@ -17,92 +17,16 @@
 
 package org.openejb.jee2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The cmr-fieldType describes the bean provider's view of
- * a relationship. It consists of an optional description, and
- * the name and the class type of a field in the source of a
- * role of a relationship. The cmr-field-name element
- * corresponds to the name used for the get and set accessor
- * methods for the relationship. The cmr-field-type element is
- * used only for collection-valued cmr-fields. It specifies the
- * type of the collection that is used.
+ * The cmr-field-type element specifies the class of a
+ * collection-valued logical relationship field in the entity
+ * bean class. The value of an element using cmr-field-typeType
+ * must be either: java.util.Collection or java.util.Set.
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cmr-fieldType", propOrder = {
-        "description",
-        "cmrFieldName",
-        "cmrFieldType"
-        })
-public class CmrFieldType {
-
-    @XmlElement(required = true)
-    protected List<Text> description;
-    @XmlElement(name = "cmr-field-name", required = true)
-    protected String cmrFieldName;
-    @XmlElement(name = "cmr-field-type")
-    protected CmrFieldTypeType cmrFieldType;
-    @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    protected String id;
-
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
-    }
-
-    public String getCmrFieldName() {
-        return cmrFieldName;
-    }
-
-    public void setCmrFieldName(String value) {
-        this.cmrFieldName = value;
-    }
-
-    public CmrFieldTypeType getCmrFieldType() {
-        return cmrFieldType;
-    }
-
-    public void setCmrFieldType(CmrFieldTypeType value) {
-        this.cmrFieldType = value;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String value) {
-        this.id = value;
-    }
-
+public enum CmrFieldType {
+    @XmlEnumValue("java.util.Collection") COLLECTION,
+    @XmlEnumValue("java.util.Set") SET
 }
