@@ -154,7 +154,7 @@ import java.util.List;
         "securityIdentity",
         "query"
         })
-public class EntityBeanType {
+public class EntityBeanType implements EnterpriseBean {
 
     @XmlElement(required = true)
     protected List<Text> description;

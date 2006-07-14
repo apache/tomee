@@ -104,7 +104,7 @@ import java.util.List;
         "preDestroy",
         "securityIdentity"
         })
-public class MessageDrivenBeanType {
+public class MessageDrivenBeanType implements EnterpriseBean {
 
     @XmlElement(required = true)
     protected List<Text> description;

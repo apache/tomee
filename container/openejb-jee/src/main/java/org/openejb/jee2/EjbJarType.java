@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -66,8 +68,15 @@ public class EjbJarType {
     protected List<Text> displayName;
     @XmlElement(required = true)
     protected List<IconType> icon;
-    @XmlElement(name = "enterprise-beans")
-    protected EnterpriseBeansType enterpriseBeans;
+
+    @XmlElementWrapper(name = "enterprise-beans")
+    @XmlElements({
+    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
+    @XmlElement(name = "session", required = true, type = SessionBeanType.class),
+    @XmlElement(name = "entity", required = true, type = EntityBeanType.class)
+            })
+    protected List<EnterpriseBean> enterpriseBeans;
+
     protected InterceptorsType interceptors;
     protected RelationshipsType relationships;
     @XmlElement(name = "assembly-descriptor")
@@ -153,12 +162,11 @@ public class EjbJarType {
         return this.icon;
     }
 
-    public EnterpriseBeansType getEnterpriseBeans() {
-        return enterpriseBeans;
-    }
-
-    public void setEnterpriseBeans(EnterpriseBeansType value) {
-        this.enterpriseBeans = value;
+    public List<EnterpriseBean> getEnterpriseBeans() {
+        if (enterpriseBeans == null) {
+            enterpriseBeans = new ArrayList<EnterpriseBean>();
+        }
+        return this.enterpriseBeans;
     }
 
     public InterceptorsType getInterceptors() {

@@ -125,7 +125,7 @@ import java.util.List;
         "securityRoleRef",
         "securityIdentity"
         })
-public class SessionBeanType {
+public class SessionBeanType implements EnterpriseBean {
 
     @XmlElement(required = true)
     protected List<Text> description;
