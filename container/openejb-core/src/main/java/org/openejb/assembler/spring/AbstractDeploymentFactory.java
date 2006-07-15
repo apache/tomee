@@ -1,0 +1,185 @@
+/**
+ * Redistribution and use of this software and associated documentation
+ * ("Software"), with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain copyright
+ *    statements and notices.  Redistributions must also contain a
+ *    copy of this document.
+ *
+ * 2. Redistributions in binary form must reproduce the
+ *    above copyright notice, this list of conditions and the
+ *    following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 3. The name "OpenEJB" must not be used to endorse or promote
+ *    products derived from this Software without prior written
+ *    permission of The OpenEJB Group.  For written permission,
+ *    please contact info@openejb.org.
+ *
+ * 4. Products derived from this Software may not be called "OpenEJB"
+ *    nor may "OpenEJB" appear in their names without prior written
+ *    permission of The OpenEJB Group. OpenEJB is a registered
+ *    trademark of The OpenEJB Group.
+ *
+ * 5. Due credit should be given to the OpenEJB Project
+ *    (http://openejb.org/).
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE OPENEJB GROUP AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
+ * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
+ * THE OPENEJB GROUP OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Copyright 2006 (C) The OpenEJB Group. All Rights Reserved.
+ *
+ * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
+ */
+package org.openejb.assembler.spring;
+
+import javax.naming.Context;
+
+import org.springframework.beans.factory.FactoryBean;
+import org.openejb.core.DeploymentInfo;
+import org.openejb.core.DeploymentContext;
+import org.openejb.SystemException;
+
+/**
+ * @version $Revision$ $Date$
+ */
+public abstract class AbstractDeploymentFactory implements FactoryBean {
+    protected String id;
+    protected String homeInterface;
+    protected String remoteInterface;
+    protected String localHomeInterface;
+    protected String localInterface;
+    protected String beanClass;
+    protected ClassLoader classLoader;
+    protected EncInfo jndiContext;
+    protected String jarPath;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getHomeInterface() {
+        return homeInterface;
+    }
+
+    public void setHomeInterface(String homeInterface) {
+        this.homeInterface = homeInterface;
+    }
+
+    public String getRemoteInterface() {
+        return remoteInterface;
+    }
+
+    public void setRemoteInterface(String remoteInterface) {
+        this.remoteInterface = remoteInterface;
+    }
+
+    public String getLocalHomeInterface() {
+        return localHomeInterface;
+    }
+
+    public void setLocalHomeInterface(String localHomeInterface) {
+        this.localHomeInterface = localHomeInterface;
+    }
+
+    public String getLocalInterface() {
+        return localInterface;
+    }
+
+    public void setLocalInterface(String localInterface) {
+        this.localInterface = localInterface;
+    }
+
+    public String getBeanClass() {
+        return beanClass;
+    }
+
+    public void setBeanClass(String beanClass) {
+        this.beanClass = beanClass;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public EncInfo getJndiContext() {
+        return jndiContext;
+    }
+
+    public void setJndiContext(EncInfo jndiContext) {
+        this.jndiContext = jndiContext;
+    }
+
+    public String getJarPath() {
+        return jarPath;
+    }
+
+    public void setJarPath(String jarPath) {
+        this.jarPath = jarPath;
+    }
+
+    public Class getObjectType() {
+        return DeploymentInfo.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
+
+    protected static Class loadClass(String name, ClassLoader classLoader) throws SystemException {
+        if (name != null) {
+            try {
+                return classLoader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                throw new SystemException(e);
+            }
+        }
+        return null;
+    }
+
+    public Object getObject() throws Exception {
+        DeploymentInfo deploymentInfo = createDeploymentInfo();
+        return deploymentInfo;
+    }
+
+    protected abstract byte getComponentType();
+    protected abstract boolean isBeanManagedTransaction();
+    protected abstract String getPkClass();
+
+    protected DeploymentInfo createDeploymentInfo() throws SystemException {
+        EncBuilder encBuilder = new EncBuilder(jndiContext, getComponentType(), isBeanManagedTransaction());
+        Context context = encBuilder.createContext();
+
+        DeploymentContext deploymentContext = new DeploymentContext(id, classLoader, context);
+        DeploymentInfo deploymentInfo = new DeploymentInfo(deploymentContext,
+                loadClass(homeInterface, classLoader),
+                loadClass(remoteInterface, classLoader),
+                loadClass(localHomeInterface, classLoader),
+                loadClass(localInterface, classLoader),
+                loadClass(beanClass, classLoader),
+                loadClass(getPkClass(), classLoader),
+                getComponentType(),
+                null);
+        deploymentInfo.setJarPath(jarPath);
+        return deploymentInfo;
+    }
+}

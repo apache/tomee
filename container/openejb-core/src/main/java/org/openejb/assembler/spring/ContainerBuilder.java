@@ -44,7 +44,9 @@ public class ContainerBuilder {
     }
 
     public Object build() throws OpenEJBException {
-        HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
+        //
+        // Build a class loader containing all of the jars from the container system info
+        //
         URL[] jars = new URL[this.ejbJars.length];
         for (int i = 0; i < this.ejbJars.length; i++) {
             try {
@@ -53,22 +55,27 @@ public class ContainerBuilder {
                 throw new OpenEJBException(AssemblerTool.messages.format("cl0001", ejbJars[i].jarPath, e.getMessage()));
             }
         }
-
         ClassLoader classLoader = new URLClassLoader(jars, org.openejb.OpenEJB.class.getClassLoader());
 
+        //
+        // Create all of the deployments index them by id
+        //
+        HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
         for (int i = 0; i < this.ejbJars.length; i++) {
             EjbJarInfo ejbJar = this.ejbJars[i];
 
             EnterpriseBeanInfo[] ejbs = ejbJar.enterpriseBeans;
             for (int j = 0; j < ejbs.length; j++) {
                 EnterpriseBeanInfo ejbInfo = ejbs[j];
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.jarPath);
                 DeploymentInfo deployment = (DeploymentInfo) deploymentBuilder.build();
-                deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
             }
         }
 
+        //
+        // Create all of the containers
+        //
         List<Container> containers = new ArrayList<Container>();
         for (int i = 0; i < containerInfos.length; i++) {
             ContainerInfo containerInfo = containerInfos[i];
@@ -106,7 +113,7 @@ public class ContainerBuilder {
 
                 ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
                 containerRecipe.setAllProperties(service.properties);
-                containerRecipe.setProperty("id", new StaticRecipe(containerName));
+                containerRecipe.setProperty("id", containerName);
                 containerRecipe.setProperty("transactionManager", new StaticRecipe(transactionManager));
                 containerRecipe.setProperty("securityService", new StaticRecipe(securityService));
                 containerRecipe.setProperty("deployments", new StaticRecipe(deploymentsList));

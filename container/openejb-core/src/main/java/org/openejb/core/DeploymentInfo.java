@@ -2,10 +2,9 @@ package org.openejb.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.net.URL;
-
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -13,6 +12,7 @@ import javax.ejb.SessionSynchronization;
 
 import org.openejb.Container;
 import org.openejb.RpcContainer;
+import org.openejb.SystemException;
 import org.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
 import org.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.openejb.core.entity.EntityEjbHomeHandler;
@@ -35,6 +35,9 @@ import org.openejb.core.transaction.TxRequiresNew;
 import org.openejb.core.transaction.TxSupports;
 import org.openejb.util.proxy.ProxyManager;
 
+/**
+ * @org.apache.xbean.XBean element="deployment"
+ */
 public class DeploymentInfo implements org.openejb.DeploymentInfo {
 
     private Class homeInterface;
@@ -66,16 +69,65 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private String jarPath;
 
-    public DeploymentInfo(DeploymentContext context, Class homeClass, Class remoteClass, Class localHomeClass, Class localClass, Class beanClass, Class pkClass, byte componentType, URL archiveURL)
-            throws org.openejb.SystemException {
+    public DeploymentInfo(DeploymentContext context,
+            String homeInterface,
+            String remoteInterface,
+            String localHomeInterface,
+            String localInterface,
+            String beanClass,
+            String pkClass,
+            String ejbType,
+            ClassLoader classLoader) throws SystemException {
+        this(context,
+                loadClass(homeInterface, classLoader),
+                loadClass(remoteInterface, classLoader),
+                loadClass(localHomeInterface, classLoader),
+                loadClass(localInterface, classLoader),
+                loadClass(beanClass, classLoader),
+                loadClass(pkClass, classLoader),
+                getComponentType(ejbType), null);
+    }
+
+    private static Class loadClass(String name, ClassLoader classLoader) throws SystemException {
+        try {
+            return classLoader.loadClass(name);
+        } catch (ClassNotFoundException e) {
+            throw new SystemException(e);
+        }
+    }
+
+    private static byte getComponentType(String name) throws SystemException {
+        if ("cmp".equalsIgnoreCase(name)) {
+            return CMP_ENTITY;
+        } else if ("bmp".equalsIgnoreCase(name)) {
+            return BMP_ENTITY;
+        } else if ("stateful".equalsIgnoreCase(name)) {
+            return CMP_ENTITY;
+        } else if ("stateless".equalsIgnoreCase(name)) {
+            return CMP_ENTITY;
+        } else {
+            throw new SystemException("Unknown component type: " + name);
+        }
+    }
+
+    public DeploymentInfo(DeploymentContext context,
+            Class homeInterface,
+            Class remoteInterface,
+            Class localHomeInterface,
+            Class localInterface,
+            Class beanClass,
+            Class pkClass,
+            byte componentType,
+            URL archiveURL) throws SystemException {
+
         this.context = context;
         this.pkClass = pkClass;
 
-        this.homeInterface = homeClass;
-        this.remoteInterface = remoteClass;
-        this.localInterface = localClass;
-        this.localHomeInterface = localHomeClass;
-        this.remoteInterface = remoteClass;
+        this.homeInterface = homeInterface;
+        this.remoteInterface = remoteInterface;
+        this.localInterface = localInterface;
+        this.localHomeInterface = localHomeInterface;
+        this.remoteInterface = remoteInterface;
         this.beanClass = beanClass;
         this.pkClass = pkClass;
         this.componentType = componentType;
@@ -460,7 +512,7 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
                     methodMap.put(homeMethods[i], beanMethod);
                 }
             } catch (NoSuchMethodException nsme) {
-                throw new RuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
+//                throw new RuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
             }
         }
     }

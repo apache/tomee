@@ -7,6 +7,9 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
+/**
+ * @org.apache.xbean.XBean element="userTransaction"
+ */
 public class CoreUserTransaction implements javax.transaction.UserTransaction, java.io.Serializable {
 
     private transient TransactionManager transactionManager;

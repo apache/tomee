@@ -44,85 +44,54 @@
  */
 package org.openejb.assembler.spring;
 
-import java.util.Map;
-import javax.naming.Context;
-import javax.naming.NamingException;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @org.apache.xbean.XBean element="jndiBinding"
- * @version $Revision$ $Date$
+ * @org.apache.xbean.XBean element="urlClassLoader"
  */
-public class JndiBinding implements FactoryBean {
-    private Context context;
-    private Map<String, Object> bindings;
+public class UrlClassLoaderFactory implements FactoryBean {
+    private URL[] urls;
+    private ClassLoader parent;
 
-    public Context getContext() {
-        return context;
+    public URL[] getUrls() {
+        return urls;
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setUrls(URL[] urls) {
+        this.urls = urls;
     }
 
-    public Map<String, Object> getBindings() {
-        return bindings;
+    public ClassLoader getParent() {
+        return parent;
     }
 
-    public void setBindings(Map<String, Object> bindings) {
-        this.bindings = bindings;
-    }
-
-    /**
-     * @org.apache.xbean.InitMethod
-     */
-    public void start() throws NamingException {
-        if (context == null && bindings != null) {
-            throw new NullPointerException("Naming context has not been set");
-        }
-        if (bindings == null) {
-            return;
-        }
-        try {
-            for (Map.Entry<String, Object> entry : bindings.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                context.bind(name, value);
-            }
-        } catch (NamingException e) {
-            stop();
-            throw e;
-        }
-    }
-
-    /**
-     * @org.apache.xbean.DestroyMethod
-     */
-    public void stop() {
-        if (context == null) {
-            return;
-        }
-        if (bindings == null) {
-            return;
-        }
-        for (String name : bindings.keySet()) {
-            try {
-                context.unbind(name);
-            } catch (NamingException ignored) {
-            }
-        }
-    }
-
-    public Object getObject() throws Exception {
-        return context;
+    public void setParent(ClassLoader parent) {
+        this.parent = parent;
     }
 
     public Class getObjectType() {
-        return Context.class;
+        return URLClassLoader.class;
     }
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public URLClassLoader getObject() {
+        if (urls == null) {
+            throw new NullPointerException("urls is null");
+        }
+
+        ClassLoader parent = this.parent;
+        if (parent == null) {
+            parent = Thread.currentThread().getContextClassLoader();
+        }
+        if (parent == null) {
+            parent = org.openejb.OpenEJB.class.getClassLoader();
+        }
+        return new URLClassLoader(this.urls, parent);
     }
 }

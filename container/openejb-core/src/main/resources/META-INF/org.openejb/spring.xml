@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans xmlns:o="http://openejb.org/schemas/core">
   <bean id="proxyFactory" class="org.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
 
@@ -9,10 +9,12 @@
   <bean id="jndiContext" factory-bean="containerSystem" factory-method="getJNDIContext"/>
 
   <o:transactionManagerWrapper id="transactionManager">
-    <property name="transactionManager">
+    <o:transactionManager>
       <o:pseudoTransactionService/>
-    </property>
+    </o:transactionManager>
   </o:transactionManagerWrapper>
+
+  <o:userTransaction id="userTransaction" transactionManager="#transactionManager"/>
 
   <o:pseudoSecurityService id="securityService"/>
 
@@ -34,4 +36,225 @@
       </map>
     </property>
   </o:jndiBinding>
+
+  <!-- ######################### -->
+  <!-- Deployment Specific Beans -->
+  <!-- ######################### -->
+
+  <o:urlClassLoader id="classLoader">
+    <o:urls>
+      <o:url>file:foo/bar</o:url>
+    </o:urls>
+  </o:urlClassLoader>
+
+  <o:castorCmp11Container id="Default CMP Container" abstract="true">
+    id=Default CMP Container
+
+    # The default size of the method ready bean pools.
+    # Every bean class gets its own pool of this size.
+
+    poolSize 100
+
+    engine  instantdb
+
+    connectorName  Default JDBC Database
+
+    # Driver class name
+
+    jdbcDriver org.enhydra.instantdb.jdbc.idbDriver
+
+    # Url for creating connections
+
+    jdbcUrl jdbc:idb:conf/instantdb.properties
+
+    # Default user name
+
+    userName Admin
+
+    # Default password
+
+    password pass
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    <o:registry>
+      <map/>
+    </o:registry>
+  </o:castorCmp11Container>
+
+  <!--
+  # ==========================================================
+  # Default Bean-Managed Persistence EntityBean Container
+  # ==========================================================
+  -->
+  <o:bmpContainer id="Default BMP Container">
+    id Default BMP Container
+
+    # Specifies the size of the bean pools for this
+    # bmp entity container.
+
+    poolSize 10
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    <o:registry>
+      <map/>
+    </o:registry>
+  </o:bmpContainer>
+
+
+
+  <!--
+  # ==========================================================
+  # Default Stateless SessinBean Container
+  # ==========================================================
+  -->
+  <o:statelessContainer id="Default Stateless Container">
+    id Default Stateless Container
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in milliseconds. A value of 5 would
+    # result in a time-out of 5 milliseconds between invocations.
+    # A value of zero would mean no timeout.
+
+    timeOut 0
+
+    # Specifies the size of the bean pools for this
+    # stateless SessionBean container.
+
+    poolSize 10
+
+    # StrictPooling tells the container what to do when the pool
+    # reaches it's maximum size and there are incoming requests
+    # that need instances.
+    #
+    # With strict pooling, requests will have to wait for instances
+    # to become available. The pool size will never grow beyond the
+    # the set PoolSize value.
+    #
+    # Without strict pooling, the container will create temporary
+    # instances to meet demand. The instances will last for just one
+    # method invocation and then are removed.
+
+    strictPooling true
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    <o:registry>
+      <map/>
+    </o:registry>
+  </o:statelessContainer>
+
+
+  <!--
+  # ==========================================================
+  # Default Stateful SessinBean Container
+  # ==========================================================
+  -->
+  <o:statefulContainer id="Default Stateful Container">
+    id Default Stateful Container
+
+    # The passivator is responsible for writing beans to disk
+    # at passivation time. Different passivators can be used
+    # by setting this property to the fully qualified class name
+    # of the PassivationStrategy implementation. The passivator
+    # is not responsible for invoking any callbacks or other
+    # processing, its only responsibly is to write the bean state
+    # to disk.
+    #
+    # Known implementations:
+    # org.openejb.core.stateful.RAFPassivater
+    # org.openejb.core.stateful.SimplePassivater
+
+    passivator org.openejb.core.stateful.SimplePassivater
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in minutes. A value of 5 would
+    # result in a time-out of 5 minutes between invocations.
+
+    timeOut 20
+
+    # Specifies the size of the bean pools for this
+    # stateful SessionBean container.
+
+    poolSize 100
+
+    # Property name that specifies the number of instances
+    # to passivate at one time when doing bulk passivation.
+
+    bulkPassivate 50
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    <o:registry>
+      <map/>
+    </o:registry>
+  </o:statefulContainer>
+
+  <o:statelessDeployment id="myStatelessDeployment"
+      homeInterface="java.lang.String"
+      remoteInterface="java.lang.String"
+      localHomeInterface="java.lang.String"
+      localInterface="java.lang.String"
+      beanClass="java.lang.String"
+      jarPath="file:foo/bar"
+      classLoader="#classLoader"
+      beanManagedTransaction="true"
+      >
+
+    <o:jndiContext>
+      <o:enc>
+        <o:envEntries>
+          <o:envEntry name="foo" type="java.lang.Integer" value="42"/>
+        </o:envEntries>
+        <o:ejbRefs>
+          <o:ejbRef name="bar" ejbId="monkey"/>
+        </o:ejbRefs>
+        <o:resourceRefs>
+          <o:resourceRef name="ds" resourceId="Default JDBC Database"/>
+        </o:resourceRefs>
+      </o:enc>
+    </o:jndiContext>
+  </o:statelessDeployment>
+
+  <o:cmpDeployment id="myCmpDeployment"
+      homeInterface="java.lang.String"
+      remoteInterface="java.lang.String"
+      localHomeInterface="java.lang.String"
+      localInterface="java.lang.String"
+      beanClass="java.lang.String"
+      pkClass="java.lang.String"
+      jarPath="file:foo/bar"
+      classLoader="#classLoader"
+      reentrant="true"
+      primKeyField="pkField"
+      >
+
+    <o:cmpFields>foo, bar, baz</o:cmpFields>
+
+    <o:queries>
+      <o:query method="findStuff()">SELECT * FROM STUFF</o:query>
+      <o:query method="findBigStuff(int)">SELECT * FROM stuff s WHERE s.size > $1</o:query>
+      <o:query method="findMediumStuff(int,int)">SELECT * FROM stuff s WHERE s.size BETWEEN $1 AND $2</o:query>
+    </o:queries>
+
+    <o:jndiContext>
+      <o:enc>
+        <o:envEntries>
+          <o:envEntry name="foo" type="java.lang.Integer" value="42"/>
+        </o:envEntries>
+        <o:ejbRefs>
+          <o:ejbRef name="bar" ejbId="monkey"/>
+        </o:ejbRefs>
+        <o:resourceRefs>
+          <o:resourceRef name="ds" resourceId="Default JDBC Database"/>
+        </o:resourceRefs>
+      </o:enc>
+    </o:jndiContext>
+  </o:cmpDeployment>
+
 </beans>

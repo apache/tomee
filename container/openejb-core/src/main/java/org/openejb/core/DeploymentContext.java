@@ -2,6 +2,9 @@ package org.openejb.core;
 
 import javax.naming.Context;
 
+/**
+ * @org.apache.xbean.XBean element="deploymentContext"
+ */
 public class DeploymentContext {
     private final ClassLoader classLoader;
     private final Object id;
@@ -17,6 +20,9 @@ public class DeploymentContext {
         return classLoader;
     }
 
+    /**
+     * @org.apache.xbean.Property alias="deploymentId"
+     */
     public Object getId() {
         return id;
     }

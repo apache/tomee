@@ -44,85 +44,40 @@
  */
 package org.openejb.assembler.spring;
 
-import java.util.Map;
-import javax.naming.Context;
-import javax.naming.NamingException;
-
-import org.springframework.beans.factory.FactoryBean;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ArrayList;
 
 /**
- * @org.apache.xbean.XBean element="jndiBinding"
- * @version $Revision$ $Date$
+ * @org.apache.xbean.XBean element="enc"
  */
-public class JndiBinding implements FactoryBean {
-    private Context context;
-    private Map<String, Object> bindings;
+public class EncInfo {
+    public final Collection<EjbReferenceInfo> ejbRefs = new ArrayList<EjbReferenceInfo>();
+    public final Collection<EnvEntryInfo> envEntries = new ArrayList<EnvEntryInfo>();
+    public final Collection<ResourceReferenceInfo> resourceRefs = new ArrayList<ResourceReferenceInfo>();
 
-    public Context getContext() {
-        return context;
+    public EjbReferenceInfo[] getEjbRefs() {
+        return ejbRefs.toArray(new EjbReferenceInfo[ejbRefs.size()]);
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setEjbRefs(EjbReferenceInfo[] ejbRefs) {
+        this.ejbRefs.addAll(Arrays.asList(ejbRefs));
     }
 
-    public Map<String, Object> getBindings() {
-        return bindings;
+    public EnvEntryInfo[] getEnvEntries() {
+        return envEntries.toArray(new EnvEntryInfo[envEntries.size()]);
     }
 
-    public void setBindings(Map<String, Object> bindings) {
-        this.bindings = bindings;
+    public void setEnvEntries(EnvEntryInfo[] envEntries) {
+        this.envEntries.addAll(Arrays.asList(envEntries));
     }
 
-    /**
-     * @org.apache.xbean.InitMethod
-     */
-    public void start() throws NamingException {
-        if (context == null && bindings != null) {
-            throw new NullPointerException("Naming context has not been set");
-        }
-        if (bindings == null) {
-            return;
-        }
-        try {
-            for (Map.Entry<String, Object> entry : bindings.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                context.bind(name, value);
-            }
-        } catch (NamingException e) {
-            stop();
-            throw e;
-        }
+    public ResourceReferenceInfo[] getResourceRefs() {
+        return resourceRefs.toArray(new ResourceReferenceInfo[resourceRefs.size()]);
     }
 
-    /**
-     * @org.apache.xbean.DestroyMethod
-     */
-    public void stop() {
-        if (context == null) {
-            return;
-        }
-        if (bindings == null) {
-            return;
-        }
-        for (String name : bindings.keySet()) {
-            try {
-                context.unbind(name);
-            } catch (NamingException ignored) {
-            }
-        }
+    public void setResourceRefs(ResourceReferenceInfo[] resourceRefs) {
+        this.resourceRefs.addAll(Arrays.asList(resourceRefs));
     }
 
-    public Object getObject() throws Exception {
-        return context;
-    }
-
-    public Class getObjectType() {
-        return Context.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
 }

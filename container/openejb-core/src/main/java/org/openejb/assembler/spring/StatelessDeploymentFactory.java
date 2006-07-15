@@ -44,85 +44,35 @@
  */
 package org.openejb.assembler.spring;
 
-import java.util.Map;
-import javax.naming.Context;
-import javax.naming.NamingException;
-
-import org.springframework.beans.factory.FactoryBean;
+import org.openejb.SystemException;
+import org.openejb.core.DeploymentInfo;
 
 /**
- * @org.apache.xbean.XBean element="jndiBinding"
- * @version $Revision$ $Date$
+ * @org.apache.xbean.XBean element="statelessDeployment"
  */
-public class JndiBinding implements FactoryBean {
-    private Context context;
-    private Map<String, Object> bindings;
+public class StatelessDeploymentFactory extends AbstractDeploymentFactory {
+    private boolean beanManagedTransaction;
+    protected String pkClass;
 
-    public Context getContext() {
-        return context;
+    public boolean isBeanManagedTransaction() {
+        return beanManagedTransaction;
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setBeanManagedTransaction(boolean beanManagedTransaction) {
+        this.beanManagedTransaction = beanManagedTransaction;
     }
 
-    public Map<String, Object> getBindings() {
-        return bindings;
+    protected byte getComponentType() {
+        return DeploymentInfo.STATELESS;
     }
 
-    public void setBindings(Map<String, Object> bindings) {
-        this.bindings = bindings;
+    protected String getPkClass() {
+        return null;
     }
 
-    /**
-     * @org.apache.xbean.InitMethod
-     */
-    public void start() throws NamingException {
-        if (context == null && bindings != null) {
-            throw new NullPointerException("Naming context has not been set");
-        }
-        if (bindings == null) {
-            return;
-        }
-        try {
-            for (Map.Entry<String, Object> entry : bindings.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                context.bind(name, value);
-            }
-        } catch (NamingException e) {
-            stop();
-            throw e;
-        }
-    }
-
-    /**
-     * @org.apache.xbean.DestroyMethod
-     */
-    public void stop() {
-        if (context == null) {
-            return;
-        }
-        if (bindings == null) {
-            return;
-        }
-        for (String name : bindings.keySet()) {
-            try {
-                context.unbind(name);
-            } catch (NamingException ignored) {
-            }
-        }
-    }
-
-    public Object getObject() throws Exception {
-        return context;
-    }
-
-    public Class getObjectType() {
-        return Context.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
+    protected DeploymentInfo createDeploymentInfo() throws SystemException {
+        DeploymentInfo deploymentInfo = super.createDeploymentInfo();
+        deploymentInfo.setBeanManagedTransaction(beanManagedTransaction);
+        return deploymentInfo;
     }
 }

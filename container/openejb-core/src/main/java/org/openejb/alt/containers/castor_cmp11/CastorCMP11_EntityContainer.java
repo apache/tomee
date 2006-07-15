@@ -45,12 +45,14 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Map;
-import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+/**
+ * @org.apache.xbean.XBean element="castorCmp11Container"
+ */
 public class CastorCMP11_EntityContainer implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
 
     /*
@@ -126,8 +128,8 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
     private JDOManager localJdoManager;
     private JDOManager globalJdoManager;
 
-    public CastorCMP11_EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolsize, String engine, String connectorName, String jdbcDriver, String jdbcUrl, String userName, String password) throws OpenEJBException {
-        init(id, transactionManager, securityService, registry, poolsize, engine, connectorName, jdbcDriver, jdbcUrl, userName, password);
+    public CastorCMP11_EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolSize, String engine, String connectorName, String jdbcDriver, String jdbcUrl, String userName, String password) throws OpenEJBException {
+        init(id, transactionManager, securityService, registry, poolSize, engine, connectorName, jdbcDriver, jdbcUrl, userName, password);
 //        init(id, transactionManager, securityService, registry, poolsize, "instantdb", "Default JDBC Database", "org.enhydra.instantdb.jdbc.idbDriver", "jdbc:idb:conf/default.idb_database.conf", "Admin", "pass");
     }
 

@@ -21,11 +21,13 @@ import org.openejb.util.SafeToolkit;
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
+    private final String jarPath;
     private final EjbType ejbType;
     private final ClassLoader cl;
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String jarPath) {
         this.bean = bean;
+        this.jarPath = jarPath;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
             ejbType = EjbType.STATEFUL;
@@ -92,6 +94,7 @@ class EnterpriseBeanBuilder {
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
         DeploymentInfo deployment = new DeploymentInfo(deploymentContext, home, remote, localhome, local, ejbClass, primaryKey, ejbType.getType(), null);
+        deployment.setJarPath(jarPath);
 
         if (ejbType.isSession()) {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));

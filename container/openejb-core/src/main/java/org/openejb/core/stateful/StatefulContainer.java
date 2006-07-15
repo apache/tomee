@@ -3,7 +3,6 @@ package org.openejb.core.stateful;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -15,22 +14,20 @@ import javax.transaction.TransactionManager;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.SystemException;
-import org.openejb.ClassLoaderUtil;
 import org.openejb.spi.SecurityService;
-import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
 import org.openejb.util.Logger;
-import org.openejb.util.SafeProperties;
-import org.openejb.util.SafeToolkit;
 
+/**
+ * @org.apache.xbean.XBean element="statefulContainer"
+ */
 public class StatefulContainer implements org.openejb.RpcContainer, TransactionContainer {
 
     private StatefulInstanceManager instanceManager;
@@ -45,13 +42,13 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, Class passivatorClass, int timeout, int poolSize, int bulkPassivate) throws OpenEJBException {
+    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, Class passivator, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
         this.deploymentRegistry = registry;
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatefulInstanceManager(transactionManager, securityService, passivatorClass, timeout, poolSize, bulkPassivate);
+        instanceManager = new StatefulInstanceManager(transactionManager, securityService, passivator, timeOut, poolSize, bulkPassivate);
 
         try {
             EJB_REMOVE_METHOD = javax.ejb.SessionBean.class.getMethod("ejbRemove", new Class [0]);

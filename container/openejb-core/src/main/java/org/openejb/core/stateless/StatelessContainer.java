@@ -29,6 +29,9 @@ import org.openejb.core.transaction.TransactionPolicy;
 import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 
+/**
+ * @org.apache.xbean.XBean element="statelessContainer"
+ */
 public class StatelessContainer implements org.openejb.RpcContainer, TransactionContainer {
 
     private StatelessInstanceManager instanceManager;
@@ -39,13 +42,13 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int timeout, int poolSize, boolean strictPooling) throws OpenEJBException {
+    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int timeOut, int poolSize, boolean strictPooling) throws OpenEJBException {
         this.deploymentRegistry = registry;
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeout, poolSize, strictPooling);
+        instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeOut, poolSize, strictPooling);
     }
 
     public DeploymentInfo [] deployments() {

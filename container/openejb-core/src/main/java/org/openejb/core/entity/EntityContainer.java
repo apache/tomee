@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Map;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -32,11 +33,14 @@ import org.openejb.util.Logger;
 import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 
+/**
+ * @org.apache.xbean.XBean element="bmpContainer"
+ */
 public class EntityContainer implements org.openejb.RpcContainer, TransactionContainer {
 
     private EntityInstanceManager instanceManager;
 
-    private HashMap deploymentRegistry;
+    private Map deploymentRegistry;
 
     private Object containerID = null;
 
@@ -44,7 +48,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolSize) throws OpenEJBException {
+    public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Map registry, int poolSize) throws OpenEJBException {
         this.deploymentRegistry = registry;
         this.containerID = id;
         this.transactionManager = transactionManager;
@@ -70,7 +74,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     }
 
     public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
-        HashMap registry = (HashMap) deploymentRegistry.clone();
+        Map registry = new HashMap(deploymentRegistry);
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
         org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;

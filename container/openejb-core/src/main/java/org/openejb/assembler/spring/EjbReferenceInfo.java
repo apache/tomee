@@ -44,85 +44,56 @@
  */
 package org.openejb.assembler.spring;
 
-import java.util.Map;
-import javax.naming.Context;
-import javax.naming.NamingException;
-
-import org.springframework.beans.factory.FactoryBean;
+import org.openejb.assembler.classic.InfoObject;
+import org.openejb.assembler.classic.EjbReferenceLocationInfo;
 
 /**
- * @org.apache.xbean.XBean element="jndiBinding"
- * @version $Revision$ $Date$
+ * @org.apache.xbean.XBean element="ejbRef"
  */
-public class JndiBinding implements FactoryBean {
-    private Context context;
-    private Map<String, Object> bindings;
+public class EjbReferenceInfo extends InfoObject {
+    private String name;
+    private boolean local;
+    private String ejbId;
+    private String remoteName;
+    private String remoteContextId;
 
-    public Context getContext() {
-        return context;
+    public String getName() {
+        return name;
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Map<String, Object> getBindings() {
-        return bindings;
+    public boolean isLocal() {
+        return local;
     }
 
-    public void setBindings(Map<String, Object> bindings) {
-        this.bindings = bindings;
+    public void setLocal(boolean local) {
+        this.local = local;
     }
 
-    /**
-     * @org.apache.xbean.InitMethod
-     */
-    public void start() throws NamingException {
-        if (context == null && bindings != null) {
-            throw new NullPointerException("Naming context has not been set");
-        }
-        if (bindings == null) {
-            return;
-        }
-        try {
-            for (Map.Entry<String, Object> entry : bindings.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                context.bind(name, value);
-            }
-        } catch (NamingException e) {
-            stop();
-            throw e;
-        }
+    public String getEjbId() {
+        return ejbId;
     }
 
-    /**
-     * @org.apache.xbean.DestroyMethod
-     */
-    public void stop() {
-        if (context == null) {
-            return;
-        }
-        if (bindings == null) {
-            return;
-        }
-        for (String name : bindings.keySet()) {
-            try {
-                context.unbind(name);
-            } catch (NamingException ignored) {
-            }
-        }
+    public void setEjbId(String ejbId) {
+        this.ejbId = ejbId;
     }
 
-    public Object getObject() throws Exception {
-        return context;
+    public String getRemoteName() {
+        return remoteName;
     }
 
-    public Class getObjectType() {
-        return Context.class;
+    public void setRemoteName(String remoteName) {
+        this.remoteName = remoteName;
     }
 
-    public boolean isSingleton() {
-        return true;
+    public String getRemoteContextId() {
+        return remoteContextId;
+    }
+
+    public void setRemoteContextId(String remoteContextId) {
+        this.remoteContextId = remoteContextId;
     }
 }

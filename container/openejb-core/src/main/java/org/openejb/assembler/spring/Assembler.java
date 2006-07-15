@@ -64,7 +64,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     private void setSecurityService(SecurityService securityService) throws NamingException {
         this.securityService = securityService;
-        
+
         // todo move binding to spring.xml file
         containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
     }
@@ -170,6 +170,9 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
      * @see OpenEjbConfiguration
      */
     public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
+        //
+        // Load the spring configuration file
+        //
         SpringApplicationContext factory = new ClassPathXmlApplicationContext("META-INF/org.openejb/spring.xml");
 
         //

@@ -31,6 +31,9 @@ import com.sun.naming.internal.ResourceManager;
 * to the NameNode so that it can be used by beans the JNDI ENC.
 */
 
+/**
+ * @org.apache.xbean.XBean element="ivmContext"
+ */
 public class IvmContext implements Context, java.io.Serializable {
     Hashtable myEnv;
     boolean readOnly = false;
@@ -43,6 +46,10 @@ public class IvmContext implements Context, java.io.Serializable {
 
     public IvmContext() {
         this(new NameNode(null, new ParsedName("root"), null));
+    }
+
+    public IvmContext(String nodeName) {
+        this(new NameNode(null, new ParsedName(nodeName), null));
     }
 
     public IvmContext(NameNode node) {
