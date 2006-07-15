@@ -12,27 +12,12 @@
   <name>OpenEJB :: Container :: Java EE</name>
   <build>
       <plugins>
-          <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                  <excludes>
-                      <exclude>org/openejb/jee2/EjbJarTest.*</exclude>
-                  </excludes>
-              </configuration>
-          </plugin>
           <!--<plugin>-->
-              <!--<groupId>org.codehaus.mojo</groupId>-->
-              <!--<artifactId>jaxb2-maven-plugin</artifactId>-->
-              <!--<version>1.0-SNAPSHOT</version>-->
-              <!--<executions>-->
-                  <!--<execution>-->
-                      <!--<goals>-->
-                          <!--<goal>xjc</goal>-->
-                      <!--</goals>-->
-                  <!--</execution>-->
-              <!--</executions>-->
+              <!--<artifactId>maven-surefire-plugin</artifactId>-->
               <!--<configuration>-->
-                  <!--<packageName>org.openejb.jee2</packageName>-->
+                  <!--<excludes>-->
+                      <!--<exclude>org/openejb/jee2/EjbJarTest.*</exclude>-->
+                  <!--</excludes>-->
               <!--</configuration>-->
           <!--</plugin>-->
       </plugins>
