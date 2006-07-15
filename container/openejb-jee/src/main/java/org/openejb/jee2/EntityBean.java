@@ -221,22 +221,6 @@ public class EntityBean implements EnterpriseBean {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -244,22 +228,6 @@ public class EntityBean implements EnterpriseBean {
         return this.description;
     }
 
-    /**
-     * Gets the value of the displayName property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDisplayName().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDisplayName() {
         if (displayName == null) {
             displayName = new ArrayList<Text>();
@@ -267,22 +235,6 @@ public class EntityBean implements EnterpriseBean {
         return this.displayName;
     }
 
-    /**
-     * Gets the value of the icon property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getIcon().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Icon }
-     */
     public List<Icon> getIcon() {
         if (icon == null) {
             icon = new ArrayList<Icon>();
@@ -405,22 +357,6 @@ public class EntityBean implements EnterpriseBean {
         this.abstractSchemaName = value;
     }
 
-    /**
-     * Gets the value of the cmpField property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the cmpField property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getCmpField().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CmpField }
-     */
     public List<CmpField> getCmpField() {
         if (cmpField == null) {
             cmpField = new ArrayList<CmpField>();
@@ -436,22 +372,6 @@ public class EntityBean implements EnterpriseBean {
         this.primkeyField = value;
     }
 
-    /**
-     * Gets the value of the envEntry property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the envEntry property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getEnvEntry().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EnvEntry }
-     */
     public List<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
             envEntry = new ArrayList<EnvEntry>();
@@ -459,22 +379,6 @@ public class EntityBean implements EnterpriseBean {
         return this.envEntry;
     }
 
-    /**
-     * Gets the value of the ejbRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getEjbRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EjbRef }
-     */
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
             ejbRef = new ArrayList<EjbRef>();
@@ -482,22 +386,6 @@ public class EntityBean implements EnterpriseBean {
         return this.ejbRef;
     }
 
-    /**
-     * Gets the value of the ejbLocalRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ejbLocalRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getEjbLocalRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EjbLocalRef }
-     */
     public List<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
             ejbLocalRef = new ArrayList<EjbLocalRef>();
@@ -505,22 +393,6 @@ public class EntityBean implements EnterpriseBean {
         return this.ejbLocalRef;
     }
 
-    /**
-     * Gets the value of the serviceRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getServiceRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ServiceRef }
-     */
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
             serviceRef = new ArrayList<ServiceRef>();
@@ -528,22 +400,6 @@ public class EntityBean implements EnterpriseBean {
         return this.serviceRef;
     }
 
-    /**
-     * Gets the value of the resourceRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getResourceRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceRef }
-     */
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
             resourceRef = new ArrayList<ResourceRef>();
@@ -551,22 +407,6 @@ public class EntityBean implements EnterpriseBean {
         return this.resourceRef;
     }
 
-    /**
-     * Gets the value of the resourceEnvRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getResourceEnvRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceEnvRef }
-     */
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
             resourceEnvRef = new ArrayList<ResourceEnvRef>();
@@ -574,22 +414,6 @@ public class EntityBean implements EnterpriseBean {
         return this.resourceEnvRef;
     }
 
-    /**
-     * Gets the value of the messageDestinationRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messageDestinationRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getMessageDestinationRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MessageDestinationRef }
-     */
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
             messageDestinationRef = new ArrayList<MessageDestinationRef>();
@@ -597,22 +421,6 @@ public class EntityBean implements EnterpriseBean {
         return this.messageDestinationRef;
     }
 
-    /**
-     * Gets the value of the persistenceContextRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the persistenceContextRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPersistenceContextRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PersistenceContextRef }
-     */
     public List<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
             persistenceContextRef = new ArrayList<PersistenceContextRef>();
@@ -620,22 +428,6 @@ public class EntityBean implements EnterpriseBean {
         return this.persistenceContextRef;
     }
 
-    /**
-     * Gets the value of the persistenceUnitRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the persistenceUnitRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPersistenceUnitRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PersistenceUnitRef }
-     */
     public List<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
             persistenceUnitRef = new ArrayList<PersistenceUnitRef>();
@@ -643,22 +435,6 @@ public class EntityBean implements EnterpriseBean {
         return this.persistenceUnitRef;
     }
 
-    /**
-     * Gets the value of the postConstruct property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the postConstruct property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPostConstruct().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LifecycleCallback }
-     */
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
             postConstruct = new ArrayList<LifecycleCallback>();
@@ -666,22 +442,6 @@ public class EntityBean implements EnterpriseBean {
         return this.postConstruct;
     }
 
-    /**
-     * Gets the value of the preDestroy property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the preDestroy property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPreDestroy().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LifecycleCallback }
-     */
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
             preDestroy = new ArrayList<LifecycleCallback>();
@@ -689,22 +449,6 @@ public class EntityBean implements EnterpriseBean {
         return this.preDestroy;
     }
 
-    /**
-     * Gets the value of the securityRoleRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the securityRoleRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getSecurityRoleRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SecurityRoleRef }
-     */
     public List<SecurityRoleRef> getSecurityRoleRef() {
         if (securityRoleRef == null) {
             securityRoleRef = new ArrayList<SecurityRoleRef>();
@@ -720,22 +464,6 @@ public class EntityBean implements EnterpriseBean {
         this.securityIdentity = value;
     }
 
-    /**
-     * Gets the value of the query property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the query property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getQuery().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Query }
-     */
     public List<Query> getQuery() {
         if (query == null) {
             query = new ArrayList<Query>();

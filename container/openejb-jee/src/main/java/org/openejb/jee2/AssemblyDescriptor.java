@@ -79,22 +79,6 @@ public class AssemblyDescriptor {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the securityRole property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the securityRole property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getSecurityRole().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SecurityRole }
-     */
     public List<SecurityRole> getSecurityRole() {
         if (securityRole == null) {
             securityRole = new ArrayList<SecurityRole>();
@@ -102,22 +86,6 @@ public class AssemblyDescriptor {
         return this.securityRole;
     }
 
-    /**
-     * Gets the value of the methodPermission property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the methodPermission property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getMethodPermission().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MethodPermission }
-     */
     public List<MethodPermission> getMethodPermission() {
         if (methodPermission == null) {
             methodPermission = new ArrayList<MethodPermission>();
@@ -125,22 +93,6 @@ public class AssemblyDescriptor {
         return this.methodPermission;
     }
 
-    /**
-     * Gets the value of the containerTransaction property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the containerTransaction property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getContainerTransaction().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ContainerTransaction }
-     */
     public List<ContainerTransaction> getContainerTransaction() {
         if (containerTransaction == null) {
             containerTransaction = new ArrayList<ContainerTransaction>();
@@ -148,22 +100,6 @@ public class AssemblyDescriptor {
         return this.containerTransaction;
     }
 
-    /**
-     * Gets the value of the interceptorBinding property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interceptorBinding property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getInterceptorBinding().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InterceptorBinding }
-     */
     public List<InterceptorBinding> getInterceptorBinding() {
         if (interceptorBinding == null) {
             interceptorBinding = new ArrayList<InterceptorBinding>();
@@ -171,22 +107,6 @@ public class AssemblyDescriptor {
         return this.interceptorBinding;
     }
 
-    /**
-     * Gets the value of the messageDestination property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messageDestination property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getMessageDestination().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MessageDestination }
-     */
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
             messageDestination = new ArrayList<MessageDestination>();
@@ -202,22 +122,6 @@ public class AssemblyDescriptor {
         this.excludeList = value;
     }
 
-    /**
-     * Gets the value of the applicationException property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the applicationException property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getApplicationException().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ApplicationException }
-     */
     public List<ApplicationException> getApplicationException() {
         if (applicationException == null) {
             applicationException = new ArrayList<ApplicationException>();

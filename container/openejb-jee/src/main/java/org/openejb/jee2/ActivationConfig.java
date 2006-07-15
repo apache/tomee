@@ -58,22 +58,6 @@ public class ActivationConfig {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -81,22 +65,6 @@ public class ActivationConfig {
         return this.description;
     }
 
-    /**
-     * Gets the value of the activationConfigProperty property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the activationConfigProperty property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getActivationConfigProperty().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ActivationConfigProperty }
-     */
     public List<ActivationConfigProperty> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
             activationConfigProperty = new ArrayList<ActivationConfigProperty>();

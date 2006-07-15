@@ -83,22 +83,6 @@ public class ServiceRefHandlerChain {
         this.portNamePattern = value;
     }
 
-    /**
-     * Gets the value of the protocolBindings property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the protocolBindings property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getProtocolBindings().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     */
     public List<String> getProtocolBindings() {
         if (protocolBindings == null) {
             protocolBindings = new ArrayList<String>();
@@ -106,22 +90,6 @@ public class ServiceRefHandlerChain {
         return this.protocolBindings;
     }
 
-    /**
-     * Gets the value of the handler property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the handler property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getHandler().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ServiceRefHandler }
-     */
     public List<ServiceRefHandler> getHandler() {
         if (handler == null) {
             handler = new ArrayList<ServiceRefHandler>();

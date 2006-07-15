@@ -90,22 +90,6 @@ public class ServiceRef {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -113,22 +97,6 @@ public class ServiceRef {
         return this.description;
     }
 
-    /**
-     * Gets the value of the displayName property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDisplayName().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDisplayName() {
         if (displayName == null) {
             displayName = new ArrayList<Text>();
@@ -136,22 +104,6 @@ public class ServiceRef {
         return this.displayName;
     }
 
-    /**
-     * Gets the value of the icon property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getIcon().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Icon }
-     */
     public List<Icon> getIcon() {
         if (icon == null) {
             icon = new ArrayList<Icon>();
@@ -213,22 +165,6 @@ public class ServiceRef {
         this.serviceQname = value;
     }
 
-    /**
-     * Gets the value of the portComponentRef property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the portComponentRef property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPortComponentRef().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PortComponentRef }
-     */
     public List<PortComponentRef> getPortComponentRef() {
         if (portComponentRef == null) {
             portComponentRef = new ArrayList<PortComponentRef>();
@@ -236,22 +172,6 @@ public class ServiceRef {
         return this.portComponentRef;
     }
 
-    /**
-     * Gets the value of the handler property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the handler property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getHandler().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ServiceRefHandler }
-     */
     public List<ServiceRefHandler> getHandler() {
         if (handler == null) {
             handler = new ArrayList<ServiceRefHandler>();
@@ -275,22 +195,6 @@ public class ServiceRef {
         this.mappedName = value;
     }
 
-    /**
-     * Gets the value of the injectionTarget property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the injectionTarget property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getInjectionTarget().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InjectionTarget }
-     */
     public List<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
             injectionTarget = new ArrayList<InjectionTarget>();

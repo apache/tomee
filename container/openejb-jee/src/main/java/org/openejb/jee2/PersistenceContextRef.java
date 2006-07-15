@@ -91,22 +91,6 @@ public class PersistenceContextRef {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -138,22 +122,6 @@ public class PersistenceContextRef {
         this.persistenceContextType = value;
     }
 
-    /**
-     * Gets the value of the persistenceProperty property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the persistenceProperty property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getPersistenceProperty().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Property }
-     */
     public List<Property> getPersistenceProperty() {
         if (persistenceProperty == null) {
             persistenceProperty = new ArrayList<Property>();
@@ -169,22 +137,6 @@ public class PersistenceContextRef {
         this.mappedName = value;
     }
 
-    /**
-     * Gets the value of the injectionTarget property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the injectionTarget property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getInjectionTarget().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InjectionTarget }
-     */
     public List<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
             injectionTarget = new ArrayList<InjectionTarget>();

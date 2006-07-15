@@ -55,22 +55,6 @@ public class Listener {
     @XmlID
     protected String id;
 
-    /**
-     * Gets the value of the description property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDescription().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -78,22 +62,6 @@ public class Listener {
         return this.description;
     }
 
-    /**
-     * Gets the value of the displayName property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getDisplayName().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Text }
-     */
     public List<Text> getDisplayName() {
         if (displayName == null) {
             displayName = new ArrayList<Text>();
@@ -101,22 +69,6 @@ public class Listener {
         return this.displayName;
     }
 
-    /**
-     * Gets the value of the icon property.
-     * <p/>
-     * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * <p/>
-     * <p/>
-     * For example, to add a new item, do as follows:
-     * getIcon().add(newItem);
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Icon }
-     */
     public List<Icon> getIcon() {
         if (icon == null) {
             icon = new ArrayList<Icon>();
