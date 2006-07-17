@@ -8,18 +8,14 @@ import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.rmi.MarshalledObject;
 
 public class ThrowableArtifactTest extends TestCase {
 
-    public void testDummy() {}
-    
-    /**
-     * Commented out until http://jira.codehaus.org/browse/MSUREFIRE-110 is fixed
-     * 
-     * @throws Throwable
-     */
-    public void XtestThrowableArtifact() throws Throwable {
+    public void testThrowableArtifact() throws Throwable {
         Throwable exception = new NullPointerException("ONE");
         exception = throwCatchReturn(exception);
 
@@ -63,9 +59,14 @@ public class ThrowableArtifactTest extends TestCase {
     }
 
     private ThrowableArtifact marshal(ThrowableArtifact artifact) throws IOException, ClassNotFoundException {
-        MarshalledObject marshalledObject = new MarshalledObject(artifact);
-        artifact = (ThrowableArtifact) marshalledObject.get();
-        return artifact;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(baos);
+        out.writeObject(artifact);
+        out.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bais);
+        return (ThrowableArtifact) in.readObject();
     }
 
     public static class BadException extends Exception {
