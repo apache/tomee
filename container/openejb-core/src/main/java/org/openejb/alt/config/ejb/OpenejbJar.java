@@ -43,4 +43,11 @@ public class OpenejbJar {
         return this.ejbDeployment;
     }
 
+    public int getEjbDeploymentCount() {
+        return getEjbDeployment().size();
+    }
+
+    public void addEjbDeployment(EjbDeployment ejbDeployment) {
+        getEjbDeployment().add(ejbDeployment);
+    }
 }

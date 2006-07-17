@@ -18,7 +18,7 @@ import org.exolab.castor.xml.ValidationException;
 import org.openejb.OpenEJBException;
 import org.openejb.alt.config.ejb11.EjbJar;
 import org.openejb.alt.config.ejb11.EnterpriseBeansItem;
-import org.openejb.alt.config.ejb11.OpenejbJar;
+import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.sys.Container;
 import org.openejb.loader.SystemInstance;
 import org.openejb.util.JarUtils;
@@ -51,7 +51,7 @@ public class EjbJarUtils {
     }
 
     private OpenejbJar readOpenEjbJar(String jarLocation) throws OpenEJBException {
-        return (OpenejbJar) Unmarshaller.unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", jarLocation);
+        return (OpenejbJar) JaxbUnmarshaller.unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", jarLocation);
     }
 
     private EjbJar readEjbJar(String jarLocation) throws OpenEJBException {
@@ -274,47 +274,47 @@ public class EjbJarUtils {
     }
 
     public static void writeOpenejbJar(String xmlFile, OpenejbJar openejbJarObject) throws OpenEJBException {
-        /* TODO:  Just to be picky, the xml file created by
-        Castor is really hard to read -- it is all on one line.
-        People might want to edit this in the future by hand, so if Castor can
-        make the output look better that would be great!  Otherwise we could
-        just spruce the output up by adding a few new lines and tabs.
-        */
-        Writer writer = null;
-        try {
-            File file = new File(xmlFile);
-            File dirs = file.getParentFile();
-            if (dirs != null) dirs.mkdirs();
-            writer = new FileWriter(file);
-            openejbJarObject.marshal(writer);
-        } catch (SecurityException e) {
-            throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
-        } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
-        } catch (MarshalException e) {
-            if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
-            } else {
-                throw new OpenEJBException(messages.format("conf.2050", xmlFile, e.getLocalizedMessage()));
-            }
-        } catch (ValidationException e) {
-            /* TODO: Implement informative error handling here.
-               The exception will say "X doesn't match the regular
-               expression Y"
-               This should be checked and more relevant information
-               should be given -- not everyone understands regular
-               expressions.
-             */
-            /* NOTE: This doesn't seem to ever happen. When the object graph
-             * is invalid, the MarshalException is thrown, not this one as you
-             * would think.
-             */
-            throw new OpenEJBException(messages.format("conf.2060", xmlFile, e.getLocalizedMessage()));
-        }
-        try {
-            writer.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()));
-        }
+//        /* TODO:  Just to be picky, the xml file created by
+//        Castor is really hard to read -- it is all on one line.
+//        People might want to edit this in the future by hand, so if Castor can
+//        make the output look better that would be great!  Otherwise we could
+//        just spruce the output up by adding a few new lines and tabs.
+//        */
+//        Writer writer = null;
+//        try {
+//            File file = new File(xmlFile);
+//            File dirs = file.getParentFile();
+//            if (dirs != null) dirs.mkdirs();
+//            writer = new FileWriter(file);
+//            openejbJarObject.marshal(writer);
+//        } catch (SecurityException e) {
+//            throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
+//        } catch (IOException e) {
+//            throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
+//        } catch (MarshalException e) {
+//            if (e.getCause() instanceof IOException) {
+//                throw new OpenEJBException(messages.format("conf.2040", xmlFile, e.getLocalizedMessage()));
+//            } else {
+//                throw new OpenEJBException(messages.format("conf.2050", xmlFile, e.getLocalizedMessage()));
+//            }
+//        } catch (ValidationException e) {
+//            /* TODO: Implement informative error handling here.
+//               The exception will say "X doesn't match the regular
+//               expression Y"
+//               This should be checked and more relevant information
+//               should be given -- not everyone understands regular
+//               expressions.
+//             */
+//            /* NOTE: This doesn't seem to ever happen. When the object graph
+//             * is invalid, the MarshalException is thrown, not this one as you
+//             * would think.
+//             */
+//            throw new OpenEJBException(messages.format("conf.2060", xmlFile, e.getLocalizedMessage()));
+//        }
+//        try {
+//            writer.close();
+//        } catch (Exception e) {
+//            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()));
+//        }
     }
 }

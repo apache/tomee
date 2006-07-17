@@ -72,4 +72,11 @@ public class EjbDeployment {
         this.ejbName = value;
     }
 
+    public void addResourceLink(ResourceLink resourceLink) {
+        getResourceLink().add(resourceLink);
+    }
+
+    public void addQuery(Query query) {
+        getQuery().add(query);
+    }
 }

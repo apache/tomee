@@ -3,7 +3,7 @@ package org.openejb.alt.config;
 import org.openejb.OpenEJBException;
 import org.openejb.assembler.classic.*;
 import org.openejb.alt.config.ejb11.ContainerTransaction;
-import org.openejb.alt.config.ejb11.EjbDeployment;
+import org.openejb.alt.config.ejb.EjbDeployment;
 import org.openejb.alt.config.ejb11.EjbJar;
 import org.openejb.alt.config.ejb11.EjbLocalRef;
 import org.openejb.alt.config.ejb11.EjbRef;
@@ -13,10 +13,10 @@ import org.openejb.alt.config.ejb11.EnvEntry;
 import org.openejb.alt.config.ejb11.Method;
 import org.openejb.alt.config.ejb11.MethodParams;
 import org.openejb.alt.config.ejb11.MethodPermission;
-import org.openejb.alt.config.ejb11.OpenejbJar;
-import org.openejb.alt.config.ejb11.Query;
-import org.openejb.alt.config.ejb11.QueryMethod;
-import org.openejb.alt.config.ejb11.ResourceLink;
+import org.openejb.alt.config.ejb.OpenejbJar;
+import org.openejb.alt.config.ejb.Query;
+import org.openejb.alt.config.ejb.QueryMethod;
+import org.openejb.alt.config.ejb.ResourceLink;
 import org.openejb.alt.config.ejb11.ResourceRef;
 import org.openejb.alt.config.ejb11.SecurityRole;
 import org.openejb.alt.config.ejb11.SecurityRoleRef;
@@ -454,13 +454,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     private Map getDeployments(OpenejbJar j) throws OpenEJBException {
         HashMap map = new HashMap(j.getEjbDeploymentCount());
-        Enumeration enumeration = j.enumerateEjbDeployment();
-
-        while (enumeration.hasMoreElements()) {
-            EjbDeployment d = (EjbDeployment) enumeration.nextElement();
+        List<org.openejb.alt.config.ejb.EjbDeployment> ejbDeployments = j.getEjbDeployment();
+        for (org.openejb.alt.config.ejb.EjbDeployment d : ejbDeployments) {
             map.put(d.getEjbName(), d);
         }
-
         return map;
     }
 
@@ -580,11 +577,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             }
 
             /* Build Resource References *****************/
-            EjbDeployment dep = (EjbDeployment) ejbds.get(bean.ejbName);
-            Enumeration rl = dep.enumerateResourceLink();
             Map resLinks = new HashMap();
-            while (rl.hasMoreElements()) {
-                ResourceLink link = (ResourceLink) rl.nextElement();
+            EjbDeployment dep = (EjbDeployment) ejbds.get(bean.ejbName);
+            for (ResourceLink link : dep.getResourceLink()) {
                 resLinks.put(link.getResRefName(), link);
             }
 
@@ -865,24 +860,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
 
         if (bean.persistenceType.equals("Container")) {
-
-            Query[] q = d.getQuery();
-            QueryInfo[] qi = new QueryInfo[q.length];
-
-            for (int i = 0; i < q.length; i++) {
+            List<QueryInfo> qi = new ArrayList<QueryInfo>();
+            for (Query q : d.getQuery()) {
                 QueryInfo query = new QueryInfo();
-                query.description = q[i].getDescription();
-                query.queryStatement = q[i].getObjectQl().trim();
+                query.description = q.getDescription();
+                query.queryStatement = q.getObjectQl().trim();
 
                 MethodInfo method = new MethodInfo();
-                QueryMethod qm = q[i].getQueryMethod();
+                QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
-                method.methodParams = qm.getMethodParams().getMethodParam();
-
+                method.methodParams = qm.getMethodParams().getMethodParam().toArray(new String[]{});
                 query.method = method;
-                qi[i] = query;
+                qi.add(query);
             }
-            bean.queries = qi;
+            bean.queries = qi.toArray(new QueryInfo[]{});
         }
         return bean;
     }

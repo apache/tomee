@@ -57,4 +57,7 @@ public class MethodParams {
         this.id = value;
     }
 
+    public void addMethodParam(String name) {
+        getMethodParam().add(name);
+    }
 }

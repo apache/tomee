@@ -13,11 +13,11 @@ import java.util.StringTokenizer;
 
 import org.openejb.OpenEJBException;
 import org.openejb.loader.SystemInstance;
-import org.openejb.alt.config.ejb11.EjbDeployment;
-import org.openejb.alt.config.ejb11.MethodParams;
-import org.openejb.alt.config.ejb11.OpenejbJar;
-import org.openejb.alt.config.ejb11.QueryMethod;
-import org.openejb.alt.config.ejb11.ResourceLink;
+import org.openejb.alt.config.ejb.EjbDeployment;
+import org.openejb.alt.config.ejb.MethodParams;
+import org.openejb.alt.config.ejb.OpenejbJar;
+import org.openejb.alt.config.ejb.QueryMethod;
+import org.openejb.alt.config.ejb.ResourceLink;
 import org.openejb.alt.config.ejb11.ResourceRef;
 import org.openejb.alt.config.sys.Connector;
 import org.openejb.alt.config.sys.Container;
@@ -255,7 +255,7 @@ public class Deploy {
 
     private void promptForOQLForEntityBeans(Class bean, EjbDeployment deployment)
             throws OpenEJBException {
-        org.openejb.alt.config.ejb11.Query query;
+        org.openejb.alt.config.ejb.Query query;
         QueryMethod queryMethod;
         MethodParams methodParams;
         boolean instructionsPrinted = false;
@@ -332,7 +332,7 @@ public class Deploy {
                 }
 
                 if (answer != null && !answer.equals("")) {
-                    query = new org.openejb.alt.config.ejb11.Query();
+                    query = new org.openejb.alt.config.ejb.Query();
                     methodParams = new MethodParams();
                     queryMethod = new QueryMethod();
 

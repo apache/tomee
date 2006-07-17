@@ -14,4 +14,5 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openejb.org/openejb-jar/1.1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.openejb.alt.config.ejb;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openejb.org/openejb-jar/1.1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.openejb.alt.config.ejb;

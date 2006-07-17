@@ -3,10 +3,10 @@ package org.openejb.alt.config;
 import java.lang.reflect.Method;
 
 import org.openejb.OpenEJBException;
-import org.openejb.alt.config.ejb11.EjbDeployment;
+import org.openejb.alt.config.ejb.EjbDeployment;
 import org.openejb.alt.config.ejb11.EjbJar;
-import org.openejb.alt.config.ejb11.OpenejbJar;
-import org.openejb.alt.config.ejb11.ResourceLink;
+import org.openejb.alt.config.ejb.OpenejbJar;
+import org.openejb.alt.config.ejb.ResourceLink;
 import org.openejb.alt.config.ejb11.ResourceRef;
 import org.openejb.alt.config.sys.Connector;
 import org.openejb.alt.config.sys.Container;
@@ -44,7 +44,7 @@ public class AutoDeployer {
         Bean[] beans = ejbJarUtils.getBeans();
 
         for (int i = 0; i < beans.length; i++) {
-            openejbJar.addEjbDeployment(deployBean(beans[i], jarLocation));
+            openejbJar.getEjbDeployment().add(deployBean(beans[i], jarLocation));
         }
         return openejbJar;
     }
@@ -65,7 +65,7 @@ public class AutoDeployer {
         }
 
         for (int i = 0; i < refs.length; i++) {
-            deployment.addResourceLink(autoAssingResourceRef(refs[i]));
+            deployment.getResourceLink().add(autoAssingResourceRef(refs[i]));
         }
 
         if (bean.getType().equals("CMP_ENTITY")) {
