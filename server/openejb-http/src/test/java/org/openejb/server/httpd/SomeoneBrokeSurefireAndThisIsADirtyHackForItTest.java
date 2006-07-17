@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb;
+package org.openejb.server.httpd;
 
 import junit.framework.TestCase;
 import junit.framework.Test;
@@ -25,6 +25,6 @@ import junit.framework.Test;
 public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.openejb.assembler.classic.Assembler.class.getName());
-        return RemoteiTest.suite();
+        return HttpEjbServerTest.suite();
     }
 }
