@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -46,13 +47,11 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-roleType", propOrder = {
-        "description",
+        "descriptions",
         "roleName"
         })
 public class SecurityRole {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
     @XmlElement(name = "role-name", required = true)
     protected String roleName;
     @XmlAttribute
@@ -60,11 +59,20 @@ public class SecurityRole {
     @XmlID
     protected String id;
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getRoleName() {

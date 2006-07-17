@@ -17,16 +17,17 @@
 package org.openejb.jee;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$ $Date$
  */
 public interface EnterpriseBean {
-    public List<Text> getDescription();
+//    public List<Text> getDescription();
 
-    public List<Text> getDisplayName();
+//    public List<Text> getDisplayName();
 
-    public List<Icon> getIcon();
+//    public List<Icon> getIcon();
 
     public String getEjbName();
 

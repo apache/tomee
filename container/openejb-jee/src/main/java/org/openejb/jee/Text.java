@@ -45,6 +45,14 @@ public class Text {
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
     protected String lang;
 
+    public Text() {
+    }
+
+    public Text(String lang, String value) {
+        this.value = value;
+        this.lang = lang;
+    }
+
     public String getValue() {
         return value;
     }

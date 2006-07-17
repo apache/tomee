@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -78,9 +79,9 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-beanType", propOrder = {
-        "description",
-        "displayName",
-        "icon",
+        "descriptions",
+        "displayNames",
+        "icons",
         "ejbName",
         "mappedName",
         "ejbClass",
@@ -106,12 +107,13 @@ import java.util.List;
         })
 public class MessageDrivenBean implements EnterpriseBean {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
-    @XmlElement(name = "display-name", required = true)
-    protected List<Text> displayName;
-    @XmlElement(required = true)
-    protected List<Icon> icon;
+    @XmlTransient
+    protected TextMap description = new TextMap();
+    @XmlTransient
+    protected TextMap displayName = new TextMap();
+    @XmlTransient
+    protected LocalList<String,Icon> icon = new LocalList<String,Icon>(Icon.class);
+
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
     @XmlElement(name = "mapped-name")
@@ -161,25 +163,43 @@ public class MessageDrivenBean implements EnterpriseBean {
     @XmlID
     protected String id;
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
-    public List<Text> getDisplayName() {
-        if (displayName == null) {
-            displayName = new ArrayList<Text>();
-        }
-        return this.displayName;
+    public void setDescriptions(Text[] text) {
+        description.set(text);
     }
 
-    public List<Icon> getIcon() {
-        if (icon == null) {
-            icon = new ArrayList<Icon>();
-        }
-        return this.icon;
+    public String getDescription() {
+        return description.get();
+    }
+
+    @XmlElement(name = "display-name", required = true)
+    public Text[] getDisplayNames() {
+        return displayName.toArray();
+    }
+
+    public void setDisplayNames(Text[] text) {
+        displayName.set(text);
+    }
+
+    public String getDisplayName() {
+        return displayName.get();
+    }
+
+    @XmlElement(name = "icon", required = true)
+    public Icon[] getIcons() {
+        return icon.toArray();
+    }
+
+    public void setIcons(Icon[] text) {
+        icon.set(text);
+    }
+
+    public Icon getIcon() {
+        return icon.getLocal();
     }
 
     public String getEjbName() {
