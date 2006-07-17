@@ -16,8 +16,14 @@
  */
 package org.openejb;
 
+import junit.framework.TestCase;
+import junit.framework.Test;
+
 /**
  * @version $Revision$ $Date$
  */
-public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest {
+public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
+    public static Test suite() {
+        return RemoteiTest.suite();
+    }
 }
