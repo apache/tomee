@@ -63,28 +63,6 @@ public class EjbJarTest extends TestCase {
         assertEquals(expected, actual);
     }
 
-//    public void _testAll() throws Exception {
-//        JAXBContext ctx = JAXBContext.newInstance(EjbJarType.class);
-//        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-//
-//        InputStream in = this.getClass().getClassLoader().getResourceAsStream("ejb-jar-example1.xml");
-//        java.lang.String expected = readContent(in);
-//
-//        JAXBElement element =  (JAXBElement) unmarshaller.unmarshal(new InputSource(expected));
-//        unmarshaller.setEventHandler(new TestValidationEventHandler());
-//        EjbJarType ejbJarType = (EjbJarType) element.getValue();
-//
-//        Marshaller marshaller = ctx.createMarshaller();
-//        marshaller.setProperty("jaxb.formatted.output", true);
-//
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        marshaller.marshal(element, baos);
-//
-//        java.lang.String actual = new java.lang.String(baos.toByteArray());
-//
-//        assertEquals(expected, actual);
-//    }
-//
     private java.lang.String readContent(InputStream in) throws IOException {
         StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
