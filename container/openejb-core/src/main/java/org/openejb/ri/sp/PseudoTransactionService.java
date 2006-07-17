@@ -20,7 +20,6 @@ public class PseudoTransactionService implements TransactionService, Transaction
     Hashtable map = new Hashtable();
 
     public void init(java.util.Properties props) {
-        props = props;
     }
 
     public TransactionManager getTransactionManager() {
@@ -62,15 +61,18 @@ public class PseudoTransactionService implements TransactionService, Transaction
 
     public void commit() throws RollbackException {
         MyTransaction tx = (MyTransaction) map.remove(Thread.currentThread());
-        if (tx != null)
+        if (tx != null) {
             tx.commit();
-        else
+        } else {
             throw new IllegalStateException();
+        }
     }
 
     public int getStatus() throws javax.transaction.SystemException {
         Transaction tx = (Transaction) map.get(Thread.currentThread());
-        if (tx == null) return Status.STATUS_NO_TRANSACTION;
+        if (tx == null) {
+            return Status.STATUS_NO_TRANSACTION;
+        }
         return tx.getStatus();
     }
 
@@ -83,8 +85,9 @@ public class PseudoTransactionService implements TransactionService, Transaction
         Transaction ctx = (Transaction) map.get(Thread.currentThread());
         int status = tx.getStatus();
 
-        if (ctx != null || tx == null || (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK))
+        if (ctx != null || tx == null || (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK)) {
             throw new javax.transaction.InvalidTransactionException();
+        }
         map.put(Thread.currentThread(), tx);
     }
 
@@ -94,13 +97,17 @@ public class PseudoTransactionService implements TransactionService, Transaction
 
     public void rollback() {
         MyTransaction tx = (MyTransaction) map.remove(Thread.currentThread());
-        if (tx == null) throw new IllegalStateException();
+        if (tx == null) {
+            throw new IllegalStateException();
+        }
         tx.rollback();
     }
 
     public void setRollbackOnly() {
         MyTransaction tx = (MyTransaction) map.get(Thread.currentThread());
-        if (tx == null) throw new IllegalStateException();
+        if (tx == null) {
+            throw new IllegalStateException();
+        }
         tx.setRollbackOnly();
     }
 

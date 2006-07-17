@@ -66,15 +66,17 @@ public class EncBuilder {
     private EncInfo encInfo;
     private byte ejbType;
     private boolean beanManagedTransaction;
+    private TransactionManager transactionManager;
     private EncBuilder.ReferenceWrapper referenceWrapper;
 
     public EncBuilder() {
     }
 
-    public EncBuilder(EncInfo encInfo, byte ejbType, boolean beanManagedTransaction) throws SystemException {
+    public EncBuilder(EncInfo encInfo, byte ejbType, boolean beanManagedTransaction, TransactionManager transactionManager) throws SystemException {
         this.encInfo = encInfo;
         setEjbType(ejbType);
         this.beanManagedTransaction = beanManagedTransaction;
+        this.transactionManager = transactionManager;
     }
 
     public EncInfo getEncInfo() {
@@ -111,12 +113,17 @@ public class EncBuilder {
         this.beanManagedTransaction = beanManagedTransaction;
     }
 
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public Context createContext() throws SystemException {
         HashMap<String, Object> bindings = new HashMap<String, Object>();
         if (beanManagedTransaction) {
-            Object obj = Assembler.getContext().get(TransactionManager.class.getName());
-            TransactionManager transactionManager = (TransactionManager) obj;
-
             Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction(transactionManager));
             bindings.put("java:comp/UserTransaction", userTransaction);
         }

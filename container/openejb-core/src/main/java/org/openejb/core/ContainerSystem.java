@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
+import org.openejb.loader.SystemInstance;
 import org.openejb.core.ivm.naming.IvmContext;
 import org.openejb.core.ivm.naming.ObjectReference;
 import org.openejb.core.ivm.naming.Reference;
@@ -28,6 +29,9 @@ public class ContainerSystem implements org.openejb.spi.ContainerSystem {
         catch (javax.naming.NamingException exception) {
             throw new RuntimeException();
         }
+
+        // todo this should be in a start method because publishing an external reference in the constructor is very dangerous
+        SystemInstance.get().setComponent(org.openejb.spi.ContainerSystem.class, this);
     }
 
     public DeploymentInfo getDeploymentInfo(Object id) {

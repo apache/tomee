@@ -42,48 +42,25 @@
  *
  * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
  */
-package org.openejb.assembler.spring;
+package org.openejb.assembler.spring.xmlwriter;
 
-import org.openejb.assembler.classic.InfoObject;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @version $Revision$ $Date$
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
-
-    public String getName() {
-        return name;
+public class CompactXmlWriter extends PrettyPrintXmlWriter {
+    public CompactXmlWriter(PrintWriter writer) {
+        super(writer);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public CompactXmlWriter(Writer writer) {
+        super(writer);
     }
 
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    @Override
+    protected void endOfLine() {
+        // override parent: don't write anything at end of line
     }
 }

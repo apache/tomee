@@ -44,46 +44,62 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.assembler.classic.InfoObject;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.ArrayList;
+
+import org.apache.xbean.spring.context.SpringApplicationContext;
+import org.openejb.OpenEJBException;
 
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @version $Revision$ $Date$
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
-
-    public String getName() {
-        return name;
+public class AssemblerUtil {
+    public static <T> List<T> asList(T[] array) {
+        List<T> list;
+        if (array != null) {
+            list = Arrays.asList(array);
+        } else {
+            list = Collections.emptyList();
+        }
+        return list;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public static void addSystemJndiProperties() {
+        Properties systemProperties = System.getProperties();
+        synchronized (systemProperties) {
+            String str = systemProperties.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
+            String naming = "org.openejb.core.ivm.naming";
+            if (str == null) {
+                str = naming;
+            } else if (str.indexOf(naming) == -1) {
+                str = naming + ":" + str;
+            }
+            systemProperties.setProperty(javax.naming.Context.URL_PKG_PREFIXES, str);
+        }
     }
 
-    public String getResourceId() {
-        return resourceId;
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(SpringApplicationContext factory, Class<T> type) throws OpenEJBException {
+        // get the main service from the configuration file
+        String[] names = factory.getBeanNamesForType(type);
+        if (names.length == 0) {
+            throw new OpenEJBException("No bean of type: " + type.getName() + " found in the bootstrap file: " + factory.getDisplayName());
+        }
+        T bean = (T) factory.getBean(names[0]);
+        return bean;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getBeans(SpringApplicationContext factory, Class<T> type) {
+        // get the main service from the configuration file
+        String[] names = factory.getBeanNamesForType(type);
+        ArrayList<T> beans = new ArrayList<T>(names.length);
+        for (String name : names) {
+            beans.add((T) factory.getBean(name));
+        }
+        return beans;
     }
 }

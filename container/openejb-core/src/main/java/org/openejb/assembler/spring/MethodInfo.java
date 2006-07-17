@@ -44,16 +44,30 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.assembler.classic.InfoObject;
-
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @org.apache.xbean.XBean element="method"
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public class MethodInfo {
+    public String deploymentId;
+    public String intf;
+    public String name = "*";
+    public String[] params;
+
+    public String getDeploymentId() {
+        return deploymentId;
+    }
+
+    public void setDeploymentId(String deploymentId) {
+        this.deploymentId = deploymentId;
+    }
+
+    public String getIntf() {
+        return intf;
+    }
+
+    public void setIntf(String intf) {
+        this.intf = intf;
+    }
 
     public String getName() {
         return name;
@@ -63,27 +77,11 @@ public class ResourceReferenceInfo extends InfoObject {
         this.name = name;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    public String[] getParams() {
+        return params;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    public void setParams(String[] params) {
+        this.params = params;
     }
 }

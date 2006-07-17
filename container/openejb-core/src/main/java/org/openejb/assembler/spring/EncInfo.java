@@ -56,6 +56,9 @@ public class EncInfo {
     public final Collection<EnvEntryInfo> envEntries = new ArrayList<EnvEntryInfo>();
     public final Collection<ResourceReferenceInfo> resourceRefs = new ArrayList<ResourceReferenceInfo>();
 
+    /**
+     * @org.apache.xbean.FlatCollection childElement="ejbRef"
+     */
     public EjbReferenceInfo[] getEjbRefs() {
         return ejbRefs.toArray(new EjbReferenceInfo[ejbRefs.size()]);
     }
@@ -64,6 +67,9 @@ public class EncInfo {
         this.ejbRefs.addAll(Arrays.asList(ejbRefs));
     }
 
+    /**
+     * @org.apache.xbean.FlatCollection childElement="envEntry"
+     */
     public EnvEntryInfo[] getEnvEntries() {
         return envEntries.toArray(new EnvEntryInfo[envEntries.size()]);
     }
@@ -72,6 +78,9 @@ public class EncInfo {
         this.envEntries.addAll(Arrays.asList(envEntries));
     }
 
+    /**
+     * @org.apache.xbean.FlatCollection childElement="resourceRef"
+     */
     public ResourceReferenceInfo[] getResourceRefs() {
         return resourceRefs.toArray(new ResourceReferenceInfo[resourceRefs.size()]);
     }

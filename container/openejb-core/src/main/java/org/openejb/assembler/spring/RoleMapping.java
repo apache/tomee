@@ -44,46 +44,26 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.assembler.classic.InfoObject;
-
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @org.apache.xbean.XBean element="roleMapping"
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public class RoleMapping {
+    public String logical;
+    public String[] physical;
 
-    public String getName() {
-        return name;
+    public String getLogical() {
+        return logical;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLogical(String logical) {
+        this.logical = logical;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    public String[] getPhysical() {
+        return physical;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    public void setPhysical(String[] physical) {
+        this.physical = physical;
     }
 }

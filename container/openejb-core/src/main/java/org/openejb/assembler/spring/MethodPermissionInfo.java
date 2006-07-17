@@ -44,46 +44,29 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.assembler.classic.InfoObject;
-
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @org.apache.xbean.XBean element="permission"
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public class MethodPermissionInfo {
+    public String[] roleNames;
+    public MethodInfo[] methods;
 
-    public String getName() {
-        return name;
+    public String[] getRoleNames() {
+        return roleNames;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoleNames(String[] roleNames) {
+        this.roleNames = roleNames;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    /**
+     * @org.apache.xbean.FlatCollection childElement="method"
+     */
+    public MethodInfo[] getMethods() {
+        return methods;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    public void setMethods(MethodInfo[] methods) {
+        this.methods = methods;
     }
 }

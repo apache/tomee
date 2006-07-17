@@ -42,48 +42,30 @@
  *
  * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
  */
-package org.openejb.assembler.spring;
+package org.openejb.alt.containers.castor_cmp11;
 
-import org.openejb.assembler.classic.InfoObject;
+import java.util.Properties;
+import javax.transaction.TransactionManager;
+
+import org.castor.transactionmanager.TransactionManagerFactory;
+import org.castor.transactionmanager.TransactionManagerAcquireException;
 
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @version $Revision$ $Date$
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public class ThreadLocalTransactionManagerFactory implements TransactionManagerFactory {
+    public static ThreadLocal<TransactionManager> transactionManager = new ThreadLocal<TransactionManager>();
+    public static final String NAME = "threadLocal";
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() { return NAME; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    /**
+     * {@inheritDoc}
+     */
+    public TransactionManager getTransactionManager(Properties properties) throws TransactionManagerAcquireException {
+        return transactionManager.get();
     }
 }

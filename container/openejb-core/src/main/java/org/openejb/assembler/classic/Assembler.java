@@ -164,7 +164,6 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
 
         containerSystem = new org.openejb.core.ContainerSystem();
-        SystemInstance.get().setComponent(org.openejb.spi.ContainerSystem.class, containerSystem);
 
         createTransactionManager(configInfo);
 

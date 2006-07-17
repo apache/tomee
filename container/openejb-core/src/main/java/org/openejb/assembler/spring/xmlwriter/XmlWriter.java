@@ -42,48 +42,19 @@
  *
  * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
  */
-package org.openejb.assembler.spring;
-
-import org.openejb.assembler.classic.InfoObject;
+package org.openejb.assembler.spring.xmlwriter;
 
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @version $Revision$ $Date$
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public interface XmlWriter {
+    void startElement( String name );
 
-    public String getName() {
-        return name;
-    }
+    void addAttribute( String key, String value );
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    void writeText( String text );
 
-    public String getResourceId() {
-        return resourceId;
-    }
+    void writeMarkup( String text );
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getRemoteContextId() {
-        return remoteContextId;
-    }
-
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
-    }
+    void endElement();
 }

@@ -46,6 +46,7 @@ package org.openejb.assembler.spring;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.openejb.SystemException;
 import org.openejb.core.DeploymentInfo;
@@ -57,7 +58,7 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
     private boolean reentrant;
     private String[] cmpFields;
     private String primKeyField;
-    private Map<String, String> queries;
+    private final Map<String, String> queries = new TreeMap<String, String>();
     protected String pkClass;
 
     public boolean isReentrant() {
@@ -96,11 +97,12 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
      * @org.apache.xbean.Map entryName="query" keyName="method"
      */
     public Map<String, String> getQueries() {
-        return queries;
+        return new TreeMap<String, String>(queries);
     }
 
     public void setQueries(Map<String, String> queries) {
-        this.queries = queries;
+        this.queries.clear();
+        this.queries.putAll(queries);
     }
 
     protected boolean isBeanManagedTransaction() {
@@ -108,12 +110,12 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
     }
 
     protected byte getComponentType() {
-        return DeploymentInfo.BMP_ENTITY;
+        return DeploymentInfo.CMP_ENTITY;
     }
 
     protected DeploymentInfo createDeploymentInfo() throws SystemException {
         DeploymentInfo deploymentInfo = super.createDeploymentInfo();
-        deploymentInfo.setCmrFields(cmpFields);
+        deploymentInfo.setCmrFields(cmpFields == null? new String[0] : cmpFields);
         deploymentInfo.setIsReentrant(reentrant);
         if (primKeyField != null) {
             try {

@@ -76,16 +76,7 @@ public class NumberedTestCase extends Assert implements Test{
         try{
             setUp();
         } catch (Exception e){
-            Test test = new Test(){
-                    public int countTestCases() {
-                        return 0;
-                    }
-                    public void run(TestResult result) {
-                    }
-                    public String toString(){
-                        return name()+".setUp()";
-                    }
-                };
+            Test test = new TestSetup();
         
             result.addError(test, e);
             return;
@@ -96,16 +87,7 @@ public class NumberedTestCase extends Assert implements Test{
         try{
             tearDown();
         } catch (Exception e){
-            Test test = new Test(){
-                    public int countTestCases() {
-                        return 0;
-                    }
-                    public void run(TestResult result) {
-                    }
-                    public String toString(){
-                        return name()+".tearDown()";
-                    }
-                };
+            Test test = new TestTearDown();
         
             result.addError(test, e);
             return;
@@ -126,13 +108,7 @@ public class NumberedTestCase extends Assert implements Test{
     
 
     protected Test createTest(final Method testMethod){
-        Test test = new Test(){
-            public int countTestCases() {return 1;}
-            public void run(TestResult result) {}
-            public String toString(){
-                return createTestName(testMethod);
-            }
-        };
+        Test test = new NamedTest(testMethod);
         return test;
     }
 
@@ -167,6 +143,63 @@ public class NumberedTestCase extends Assert implements Test{
     
     protected static String removePrefix(String prefix, String name){
         return name.substring(prefix.length());
+    }
+
+    public class NamedTest implements Test {
+        private final Method testMethod;
+
+        public NamedTest(Method testMethod) {
+            this.testMethod = testMethod;
+        }
+
+        public String getName() {
+            return createTestName(testMethod);
+        }
+
+        public int countTestCases() {
+            return 1;
+        }
+
+        public void run(TestResult result) {
+        }
+
+        public String toString() {
+            return getName();
+        }
+    }
+
+    public class TestSetup implements Test {
+        public int countTestCases() {
+            return 0;
+        }
+
+        public void run(TestResult result) {
+        }
+
+        public String getName(){
+            return name()+".setUp()";
+        }
+
+        public String toString() {
+            return getName();
+        }
+    }
+
+    public class TestTearDown implements Test {
+        public int countTestCases() {
+            return 0;
+        }
+
+        public void run(TestResult result) {
+        }
+
+        public String getName(){
+            return name()+".tearDown()";
+        }
+
+        public String toString() {
+            return getName();
+        }
     }
 }
 

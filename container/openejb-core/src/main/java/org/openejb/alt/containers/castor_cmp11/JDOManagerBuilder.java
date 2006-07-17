@@ -25,6 +25,7 @@ import org.castor.jdo.conf.Mapping;
 import org.castor.jdo.conf.Param;
 import org.castor.jdo.conf.TransactionDemarcation;
 import org.castor.jdo.conf.TransactionManager;
+import org.castor.util.Configuration;
 import org.exolab.castor.jdo.JDOManager;
 import org.exolab.castor.mapping.MappingException;
 
@@ -40,13 +41,26 @@ public class JDOManagerBuilder {
     private static final String GLOBAL_TX_DATABASE = "Global_TX_Database";
     private static final String LOCAL_TX_DATABASE = "Local_TX_Database";
 
+//    // todo replace with ConfigKeys.TRANSACTION_MANAGER_FACTORIES after upgrade to 1.0.1
+//    public static final String TRANSACTION_MANAGER_FACTORIES = "org.castor.transactionmanager.Factories";
+//
+//    static {
+//        Configuration config = Configuration.getInstance();
+//        String property = config.getProperty(TRANSACTION_MANAGER_FACTORIES, null).trim();
+//        if (property != null && property.length() > 0) property += ", ";
+//        property += ThreadLocalTransactionManagerFactory.class.getName();
+//        config.getProperties().put(TRANSACTION_MANAGER_FACTORIES, property);
+//    }
+//
     private final String engine;
     private final String transactionManagerJndiName;
+    private final javax.transaction.TransactionManager transactionManager;
     private final List<Mapping> mappings = new ArrayList<Mapping>();
 
-    public JDOManagerBuilder(String engine, String transactionManagerJndiName) {
+    public JDOManagerBuilder(String engine, String transactionManagerJndiName, javax.transaction.TransactionManager transactionManager) {
         this.engine = engine;
         this.transactionManagerJndiName = transactionManagerJndiName;
+        this.transactionManager = transactionManager;
     }
 
     public void addMapping(URL location){
@@ -74,6 +88,9 @@ public class JDOManagerBuilder {
      * @param dataSourceJndiName
      */
     public JDOManager buildGlobalJDOManager(String dataSourceJndiName) throws MappingException {
+//        javax.transaction.TransactionManager oldTransactionManager = ThreadLocalTransactionManagerFactory.transactionManager.get();
+//        ThreadLocalTransactionManagerFactory.transactionManager.set(transactionManager);
+//        try {
 
         JdoConf jdoConf = new JdoConf();
         Database database = new Database();
@@ -95,6 +112,7 @@ public class JDOManagerBuilder {
         transactionDemarcation.setMode("global");
 
         TransactionManager transactionManager = new TransactionManager();
+//            transactionManager.setName("threadLocal");
         transactionManager.setName("jndi");
         Param param = new Param();
         param.setName("jndiEnc");
@@ -108,6 +126,9 @@ public class JDOManagerBuilder {
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());
+//        } finally {
+//            ThreadLocalTransactionManagerFactory.transactionManager.set(oldTransactionManager);
+//        }
     }
 
     /**
@@ -137,6 +158,9 @@ public class JDOManagerBuilder {
      * @param password  example "pass"
      */
     public JDOManager buildLocalJDOManager(String driverClassName, String driverUrl, String username, String password) throws MappingException {
+//        javax.transaction.TransactionManager oldTransactionManager = ThreadLocalTransactionManagerFactory.transactionManager.get();
+//        ThreadLocalTransactionManagerFactory.transactionManager.set(transactionManager);
+//        try {
 
         JdoConf jdoConf = new JdoConf();
         Database database = new Database();
@@ -166,6 +190,7 @@ public class JDOManagerBuilder {
         transactionDemarcation.setMode("local");
 
         TransactionManager transactionManager = new TransactionManager();
+//            transactionManager.setName("threadLocal");
         transactionManager.setName("jndi");
         Param param = new Param();
         param.setName("jndiEnc");
@@ -180,5 +205,8 @@ public class JDOManagerBuilder {
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());
+//        } finally {
+//            ThreadLocalTransactionManagerFactory.transactionManager.set(oldTransactionManager);
+//        }
     }
 }

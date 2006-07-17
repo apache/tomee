@@ -52,7 +52,6 @@ import org.openejb.core.DeploymentInfo;
  */
 public class StatelessDeploymentFactory extends AbstractDeploymentFactory {
     private boolean beanManagedTransaction;
-    protected String pkClass;
 
     public boolean isBeanManagedTransaction() {
         return beanManagedTransaction;

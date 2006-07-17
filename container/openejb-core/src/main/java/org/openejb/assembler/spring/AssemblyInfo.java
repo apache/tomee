@@ -44,46 +44,44 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.assembler.classic.InfoObject;
-
 /**
- * @org.apache.xbean.XBean element="resourceRef"
+ * @org.apache.xbean.XBean element="assembly"
  */
-public class ResourceReferenceInfo extends InfoObject {
-    private String name;
-    private String resourceId;
-    private String remoteContextId;
-    private String remoteName;
+public class AssemblyInfo {
+    MethodPermissionInfo[] methodPermissions;
+    public MethodTransactionInfo[] methodTransactions;
+    public RoleMapping[] roleMappings;
 
-    public String getName() {
-        return name;
+    /**
+     * @org.apache.xbean.FlatCollection childElement="permission"
+     */
+    public MethodPermissionInfo[] getMethodPermissions() {
+        return methodPermissions;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMethodPermissions(MethodPermissionInfo[] methodPermissions) {
+        this.methodPermissions = methodPermissions;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    /**
+     * @org.apache.xbean.FlatCollection childElement="transaction"
+     */
+    public MethodTransactionInfo[] getMethodTransactions() {
+        return methodTransactions;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
+    public void setMethodTransactions(MethodTransactionInfo[] methodTransactions) {
+        this.methodTransactions = methodTransactions;
     }
 
-    public String getRemoteContextId() {
-        return remoteContextId;
+    /**
+     * @org.apache.xbean.FlatCollection childElement="roleMapping"
+     */
+    public RoleMapping[] getRoleMappings() {
+        return roleMappings;
     }
 
-    public void setRemoteContextId(String remoteContextId) {
-        this.remoteContextId = remoteContextId;
-    }
-
-    public String getRemoteName() {
-        return remoteName;
-    }
-
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    public void setRoleMappings(RoleMapping[] roleMappings) {
+        this.roleMappings = roleMappings;
     }
 }

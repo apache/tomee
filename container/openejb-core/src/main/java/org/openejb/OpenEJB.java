@@ -211,6 +211,7 @@ public final class OpenEJB {
             } else {
                 logger.i18n.debug("startup.transactionManager", transactionManager.getClass().getName());
             }
+            SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
 
             logger.i18n.info("startup.ready");
 

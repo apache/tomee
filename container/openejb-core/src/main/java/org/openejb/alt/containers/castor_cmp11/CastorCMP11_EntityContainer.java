@@ -201,7 +201,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
 
         try {
-            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, transactionManagerJndiName);
+            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, transactionManagerJndiName, transactionManager);
 //            File mappingFile = new File("/Users/dblevins/work/openejb3/container/openejb-core/target/test-classes/conf/default.cmp_mapping.xml");
 
             Collection<URL> urls = mappings.values();

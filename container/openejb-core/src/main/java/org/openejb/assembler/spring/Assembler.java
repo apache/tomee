@@ -1,47 +1,48 @@
 package org.openejb.assembler.spring;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import javax.naming.NamingException;
+import java.util.TreeMap;
 import javax.transaction.TransactionManager;
 
+import org.apache.xbean.recipe.ConstructionException;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.apache.xbean.spring.context.SpringApplicationContext;
 import org.openejb.Container;
-import org.openejb.EnvProps;
 import org.openejb.OpenEJBException;
-import org.openejb.assembler.classic.ContainerInfo;
-import org.openejb.assembler.classic.ContainerSystemInfo;
-import org.openejb.assembler.classic.OpenEjbConfiguration;
-import org.openejb.assembler.classic.OpenEjbConfigurationFactory;
+import org.openejb.RpcContainer;
 import org.openejb.core.DeploymentInfo;
-import org.openejb.loader.SystemInstance;
+import org.openejb.core.ContainerSystem;
 import org.openejb.spi.SecurityService;
+import org.openejb.util.Logger;
 import org.openejb.util.OpenEJBErrorHandler;
-import org.openejb.util.SafeToolkit;
 import org.openejb.util.proxy.ProxyFactory;
 import org.openejb.util.proxy.ProxyManager;
 
-public class Assembler extends AssemblerTool implements org.openejb.spi.Assembler {
+public class Assembler implements org.openejb.spi.Assembler {
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
+
+    public static final String CONTAINER_DECORATORS = "openejb.container.decorators";
+
     private ProxyFactory proxyFactory;
-    private org.openejb.core.ContainerSystem containerSystem;
+    private ContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    private final SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
-    private OpenEjbConfiguration config;
+    private String[] decorators;
 
-    // todo eliminate this.. only used by jndi binding builder and should be injected
-    private static ThreadLocal<HashMap<String, Object>> context = new ThreadLocal<HashMap<String, Object>>();
-    private String decorators;
+    public String[] getDecorators() {
+        return decorators;
+    }
 
-    // todo eliminate this.. only used by jndi binding builder and should be injected
-    public static HashMap<String, Object> getContext() {
-        return context.get();
+    public void setDecorators(String[] decorators) {
+        this.decorators = decorators;
     }
 
     public ProxyFactory getProxyFactory() {
@@ -54,126 +55,73 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         ProxyManager.setDefaultFactory("ivm_server");
     }
 
-    public org.openejb.spi.ContainerSystem getContainerSystem() {
+    public ContainerSystem getContainerSystem() {
         return containerSystem;
+    }
+
+    private void setContainerSystem(ContainerSystem containerSystem) {
+        this.containerSystem = containerSystem;
     }
 
     public SecurityService getSecurityService() {
         return securityService;
     }
 
-    private void setSecurityService(SecurityService securityService) throws NamingException {
+    private void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
-
-        // todo move binding to spring.xml file
-        containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
     }
 
     public TransactionManager getTransactionManager() {
         return transactionManager;
     }
 
-    private void setTransactionManager(TransactionManager transactionManager) throws Exception {
+    private void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-
-        // todo move binding to spring.xml file
-        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
-
-        // todo eliminate this.. only used by jndi binding builder and should be injected
-        getContext().put(TransactionManager.class.getName(), transactionManager);
-
-        // todo push this out to OpenEJB object
-        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
     }
 
     public void init(Properties props) throws OpenEJBException {
-        decorators = props.getProperty("openejb.container.decorators");
-
-        /* Get Configuration ////////////////////////////*/
-        String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
-        if (className == null) {
-            className = props.getProperty("openejb.configurator", "org.openejb.alt.config.ConfigurationFactory");
+        if (props.contains(CONTAINER_DECORATORS)) {
+            decorators = props.getProperty(CONTAINER_DECORATORS).split(" *, *");
         }
 
-        OpenEjbConfigurationFactory configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
-        configFactory.init(props);
-        config = configFactory.getOpenEjbConfiguration();
-        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
-        /* Add IntraVM JNDI service /////////////////////*/
-        Properties systemProperties = System.getProperties();
-        synchronized (systemProperties) {
-            String str = systemProperties.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
-            String naming = "org.openejb.core.ivm.naming";
-            if (str == null) {
-                str = naming;
-            } else if (str.indexOf(naming) == -1) {
-                str = naming + ":" + str;
-            }
-            systemProperties.setProperty(javax.naming.Context.URL_PKG_PREFIXES, str);
-        }
-        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+        AssemblerUtil.addSystemJndiProperties();
     }
 
     public void build() throws OpenEJBException {
-        context.set(new HashMap<String, Object>());
         try {
-            containerSystem = buildContainerSystem(config);
-        } catch (OpenEJBException ae) {
-            /* OpenEJBExceptions contain useful information and are debbugable.
-             * Let the exception pass through to the top and be logged.
-             */
-            throw ae;
+            containerSystem = buildContainerSystem("META-INF/org.openejb/spring.xml");
+        } catch (OpenEJBException e) {
+            //
+            // OpenEJBExceptions contain useful information and are debbugable.
+            // Let the exception pass through to the top and be logged.
+            //
+            throw e;
         } catch (Exception e) {
-            /* General Exceptions at this level are too generic and difficult to debug.
-             * These exceptions are considered unknown bugs and are fatal.
-             * If you get an error at this level, please trap and handle the error
-             * where it is most relevant.
-             */
+            //
+            // General Exceptions at this level are too generic and difficult to debug.
+            // These exceptions are considered unknown bugs and are fatal.
+            // If you get an error at this level, please trap and handle the error
+            // where it is most relevant.
+            //
             OpenEJBErrorHandler.handleUnknownError(e, "Assembler");
             throw new OpenEJBException(e);
-        } finally {
-            context.set(null);
         }
     }
-
-    /////////////////////////////////////////////////////////////////////
-    ////
-    ////    Public Methods Used for Assembly
-    ////
-    /////////////////////////////////////////////////////////////////////
 
     /**
      * When given a complete OpenEjbConfiguration graph this method,
      * will construct an entire container system and return a reference to that
      * container system, as ContainerSystem instance.
-     * <p/>
-     * This method leverage the other assemble and apply methods which
-     * can be used independently.
-     * <p/>
-     * Assembles and returns the {@link org.openejb.core.ContainerSystem} using the
-     * information from the {@link OpenEjbConfiguration} object passed in.
-     * <pre>
-     * This method performs the following actions(in order):
-     * <p/>
-     * 1  Assembles ProxyFactory
-     * 2  Assembles Containers and Deployments
-     * 3  Assembles SecurityService
-     * 4  Apply method permissions, role refs, and tx attributes
-     * 5  Assembles TransactionService
-     * 6  Assembles ConnectionManager(s)
-     * 7  Assembles Connector(s)
-     * </pre>
      *
-     * @return ContainerSystem
+     * @return ContainerSystem the container system
      * @throws Exception if there was a problem constructing the ContainerSystem.
-     * @see OpenEjbConfiguration
+     * @param springConfigLocation the location of the spring configuration file
      */
-    public org.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
+    public ContainerSystem buildContainerSystem(String springConfigLocation) throws Exception {
         //
         // Load the spring configuration file
         //
-        SpringApplicationContext factory = new ClassPathXmlApplicationContext("META-INF/org.openejb/spring.xml");
+        SpringApplicationContext factory = new ClassPathXmlApplicationContext(springConfigLocation);
 
         //
         // Proxy factory
@@ -184,96 +132,176 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         //  Naming Service for OpenEJB.  This requires that a proxy for the deployed bean's
         //  EJBHome be created. The proxy requires that the default proxy factory is set.
         //
-        ProxyFactory proxyFactory = getBean(factory, ProxyFactory.class);
+        ProxyFactory proxyFactory = AssemblerUtil.getBean(factory, ProxyFactory.class);
         setProxyFactory(proxyFactory);
 
         //
         // Container system
         //
-        containerSystem = getBean(factory, org.openejb.core.ContainerSystem.class);
-
-        // todo this is set in OpenEJB also so should be safe to remove
-        SystemInstance.get().setComponent(org.openejb.spi.ContainerSystem.class, containerSystem);
+        ContainerSystem containerSystem = AssemblerUtil.getBean(factory, org.openejb.core.ContainerSystem.class);
+        setContainerSystem(containerSystem);
 
         //
         // Transaction manager
         //
-        TransactionManager transactionManager = getBean(factory, TransactionManager.class);
+        TransactionManager transactionManager = AssemblerUtil.getBean(factory, TransactionManager.class);
         setTransactionManager(transactionManager);
 
         //
         // Security system
         //
-        SecurityService securityService = getBean(factory, SecurityService.class);
+        SecurityService securityService = AssemblerUtil.getBean(factory, SecurityService.class);
         setSecurityService(securityService);
 
         //
         // Create the containers
         //
-        ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
-        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo,
-                decorators,
-                transactionManager,
-                securityService);
-
-        List<Container> containers = (List<Container>) containerBuilder.build();
-        for (int i1 = 0; i1 < containers.size(); i1++) {
-            Container container = containers.get(i1);
+        List<Container> containers = wrapContainers(AssemblerUtil.getBeans(factory, Container.class));
+        List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
+        for (Container container : containers) {
             containerSystem.addContainer(container.getContainerID(), container);
-            org.openejb.DeploymentInfo[] deployments1 = container.deployments();
-            for (int j = 0; j < deployments1.length; j++) {
-                containerSystem.addDeployment((DeploymentInfo) deployments1[j]);
+            for (org.openejb.DeploymentInfo d : container.deployments()) {
+                DeploymentInfo deployment = (DeploymentInfo) d;
+                deployment.setContainer(container);
+                deployments.add(deployment);
+                containerSystem.addDeployment(deployment);
             }
         }
 
-        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
-        // roleMapping used later in buildMethodPermissions
-        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
-        org.openejb.DeploymentInfo [] deployments = containerSystem.deployments();
-        for (int i = 0; i < deployments.length; i++) {
-            applyMethodPermissions((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodPermissions, roleMapping);
-            applyTransactionAttributes((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
+        //
+        // Transaction attributes
+        //
+        AssemblyInfo assemblyInfo = AssemblerUtil.getBean(factory, AssemblyInfo.class);
+        for (DeploymentInfo deployment : deployments) {
+            applyTransactionAttributes(deployment, assemblyInfo.methodTransactions);
         }
 
-        ArrayList<ContainerInfo> list = new ArrayList<ContainerInfo>();
-        if (containerSystemInfo.entityContainers != null) {
-            list.addAll(Arrays.asList(containerSystemInfo.entityContainers));
-        }
-        if (containerSystemInfo.statefulContainers != null) {
-            list.addAll(Arrays.asList(containerSystemInfo.statefulContainers));
-        }
-        if (containerSystemInfo.statelessContainers != null) {
-            list.addAll(Arrays.asList(containerSystemInfo.statelessContainers));
-        }
-        Iterator<ContainerInfo> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            ContainerInfo container = iterator.next();
-            for (int z = 0; z < container.ejbeans.length; z++) {
-                DeploymentInfo deployment = (org.openejb.core.DeploymentInfo) containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
-                applySecurityRoleReference(deployment, container.ejbeans[z], roleMapping);
-            }
-        }
-        /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-        if (configInfo.facilities.remoteJndiContexts != null) {
-            for (int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++) {
-                javax.naming.InitialContext cntx = assembleRemoteJndiContext(configInfo.facilities.remoteJndiContexts[i]);
-                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
-            }
-
+        //
+        // Method permisions
+        //
+        for (DeploymentInfo deployment : deployments) {
+            applyMethodPermissions(deployment, assemblyInfo);
         }
 
         return containerSystem;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> T getBean(SpringApplicationContext factory, Class<T> type) throws OpenEJBException {
-        // get the main service from the configuration file
-        String[] names = factory.getBeanNamesForType(type);
-        T bean = null;
-        if (names.length == 0) {
-            throw new OpenEJBException("No bean of type: " + type.getName() + " found in the bootstrap file: " + factory.getDisplayName());
+    protected List<Container> wrapContainers(List<Container> containers) {
+        List<Container> wrappedContainers = new ArrayList<Container>(containers.size());
+        for (Container container : containers) {
+            if (container instanceof RpcContainer) {
+                for (String decorator : AssemblerUtil.asList(decorators)) {
+                    try {
+                        ObjectRecipe decoratorRecipe = new ObjectRecipe(decorator,new String[]{"container"}, null);
+                        decoratorRecipe.setProperty("container", new StaticRecipe(container));
+                        container = (Container) decoratorRecipe.create();
+                    } catch (ConstructionException e) {
+                        logger.error("Container wrapper class " + decorator + " could not be constructed and will be skipped.", e);
+                    }
+                }
+            }
+            wrappedContainers.add(container);
         }
-        bean = (T) factory.getBean(names[0]);
-        return bean;
+        return wrappedContainers;
+    }
+
+    protected void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] transactionInfos) {
+        if (deploymentInfo.isBeanManagedTransaction()) {
+            // deployments with bean managed transactions don't have transaction attributes
+            return;
+        }
+        for (org.openejb.assembler.spring.MethodTransactionInfo transactionInfo : AssemblerUtil.asList(transactionInfos)) {
+            for (MethodInfo methodInfo : AssemblerUtil.asList(transactionInfo.methods)) {
+                if (methodInfo.deploymentId == null || methodInfo.deploymentId.equals(deploymentInfo.getDeploymentID())) {
+                    // find all the methods matching the method spec
+                    List<Method> methods = resolveMethods(deploymentInfo, methodInfo);
+                    for (Method method : methods) {
+                        // not all methods can have a transaction attribute
+                        if (isValidTxMethod(method)) {
+                            deploymentInfo.setMethodTransactionAttribute(method, transactionInfo.transAttribute);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected boolean isValidTxMethod(Method method) {
+        // bean methods are alwas valid
+        if (method.getDeclaringClass() != javax.ejb.EJBObject.class &&
+                method.getDeclaringClass() != javax.ejb.EJBHome.class &&
+                method.getDeclaringClass() != javax.ejb.EJBLocalObject.class &&
+                method.getDeclaringClass() != javax.ejb.EJBLocalHome.class) {
+            return true;
+        }
+
+        // the only valid EJBObject and EJBHome method is remove
+        return method.getName().equals("remove");
+    }
+
+    protected void applyMethodPermissions(DeploymentInfo deploymentInfo, AssemblyInfo assemblyInfo) {
+        Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
+        for (org.openejb.assembler.spring.RoleMapping roleMapping : AssemblerUtil.asList(assemblyInfo.roleMappings)) {
+            roleMappings.put(roleMapping.logical, roleMapping.physical);
+        }
+
+        for (MethodPermissionInfo methodPermission : assemblyInfo.methodPermissions) {
+            for (MethodInfo methodInfo : methodPermission.methods) {
+                if (methodInfo.deploymentId == null || methodInfo.deploymentId.equals(deploymentInfo.getDeploymentID())) {
+                    List<Method> methods = resolveMethods(deploymentInfo, methodInfo);
+                    for (Method method : methods) {
+                        deploymentInfo.appendMethodPermissions(method, mapRoleNames(methodPermission.roleNames, roleMappings));
+                    }
+                }
+            }
+        }
+    }
+
+    protected String[] mapRoleNames(String[] names, Map<String, String[]> roleMappings) {
+        List<String> physicalRoles = new ArrayList<String>(names.length);
+        for (String logical : names) {
+            String[] physical = roleMappings.get(logical);
+            if (physical == null) {
+                physicalRoles.add(logical);
+            } else {
+                physicalRoles.addAll(Arrays.asList(physical));
+            }
+        }
+        return physicalRoles.toArray(new String[physicalRoles.size()]);
+    }
+
+    protected List<Method> resolveMethods(DeploymentInfo deploymentInfo, MethodInfo methodInfo) {
+        List<Method> methods = new ArrayList<Method>();
+        if (methodInfo.intf == null) {
+            resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
+            resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
+        } else if (methodInfo.intf.equals("Home")) {
+            resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
+        } else if (methodInfo.intf.equals("Remote")) {
+            resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
+        } else {
+
+        }
+        return methods;
+    }
+
+    protected void resolveMethods(List<Method> methods, Class intf, MethodInfo methodInfo) {
+        if (methodInfo.name.equals("*")) {
+            for (Method method : intf.getMethods()) {
+                methods.add(method);
+            }
+        } else if (methodInfo.params != null) {
+            // specific parameters types specified
+            MethodSignature signature = new MethodSignature(methodInfo.name, methodInfo.params);
+            Method method = signature.getMethod(intf);
+            methods.add(method);
+        } else {
+            // no paramters specified so may be several methods
+            for (Method method : intf.getMethods()) {
+                if (method.getName().equals(methodInfo.name)) {
+                    methods.add(method);
+                }
+            }
+        }
     }
 }

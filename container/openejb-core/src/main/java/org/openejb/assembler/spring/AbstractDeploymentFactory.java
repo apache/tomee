@@ -44,12 +44,16 @@
  */
 package org.openejb.assembler.spring;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.naming.Context;
+import javax.transaction.TransactionManager;
 
-import org.springframework.beans.factory.FactoryBean;
-import org.openejb.core.DeploymentInfo;
-import org.openejb.core.DeploymentContext;
 import org.openejb.SystemException;
+import org.openejb.core.DeploymentContext;
+import org.openejb.core.DeploymentInfo;
+import org.springframework.beans.factory.FactoryBean;
 
 /**
  * @version $Revision$ $Date$
@@ -64,6 +68,9 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     protected ClassLoader classLoader;
     protected EncInfo jndiContext;
     protected String jarPath;
+    protected TransactionManager transactionManager;
+    protected AssemblyInfo assembly;
+    protected final Map<String, String> roleReferences = new LinkedHashMap<String, String>();
 
     public String getId() {
         return id;
@@ -137,6 +144,22 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         this.jarPath = jarPath;
     }
 
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
+    public AssemblyInfo getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(AssemblyInfo assembly) {
+        this.assembly = assembly;
+    }
+
     public Class getObjectType() {
         return DeploymentInfo.class;
     }
@@ -162,11 +185,13 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     protected abstract byte getComponentType();
+
     protected abstract boolean isBeanManagedTransaction();
+
     protected abstract String getPkClass();
 
     protected DeploymentInfo createDeploymentInfo() throws SystemException {
-        EncBuilder encBuilder = new EncBuilder(jndiContext, getComponentType(), isBeanManagedTransaction());
+        EncBuilder encBuilder = new EncBuilder(jndiContext, getComponentType(), isBeanManagedTransaction(), transactionManager);
         Context context = encBuilder.createContext();
 
         DeploymentContext deploymentContext = new DeploymentContext(id, classLoader, context);
@@ -180,6 +205,29 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 getComponentType(),
                 null);
         deploymentInfo.setJarPath(jarPath);
+        if (assembly != null) {
+            applySecurityRoleReference(deploymentInfo);
+            // todo we should be able to apply tx attributes and security permissions here
+            // but the code in the deployment tries to access the container which isn't available here
+            // when we change the container to not need the deployments in the constructor, we can
+            // move the code from assembler to here
+        }
         return deploymentInfo;
+    }
+
+    private void applySecurityRoleReference(DeploymentInfo deployment) {
+        Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
+        for (RoleMapping roleMapping : AssemblerUtil.asList(assembly.roleMappings)) {
+            roleMappings.put(roleMapping.logical, roleMapping.physical);
+        }
+
+        for (Map.Entry<String, String> roleRef : roleReferences.entrySet()) {
+            String roleLink = roleRef.getKey();
+            String roleName = roleRef.getValue();
+
+
+            String[] physicalRoles = roleMappings.get(roleLink);
+            deployment.addSecurityRoleReference(roleName, physicalRoles);
+        }
     }
 }

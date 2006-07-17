@@ -87,6 +87,7 @@
         </executions>
         <configuration>
           <namespace>http://openejb.org/schemas/core</namespace>
+          <excludedClasses>org.openejb.alt.config.ejb,org.openejb.util.io</excludedClasses>
         </configuration>
       </plugin>
     </plugins>

@@ -58,7 +58,7 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private Method createMethod = null;
 
     private HashMap postCreateMethodMap = new HashMap();
-    private byte componentType;
+    private final byte componentType;
 
     private HashMap methodPermissions = new HashMap();
     private HashMap methodTransactionAttributes = new HashMap();
@@ -102,9 +102,9 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         } else if ("bmp".equalsIgnoreCase(name)) {
             return BMP_ENTITY;
         } else if ("stateful".equalsIgnoreCase(name)) {
-            return CMP_ENTITY;
+            return STATEFUL;
         } else if ("stateless".equalsIgnoreCase(name)) {
-            return CMP_ENTITY;
+            return STATELESS;
         } else {
             throw new SystemException("Unknown component type: " + name);
         }
