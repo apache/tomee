@@ -208,7 +208,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         mthdTranInfos.copyInto(sys.containerSystem.methodTransactions);
 
         initSecutityService(openejb, sys.facilities);
-        printConf(sys);
         return sys;
     }
 
