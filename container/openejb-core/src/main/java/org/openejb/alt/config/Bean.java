@@ -1,10 +1,6 @@
 package org.openejb.alt.config;
 
-import org.openejb.alt.config.ejb11.EjbLocalRef;
-import org.openejb.alt.config.ejb11.EjbRef;
-import org.openejb.alt.config.ejb11.EnvEntry;
-import org.openejb.alt.config.ejb11.ResourceRef;
-import org.openejb.alt.config.ejb11.SecurityRoleRef;
+import org.openejb.jee.ResourceRef;
 
 public interface Bean {
 
@@ -29,15 +25,6 @@ public interface Bean {
 
     public String getLocal();
 
-    public EjbRef[] getEjbRef();
-
-    public EjbLocalRef[] getEjbLocalRef();
-
-    public EnvEntry[] getEnvEntry();
-
     public ResourceRef[] getResourceRef();
-
-    public SecurityRoleRef[] getSecurityRoleRef();
-
 }
 

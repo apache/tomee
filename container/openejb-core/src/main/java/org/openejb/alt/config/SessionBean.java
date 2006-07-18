@@ -1,20 +1,16 @@
 package org.openejb.alt.config;
 
-import org.openejb.alt.config.ejb11.EjbLocalRef;
-import org.openejb.alt.config.ejb11.EjbRef;
-import org.openejb.alt.config.ejb11.EnvEntry;
-import org.openejb.alt.config.ejb11.ResourceRef;
-import org.openejb.alt.config.ejb11.SecurityRoleRef;
-import org.openejb.alt.config.ejb11.Session;
+import org.openejb.jee.SessionType;
+import org.openejb.jee.ResourceRef;
 
 public class SessionBean implements Bean {
 
-    Session bean;
+    org.openejb.jee.SessionBean bean;
     String type;
 
-    SessionBean(Session bean) {
+    SessionBean(org.openejb.jee.SessionBean bean) {
         this.bean = bean;
-        if (bean.getSessionType().equals("Stateful")) {
+        if (bean.getSessionType() == SessionType.STATEFUL) {
             type = STATEFUL;
         } else {
             type = STATELESS;
@@ -45,10 +41,6 @@ public class SessionBean implements Bean {
         return bean.getRemote();
     }
 
-    public EjbLocalRef[] getEjbLocalRef() {
-        return bean.getEjbLocalRef();
-    }
-
     public String getLocal() {
         return bean.getLocal();
     }
@@ -57,20 +49,8 @@ public class SessionBean implements Bean {
         return bean.getLocalHome();
     }
 
-    public EjbRef[] getEjbRef() {
-        return bean.getEjbRef();
-    }
-
-    public EnvEntry[] getEnvEntry() {
-        return bean.getEnvEntry();
-    }
-
     public ResourceRef[] getResourceRef() {
-        return bean.getResourceRef();
-    }
-
-    public SecurityRoleRef[] getSecurityRoleRef() {
-        return bean.getSecurityRoleRef();
+        return bean.getResourceRef().toArray(new ResourceRef[]{});
     }
 }
 

@@ -1,26 +1,11 @@
 package org.openejb.alt.config;
 
 import org.openejb.OpenEJBException;
-import org.openejb.assembler.classic.*;
-import org.openejb.alt.config.ejb11.ContainerTransaction;
 import org.openejb.alt.config.ejb.EjbDeployment;
-import org.openejb.alt.config.ejb11.EjbJar;
-import org.openejb.alt.config.ejb11.EjbLocalRef;
-import org.openejb.alt.config.ejb11.EjbRef;
-import org.openejb.alt.config.ejb11.EnterpriseBeansItem;
-import org.openejb.alt.config.ejb11.Entity;
-import org.openejb.alt.config.ejb11.EnvEntry;
-import org.openejb.alt.config.ejb11.Method;
-import org.openejb.alt.config.ejb11.MethodParams;
-import org.openejb.alt.config.ejb11.MethodPermission;
 import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.ejb.Query;
 import org.openejb.alt.config.ejb.QueryMethod;
 import org.openejb.alt.config.ejb.ResourceLink;
-import org.openejb.alt.config.ejb11.ResourceRef;
-import org.openejb.alt.config.ejb11.SecurityRole;
-import org.openejb.alt.config.ejb11.SecurityRoleRef;
-import org.openejb.alt.config.ejb11.Session;
 import org.openejb.alt.config.sys.ConnectionManager;
 import org.openejb.alt.config.sys.Connector;
 import org.openejb.alt.config.sys.Container;
@@ -32,10 +17,61 @@ import org.openejb.alt.config.sys.SecurityService;
 import org.openejb.alt.config.sys.ServiceProvider;
 import org.openejb.alt.config.sys.ServicesJar;
 import org.openejb.alt.config.sys.TransactionService;
+import org.openejb.assembler.classic.ConnectionManagerInfo;
+import org.openejb.assembler.classic.ConnectorInfo;
+import org.openejb.assembler.classic.ContainerInfo;
+import org.openejb.assembler.classic.ContainerSystemInfo;
+import org.openejb.assembler.classic.EjbJarInfo;
+import org.openejb.assembler.classic.EjbLocalReferenceInfo;
+import org.openejb.assembler.classic.EjbReferenceInfo;
+import org.openejb.assembler.classic.EjbReferenceLocationInfo;
+import org.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.openejb.assembler.classic.EntityBeanInfo;
+import org.openejb.assembler.classic.EntityContainerInfo;
+import org.openejb.assembler.classic.EnvEntryInfo;
+import org.openejb.assembler.classic.FacilitiesInfo;
+import org.openejb.assembler.classic.IntraVmServerInfo;
+import org.openejb.assembler.classic.JndiContextInfo;
+import org.openejb.assembler.classic.JndiEncInfo;
+import org.openejb.assembler.classic.ManagedConnectionFactoryInfo;
+import org.openejb.assembler.classic.MethodInfo;
+import org.openejb.assembler.classic.MethodPermissionInfo;
+import org.openejb.assembler.classic.MethodTransactionInfo;
+import org.openejb.assembler.classic.OpenEjbConfiguration;
+import org.openejb.assembler.classic.OpenEjbConfigurationFactory;
+import org.openejb.assembler.classic.QueryInfo;
+import org.openejb.assembler.classic.ResourceReferenceInfo;
+import org.openejb.assembler.classic.RoleMappingInfo;
+import org.openejb.assembler.classic.SecurityRoleInfo;
+import org.openejb.assembler.classic.SecurityRoleReferenceInfo;
+import org.openejb.assembler.classic.SecurityServiceInfo;
+import org.openejb.assembler.classic.StatefulBeanInfo;
+import org.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.openejb.assembler.classic.StatelessBeanInfo;
+import org.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.openejb.assembler.classic.TransactionServiceInfo;
+import org.openejb.jee.CmpField;
+import org.openejb.jee.ContainerTransaction;
+import org.openejb.jee.EjbJar;
+import org.openejb.jee.EjbRef;
+import org.openejb.jee.EnterpriseBean;
+import org.openejb.jee.EntityBean;
+import org.openejb.jee.EnvEntry;
+import org.openejb.jee.Icon;
+import org.openejb.jee.Method;
+import org.openejb.jee.MethodParams;
+import org.openejb.jee.MethodPermission;
+import org.openejb.jee.RemoteBean;
+import org.openejb.jee.ResourceRef;
+import org.openejb.jee.SecurityRole;
+import org.openejb.jee.SecurityRoleRef;
+import org.openejb.jee.SessionBean;
+import org.openejb.jee.SessionType;
+import org.openejb.jee.EjbLocalRef;
+import org.openejb.loader.FileUtils;
 import org.openejb.loader.SystemInstance;
 import org.openejb.util.Logger;
 import org.openejb.util.Messages;
-import org.openejb.loader.FileUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -48,10 +84,10 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.List;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -172,7 +208,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         mthdTranInfos.copyInto(sys.containerSystem.methodTransactions);
 
         initSecutityService(openejb, sys.facilities);
-
+        printConf(sys);
         return sys;
     }
 
@@ -452,10 +488,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         return constructor.split("[ ,]+");
     }
 
-    private Map getDeployments(OpenejbJar j) throws OpenEJBException {
-        HashMap map = new HashMap(j.getEjbDeploymentCount());
-        List<org.openejb.alt.config.ejb.EjbDeployment> ejbDeployments = j.getEjbDeployment();
-        for (org.openejb.alt.config.ejb.EjbDeployment d : ejbDeployments) {
+    private Map<String,EjbDeployment> getDeployments(OpenejbJar j) throws OpenEJBException {
+        HashMap<String,EjbDeployment> map = new HashMap(j.getEjbDeploymentCount());
+        List<EjbDeployment> ejbDeployments = j.getEjbDeployment();
+        for (EjbDeployment d : ejbDeployments) {
             map.put(d.getEjbName(), d);
         }
         return map;
@@ -464,7 +500,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     private EjbJarInfo initEjbJarInfo(DeployedJar jar) throws OpenEJBException {
 
         int beansDeployed = jar.openejbJar.getEjbDeploymentCount();
-        int beansInEjbJar = jar.ejbJar.getEnterpriseBeans().getEnterpriseBeansItemCount();
+        int beansInEjbJar = jar.ejbJar.getEnterpriseBeans().length;
 
         if (beansInEjbJar != beansDeployed) {
             ConfigUtils.logger.i18n.warning("conf.0008", jar.jarURI, "" + beansInEjbJar, "" + beansDeployed);
@@ -472,41 +508,41 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             return null;
         }
 
-        Map ejbds = getDeployments(jar.openejbJar);
-        Map infos = new HashMap();
-        Map items = new HashMap();
+        Map<String,EjbDeployment> ejbds = getDeployments(jar.openejbJar);
+        Map<String,EnterpriseBeanInfo> infos = new HashMap();
+        Map<String, EnterpriseBean> items = new HashMap();
 
-        EnterpriseBeanInfo[] beans = new EnterpriseBeanInfo[ejbds.size()];
         EjbJarInfo ejbJar = new EjbJarInfo();
-        ejbJar.enterpriseBeans = beans;
         ejbJar.jarPath = jar.jarURI;
 
-        int i = -1;
 
-        Enumeration bl = jar.ejbJar.getEnterpriseBeans().enumerateEnterpriseBeansItem();
-        while (bl.hasMoreElements()) {
-            EnterpriseBeansItem item = (EnterpriseBeansItem) bl.nextElement();
-            i++;
-
-            if (item.getEntity() == null) {
-                beans[i] = initSessionBean(item, ejbds);
+        List<EnterpriseBeanInfo> beanInfos = new ArrayList<EnterpriseBeanInfo>(ejbds.size());
+        for (EnterpriseBean bean : jar.ejbJar.getEnterpriseBeans()) {
+            EnterpriseBeanInfo beanInfo;
+            if (bean instanceof SessionBean) {
+                beanInfo = initSessionBean((SessionBean)bean, ejbds);
             } else {
-                beans[i] = initEntityBean(item, ejbds);
+                beanInfo = initEntityBean((EntityBean)bean, ejbds);
             }
+            beanInfos.add(beanInfo);
 
-            if (deploymentIds.contains(beans[i].ejbDeploymentId)) {
-                ConfigUtils.logger.i18n.warning("conf.0100", beans[i].ejbDeploymentId, jar.jarURI, beans[i].ejbName);
+            if (deploymentIds.contains(beanInfo.ejbDeploymentId)) {
+                ConfigUtils.logger.i18n.warning("conf.0100", beanInfo.ejbDeploymentId, jar.jarURI, beanInfo.ejbName);
 
                 return null;
             }
 
-            deploymentIds.add(beans[i].ejbDeploymentId);
+            deploymentIds.add(beanInfo.ejbDeploymentId);
 
-            beans[i].codebase = jar.jarURI;
-            infos.put(beans[i].ejbName, beans[i]);
-            items.put(beans[i].ejbName, item);
+            beanInfo.codebase = jar.jarURI;
+            infos.put(beanInfo.ejbName, beanInfo);
+            items.put(beanInfo.ejbName, bean);
+
 
         }
+
+        EnterpriseBeanInfo[] beans = beanInfos.toArray(new EnterpriseBeanInfo[]{});
+        ejbJar.enterpriseBeans = beans;
 
         initJndiReferences(ejbds, infos, items);
 
@@ -516,7 +552,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             initMethodTransactions(jar, ejbds, infos, items);
 
             for (int x = 0; x < beans.length; x++) {
-                resolveRoleLinks(jar, beans[x], (EnterpriseBeansItem) items.get(beans[x].ejbName));
+                resolveRoleLinks(jar, beans[x], (EnterpriseBean) items.get(beans[x].ejbName));
             }
         }
 
@@ -536,135 +572,25 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         return ejbJar;
     }
 
-    private void initJndiReferences(Map ejbds, Map infos, Map items) throws OpenEJBException {
+    private void initJndiReferences(Map<String,EjbDeployment> ejbds, Map<String,EnterpriseBeanInfo> infos, Map<String,EnterpriseBean> items) throws OpenEJBException {
 
         Iterator i = infos.values().iterator();
         while (i.hasNext()) {
+            JndiEncInfo jndi = new JndiEncInfo();
+
             EnterpriseBeanInfo bean = (EnterpriseBeanInfo) i.next();
-            EnterpriseBeansItem item = (EnterpriseBeansItem) items.get(bean.ejbName);
-            Enumeration envEntries = null;
-            Enumeration ejbRefs = null;
-            Enumeration ejbLocalRefs = null;
-            Enumeration resourceRefs = null;
-
-            if (item.getEntity() != null) {
-                envEntries = item.getEntity().enumerateEnvEntry();
-                ejbRefs = item.getEntity().enumerateEjbRef();
-                ejbLocalRefs = item.getEntity().enumerateEjbLocalRef();
-                resourceRefs = item.getEntity().enumerateResourceRef();
-            } else {
-                envEntries = item.getSession().enumerateEnvEntry();
-                ejbRefs = item.getSession().enumerateEjbRef();
-                ejbLocalRefs = item.getSession().enumerateEjbLocalRef();
-                resourceRefs = item.getSession().enumerateResourceRef();
-            }
-
-            Vector envRef = new Vector();
-            Vector ejbRef = new Vector();
-            Vector ejbLocalRef = new Vector();
-            Vector resRef = new Vector();
+            EnterpriseBean item = (EnterpriseBean) items.get(bean.ejbName);
+            EjbDeployment dep = (EjbDeployment) ejbds.get(bean.ejbName);
 
             /* Build Environment entries *****************/
-            while (envEntries.hasMoreElements()) {
-                EnvEntry env = (EnvEntry) envEntries.nextElement();
-                EnvEntryInfo info = new EnvEntryInfo();
-
-                info.name = env.getEnvEntryName();
-                info.type = env.getEnvEntryType();
-                info.value = env.getEnvEntryValue();
-
-                envRef.add(info);
-            }
+            jndi.envEntries = buildEnvEntryInfos(item);
 
             /* Build Resource References *****************/
-            Map resLinks = new HashMap();
-            EjbDeployment dep = (EjbDeployment) ejbds.get(bean.ejbName);
-            for (ResourceLink link : dep.getResourceLink()) {
-                resLinks.put(link.getResRefName(), link);
-            }
+            jndi.resourceRefs = buildResourceRefInfos(item, dep);
 
-            /* Build EJB References **********************/
-            while (ejbRefs.hasMoreElements()) {
-                EjbRef ejb = (EjbRef) ejbRefs.nextElement();
-                EjbReferenceInfo info = new EjbReferenceInfo();
+            jndi.ejbReferences = buildEjbRefInfos(item, dep, infos, bean);
 
-                info.homeType = ejb.getHome();
-                info.referenceName = ejb.getEjbRefName();
-                info.location = new EjbReferenceLocationInfo();
-
-                String ejbLink;
-                if (ejb.getEjbLink() == null) {
-                    ejbLink = ((ResourceLink) resLinks.get(ejb.getEjbRefName())).getResId();
-                } else {
-                    ejbLink = ejb.getEjbLink();
-                }
-
-                EnterpriseBeanInfo otherBean = (EnterpriseBeanInfo) infos.get(ejbLink);
-                if (otherBean == null) {
-                    String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
-
-                    logger.fatal(msg);
-                    throw new OpenEJBException(msg);
-                }
-                info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
-
-                ejbRef.add(info);
-            }
-
-            /* Build EJB References **********************/
-            while (ejbLocalRefs.hasMoreElements()) {
-                EjbLocalRef ejb = (EjbLocalRef) ejbLocalRefs.nextElement();
-                EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
-
-                info.homeType = ejb.getLocalHome();
-                info.referenceName = ejb.getEjbRefName();
-                info.location = new EjbReferenceLocationInfo();
-
-                String ejbLink;
-                if (ejb.getEjbLink() == null) {
-                    ejbLink = null;
-
-                } else {
-                    ejbLink = ejb.getEjbLink();
-                }
-
-                EnterpriseBeanInfo otherBean = (EnterpriseBeanInfo) infos.get(ejbLink);
-                if (otherBean == null) {
-                    String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
-
-                    logger.fatal(msg);
-                    throw new OpenEJBException(msg);
-                }
-                info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
-
-                ejbLocalRef.add(info);
-            }
-
-            while (resourceRefs.hasMoreElements()) {
-                ResourceRef res = (ResourceRef) resourceRefs.nextElement();
-                ResourceReferenceInfo info = new ResourceReferenceInfo();
-
-                info.referenceAuth = res.getResAuth();
-                info.referenceName = res.getResRefName();
-                info.referenceType = res.getResType();
-
-                ResourceLink link = (ResourceLink) resLinks.get(res.getResRefName());
-                info.resourceID = link.getResId();
-
-                resRef.add(info);
-            }
-
-            /*  Assign everything to the EnterpriseBeanInfo *****/
-            JndiEncInfo jndi = new JndiEncInfo();
-            jndi.envEntries = new EnvEntryInfo[envRef.size()];
-            jndi.ejbReferences = new EjbReferenceInfo[ejbRef.size()];
-            jndi.ejbLocalReferences = new EjbLocalReferenceInfo[ejbLocalRef.size()];
-            jndi.resourceRefs = new ResourceReferenceInfo[resRef.size()];
-
-            envRef.copyInto(jndi.envEntries);
-            ejbRef.copyInto(jndi.ejbReferences);
-            resRef.copyInto(jndi.resourceRefs);
-            ejbLocalRef.copyInto(jndi.ejbLocalReferences);
+            jndi.ejbLocalReferences = buildEjbLocalRefInfos(item, dep, infos, bean);
 
             bean.jndiEnc = jndi;
 
@@ -672,133 +598,212 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     }
 
-    private void initMethodTransactions(DeployedJar jar, Map ejbds, Map infos, Map items)
-            throws OpenEJBException {
+    private EjbLocalReferenceInfo[] buildEjbLocalRefInfos(EnterpriseBean item, EjbDeployment dep, Map<String, EnterpriseBeanInfo> beanInfos, EnterpriseBeanInfo bean) throws OpenEJBException {
+        List<EjbLocalReferenceInfo> infos = new ArrayList();
+        for (EjbLocalRef ejb : item.getEjbLocalRef()) {
+            EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
 
-        ContainerTransaction[] cTx = jar.ejbJar.getAssemblyDescriptor().getContainerTransaction();
+            info.homeType = ejb.getLocalHome();
+            info.referenceName = ejb.getEjbRefName();
+            info.location = new EjbReferenceLocationInfo();
 
-        if (cTx == null || cTx.length < 1) return;
-
-        MethodTransactionInfo[] mTxs = new MethodTransactionInfo[cTx.length];
-
-        for (int i = 0; i < mTxs.length; i++) {
-            mTxs[i] = new MethodTransactionInfo();
-
-            mTxs[i].description = cTx[i].getDescription();
-            mTxs[i].transAttribute = cTx[i].getTransAttribute();
-            mTxs[i].methods = getMethodInfos(cTx[i].getMethod(), ejbds);
-        }
-
-        this.mthdTranInfos.addAll(Arrays.asList(mTxs));
-    }
-
-    private void initSecurityRoles(DeployedJar jar, Map ejbds, Map infos, Map items)
-            throws OpenEJBException {
-
-        SecurityRole[] sr = jar.ejbJar.getAssemblyDescriptor().getSecurityRole();
-
-        if (sr == null || sr.length < 1) return;
-
-        SecurityRoleInfo[] roles = new SecurityRoleInfo[sr.length];
-        for (int i = 0; i < roles.length; i++) {
-            roles[i] = new SecurityRoleInfo();
-
-            roles[i].description = sr[i].getDescription();
-            roles[i].roleName = sr[i].getRoleName();
-
-            if (securityRoles.contains(sr[i].getRoleName())) {
-                ConfigUtils.logger.i18n.warning("conf.0102", jar.jarURI, sr[i].getRoleName());
+            String ejbLink;
+            if (ejb.getEjbLink() == null) {
+                ejbLink = null;
             } else {
-                securityRoles.add(sr[i].getRoleName());
+                ejbLink = ejb.getEjbLink();
             }
-        }
 
-        this.sRoleInfos.addAll(Arrays.asList(roles));
+            EnterpriseBeanInfo otherBean1 = (EnterpriseBeanInfo) beanInfos.get(ejbLink);
+            if (otherBean1 == null) {
+                String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
+
+                logger.fatal(msg);
+                throw new OpenEJBException(msg);
+            }
+            EnterpriseBeanInfo otherBean = otherBean1;
+            info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
+            infos.add(info);
+        }
+        EjbLocalReferenceInfo[] ejbReferenceInfos = infos.toArray(new EjbLocalReferenceInfo[]{});
+        return ejbReferenceInfos;
     }
 
-    private void initMethodPermissions(DeployedJar jar, Map ejbds, Map infos, Map items)
+    private EjbReferenceInfo[] buildEjbRefInfos(EnterpriseBean item, EjbDeployment dep, Map<String, EnterpriseBeanInfo> beanInfos, EnterpriseBeanInfo bean) throws OpenEJBException {
+        List<EjbReferenceInfo> infos = new ArrayList();
+        for (EjbRef ejb : item.getEjbRef()) {
+            EjbReferenceInfo info = new EjbReferenceInfo();
+
+            info.homeType = ejb.getHome();
+            info.referenceName = ejb.getEjbRefName();
+            info.location = new EjbReferenceLocationInfo();
+
+            String ejbLink;
+            if (ejb.getEjbLink() == null) {
+                ejbLink = ((ResourceLink) dep.getResourceLink(ejb.getEjbRefName())).getResId();
+            } else {
+                ejbLink = ejb.getEjbLink();
+            }
+
+            EnterpriseBeanInfo otherBean1 = (EnterpriseBeanInfo) beanInfos.get(ejbLink);
+            if (otherBean1 == null) {
+                String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
+
+                logger.fatal(msg);
+                throw new OpenEJBException(msg);
+            }
+            EnterpriseBeanInfo otherBean = otherBean1;
+            info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
+            infos.add(info);
+        }
+        EjbReferenceInfo[] ejbReferenceInfos = infos.toArray(new EjbReferenceInfo[]{});
+        return ejbReferenceInfos;
+    }
+
+    private ResourceReferenceInfo[] buildResourceRefInfos(EnterpriseBean item, EjbDeployment dep) {
+        List<ResourceReferenceInfo> infos = new ArrayList();
+        for (ResourceRef res : item.getResourceRef()) {
+            ResourceReferenceInfo info = new ResourceReferenceInfo();
+
+            info.referenceAuth = res.getResAuth().toString();
+            info.referenceName = res.getResRefName();
+            info.referenceType = res.getResType();
+            info.resourceID = dep.getResourceLink(res.getResRefName()).getResId();
+            infos.add(info);
+        }
+        ResourceReferenceInfo[] resourceReferenceInfos = infos.toArray(new ResourceReferenceInfo[]{});
+        return resourceReferenceInfos;
+    }
+
+    private EnvEntryInfo[] buildEnvEntryInfos(EnterpriseBean item) {
+        List<EnvEntryInfo> infos = new ArrayList();
+        for (EnvEntry env : item.getEnvEntry()) {
+            EnvEntryInfo info = new EnvEntryInfo();
+
+            info.name = env.getEnvEntryName();
+            info.type = env.getEnvEntryType();
+            info.value = env.getEnvEntryValue();
+
+            infos.add(info);
+        }
+        EnvEntryInfo[] envEntryInfos = infos.toArray(new EnvEntryInfo[]{});
+        return envEntryInfos;
+    }
+
+    private void initMethodTransactions(DeployedJar jar, Map ejbds, Map beanInfos, Map items)
             throws OpenEJBException {
 
-        MethodPermission[] mp = jar.ejbJar.getAssemblyDescriptor().getMethodPermission();
-        if (mp == null || mp.length < 1) return;
+        List<ContainerTransaction> containerTransactions = jar.ejbJar.getAssemblyDescriptor().getContainerTransaction();
+        List<MethodTransactionInfo> infos = new ArrayList();
+        for (ContainerTransaction cTx : containerTransactions) {
+            MethodTransactionInfo info = new MethodTransactionInfo();
 
-        MethodPermissionInfo[] perms = new MethodPermissionInfo[mp.length];
-
-        for (int i = 0; i < perms.length; i++) {
-            perms[i] = new MethodPermissionInfo();
-
-            perms[i].description = mp[i].getDescription();
-            perms[i].roleNames = mp[i].getRoleName();
-            perms[i].methods = getMethodInfos(mp[i].getMethod(), ejbds);
+            info.description = cTx.getDescription();
+            info.transAttribute = cTx.getTransAttribute().toString();
+            info.methods = getMethodInfos(cTx.getMethod(), ejbds);
+            infos.add(info);
         }
-
-        this.mthdPermInfos.addAll(Arrays.asList(perms));
+        this.mthdTranInfos.addAll(infos);
     }
 
-    private void resolveRoleLinks(DeployedJar jar,
-                                  EnterpriseBeanInfo bean,
-                                  EnterpriseBeansItem item)
-            throws OpenEJBException {
-        SecurityRoleRef[] refs = null;
-        if (item.getEntity() != null) {
-            refs = item.getEntity().getSecurityRoleRef();
-        } else {
-            refs = item.getSession().getSecurityRoleRef();
-        }
+    private void initSecurityRoles(DeployedJar jar, Map ejbds, Map beaninfos, Map items) throws OpenEJBException {
 
-        if (refs == null || refs.length < 1) return;
+        List<SecurityRole> roles = jar.ejbJar.getAssemblyDescriptor().getSecurityRole();
+        List<SecurityRoleInfo> infos = new ArrayList();
 
-        SecurityRoleReferenceInfo[] sr = new SecurityRoleReferenceInfo[refs.length];
-        bean.securityRoleReferences = sr;
+        for (SecurityRole sr : roles) {
+            SecurityRoleInfo info = new SecurityRoleInfo();
 
-        for (int i = 0; i < sr.length; i++) {
-            sr[i] = new SecurityRoleReferenceInfo();
+            info.description = sr.getDescription();
+            info.roleName = sr.getRoleName();
 
-            sr[i].description = refs[i].getDescription();
-            sr[i].roleLink = refs[i].getRoleLink();
-            sr[i].roleName = refs[i].getRoleName();
-
-            if (sr[i].roleLink == null) {
-                ConfigUtils.logger.i18n.warning("conf.0009", sr[i].roleName, bean.ejbName, jar.jarURI);
-                sr[i].roleLink = DEFAULT_SECURITY_ROLE;
+            if (securityRoles.contains(sr.getRoleName())) {
+                ConfigUtils.logger.i18n.warning("conf.0102", jar.jarURI, sr.getRoleName());
+            } else {
+                securityRoles.add(sr.getRoleName());
             }
+            infos.add(info);
         }
-
+        this.sRoleInfos.addAll(infos);
     }
 
-    private MethodInfo[] getMethodInfos(Method[] ms, Map ejbds) {
+    private void initMethodPermissions(DeployedJar jar, Map ejbds, Map beanInfos, Map items) throws OpenEJBException {
+
+        List<MethodPermission> methodPermissions = jar.ejbJar.getAssemblyDescriptor().getMethodPermission();
+        List<MethodPermissionInfo> infos = new ArrayList();
+
+        for (MethodPermission mp : methodPermissions) {
+            MethodPermissionInfo info = new MethodPermissionInfo();
+
+            info.description = mp.getDescription();
+            info.roleNames = mp.getRoleName().toArray(new String[]{});
+            info.methods = getMethodInfos(mp.getMethod(), ejbds);
+
+            infos.add(info);
+        }
+
+        this.mthdPermInfos.addAll(infos);
+    }
+
+    private void resolveRoleLinks(DeployedJar jar, EnterpriseBeanInfo bean, EnterpriseBean item)
+    throws OpenEJBException {
+        if (!(item instanceof RemoteBean)) {
+            return;
+        }
+
+        RemoteBean rb = (RemoteBean) item;
+
+        List<SecurityRoleRef> refs = rb.getSecurityRoleRef();
+        List<SecurityRoleReferenceInfo> infos = new ArrayList();
+        for (SecurityRoleRef ref : refs) {
+            SecurityRoleReferenceInfo info = new SecurityRoleReferenceInfo();
+
+            info.description = ref.getDescription();
+            info.roleLink = ref.getRoleLink();
+            info.roleName = ref.getRoleName();
+
+            if (info.roleLink == null) {
+                ConfigUtils.logger.i18n.warning("conf.0009", info.roleName, bean.ejbName, jar.jarURI);
+                info.roleLink = DEFAULT_SECURITY_ROLE;
+            }
+            infos.add(info);
+        }
+        bean.securityRoleReferences = infos.toArray(new SecurityRoleReferenceInfo[]{});
+    }
+
+    private MethodInfo[] getMethodInfos(List<Method> ms, Map ejbds) {
         if (ms == null) return null;
 
-        MethodInfo[] mi = new MethodInfo[ms.length];
+        MethodInfo[] mi = new MethodInfo[ms.size()];
         for (int i = 0; i < mi.length; i++) {
 
             mi[i] = new MethodInfo();
 
-            EjbDeployment d = (EjbDeployment) ejbds.get(ms[i].getEjbName());
+            Method method = ms.get(i);
+            EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
 
-            mi[i].description = ms[i].getDescription();
+            mi[i].description = method.getDescription();
             mi[i].ejbDeploymentId = d.getDeploymentId();
-            mi[i].methodIntf = ms[i].getMethodIntf();
-            mi[i].methodName = ms[i].getMethodName();
+            mi[i].methodIntf = (method.getMethodIntf() == null)?null: method.getMethodIntf().toString();
+            mi[i].methodName = method.getMethodName();
 
-            MethodParams mp = ms[i].getMethodParams();
+            MethodParams mp = method.getMethodParams();
             if (mp != null) {
-                mi[i].methodParams = mp.getMethodParam();
+                mi[i].methodParams = mp.getMethodParam().toArray(new String[]{});
             }
         }
 
         return mi;
     }
 
-    private EnterpriseBeanInfo initSessionBean(EnterpriseBeansItem item, Map m)
-            throws OpenEJBException {
-        Session s = item.getSession();
+    private EnterpriseBeanInfo initSessionBean(SessionBean s, Map m) throws OpenEJBException {
         EnterpriseBeanInfo bean = null;
 
-        if (s.getSessionType().equals("Stateful"))
+        if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
-        else
+        } else {
             bean = new StatelessBeanInfo();
+        }
 
         EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
         if (d == null) {
@@ -808,9 +813,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
         bean.ejbDeploymentId = d.getDeploymentId();
 
+        Icon icon = s.getIcon();
+        bean.largeIcon = (icon ==null)?null: icon.getLargeIcon();
+        bean.smallIcon = (icon ==null)?null: icon.getSmallIcon();
         bean.description = s.getDescription();
-        bean.largeIcon = s.getLargeIcon();
-        bean.smallIcon = s.getSmallIcon();
         bean.displayName = s.getDisplayName();
         bean.ejbClass = s.getEjbClass();
         bean.ejbName = s.getEjbName();
@@ -818,14 +824,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         bean.remote = s.getRemote();
         bean.localHome = s.getLocalHome();
         bean.local = s.getLocal();
-        bean.transactionType = s.getTransactionType();
+        bean.transactionType = s.getTransactionType().toString();
 
         return bean;
     }
 
-    private EnterpriseBeanInfo initEntityBean(EnterpriseBeansItem item, Map m)
-            throws OpenEJBException {
-        Entity e = item.getEntity();
+    private EnterpriseBeanInfo initEntityBean(EntityBean e, Map m) throws OpenEJBException {
         EntityBeanInfo bean = new EntityBeanInfo();
 
         EjbDeployment d = (EjbDeployment) m.get(e.getEjbName());
@@ -836,9 +840,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
         bean.ejbDeploymentId = d.getDeploymentId();
 
+        Icon icon = e.getIcon();
+        bean.largeIcon = (icon ==null)?null: icon.getLargeIcon();
+        bean.smallIcon = (icon ==null)?null: icon.getSmallIcon();
         bean.description = e.getDescription();
-        bean.largeIcon = e.getLargeIcon();
-        bean.smallIcon = e.getSmallIcon();
         bean.displayName = e.getDisplayName();
         bean.ejbClass = e.getEjbClass();
         bean.ejbName = e.getEjbName();
@@ -850,16 +855,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         bean.primKeyClass = e.getPrimKeyClass();
         bean.primKeyField = e.getPrimkeyField();
-        bean.persistenceType = e.getPersistenceType();
+        bean.persistenceType = e.getPersistenceType().toString();
         bean.reentrant = e.getReentrant() + "";
 
-        bean.cmpFieldNames = new String[e.getCmpFieldCount()];
+        List<CmpField> cmpFields = e.getCmpField();
+        bean.cmpFieldNames = new String[cmpFields.size()];
 
         for (int i = 0; i < bean.cmpFieldNames.length; i++) {
-            bean.cmpFieldNames[i] = e.getCmpField(i).getFieldName();
+            bean.cmpFieldNames[i] = cmpFields.get(i).getFieldName();
         }
 
-        if (bean.persistenceType.equals("Container")) {
+        if (bean.persistenceType.equalsIgnoreCase("Container")) {
             List<QueryInfo> qi = new ArrayList<QueryInfo>();
             for (Query q : d.getQuery()) {
                 QueryInfo query = new QueryInfo();

@@ -9,13 +9,12 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.openejb.OpenEJBException;
+import org.openejb.jee.EjbRef;
+import org.openejb.jee.EnvEntry;
+import org.openejb.jee.SecurityRoleRef;
+import org.openejb.jee.ResourceRef;
+import org.openejb.jee.EjbLocalRef;
 import org.openejb.loader.SystemInstance;
-import org.openejb.alt.config.ejb11.EjbJar;
-import org.openejb.alt.config.ejb11.EjbRef;
-import org.openejb.alt.config.ejb11.EjbLocalRef;
-import org.openejb.alt.config.ejb11.EnvEntry;
-import org.openejb.alt.config.ejb11.ResourceRef;
-import org.openejb.alt.config.ejb11.SecurityRoleRef;
 import org.openejb.alt.config.rules.CheckClasses;
 import org.openejb.alt.config.rules.CheckMethods;
 import org.openejb.util.JarUtils;

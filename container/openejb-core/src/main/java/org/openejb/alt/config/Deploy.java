@@ -12,13 +12,13 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.openejb.OpenEJBException;
+import org.openejb.jee.ResourceRef;
 import org.openejb.loader.SystemInstance;
 import org.openejb.alt.config.ejb.EjbDeployment;
 import org.openejb.alt.config.ejb.MethodParams;
 import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.ejb.QueryMethod;
 import org.openejb.alt.config.ejb.ResourceLink;
-import org.openejb.alt.config.ejb11.ResourceRef;
 import org.openejb.alt.config.sys.Connector;
 import org.openejb.alt.config.sys.Container;
 import org.openejb.alt.config.sys.Openejb;

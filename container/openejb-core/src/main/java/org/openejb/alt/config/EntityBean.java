@@ -1,28 +1,20 @@
 package org.openejb.alt.config;
 
-import org.openejb.alt.config.ejb11.EjbLocalRef;
-import org.openejb.alt.config.ejb11.EjbRef;
-import org.openejb.alt.config.ejb11.Entity;
-import org.openejb.alt.config.ejb11.EnvEntry;
-import org.openejb.alt.config.ejb11.ResourceRef;
-import org.openejb.alt.config.ejb11.SecurityRoleRef;
+import org.openejb.jee.PersistenceType;
+import org.openejb.jee.ResourceRef;
 
 public class EntityBean implements Bean {
 
-    Entity bean;
+    org.openejb.jee.EntityBean bean;
     String type;
 
-    EntityBean(Entity bean) {
+    EntityBean(org.openejb.jee.EntityBean bean) {
         this.bean = bean;
-        if (bean.getPersistenceType().equals("Container")) {
+        if (bean.getPersistenceType() == PersistenceType.CONTAINER) {
             type = CMP_ENTITY;
         } else {
             type = BMP_ENTITY;
         }
-    }
-
-    public EjbLocalRef[] getEjbLocalRef() {
-        return bean.getEjbLocalRef();
     }
 
     public String getLocal() {
@@ -61,21 +53,8 @@ public class EntityBean implements Bean {
         return bean.getPrimKeyClass();
     }
 
-    public EjbRef[] getEjbRef() {
-        return bean.getEjbRef();
-    }
-
-    public EnvEntry[] getEnvEntry() {
-        return bean.getEnvEntry();
-    }
-
     public ResourceRef[] getResourceRef() {
-        return bean.getResourceRef();
+        return bean.getResourceRef().toArray(new ResourceRef[]{});
     }
-
-    public SecurityRoleRef[] getSecurityRoleRef() {
-        return bean.getSecurityRoleRef();
-    }
-
 }
 

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -16,8 +18,8 @@ import org.exolab.castor.util.LocalConfiguration;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.openejb.OpenEJBException;
-import org.openejb.alt.config.ejb11.EjbJar;
-import org.openejb.alt.config.ejb11.EnterpriseBeansItem;
+import org.openejb.jee.EjbJar;
+import org.openejb.jee.EnterpriseBean;
 import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.sys.Container;
 import org.openejb.loader.SystemInstance;
@@ -55,7 +57,7 @@ public class EjbJarUtils {
     }
 
     private EjbJar readEjbJar(String jarLocation) throws OpenEJBException {
-        return (EjbJar) Unmarshaller.unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", jarLocation);
+        return (EjbJar) JaxbUnmarshaller.unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", jarLocation);
     }
 
     public String getJarLocation() {
@@ -75,44 +77,44 @@ public class EjbJarUtils {
     }
 
     public void writeEjbJar(String xmlFile) throws OpenEJBException {
-        /* TODO:  Just to be picky, the xml file created by
-        Castor is really hard to read -- it is all on one line.
-        People might want to edit this in the future by hand, so if Castor can
-        make the output look better that would be great!  Otherwise we could
-        just spruce the output up by adding a few new lines and tabs.
-        */
-        Writer writer = null;
-        try {
-            File file = new File(xmlFile);
-            writer = new FileWriter(file);
-            ejbJar.marshal(writer);
-        } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
-        } catch (MarshalException e) {
-            if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
-            } else {
-                throw new OpenEJBException(messages.format("conf.3050", xmlFile, e.getLocalizedMessage()));
-            }
-        } catch (ValidationException e) {
-            /* TODO: Implement informative error handling here.
-               The exception will say "X doesn't match the regular
-               expression Y"
-               This should be checked and more relevant information
-               should be given -- not everyone understands regular
-               expressions.
-             */
-            /* NOTE: This doesn't seem to ever happen. When the object graph
-             * is invalid, the MarshalException is thrown, not this one as you
-             * would think.
-             */
-            throw new OpenEJBException(messages.format("conf.3060", xmlFile, e.getLocalizedMessage()));
-        }
-        try {
-            writer.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()));
-        }
+//        /* TODO:  Just to be picky, the xml file created by
+//        Castor is really hard to read -- it is all on one line.
+//        People might want to edit this in the future by hand, so if Castor can
+//        make the output look better that would be great!  Otherwise we could
+//        just spruce the output up by adding a few new lines and tabs.
+//        */
+//        Writer writer = null;
+//        try {
+//            File file = new File(xmlFile);
+//            writer = new FileWriter(file);
+//            ejbJar.marshal(writer);
+//        } catch (IOException e) {
+//            throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
+//        } catch (MarshalException e) {
+//            if (e.getCause() instanceof IOException) {
+//                throw new OpenEJBException(messages.format("conf.3040", xmlFile, e.getLocalizedMessage()));
+//            } else {
+//                throw new OpenEJBException(messages.format("conf.3050", xmlFile, e.getLocalizedMessage()));
+//            }
+//        } catch (ValidationException e) {
+//            /* TODO: Implement informative error handling here.
+//               The exception will say "X doesn't match the regular
+//               expression Y"
+//               This should be checked and more relevant information
+//               should be given -- not everyone understands regular
+//               expressions.
+//             */
+//            /* NOTE: This doesn't seem to ever happen. When the object graph
+//             * is invalid, the MarshalException is thrown, not this one as you
+//             * would think.
+//             */
+//            throw new OpenEJBException(messages.format("conf.3060", xmlFile, e.getLocalizedMessage()));
+//        }
+//        try {
+//            writer.close();
+//        } catch (Exception e) {
+//            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()));
+//        }
     }
 
     public static String moveJar(String jar, boolean overwrite) throws OpenEJBException {
@@ -234,16 +236,15 @@ public class EjbJarUtils {
     }
 
     public Bean[] getBeans() {
-        EnterpriseBeansItem[] items = ejbJar.getEnterpriseBeans().getEnterpriseBeansItem();
-        Bean[] beans = new Bean[items.length];
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getEntity() == null) {
-                beans[i] = new SessionBean(items[i].getSession());
-            } else {
-                beans[i] = new EntityBean(items[i].getEntity());
+        List<Bean> beans = new ArrayList();
+        for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+            if (enterpriseBean instanceof org.openejb.jee.EntityBean) {
+                beans.add(new EntityBean((org.openejb.jee.EntityBean) enterpriseBean));
+            } else if (enterpriseBean instanceof org.openejb.jee.SessionBean) {
+                beans.add(new SessionBean((org.openejb.jee.SessionBean) enterpriseBean));
             }
         }
-        return beans;
+        return beans.toArray(new Bean[]{});
     }
 
     /*------------------------------------------------------*/

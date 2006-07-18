@@ -309,37 +309,37 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         Byte byteValue = null;
         TransactionPolicy policy = null;
 
-        if (transAttribute.equals("Supports")) {
+        if (transAttribute.equalsIgnoreCase("Supports")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxSupports((TransactionContainer) container);
             }
             byteValue = new Byte(TX_SUPPORTS);
 
-        } else if (transAttribute.equals("RequiresNew")) {
+        } else if (transAttribute.equalsIgnoreCase("RequiresNew")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxRequiresNew((TransactionContainer) container);
             }
             byteValue = new Byte(TX_REQUIRES_NEW);
 
-        } else if (transAttribute.equals("Mandatory")) {
+        } else if (transAttribute.equalsIgnoreCase("Mandatory")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxManditory((TransactionContainer) container);
             }
             byteValue = new Byte(TX_MANDITORY);
 
-        } else if (transAttribute.equals("NotSupported")) {
+        } else if (transAttribute.equalsIgnoreCase("NotSupported")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxNotSupported((TransactionContainer) container);
             }
             byteValue = new Byte(TX_NOT_SUPPORTED);
 
-        } else if (transAttribute.equals("Required")) {
+        } else if (transAttribute.equalsIgnoreCase("Required")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxRequired((TransactionContainer) container);
             }
             byteValue = new Byte(TX_REQUIRED);
 
-        } else if (transAttribute.equals("Never")) {
+        } else if (transAttribute.equalsIgnoreCase("Never")) {
             if (container instanceof TransactionContainer) {
                 policy = new TxNever((TransactionContainer) container);
             }

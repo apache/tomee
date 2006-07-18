@@ -21,6 +21,7 @@ import org.openejb.util.JarUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBElement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -173,7 +174,12 @@ public class JaxbUnmarshaller {
 
     private Object unmarshalObject(Reader reader, String file, String jarLocation) throws OpenEJBException {
         try {
-            return unmarshaller.unmarshal(reader);
+            Object object = unmarshaller.unmarshal(reader);
+            if (object instanceof JAXBElement) {
+                JAXBElement element = (JAXBElement) object;
+                object = element.getValue();
+            }
+            return object;
         } catch (JAXBException e) {
             e.printStackTrace();
             throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()));

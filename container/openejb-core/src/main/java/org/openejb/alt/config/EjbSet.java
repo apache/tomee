@@ -2,8 +2,7 @@ package org.openejb.alt.config;
 
 import java.util.Vector;
 
-import org.openejb.alt.config.ejb11.EjbJar;
-import org.openejb.OpenEJBException;
+import org.openejb.jee.EjbJar;
 
 public class EjbSet {
 

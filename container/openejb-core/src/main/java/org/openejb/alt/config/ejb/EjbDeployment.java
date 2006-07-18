@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"resourceLink", "query"})
@@ -47,6 +49,19 @@ public class EjbDeployment {
         }
         return this.query;
     }
+
+    public ResourceLink getResourceLink(String refName) {
+        return getResourceLinksMap().get(refName);
+    }
+
+    public Map<String,ResourceLink> getResourceLinksMap(){
+        Map<String,ResourceLink> map = new LinkedHashMap();
+        for (ResourceLink link : resourceLink) {
+            map.put(link.getResRefName(), link);
+        }
+        return map;
+    }
+
 
     public String getContainerId() {
         return containerId;
