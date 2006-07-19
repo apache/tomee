@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Arrays;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -42,9 +43,6 @@ public class DeploymentLoader {
 
     public DeploymentLoader(){
 
-    }
-
-    public DeploymentLoader(Properties props){
     }
 
     private static void loadFrom(Deployments dep, FileUtils path, List jarList) {
@@ -109,8 +107,25 @@ public class DeploymentLoader {
             jarList.add(jar.getAbsolutePath());
         }
     }
+    public static enum Type {
+        JAR, DIR, CLASSPATH
+    }
 
-    public List<DeployedJar> loadDeploymentsList(List<Deployments> deployments, Properties props, AutoDeployer deployer) throws OpenEJBException {
+    public List<DeployedJar> load(Type type, Object source) throws OpenEJBException {
+        Deployments deployments = new Deployments();
+        switch(type){
+            case JAR: deployments.setJar((String) source); break;
+            case DIR: deployments.setDir((String) source); break;
+            case CLASSPATH: deployments.setClasspath((ClassLoader) source); break;
+        }
+
+        List<Deployments> list = new ArrayList();
+        list.add(deployments);
+        return loadDeploymentsList(list, null);
+    }
+
+
+    public List<DeployedJar> loadDeploymentsList(List<Deployments> deployments, AutoDeployer deployer) throws OpenEJBException {
         EjbValidator validator = new EjbValidator();
 
         List<DeployedJar> deployedJars = new ArrayList();

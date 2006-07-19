@@ -115,7 +115,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             deployments.add(deployment);
         }
 
-        List<DeployedJar> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, props, deployer);
+        List<DeployedJar> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
 
         DeployedJar[] jars = deployedJars.toArray(new DeployedJar[]{});
 

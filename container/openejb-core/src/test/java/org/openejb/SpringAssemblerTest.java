@@ -53,6 +53,7 @@ import junit.framework.TestCase;
 public class SpringAssemblerTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.openejb.assembler.spring.Assembler.class.getName());
+        System.setProperty("openejb.spring.conf", "META-INF/org.openejb/spring.xml");
         return org.openejb.iTest.suite();
     }
 }

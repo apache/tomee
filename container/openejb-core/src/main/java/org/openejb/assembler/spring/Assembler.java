@@ -89,7 +89,8 @@ public class Assembler implements org.openejb.spi.Assembler {
 
     public void build() throws OpenEJBException {
         try {
-            containerSystem = buildContainerSystem("META-INF/org.openejb/spring.xml");
+            String springXml = System.getProperty("openejb.spring.conf", "META-INF/org.openejb/spring.xml");
+            containerSystem = buildContainerSystem(springXml);
         } catch (OpenEJBException e) {
             //
             // OpenEJBExceptions contain useful information and are debbugable.

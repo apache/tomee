@@ -39,7 +39,6 @@ public class ContainerBuilder {
     }
 
     public Object build() throws OpenEJBException {
-        HashMap deployments = new HashMap();
         URL[] jars = new URL[this.ejbJars.length];
         for (int i = 0; i < this.ejbJars.length; i++) {
             try {
@@ -50,18 +49,13 @@ public class ContainerBuilder {
         }
 
         ClassLoader classLoader = new URLClassLoader(jars, org.openejb.OpenEJB.class.getClassLoader());
+        EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
 
+        HashMap<String,DeploymentInfo> deployments = new HashMap();
         for (int i = 0; i < this.ejbJars.length; i++) {
             EjbJarInfo ejbJar = this.ejbJars[i];
 
-            EnterpriseBeanInfo[] ejbs = ejbJar.enterpriseBeans;
-            for (int j = 0; j < ejbs.length; j++) {
-                EnterpriseBeanInfo ejbInfo = ejbs[j];
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
-                DeploymentInfo deployment = (DeploymentInfo) deploymentBuilder.build();
-                deployment.setJarPath(ejbJar.jarPath);
-                deployments.put(ejbInfo.ejbDeploymentId, deployment);
-            }
+            deployments.putAll(ejbJarBuilder.build(ejbJar));
         }
 
         List containers = new ArrayList();
