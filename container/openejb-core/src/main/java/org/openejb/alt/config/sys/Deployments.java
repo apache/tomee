@@ -27,11 +27,25 @@ public class Deployments implements java.io.Serializable {
 
     private java.lang.String _dir;
 
+    /**
+     * This does not specify the classloader to use for loading
+     * deployments, rather it is an alternate to using 'jar' or 'dir'.
+     * The ejb-jar.xml files are searched in the classpath of the
+     * specified classloader.
+     */
+    private ClassLoader classpath;
 
     public Deployments() {
         super();
     }
 
+    public ClassLoader getClasspath() {
+        return classpath;
+    }
+
+    public void setClasspath(ClassLoader classpath) {
+        this.classpath = classpath;
+    }
 
     public java.lang.String getDir() {
         return this._dir;

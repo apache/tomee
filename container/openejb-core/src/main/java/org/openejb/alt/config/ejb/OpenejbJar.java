@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 /**
@@ -41,6 +43,22 @@ public class OpenejbJar {
             ejbDeployment = new ArrayList<EjbDeployment>();
         }
         return this.ejbDeployment;
+    }
+
+    public Map<String,EjbDeployment> getDeploymentsById(){
+        Map<String,EjbDeployment> map = new LinkedHashMap();
+        for (EjbDeployment deployment : ejbDeployment) {
+            map.put(deployment.getDeploymentId(), deployment);
+        }
+        return map;
+    }
+
+    public Map<String,EjbDeployment> getDeploymentsByEjbName(){
+        Map<String,EjbDeployment> map = new LinkedHashMap();
+        for (EjbDeployment deployment : ejbDeployment) {
+            map.put(deployment.getEjbName(), deployment);
+        }
+        return map;
     }
 
     public int getEjbDeploymentCount() {

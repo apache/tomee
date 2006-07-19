@@ -181,6 +181,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                     logger.error("Could not retreive the current transaction from the transaction manager while handling a callback exception from the afterCompletion method of bean " + callContext.getPrimaryKey());
                 }
                 try {
+                    // TODO: DMB: This may not be spec compliant
                     markTxRollbackOnly(tx);
                 } catch (Throwable t) {
                     logger.error("Could not mark the current transaction for rollback while handling a callback exception from the afterCompletion method of bean " + callContext.getPrimaryKey());
