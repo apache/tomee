@@ -51,6 +51,16 @@ public class MethodTransactionInfo {
     public String transAttribute;
     public MethodInfo[] methods;
 
+    public MethodTransactionInfo() {
+    }
+
+    public MethodTransactionInfo(org.openejb.assembler.classic.MethodTransactionInfo info){
+        this.transAttribute = info.transAttribute;
+        this.methods = new MethodInfo[info.methods.length];
+        for (int i = 0; i < methods.length; i++) {
+            methods[i] = new MethodInfo(info.methods[i]);
+        }
+    }
     public String getTransAttribute() {
         return transAttribute;
     }

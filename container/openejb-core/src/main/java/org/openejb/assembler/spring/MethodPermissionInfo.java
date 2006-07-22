@@ -51,6 +51,17 @@ public class MethodPermissionInfo {
     public String[] roleNames;
     public MethodInfo[] methods;
 
+    public MethodPermissionInfo() {
+    }
+
+    public MethodPermissionInfo(org.openejb.assembler.classic.MethodPermissionInfo info){
+        this.roleNames = info.roleNames;
+        this.methods = new MethodInfo[info.methods.length];
+        for (int i = 0; i < methods.length; i++) {
+            methods[i] = new MethodInfo(info.methods[i]);
+        }
+    }
+
     public String[] getRoleNames() {
         return roleNames;
     }

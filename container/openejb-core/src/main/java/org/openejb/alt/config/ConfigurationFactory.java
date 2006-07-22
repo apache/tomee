@@ -144,12 +144,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 if (ejbJarInfo == null) {
                     continue;
                 }
-                assignBeansToContainers(ejbJarInfo.enterpriseBeans, jar.openejbJar.getDeploymentsByEjbName());
+                assignBeansToContainers(ejbJarInfo.enterpriseBeans, jar.getOpenejbJar().getDeploymentsByEjbName());
                 ejbJars.add(ejbJarInfo);
                 ejbs.addAll(Arrays.asList(ejbJarInfo.enterpriseBeans));
             } catch (Exception e) {
                 e.printStackTrace();
-                ConfigUtils.logger.i18n.warning("conf.0004", jar.jarURI, e.getMessage());
+                ConfigUtils.logger.i18n.warning("conf.0004", jar.getJarURI(), e.getMessage());
             }
         }
         sys.containerSystem.enterpriseBeans = (EnterpriseBeanInfo[]) ejbs.toArray(new EnterpriseBeanInfo[]{});

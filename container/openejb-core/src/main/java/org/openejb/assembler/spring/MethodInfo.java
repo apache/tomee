@@ -53,6 +53,16 @@ public class MethodInfo {
     public String name = "*";
     public String[] params;
 
+    public MethodInfo() {
+    }
+
+    public MethodInfo(org.openejb.assembler.classic.MethodInfo info){
+        this.deploymentId = (String) info.ejbDeploymentId;
+        this.intf = info.methodIntf;
+        this.name = info.methodName;
+        this.params = info.methodParams;
+    }
+
     public String getDeploymentId() {
         return deploymentId;
     }

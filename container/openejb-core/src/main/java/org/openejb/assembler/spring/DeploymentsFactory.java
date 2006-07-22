@@ -19,21 +19,44 @@ package org.openejb.assembler.spring;
 import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.DeploymentLoader;
 import org.openejb.alt.config.EjbJarInfoBuilder;
+import org.openejb.alt.config.ejb.EjbDeployment;
+import org.openejb.core.DeploymentInfo;
 import org.openejb.assembler.classic.EjbJarBuilder;
 import org.openejb.assembler.classic.EjbJarInfo;
-import org.openejb.core.DeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
 
+import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @org.apache.xbean.XBean element="deployments"
  */
 public class DeploymentsFactory implements FactoryBean {
 
+    private AssemblyInfo assembly;
+    private TransactionManager transactionManager;
     private Object value;
     private DeploymentLoader.Type type;
+
+    public AssemblyInfo getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(AssemblyInfo assembly) {
+        this.assembly = assembly;
+    }
+
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     public String getJar() {
         return (String) value;
@@ -62,7 +85,16 @@ public class DeploymentsFactory implements FactoryBean {
         this.value = classpath;
     }
 
+    // Singletons don't work
+    private HashMap<String, DeploymentInfo> deployments;
     public Object getObject() throws Exception {
+        if (deployments != null){
+            return deployments;
+        }
+        HashMap context = new HashMap();
+        context.put(TransactionManager.class.getName(), transactionManager);
+        org.openejb.assembler.classic.Assembler.setContext(context);
+
         DeploymentLoader loader = new DeploymentLoader();
         List<DeployedJar> deployedJars = loader.load(type, value);
 
@@ -71,19 +103,59 @@ public class DeploymentsFactory implements FactoryBean {
         ClassLoader classLoader = (value instanceof ClassLoader) ? (ClassLoader) value : Thread.currentThread().getContextClassLoader();
         EjbJarBuilder builder = new EjbJarBuilder(classLoader);
 
-        HashMap<String, DeploymentInfo> deployments = new HashMap();
+        System.out.println("DeploymentsFactory.getObject");
+
+        deployments = new HashMap();
         for (DeployedJar jar : deployedJars) {
             EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
-            deployments.putAll(builder.build(jarInfo));
+            if (jarInfo == null){
+                // This means the jar failed validation or otherwise could not be deployed
+                // a message was already logged to the appropriate place.
+                continue;
+            }
+
+            transferMethodTransactionInfos(infoBuilder);
+            transferMethodPermissionInfos(infoBuilder);
+
+            HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo);
+
+            for (EjbDeployment data : jar.getOpenejbJar().getEjbDeployment()) {
+                ejbs.get(data.getDeploymentId()).setContainer(new ContainerPointer(data.getContainerId()));
+            }
+
+            deployments.putAll(ejbs);
         }
-        return null;
+
+        return deployments;
+    }
+
+    private void transferMethodTransactionInfos(EjbJarInfoBuilder infoBuilder) {
+        List<MethodTransactionInfo> infos = new ArrayList();
+        if (assembly.getMethodTransactions() != null){
+            infos.addAll(Arrays.asList(assembly.getMethodTransactions()));
+        }
+        for (org.openejb.assembler.classic.MethodTransactionInfo info : infoBuilder.getMethodTransactionInfos()) {
+            infos.add(new MethodTransactionInfo(info));
+        }
+        assembly.setMethodTransactions(infos.toArray(new MethodTransactionInfo[]{}));
+    }
+
+    private void transferMethodPermissionInfos(EjbJarInfoBuilder infoBuilder) {
+        List<MethodPermissionInfo> infos = new ArrayList();
+        if (assembly.getMethodPermissions() != null){
+            infos.addAll(Arrays.asList(assembly.getMethodPermissions()));
+        }
+        for (org.openejb.assembler.classic.MethodPermissionInfo info : infoBuilder.getMethodPermissionInfos()) {
+            infos.add(new MethodPermissionInfo(info));
+        }
+        assembly.setMethodPermissions(infos.toArray(new MethodPermissionInfo[]{}));
     }
 
     public Class getObjectType() {
-        return null;
+        return Map.class;
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

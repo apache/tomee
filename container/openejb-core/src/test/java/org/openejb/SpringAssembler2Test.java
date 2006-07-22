@@ -14,36 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.alt.config;
+package org.openejb;
 
-import org.openejb.jee.EjbJar;
-import org.openejb.alt.config.ejb.OpenejbJar;
+import junit.framework.TestCase;
+import junit.framework.Test;
 
 /**
  * @version $Revision$ $Date$
  */
-public class DeployedJar {
-
-    private EjbJar ejbJar;
-    private OpenejbJar openejbJar;
-    private String jarURI;
-
-    public DeployedJar(String jar, EjbJar ejbJar, OpenejbJar openejbJar) {
-        this.ejbJar = ejbJar;
-        this.openejbJar = openejbJar;
-        this.jarURI = jar;
-    }
-
-
-    public EjbJar getEjbJar() {
-        return ejbJar;
-    }
-
-    public OpenejbJar getOpenejbJar() {
-        return openejbJar;
-    }
-
-    public String getJarURI() {
-        return jarURI;
+public class SpringAssembler2Test extends TestCase {
+    public static Test suite() {
+        System.setProperty("openejb.assembler", org.openejb.assembler.spring.Assembler.class.getName());
+        System.setProperty("openejb.spring.conf", "META-INF/org.openejb/spring2.xml");
+        return iTest.suite();
     }
 }

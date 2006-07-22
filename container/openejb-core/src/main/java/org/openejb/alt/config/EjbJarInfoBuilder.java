@@ -75,25 +75,25 @@ public class EjbJarInfoBuilder {
 
     public EjbJarInfo buildInfo(DeployedJar jar) throws OpenEJBException {
 
-        int beansDeployed = jar.openejbJar.getEjbDeploymentCount();
-        int beansInEjbJar = jar.ejbJar.getEnterpriseBeans().length;
+        int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
+        int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
 
         if (beansInEjbJar != beansDeployed) {
-            ConfigUtils.logger.i18n.warning("conf.0008", jar.jarURI, "" + beansInEjbJar, "" + beansDeployed);
+            ConfigUtils.logger.i18n.warning("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
 
             return null;
         }
 
-        Map<String, EjbDeployment> ejbds = jar.openejbJar.getDeploymentsByEjbName();
+        Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
         Map<String, EnterpriseBeanInfo> infos = new HashMap();
         Map<String, EnterpriseBean> items = new HashMap();
 
         EjbJarInfo ejbJar = new EjbJarInfo();
-        ejbJar.jarPath = jar.jarURI;
+        ejbJar.jarPath = jar.getJarURI();
 
 
         List<EnterpriseBeanInfo> beanInfos = new ArrayList<EnterpriseBeanInfo>(ejbds.size());
-        for (EnterpriseBean bean : jar.ejbJar.getEnterpriseBeans()) {
+        for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
             EnterpriseBeanInfo beanInfo;
             if (bean instanceof org.openejb.jee.SessionBean) {
                 beanInfo = initSessionBean((SessionBean) bean, ejbds);
@@ -103,14 +103,14 @@ public class EjbJarInfoBuilder {
             beanInfos.add(beanInfo);
 
             if (deploymentIds.contains(beanInfo.ejbDeploymentId)) {
-                ConfigUtils.logger.i18n.warning("conf.0100", beanInfo.ejbDeploymentId, jar.jarURI, beanInfo.ejbName);
+                ConfigUtils.logger.i18n.warning("conf.0100", beanInfo.ejbDeploymentId, jar.getJarURI(), beanInfo.ejbName);
 
                 return null;
             }
 
             deploymentIds.add(beanInfo.ejbDeploymentId);
 
-            beanInfo.codebase = jar.jarURI;
+            beanInfo.codebase = jar.getJarURI();
             infos.put(beanInfo.ejbName, beanInfo);
             items.put(beanInfo.ejbName, bean);
 
@@ -122,7 +122,7 @@ public class EjbJarInfoBuilder {
 
         initJndiReferences(ejbds, infos, items);
 
-        if (jar.ejbJar.getAssemblyDescriptor() != null) {
+        if (jar.getEjbJar().getAssemblyDescriptor() != null) {
             initSecurityRoles(jar);
             initMethodPermissions(jar, ejbds);
             initMethodTransactions(jar, ejbds);
@@ -134,7 +134,7 @@ public class EjbJarInfoBuilder {
 
         if (!"tomcat-webapp".equals(SystemInstance.get().getProperty("openejb.loader"))) {
             try {
-                File jarFile = new File(jar.jarURI);
+                File jarFile = new File(jar.getJarURI());
 
                 SystemInstance.get().getClassPath().addJarToPath(jarFile.toURL());
             } catch (Exception e) {
@@ -255,7 +255,7 @@ public class EjbJarInfoBuilder {
 
     private void initMethodTransactions(DeployedJar jar, Map ejbds) {
 
-        List<ContainerTransaction> containerTransactions = jar.ejbJar.getAssemblyDescriptor().getContainerTransaction();
+        List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
         List<MethodTransactionInfo> infos = new ArrayList();
         for (ContainerTransaction cTx : containerTransactions) {
             MethodTransactionInfo info = new MethodTransactionInfo();
@@ -270,7 +270,7 @@ public class EjbJarInfoBuilder {
 
     private void initSecurityRoles(DeployedJar jar) {
 
-        List<SecurityRole> roles = jar.ejbJar.getAssemblyDescriptor().getSecurityRole();
+        List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
         List<SecurityRoleInfo> infos = new ArrayList();
 
         for (SecurityRole sr : roles) {
@@ -280,7 +280,7 @@ public class EjbJarInfoBuilder {
             info.roleName = sr.getRoleName();
 
             if (securityRoles.contains(sr.getRoleName())) {
-                ConfigUtils.logger.i18n.warning("conf.0102", jar.jarURI, sr.getRoleName());
+                ConfigUtils.logger.i18n.warning("conf.0102", jar.getJarURI(), sr.getRoleName());
             } else {
                 securityRoles.add(sr.getRoleName());
             }
@@ -291,7 +291,7 @@ public class EjbJarInfoBuilder {
 
     private void initMethodPermissions(DeployedJar jar, Map ejbds) {
 
-        List<MethodPermission> methodPermissions = jar.ejbJar.getAssemblyDescriptor().getMethodPermission();
+        List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
         List<MethodPermissionInfo> infos = new ArrayList();
 
         for (MethodPermission mp : methodPermissions) {
@@ -324,7 +324,7 @@ public class EjbJarInfoBuilder {
             info.roleName = ref.getRoleName();
 
             if (info.roleLink == null) {
-                ConfigUtils.logger.i18n.warning("conf.0009", info.roleName, bean.ejbName, jar.jarURI);
+                ConfigUtils.logger.i18n.warning("conf.0009", info.roleName, bean.ejbName, jar.getJarURI());
                 info.roleLink = DEFAULT_SECURITY_ROLE;
             }
             infos.add(info);

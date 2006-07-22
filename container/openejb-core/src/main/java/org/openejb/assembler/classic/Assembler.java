@@ -85,12 +85,16 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
 
     private static ThreadLocal context = new ThreadLocal();
 
+    public static void setContext(HashMap map) {
+        context.set(map);
+    }
+
     public static HashMap getContext() {
         return (HashMap) context.get();
     }
 
     public void build() throws OpenEJBException {
-        context.set(new HashMap());
+        setContext(new HashMap());
         try {
             containerSystem = buildContainerSystem(config);
         } catch (OpenEJBException ae) {

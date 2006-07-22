@@ -2,6 +2,7 @@
 
 <!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
 <beans xmlns:o="http://openejb.org/schemas/core">
+
   <bean id="proxyFactory" class="org.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
 
   <o:containerSystem id="containerSystem"/>
@@ -79,7 +80,9 @@
 
     transactionManager #transactionManager
     securityService #securityService
-    registry #cmpDeployments
+    <o:registry>
+      <o:addDeployments from="#deployments1" to="Default CMP Container"/>
+    </o:registry>
   </o:castorCmp11Container>
 
   <!--
@@ -98,7 +101,9 @@
     transactionManager #transactionManager
     securityService #securityService
 
-    registry #bmpDeployments
+    <o:registry>
+      <o:addDeployments from="#deployments1" to="Default BMP Container"/>
+    </o:registry>
   </o:bmpContainer>
 
 
@@ -139,7 +144,9 @@
     transactionManager #transactionManager
     securityService #securityService
 
-    registry #statelessDeployments
+    <o:registry>
+      <o:addDeployments from="#deployments1" to="Default Stateless Container"/>
+    </o:registry>
   </o:statelessContainer>
 
 
@@ -183,9 +190,12 @@
 
     transactionManager #transactionManager
     securityService #securityService
-    registry #statefulDeployments
+    <o:registry>
+      <o:addDeployments from="#deployments1" to="Default Stateful Container"/>
+    </o:registry>
   </o:statefulContainer>
 
-  <o:deployments classpath="#classLoader"/>
+  <o:deployments id="deployments1" classpath="#classLoader" transactionManager="#transactionManager" assembly="#assembly"/>
+  <o:assembly id="assembly"/>
 
 </beans>
