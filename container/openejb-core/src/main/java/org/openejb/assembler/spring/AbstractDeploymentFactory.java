@@ -47,10 +47,14 @@ package org.openejb.assembler.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
 import javax.naming.Context;
 import javax.transaction.TransactionManager;
 
 import org.openejb.SystemException;
+import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentContext;
 import org.openejb.core.DeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
@@ -67,7 +71,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     protected String beanClass;
     protected ClassLoader classLoader;
     protected EncInfo jndiContext;
-    protected String jarPath;
+    private String jarPath;
     protected TransactionManager transactionManager;
     protected AssemblyInfo assembly;
     protected final Map<String, String> roleReferences = new LinkedHashMap<String, String>();
@@ -137,7 +141,12 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     public String getJarPath() {
-        return jarPath;
+        try {
+            File file = SystemInstance.get().getHome().getFile(jarPath, false).getCanonicalFile();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            return jarPath;
+        }
     }
 
     public void setJarPath(String jarPath) {
@@ -204,7 +213,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 loadClass(getPkClass(), classLoader),
                 getComponentType(),
                 null);
-        deploymentInfo.setJarPath(jarPath);
+        deploymentInfo.setJarPath(getJarPath());
         if (assembly != null) {
             applySecurityRoleReference(deploymentInfo);
             // todo we should be able to apply tx attributes and security permissions here

@@ -2,7 +2,7 @@
 
 <!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
 <beans xmlns:o="http://openejb.org/schemas/core">
-  <bean id="proxyFactory" class="org.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
+  <o:jdk13ProxyFactory id="proxyFactory"/>
 
   <o:containerSystem id="containerSystem"/>
 
@@ -194,7 +194,7 @@
               homeInterface="org.openejb.test.entity.cmp.RmiIiopCmpHome"
               remoteInterface="org.openejb.test.entity.cmp.RmiIiopCmpObject"
               beanClass="org.openejb.test.entity.cmp.RmiIiopCmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
@@ -208,7 +208,7 @@
           <o:cmpDeployment id="client/tests/entity/cmp/EncBean" homeInterface="org.openejb.test.entity.cmp.EncCmpHome"
               remoteInterface="org.openejb.test.entity.cmp.EncCmpObject"
               beanClass="org.openejb.test.entity.cmp.EncCmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
@@ -238,7 +238,7 @@
               homeInterface="org.openejb.test.entity.cmp.BasicCmpHome"
               remoteInterface="org.openejb.test.entity.cmp.BasicCmpObject"
               beanClass="org.openejb.test.entity.cmp.AllowedOperationsCmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
@@ -253,7 +253,7 @@
               homeInterface="org.openejb.test.entity.cmp.BasicCmpHome"
               remoteInterface="org.openejb.test.entity.cmp.BasicCmpObject"
               beanClass="org.openejb.test.entity.cmp.BasicCmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:queries>
@@ -278,7 +278,7 @@
               homeInterface="org.openejb.test.entity.bmp.RmiIiopBmpHome"
               remoteInterface="org.openejb.test.entity.bmp.RmiIiopBmpObject"
               beanClass="org.openejb.test.entity.bmp.RmiIiopBmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer">
             <o:jndiContext>
@@ -292,7 +292,7 @@
           <o:bmpDeployment id="client/tests/entity/bmp/EncBean" homeInterface="org.openejb.test.entity.bmp.EncBmpHome"
               remoteInterface="org.openejb.test.entity.bmp.EncBmpObject"
               beanClass="org.openejb.test.entity.bmp.EncBmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer">
             <o:jndiContext>
@@ -322,7 +322,7 @@
               homeInterface="org.openejb.test.entity.bmp.BasicBmpHome"
               remoteInterface="org.openejb.test.entity.bmp.BasicBmpObject"
               beanClass="org.openejb.test.entity.bmp.AllowedOperationsBmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer">
             <o:jndiContext>
@@ -342,7 +342,7 @@
               homeInterface="org.openejb.test.entity.bmp.BasicBmpHome"
               remoteInterface="org.openejb.test.entity.bmp.BasicBmpObject"
               beanClass="org.openejb.test.entity.bmp.BasicBmpBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer">
             <o:jndiContext>
@@ -363,7 +363,7 @@
               homeInterface="org.openejb.test.stateful.RmiIiopStatefulHome"
               remoteInterface="org.openejb.test.stateful.RmiIiopStatefulObject"
               beanClass="org.openejb.test.stateful.RmiIiopStatefulBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -377,7 +377,7 @@
               homeInterface="org.openejb.test.stateful.EncStatefulHome"
               remoteInterface="org.openejb.test.stateful.EncStatefulObject"
               beanClass="org.openejb.test.stateful.EncStatefulBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -405,7 +405,7 @@
               homeInterface="org.openejb.test.stateful.BeanTxStatefulHome"
               remoteInterface="org.openejb.test.stateful.BeanTxStatefulObject"
               beanClass="org.openejb.test.stateful.BeanTxStatefulBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -419,7 +419,7 @@
               homeInterface="org.openejb.test.stateful.BasicStatefulHome"
               remoteInterface="org.openejb.test.stateful.BasicStatefulObject"
               beanClass="org.openejb.test.stateful.BMTStatefulBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc/>
@@ -431,7 +431,7 @@
               homeInterface="org.openejb.test.stateful.BasicStatefulHome"
               remoteInterface="org.openejb.test.stateful.BasicStatefulObject"
               beanClass="org.openejb.test.stateful.BasicStatefulBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
             <o:jndiContext>
               <o:enc/>
@@ -449,7 +449,7 @@
               homeInterface="org.openejb.test.stateless.RmiIiopStatelessHome"
               remoteInterface="org.openejb.test.stateless.RmiIiopStatelessObject"
               beanClass="org.openejb.test.stateless.RmiIiopStatelessBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -463,7 +463,7 @@
               homeInterface="org.openejb.test.stateless.EncStatelessHome"
               remoteInterface="org.openejb.test.stateless.EncStatelessObject"
               beanClass="org.openejb.test.stateless.EncStatelessBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -495,7 +495,7 @@
               homeInterface="org.openejb.test.stateless.BeanTxStatelessHome"
               remoteInterface="org.openejb.test.stateless.BeanTxStatelessObject"
               beanClass="org.openejb.test.stateless.BeanTxStatelessBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -507,7 +507,7 @@
         <entry key="client/tools/DatabaseHome">
           <o:statelessDeployment id="client/tools/DatabaseHome" homeInterface="org.openejb.test.beans.DatabaseHome"
               remoteInterface="org.openejb.test.beans.Database" beanClass="org.openejb.test.beans.DatabaseBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -521,7 +521,7 @@
               homeInterface="org.openejb.test.stateless.BasicStatelessHome"
               remoteInterface="org.openejb.test.stateless.BasicStatelessObject"
               beanClass="org.openejb.test.stateless.BasicStatelessBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
@@ -539,7 +539,7 @@
               homeInterface="org.openejb.test.stateless.BasicStatelessHome"
               remoteInterface="org.openejb.test.stateless.BasicStatelessObject"
               beanClass="org.openejb.test.stateless.BasicStatelessBean"
-              jarPath="/Users/dane/work/openejb3/openejb-itests/target/classes" classLoader="#classLoader"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
             <o:jndiContext>
               <o:enc>

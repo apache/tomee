@@ -57,7 +57,7 @@
     </repository>
     <repository>
       <id>apache-snapshot</id>
-      <name>Apache monkey Repository</name>
+      <name>Apache Repository</name>
       <url>http://people.apache.org/repository</url>
       <layout>legacy</layout>
     </repository>
