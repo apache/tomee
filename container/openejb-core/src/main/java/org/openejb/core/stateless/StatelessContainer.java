@@ -1,9 +1,15 @@
 package org.openejb.core.stateless;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Properties;
+import org.openejb.Container;
+import org.openejb.DeploymentInfo;
+import org.openejb.OpenEJBException;
+import org.openejb.ProxyInfo;
+import org.openejb.core.Operations;
+import org.openejb.core.ThreadContext;
+import org.openejb.core.transaction.TransactionContainer;
+import org.openejb.core.transaction.TransactionContext;
+import org.openejb.core.transaction.TransactionPolicy;
+import org.openejb.spi.SecurityService;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -12,22 +18,9 @@ import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.transaction.TransactionManager;
-
-import org.openejb.Container;
-import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
-import org.openejb.OpenEJBException;
-import org.openejb.ProxyInfo;
-import org.openejb.ClassLoaderUtil;
-import org.openejb.spi.SecurityService;
-import org.openejb.core.EnvProps;
-import org.openejb.core.Operations;
-import org.openejb.core.ThreadContext;
-import org.openejb.core.transaction.TransactionContainer;
-import org.openejb.core.transaction.TransactionContext;
-import org.openejb.core.transaction.TransactionPolicy;
-import org.openejb.util.SafeProperties;
-import org.openejb.util.SafeToolkit;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"

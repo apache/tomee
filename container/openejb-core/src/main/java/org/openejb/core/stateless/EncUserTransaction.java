@@ -1,9 +1,9 @@
 package org.openejb.core.stateless;
 
-import javax.naming.NameNotFoundException;
-
 import org.openejb.core.Operations;
 import org.openejb.core.ivm.naming.ObjectReference;
+
+import javax.naming.NameNotFoundException;
 
 /*
   This class is a wrapper for CoreUserTransaction reference in the 

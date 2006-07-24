@@ -1,14 +1,14 @@
 package org.openejb.core.stateless;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-
 import org.openejb.RpcContainer;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbHomeProxyHandler;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 import org.openejb.core.ivm.IntraVmHandle;
 import org.openejb.util.proxy.ProxyManager;
+
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 

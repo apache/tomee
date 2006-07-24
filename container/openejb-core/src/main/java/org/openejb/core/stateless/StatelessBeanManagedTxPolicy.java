@@ -1,14 +1,13 @@
 package org.openejb.core.stateless;
 
-import java.rmi.RemoteException;
-
-import javax.ejb.EnterpriseBean;
-import javax.transaction.Status;
-
 import org.openejb.ApplicationException;
 import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
+
+import javax.ejb.EnterpriseBean;
+import javax.transaction.Status;
+import java.rmi.RemoteException;
 
 public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
@@ -45,7 +44,8 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
             if (context.currentTx == null) return;
 
-            if (context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK && context.currentTx.getStatus() != Status.STATUS_COMMITTED) {
+            if (context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK && context.currentTx.getStatus() != Status.STATUS_COMMITTED)
+            {
                 String message = "The stateless session bean started a transaction but did not complete it.";
 
                 /* [1] Log this as an application error ********/

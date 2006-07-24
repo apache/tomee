@@ -1,12 +1,12 @@
 package org.openejb.core.stateless;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-
 import org.openejb.Container;
 import org.openejb.RpcContainer;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
 import org.openejb.util.proxy.ProxyManager;
+
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;

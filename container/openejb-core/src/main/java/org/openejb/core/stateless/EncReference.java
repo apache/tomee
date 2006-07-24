@@ -1,8 +1,8 @@
 package org.openejb.core.stateless;
 
-import javax.naming.NameNotFoundException;
-
 import org.openejb.core.ivm.naming.Reference;
+
+import javax.naming.NameNotFoundException;
 
 public class EncReference extends org.openejb.core.ivm.naming.ENCReference {
 
