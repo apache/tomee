@@ -47,7 +47,6 @@
  */
 package org.openejb;
 
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
 import org.openejb.cache.InstanceFactory;
 import org.openejb.cache.InstancePool;
 import org.openejb.dispatch.EJBTimeoutOperation;
@@ -113,7 +112,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
                             boolean securityEnabled,
                             String policyContextId,
-                            DefaultPrincipal defaultPrincipal,
+                            Subject defaultSubject,
                             Subject runAs,
 
                             SortedMap transactionPolicies,
@@ -142,7 +141,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 transactionPolicies,
                 componentContext,
@@ -171,7 +170,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
                             boolean securityEnabled,
                             String policyContextId,
-                            DefaultPrincipal defaultPrincipal,
+                            Subject defaultSubject,
                             Subject runAs,
 
                             SortedMap transactionPolicies,
@@ -204,11 +203,13 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 false,
                 transactionPolicies,
-                componentContext);
+                componentContext,
+                unshareableResources,
+                applicationManagedSecurityResources);
 
         this.reentrant = reentrant;
 
@@ -230,8 +231,6 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
         InstanceContextFactory contextFactory = new CmpInstanceContextFactory(this,
                 ejbContainer,
                 proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources,
                 cmp2,
                 instanceMap);
 

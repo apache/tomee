@@ -47,11 +47,10 @@
  */
 package org.openejb.entity.bmp;
 
-import java.util.Set;
 import javax.ejb.EntityBean;
 
-import org.openejb.BmpEjbDeployment;
 import org.openejb.BmpEjbContainer;
+import org.openejb.BmpEjbDeployment;
 import org.openejb.entity.EntityInstanceContext;
 import org.openejb.proxy.EJBProxyFactory;
 
@@ -62,16 +61,12 @@ public final class BmpInstanceContext extends EntityInstanceContext {
     public BmpInstanceContext(BmpEjbDeployment bmpEjbDeployment,
             BmpEjbContainer bmpEjbContainer,
             EntityBean instance,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
+            EJBProxyFactory proxyFactory) {
 
         super(bmpEjbDeployment,
                 bmpEjbContainer,
                 instance,
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources
+                proxyFactory
         );
     }
 }

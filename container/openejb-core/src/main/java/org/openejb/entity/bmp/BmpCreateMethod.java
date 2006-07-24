@@ -133,7 +133,7 @@ public class BmpCreateMethod implements VirtualOperation, Serializable {
 
         // associate the new BMP instance with the tx cache
         ctx.setLoaded(true);
-        invocation.getTransactionContext().associate(ctx);
+        invocation.getEjbTransactionData().associate(ctx);
 
         // call the post create method
         try {

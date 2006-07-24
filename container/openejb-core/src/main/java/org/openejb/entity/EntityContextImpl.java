@@ -56,8 +56,8 @@ import javax.ejb.EntityContext;
 import javax.ejb.TimerService;
 import javax.security.auth.Subject;
 import javax.transaction.UserTransaction;
+import javax.transaction.TransactionManager;
 
-import org.apache.geronimo.transaction.context.TransactionContextManager;
 import org.openejb.EJBContextImpl;
 import org.openejb.EJBInstanceContext;
 import org.openejb.EJBOperation;
@@ -67,8 +67,8 @@ import org.openejb.timer.TimerState;
  * @version $Revision$ $Date$
  */
 public class EntityContextImpl extends EJBContextImpl implements EntityContext {
-    public EntityContextImpl(EntityInstanceContext context, TransactionContextManager transactionContextManager) {
-        super(context, transactionContextManager, null);
+    public EntityContextImpl(EntityInstanceContext context, TransactionManager transactionManager) {
+        super(context, transactionManager, null);
     }
 
     public void setState(EJBOperation operation) {
@@ -130,11 +130,11 @@ public class EntityContextImpl extends EJBContextImpl implements EntityContext {
             throw new IllegalStateException("getUserTransaction() is not allowed on an Entity bean");
         }
 
-        public void setRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public void setRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("setRollbackOnly() cannot be called when inactive");
         }
 
-        public boolean getRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public boolean getRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("getRollbackOnly() cannot be called when inactive");
         }
 
@@ -164,11 +164,11 @@ public class EntityContextImpl extends EJBContextImpl implements EntityContext {
             throw new IllegalStateException("isCallerInRole(String) cannot be called from set/unsetEntityContext");
         }
 
-        public void setRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public void setRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("setRollbackOnly() cannot be called from set/unsetEntityContext");
         }
 
-        public boolean getRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public boolean getRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("getRollbackOnly() cannot be called from set/unsetEntityContext");
         }
 
@@ -238,11 +238,11 @@ public class EntityContextImpl extends EJBContextImpl implements EntityContext {
             throw new IllegalStateException("isCallerInRole(String) cannot be called from ejbActivate/ejbPassivate");
         }
 
-        public void setRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public void setRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("setRollbackOnly() cannot be called from ejbActivate/ejbPassivate");
         }
 
-        public boolean getRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
+        public boolean getRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             throw new IllegalStateException("getRollbackOnly() cannot be called from ejbActivate/ejbPassivate");
         }
     };

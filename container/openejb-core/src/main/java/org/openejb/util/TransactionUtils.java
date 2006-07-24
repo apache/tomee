@@ -42,45 +42,50 @@
  *
  * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
  */
-package org.openejb.transaction;
+package org.openejb.util;
 
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-
-import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.interceptor.Invocation;
-import org.openejb.EjbInvocation;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
 
 /**
- * @version $Revision: 2449 $ $Date: 2006-02-15 22:30:22 -0800 (Wed, 15 Feb 2006) $
+ * @version $Revision$ $Date$
  */
-public class TransactionContextInterceptor implements Interceptor {
-    private final Interceptor next;
-    private final TransactionManager transactionManager;
-
-    public TransactionContextInterceptor(Interceptor next, TransactionManager transactionManager) {
-        this.next = next;
-        this.transactionManager = transactionManager;
+public final class TransactionUtils {
+    private TransactionUtils() {
     }
 
-    public InvocationResult invoke(Invocation invocation) throws Throwable {
-        EjbInvocation ejbInvocation = (EjbInvocation) invocation;
-
-        if (ejbInvocation.getEjbTransactionData() != null) {
-            throw new IllegalStateException("Invocation is already associated with a transaction");
+    public static Transaction getTransactionIfActive(TransactionManager transactionManager) {
+        Transaction transaction = null;
+        int status = Status.STATUS_NO_TRANSACTION;
+        try {
+            transaction = transactionManager.getTransaction();
+            if (transaction != null) status = transaction.getStatus();
+        } catch (SystemException ignored) {
         }
 
-        EjbTransactionContext ejbTransactionContext = EjbTransactionContext.get(transactionManager.getTransaction());
+        if (transaction != null && status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK) {
+            return transaction;
+        }
+        return null;
+    }
 
-        boolean succeeded = false;
+    public static boolean isTransactionActive(TransactionManager transactionManager) {
         try {
-            ejbInvocation.setEjbTransactionData(ejbTransactionContext);
-            InvocationResult result = next.invoke(ejbInvocation);
-            succeeded = true;
-            return result;
-        } finally {
-            ejbInvocation.setEjbTransactionData(null);
-            ejbTransactionContext.complete(succeeded);
+            int status = transactionManager.getStatus();
+            return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
+        } catch (SystemException ignored) {
+            return false;
+        }
+    }
+
+    public static boolean isActive(Transaction transaction) {
+        try {
+            int status = transaction.getStatus();
+            return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
+        } catch (SystemException ignored) {
+            return false;
         }
     }
 }

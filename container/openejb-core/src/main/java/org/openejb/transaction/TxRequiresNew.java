@@ -16,15 +16,16 @@
  */
 package org.openejb.transaction;
 
-import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import javax.transaction.RollbackException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.Status;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.geronimo.interceptor.Interceptor;
+import org.apache.geronimo.interceptor.InvocationResult;
 import org.openejb.EjbInvocation;
-
-import javax.transaction.RollbackException;
 
 /**
  * RequiresNew
@@ -52,15 +53,10 @@ import javax.transaction.RollbackException;
 final class TxRequiresNew implements TransactionPolicy {
     private static final Log log = LogFactory.getLog(TxRequiresNew.class);
 
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
-
-        if (callerContext != null) {
-            callerContext.suspend();
-        }
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction callerTransaction = transactionManager.suspend();
         try {
-            TransactionContext beanContext = transactionContextManager.newContainerTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
+            transactionManager.begin();
             try {
                 InvocationResult result = interceptor.invoke(ejbInvocation);
                 return result;
@@ -68,19 +64,21 @@ final class TxRequiresNew implements TransactionPolicy {
                 throw re;
             } catch (Throwable t) {
                 try {
-                    beanContext.setRollbackOnly();
+                    transactionManager.setRollbackOnly();
                 } catch (Exception e) {
                     log.warn("Unable to roll back", e);
                 }
                 throw t;
             } finally {
-                beanContext.commit();
+                if (transactionManager.getStatus() == Status.STATUS_ACTIVE) {
+                    transactionManager.commit();
+                } else {
+                    transactionManager.rollback();
+                }
             }
         } finally {
-            ejbInvocation.setTransactionContext(null);
-            transactionContextManager.setContext(callerContext);
-            if (callerContext != null) {
-                callerContext.resume();
+            if (callerTransaction != null) {
+                transactionManager.resume(callerTransaction);
             }
         }
     }

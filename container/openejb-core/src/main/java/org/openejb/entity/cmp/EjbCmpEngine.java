@@ -45,12 +45,11 @@
 package org.openejb.entity.cmp;
 
 import java.util.Set;
-
 import javax.ejb.DuplicateKeyException;
 import javax.ejb.RemoveException;
 
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.Flushable;
+import org.openejb.transaction.EjbTransactionContext;
+import org.openejb.transaction.CmpTxData;
 
 /**
  * @version $Revision$ $Date$
@@ -77,17 +76,17 @@ public interface EjbCmpEngine {
      * Defines the primary key after the ejbCreate callback has been invoked.  After this method is invoked the instance
      * context will have an id set.
      */
-    void afterCreate(CmpInstanceContext ctx, TransactionContext transactionContext) throws DuplicateKeyException, Exception;
+    void afterCreate(CmpInstanceContext ctx, EjbTransactionContext ejbTransactionContext) throws DuplicateKeyException, Exception;
 
     /**
      * Removes the instance and handles cascade delete.  After this method returns the instance context will not have
      * an id set, nor will it contain any cmp data.
      */
-    void afterRemove(CmpInstanceContext ctx, TransactionContext transactionContext) throws RemoveException;
+    void afterRemove(CmpInstanceContext ctx, EjbTransactionContext ejbTransactionContext) throws RemoveException;
 
     void beforeLoad(CmpInstanceContext ctx) throws Exception;
 
     void afterStore(CmpInstanceContext ctx) throws Exception;
 
-    Flushable createInTxCache();
+    CmpTxData createCmpTxData();
 }

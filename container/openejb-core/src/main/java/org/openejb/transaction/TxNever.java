@@ -16,10 +16,10 @@
  */
 package org.openejb.transaction;
 
-import org.apache.geronimo.interceptor.InvocationResult;
+import javax.transaction.TransactionManager;
+
 import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.apache.geronimo.interceptor.InvocationResult;
 import org.openejb.EjbInvocation;
 
 /**
@@ -38,11 +38,9 @@ import org.openejb.EjbInvocation;
  *
  */
 final class TxNever implements TransactionPolicy {
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
-
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
         // If we have a transaction, throw an exception
-        if (callerContext != null && callerContext.isInheritable()) {
+        if (transactionManager.getTransaction() != null) {
             if (ejbInvocation.getType().isLocal()) {
                 throw new TransactionNotSupportedLocalException();
             } else {
@@ -50,29 +48,10 @@ final class TxNever implements TransactionPolicy {
             }
         }
 
-        if (callerContext != null) {
-            callerContext.suspend();
-        }
-        try {
-            TransactionContext beanContext = transactionContextManager.newUnspecifiedTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
-            try {
-                InvocationResult result = interceptor.invoke(ejbInvocation);
-                return result;
-            } catch (Throwable t) {
-                beanContext.setRollbackOnly();
-                throw t;
-            } finally {
-                beanContext.commit();
-            }
-        } finally {
-            ejbInvocation.setTransactionContext(null);
-            transactionContextManager.setContext(callerContext);
-            if (callerContext != null) {
-                callerContext.resume();
-            }
-        }
+        InvocationResult result = interceptor.invoke(ejbInvocation);
+        return result;
     }
+
     public String toString() {
         return "Never";
     }

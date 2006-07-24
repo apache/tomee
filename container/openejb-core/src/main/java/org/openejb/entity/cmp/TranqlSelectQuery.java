@@ -66,6 +66,7 @@ import org.tranql.ql.QueryException;
 import org.tranql.query.QueryCommand;
 import org.tranql.query.ResultHandler;
 import org.tranql.schema.Entity;
+import org.openejb.transaction.EjbTransactionContext;
 
 public abstract class TranqlSelectQuery implements SelectQuery {
     private final EJBQLQuery ejbqlQuery;
@@ -110,9 +111,19 @@ public abstract class TranqlSelectQuery implements SelectQuery {
     }
 
     protected Object execute(CmpInstanceContext ctx, ResultHandler resultHandler, Object[] args, Object results, boolean local) throws QueryException {
-        InTxCache cache = (InTxCache) ctx.getTransactionContext().getInTxCache();
+        EjbTransactionContext ejbTransactionData = ctx.getEjbTransactionData();
         if (ejbqlQuery.isFlushCacheBeforeQuery()) {
-            cache.flush();
+            try {
+                ejbTransactionData.flush();
+            } catch (QueryException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable throwable) {
+                throw new QueryException("Exception while flushing cmp data", throwable);
+            }
         }
 
         QueryCommand command;
@@ -122,6 +133,7 @@ public abstract class TranqlSelectQuery implements SelectQuery {
             command = remoteCommand;
         }
 
+        InTxCache cache = (InTxCache) ejbTransactionData.getCmpTxData();
         resultHandler = new CacheFiller(resultHandler, idDefiner, idInjector, cache);
         return command.execute(cache, resultHandler, new Row(args), results);
     }

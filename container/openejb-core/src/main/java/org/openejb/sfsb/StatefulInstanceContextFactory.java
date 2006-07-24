@@ -48,15 +48,14 @@
 package org.openejb.sfsb;
 
 import java.io.Serializable;
-import java.util.Set;
 import javax.ejb.SessionBean;
 
-import org.apache.geronimo.transaction.InstanceContext;
+import org.openejb.EJBInstanceContext;
 import org.openejb.EJBInstanceFactory;
 import org.openejb.EJBInstanceFactoryImpl;
 import org.openejb.InstanceContextFactory;
-import org.openejb.StatefulEjbDeployment;
 import org.openejb.StatefulEjbContainer;
+import org.openejb.StatefulEjbDeployment;
 import org.openejb.proxy.EJBProxyFactory;
 
 /**
@@ -68,31 +67,24 @@ public class StatefulInstanceContextFactory implements InstanceContextFactory, S
     protected final StatefulEjbDeployment statefulEjbDeployment;
     private final EJBInstanceFactory instanceFactory;
     protected final transient EJBProxyFactory proxyFactory;
-    protected final Set unshareableResources;
-    protected final Set applicationManagedSecurityResources;
 
     public StatefulInstanceContextFactory(StatefulEjbDeployment statefulEjbDeployment,
             StatefulEjbContainer statefulEjbContainer,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
+            EJBProxyFactory proxyFactory) {
         this.statefulEjbContainer = statefulEjbContainer;
         this.instanceFactory = new EJBInstanceFactoryImpl(statefulEjbDeployment.getBeanClass());
         this.proxyFactory = proxyFactory;
-        this.unshareableResources = unshareableResources;
-        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
         this.statefulEjbDeployment = statefulEjbDeployment;
     }
 
-    public InstanceContext newInstance() throws Exception {
+    public EJBInstanceContext newInstance() throws Exception {
         return new StatefulInstanceContext(
                 statefulEjbDeployment,
                 statefulEjbContainer,
                 createInstance(),
                 createInstanceId(),
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources);
+                proxyFactory
+        );
     }
 
     protected SessionBean createInstance() throws Exception {

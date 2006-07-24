@@ -47,6 +47,11 @@
  */
 package org.openejb.entity.bmp;
 
+import javax.ejb.EntityContext;
+import javax.ejb.Timer;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.geronimo.interceptor.Interceptor;
@@ -54,9 +59,6 @@ import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
 import org.apache.geronimo.transaction.TrackedConnectionAssociator;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.BmpEjbContainer;
 import org.openejb.CallbackMethod;
 import org.openejb.ConnectionTrackingInterceptor;
@@ -67,6 +69,7 @@ import org.openejb.EjbInvocation;
 import org.openejb.EjbInvocationImpl;
 import org.openejb.ExtendedEjbDeployment;
 import org.openejb.SystemExceptionInterceptor;
+import org.openejb.core.CoreUserTransaction;
 import org.openejb.dispatch.DispatchInterceptor;
 import org.openejb.entity.EntityCallbackInterceptor;
 import org.openejb.entity.EntityInstanceInterceptor;
@@ -75,10 +78,9 @@ import org.openejb.security.EJBIdentityInterceptor;
 import org.openejb.security.EjbRunAsInterceptor;
 import org.openejb.security.EjbSecurityInterceptor;
 import org.openejb.security.PolicyContextHandlerEJBInterceptor;
+import org.openejb.transaction.EjbTransactionContext;
+import org.openejb.transaction.TransactionPolicyInterceptor;
 import org.openejb.transaction.TransactionContextInterceptor;
-
-import javax.ejb.EntityContext;
-import javax.ejb.Timer;
 
 
 /**
@@ -90,11 +92,11 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
     private final Interceptor callbackChain;
     private final PersistentTimer transactedTimer;
     private final PersistentTimer nontransactionalTimer;
-    private final TransactionContextManager transactionContextManager;
-    private final UserTransactionImpl userTransaction;
+    private final TransactionManager transactionManager;
+    private final UserTransaction userTransaction;
 
     public DefaultBmpEjbContainer(
-            TransactionContextManager transactionContextManager,
+            TransactionManager transactionManager,
             TrackedConnectionAssociator trackedConnectionAssociator,
             PersistentTimer transactionalTimer,
             PersistentTimer nontransactionalTimer,
@@ -102,8 +104,8 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
             boolean doAsCurrentCaller,
             boolean useContextHandler) throws Exception {
 
-        this.transactionContextManager = transactionContextManager;
-        this.userTransaction = new UserTransactionImpl(transactionContextManager, trackedConnectionAssociator);
+        this.transactionManager = transactionManager;
+        this.userTransaction = new CoreUserTransaction(transactionManager);
         this.transactedTimer = transactionalTimer;
         this.nontransactionalTimer = nontransactionalTimer;
 
@@ -129,7 +131,8 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
             invocationChain = new ConnectionTrackingInterceptor(invocationChain, trackedConnectionAssociator);
         }
         invocationChain = new EntityInstanceInterceptor(invocationChain);
-        invocationChain = new TransactionContextInterceptor(invocationChain, transactionContextManager);
+        invocationChain = new TransactionContextInterceptor(invocationChain, transactionManager);
+        invocationChain = new TransactionPolicyInterceptor(invocationChain, transactionManager);
         invocationChain = new SystemExceptionInterceptor(invocationChain);
         this.invocationChain = invocationChain;
 
@@ -145,11 +148,11 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
         this.callbackChain = callbackChain;
     }
 
-    public TransactionContextManager getTransactionContextManager() {
-        return transactionContextManager;
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
-    public UserTransactionImpl getUserTransaction() {
+    public UserTransaction getUserTransaction() {
         return userTransaction;
     }
 
@@ -185,15 +188,15 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
         callbackChain.invoke(invocation);
     }
 
-    public void load(EJBInstanceContext instanceContext, TransactionContext transactionContext) throws Throwable {
+    public void load(EJBInstanceContext instanceContext, EjbTransactionContext ejbTransactionContext) throws Throwable {
         EjbCallbackInvocation invocation = new EjbCallbackInvocation(CallbackMethod.LOAD, instanceContext);
-        invocation.setTransactionContext(transactionContext);
+        invocation.setEjbTransactionData(ejbTransactionContext);
         callbackChain.invoke(invocation);
     }
 
-    public void store(EJBInstanceContext instanceContext, TransactionContext transactionContext) throws Throwable {
+    public void store(EJBInstanceContext instanceContext, EjbTransactionContext ejbTransactionContext) throws Throwable {
         EjbCallbackInvocation invocation = new EjbCallbackInvocation(CallbackMethod.STORE, instanceContext);
-        invocation.setTransactionContext(transactionContext);
+        invocation.setEjbTransactionData(ejbTransactionContext);
         callbackChain.invoke(invocation);
     }
 
@@ -201,24 +204,14 @@ public class DefaultBmpEjbContainer implements BmpEjbContainer {
         EjbInvocation invocation = new EjbInvocationImpl(EJBInterfaceType.TIMEOUT, id, ejbTimeoutIndex, new Object[]{timer});
         invocation.setEjbDeployment(deployment);
 
-        // set the transaction context into the invocation object
-        TransactionContext transactionContext = transactionContextManager.getContext();
-        if (transactionContext == null) {
-            throw new IllegalStateException("Transaction context has not been set");
-        }
-        invocation.setTransactionContext(transactionContext);
-
-        Thread currentThread = Thread.currentThread();
-        ClassLoader oldClassLoader = currentThread.getContextClassLoader();
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(deployment.getClassLoader());
         try {
-            currentThread.setContextClassLoader(deployment.getClassLoader());
             invoke(invocation);
         } catch (Throwable throwable) {
             log.warn("Timer invocation failed", throwable);
         } finally {
-            currentThread.setContextClassLoader(oldClassLoader);
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
-
-
 }

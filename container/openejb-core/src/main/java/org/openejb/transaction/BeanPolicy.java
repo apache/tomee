@@ -47,12 +47,13 @@
  */
 package org.openejb.transaction;
 
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
 import org.openejb.EjbInvocation;
 
 /**
@@ -62,41 +63,28 @@ public class BeanPolicy implements TransactionPolicy {
     private static final Log log = LogFactory.getLog(BeanPolicy.class);
     public static final BeanPolicy INSTANCE = new BeanPolicy();
 
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext clientContext = transactionContextManager.getContext();
-        if (clientContext != null) {
-            clientContext.suspend();
-        }
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction clientContext = transactionManager.suspend();
         try {
-            TransactionContext beanContext = transactionContextManager.newUnspecifiedTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
             try {
                 InvocationResult result = interceptor.invoke(ejbInvocation);
-                if (beanContext != transactionContextManager.getContext()) {
+                if (transactionManager.getTransaction() != null) {
                     throw new UncommittedTransactionException();
                 }
                 return result;
             } catch (Throwable t) {
-                TransactionContext currentContext = transactionContextManager.getContext();
-                if (currentContext.isActive()) {
+                if (transactionManager.getTransaction() != null) {
                     try {
-                        if (beanContext != currentContext) {
-                            currentContext.rollback();
-                        }
+                        transactionManager.rollback();
                     } catch (Exception e) {
                         log.warn("Unable to roll back", e);
                     }
                 }
-                beanContext.setRollbackOnly();
                 throw t;
-            } finally {
-                beanContext.commit();
             }
         } finally {
-            ejbInvocation.setTransactionContext(clientContext);
-            transactionContextManager.setContext(clientContext);
-            if (clientContext != null) {  
-                clientContext.resume();
+            if (clientContext != null) {
+                transactionManager.resume(clientContext);
             }
         }
     }
@@ -105,7 +93,7 @@ public class BeanPolicy implements TransactionPolicy {
         return "BeanManaged";
     }
 
-    private Object readResolve() {
+    protected Object readResolve() {
         return INSTANCE;
     }
 }

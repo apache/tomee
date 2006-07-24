@@ -51,8 +51,9 @@ package org.openejb;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.InstanceContext;
 import org.apache.geronimo.transaction.TrackedConnectionAssociator;
+import org.apache.geronimo.transaction.DefaultInstanceContext;
+import org.apache.geronimo.transaction.InstanceContext;
 
 /**
  *
@@ -65,16 +66,24 @@ public class ConnectionTrackingInterceptor implements Interceptor {
     private final Interceptor next;
     private final TrackedConnectionAssociator trackedConnectionAssociator;
 
-    public ConnectionTrackingInterceptor(final Interceptor next,
-                                         final TrackedConnectionAssociator trackedConnectionAssociator) {
+    public ConnectionTrackingInterceptor(Interceptor next, TrackedConnectionAssociator trackedConnectionAssociator) {
         this.next = next;
         this.trackedConnectionAssociator = trackedConnectionAssociator;
     }
 
     public InvocationResult invoke(Invocation invocation) throws Throwable {
         EjbInvocation ejbInvocation = (EjbInvocation) invocation;
-        InstanceContext enteringInstanceContext = ejbInvocation.getEJBInstanceContext();
-        InstanceContext leavingInstanceContext = trackedConnectionAssociator.enter(enteringInstanceContext);
+        EJBInstanceContext ejbInstanceContext = ejbInvocation.getEJBInstanceContext();
+
+        InstanceContext connectorCtx = (InstanceContext) ejbInstanceContext.getConnectorInstanceData();
+        if (connectorCtx == null) {
+            ExtendedEjbDeployment ejbDeployment = ejbInvocation.getEjbDeployment();
+            connectorCtx = new DefaultInstanceContext(ejbDeployment.getUnshareableResources(),
+                    ejbDeployment.getApplicationManagedSecurityResources());
+            ejbInstanceContext.setConnectorInstanceData(connectorCtx);
+        }
+
+        InstanceContext leavingInstanceContext = trackedConnectionAssociator.enter(connectorCtx);
         try {
             return next.invoke(invocation);
         } finally {

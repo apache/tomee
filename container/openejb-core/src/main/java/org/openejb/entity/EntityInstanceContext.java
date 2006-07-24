@@ -47,11 +47,9 @@
  */
 package org.openejb.entity;
 
-import java.util.Set;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 
-import org.apache.geronimo.transaction.context.TransactionContext;
 import org.openejb.AbstractInstanceContext;
 import org.openejb.EJBContextImpl;
 import org.openejb.EJBOperation;
@@ -59,6 +57,7 @@ import org.openejb.EntityEjbContainer;
 import org.openejb.EntityEjbDeployment;
 import org.openejb.cache.InstancePool;
 import org.openejb.proxy.EJBProxyFactory;
+import org.openejb.transaction.EjbTransactionContext;
 
 /**
  * @version $Revision$ $Date$
@@ -68,19 +67,17 @@ public abstract class EntityInstanceContext extends AbstractInstanceContext {
     private Object id;
     private boolean loaded = false;
     private InstancePool pool;
-    private TransactionContext transactionContext;
+    private EjbTransactionContext ejbTransactionContext;
     private final EntityContextImpl entityContext;
 
     public EntityInstanceContext(EntityEjbDeployment entityEjbDeployment,
             EntityEjbContainer entityEjbContainer,
             EntityBean instance,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
-        super(entityEjbDeployment, instance, proxyFactory, unshareableResources, applicationManagedSecurityResources);
+            EJBProxyFactory proxyFactory) {
+        super(entityEjbDeployment, instance, proxyFactory);
         this.entityEjbContainer = entityEjbContainer;
 
-        entityContext = new EntityContextImpl(this, entityEjbContainer.getTransactionContextManager());
+        entityContext = new EntityContextImpl(this, entityEjbContainer.getTransactionManager());
     }
 
     public Object getId() {
@@ -115,12 +112,12 @@ public abstract class EntityInstanceContext extends AbstractInstanceContext {
         return entityContext;
     }
 
-    public TransactionContext getTransactionContext() {
-        return transactionContext;
+    public EjbTransactionContext getEjbTransactionData() {
+        return ejbTransactionContext;
     }
 
-    public void setTransactionContext(TransactionContext transactionContext) {
-        this.transactionContext = transactionContext;
+    public void setEjbTransactionData(EjbTransactionContext ejbTransactionContext) {
+        this.ejbTransactionContext = ejbTransactionContext;
     }
 
     public boolean isLoaded() {
@@ -137,7 +134,7 @@ public abstract class EntityInstanceContext extends AbstractInstanceContext {
             pool = null;
         }
         loaded = false;
-        setTransactionContext(null);
+        setEjbTransactionData(null);
         super.die();
     }
 
@@ -169,7 +166,7 @@ public abstract class EntityInstanceContext extends AbstractInstanceContext {
             throw t;
         } finally {
             loaded = false;
-            setTransactionContext(null);
+            ejbTransactionContext = null;
         }
     }
 
@@ -218,15 +215,15 @@ public abstract class EntityInstanceContext extends AbstractInstanceContext {
     }
 
     protected void ejbLoad() throws Throwable {
-        entityEjbContainer.load(this, transactionContext);
+        entityEjbContainer.load(this, ejbTransactionContext);
     }
 
     public void ejbStore() throws Throwable {
-        entityEjbContainer.store(this, transactionContext);
+        entityEjbContainer.store(this, ejbTransactionContext);
     }
 
     public void afterCommit(boolean status) throws Throwable {
         super.afterCommit(status);
-        transactionContext = null;
+        ejbTransactionContext = null;
     }
 }

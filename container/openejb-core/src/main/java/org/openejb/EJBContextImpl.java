@@ -56,14 +56,14 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.TimerService;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import javax.security.auth.Subject;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.apache.geronimo.security.ContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 
 /**
  * Implementation of EJBContext that uses the State pattern to determine
@@ -73,15 +73,15 @@ import org.apache.geronimo.transaction.context.UserTransactionImpl;
  */
 public abstract class EJBContextImpl {
     protected final EJBInstanceContext context;
-    protected final UserTransactionImpl userTransaction;
-    private final TransactionContextManager transactionContextManager;
+    private final UserTransaction userTransaction;
+    private final TransactionManager transactionManager;
     private Subject callerSubject;
     protected EJBContextState state;
 
-    public EJBContextImpl(EJBInstanceContext context, TransactionContextManager transactionContextManager, UserTransactionImpl userTransaction) {
+    public EJBContextImpl(EJBInstanceContext context, TransactionManager transactionManager, UserTransaction userTransaction) {
         this.context = context;
         this.userTransaction = userTransaction;
-        this.transactionContextManager = transactionContextManager;
+        this.transactionManager = transactionManager;
     }
 
     public Subject getCallerSubject() {
@@ -128,14 +128,14 @@ public abstract class EJBContextImpl {
         if (userTransaction != null) {
             throw new IllegalStateException("Calls to setRollbackOnly are not allowed for EJBs with bean-managed transaction demarcation");
         }
-        state.setRollbackOnly(context, transactionContextManager);
+        state.setRollbackOnly(context, transactionManager);
     }
 
     public boolean getRollbackOnly() {
         if (userTransaction != null) {
             throw new IllegalStateException("Calls to getRollbackOnly are not allowed for EJBs with bean-managed transaction demarcation");
         }
-        return state.getRollbackOnly(context, transactionContextManager);
+        return state.getRollbackOnly(context, transactionManager);
     }
 
     public TimerService getTimerService() {
@@ -202,25 +202,24 @@ public abstract class EJBContextImpl {
             return userTransaction;
         }
 
-        public void setRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
-            TransactionContext ctx = transactionContextManager.getContext();
-            if (ctx == null || !ctx.isInheritable() || !ctx.isActive()) {
-                throw new IllegalStateException("There is no transaction in progess.");
-            }
+        public void setRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             try {
-                ctx.setRollbackOnly();
+                Transaction transaction = transactionManager.getTransaction();
+                if (transaction == null) {
+                    throw new IllegalStateException("There is no transaction in progess.");
+                }
+                transaction.setRollbackOnly();
             } catch (SystemException e) {
                 throw new EJBException(e);
             }
         }
 
-        public boolean getRollbackOnly(EJBInstanceContext context, TransactionContextManager transactionContextManager) {
-            TransactionContext ctx = transactionContextManager.getContext();
-            if (ctx == null || !ctx.isInheritable() || !ctx.isActive()) {
-                throw new IllegalStateException("There is no transaction in progess.");
-            }
+        public boolean getRollbackOnly(EJBInstanceContext context, TransactionManager transactionManager) {
             try {
-                return ctx.getRollbackOnly();
+                int status = transactionManager.getStatus();
+                return (status == Status.STATUS_MARKED_ROLLBACK ||
+                        status == Status.STATUS_ROLLEDBACK ||
+                        status == Status.STATUS_ROLLING_BACK);
             } catch (SystemException e) {
                 throw new EJBException(e);
             }

@@ -46,6 +46,7 @@ package org.openejb;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -56,6 +57,8 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.security.auth.Subject;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,12 +66,8 @@ import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.naming.enc.EnterpriseNamingContext;
 import org.apache.geronimo.security.ContextManager;
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
-import org.apache.geronimo.security.util.ConfigurationUtil;
 import org.apache.geronimo.timer.PersistenceException;
 import org.apache.geronimo.timer.PersistentTimer;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.dispatch.InterfaceMethodSignature;
 import org.openejb.dispatch.SystemMethodIndices;
 import org.openejb.security.PermissionManager;
@@ -93,12 +92,17 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
     protected final PermissionManager permissionManager;
     protected final Context componentContext;
     protected final EjbContainer ejbContainer;
-    protected final TransactionContextManager transactionContextManager;
+    protected final TransactionManager transactionManager;
     protected final boolean beanManagedTransactions;
     protected final SortedMap transactionPolicies;
     protected final SystemMethodIndices systemMethodIndices;
     protected final BasicTimerServiceImpl timerService;
     protected final boolean securityEnabled;
+
+    // connector stuff
+    // todo find a new home for this data
+    private final Set unshareableResources;
+    private final Set applicationManagedSecurityResources;
 
     public AbstractEjbDeployment(String containerId,
             String ejbName,
@@ -111,14 +115,16 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
 
             boolean securityEnabled,
             String policyContextId,
-            DefaultPrincipal defaultPrincipal,
+            Subject defaultSubject,
             Subject runAs,
 
             boolean beanManagedTransactions,
             SortedMap transactionPolicies,
 
-            Map componentContext
-            ) throws Exception {
+            Map componentContext,
+
+            Set unshareableResources,
+            Set applicationManagedSecurityResources) throws Exception {
 
         assert (containerId != null);
         assert (ejbName != null && ejbName.length() > 0);
@@ -147,16 +153,9 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
         permissionManager = new PermissionManager(ejbName, signatures);
         transactionPolicyManager = new TransactionPolicyManager(beanManagedTransactions, transactionPolicies, signatures);
 
-        // create the default subject
-        if (defaultPrincipal != null) {
-            // TODO: Throws org.apache.geronimo.common.DeploymentException
-//            this.defaultSubject = ConfigurationUtil.generateDefaultSubject(defaultPrincipal, classLoader);
-            this.defaultSubject = null;
-        } else {
-            this.defaultSubject = null;
-        }
+        this.defaultSubject = defaultSubject;
 
-        UserTransactionImpl userTransaction;
+        UserTransaction userTransaction;
         if (beanManagedTransactions) {
             userTransaction = ejbContainer.getUserTransaction();
         } else {
@@ -166,7 +165,7 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
         // TODO: Kernel reference
         this.componentContext = EnterpriseNamingContext.createEnterpriseNamingContext(componentContext, userTransaction, null, classLoader);
 
-        transactionContextManager = ejbContainer.getTransactionContextManager();
+        transactionManager = ejbContainer.getTransactionManager();
 
         if (EntityBean.class.isAssignableFrom(beanClass)) {
             systemMethodIndices = SystemMethodIndices.createSystemMethodIndices(signatures, "setEntityContext", EntityContext.class.getName(), "unsetEntityContext");
@@ -187,6 +186,9 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
         } else {
             timerService = null;
         }
+
+        this.unshareableResources = unshareableResources;
+        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
     }
 
     private PersistentTimer getTimer() {
@@ -353,5 +355,13 @@ public abstract class AbstractEjbDeployment implements EjbDeployment, ExtendedEj
 
     public boolean isSecurityEnabled() {
         return securityEnabled;
+    }
+
+    public Set getUnshareableResources() {
+        return unshareableResources;
+    }
+
+    public Set getApplicationManagedSecurityResources() {
+        return applicationManagedSecurityResources;
     }
 }

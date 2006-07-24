@@ -55,7 +55,7 @@ import javax.ejb.EntityBean;
 
 import net.sf.cglib.reflect.FastClass;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 import org.openejb.EJBOperation;
 import org.openejb.EjbInvocation;
 import org.openejb.dispatch.MethodSignature;
@@ -139,16 +139,16 @@ public class CmpCreateMethod implements VirtualOperation, Serializable {
         }
 
         // create the new instance using the data set during the ejbCreate callback
-        TransactionContext transactionContext = invocation.getTransactionContext();
+        EjbTransactionContext ejbTransactionContext = invocation.getEjbTransactionData();
         try {
-            ejbCmpEngine.afterCreate(ctx, transactionContext);
+            ejbCmpEngine.afterCreate(ctx, ejbTransactionContext);
         } catch (DuplicateKeyException e) {
             return invocation.createExceptionResult(e);
         }
 
         // associate the new cmp instance with the tx context
         ctx.setLoaded(true);
-        transactionContext.associate(ctx);
+        ejbTransactionContext.associate(ctx);
 
         // call the post create method
         try {

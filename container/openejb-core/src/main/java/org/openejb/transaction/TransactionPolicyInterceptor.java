@@ -45,58 +45,40 @@
  *
  * ====================================================================
  */
-package org.openejb.entity.cmp;
+package org.openejb.transaction;
 
-import java.util.Collection;
-import java.util.Iterator;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
+import javax.transaction.TransactionManager;
 
+import org.apache.geronimo.interceptor.Interceptor;
+import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.openejb.EJBOperation;
+import org.openejb.EJBInterfaceType;
+import org.openejb.ExtendedEjbDeployment;
 import org.openejb.EjbInvocation;
-import org.openejb.dispatch.AbstractMethodOperation;
-import org.openejb.dispatch.MethodSignature;
-import org.openejb.timer.TimerState;
 
 /**
- * Virtual operation handling removal of an instance.
- *
  * @version $Revision$ $Date$
  */
-public class CmpRemoveMethod extends AbstractMethodOperation {
-    private final EjbCmpEngine ejbCmpEngine;
+public class TransactionPolicyInterceptor implements Interceptor {
+    private final Interceptor next;
+    private final TransactionManager transactionManager;
 
-    public CmpRemoveMethod(Class beanClass, MethodSignature signature, EjbCmpEngine ejbCmpEngine) {
-        super(beanClass, signature);
-        this.ejbCmpEngine = ejbCmpEngine;
+    public TransactionPolicyInterceptor(Interceptor next, TransactionManager transactionManager) {
+        this.next = next;
+        this.transactionManager = transactionManager;
     }
 
-    public InvocationResult execute(EjbInvocation invocation) throws Throwable {
-        CmpInstanceContext ctx = (CmpInstanceContext) invocation.getEJBInstanceContext();
-        InvocationResult result = invoke(invocation, EJBOperation.EJBREMOVE);
+    public InvocationResult invoke(Invocation invocation) throws Throwable {
+        EjbInvocation ejbInvocation = (EjbInvocation) invocation;
+        ExtendedEjbDeployment deployment = ejbInvocation.getEjbDeployment();
+        TransactionPolicyManager transactionPolicyManager = deployment.getTransactionPolicyManager();
 
-        if (result.isNormal()) {
-            //cancel timers
-            TimerService timerService = ctx.getTimerService();
-            if (timerService != null) {
-                boolean oldTimerMethodAvailable = TimerState.getTimerState();
-                ctx.setTimerServiceAvailable(true);
-                TimerState.setTimerState(true);
-                try {
-                    Collection timers = timerService.getTimers();
-                    for (Iterator iterator = timers.iterator(); iterator.hasNext();) {
-                        Timer timer = (Timer) iterator.next();
-                        timer.cancel();
-                    }
-                } finally {
-                    ctx.setTimerServiceAvailable(false);
-                    TimerState.setTimerState(oldTimerMethodAvailable);
-                }
-            }
+        EJBInterfaceType invocationType = ejbInvocation.getType();
+        int methodIndex = ejbInvocation.getMethodIndex();
 
-            ejbCmpEngine.afterRemove(ctx, invocation.getEjbTransactionData());
-        }
-        return result;
+        TransactionPolicy policy = transactionPolicyManager.getTransactionPolicy(invocationType, methodIndex);
+        assert policy != null: "transaction policy array was not set up correctly, no policy for " + invocation;
+        return policy.invoke(next, ejbInvocation, transactionManager);
     }
+
 }

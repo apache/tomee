@@ -16,10 +16,11 @@
  */
 package org.openejb.transaction;
 
-import org.apache.geronimo.interceptor.InvocationResult;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
 import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.apache.geronimo.interceptor.InvocationResult;
 import org.openejb.EjbInvocation;
 
 /**
@@ -43,28 +44,14 @@ import org.openejb.EjbInvocation;
  *
  */
 final class TxNotSupported implements TransactionPolicy {
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
-        if (callerContext != null) {
-            callerContext.suspend();
-        }
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction callerTransaction = transactionManager.suspend();
         try {
-            TransactionContext beanContext = transactionContextManager.newUnspecifiedTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
-            try {
-                InvocationResult result = interceptor.invoke(ejbInvocation);
-                return result;
-            } catch (Throwable t) {
-                beanContext.setRollbackOnly();
-                throw t;
-            } finally {
-                beanContext.commit();
-            }
+            InvocationResult result = interceptor.invoke(ejbInvocation);
+            return result;
         } finally {
-            ejbInvocation.setTransactionContext(null);
-            transactionContextManager.setContext(callerContext);
-            if (callerContext != null) {
-                callerContext.resume();
+            if (callerTransaction != null) {
+                transactionManager.resume(callerTransaction);
             }
         }
     }

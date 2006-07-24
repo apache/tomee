@@ -16,17 +16,18 @@
  */
 package org.openejb.transaction;
 
-import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.RollbackException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionRolledbackException;
+import javax.transaction.TransactionManager;
+import javax.transaction.Status;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.geronimo.interceptor.Interceptor;
+import org.apache.geronimo.interceptor.InvocationResult;
 import org.openejb.EjbInvocation;
-
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.transaction.TransactionRolledbackException;
-import javax.transaction.RollbackException;
 
 /**
  * Required
@@ -52,54 +53,44 @@ import javax.transaction.RollbackException;
 final class TxRequired implements TransactionPolicy {
     private static final Log log = LogFactory.getLog(TxRequired.class);
 
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
-        if (callerContext != null && callerContext.isInheritable()) {
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction transaction = transactionManager.getTransaction();
+        if (transaction != null) {
             try {
-                ejbInvocation.setTransactionContext(callerContext);
                 return interceptor.invoke(ejbInvocation);
             } catch (Throwable t){
-                callerContext.setRollbackOnly();
+                transactionManager.setRollbackOnly();
                 if (ejbInvocation.getType().isLocal()) {
                     throw new TransactionRolledbackLocalException().initCause(t);
                 } else {
                     // can't set an initCause on a TransactionRolledbackException
                     throw new TransactionRolledbackException(t.getMessage());
                 }
-            } finally {
-                ejbInvocation.setTransactionContext(null);
             }
         }
 
-        if (callerContext != null) {
-            callerContext.suspend();
-        }
+        transactionManager.begin();
         try {
-            TransactionContext beanContext = transactionContextManager.newContainerTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
+            InvocationResult result = interceptor.invoke(ejbInvocation);
+            return result;
+        } catch (RollbackException re) {
+            throw re;
+        } catch (Throwable t) {
             try {
-                InvocationResult result = interceptor.invoke(ejbInvocation);
-                return result;
-            } catch (RollbackException re) {
-                throw re;
-            } catch (Throwable t) {
-                try {
-                    beanContext.setRollbackOnly();
-                } catch (Exception e) {
-                    log.warn("Unable to roll back", e);
-                }
-                throw t;
-            } finally {
-                beanContext.commit();
+                transactionManager.setRollbackOnly();
+            } catch (Exception e) {
+                log.warn("Unable to roll back", e);
             }
+            throw t;
         } finally {
-            ejbInvocation.setTransactionContext(null);
-            transactionContextManager.setContext(callerContext);
-            if (callerContext != null) {
-                callerContext.resume();
+            if (transactionManager.getStatus() == Status.STATUS_ACTIVE) {
+                transactionManager.commit();
+            } else {
+                transactionManager.rollback();
             }
         }
     }
+
     public String toString() {
         return "Required";
     }

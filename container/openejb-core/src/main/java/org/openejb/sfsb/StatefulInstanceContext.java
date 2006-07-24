@@ -47,21 +47,21 @@
  */
 package org.openejb.sfsb;
 
-import java.util.Set;
 import javax.ejb.SessionBean;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.AbstractInstanceContext;
 import org.openejb.EJBContextImpl;
 import org.openejb.EJBOperation;
-import org.openejb.StatefulEjbDeployment;
 import org.openejb.StatefulEjbContainer;
+import org.openejb.StatefulEjbDeployment;
 import org.openejb.cache.InstanceCache;
 import org.openejb.proxy.EJBProxyFactory;
+import org.openejb.util.TransactionUtils;
 
 /**
  * @version $Revision$ $Date$
@@ -71,7 +71,7 @@ public class StatefulInstanceContext extends AbstractInstanceContext {
     private final StatefulEjbContainer statefulEjbContainer;
     private final Object id;
     private final StatefulSessionContext statefulContext;
-    private TransactionContext preexistingContext;
+    private Transaction preexistingTransaction;
     private EJBOperation operation;
     private InstanceCache cache;
 
@@ -79,24 +79,22 @@ public class StatefulInstanceContext extends AbstractInstanceContext {
             StatefulEjbContainer statefulEjbContainer,
             SessionBean instance,
             Object id,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
-        super(statefulEjbDeployment, instance, proxyFactory, unshareableResources, applicationManagedSecurityResources);
+            EJBProxyFactory proxyFactory) {
+        super(statefulEjbDeployment, instance, proxyFactory);
 
         this.statefulEjbContainer = statefulEjbContainer;
         this.id = id;
 
-        TransactionContextManager transactionContextManager = statefulEjbContainer.getTransactionContextManager();
+        TransactionManager transactionManager = statefulEjbContainer.getTransactionManager();
 
-        UserTransactionImpl userTransaction;
+        UserTransaction userTransaction;
         if (statefulEjbDeployment.isBeanManagedTransactions()) {
             userTransaction = statefulEjbContainer.getUserTransaction();
         } else {
             userTransaction = null;
         }
 
-        statefulContext = new StatefulSessionContext(this, transactionContextManager, userTransaction);
+        statefulContext = new StatefulSessionContext(this, transactionManager, userTransaction);
     }
 
     public EJBOperation getOperation() {
@@ -120,12 +118,12 @@ public class StatefulInstanceContext extends AbstractInstanceContext {
         return id;
     }
 
-    public TransactionContext getPreexistingContext() {
-        return preexistingContext;
+    public Transaction getPreexistingTransaction() {
+        return preexistingTransaction;
     }
 
-    public void setPreexistingContext(TransactionContext preexistingContext) {
-        this.preexistingContext = preexistingContext;
+    public void setPreexistingTransaction(Transaction preexistingTransaction) {
+        this.preexistingTransaction = preexistingTransaction;
     }
 
     public InstanceCache getCache() {
@@ -137,15 +135,15 @@ public class StatefulInstanceContext extends AbstractInstanceContext {
     }
 
     public void die() {
-        if (preexistingContext != null) {
-            if (preexistingContext.isActive()) {
+        if (preexistingTransaction != null) {
+            if (TransactionUtils.isActive(preexistingTransaction)) {
                 try {
-                    preexistingContext.rollback();
+                    preexistingTransaction.rollback();
                 } catch (Exception e) {
                     log.warn("Unable to roll back", e);
                 }
             }
-            preexistingContext = null;
+            preexistingTransaction = null;
         }
         if (cache != null) {
             cache.remove(id);
@@ -172,7 +170,7 @@ public class StatefulInstanceContext extends AbstractInstanceContext {
     }
 
     public void afterCommit(boolean committed) throws Throwable {
-        super.beforeCommit();
+        super.afterCommit(committed);
         statefulEjbContainer.afterCommit(this, committed);
     }
 

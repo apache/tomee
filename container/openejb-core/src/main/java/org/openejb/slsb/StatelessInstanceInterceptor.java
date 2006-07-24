@@ -52,12 +52,12 @@ import javax.xml.rpc.handler.MessageContext;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.InstanceContext;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 import org.apache.geronimo.webservices.MessageContextInvocationKey;
 import org.openejb.EjbDeployment;
 import org.openejb.EjbInvocation;
 import org.openejb.StatelessEjbDeployment;
+import org.openejb.EJBInstanceContext;
 import org.openejb.cache.InstancePool;
 
 
@@ -95,8 +95,8 @@ public final class StatelessInstanceInterceptor implements Interceptor {
         // set the webservice message context if we got one
         ctx.setMessageContext((MessageContext)invocation.get(MessageContextInvocationKey.INSTANCE));
 
-        TransactionContext transactionContext = ejbInvocation.getTransactionContext();
-        InstanceContext oldContext = transactionContext.beginInvocation(ctx);
+        EjbTransactionContext ejbTransactionContext = ejbInvocation.getEjbTransactionData();
+        EJBInstanceContext oldContext = ejbTransactionContext.beginInvocation(ctx);
         try {
             InvocationResult result = next.invoke(invocation);
             return result;
@@ -105,7 +105,7 @@ public final class StatelessInstanceInterceptor implements Interceptor {
             ctx.die();
             throw t;
         } finally {
-            transactionContext.endInvocation(oldContext);
+            ejbTransactionContext.endInvocation(oldContext);
             ejbInvocation.setEJBInstanceContext(null);
             ctx.setMessageContext(null);
         }

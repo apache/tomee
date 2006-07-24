@@ -48,15 +48,14 @@
 package org.openejb.entity.bmp;
 
 import java.io.Serializable;
-import java.util.Set;
 import javax.ejb.EntityBean;
 
-import org.apache.geronimo.transaction.InstanceContext;
+import org.openejb.BmpEjbContainer;
 import org.openejb.BmpEjbDeployment;
+import org.openejb.EJBInstanceContext;
 import org.openejb.EJBInstanceFactory;
 import org.openejb.EJBInstanceFactoryImpl;
 import org.openejb.InstanceContextFactory;
-import org.openejb.BmpEjbContainer;
 import org.openejb.proxy.EJBProxyFactory;
 
 /**
@@ -68,28 +67,21 @@ public class BmpInstanceContextFactory implements InstanceContextFactory, Serial
     private final BmpEjbContainer bmpEjbContainer;
     private final EJBInstanceFactory instanceFactory;
     private final transient EJBProxyFactory proxyFactory;
-    private final Set unshareableResources;
-    private final Set applicationManagedSecurityResources;
 
     public BmpInstanceContextFactory(BmpEjbDeployment bmpEjbDeployment,
             BmpEjbContainer bmpEjbContainer,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
+            EJBProxyFactory proxyFactory) {
         this.bmpEjbDeployment = bmpEjbDeployment;
         this.bmpEjbContainer = bmpEjbContainer;
         this.instanceFactory = new EJBInstanceFactoryImpl(bmpEjbDeployment.getBeanClass());
         this.proxyFactory = proxyFactory;
-        this.unshareableResources = unshareableResources;
-        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
     }
 
-    public InstanceContext newInstance() throws Exception {
+    public EJBInstanceContext newInstance() throws Exception {
         return new BmpInstanceContext(bmpEjbDeployment,
                 bmpEjbContainer,
                 (EntityBean) instanceFactory.newInstance(),
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources);
+                proxyFactory
+        );
     }
 }

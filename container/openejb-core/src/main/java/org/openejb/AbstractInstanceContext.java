@@ -17,15 +17,12 @@
 
 package org.openejb;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.TimerService;
 
 import org.openejb.proxy.EJBProxyFactory;
-import org.openejb.timer.TimerServiceImpl;
 import org.openejb.timer.BasicTimerService;
+import org.openejb.timer.TimerServiceImpl;
 import org.openejb.timer.UnavailableTimerService;
 
 
@@ -42,20 +39,15 @@ public abstract class AbstractInstanceContext implements EJBInstanceContext {
     private final EJBProxyFactory proxyFactory;
     private final BasicTimerService activeTimer;
     private final TimerService timerService;
-    private final Set unshareableResources;
-    private final Set applicationManagedSecurityResources;
-
-    private final Map connectionManagerMap = new HashMap();
 
     private BasicTimerService timerState = UnavailableTimerService.INSTANCE;
     private boolean dead = false;
     private int callDepth;
+    private Object connectorInstanceData;
 
     public AbstractInstanceContext(ExtendedEjbDeployment deployment,
             EnterpriseBean instance,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
+            EJBProxyFactory proxyFactory) {
         this.deployment = deployment;
         this.containerId = deployment.getContainerId();
         this.instance = instance;
@@ -65,10 +57,7 @@ public abstract class AbstractInstanceContext implements EJBInstanceContext {
             this.timerService = null;
         } else {
             this.timerService = new TimerServiceImpl(this);
-        }
-        this.unshareableResources = unshareableResources;
-        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
-    }
+        }    }
 
     public ExtendedEjbDeployment getDeployment() {
         return deployment;
@@ -109,16 +98,12 @@ public abstract class AbstractInstanceContext implements EJBInstanceContext {
     public void unassociate() throws Throwable {
     }
 
-    public Map getConnectionManagerMap() {
-        return connectionManagerMap;
+    public Object getConnectorInstanceData() {
+        return connectorInstanceData;
     }
 
-    public Set getUnshareableResources() {
-        return unshareableResources;
-    }
-
-    public Set getApplicationManagedSecurityResources() {
-        return applicationManagedSecurityResources;
+    public void setConnectorInstanceData(Object connectorInstanceData) {
+        this.connectorInstanceData = connectorInstanceData;
     }
 
     public EnterpriseBean getInstance() {
@@ -162,7 +147,9 @@ public abstract class AbstractInstanceContext implements EJBInstanceContext {
     }
 
     public void exit() {
-        assert isInCall();
+        if (!isInCall()){
+            throw new IllegalArgumentException("EJB instance is not in a call");
+        }
         callDepth--;
     }
 

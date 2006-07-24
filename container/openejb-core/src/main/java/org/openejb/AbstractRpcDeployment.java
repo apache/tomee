@@ -44,12 +44,10 @@
  */
 package org.openejb;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -60,11 +58,9 @@ import javax.naming.Context;
 import javax.security.auth.Subject;
 
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
 import org.apache.geronimo.timer.PersistenceException;
 import org.openejb.proxy.EJBProxyFactory;
 import org.openejb.proxy.ProxyInfo;
-import org.openejb.transaction.TransactionPolicyType;
 
 /**
  * @version $Revision$ $Date$
@@ -77,6 +73,7 @@ public abstract class AbstractRpcDeployment extends AbstractEjbDeployment implem
     private final String[] localJndiNames;
 
     protected final EJBProxyFactory proxyFactory;
+
 
     public AbstractRpcDeployment(String containerId,
             String ejbName,
@@ -93,13 +90,16 @@ public abstract class AbstractRpcDeployment extends AbstractEjbDeployment implem
 
             boolean securityEnabled,
             String policyContextId,
-            DefaultPrincipal defaultPrincipal,
+            Subject subject,
             Subject runAs,
 
             boolean beanManagedTransactions,
             SortedMap transactionPolicies,
 
-            Map componentContext) throws Exception {
+            Map componentContext,
+
+            Set unshareableResources,
+            Set applicationManagedSecurityResources) throws Exception {
 
         super(containerId,
                 ejbName,
@@ -109,11 +109,13 @@ public abstract class AbstractRpcDeployment extends AbstractEjbDeployment implem
                 ejbContainer,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                subject,
                 runAs,
                 beanManagedTransactions,
                 transactionPolicies,
-                componentContext);
+                componentContext,
+                unshareableResources,
+                applicationManagedSecurityResources);
 
         assert (containerId != null);
         assert (ejbName != null && ejbName.length() > 0);
@@ -122,9 +124,13 @@ public abstract class AbstractRpcDeployment extends AbstractEjbDeployment implem
         // load the bean classes
         this.proxyInfo = proxyInfo;
 
-        if (jndiNames == null) jndiNames = new String[0];
+        if (jndiNames == null) {
+            jndiNames = new String[0];
+        }
         this.jndiNames = jndiNames;
-        if (localJndiNames == null) localJndiNames = new String[0];
+        if (localJndiNames == null) {
+            localJndiNames = new String[0];
+        }
         this.localJndiNames = localJndiNames;
 
         // create the proxy factory
@@ -188,7 +194,7 @@ public abstract class AbstractRpcDeployment extends AbstractEjbDeployment implem
         if (invocationType == EJBInterfaceType.HOME && method.getName().equals("remove")) {
             primKey = args[0];
             if (primKey instanceof Handle) {
-                Handle handle = (Handle) primKey;
+//                Handle handle = (Handle) primKey;
                 //TODO: This naughty code uses org.openejb.client
 //                EJBObjectProxy ejbObject = (EJBObjectProxy) handle.getEJBObject();
 //                EJBObjectHandler handler = ejbObject.getEJBObjectHandler();

@@ -44,6 +44,7 @@
  */
 package org.openejb;
 
+import java.util.Set;
 import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.security.auth.Subject;
@@ -78,4 +79,8 @@ public interface ExtendedEjbDeployment extends EjbDeployment{
     Timer getTimerById(Long id);
 
     BasicTimerServiceImpl getTimerService();
+
+    Set getUnshareableResources();
+
+    Set getApplicationManagedSecurityResources();
 }

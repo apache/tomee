@@ -45,20 +45,20 @@
 package org.openejb;
 
 import javax.ejb.Timer;
+import javax.transaction.UserTransaction;
+import javax.transaction.TransactionManager;
 
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
-import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.interceptor.Invocation;
+import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
 
 /**
  * @version $Revision$ $Date$
  */
 public interface EjbContainer {
-    TransactionContextManager getTransactionContextManager();
+    TransactionManager getTransactionManager();
 
-    UserTransactionImpl getUserTransaction();
+    UserTransaction getUserTransaction();
 
     InvocationResult invoke(Invocation invocation) throws Throwable;
 

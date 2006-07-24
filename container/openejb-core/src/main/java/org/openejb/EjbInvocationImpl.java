@@ -54,7 +54,7 @@ import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.interceptor.SimpleInvocationResult;
 import org.apache.geronimo.interceptor.InvocationKey;
 
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 
 /**
  *
@@ -70,13 +70,13 @@ public class EjbInvocationImpl implements EjbInvocation {
     private final Object id;
 
     // The deployment that we are invoking, this is set in the deployment before sending the invocation to the interceptor stack
-    private transient ExtendedEjbDeployment ejbDeployment;
+    private ExtendedEjbDeployment ejbDeployment;
 
     // Valid in server-side interceptor stack once an instance has been identified
-    private transient EJBInstanceContext instanceContext;
+    private EJBInstanceContext instanceContext;
 
     // Valid in server-side interceptor stack once a TransactionContext has been created
-    private transient TransactionContext transactionContext;
+    private EjbTransactionContext ejbTransactionContext;
 
     public EjbInvocationImpl(EJBInterfaceType type, int index, Object[] arguments) {
         assert type != null : "Interface type may not be null";
@@ -149,12 +149,12 @@ public class EjbInvocationImpl implements EjbInvocation {
         this.instanceContext = instanceContext;
     }
 
-    public TransactionContext getTransactionContext() {
-        return transactionContext;
+    public EjbTransactionContext getEjbTransactionData() {
+        return ejbTransactionContext;
     }
 
-    public void setTransactionContext(TransactionContext transactionContext) {
-        this.transactionContext = transactionContext;
+    public void setEjbTransactionData(EjbTransactionContext ejbTransactionContext) {
+        this.ejbTransactionContext = ejbTransactionContext;
     }
 
     public InvocationResult createResult(Object object) {

@@ -50,7 +50,7 @@ package org.openejb;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 
 /**
  * Specialization of Invocation to define attributes specific to the
@@ -109,14 +109,14 @@ public interface EjbInvocation extends Invocation {
      * thread local we carry it in the invocation context to avoid the extra tx cost.
      * @return the transaction context to use
      */
-    TransactionContext getTransactionContext();
+    EjbTransactionContext getEjbTransactionData();
 
     /**
      * Setx the transaction context to use.  Eventhough the tx context is available from a
      * thread local we carry it in the invocation context to avoid the extra tx cost.
-     * @param transactionContext the transaction context to use
+     * @param ejbTransactionContext the transaction context to use
      */
-    void setTransactionContext(TransactionContext transactionContext);
+    void setEjbTransactionData(EjbTransactionContext ejbTransactionContext);
 
     InvocationResult createResult(Object object);
 

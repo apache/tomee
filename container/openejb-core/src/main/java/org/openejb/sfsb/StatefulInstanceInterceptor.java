@@ -49,20 +49,20 @@ package org.openejb.sfsb;
 
 import java.rmi.NoSuchObjectException;
 import javax.ejb.NoSuchObjectLocalException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.InstanceContext;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
+import org.openejb.transaction.EjbTransactionContext;
 import org.openejb.EjbDeployment;
 import org.openejb.EjbInvocation;
 import org.openejb.NotReentrantException;
 import org.openejb.NotReentrantLocalException;
 import org.openejb.StatefulEjbDeployment;
+import org.openejb.EJBInstanceContext;
 import org.openejb.cache.InstanceCache;
-import org.openejb.transaction.UncommittedTransactionException;
 
 /**
  * Interceptor for Stateful Session EJBs that acquires an instance for execution.
@@ -73,16 +73,16 @@ import org.openejb.transaction.UncommittedTransactionException;
  */
 public final class StatefulInstanceInterceptor implements Interceptor {
     private final Interceptor next;
-    private final TransactionContextManager transactionContextManager;
+    private final TransactionManager transactionManager;
 
-    public StatefulInstanceInterceptor(Interceptor next, TransactionContextManager transactionContextManager) {
+    public StatefulInstanceInterceptor(Interceptor next, TransactionManager transactionManager) {
         this.next = next;
-        this.transactionContextManager = transactionContextManager;
+        this.transactionManager = transactionManager;
     }
 
     public InvocationResult invoke(Invocation invocation) throws Throwable {
         EjbInvocation ejbInvocation = (EjbInvocation) invocation;
-        EjbDeployment deployment = ejbInvocation.getEjbDeployment();
+        StatefulEjbDeployment deployment = (StatefulEjbDeployment) ejbInvocation.getEjbDeployment();
         if (!(deployment instanceof StatefulEjbDeployment)) {
             throw new IllegalArgumentException("StatefulInstanceInterceptor can only be used with a StatefulEjbDeploymentContext: " + deployment.getClass().getName());
         }
@@ -92,10 +92,10 @@ public final class StatefulInstanceInterceptor implements Interceptor {
         ejbInvocation.setEJBInstanceContext(ctx);
 
         // resume the preexisting transaction context
-        if (ctx.getPreexistingContext() != null) {
-            TransactionContext preexistingContext = ctx.getPreexistingContext();
-            transactionContextManager.resumeBeanTransactionContext(preexistingContext);
-            ctx.setPreexistingContext(null);
+        if (ctx.getPreexistingTransaction() != null) {
+            Transaction preexistingContext = ctx.getPreexistingTransaction();
+            transactionManager.resume(preexistingContext);
+            ctx.setPreexistingTransaction(null);
         }
 
         // check reentrancy
@@ -107,20 +107,15 @@ public final class StatefulInstanceInterceptor implements Interceptor {
             }
         }
 
-        TransactionContext oldTransactionContext = ejbInvocation.getTransactionContext();
-        InstanceContext oldInstanceContext = oldTransactionContext.beginInvocation(ctx);
+        EjbTransactionContext ejbTransactionContext = ejbInvocation.getEjbTransactionData();
+        EJBInstanceContext oldInstanceContext = ejbTransactionContext.beginInvocation(ctx);
         try {
             // invoke next
             InvocationResult invocationResult = next.invoke(invocation);
 
             // if we have a BMT still associated with the thread, suspend it and save it off for the next invocation
-            TransactionContext currentContext = transactionContextManager.getContext();
-            if (oldTransactionContext != currentContext) {
-                TransactionContext preexistingContext = transactionContextManager.suspendBeanTransactionContext();
-                ctx.setPreexistingContext(preexistingContext);
-                if (transactionContextManager.getContext() != oldTransactionContext) {
-                    throw new UncommittedTransactionException("Found an uncommitted bean transaction from another session bean");
-                }
+            if (deployment.isBeanManagedTransactions()) {
+                ctx.setPreexistingTransaction(transactionManager.suspend());
             }
 
             return invocationResult;
@@ -130,7 +125,7 @@ public final class StatefulInstanceInterceptor implements Interceptor {
 
             throw t;
         } finally {
-            oldTransactionContext.endInvocation(oldInstanceContext);
+            ejbTransactionContext.endInvocation(oldInstanceContext);
             ejbInvocation.setEJBInstanceContext(null);
         }
     }
@@ -149,8 +144,8 @@ public final class StatefulInstanceInterceptor implements Interceptor {
             instanceCache.putActive(id, ctx);
         } else {
             // first check the transaction cache
-            TransactionContext transactionContext = ejbInvocation.getTransactionContext();
-            ctx = (StatefulInstanceContext) transactionContext.getContext(deployment.getContainerId(), id);
+            EjbTransactionContext ejbTransactionContext = ejbInvocation.getEjbTransactionData();
+            ctx = (StatefulInstanceContext) ejbTransactionContext.getContext(deployment.getContainerId(), id);
             if (ctx == null) {
                 // next check the main cache
                 ctx = (StatefulInstanceContext) instanceCache.get(id);

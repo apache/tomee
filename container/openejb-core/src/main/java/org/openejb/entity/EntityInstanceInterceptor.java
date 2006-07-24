@@ -54,13 +54,13 @@ import javax.ejb.NoSuchObjectLocalException;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.InstanceContext;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 import org.openejb.EjbDeployment;
 import org.openejb.EjbInvocation;
 import org.openejb.EntityEjbDeployment;
 import org.openejb.NotReentrantException;
 import org.openejb.NotReentrantLocalException;
+import org.openejb.EJBInstanceContext;
 import org.openejb.cache.InstancePool;
 
 /**
@@ -87,7 +87,7 @@ public final class EntityInstanceInterceptor implements Interceptor {
         String containerId = entityEjbDeploymentContext.getContainerId();
         InstancePool pool = entityEjbDeploymentContext.getInstancePool();
 
-        TransactionContext transactionContext = ejbInvocation.getTransactionContext();
+        EjbTransactionContext ejbTransactionContext = ejbInvocation.getEjbTransactionData();
         Object id = ejbInvocation.getId();
 
         // get the context
@@ -95,10 +95,10 @@ public final class EntityInstanceInterceptor implements Interceptor {
 
         // if we have an id then check if there is already a context associated with the transaction
         if (id != null) {
-            ctx = (EntityInstanceContext) transactionContext.getContext(containerId, id);
+            ctx = (EntityInstanceContext) ejbTransactionContext.getContext(containerId, id);
             // if we have a dead context, the cached context was discarded, so we need clean it up and get a new one
             if (ctx != null && ctx.isDead()) {
-                transactionContext.unassociate(ctx);
+                ejbTransactionContext.unassociate(ctx);
                 ctx = null;
             }
         }
@@ -108,7 +108,7 @@ public final class EntityInstanceInterceptor implements Interceptor {
             ctx = (EntityInstanceContext) pool.acquire();
             ctx.setId(id);
             ctx.setPool(pool);
-            ctx.setTransactionContext(transactionContext);
+            ctx.setEjbTransactionData(ejbTransactionContext);
         }
 
         // set the instanct into the invocation
@@ -125,9 +125,9 @@ public final class EntityInstanceInterceptor implements Interceptor {
 
         // associates the context with the transaction, this may result an a load that throws
         // and NoSuchEntityException, which needs to be converted to the a NoSuchObject[Local]Exception
-        InstanceContext oldContext = null;
+        EJBInstanceContext oldContext = null;
         try {
-            oldContext = transactionContext.beginInvocation(ctx);
+            oldContext = ejbTransactionContext.beginInvocation(ctx);
         } catch (NoSuchEntityException e) {
             if (ejbInvocation.getType().isLocal()) {
                 throw new NoSuchObjectLocalException().initCause(e);
@@ -149,11 +149,11 @@ public final class EntityInstanceInterceptor implements Interceptor {
             }
             // if we have an id unassociate the context
             if (id != null) {
-                transactionContext.unassociate(containerId, id);
+                ejbTransactionContext.unassociate(containerId, id);
             }
             throw t;
         } finally {
-            transactionContext.endInvocation(oldContext);
+            ejbTransactionContext.endInvocation(oldContext);
             ejbInvocation.setEJBInstanceContext(null);
         }
     }

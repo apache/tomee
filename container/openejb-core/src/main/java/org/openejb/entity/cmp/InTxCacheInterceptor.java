@@ -50,8 +50,8 @@ package org.openejb.entity.cmp;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.context.Flushable;
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
+import org.openejb.transaction.CmpTxData;
 import org.openejb.CmpEjbDeployment;
 import org.openejb.EjbDeployment;
 import org.openejb.EjbInvocation;
@@ -73,8 +73,8 @@ public final class InTxCacheInterceptor implements Interceptor {
 
     public InvocationResult invoke(final Invocation invocation) throws Throwable {
         EjbInvocation ejbInvocation = (EjbInvocation) invocation;
-        TransactionContext transactionContext = ejbInvocation.getTransactionContext();
-        if (transactionContext.getInTxCache() == null) {
+        EjbTransactionContext ejbTransactionContext = ejbInvocation.getEjbTransactionData();
+        if (ejbTransactionContext.getCmpTxData() == null) {
             EjbDeployment deployment = ejbInvocation.getEjbDeployment();
             if (!(deployment instanceof CmpEjbDeployment)) {
                 throw new IllegalArgumentException("NewInTxCacheInterceptor can only be used with an CmpEjbDeployment: " + deployment.getClass().getName());
@@ -82,10 +82,10 @@ public final class InTxCacheInterceptor implements Interceptor {
 
             CmpEjbDeployment cmpEjbDeploymentContext = ((CmpEjbDeployment) deployment);
 
-            Flushable inTxCache = cmpEjbDeploymentContext.getEjbCmpEngine().createInTxCache();
-            if (inTxCache == null) throw new NullPointerException("inTxCache is null");
+            CmpTxData cmpTxData = cmpEjbDeploymentContext.getEjbCmpEngine().createCmpTxData();
+            if (cmpTxData == null) throw new NullPointerException("cmpTxData is null");
 
-            transactionContext.setInTxCache(inTxCache);
+            ejbTransactionContext.setCmpTxData(cmpTxData);
         }
 
         return next.invoke(invocation);

@@ -50,31 +50,71 @@ package org.openejb;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.TimerService;
 
-import org.apache.geronimo.transaction.InstanceContext;
 import org.openejb.proxy.EJBProxyFactory;
 import org.openejb.timer.BasicTimerService;
 
 /**
  * @version $Revision$ $Date$
  */
-public interface EJBInstanceContext extends InstanceContext {
+public interface EJBInstanceContext {
+    Object getId();
 
+    Object getContainerId();
+
+    // entity/stateful
+    void associate() throws Throwable;
+
+    // entity/stateful
+    void unassociate() throws Throwable;
+
+    // stateful
+    void beforeCommit() throws Throwable;
+
+    // stateful
+    void afterCommit(boolean status) throws Throwable;
+
+    // entity
+    void flush() throws Throwable;
+
+    // ALL beginInvocation
+    boolean isInCall();
+
+    // ALL beginInvocation
+    void enter();
+
+    // ALL endInvocation
+    void exit();
+
+    // ALL beginInvocation
+    boolean isDead();
+
+    // ALL beginInvocation
+    void die();
+
+    // ALL
     EnterpriseBean getInstance();
 
+    // ALL
     void setOperation(EJBOperation operation);
 
+    // replace with getDeployment().getProxyFactory()
     EJBProxyFactory getProxyFactory();
 
+    // All
     TimerService getTimerService();
 
+    // remove only used by internal TimerService
     BasicTimerService getBasicTimerService();
 
+    // both of these should be handled by setOperation above
     void setTimerServiceAvailable(boolean available);
-
-    //sets timer method availability based on operation, returns old availability
     boolean setTimerState(EJBOperation operation);
 
     EJBContextImpl getEJBContextImpl();
 
     ExtendedEjbDeployment getDeployment();
+
+    Object getConnectorInstanceData();
+
+    void setConnectorInstanceData(Object connectorInstanceData);
 }

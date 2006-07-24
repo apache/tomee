@@ -46,7 +46,7 @@ package org.openejb;
 
 import javax.ejb.EntityContext;
 
-import org.apache.geronimo.transaction.context.TransactionContext;
+import org.openejb.transaction.EjbTransactionContext;
 
 /**
  * @version $Revision$ $Date$
@@ -60,7 +60,7 @@ public interface EntityEjbContainer extends EjbContainer {
 
     void ejbPassivate(EJBInstanceContext instanceContext) throws Throwable;
 
-    void load(EJBInstanceContext instanceContext, TransactionContext transactionContext) throws Throwable;
+    void load(EJBInstanceContext instanceContext, EjbTransactionContext ejbTransactionContext) throws Throwable;
 
-    void store(EJBInstanceContext instanceContext, TransactionContext transactionContext) throws Throwable;
+    void store(EJBInstanceContext instanceContext, EjbTransactionContext ejbTransactionContext) throws Throwable;
 }

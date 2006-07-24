@@ -47,7 +47,6 @@
  */
 package org.openejb;
 
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
 import org.openejb.cache.InstanceFactory;
 import org.openejb.cache.InstancePool;
 import org.openejb.dispatch.EJBTimeoutOperation;
@@ -100,7 +99,7 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
                             boolean securityEnabled,
                             String policyContextId,
-                            DefaultPrincipal defaultPrincipal,
+                            Subject defaultSubject,
                             Subject runAs,
 
                             SortedMap transactionPolicies,
@@ -127,7 +126,7 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 transactionPolicies,
                 componentContext,
@@ -154,7 +153,7 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
                             boolean securityEnabled,
                             String policyContextId,
-                            DefaultPrincipal defaultPrincipal,
+                            Subject defaultSubject,
                             Subject runAs,
 
                             SortedMap transactionPolicies,
@@ -185,22 +184,19 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 false,
                 transactionPolicies,
-                componentContext);
+                componentContext,
+                unshareableResources,
+                applicationManagedSecurityResources);
 
         this.reentrant = reentrant;
 
         dispatchMethodMap = buildDispatchMethodMap();
 
-        InstanceContextFactory contextFactory = new BmpInstanceContextFactory(this,
-                ejbContainer,
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources
-        );
+        InstanceContextFactory contextFactory = new BmpInstanceContextFactory(this, ejbContainer, proxyFactory);
 
         InstanceFactory instanceFactory = new EntityInstanceFactory(contextFactory);
 

@@ -47,7 +47,6 @@
  */
 package org.openejb;
 
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
 import org.openejb.cache.InstanceFactory;
 import org.openejb.cache.InstancePool;
 import org.openejb.dispatch.EJBTimeoutOperation;
@@ -99,7 +98,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
 
                                   boolean securityEnabled,
                                   String policyContextId,
-                                  DefaultPrincipal defaultPrincipal,
+                                  Subject defaultSubject,
                                   Subject runAs,
 
                                   boolean beanManagedTransactions,
@@ -128,7 +127,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 beanManagedTransactions,
                 transactionPolicies,
@@ -156,7 +155,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
 
                                   boolean securityEnabled,
                                   String policyContextId,
-                                  DefaultPrincipal defaultPrincipal,
+                                  Subject defaultSubject,
                                   Subject runAs,
 
                                   boolean beanManagedTransactions,
@@ -189,19 +188,17 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
                 localJndiNames,
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
                 beanManagedTransactions,
                 transactionPolicies,
-                componentContext);
+                componentContext,
+                unshareableResources,
+                applicationManagedSecurityResources);
 
         dispatchMethodMap = buildDispatchMethodMap();
 
-        InstanceContextFactory contextFactory = new StatelessInstanceContextFactory(this,
-                ejbContainer,
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources);
+        InstanceContextFactory contextFactory = new StatelessInstanceContextFactory(this, ejbContainer, proxyFactory);
 
         InstanceFactory instanceFactory = new StatelessInstanceFactory(contextFactory);
 

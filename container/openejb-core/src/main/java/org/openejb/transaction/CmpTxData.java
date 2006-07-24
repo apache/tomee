@@ -1,4 +1,4 @@
-/* ====================================================================
+/**
  * Redistribution and use of this software and associated documentation
  * ("Software"), with or without modification, are permitted provided
  * that the following conditions are met:
@@ -7,14 +7,15 @@
  *    statements and notices.  Redistributions must also contain a
  *    copy of this document.
  *
- * 2. Redistributions in binary form must reproduce this list of
- *    conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 2. Redistributions in binary form must reproduce the
+ *    above copyright notice, this list of conditions and the
+ *    following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
  *
  * 3. The name "OpenEJB" must not be used to endorse or promote
  *    products derived from this Software without prior written
  *    permission of The OpenEJB Group.  For written permission,
- *    please contact openejb-group@openejb.sf.net.
+ *    please contact info@openejb.org.
  *
  * 4. Products derived from this Software may not be called "OpenEJB"
  *    nor may "OpenEJB" appear in their names without prior written
@@ -37,46 +38,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * ====================================================================
+ * Copyright 2006 (C) The OpenEJB Group. All Rights Reserved.
  *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the OpenEJB Project.  For more information
- * please see <http://openejb.org/>.
- *
- * ====================================================================
+ * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
  */
-package org.openejb.entity.cmp;
-
-import javax.ejb.EntityBean;
-
-import org.openejb.CmpEjbContainer;
-import org.openejb.CmpEjbDeployment;
-import org.openejb.entity.EntityInstanceContext;
-import org.openejb.proxy.EJBProxyFactory;
+package org.openejb.transaction;
 
 /**
  * @version $Revision$ $Date$
  */
-public final class CmpInstanceContext extends EntityInstanceContext {
-    private Object cmpData;
-
-    public CmpInstanceContext(CmpEjbDeployment cmpEjbDeployment,
-            CmpEjbContainer cmpEjbContainer,
-            EntityBean instance,
-            EJBProxyFactory proxyFactory) {
-
-        super(cmpEjbDeployment,
-                cmpEjbContainer,
-                instance,
-                proxyFactory
-        );
-    }
-
-    public Object getCmpData() {
-        return cmpData;
-    }
-
-    public void setCmpData(Object cmpData) {
-        this.cmpData = cmpData;
-    }
+public interface CmpTxData {
+    void flush() throws Throwable;
 }

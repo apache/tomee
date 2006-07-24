@@ -47,6 +47,11 @@
  */
 package org.openejb.slsb;
 
+import javax.ejb.SessionContext;
+import javax.ejb.Timer;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.geronimo.interceptor.Interceptor;
@@ -54,9 +59,6 @@ import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
 import org.apache.geronimo.transaction.TrackedConnectionAssociator;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.CallbackMethod;
 import org.openejb.ConnectionTrackingInterceptor;
 import org.openejb.EJBInstanceContext;
@@ -67,6 +69,7 @@ import org.openejb.EjbInvocationImpl;
 import org.openejb.ExtendedEjbDeployment;
 import org.openejb.StatelessEjbContainer;
 import org.openejb.SystemExceptionInterceptor;
+import org.openejb.core.CoreUserTransaction;
 import org.openejb.dispatch.DispatchInterceptor;
 import org.openejb.naming.ComponentContextInterceptor;
 import org.openejb.security.DefaultSubjectInterceptor;
@@ -74,10 +77,8 @@ import org.openejb.security.EJBIdentityInterceptor;
 import org.openejb.security.EjbRunAsInterceptor;
 import org.openejb.security.EjbSecurityInterceptor;
 import org.openejb.security.PolicyContextHandlerEJBInterceptor;
+import org.openejb.transaction.TransactionPolicyInterceptor;
 import org.openejb.transaction.TransactionContextInterceptor;
-
-import javax.ejb.SessionContext;
-import javax.ejb.Timer;
 
 
 /**
@@ -89,11 +90,11 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
     private final Interceptor callbackChain;
     private final PersistentTimer transactedTimer;
     private final PersistentTimer nontransactionalTimer;
-    private final TransactionContextManager transactionContextManager;
-    private final UserTransactionImpl userTransaction;
+    private final TransactionManager transactionManager;
+    private final UserTransaction userTransaction;
 
     public DefaultStatelessEjbContainer(
-            TransactionContextManager transactionContextManager,
+            TransactionManager transactionManager,
             TrackedConnectionAssociator trackedConnectionAssociator,
             PersistentTimer transactionalTimer,
             PersistentTimer nontransactionalTimer,
@@ -101,8 +102,8 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
             boolean doAsCurrentCaller,
             boolean useContextHandler) throws Exception {
 
-        this.transactionContextManager = transactionContextManager;
-        this.userTransaction = new UserTransactionImpl(transactionContextManager, trackedConnectionAssociator);
+        this.transactionManager = transactionManager;
+        this.userTransaction = new CoreUserTransaction(transactionManager);
         this.transactedTimer = transactionalTimer;
         this.nontransactionalTimer = nontransactionalTimer;
 
@@ -146,7 +147,8 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
         invocationChain = new StatelessInstanceInterceptor(invocationChain);
 
         // transaction interceptor
-        invocationChain = new TransactionContextInterceptor(invocationChain, transactionContextManager);
+        invocationChain = new TransactionContextInterceptor(invocationChain, transactionManager);
+        invocationChain = new TransactionPolicyInterceptor(invocationChain, transactionManager);
 
         // logs system exceptions
         invocationChain = new SystemExceptionInterceptor(invocationChain);
@@ -180,11 +182,11 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
         this.callbackChain = callbackChain;
     }
 
-    public TransactionContextManager getTransactionContextManager() {
-        return transactionContextManager;
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
-    public UserTransactionImpl getUserTransaction() {
+    public UserTransaction getUserTransaction() {
         return userTransaction;
     }
 
@@ -219,24 +221,14 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
         EjbInvocation invocation = new EjbInvocationImpl(EJBInterfaceType.TIMEOUT, id, ejbTimeoutIndex, new Object[]{timer});
         invocation.setEjbDeployment(deployment);
 
-        // set the transaction context into the invocation object
-        TransactionContext transactionContext = transactionContextManager.getContext();
-        if (transactionContext == null) {
-            throw new IllegalStateException("Transaction context has not been set");
-        }
-        invocation.setTransactionContext(transactionContext);
-
-        Thread currentThread = Thread.currentThread();
-        ClassLoader oldClassLoader = currentThread.getContextClassLoader();
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(deployment.getClassLoader());
         try {
-            currentThread.setContextClassLoader(deployment.getClassLoader());
             invoke(invocation);
         } catch (Throwable throwable) {
             log.warn("Timer invocation failed", throwable);
         } finally {
-            currentThread.setContextClassLoader(oldClassLoader);
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
-
-
 }

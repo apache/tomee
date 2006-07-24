@@ -18,12 +18,12 @@ package org.openejb.transaction;
 
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
 import org.openejb.EjbInvocation;
 
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.TransactionRolledbackException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 /**
  * Supports
@@ -45,48 +45,27 @@ import javax.transaction.TransactionRolledbackException;
  *
  */
 final class TxSupports implements TransactionPolicy {
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
-        if (callerContext != null && callerContext.isInheritable()) {
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction callerTransaction = transactionManager.getTransaction();
+        if (callerTransaction != null) {
             try {
-                ejbInvocation.setTransactionContext(callerContext);
-                return interceptor.invoke(ejbInvocation);
+                InvocationResult result = interceptor.invoke(ejbInvocation);
+                return result;
             } catch (Throwable t){
-                callerContext.setRollbackOnly();
+                transactionManager.setRollbackOnly();
                 if (ejbInvocation.getType().isLocal()) {
                     throw new TransactionRolledbackLocalException().initCause(t);
                 } else {
                     // can't set an initCause on a TransactionRolledbackException
                     throw new TransactionRolledbackException(t.getMessage());
                 }
-            } finally {
-                ejbInvocation.setTransactionContext(null);
             }
-        }
-
-        if (callerContext != null) {
-            callerContext.suspend();
-        }
-        try {
-            TransactionContext beanContext = transactionContextManager.newUnspecifiedTransactionContext();
-            ejbInvocation.setTransactionContext(beanContext);
-            try {
-                InvocationResult result = interceptor.invoke(ejbInvocation);
-                return result;
-            } catch (Throwable t) {
-                beanContext.setRollbackOnly();
-                throw t;
-            } finally {
-                beanContext.commit();
-            }
-        } finally {
-            ejbInvocation.setTransactionContext(null);
-            transactionContextManager.setContext(callerContext);
-            if (callerContext != null) {
-                callerContext.resume();
-            }
+        } else {
+            InvocationResult result = interceptor.invoke(ejbInvocation);
+            return result;
         }
     }
+
     public String toString() {
         return "Supports";
     }

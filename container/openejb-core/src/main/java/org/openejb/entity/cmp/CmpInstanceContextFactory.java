@@ -52,7 +52,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJBException;
 import javax.ejb.EntityBean;
 
@@ -62,10 +61,10 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.NoOp;
 import net.sf.cglib.reflect.FastClass;
-import org.apache.geronimo.transaction.InstanceContext;
-import org.openejb.CmpEjbDeployment;
-import org.openejb.InstanceContextFactory;
 import org.openejb.CmpEjbContainer;
+import org.openejb.CmpEjbDeployment;
+import org.openejb.EJBInstanceContext;
+import org.openejb.InstanceContextFactory;
 import org.openejb.dispatch.MethodHelper;
 import org.openejb.dispatch.MethodSignature;
 import org.openejb.proxy.EJBProxyFactory;
@@ -77,8 +76,6 @@ public class CmpInstanceContextFactory implements InstanceContextFactory {
     private final CmpEjbDeployment cmpEjbDeployment;
     private final CmpEjbContainer cmpEjbContainer;
     private final EJBProxyFactory proxyFactory;
-    private final Set unshareableResources;
-    private final Set applicationManagedSecurityResources;
     private final boolean cmp2;
 
     private final InstanceOperation[] itable;
@@ -88,14 +85,10 @@ public class CmpInstanceContextFactory implements InstanceContextFactory {
     public CmpInstanceContextFactory(CmpEjbDeployment cmpEjbDeployment,
             CmpEjbContainer cmpEjbContainer,
             EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources,
             boolean cmp2,
             Map imap) {
         this.cmpEjbContainer = cmpEjbContainer;
         this.proxyFactory = proxyFactory;
-        this.unshareableResources = unshareableResources;
-        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
         this.cmpEjbDeployment = cmpEjbDeployment;
         this.cmp2 = cmp2;
 
@@ -130,15 +123,13 @@ public class CmpInstanceContextFactory implements InstanceContextFactory {
         }
     }
 
-    public synchronized InstanceContext newInstance() throws Exception {
+    public synchronized EJBInstanceContext newInstance() throws Exception {
         CmpMethodInterceptor cmpMethodInterceptor = new CmpMethodInterceptor(itable);
         EntityBean instance = createCMPBeanInstance(cmpMethodInterceptor);
         CmpInstanceContext context = new CmpInstanceContext(cmpEjbDeployment,
                 cmpEjbContainer,
                 instance,
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources
+                proxyFactory
         );
         cmpMethodInterceptor.setInstanceContext(context);
         return context;

@@ -44,43 +44,62 @@
  */
 package org.openejb.transaction;
 
-import javax.transaction.TransactionManager;
-
-import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.interceptor.Invocation;
-import org.openejb.EjbInvocation;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
 
 /**
- * @version $Revision: 2449 $ $Date: 2006-02-15 22:30:22 -0800 (Wed, 15 Feb 2006) $
+ * <b>Really</b> stupid implementation of a double keyed map.
+ *
+ * @version $Rev: 355877 $ $Date: 2005-12-10 18:48:27 -0800 (Sat, 10 Dec 2005) $
  */
-public class TransactionContextInterceptor implements Interceptor {
-    private final Interceptor next;
-    private final TransactionManager transactionManager;
+public final class DoubleKeyedHashMap {
+    private final Map map = new HashMap();
 
-    public TransactionContextInterceptor(Interceptor next, TransactionManager transactionManager) {
-        this.next = next;
-        this.transactionManager = transactionManager;
+    public Object put(Object key1, Object key2, Object value) {
+        return map.put(new org.openejb.transaction.DoubleKeyedHashMap.Key(key1, key2), value);
     }
 
-    public InvocationResult invoke(Invocation invocation) throws Throwable {
-        EjbInvocation ejbInvocation = (EjbInvocation) invocation;
+    public Object get(Object key1, Object key2) {
+        return map.get(new org.openejb.transaction.DoubleKeyedHashMap.Key(key1, key2));
+    }
 
-        if (ejbInvocation.getEjbTransactionData() != null) {
-            throw new IllegalStateException("Invocation is already associated with a transaction");
+    public Object remove(Object key1, Object key2) {
+        return map.remove(new org.openejb.transaction.DoubleKeyedHashMap.Key(key1, key2));
+    }
+
+    public Collection values() {
+        return map.values();
+    }
+
+    public void clear() {
+        map.clear();
+    }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    private final static class Key {
+        private final Object part1;
+        private final Object part2;
+
+        public Key(Object part1, Object part2) {
+            this.part1 = part1;
+            this.part2 = part2;
         }
 
-        EjbTransactionContext ejbTransactionContext = EjbTransactionContext.get(transactionManager.getTransaction());
+        public int hashCode() {
+            return part1.hashCode() ^ part2.hashCode();
+        }
 
-        boolean succeeded = false;
-        try {
-            ejbInvocation.setEjbTransactionData(ejbTransactionContext);
-            InvocationResult result = next.invoke(ejbInvocation);
-            succeeded = true;
-            return result;
-        } finally {
-            ejbInvocation.setEjbTransactionData(null);
-            ejbTransactionContext.complete(succeeded);
+        public boolean equals(Object obj) {
+            if (obj instanceof org.openejb.transaction.DoubleKeyedHashMap.Key) {
+                org.openejb.transaction.DoubleKeyedHashMap.Key other = (org.openejb.transaction.DoubleKeyedHashMap.Key) obj;
+                return this.part1.equals(other.part1) && this.part2.equals(other.part2);
+            } else {
+                return false;
+            }
         }
     }
 }

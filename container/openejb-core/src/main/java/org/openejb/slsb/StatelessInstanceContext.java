@@ -47,17 +47,16 @@
  */                
 package org.openejb.slsb;
 
-import java.util.Set;
 import javax.ejb.SessionBean;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.AbstractInstanceContext;
 import org.openejb.EJBContextImpl;
 import org.openejb.EJBOperation;
-import org.openejb.StatelessEjbDeployment;
 import org.openejb.StatelessEjbContainer;
+import org.openejb.StatelessEjbDeployment;
 import org.openejb.cache.InstancePool;
 import org.openejb.proxy.EJBProxyFactory;
 
@@ -76,23 +75,21 @@ public final class StatelessInstanceContext extends AbstractInstanceContext {
     public StatelessInstanceContext(StatelessEjbDeployment statelessEjbDeployment,
             StatelessEjbContainer statelessEjbContainer,
             SessionBean instance,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
-        super(statelessEjbDeployment, instance, proxyFactory, unshareableResources, applicationManagedSecurityResources);
+            EJBProxyFactory proxyFactory) {
+        super(statelessEjbDeployment, instance, proxyFactory);
 
         this.statelessEjbContainer = statelessEjbContainer;
 
-        TransactionContextManager transactionContextManager = statelessEjbContainer.getTransactionContextManager();
+        TransactionManager transactionManager = statelessEjbContainer.getTransactionManager();
 
-        UserTransactionImpl userTransaction;
+        UserTransaction userTransaction;
         if (statelessEjbDeployment.isBeanManagedTransactions()) {
             userTransaction = statelessEjbContainer.getUserTransaction();
         } else {
             userTransaction = null;
         }
 
-        this.sessionContext = new StatelessSessionContext(this, transactionContextManager, userTransaction);
+        this.sessionContext = new StatelessSessionContext(this, transactionManager, userTransaction);
     }
 
     public void setId(Object id) {

@@ -44,9 +44,6 @@
  */
 package org.openejb;
 
-import javax.ejb.EntityContext;
-
-import org.apache.geronimo.transaction.context.TransactionContext;
 import org.openejb.cache.InstancePool;
 
 /**

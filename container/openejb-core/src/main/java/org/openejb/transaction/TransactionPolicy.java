@@ -49,9 +49,10 @@ package org.openejb.transaction;
 
 import java.io.Serializable;
 
+import javax.transaction.TransactionManager;
+
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
 import org.openejb.EjbInvocation;
 
 /**
@@ -60,5 +61,5 @@ import org.openejb.EjbInvocation;
  * @version $Revision$ $Date$
  */
 public interface TransactionPolicy extends Serializable {
-    InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable;
+    InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable;
 }

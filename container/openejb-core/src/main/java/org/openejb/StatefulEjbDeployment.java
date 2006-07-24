@@ -47,7 +47,6 @@
  */
 package org.openejb;
 
-import org.apache.geronimo.security.deploy.DefaultPrincipal;
 import org.apache.geronimo.timer.PersistenceException;
 import org.openejb.cache.InstanceCache;
 import org.openejb.cache.SimpleInstanceCache;
@@ -93,7 +92,7 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
 
                                  boolean securityEnabled,
                                  String policyContextId,
-                                 DefaultPrincipal defaultPrincipal,
+                                 Subject defaultSubject,
                                  Subject runAs,
 
                                  boolean beanManagedTransactions,
@@ -123,7 +122,7 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
 
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
 
                 beanManagedTransactions,
@@ -152,7 +151,7 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
 
                                  boolean securityEnabled,
                                  String policyContextId,
-                                 DefaultPrincipal defaultPrincipal,
+                                 Subject defaultSubject,
                                  Subject runAs,
 
                                  boolean beanManagedTransactions,
@@ -192,23 +191,21 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
 
                 securityEnabled,
                 policyContextId,
-                defaultPrincipal,
+                defaultSubject,
                 runAs,
 
                 beanManagedTransactions,
                 transactionPolicies,
 
-                componentContext);
+                componentContext,
+                unshareableResources,
+                applicationManagedSecurityResources);
 
         dispatchMethodMap = buildDispatchMethodMap();
 
         // build the instance factory
         StatefulInstanceContextFactory contextFactory;
-        contextFactory = new StatefulInstanceContextFactory(this,
-                ejbContainer,
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources);
+        contextFactory = new StatefulInstanceContextFactory(this, ejbContainer, proxyFactory);
 
         instanceFactory = new StatefulInstanceFactory(contextFactory);
 

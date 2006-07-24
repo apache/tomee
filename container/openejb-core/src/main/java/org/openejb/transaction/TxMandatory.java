@@ -16,16 +16,16 @@
  */
 package org.openejb.transaction;
 
-import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.interceptor.Interceptor;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.TransactionContext;
-import org.openejb.EjbInvocation;
-
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
+import javax.transaction.TransactionManager;
+
+import org.apache.geronimo.interceptor.Interceptor;
+import org.apache.geronimo.interceptor.InvocationResult;
+import org.openejb.EjbInvocation;
 
 /**
  * Mandatory
@@ -45,11 +45,11 @@ import javax.transaction.TransactionRolledbackException;
  *
  */
 final class TxMandatory implements TransactionPolicy {
-    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionContextManager transactionContextManager) throws Throwable {
-        TransactionContext callerContext = transactionContextManager.getContext();
+    public InvocationResult invoke(Interceptor interceptor, EjbInvocation ejbInvocation, TransactionManager transactionManager) throws Throwable {
+        Transaction callerTransaction = transactionManager.getTransaction();
 
         // If we don't have a transaction, throw an exception
-        if (callerContext == null || !callerContext.isInheritable()) {
+        if (callerTransaction == null) {
             if (ejbInvocation.getType().isLocal()) {
                 throw new TransactionRequiredLocalException();
             } else {
@@ -58,20 +58,18 @@ final class TxMandatory implements TransactionPolicy {
         }
 
         try {
-            ejbInvocation.setTransactionContext(callerContext);
             return interceptor.invoke(ejbInvocation);
         } catch (Throwable t) {
-            callerContext.setRollbackOnly();
+            callerTransaction.setRollbackOnly();
             if (ejbInvocation.getType().isLocal()) {
                 throw new TransactionRolledbackLocalException().initCause(t);
             } else {
                 // can't set an initCause on a TransactionRolledbackException
                 throw new TransactionRolledbackException(t.getMessage());
             }
-        } finally {
-            ejbInvocation.setTransactionContext(null);
         }
     }
+
     public String toString() {
         return "Mandatory";
     }

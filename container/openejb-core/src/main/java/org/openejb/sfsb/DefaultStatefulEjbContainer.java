@@ -47,13 +47,18 @@
  */
 package org.openejb.sfsb;
 
+import javax.ejb.EnterpriseBean;
+import javax.ejb.SessionContext;
+import javax.ejb.SessionSynchronization;
+import javax.ejb.Timer;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
 import org.apache.geronimo.transaction.TrackedConnectionAssociator;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
-import org.apache.geronimo.transaction.context.UserTransactionImpl;
 import org.openejb.CallbackMethod;
 import org.openejb.ConnectionTrackingInterceptor;
 import org.openejb.EJBInstanceContext;
@@ -61,6 +66,7 @@ import org.openejb.EjbCallbackInvocation;
 import org.openejb.ExtendedEjbDeployment;
 import org.openejb.StatefulEjbContainer;
 import org.openejb.SystemExceptionInterceptor;
+import org.openejb.core.CoreUserTransaction;
 import org.openejb.dispatch.DispatchInterceptor;
 import org.openejb.naming.ComponentContextInterceptor;
 import org.openejb.security.DefaultSubjectInterceptor;
@@ -68,12 +74,8 @@ import org.openejb.security.EJBIdentityInterceptor;
 import org.openejb.security.EjbRunAsInterceptor;
 import org.openejb.security.EjbSecurityInterceptor;
 import org.openejb.security.PolicyContextHandlerEJBInterceptor;
+import org.openejb.transaction.TransactionPolicyInterceptor;
 import org.openejb.transaction.TransactionContextInterceptor;
-
-import javax.ejb.EnterpriseBean;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
-import javax.ejb.Timer;
 
 
 /**
@@ -82,17 +84,17 @@ import javax.ejb.Timer;
 public class DefaultStatefulEjbContainer implements StatefulEjbContainer {
     private final Interceptor invocationChain;
     private final Interceptor callbackChain;
-    private final TransactionContextManager transactionContextManager;
-    private final UserTransactionImpl userTransaction;
+    private final TransactionManager transactionManager;
+    private final UserTransaction userTransaction;
 
-    public DefaultStatefulEjbContainer(TransactionContextManager transactionContextManager,
+    public DefaultStatefulEjbContainer(TransactionManager transactionManager,
                                        TrackedConnectionAssociator trackedConnectionAssociator,
                                        boolean securityEnabled,
                                        boolean doAsCurrentCaller,
                                        boolean useContextHandler) throws Exception {
 
-        this.transactionContextManager = transactionContextManager;
-        this.userTransaction = new UserTransactionImpl(transactionContextManager, trackedConnectionAssociator);
+        this.transactionManager = transactionManager;
+        this.userTransaction = new CoreUserTransaction(transactionManager);
 
         //
         // build the normal invocation processing chain (built in reverse order)
@@ -127,10 +129,11 @@ public class DefaultStatefulEjbContainer implements StatefulEjbContainer {
             invocationChain = new PolicyContextHandlerEJBInterceptor(invocationChain);
         }
 
-        invocationChain = new StatefulInstanceInterceptor(invocationChain, transactionContextManager);
+        invocationChain = new StatefulInstanceInterceptor(invocationChain, transactionManager);
 
         // transaction interceptor
-        invocationChain = new TransactionContextInterceptor(invocationChain, transactionContextManager);
+        invocationChain = new TransactionContextInterceptor(invocationChain, transactionManager);
+        invocationChain = new TransactionPolicyInterceptor(invocationChain, transactionManager);
 
         // logs system exceptions
         invocationChain = new SystemExceptionInterceptor(invocationChain);
@@ -161,11 +164,11 @@ public class DefaultStatefulEjbContainer implements StatefulEjbContainer {
         this.callbackChain = new SystemExceptionInterceptor(callbackChain);
     }
 
-    public TransactionContextManager getTransactionContextManager() {
-        return transactionContextManager;
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
-    public UserTransactionImpl getUserTransaction() {
+    public UserTransaction getUserTransaction() {
         return userTransaction;
     }
 

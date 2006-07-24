@@ -50,12 +50,12 @@ package org.openejb.slsb;
 import java.util.Set;
 import javax.ejb.SessionBean;
 
-import org.apache.geronimo.transaction.InstanceContext;
 import org.openejb.EJBInstanceFactory;
 import org.openejb.EJBInstanceFactoryImpl;
 import org.openejb.InstanceContextFactory;
 import org.openejb.StatelessEjbDeployment;
 import org.openejb.StatelessEjbContainer;
+import org.openejb.EJBInstanceContext;
 import org.openejb.proxy.EJBProxyFactory;
 
 /**
@@ -64,30 +64,23 @@ import org.openejb.proxy.EJBProxyFactory;
 public class StatelessInstanceContextFactory implements InstanceContextFactory {
     private final EJBInstanceFactory instanceFactory;
     private final EJBProxyFactory proxyFactory;
-    private final Set unshareableResources;
-    private final Set applicationManagedSecurityResources;
     private final StatelessEjbDeployment statelessEjbDeployment;
     private final StatelessEjbContainer statelessEjbContainer;
 
     public StatelessInstanceContextFactory(StatelessEjbDeployment statelessEjbDeployment,
             StatelessEjbContainer statelessEjbContainer,
-            EJBProxyFactory proxyFactory,
-            Set unshareableResources,
-            Set applicationManagedSecurityResources) {
+            EJBProxyFactory proxyFactory) {
         this.instanceFactory = new EJBInstanceFactoryImpl(statelessEjbDeployment.getBeanClass());
         this.proxyFactory = proxyFactory;
-        this.unshareableResources = unshareableResources;
-        this.applicationManagedSecurityResources = applicationManagedSecurityResources;
         this.statelessEjbDeployment = statelessEjbDeployment;
         this.statelessEjbContainer = statelessEjbContainer;
     }
 
-    public InstanceContext newInstance() throws Exception {
+    public EJBInstanceContext newInstance() throws Exception {
         return new StatelessInstanceContext(statelessEjbDeployment,
                 statelessEjbContainer,
                 (SessionBean) instanceFactory.newInstance(),
-                proxyFactory,
-                unshareableResources,
-                applicationManagedSecurityResources);
+                proxyFactory
+        );
     }
 }
