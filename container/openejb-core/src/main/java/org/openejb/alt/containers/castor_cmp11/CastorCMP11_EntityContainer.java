@@ -31,7 +31,6 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
-import javax.ejb.EnterpriseBean;
 import javax.ejb.EntityBean;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
@@ -318,7 +317,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         }
     }
 
-    public void discardInstance(EnterpriseBean bean, ThreadContext threadContext) {
+    public void discardInstance(Object bean, ThreadContext threadContext) {
         if (bean != null) txReadyPoolMap.remove(bean);
     }
 

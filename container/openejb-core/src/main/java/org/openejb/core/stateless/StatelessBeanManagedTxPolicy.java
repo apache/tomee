@@ -5,7 +5,6 @@ import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
 
-import javax.ejb.EnterpriseBean;
 import javax.transaction.Status;
 import java.rmi.RemoteException;
 
@@ -29,12 +28,12 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
         return "TX_BeanManaged: ";
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
 
         context.clientTx = suspendTransaction(context);
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             /*
             * The Container must detect the case in which a transaction was started, but
@@ -74,7 +73,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             context.currentTx = context.getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException e) {

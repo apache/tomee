@@ -1,7 +1,5 @@
 package org.openejb.core.transaction;
 
-import javax.ejb.EnterpriseBean;
-
 import org.openejb.ApplicationException;
 
 public class TxSupports extends TransactionPolicy {
@@ -19,7 +17,7 @@ public class TxSupports extends TransactionPolicy {
         return "TX_Supports: ";
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
 
         try {
 
@@ -31,7 +29,7 @@ public class TxSupports extends TransactionPolicy {
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
 
     }
 
@@ -40,7 +38,7 @@ public class TxSupports extends TransactionPolicy {
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
 
         boolean runningInTransaction = (context.currentTx != null);
 

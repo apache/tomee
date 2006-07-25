@@ -36,6 +36,15 @@ public class EjbDeployment {
     @XmlAttribute(name = "ejb-name")
     protected String ejbName;
 
+    public EjbDeployment() {
+    }
+
+    public EjbDeployment(String containerId, String deploymentId, String ejbName) {
+        this.containerId = containerId;
+        this.deploymentId = deploymentId;
+        this.ejbName = ejbName;
+    }
+
     public List<ResourceLink> getResourceLink() {
         if (resourceLink == null) {
             resourceLink = new ArrayList<ResourceLink>();

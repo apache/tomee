@@ -47,7 +47,6 @@ package org.openejb.assembler.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Properties;
 import java.io.File;
 import java.io.IOException;
 import javax.naming.Context;
@@ -205,12 +204,11 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
 
         DeploymentContext deploymentContext = new DeploymentContext(id, classLoader, context);
         DeploymentInfo deploymentInfo = new DeploymentInfo(deploymentContext,
-                loadClass(homeInterface, classLoader),
+                loadClass(beanClass, classLoader), loadClass(homeInterface, classLoader),
                 loadClass(remoteInterface, classLoader),
                 loadClass(localHomeInterface, classLoader),
                 loadClass(localInterface, classLoader),
-                loadClass(beanClass, classLoader),
-                loadClass(getPkClass(), classLoader),
+                null, null, loadClass(getPkClass(), classLoader),
                 getComponentType(),
                 null);
         deploymentInfo.setJarPath(getJarPath());

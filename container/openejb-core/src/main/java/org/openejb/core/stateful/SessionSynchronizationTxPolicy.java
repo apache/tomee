@@ -1,6 +1,5 @@
 package org.openejb.core.stateful;
 
-import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionSynchronization;
 
 import org.openejb.ApplicationException;
@@ -25,7 +24,7 @@ public class SessionSynchronizationTxPolicy extends org.openejb.core.transaction
 
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
         policy.beforeInvoke(instance, context);
 
         if (context.currentTx == null) return;
@@ -45,7 +44,7 @@ public class SessionSynchronizationTxPolicy extends org.openejb.core.transaction
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         policy.afterInvoke(instance, context);
     }
 
@@ -53,7 +52,7 @@ public class SessionSynchronizationTxPolicy extends org.openejb.core.transaction
         policy.handleApplicationException(appException, context);
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             policy.handleSystemException(sysException, instance, context);
         } catch (ApplicationException e) {

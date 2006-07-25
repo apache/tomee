@@ -6,7 +6,7 @@ import org.openejb.core.ThreadContext;
 
 public interface TransactionContainer {
 
-    public void discardInstance(EnterpriseBean instance, ThreadContext context);
+    public void discardInstance(Object instance, ThreadContext context);
 
 }
 

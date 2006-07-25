@@ -90,7 +90,12 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
     }
 
     public static HashMap getContext() {
-        return (HashMap) context.get();
+        HashMap map = (HashMap) context.get();
+        if (map == null){
+            map = new HashMap();
+            context.set(map);
+        }
+        return map;
     }
 
     public void build() throws OpenEJBException {

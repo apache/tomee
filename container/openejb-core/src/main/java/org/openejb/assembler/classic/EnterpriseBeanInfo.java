@@ -1,5 +1,7 @@
 package org.openejb.assembler.classic;
 
+import java.util.List;
+
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public static final int ENTITY = 0;
@@ -26,4 +28,9 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String transactionType;
     public JndiEncInfo jndiEnc;
     public SecurityRoleReferenceInfo [] securityRoleReferences;
+
+    public List<LifecycelCallbackInfo> postConstruct;
+    public List<LifecycelCallbackInfo> preDestroy;
+
+
 }

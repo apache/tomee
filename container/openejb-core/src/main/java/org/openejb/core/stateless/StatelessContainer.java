@@ -15,8 +15,6 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
-import javax.ejb.EnterpriseBean;
-import javax.ejb.SessionBean;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -29,7 +27,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
 
     private StatelessInstanceManager instanceManager;
 
-    private HashMap deploymentRegistry;
+    private HashMap<String,DeploymentInfo> deploymentRegistry;
 
     private Object containerID = null;
     private TransactionManager transactionManager;
@@ -42,6 +40,11 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         this.securityService = securityService;
 
         instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeOut, poolSize, strictPooling);
+
+        for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
+            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploymentInfo;
+            di.setContainer(this);
+        }
     }
 
     public DeploymentInfo [] deployments() {
@@ -91,15 +94,13 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
                 return null;// EJBObject.remove( ) and other EJBObject methods are not process by the container
             }
 
-            SessionBean bean = null;
-
-            bean = (SessionBean) instanceManager.getInstance(callContext);
+            Object bean = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(Operations.OP_BUSINESS);
 
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
-            Object retValue = invoke(callMethod, runMethod, args, bean, callContext);
+            Object retValue = _invoke(callMethod, runMethod, args, bean, callContext);
             instanceManager.poolInstance(callContext, bean);
 
             return deployInfo.convertIfLocalReference(callMethod, retValue);
@@ -129,7 +130,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         return instanceManager;
     }
 
-    protected Object invoke(Method callMethod, Method runMethod, Object [] args, EnterpriseBean bean, ThreadContext callContext)
+    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
@@ -181,7 +182,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         return new ProxyInfo(deploymentInfo, null, isLocalInterface, this);
     }
 
-    public void discardInstance(EnterpriseBean instance, ThreadContext context) {
+    public void discardInstance(Object instance, ThreadContext context) {
         instanceManager.discardInstance(context, instance);
     }
 

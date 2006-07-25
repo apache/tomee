@@ -1,7 +1,5 @@
 package org.openejb.core.stateful;
 
-import javax.ejb.EnterpriseBean;
-
 import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
 import org.openejb.core.transaction.TransactionContext;
@@ -25,11 +23,11 @@ public class StatefulContainerManagedTxPolicy extends org.openejb.core.transacti
         return policy.policyToString();
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
         policy.beforeInvoke(instance, context);
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         policy.afterInvoke(instance, context);
     }
 
@@ -37,7 +35,7 @@ public class StatefulContainerManagedTxPolicy extends org.openejb.core.transacti
         policy.handleApplicationException(appException, context);
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             policy.handleSystemException(sysException, instance, context);
         } catch (ApplicationException e) {

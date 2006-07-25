@@ -2,16 +2,12 @@ package org.openejb.alt.containers.castor_cmp11;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EnterpriseBean;
-
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.JDO;
 import org.exolab.castor.jdo.JDOManager;
 import org.openejb.ApplicationException;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
 import org.openejb.core.transaction.TransactionContainer;
-import org.openejb.core.DeploymentInfo;
 import org.openejb.core.RpcContainerWrapper;
 
 public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.TransactionPolicy {
@@ -40,7 +36,7 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
         }
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
         policy.beforeInvoke(instance, context);
 
 //        DeploymentInfo deploymentInfo = context.callContext.getDeploymentInfo();
@@ -98,7 +94,7 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             if (context.currentTx == null) {
                 Database db = (Database) context.callContext.getUnspecified();
@@ -133,7 +129,7 @@ public class CastorCmpEntityTxPolicy extends org.openejb.core.transaction.Transa
         }
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
             if (context.currentTx == null) {
                 Database db = (Database) context.callContext.getUnspecified();

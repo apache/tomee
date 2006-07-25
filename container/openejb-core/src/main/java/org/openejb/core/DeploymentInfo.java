@@ -9,6 +9,7 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.SessionSynchronization;
+import javax.ejb.EnterpriseBean;
 
 import org.openejb.Container;
 import org.openejb.RpcContainer;
@@ -46,6 +47,13 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private Class localInterface;
     private Class beanClass;
     private Class pkClass;
+    private Class businessLocal;
+    private Class businessRemote;
+
+    private Method postConstruct;
+    private Method preDestroy;
+    private Method prePassivate;
+    private Method postActivate;
 
     private boolean isBeanManagedTransaction;
     private boolean isReentrant;
@@ -70,20 +78,20 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private String jarPath;
 
     public DeploymentInfo(DeploymentContext context,
-            String homeInterface,
-            String remoteInterface,
-            String localHomeInterface,
-            String localInterface,
-            String beanClass,
-            String pkClass,
-            String ejbType,
-            ClassLoader classLoader) throws SystemException {
+                          String beanClass, String homeInterface,
+                          String remoteInterface,
+                          String localHomeInterface,
+                          String localInterface,
+                          String businessLocal, String businessRemote, String pkClass,
+                          String ejbType,
+                          ClassLoader classLoader) throws SystemException {
         this(context,
-                loadClass(homeInterface, classLoader),
+                loadClass(beanClass, classLoader), loadClass(homeInterface, classLoader),
                 loadClass(remoteInterface, classLoader),
                 loadClass(localHomeInterface, classLoader),
                 loadClass(localInterface, classLoader),
-                loadClass(beanClass, classLoader),
+                loadClass(businessLocal, classLoader),
+                loadClass(businessRemote, classLoader),
                 loadClass(pkClass, classLoader),
                 getComponentType(ejbType), null);
     }
@@ -111,14 +119,13 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     }
 
     public DeploymentInfo(DeploymentContext context,
-            Class homeInterface,
-            Class remoteInterface,
-            Class localHomeInterface,
-            Class localInterface,
-            Class beanClass,
-            Class pkClass,
-            byte componentType,
-            URL archiveURL) throws SystemException {
+                          Class beanClass, Class homeInterface,
+                          Class remoteInterface,
+                          Class localHomeInterface,
+                          Class localInterface,
+                          Class businessLocal, Class businessRemote, Class pkClass,
+                          byte componentType,
+                          URL archiveURL) throws SystemException {
 
         this.context = context;
         this.pkClass = pkClass;
@@ -127,6 +134,8 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         this.remoteInterface = remoteInterface;
         this.localInterface = localInterface;
         this.localHomeInterface = localHomeInterface;
+        this.businessLocal = businessLocal;
+        this.businessRemote = businessRemote;
         this.remoteInterface = remoteInterface;
         this.beanClass = beanClass;
         this.pkClass = pkClass;
@@ -134,6 +143,13 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         this.archiveURL = archiveURL;
         createMethodMap();
 
+        if (EnterpriseBean.class.isAssignableFrom(beanClass)){
+            try {
+                preDestroy = beanClass.getMethod("ejbRemove");
+            } catch (NoSuchMethodException e) {
+                throw new SystemException(e);
+            }
+        }
     }
 
     public void setContainer(Container cont) {
@@ -221,6 +237,14 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
 
     public Class getBeanClass() {
         return beanClass;
+    }
+
+    public Class getBusinessLocal() {
+        return businessLocal;
+    }
+
+    public Class getBusinessRemote() {
+        return businessRemote;
     }
 
     public Class getPrimaryKeyClass() {
@@ -558,6 +582,39 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
 
     public Method getCreateMethod() {
         return createMethod;
+    }
+
+    public Method getPostActivate() {
+        return postActivate;
+    }
+
+    public void setPostActivate(Method postActivate) {
+        this.postActivate = postActivate;
+    }
+
+    public Method getPostConstruct() {
+        // TODO: Need to truly enforce the backwards compatibility rules
+        return (postConstruct == null)? getCreateMethod(): postConstruct;
+    }
+
+    public void setPostConstruct(Method postConstruct) {
+        this.postConstruct = postConstruct;
+    }
+
+    public Method getPreDestroy() {
+        return preDestroy;
+    }
+
+    public void setPreDestroy(Method preDestroy) {
+        this.preDestroy = preDestroy;
+    }
+
+    public Method getPrePassivate() {
+        return prePassivate;
+    }
+
+    public void setPrePassivate(Method prePassivate) {
+        this.prePassivate = prePassivate;
     }
 
     public Method getMatchingPostCreateMethod(Method createMethod) {

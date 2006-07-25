@@ -39,11 +39,11 @@ public abstract class TransactionPolicy {
 
     public abstract void handleApplicationException(Throwable appException, TransactionContext context) throws org.openejb.ApplicationException;
 
-    public abstract void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
+    public abstract void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
 
-    public abstract void beforeInvoke(EnterpriseBean bean, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException;
+    public abstract void beforeInvoke(Object bean, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException;
 
-    public abstract void afterInvoke(EnterpriseBean bean, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
+    public abstract void afterInvoke(Object bean, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException;
 
     protected void markTxRollbackOnly(Transaction tx) throws SystemException {
         try {
@@ -189,7 +189,7 @@ public abstract class TransactionPolicy {
         logger.error("The bean instances business method encountered a system exception:" + sysException.getMessage(), sysException);
     }
 
-    protected void discardBeanInstance(EnterpriseBean instance, ThreadContext callContext) {
+    protected void discardBeanInstance(Object instance, ThreadContext callContext) {
         container.discardInstance(instance, callContext);
     }
 

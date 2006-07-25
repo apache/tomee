@@ -1,6 +1,8 @@
 package org.openejb.core.stateless;
 
 import org.apache.log4j.Category;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
 import org.openejb.core.DeploymentInfo;
@@ -14,6 +16,7 @@ import org.openejb.util.Stack;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
+import javax.ejb.EJBException;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -44,47 +47,47 @@ public class StatelessInstanceManager {
         }
     }
 
-    public EnterpriseBean getInstance(ThreadContext callContext)
+    public Object getInstance(ThreadContext callContext)
             throws OpenEJBException {
-        SessionBean bean = null;
+        Object bean = null;
         Object deploymentId = callContext.getDeploymentInfo().getDeploymentID();
         Stack pool = (Stack) poolMap.get(deploymentId);
         if (pool == null) {
             pool = new LinkedListStack(poolLimit);
             poolMap.put(deploymentId, pool);
         } else
-            bean = (SessionBean) pool.pop();
+            bean = pool.pop();
 
         while (strictPooling && bean == null && pool.size() >= poolLimit) {
             poolQueue.waitForAvailableInstance();
-            bean = (SessionBean) pool.pop();
+            bean = pool.pop();
         }
 
         if (bean == null) {
-            try {
-                Class beanClass = callContext.getDeploymentInfo().getBeanClass();
-                bean = (SessionBean) toolkit.newInstance(beanClass);
-            } catch (OpenEJBException oee) {
-                throw (SystemException) oee;
-            }
+
+            Class beanClass = callContext.getDeploymentInfo().getBeanClass();
+            ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
 
             byte originalOperation = callContext.getCurrentOperation();
             try {
 
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
-                DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-                bean.setSessionContext(createSessionContext());
-
+                objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
+                bean = objectRecipe.create();
                 callContext.setCurrentOperation(Operations.OP_CREATE);
-                Method createMethod = deploymentInfo.getCreateMethod();
-                createMethod.invoke(bean, null);
+
+                DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+                Method postConstruct = deploymentInfo.getPostConstruct();
+                if (postConstruct != null){
+                    postConstruct.invoke(bean);
+                }
             } catch (Throwable e) {
                 if (e instanceof java.lang.reflect.InvocationTargetException) {
                     e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
                 }
                 String t = "The bean instance " + bean + " threw a system exception:" + e;
                 logger.error(t, e);
-                throw new org.openejb.ApplicationException(new RemoteException("Can not obtain a free instance."));
+                throw new org.openejb.ApplicationException(new RemoteException("Can not obtain a free instance.",e));
             } finally {
                 callContext.setCurrentOperation(originalOperation);
             }
@@ -96,7 +99,7 @@ public class StatelessInstanceManager {
         return (SessionContext) new StatelessContext(transactionManager, securityService);
     }
 
-    public void poolInstance(ThreadContext callContext, EnterpriseBean bean)
+    public void poolInstance(ThreadContext callContext, Object bean)
             throws OpenEJBException {
         if (bean == null)
             throw new SystemException("Invalid arguments");
@@ -114,10 +117,13 @@ public class StatelessInstanceManager {
 
     }
 
-    public void freeInstance(ThreadContext callContext, EnterpriseBean bean) {
+    public void freeInstance(ThreadContext callContext, Object bean) {
         try {
             callContext.setCurrentOperation(Operations.OP_REMOVE);
-            ((SessionBean) bean).ejbRemove();
+            Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
+            if (preDestroy != null){
+                preDestroy.invoke(bean);
+            }
         } catch (Throwable re) {
 
             logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
@@ -125,7 +131,7 @@ public class StatelessInstanceManager {
 
     }
 
-    public void discardInstance(ThreadContext callContext, EnterpriseBean bean) {
+    public void discardInstance(ThreadContext callContext, Object bean) {
 
     }
 

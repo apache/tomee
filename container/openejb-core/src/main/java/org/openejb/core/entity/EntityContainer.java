@@ -3,35 +3,28 @@ package org.openejb.core.entity;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Map;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
-import javax.ejb.EnterpriseBean;
 import javax.ejb.EntityBean;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.openejb.Container;
 import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJB;
 import org.openejb.OpenEJBException;
 import org.openejb.ProxyInfo;
 import org.openejb.SystemException;
-import org.openejb.ClassLoaderUtil;
 import org.openejb.spi.SecurityService;
-import org.openejb.core.EnvProps;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
 import org.openejb.util.Logger;
-import org.openejb.util.SafeProperties;
-import org.openejb.util.SafeToolkit;
 
 /**
  * @org.apache.xbean.XBean element="bmpContainer"
@@ -426,7 +419,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         }
     }
 
-    public void discardInstance(EnterpriseBean bean, ThreadContext threadContext) {
+    public void discardInstance(Object bean, ThreadContext threadContext) {
         if (bean != null) {
             try {
                 instanceManager.discardInstance(threadContext, (EntityBean) bean);

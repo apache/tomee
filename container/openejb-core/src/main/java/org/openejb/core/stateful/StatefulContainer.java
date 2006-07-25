@@ -243,7 +243,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         return new java.rmi.dgc.VMID();
     }
 
-    public void discardInstance(EnterpriseBean bean, ThreadContext threadContext) {
+    public void discardInstance(Object bean, ThreadContext threadContext) {
         try {
             Object primaryKey = threadContext.getPrimaryKey();
             instanceManager.freeInstance(primaryKey);

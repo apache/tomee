@@ -2,7 +2,6 @@ package org.openejb.core.stateful;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EnterpriseBean;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 
@@ -31,7 +30,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         return "TX_BeanManaged: ";
     }
 
-    public void beforeInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws org.openejb.SystemException, org.openejb.ApplicationException {
         try {
 
             StatefulInstanceManager instanceManager = (StatefulInstanceManager) context.context.get(StatefulInstanceManager.class);
@@ -50,7 +49,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         }
     }
 
-    public void afterInvoke(EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
         try {
 
             context.currentTx = context.getTransactionManager().getTransaction();
@@ -85,7 +84,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, EnterpriseBean instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.openejb.ApplicationException, org.openejb.SystemException {
 
         logSystemException(sysException);
 

@@ -47,6 +47,14 @@ public class LifecycleCallback {
     @XmlElement(name = "lifecycle-callback-method", required = true)
     protected String lifecycleCallbackMethod;
 
+    public LifecycleCallback() {
+    }
+
+    public LifecycleCallback(String lifecycleCallbackClass, String lifecycleCallbackMethod) {
+        this.lifecycleCallbackClass = lifecycleCallbackClass;
+        this.lifecycleCallbackMethod = lifecycleCallbackMethod;
+    }
+
     public String getLifecycleCallbackClass() {
         return lifecycleCallbackClass;
     }

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Collections;
 
 
 /**
@@ -130,7 +131,6 @@ import java.util.Map;
         "securityIdentity"
         })
 public class SessionBean implements EnterpriseBean, RemoteBean {
-
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
@@ -147,16 +147,16 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
     @XmlElement(name = "local-home")
     protected String localHome;
     protected String local;
-    @XmlElement(name = "business-local", required = true)
-    protected List<String> businessLocal;
-    @XmlElement(name = "business-remote", required = true)
-    protected List<String> businessRemote;
+    @XmlElement(name = "business-local")
+    protected String businessLocal;
+    @XmlElement(name = "business-remote")
+    protected String businessRemote;
     @XmlElement(name = "service-endpoint")
     protected String serviceEndpoint;
     @XmlElement(name = "ejb-class")
     protected String ejbClass;
     @XmlElement(name = "session-type")
-    protected SessionType sessionType;
+    protected SessionType sessionType = SessionType.STATELESS;
     @XmlElement(name = "timeout-method")
     protected NamedMethod timeoutMethod;
     @XmlElement(name = "init-method", required = true)
@@ -164,7 +164,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
     @XmlElement(name = "remove-method", required = true)
     protected List<RemoveMethod> removeMethod;
     @XmlElement(name = "transaction-type")
-    protected TransactionType transactionType;
+    protected TransactionType transactionType = TransactionType.BEAN;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "env-entry", required = true)
@@ -201,6 +201,15 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public SessionBean() {
+    }
+
+    public SessionBean(String ejbName, String ejbClass, SessionType sessionType) {
+        this.ejbName = ejbName;
+        this.ejbClass = ejbClass;
+        this.sessionType = sessionType;
+    }
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
@@ -308,18 +317,20 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
         this.local = value;
     }
 
-    public List<String> getBusinessLocal() {
-        if (businessLocal == null) {
-            businessLocal = new ArrayList<String>();
-        }
-        return this.businessLocal;
+    public String getBusinessLocal() {
+        return businessLocal;
     }
 
-    public List<String> getBusinessRemote() {
-        if (businessRemote == null) {
-            businessRemote = new ArrayList<String>();
-        }
-        return this.businessRemote;
+    public void setBusinessLocal(String businessLocal) {
+        this.businessLocal = businessLocal;
+    }
+
+    public String getBusinessRemote() {
+        return businessRemote;
+    }
+
+    public void setBusinessRemote(String businessRemote) {
+        this.businessRemote = businessRemote;
     }
 
     public String getServiceEndpoint() {
@@ -453,6 +464,11 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
         return this.postConstruct;
     }
 
+    public void addPostConstruct(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPostConstruct().add(new LifecycleCallback(ejbClass, method));
+    }
+
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
             preDestroy = new ArrayList<LifecycleCallback>();
@@ -460,11 +476,21 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
         return this.preDestroy;
     }
 
+    public void addPreDestroy(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPreDestroy().add(new LifecycleCallback(ejbClass, method));
+    }
+
     public List<LifecycleCallback> getPostActivate() {
         if (postActivate == null) {
             postActivate = new ArrayList<LifecycleCallback>();
         }
         return this.postActivate;
+    }
+
+    public void addPostActivate(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPostActivate().add(new LifecycleCallback(ejbClass, method));
     }
 
     public List<LifecycleCallback> getPrePassivate() {

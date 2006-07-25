@@ -4,10 +4,7 @@ import org.openejb.RpcContainer;
 import org.openejb.OpenEJBException;
 import org.openejb.core.transaction.TransactionContainer;
 
-import javax.ejb.EnterpriseBean;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Properties;
 
 public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
 
@@ -41,7 +38,7 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         container.deploy(deploymentID, info);
     }
 
-    public void discardInstance(EnterpriseBean instance, ThreadContext context) {
+    public void discardInstance(Object instance, ThreadContext context) {
         ((TransactionContainer) container).discardInstance(instance, context);
     }
 
