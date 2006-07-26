@@ -76,14 +76,14 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.openejb.OpenEJBException {
         try {
 
-            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
+            org.openejb.core.CoreDeploymentInfo deployInfo = (org.openejb.core.CoreDeploymentInfo) this.getDeploymentInfo(deployID);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
@@ -221,7 +221,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
 
     protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = (org.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
         Class beanType = deploymentInfo.getBeanClass();
         Object primaryKey = this.newPrimaryKey();
         callContext.setPrimaryKey(primaryKey);

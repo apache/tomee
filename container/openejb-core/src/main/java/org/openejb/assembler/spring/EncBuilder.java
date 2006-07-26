@@ -54,7 +54,7 @@ import javax.transaction.UserTransaction;
 
 import org.openejb.SystemException;
 import org.openejb.core.CoreUserTransaction;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.openejb.core.ivm.naming.IvmContext;
 import org.openejb.core.ivm.naming.JndiReference;
@@ -93,12 +93,12 @@ public class EncBuilder {
 
     public void setEjbType(byte ejbType) throws SystemException {
         this.ejbType = ejbType;
-        if (DeploymentInfo.BMP_ENTITY == ejbType ||
-                DeploymentInfo.CMP_ENTITY == ejbType) {
+        if (CoreDeploymentInfo.BMP_ENTITY == ejbType ||
+                CoreDeploymentInfo.CMP_ENTITY == ejbType) {
             referenceWrapper = new EntityRefereceWrapper();
-        } else if (DeploymentInfo.STATEFUL == ejbType ) {
+        } else if (CoreDeploymentInfo.STATEFUL == ejbType ) {
             referenceWrapper = new StatefulRefereceWrapper();
-        } else if (DeploymentInfo.STATELESS == ejbType ) {
+        } else if (CoreDeploymentInfo.STATELESS == ejbType ) {
             referenceWrapper = new StatelessRefereceWrapper();
         } else {
             throw new SystemException("Unknown component type: " + ejbType);

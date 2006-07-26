@@ -42,7 +42,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeOut, poolSize, strictPooling);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
-            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploymentInfo;
+            org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) deploymentInfo;
             di.setContainer(this);
         }
     }
@@ -67,7 +67,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
     }
 
@@ -75,7 +75,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
             throws org.openejb.OpenEJBException {
         try {
 
-            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
+            org.openejb.core.CoreDeploymentInfo deployInfo = (org.openejb.core.CoreDeploymentInfo) this.getDeploymentInfo(deployID);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
@@ -176,7 +176,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
         return transactionManager;
     }
 
-    protected ProxyInfo createEJBObject(org.openejb.core.DeploymentInfo deploymentInfo, Method callMethod) {
+    protected ProxyInfo createEJBObject(org.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         Class callingClass = callMethod.getDeclaringClass();
         boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
         return new ProxyInfo(deploymentInfo, null, isLocalInterface, this);

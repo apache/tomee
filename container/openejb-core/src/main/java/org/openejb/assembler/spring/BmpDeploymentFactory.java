@@ -44,7 +44,7 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.SystemException;
 
 /**
@@ -67,11 +67,11 @@ public class BmpDeploymentFactory extends AbstractDeploymentFactory {
     }
 
     protected byte getComponentType() {
-        return DeploymentInfo.BMP_ENTITY;
+        return CoreDeploymentInfo.BMP_ENTITY;
     }
 
-    protected DeploymentInfo createDeploymentInfo() throws SystemException {
-        DeploymentInfo deploymentInfo = super.createDeploymentInfo();
+    protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {
+        CoreDeploymentInfo deploymentInfo = super.createDeploymentInfo();
         deploymentInfo.setIsReentrant(reentrant);
         return deploymentInfo;
     }

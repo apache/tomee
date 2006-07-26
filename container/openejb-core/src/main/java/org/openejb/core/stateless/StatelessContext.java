@@ -1,7 +1,7 @@
 package org.openejb.core.stateless;
 
 import org.openejb.RpcContainer;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
@@ -29,7 +29,7 @@ public class StatelessContext
 
         */
         ThreadContext callContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = callContext.getDeploymentInfo();
+        CoreDeploymentInfo di = callContext.getDeploymentInfo();
 
         switch (callContext.getCurrentOperation()) {
             case Operations.OP_SET_CONTEXT:

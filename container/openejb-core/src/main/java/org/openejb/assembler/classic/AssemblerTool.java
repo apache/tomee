@@ -1,11 +1,7 @@
 package org.openejb.assembler.classic;
 
-import org.openejb.Container;
 import org.openejb.OpenEJBException;
-import org.openejb.core.ContainerSystem;
-import org.openejb.core.DeploymentInfo;
-import org.openejb.spi.SecurityService;
-import org.openejb.spi.TransactionService;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.proxy.ProxyFactory;
@@ -17,7 +13,6 @@ import javax.resource.spi.ManagedConnectionFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -129,7 +124,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
+    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -175,7 +170,7 @@ public class AssemblerTool {
 
     }
 
-    public void applySecurityRoleReference(DeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
+    public void applySecurityRoleReference(CoreDeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
         if (beanInfo.securityRoleReferences != null) {
             for (int l = 0; l < beanInfo.securityRoleReferences.length; l++) {
                 SecurityRoleReferenceInfo roleRef = beanInfo.securityRoleReferences[l];
@@ -185,7 +180,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions) {
+    public void applyMethodPermissions(CoreDeploymentInfo deployment, MethodPermissionInfo[] permissions) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -209,7 +204,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(DeploymentInfo deployment, MethodPermissionInfo[] permissions, AssemblerTool.RoleMapping roleMapping) {
+    public void applyMethodPermissions(CoreDeploymentInfo deployment, MethodPermissionInfo[] permissions, AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -281,7 +276,7 @@ public class AssemblerTool {
 
     }
 
-    protected java.lang.reflect.Method[] resolveMethodInfo(MethodInfo methodInfo, org.openejb.core.DeploymentInfo di) {
+    protected java.lang.reflect.Method[] resolveMethodInfo(MethodInfo methodInfo, org.openejb.core.CoreDeploymentInfo di) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.

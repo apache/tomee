@@ -54,7 +54,7 @@ public class ContainerSystem implements org.openejb.spi.ContainerSystem {
         containers.put(id, c);
     }
 
-    public void addDeployment(org.openejb.core.DeploymentInfo deployment) {
+    public void addDeployment(org.openejb.core.CoreDeploymentInfo deployment) {
 
         this.deployments.put(deployment.getDeploymentID(), deployment);
 
@@ -66,7 +66,7 @@ public class ContainerSystem implements org.openejb.spi.ContainerSystem {
         }
     }
 
-    private void bindProxy(org.openejb.core.DeploymentInfo deployment, Object proxy, boolean isLocal) {
+    private void bindProxy(org.openejb.core.CoreDeploymentInfo deployment, Object proxy, boolean isLocal) {
         Reference ref = new ObjectReference(proxy);
 
         if (deployment.getComponentType() == DeploymentInfo.STATEFUL) {

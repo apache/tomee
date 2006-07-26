@@ -7,7 +7,6 @@ import javax.ejb.TimerService;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
-import org.openejb.OpenEJB;
 import org.openejb.RpcContainer;
 import org.openejb.spi.SecurityService;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
@@ -54,7 +53,7 @@ public abstract class CoreContext implements java.io.Serializable {
     public boolean isCallerInRole(java.lang.String roleName) {
         checkBeanState(SECURITY_METHOD);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();
         String physicalRoles [] = di.getPhysicalRole(roleName);
         Object caller = threadContext.getSecurityIdentity();
         return securityService.isCallerAuthorized(caller, physicalRoles);
@@ -64,7 +63,7 @@ public abstract class CoreContext implements java.io.Serializable {
         checkBeanState(EJBHOME_METHOD);
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();
 
         return di.getEJBHome();
     }
@@ -104,7 +103,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public EJBLocalHome getEJBLocalHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) threadContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();
 
         return di.getEJBLocalHome();
     }

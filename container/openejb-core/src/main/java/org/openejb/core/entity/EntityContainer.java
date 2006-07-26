@@ -70,14 +70,14 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         Map registry = new HashMap(deploymentRegistry);
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.openejb.OpenEJBException {
         try {
 
-            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
+            org.openejb.core.CoreDeploymentInfo deployInfo = (org.openejb.core.CoreDeploymentInfo) this.getDeploymentInfo(deployID);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
@@ -262,7 +262,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
     protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
 
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = (org.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
 
         callContext.setCurrentOperation(Operations.OP_CREATE);
         EntityBean bean = null;
@@ -339,7 +339,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
     protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = (org.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operations.OP_FIND);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
@@ -375,7 +375,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
 
     protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = (org.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operations.OP_HOME);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         return invoke(callMethod, runMethod, args, callContext);

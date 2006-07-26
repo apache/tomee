@@ -55,7 +55,7 @@ import javax.transaction.TransactionManager;
 import org.openejb.SystemException;
 import org.openejb.loader.SystemInstance;
 import org.openejb.core.DeploymentContext;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -169,7 +169,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     public Class getObjectType() {
-        return DeploymentInfo.class;
+        return CoreDeploymentInfo.class;
     }
 
     public boolean isSingleton() {
@@ -188,7 +188,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     public Object getObject() throws Exception {
-        DeploymentInfo deploymentInfo = createDeploymentInfo();
+        CoreDeploymentInfo deploymentInfo = createDeploymentInfo();
         return deploymentInfo;
     }
 
@@ -198,12 +198,12 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
 
     protected abstract String getPkClass();
 
-    protected DeploymentInfo createDeploymentInfo() throws SystemException {
+    protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {
         EncBuilder encBuilder = new EncBuilder(jndiContext, getComponentType(), isBeanManagedTransaction(), transactionManager);
         Context context = encBuilder.createContext();
 
         DeploymentContext deploymentContext = new DeploymentContext(id, classLoader, context);
-        DeploymentInfo deploymentInfo = new DeploymentInfo(deploymentContext,
+        CoreDeploymentInfo deploymentInfo = new CoreDeploymentInfo(deploymentContext,
                 loadClass(beanClass, classLoader), loadClass(homeInterface, classLoader),
                 loadClass(remoteInterface, classLoader),
                 loadClass(localHomeInterface, classLoader),
@@ -222,7 +222,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         return deploymentInfo;
     }
 
-    private void applySecurityRoleReference(DeploymentInfo deployment) {
+    private void applySecurityRoleReference(CoreDeploymentInfo deployment) {
         Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
         for (RoleMapping roleMapping : AssemblerUtil.asList(assembly.roleMappings)) {
             roleMappings.put(roleMapping.logical, roleMapping.physical);

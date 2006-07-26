@@ -5,7 +5,7 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.spi.SecurityService;
@@ -13,10 +13,7 @@ import org.openejb.util.LinkedListStack;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.Stack;
 
-import javax.ejb.EnterpriseBean;
-import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.EJBException;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -45,7 +42,7 @@ public class StatelessInstanceManager {
         if (strictPooling && poolSize < 1){
             throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
         }
-        
+
         if (this.strictPooling) {
             poolQueue = new PoolQueue(timeout);
         }
@@ -81,7 +78,7 @@ public class StatelessInstanceManager {
                 bean = objectRecipe.create();
                 callContext.setCurrentOperation(Operations.OP_CREATE);
 
-                DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+                CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null){
                     postConstruct.invoke(bean);

@@ -1,15 +1,15 @@
 package org.openejb.tomcat;
 
-import org.openejb.*;
-import org.openejb.DeploymentInfo;
-import org.openejb.core.*;
+import org.openejb.OpenEJBException;
+import org.openejb.RpcContainer;
+import org.openejb.core.RpcContainerWrapper;
 
 import javax.naming.Context;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 
 public class TomcatJndiSupport extends RpcContainerWrapper {
     private final Class contextBindings;
@@ -32,7 +32,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
         }
         org.openejb.DeploymentInfo[] deploymentInfos = container.deployments();
         for (int i = 0; i < deploymentInfos.length; i++) {
-            org.openejb.core.DeploymentInfo deployment = (org.openejb.core.DeploymentInfo) deploymentInfos[i];
+            org.openejb.core.CoreDeploymentInfo deployment = (org.openejb.core.CoreDeploymentInfo) deploymentInfos[i];
             setupDeployment(deployment);
         }
     }
@@ -42,12 +42,12 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void deploy(Object deploymentID, org.openejb.DeploymentInfo info) throws OpenEJBException {
         super.deploy(deploymentID, info);
-        setupDeployment((org.openejb.core.DeploymentInfo) info);
+        setupDeployment((org.openejb.core.CoreDeploymentInfo) info);
     }
 
     public static Map contexts = new HashMap();
 
-    private void setupDeployment(org.openejb.core.DeploymentInfo deployment) {
+    private void setupDeployment(org.openejb.core.CoreDeploymentInfo deployment) {
 
         deployment.setContainer(this);
 

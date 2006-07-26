@@ -37,8 +37,8 @@ public class IntraVmServer implements org.openejb.spi.ApplicationServer {
 
     public EJBHome getEJBHome(ProxyInfo pi) {
 
-        if (pi.getDeploymentInfo() instanceof org.openejb.core.DeploymentInfo) {
-            org.openejb.core.DeploymentInfo coreDeployment = (org.openejb.core.DeploymentInfo) pi.getDeploymentInfo();
+        if (pi.getDeploymentInfo() instanceof org.openejb.core.CoreDeploymentInfo) {
+            org.openejb.core.CoreDeploymentInfo coreDeployment = (org.openejb.core.CoreDeploymentInfo) pi.getDeploymentInfo();
             return coreDeployment.getEJBHome();
 
         } else {

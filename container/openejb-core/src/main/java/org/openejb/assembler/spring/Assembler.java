@@ -17,7 +17,7 @@ import org.apache.xbean.spring.context.SpringApplicationContext;
 import org.openejb.Container;
 import org.openejb.OpenEJBException;
 import org.openejb.RpcContainer;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ContainerSystem;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.Logger;
@@ -158,11 +158,11 @@ public class Assembler implements org.openejb.spi.Assembler {
         // Create the containers
         //
         List<Container> containers = wrapContainers(AssemblerUtil.getBeans(factory, Container.class));
-        List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
+        List<CoreDeploymentInfo> deployments = new ArrayList<CoreDeploymentInfo>();
         for (Container container : containers) {
             containerSystem.addContainer(container.getContainerID(), container);
             for (org.openejb.DeploymentInfo d : container.deployments()) {
-                DeploymentInfo deployment = (DeploymentInfo) d;
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) d;
                 deployment.setContainer(container);
                 deployments.add(deployment);
                 containerSystem.addDeployment(deployment);
@@ -173,14 +173,14 @@ public class Assembler implements org.openejb.spi.Assembler {
         // Transaction attributes
         //
         AssemblyInfo assemblyInfo = AssemblerUtil.getBean(factory, AssemblyInfo.class);
-        for (DeploymentInfo deployment : deployments) {
+        for (CoreDeploymentInfo deployment : deployments) {
             applyTransactionAttributes(deployment, assemblyInfo.methodTransactions);
         }
 
         //
         // Method permisions
         //
-        for (DeploymentInfo deployment : deployments) {
+        for (CoreDeploymentInfo deployment : deployments) {
             applyMethodPermissions(deployment, assemblyInfo);
         }
 
@@ -206,7 +206,7 @@ public class Assembler implements org.openejb.spi.Assembler {
         return wrappedContainers;
     }
 
-    protected void applyTransactionAttributes(DeploymentInfo deploymentInfo, MethodTransactionInfo[] transactionInfos) {
+    protected void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, MethodTransactionInfo[] transactionInfos) {
         if (deploymentInfo.isBeanManagedTransaction()) {
             // deployments with bean managed transactions don't have transaction attributes
             return;
@@ -240,7 +240,7 @@ public class Assembler implements org.openejb.spi.Assembler {
         return method.getName().equals("remove");
     }
 
-    protected void applyMethodPermissions(DeploymentInfo deploymentInfo, AssemblyInfo assemblyInfo) {
+    protected void applyMethodPermissions(CoreDeploymentInfo deploymentInfo, AssemblyInfo assemblyInfo) {
         Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
         for (org.openejb.assembler.spring.RoleMapping roleMapping : AssemblerUtil.asList(assemblyInfo.roleMappings)) {
             roleMappings.put(roleMapping.logical, roleMapping.physical);
@@ -271,7 +271,7 @@ public class Assembler implements org.openejb.spi.Assembler {
         return physicalRoles.toArray(new String[physicalRoles.size()]);
     }
 
-    protected List<Method> resolveMethods(DeploymentInfo deploymentInfo, MethodInfo methodInfo) {
+    protected List<Method> resolveMethods(CoreDeploymentInfo deploymentInfo, MethodInfo methodInfo) {
         List<Method> methods = new ArrayList<Method>();
         if (methodInfo.intf == null) {
             resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);

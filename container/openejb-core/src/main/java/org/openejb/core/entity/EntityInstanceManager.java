@@ -3,13 +3,11 @@ package org.openejb.core.entity;
 import org.openejb.ApplicationException;
 import org.openejb.OpenEJBException;
 import org.openejb.spi.SecurityService;
-import org.openejb.core.DeploymentInfo;
-import org.openejb.core.EnvProps;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.util.LinkedListStack;
 import org.openejb.util.Logger;
-import org.openejb.util.SafeProperties;
 import org.openejb.util.SafeToolkit;
 import org.openejb.util.Stack;
 
@@ -18,7 +16,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Properties;
 
 public class EntityInstanceManager {
 
@@ -103,7 +100,7 @@ public class EntityInstanceManager {
                     return wrapper.getEntityBean();
                 } else {
 
-                    org.openejb.core.DeploymentInfo depInfo = (org.openejb.core.DeploymentInfo) callContext.getDeploymentInfo();
+                    org.openejb.core.CoreDeploymentInfo depInfo = (org.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
                     if (depInfo.isReentrant()) {
                         /*
                          * If the bean is declared as reentrant then the instance may be accessed
@@ -182,7 +179,7 @@ public class EntityInstanceManager {
 
     protected EntityBean getPooledInstance(ThreadContext callContext)
             throws org.openejb.OpenEJBException {
-        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Stack methodReadyPool = (Stack) poolMap.get(deploymentInfo.getDeploymentID());
         if (methodReadyPool == null)
             throw new org.openejb.SystemException("Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container");
@@ -210,7 +207,7 @@ public class EntityInstanceManager {
                 * we don't want the TransactionScopeHandler commiting the transaction in afterInvoke() which is what it would attempt 
                 * to do.
                 */
-                DeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
+                CoreDeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
                 bean.setEntityContext(createEntityContext());
             } catch (java.lang.Exception e) {
                 /*

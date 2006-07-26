@@ -6,7 +6,7 @@ import org.apache.xbean.recipe.StaticRecipe;
 import org.openejb.Container;
 import org.openejb.OpenEJBException;
 import org.openejb.RpcContainer;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.loader.SystemInstance;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.Logger;
@@ -51,7 +51,7 @@ public class ContainerBuilder {
         ClassLoader classLoader = new URLClassLoader(jars, org.openejb.OpenEJB.class.getClassLoader());
         EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
 
-        HashMap<String,DeploymentInfo> deployments = new HashMap();
+        HashMap<String,CoreDeploymentInfo> deployments = new HashMap();
         for (int i = 0; i < this.ejbJars.length; i++) {
             EjbJarInfo ejbJar = this.ejbJars[i];
 
@@ -65,7 +65,7 @@ public class ContainerBuilder {
             HashMap deploymentsList = new HashMap();
             for (int z = 0; z < containerInfo.ejbeans.length; z++) {
                 String ejbDeploymentId = containerInfo.ejbeans[z].ejbDeploymentId;
-                DeploymentInfo deployment = (DeploymentInfo) deployments.get(ejbDeploymentId);
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(ejbDeploymentId);
                 deploymentsList.put(ejbDeploymentId, deployment);
             }
 
@@ -74,7 +74,7 @@ public class ContainerBuilder {
 
             org.openejb.DeploymentInfo [] deploys = container.deployments();
             for (int x = 0; x < deploys.length; x++) {
-                org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
+                org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) deploys[x];
                 di.setContainer(container);
             }
             containers.add(container);

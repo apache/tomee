@@ -3,7 +3,7 @@ package org.openejb.assembler.classic;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
 import org.openejb.core.DeploymentContext;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ivm.naming.IvmContext;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
@@ -91,7 +91,7 @@ class EnterpriseBeanBuilder {
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
-        DeploymentInfo deployment = new DeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, null, null, primaryKey, ejbType.getType(), null);
+        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, null, null, primaryKey, ejbType.getType(), null);
 
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));

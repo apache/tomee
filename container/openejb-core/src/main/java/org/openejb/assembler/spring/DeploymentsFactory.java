@@ -20,7 +20,7 @@ import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.DeploymentLoader;
 import org.openejb.alt.config.EjbJarInfoBuilder;
 import org.openejb.alt.config.ejb.EjbDeployment;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.assembler.classic.EjbJarBuilder;
 import org.openejb.assembler.classic.EjbJarInfo;
 import org.springframework.beans.factory.FactoryBean;
@@ -86,7 +86,7 @@ public class DeploymentsFactory implements FactoryBean {
     }
 
     // Singletons don't work
-    private HashMap<String, DeploymentInfo> deployments;
+    private HashMap<String, CoreDeploymentInfo> deployments;
     public Object getObject() throws Exception {
         if (deployments != null){
             return deployments;
@@ -117,7 +117,7 @@ public class DeploymentsFactory implements FactoryBean {
             transferMethodTransactionInfos(infoBuilder);
             transferMethodPermissionInfos(infoBuilder);
 
-            HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo);
+            HashMap<String, CoreDeploymentInfo> ejbs = builder.build(jarInfo);
 
             for (EjbDeployment data : jar.getOpenejbJar().getEjbDeployment()) {
                 ejbs.get(data.getDeploymentId()).setContainer(new ContainerPointer(data.getContainerId()));

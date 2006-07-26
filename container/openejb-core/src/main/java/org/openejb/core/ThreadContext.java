@@ -9,7 +9,7 @@ public class ThreadContext implements Cloneable {
     protected static Class implClass = ThreadContext.class;
 
     protected boolean valid = false;
-    protected DeploymentInfo deploymentInfo;
+    protected CoreDeploymentInfo deploymentInfo;
     protected Object primaryKey;
     protected byte currentOperation;
     protected Object securityIdentity;
@@ -93,7 +93,7 @@ public class ThreadContext implements Cloneable {
         return primaryKey;
     }
 
-    public DeploymentInfo getDeploymentInfo() {
+    public CoreDeploymentInfo getDeploymentInfo() {
         return deploymentInfo;
     }
 
@@ -105,7 +105,7 @@ public class ThreadContext implements Cloneable {
         return unspecified;
     }
 
-    public void set(DeploymentInfo di, Object primKey, Object securityIdentity) {
+    public void set(CoreDeploymentInfo di, Object primKey, Object securityIdentity) {
         setDeploymentInfo(di);
         setPrimaryKey(primKey);
         setSecurityIdentity(securityIdentity);
@@ -127,7 +127,7 @@ public class ThreadContext implements Cloneable {
         valid = true;
     }
 
-    public void setDeploymentInfo(DeploymentInfo info) {
+    public void setDeploymentInfo(CoreDeploymentInfo info) {
         deploymentInfo = info;
     }
 

@@ -2,7 +2,7 @@ package org.openejb.alt.containers.castor_cmp11;
 
 import java.util.HashMap;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.util.Logger;
 
 public abstract class KeyGeneratorFactory {
@@ -11,7 +11,7 @@ public abstract class KeyGeneratorFactory {
     private static class PrimitiveKey implements org.openejb.alt.containers.castor_cmp11.KeyGenerator {
         private final java.lang.reflect.Field field;
 
-        PrimitiveKey(DeploymentInfo di) throws org.openejb.OpenEJBException {
+        PrimitiveKey(CoreDeploymentInfo di) throws org.openejb.OpenEJBException {
             field = di.getPrimaryKeyField();
         }
 
@@ -39,7 +39,7 @@ public abstract class KeyGeneratorFactory {
         private final HashMap pkFieldMap;
         private final HashMap beanFieldMap;
 
-        ComplexKey(DeploymentInfo di) throws org.openejb.OpenEJBException {
+        ComplexKey(CoreDeploymentInfo di) throws org.openejb.OpenEJBException {
             pkClass = di.getPrimaryKeyClass();
             Class beanClass = di.getBeanClass();
             java.util.List v = new java.util.ArrayList();
@@ -94,7 +94,7 @@ public abstract class KeyGeneratorFactory {
         }
     }
 
-    public static KeyGenerator createKeyGenerator(DeploymentInfo di)
+    public static KeyGenerator createKeyGenerator(CoreDeploymentInfo di)
             throws org.openejb.OpenEJBException {
 
         if (di.getPrimaryKeyField() != null) {

@@ -171,7 +171,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         Map<String,URL> mappings = new HashMap<String,URL>();
         JndiTxReference txReference = new JndiTxReference(this.transactionManager);
         for (int x = 0; x < deploys.length; x++) {
-            org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) deploys[x];
+            org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) deploys[x];
             di.setContainer(this);
 
             URL url = null;
@@ -250,14 +250,14 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         HashMap registry = (HashMap) deploymentRegistry.clone();
         registry.put(deploymentID, info);
         deploymentRegistry = registry;
-        org.openejb.core.DeploymentInfo di = (org.openejb.core.DeploymentInfo) info;
+        org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity)
             throws org.openejb.OpenEJBException {
         try {
-            org.openejb.core.DeploymentInfo deployInfo = (org.openejb.core.DeploymentInfo) this.getDeploymentInfo(deployID);
+            org.openejb.core.CoreDeploymentInfo deployInfo = (org.openejb.core.CoreDeploymentInfo) this.getDeploymentInfo(deployID);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
             callContext.set(deployInfo, primKey, securityIdentity);
@@ -323,7 +323,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
     public EntityBean fetchFreeInstance(ThreadContext callContext) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
-        org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         /*
         Obtain the stack of instances of this deployment that are in the method ready state.
@@ -473,7 +473,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
     protected ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext)
             throws org.openejb.OpenEJBException {
-        org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         EntityBean bean = null;
         Object primaryKey = null;
@@ -637,7 +637,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
     protected Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws org.openejb.OpenEJBException {
 
-        org.openejb.core.DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        org.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         QueryResults results = null;
         Object returnValue = null;
@@ -1008,7 +1008,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         }
     }
 
-    protected void resetBeanFields(java.lang.Object bean, org.openejb.core.DeploymentInfo info) {
+    protected void resetBeanFields(java.lang.Object bean, org.openejb.core.CoreDeploymentInfo info) {
         final String[] cmFields = info.getCmrFields();
         final Class beanClass = bean.getClass();
 
@@ -1173,7 +1173,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
      * space based every time the container starts. It nearly impossible for the bean to anticipate
      * and use the binding directly.  It may be possible, however, to locate it using a Context listing method.
      */
-    private void bindTransactionManagerReference(org.openejb.core.DeploymentInfo di, String transactionManagerJndiName, JndiTxReference txReference) throws org.openejb.SystemException {
+    private void bindTransactionManagerReference(org.openejb.core.CoreDeploymentInfo di, String transactionManagerJndiName, JndiTxReference txReference) throws org.openejb.SystemException {
         try {
             di.getJndiEnc().bind(transactionManagerJndiName, txReference);
         } catch (Exception e) {
@@ -1182,7 +1182,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         }
     }
 
-    private void configureKeyGenerator(org.openejb.core.DeploymentInfo di) throws org.openejb.SystemException {
+    private void configureKeyGenerator(org.openejb.core.CoreDeploymentInfo di) throws org.openejb.SystemException {
         KeyGenerator kg = null;
         try {
             kg = KeyGeneratorFactory.createKeyGenerator(di);

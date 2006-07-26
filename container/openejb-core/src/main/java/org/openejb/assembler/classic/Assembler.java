@@ -5,7 +5,7 @@ import org.openejb.OpenEJBException;
 import org.openejb.Container;
 import org.openejb.loader.SystemInstance;
 import org.openejb.core.ConnectorReference;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.TransactionManagerWrapper;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.OpenEJBErrorHandler;
@@ -213,7 +213,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
             containerSystem.addContainer(container1.getContainerID(), container1);
             org.openejb.DeploymentInfo[] deployments1 = container1.deployments();
             for (int j = 0; j < deployments1.length; j++) {
-                containerSystem.addDeployment((DeploymentInfo) deployments1[j]);
+                containerSystem.addDeployment((CoreDeploymentInfo) deployments1[j]);
             }
         }
 
@@ -221,8 +221,8 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
         org.openejb.DeploymentInfo [] deployments = containerSystem.deployments();
         for (int i = 0; i < deployments.length; i++) {
-            applyMethodPermissions((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodPermissions, roleMapping);
-            applyTransactionAttributes((org.openejb.core.DeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
+            applyMethodPermissions((org.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodPermissions, roleMapping);
+            applyTransactionAttributes((org.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
         }
 
         ArrayList list = new ArrayList();
@@ -233,7 +233,7 @@ public class Assembler extends AssemblerTool implements org.openejb.spi.Assemble
         while (iterator.hasNext()) {
             ContainerInfo container = (ContainerInfo) iterator.next();
             for (int z = 0; z < container.ejbeans.length; z++) {
-                DeploymentInfo deployment = (org.openejb.core.DeploymentInfo) containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
+                CoreDeploymentInfo deployment = (org.openejb.core.CoreDeploymentInfo) containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
                 applySecurityRoleReference(deployment, container.ejbeans[z], roleMapping);
             }
         }

@@ -16,7 +16,7 @@ public class EjbType {
     private EjbType(byte type, String typeName) {
         this.type = type;
         this.typeName = typeName;
-        isSession = org.openejb.core.DeploymentInfo.STATEFUL == type || org.openejb.core.DeploymentInfo.STATELESS == type;
+        isSession = org.openejb.core.CoreDeploymentInfo.STATEFUL == type || org.openejb.core.CoreDeploymentInfo.STATELESS == type;
         isEntity = !isSession;
     }
 

@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.openejb.SystemException;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 
 /**
  * @org.apache.xbean.XBean element="cmpDeployment"
@@ -110,11 +110,11 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
     }
 
     protected byte getComponentType() {
-        return DeploymentInfo.CMP_ENTITY;
+        return CoreDeploymentInfo.CMP_ENTITY;
     }
 
-    protected DeploymentInfo createDeploymentInfo() throws SystemException {
-        DeploymentInfo deploymentInfo = super.createDeploymentInfo();
+    protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {
+        CoreDeploymentInfo deploymentInfo = super.createDeploymentInfo();
         deploymentInfo.setCmrFields(cmpFields == null? new String[0] : cmpFields);
         deploymentInfo.setIsReentrant(reentrant);
         if (primKeyField != null) {

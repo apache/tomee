@@ -1,6 +1,6 @@
 package org.openejb.core.ivm.naming;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ThreadContext;
 /*
   This class is used as a replacement when a IvmContext referenced by a stateful bean 
@@ -26,7 +26,7 @@ public class JndiEncArtifact implements java.io.Serializable {
 
     public Object readResolve() throws java.io.ObjectStreamException {
         ThreadContext thrdCntx = ThreadContext.getThreadContext();
-        DeploymentInfo deployment = thrdCntx.getDeploymentInfo();
+        CoreDeploymentInfo deployment = thrdCntx.getDeploymentInfo();
         javax.naming.Context cntx = deployment.getJndiEnc();
         try {
             Object obj = cntx.lookup(path);

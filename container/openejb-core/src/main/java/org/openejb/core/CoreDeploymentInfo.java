@@ -39,7 +39,7 @@ import org.openejb.util.proxy.ProxyManager;
 /**
  * @org.apache.xbean.XBean element="deployment"
  */
-public class DeploymentInfo implements org.openejb.DeploymentInfo {
+public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
 
     private Class homeInterface;
     private Class remoteInterface;
@@ -77,14 +77,14 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private String jarPath;
 
-    public DeploymentInfo(DeploymentContext context,
-                          String beanClass, String homeInterface,
-                          String remoteInterface,
-                          String localHomeInterface,
-                          String localInterface,
-                          String businessLocal, String businessRemote, String pkClass,
-                          String ejbType,
-                          ClassLoader classLoader) throws SystemException {
+    public CoreDeploymentInfo(DeploymentContext context,
+                              String beanClass, String homeInterface,
+                              String remoteInterface,
+                              String localHomeInterface,
+                              String localInterface,
+                              String businessLocal, String businessRemote, String pkClass,
+                              String ejbType,
+                              ClassLoader classLoader) throws SystemException {
         this(context,
                 loadClass(beanClass, classLoader), loadClass(homeInterface, classLoader),
                 loadClass(remoteInterface, classLoader),
@@ -118,14 +118,14 @@ public class DeploymentInfo implements org.openejb.DeploymentInfo {
         }
     }
 
-    public DeploymentInfo(DeploymentContext context,
-                          Class beanClass, Class homeInterface,
-                          Class remoteInterface,
-                          Class localHomeInterface,
-                          Class localInterface,
-                          Class businessLocal, Class businessRemote, Class pkClass,
-                          byte componentType,
-                          URL archiveURL) throws SystemException {
+    public CoreDeploymentInfo(DeploymentContext context,
+                              Class beanClass, Class homeInterface,
+                              Class remoteInterface,
+                              Class localHomeInterface,
+                              Class localInterface,
+                              Class businessLocal, Class businessRemote, Class pkClass,
+                              byte componentType,
+                              URL archiveURL) throws SystemException {
 
         this.context = context;
         this.pkClass = pkClass;

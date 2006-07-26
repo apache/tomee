@@ -44,7 +44,7 @@
  */
 package org.openejb.assembler.spring;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.SystemException;
 
 /**
@@ -62,15 +62,15 @@ public class StatefulDeploymentFactory extends AbstractDeploymentFactory {
     }
 
     protected byte getComponentType() {
-        return DeploymentInfo.STATEFUL;
+        return CoreDeploymentInfo.STATEFUL;
     }
 
     protected String getPkClass() {
         return null;
     }
 
-    protected DeploymentInfo createDeploymentInfo() throws SystemException {
-        DeploymentInfo deploymentInfo = super.createDeploymentInfo();
+    protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {
+        CoreDeploymentInfo deploymentInfo = super.createDeploymentInfo();
         deploymentInfo.setBeanManagedTransaction(beanManagedTransaction);
         return deploymentInfo;
     }

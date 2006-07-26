@@ -16,7 +16,7 @@
  */
 package org.openejb.assembler.classic;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.OpenEJBException;
 
 import java.util.HashMap;
@@ -31,13 +31,13 @@ public class EjbJarBuilder {
         this.classLoader = classLoader;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
-        HashMap<String,DeploymentInfo> deployments = new HashMap();
+    public HashMap<String, CoreDeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
+        HashMap<String,CoreDeploymentInfo> deployments = new HashMap();
         EnterpriseBeanInfo[] ejbs = ejbJar.enterpriseBeans;
         for (int j = 0; j < ejbs.length; j++) {
             EnterpriseBeanInfo ejbInfo = ejbs[j];
             EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
-            DeploymentInfo deployment = (DeploymentInfo) deploymentBuilder.build();
+            CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
             deployment.setJarPath(ejbJar.jarPath);
             deployments.put(ejbInfo.ejbDeploymentId, deployment);
         }

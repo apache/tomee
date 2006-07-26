@@ -4,7 +4,7 @@ import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
 import org.openejb.OpenEJBException;
 import org.openejb.SystemException;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.IntraVmCopyMonitor;
@@ -89,7 +89,7 @@ public class StatefulInstanceManager {
         byte currentOp = thrdCntx.getCurrentOperation();
         thrdCntx.setCurrentOperation(Operations.OP_SET_CONTEXT);
         try {
-            DeploymentInfo deploymentInfo = thrdCntx.getDeploymentInfo();
+            CoreDeploymentInfo deploymentInfo = thrdCntx.getDeploymentInfo();
             bean.setSessionContext(createSessionContext());
         } catch (Throwable callbackException) {
             /*

@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.ObjectFactory;
 
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ThreadContext;
 import org.openejb.spi.ContainerSystem;
 import org.openejb.loader.SystemInstance;
@@ -55,7 +55,7 @@ public class javaURLContextFactory implements ObjectFactory, InitialContextFacto
             return containerSystem.getJNDIContext();
         }
 
-        DeploymentInfo di = ThreadContext.getThreadContext().getDeploymentInfo();
+        CoreDeploymentInfo di = ThreadContext.getThreadContext().getDeploymentInfo();
         if (di != null) {
             return di.getJndiEnc();
         } else {

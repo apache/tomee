@@ -45,7 +45,7 @@
 package org.openejb.assembler.spring;
 
 import org.openejb.SystemException;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 
 /**
  * @org.apache.xbean.XBean element="statelessDeployment"
@@ -62,15 +62,15 @@ public class StatelessDeploymentFactory extends AbstractDeploymentFactory {
     }
 
     protected byte getComponentType() {
-        return DeploymentInfo.STATELESS;
+        return CoreDeploymentInfo.STATELESS;
     }
 
     protected String getPkClass() {
         return null;
     }
 
-    protected DeploymentInfo createDeploymentInfo() throws SystemException {
-        DeploymentInfo deploymentInfo = super.createDeploymentInfo();
+    protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {
+        CoreDeploymentInfo deploymentInfo = super.createDeploymentInfo();
         deploymentInfo.setBeanManagedTransaction(beanManagedTransaction);
         return deploymentInfo;
     }

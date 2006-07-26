@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
-import java.rmi.MarshalledObject;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ import org.openejb.RpcContainer;
 import org.openejb.spi.SecurityService;
 import org.openejb.spi.ContainerSystem;
 import org.openejb.loader.SystemInstance;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.core.ThreadContext;
 import org.openejb.util.proxy.InvocationHandler;
 import org.openejb.util.proxy.ProxyManager;
@@ -36,7 +35,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public boolean inProxyMap = false;
 
-    public transient DeploymentInfo deploymentInfo;
+    public transient CoreDeploymentInfo deploymentInfo;
 
     public transient RpcContainer container;
 
@@ -62,7 +61,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.container = container;
         this.primaryKey = pk;
         this.deploymentID = depID;
-        this.deploymentInfo = (org.openejb.core.DeploymentInfo) container.getDeploymentInfo(depID);
+        this.deploymentInfo = (org.openejb.core.CoreDeploymentInfo) container.getDeploymentInfo(depID);
 
         Properties properties = SystemInstance.get().getProperties();
         String value = properties.getProperty("openejb.localcopy");
@@ -77,7 +76,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         in.defaultReadObject();
 
         ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        deploymentInfo = (org.openejb.core.DeploymentInfo) containerSystem.getDeploymentInfo(deploymentID);
+        deploymentInfo = (org.openejb.core.CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID);
         container = (RpcContainer) deploymentInfo.getContainer();
     }
 
@@ -137,7 +136,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         */
 
         ThreadContext cntext = null;
-        DeploymentInfo depInfo = null;
+        CoreDeploymentInfo depInfo = null;
         Object prmryKey = null;
         byte crrntOperation = (byte) 0;
         Object scrtyIdentity = null;
