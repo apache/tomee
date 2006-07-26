@@ -14,12 +14,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
     private final EjbType ejbType;
     private final ClassLoader cl;
+    private List<Exception> warnings = new ArrayList();
 
     public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean) {
         this.bean = bean;
@@ -90,6 +93,9 @@ class EnterpriseBeanBuilder {
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
         DeploymentInfo deployment = new DeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, null, null, primaryKey, ejbType.getType(), null);
 
+        deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
+        deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
+
         if (ejbType.isSession()) {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));
         }
@@ -128,6 +134,34 @@ class EnterpriseBeanBuilder {
             }
         }
         return deployment;
+    }
+
+    public List<Exception> getWarnings() {
+        return warnings;
+    }
+
+    private Method getCallback(Class ejbClass, List<LifecycleCallbackInfo> callbackInfos) {
+        Method callback = null;
+        for (LifecycleCallbackInfo info : callbackInfos) {
+            try {
+                if (ejbClass.getName().equals(info.className)){
+                    if (callback != null){
+                        throw new IllegalStateException("Spec requirements only allow one callback method of a given type per class.  The following callback will be ignored: "+info.className+"."+info.method);
+                    }
+                    try {
+                        callback = ejbClass.getMethod(info.method);
+                    } catch (NoSuchMethodException e) {
+                        throw (IllegalStateException) new IllegalStateException("Callback method does not exist: "+info.className+"."+info.method).initCause(e);
+                    }
+
+                } else {
+                    throw new UnsupportedOperationException("Callback: "+info.className+"."+info.method+" -- We currently do not support callbacks where the callback class is not the bean class.  If you need this feature, please let us know and we will complete it asap.");
+                }
+            } catch (Exception e) {
+                warnings.add(e);
+            }
+        }
+        return callback;
     }
 
     private Class loadClass(String className, String messageCode) throws OpenEJBException {

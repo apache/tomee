@@ -36,6 +36,7 @@ import org.openejb.assembler.classic.SecurityRoleInfo;
 import org.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.openejb.assembler.classic.StatefulBeanInfo;
 import org.openejb.assembler.classic.StatelessBeanInfo;
+import org.openejb.assembler.classic.LifecycleCallbackInfo;
 import org.openejb.jee.CmpField;
 import org.openejb.jee.ContainerTransaction;
 import org.openejb.jee.EjbLocalRef;
@@ -53,6 +54,7 @@ import org.openejb.jee.SecurityRole;
 import org.openejb.jee.SecurityRoleRef;
 import org.openejb.jee.SessionBean;
 import org.openejb.jee.SessionType;
+import org.openejb.jee.LifecycleCallback;
 import org.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -362,9 +364,14 @@ public class EjbJarInfoBuilder {
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
+            copyCallbacks(s.getPostActivate(), ((StatefulBeanInfo) bean).postActivate);
+            copyCallbacks(s.getPrePassivate(), ((StatefulBeanInfo) bean).prePassivate);
         } else {
             bean = new StatelessBeanInfo();
         }
+
+        copyCallbacks(s.getPostConstruct(), bean.postConstruct);
+        copyCallbacks(s.getPreDestroy(), bean.preDestroy);
 
         EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
         if (d == null) {
@@ -388,6 +395,15 @@ public class EjbJarInfoBuilder {
         bean.transactionType = s.getTransactionType().toString();
 
         return bean;
+    }
+
+    private void copyCallbacks(List<LifecycleCallback> from, List<LifecycleCallbackInfo> to) {
+        for (LifecycleCallback callback : from) {
+            LifecycleCallbackInfo info = new LifecycleCallbackInfo();
+            info.className = callback.getLifecycleCallbackClass();
+            info.method = callback.getLifecycleCallbackMethod();
+            to.add(info);
+        }
     }
 
     private EnterpriseBeanInfo initEntityBean(EntityBean e, Map m) throws OpenEJBException {

@@ -1,6 +1,7 @@
 package org.openejb.assembler.classic;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
@@ -29,8 +30,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public JndiEncInfo jndiEnc;
     public SecurityRoleReferenceInfo [] securityRoleReferences;
 
-    public List<LifecycelCallbackInfo> postConstruct;
-    public List<LifecycelCallbackInfo> preDestroy;
-
+    public List<LifecycleCallbackInfo> postConstruct = new ArrayList();
+    public List<LifecycleCallbackInfo> preDestroy = new ArrayList();
 
 }

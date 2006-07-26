@@ -58,8 +58,9 @@ public class StatelessContainerTest extends TestCase {
         StatelessContainer container = new StatelessContainer("Stateless Container", new PseudoTransactionService(), new PseudoSecurityService(), ejbs, 10, 10, false);
 
         Object result = container.invoke("widget", Widget.class.getMethod("add", int.class, int.class), new Object[]{2, 3}, null, "");
+        assertEquals("widget.add", new Integer(5), result);
         result = container.invoke("widget", Widget.class.getMethod("initCalled"), new Object[]{}, null, "");
-        System.out.println("result = " + result);
+        assertEquals("widget.init", Boolean.TRUE, result);
     }
 
     private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
