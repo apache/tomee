@@ -52,6 +52,7 @@ public class StatefulInstanceManager {
         this.timeOUT = timeout * 60 * 1000;
 
         try {
+            passivatorClass = (passivatorClass == null)? SimplePassivater.class: passivatorClass;
             passivator = (PassivationStrategy) passivatorClass.newInstance();
         } catch (Exception e) {
             throw new OpenEJBException("Could not create the passivator "+passivatorClass.getName(), e);
