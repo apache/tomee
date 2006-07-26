@@ -42,6 +42,10 @@ public class StatelessInstanceManager {
         this.poolLimit = poolSize;
         this.strictPooling = strictPooling;
 
+        if (strictPooling && poolSize < 1){
+            throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
+        }
+        
         if (this.strictPooling) {
             poolQueue = new PoolQueue(timeout);
         }
@@ -55,8 +59,9 @@ public class StatelessInstanceManager {
         if (pool == null) {
             pool = new LinkedListStack(poolLimit);
             poolMap.put(deploymentId, pool);
-        } else
+        } else {
             bean = pool.pop();
+        }
 
         while (strictPooling && bean == null && pool.size() >= poolLimit) {
             poolQueue.waitForAvailableInstance();
@@ -99,22 +104,25 @@ public class StatelessInstanceManager {
         return (SessionContext) new StatelessContext(transactionManager, securityService);
     }
 
-    public void poolInstance(ThreadContext callContext, Object bean)
-            throws OpenEJBException {
-        if (bean == null)
+    public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
+        if (bean == null) {
             throw new SystemException("Invalid arguments");
+        }
+
         Object deploymentId = callContext.getDeploymentInfo().getDeploymentID();
+
         Stack pool = (Stack) poolMap.get(deploymentId);
+
         if (strictPooling) {
             pool.push(bean);
             poolQueue.notifyWaitingThreads();
         } else {
-            if (pool.size() > poolLimit)
+            if (pool.size() >= poolLimit){
                 freeInstance(callContext, bean);
-            else
+            } else {
                 pool.push(bean);
+            }
         }
-
     }
 
     public void freeInstance(ThreadContext callContext, Object bean) {
@@ -125,7 +133,6 @@ public class StatelessInstanceManager {
                 preDestroy.invoke(bean);
             }
         } catch (Throwable re) {
-
             logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
         }
 

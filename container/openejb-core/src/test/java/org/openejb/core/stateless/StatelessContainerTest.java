@@ -19,7 +19,6 @@ package org.openejb.core.stateless;
 import junit.framework.TestCase;
 import org.openejb.jee.StatelessBean;
 import org.openejb.jee.EjbJar;
-import org.openejb.jee.LifecycleCallback;
 import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.EjbJarInfoBuilder;
 import org.openejb.alt.config.ejb.OpenejbJar;
@@ -33,6 +32,10 @@ import org.openejb.OpenEJBException;
 
 import javax.ejb.SessionContext;
 import java.util.HashMap;
+import java.util.Stack;
+import java.util.Collection;
+import java.util.List;
+import java.util.Arrays;
 
 /**
  * @version $Revision$ $Date$
@@ -44,6 +47,7 @@ public class StatelessContainerTest extends TestCase {
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
         bean.addPostConstruct("init");
+        bean.addPreDestroy("destroy");
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
@@ -55,12 +59,24 @@ public class StatelessContainerTest extends TestCase {
 
         HashMap<String, DeploymentInfo> ejbs = build(jar);
 
-        StatelessContainer container = new StatelessContainer("Stateless Container", new PseudoTransactionService(), new PseudoSecurityService(), ejbs, 10, 10, false);
+        StatelessContainer container = new StatelessContainer("Stateless Container", new PseudoTransactionService(), new PseudoSecurityService(), ejbs, 10, 0, false);
 
-        Object result = container.invoke("widget", Widget.class.getMethod("add", int.class, int.class), new Object[]{2, 3}, null, "");
-        assertEquals("widget.add", new Integer(5), result);
-        result = container.invoke("widget", Widget.class.getMethod("initCalled"), new Object[]{}, null, "");
-        assertEquals("widget.init", Boolean.TRUE, result);
+        Object result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, null, "");
+        assertTrue("instance of Stack", result instanceof Stack);
+
+        Stack<Lifecycle> actual = (Stack<Lifecycle>) result;
+
+        List expected = Arrays.asList(Lifecycle.values());
+
+        assertEquals(join("\n", expected) ,join("\n", actual));
+    }
+
+    private static String join(String delimeter, List items){
+        StringBuffer sb = new StringBuffer();
+        for (Object item : items) {
+            sb.append(item.toString()).append(delimeter);
+        }
+        return sb.toString();
     }
 
     private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
@@ -72,28 +88,37 @@ public class StatelessContainerTest extends TestCase {
     }
 
     public static interface Widget {
-        int add(int a, int b);
-        boolean initCalled();
+        Stack<Lifecycle> getLifecycle();
+    }
+    public static enum Lifecycle {
+        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
     }
 
     public static class WidgetBean implements Widget {
-        private SessionContext sessionContext;
-        private boolean initCalled;
 
+        private Stack<Lifecycle> lifecycle = new Stack();
+
+        private SessionContext sessionContext;
+
+        public WidgetBean() {
+            lifecycle.push(Lifecycle.CONSTRUCTOR);
+        }
         public void setSessionContext(SessionContext sessionContext){
+            lifecycle.push(Lifecycle.INJECTION);
             this.sessionContext = sessionContext;
         }
 
-        public int add(int a, int b) {
-            return a + b;
-        }
-
-        public boolean initCalled() {
-            return initCalled;
+        public Stack<Lifecycle> getLifecycle() {
+            lifecycle.push(Lifecycle.BUSINESS_METHOD);
+            return lifecycle;
         }
 
         public void init() {
-            initCalled = true;
+            lifecycle.push(Lifecycle.POST_CONSTRUCT);
+        }
+
+        public void destroy() {
+            lifecycle.push(Lifecycle.PRE_DESTROY);
         }
     }
 }
