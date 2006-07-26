@@ -1,5 +1,9 @@
 package org.openejb.core.stateful;
 
+import org.openejb.SystemException;
+import org.openejb.core.EnvProps;
+import org.openejb.loader.SystemInstance;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,10 +12,6 @@ import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
-
-import org.openejb.core.EnvProps;
-import org.openejb.loader.SystemInstance;
-import org.openejb.SystemException;
 
 public class SimplePassivater implements PassivationStrategy {
     private File sessionDirectory;

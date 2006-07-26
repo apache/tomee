@@ -1,19 +1,17 @@
 package org.openejb.core.stateful;
 
-import javax.ejb.EnterpriseBean;
-import javax.ejb.SessionSynchronization;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.openejb.ApplicationException;
-import org.openejb.OpenEJB;
 import org.openejb.SystemException;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.util.Logger;
 
+import javax.ejb.EnterpriseBean;
+import javax.ejb.SessionSynchronization;
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import java.util.HashMap;
 
 public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {

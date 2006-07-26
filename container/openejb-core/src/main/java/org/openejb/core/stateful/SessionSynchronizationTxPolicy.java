@@ -1,11 +1,11 @@
 package org.openejb.core.stateful;
 
-import javax.ejb.SessionSynchronization;
-
 import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
+
+import javax.ejb.SessionSynchronization;
 
 public class SessionSynchronizationTxPolicy extends org.openejb.core.transaction.TransactionPolicy {
 

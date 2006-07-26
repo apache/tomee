@@ -1,8 +1,17 @@
 package org.openejb.core.stateful;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
+import org.openejb.Container;
+import org.openejb.DeploymentInfo;
+import org.openejb.OpenEJBException;
+import org.openejb.ProxyInfo;
+import org.openejb.SystemException;
+import org.openejb.core.Operations;
+import org.openejb.core.ThreadContext;
+import org.openejb.core.transaction.TransactionContainer;
+import org.openejb.core.transaction.TransactionContext;
+import org.openejb.core.transaction.TransactionPolicy;
+import org.openejb.spi.SecurityService;
+import org.openejb.util.Logger;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -11,19 +20,9 @@ import javax.ejb.EJBObject;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.transaction.TransactionManager;
-
-import org.openejb.Container;
-import org.openejb.DeploymentInfo;
-import org.openejb.OpenEJBException;
-import org.openejb.ProxyInfo;
-import org.openejb.SystemException;
-import org.openejb.spi.SecurityService;
-import org.openejb.core.Operations;
-import org.openejb.core.ThreadContext;
-import org.openejb.core.transaction.TransactionContainer;
-import org.openejb.core.transaction.TransactionContext;
-import org.openejb.core.transaction.TransactionPolicy;
-import org.openejb.util.Logger;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
@@ -103,7 +102,9 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
                     removeEJBObject(callMethod, args, callContext);
                     return null;
                 }
-            } else if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove")) {
+            } else
+            if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove"))
+            {
                 removeEJBObject(callMethod, args, callContext);
                 return null;
             }

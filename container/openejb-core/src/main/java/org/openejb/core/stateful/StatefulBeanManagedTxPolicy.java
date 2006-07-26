@@ -1,15 +1,14 @@
 package org.openejb.core.stateful;
 
-import java.rmi.RemoteException;
-
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-
 import org.openejb.ApplicationException;
 import org.openejb.InvalidateReferenceException;
 import org.openejb.core.transaction.TransactionContainer;
 import org.openejb.core.transaction.TransactionContext;
 import org.openejb.core.transaction.TransactionPolicy;
+
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import java.rmi.RemoteException;
 
 public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
 
@@ -39,7 +38,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
 
             // Get any previously started transaction
             Object primaryKey = context.callContext.getPrimaryKey();
-            Object possibleBeanTx = instanceManager.getAncillaryState( primaryKey );
+            Object possibleBeanTx = instanceManager.getAncillaryState(primaryKey);
             if (possibleBeanTx instanceof Transaction) {
                 context.currentTx = (Transaction) possibleBeanTx;
                 resumeTransaction(context, context.currentTx);
@@ -66,7 +65,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
 
             Object primaryKey = context.callContext.getPrimaryKey();
             StatefulInstanceManager instanceManager = (StatefulInstanceManager) context.context.get(StatefulInstanceManager.class);
-            instanceManager.setAncillaryState( primaryKey, context.currentTx );
+            instanceManager.setAncillaryState(primaryKey, context.currentTx);
 
         } catch (org.openejb.OpenEJBException e) {
             handleSystemException(e.getRootCause(), instance, context);

@@ -1,8 +1,16 @@
 package org.openejb.core.stateful;
 
-import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Properties;
+import org.openejb.ApplicationException;
+import org.openejb.InvalidateReferenceException;
+import org.openejb.OpenEJBException;
+import org.openejb.SystemException;
+import org.openejb.core.DeploymentInfo;
+import org.openejb.core.Operations;
+import org.openejb.core.ThreadContext;
+import org.openejb.core.ivm.IntraVmCopyMonitor;
+import org.openejb.spi.SecurityService;
+import org.openejb.util.Logger;
+import org.openejb.util.SafeToolkit;
 
 import javax.ejb.EJBException;
 import javax.ejb.EnterpriseBean;
@@ -11,22 +19,8 @@ import javax.ejb.SessionContext;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-
-import org.openejb.ApplicationException;
-import org.openejb.InvalidateReferenceException;
-import org.openejb.OpenEJBException;
-import org.openejb.SystemException;
-import org.openejb.OpenEJB;
-import org.openejb.spi.SecurityService;
-import org.openejb.core.EnvProps;
-import org.openejb.core.Operations;
-import org.openejb.core.ThreadContext;
-import org.openejb.core.DeploymentInfo;
-import org.openejb.core.ivm.IntraVmCopyMonitor;
-import org.openejb.util.Logger;
-import org.openejb.util.OpenEJBErrorHandler;
-import org.openejb.util.SafeProperties;
-import org.openejb.util.SafeToolkit;
+import java.rmi.RemoteException;
+import java.util.Hashtable;
 
 public class StatefulInstanceManager {
 
@@ -52,10 +46,10 @@ public class StatefulInstanceManager {
         this.timeOUT = timeout * 60 * 1000;
 
         try {
-            passivatorClass = (passivatorClass == null)? SimplePassivater.class: passivatorClass;
+            passivatorClass = (passivatorClass == null) ? SimplePassivater.class : passivatorClass;
             passivator = (PassivationStrategy) passivatorClass.newInstance();
         } catch (Exception e) {
-            throw new OpenEJBException("Could not create the passivator "+passivatorClass.getName(), e);
+            throw new OpenEJBException("Could not create the passivator " + passivatorClass.getName(), e);
         }
 
     }
@@ -200,7 +194,8 @@ public class StatefulInstanceManager {
                     return entry.bean;
                 } else {
                     byte currentOperation = callContext.getCurrentOperation();
-                    if (currentOperation == Operations.OP_AFTER_COMPLETION || currentOperation == Operations.OP_BEFORE_COMPLETION) {
+                    if (currentOperation == Operations.OP_AFTER_COMPLETION || currentOperation == Operations.OP_BEFORE_COMPLETION)
+                    {
                         return entry.bean;
                     } else {
 

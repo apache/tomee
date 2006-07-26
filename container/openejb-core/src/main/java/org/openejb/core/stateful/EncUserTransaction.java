@@ -1,9 +1,9 @@
 package org.openejb.core.stateful;
 
-import javax.naming.NameNotFoundException;
-
 import org.openejb.core.Operations;
 import org.openejb.core.ivm.naming.ObjectReference;
+
+import javax.naming.NameNotFoundException;
 
 /*
   This class is a wrapper for CoreUserTransaction reference in the 
@@ -27,7 +27,8 @@ public class EncUserTransaction extends org.openejb.core.ivm.naming.ENCReference
     * class can return the requested reference object.
     */
     public void checkOperation(byte operation) throws NameNotFoundException {
-        if (operation == Operations.OP_SET_CONTEXT || operation == Operations.OP_AFTER_COMPLETION || operation == Operations.OP_BEFORE_COMPLETION) {
+        if (operation == Operations.OP_SET_CONTEXT || operation == Operations.OP_AFTER_COMPLETION || operation == Operations.OP_BEFORE_COMPLETION)
+        {
             throw new NameNotFoundException("Operation Not Allowed");
         }
 

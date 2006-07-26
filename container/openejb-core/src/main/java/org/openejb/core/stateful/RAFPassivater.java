@@ -1,12 +1,12 @@
 package org.openejb.core.stateful;
 
-import java.io.RandomAccessFile;
+import org.openejb.spi.Serializer;
+
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
-
-import org.openejb.spi.Serializer;
 
 // optimization: replace HashTable with HashMap (vc no debug hashmap)
 
