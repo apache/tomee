@@ -25,7 +25,7 @@ import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.ejb.EjbDeployment;
 import org.openejb.assembler.classic.EjbJarBuilder;
 import org.openejb.assembler.classic.EjbJarInfo;
-import org.openejb.core.DeploymentInfo;
+import org.openejb.DeploymentInfo;
 import org.openejb.ri.sp.PseudoTransactionService;
 import org.openejb.ri.sp.PseudoSecurityService;
 import org.openejb.OpenEJBException;

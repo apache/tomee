@@ -1,17 +1,5 @@
 package org.openejb.assembler.classic;
 
-import org.apache.xbean.recipe.ConstructionException;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
-import org.openejb.Container;
-import org.openejb.OpenEJBException;
-import org.openejb.RpcContainer;
-import org.openejb.core.CoreDeploymentInfo;
-import org.openejb.loader.SystemInstance;
-import org.openejb.spi.SecurityService;
-import org.openejb.util.Logger;
-
-import javax.transaction.TransactionManager;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +8,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+import javax.transaction.TransactionManager;
+
+import org.apache.xbean.recipe.ConstructionException;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
+import org.openejb.Container;
+import org.openejb.DeploymentInfo;
+import org.openejb.OpenEJBException;
+import org.openejb.RpcContainer;
+import org.openejb.core.CoreDeploymentInfo;
+import org.openejb.loader.SystemInstance;
+import org.openejb.spi.SecurityService;
+import org.openejb.util.Logger;
 
 public class ContainerBuilder {
 
@@ -51,7 +53,7 @@ public class ContainerBuilder {
         ClassLoader classLoader = new URLClassLoader(jars, org.openejb.OpenEJB.class.getClassLoader());
         EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
 
-        HashMap<String,CoreDeploymentInfo> deployments = new HashMap();
+        HashMap<String,DeploymentInfo> deployments = new HashMap();
         for (int i = 0; i < this.ejbJars.length; i++) {
             EjbJarInfo ejbJar = this.ejbJars[i];
 

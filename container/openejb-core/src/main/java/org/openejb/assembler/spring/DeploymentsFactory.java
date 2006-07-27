@@ -16,21 +16,23 @@
  */
 package org.openejb.assembler.spring;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.TransactionManager;
+
+import org.openejb.DeploymentInfo;
 import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.DeploymentLoader;
 import org.openejb.alt.config.EjbJarInfoBuilder;
 import org.openejb.alt.config.ejb.EjbDeployment;
-import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.assembler.classic.EjbJarBuilder;
 import org.openejb.assembler.classic.EjbJarInfo;
+import org.openejb.core.CoreDeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
-
-import javax.transaction.TransactionManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @org.apache.xbean.XBean element="deployments"
@@ -86,7 +88,7 @@ public class DeploymentsFactory implements FactoryBean {
     }
 
     // Singletons don't work
-    private HashMap<String, CoreDeploymentInfo> deployments;
+    private HashMap<String, DeploymentInfo> deployments;
     public Object getObject() throws Exception {
         if (deployments != null){
             return deployments;
@@ -117,10 +119,10 @@ public class DeploymentsFactory implements FactoryBean {
             transferMethodTransactionInfos(infoBuilder);
             transferMethodPermissionInfos(infoBuilder);
 
-            HashMap<String, CoreDeploymentInfo> ejbs = builder.build(jarInfo);
+            HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo);
 
             for (EjbDeployment data : jar.getOpenejbJar().getEjbDeployment()) {
-                ejbs.get(data.getDeploymentId()).setContainer(new ContainerPointer(data.getContainerId()));
+                ((CoreDeploymentInfo)ejbs.get(data.getDeploymentId())).setContainer(new ContainerPointer(data.getContainerId()));
             }
 
             deployments.putAll(ejbs);
