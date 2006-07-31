@@ -59,6 +59,7 @@ import org.openejb.slsb.CreateMethod;
 import org.openejb.slsb.StatelessInstanceContextFactory;
 import org.openejb.slsb.StatelessInstanceFactory;
 import org.openejb.util.SoftLimitedInstancePool;
+import org.openejb.util.Index;
 
 import javax.ejb.Handle;
 import javax.ejb.TimedObject;
@@ -78,7 +79,7 @@ import java.util.TreeSet;
 public class StatelessEjbDeployment extends AbstractRpcDeployment implements ExtendedEjbDeployment {
     private final InstancePool instancePool;
     private final List handlerInfos;
-    private final MethodMap dispatchMethodMap;
+    private final Index dispatchIndex;
 
     public StatelessEjbDeployment(String containerId,
                                   String ejbName,
@@ -196,7 +197,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
                 unshareableResources,
                 applicationManagedSecurityResources);
 
-        dispatchMethodMap = buildDispatchMethodMap();
+        dispatchIndex = buildDispatchMethodMap();
 
         InstanceContextFactory contextFactory = new StatelessInstanceContextFactory(this, ejbContainer, proxyFactory);
 
@@ -208,7 +209,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
     }
 
     public VirtualOperation getVirtualOperation(int methodIndex) {
-        VirtualOperation vop = (VirtualOperation) dispatchMethodMap.get(methodIndex);
+        VirtualOperation vop = (VirtualOperation) dispatchIndex.get(methodIndex);
         return vop;
     }
 
@@ -229,22 +230,22 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
     }
 
 
-    private MethodMap buildDispatchMethodMap() throws Exception {
+    private Index buildDispatchMethodMap() throws Exception {
         Class beanClass = getBeanClass();
 
-        MethodMap dispatchMethodMap = new MethodMap(signatures);
+        Index dispatchIndex = new Index(signatures);
 
         // create... this is the method that is called by the user
         InterfaceMethodSignature createSignature = new InterfaceMethodSignature("create", true);
-        dispatchMethodMap.put(createSignature, CreateMethod.INSTANCE);
+        dispatchIndex.put(createSignature, CreateMethod.INSTANCE);
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             InterfaceMethodSignature timeoutSignature = new InterfaceMethodSignature("ejbTimeout", new Class[]{Timer.class}, false);
-            dispatchMethodMap.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
+            dispatchIndex.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
         }
 
         // add the business methods
-        for (Iterator iterator = dispatchMethodMap.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = dispatchIndex.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             InterfaceMethodSignature methodSignature = (InterfaceMethodSignature) entry.getKey();
             String methodName = methodSignature.getMethodName();
@@ -256,7 +257,7 @@ public class StatelessEjbDeployment extends AbstractRpcDeployment implements Ext
             }
         }
 
-        return dispatchMethodMap;
+        return dispatchIndex;
     }
 
     public boolean isBeanManagedTransactions() {

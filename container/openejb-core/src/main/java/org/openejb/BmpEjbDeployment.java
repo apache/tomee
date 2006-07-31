@@ -63,6 +63,7 @@ import org.openejb.entity.bmp.BmpInstanceContextFactory;
 import org.openejb.entity.bmp.BmpRemoveMethod;
 import org.openejb.proxy.ProxyInfo;
 import org.openejb.util.SoftLimitedInstancePool;
+import org.openejb.util.Index;
 
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -79,7 +80,7 @@ import java.util.SortedMap;
 public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjbDeployment {
     private final InstancePool instancePool;
     private final boolean reentrant;
-    private final MethodMap dispatchMethodMap;
+    private final Index dispatchIndex;
 
     public BmpEjbDeployment(String containerId,
                             String ejbName,
@@ -194,7 +195,7 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
         this.reentrant = reentrant;
 
-        dispatchMethodMap = buildDispatchMethodMap();
+        dispatchIndex = buildDispatchMethodMap();
 
         InstanceContextFactory contextFactory = new BmpInstanceContextFactory(this, ejbContainer, proxyFactory);
 
@@ -207,23 +208,23 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
     }
 
     public VirtualOperation getVirtualOperation(int methodIndex) {
-        VirtualOperation vop = (VirtualOperation) dispatchMethodMap.get(methodIndex);
+        VirtualOperation vop = (VirtualOperation) dispatchIndex.get(methodIndex);
         return vop;
     }
 
-    private MethodMap buildDispatchMethodMap() throws Exception {
+    private Index buildDispatchMethodMap() throws Exception {
         Class beanClass = getBeanClass();
 
-        MethodMap dispatchMethodMap = new MethodMap(signatures);
+        Index dispatchIndex = new Index(signatures);
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             InterfaceMethodSignature timeoutSignature = new InterfaceMethodSignature("ejbTimeout", new Class[]{Timer.class}, false);
-            dispatchMethodMap.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
+            dispatchIndex.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
         }
 
         MethodSignature removeSignature = new MethodSignature("ejbRemove");
         BmpRemoveMethod removeVop = new BmpRemoveMethod(beanClass, removeSignature);
-        for (Iterator iterator = dispatchMethodMap.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = dispatchIndex.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             InterfaceMethodSignature methodSignature = (InterfaceMethodSignature) entry.getKey();
             String methodName = methodSignature.getMethodName();
@@ -254,7 +255,7 @@ public class BmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
             }
         }
 
-        return dispatchMethodMap;
+        return dispatchIndex;
     }
 
     public InstancePool getInstancePool() {

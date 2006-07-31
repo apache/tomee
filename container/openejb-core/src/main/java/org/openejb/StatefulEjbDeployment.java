@@ -59,6 +59,7 @@ import org.openejb.sfsb.CreateMethod;
 import org.openejb.sfsb.RemoveMethod;
 import org.openejb.sfsb.StatefulInstanceContextFactory;
 import org.openejb.sfsb.StatefulInstanceFactory;
+import org.openejb.util.Index;
 
 import javax.security.auth.Subject;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ import java.util.SortedMap;
 public class StatefulEjbDeployment extends AbstractRpcDeployment implements ExtendedEjbDeployment {
     private final StatefulInstanceFactory instanceFactory;
     private final InstanceCache instanceCache;
-    private final MethodMap dispatchMethodMap;
+    private final Index dispatchIndex;
 
     public StatefulEjbDeployment(String containerId,
                                  String ejbName,
@@ -201,7 +202,7 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
                 unshareableResources,
                 applicationManagedSecurityResources);
 
-        dispatchMethodMap = buildDispatchMethodMap();
+        dispatchIndex = buildDispatchMethodMap();
 
         // build the instance factory
         StatefulInstanceContextFactory contextFactory;
@@ -215,18 +216,18 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
     }
 
     public VirtualOperation getVirtualOperation(int methodIndex) {
-        VirtualOperation vop = (VirtualOperation) dispatchMethodMap.get(methodIndex);
+        VirtualOperation vop = (VirtualOperation) dispatchIndex.get(methodIndex);
         return vop;
     }
 
-    private MethodMap buildDispatchMethodMap() throws Exception {
+    private Index buildDispatchMethodMap() throws Exception {
         Class beanClass = getBeanClass();
 
-        MethodMap dispatchMethodMap = new MethodMap(signatures);
+        Index dispatchIndex = new Index(signatures);
 
         MethodSignature removeSignature = new MethodSignature("ejbRemove");
         RemoveMethod removeVop = new RemoveMethod(beanClass, removeSignature);
-        for (Iterator iterator = dispatchMethodMap.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = dispatchIndex.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             InterfaceMethodSignature methodSignature = (InterfaceMethodSignature) entry.getKey();
             String methodName = methodSignature.getMethodName();
@@ -251,7 +252,7 @@ public class StatefulEjbDeployment extends AbstractRpcDeployment implements Exte
                 }
             }
         }
-        return dispatchMethodMap;
+        return dispatchIndex;
 
     }
 

@@ -71,6 +71,7 @@ import org.openejb.entity.cmp.SelectMethod;
 import org.openejb.entity.cmp.SelectQuery;
 import org.openejb.proxy.ProxyInfo;
 import org.openejb.util.SoftLimitedInstancePool;
+import org.openejb.util.Index;
 
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -92,7 +93,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
     private final boolean reentrant;
     private final EjbCmpEngine ejbCmpEngine;
     private final Cmp1Bridge cmp1Bridge;
-    private final MethodMap dispatchMethodMap;
+    private final Index dispatchIndex;
 
     public CmpEjbDeployment(String containerId,
                             String ejbName,
@@ -218,7 +219,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
             throw new Exception("Module cmp engine does not contain an engine for ejb: " + ejbName);
         }
 
-        dispatchMethodMap = buildDispatchMethodMap();
+        dispatchIndex = buildDispatchMethodMap();
 
         Map instanceMap = null;
         if (cmp2) {
@@ -243,18 +244,18 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
     }
 
     public VirtualOperation getVirtualOperation(int methodIndex) {
-        VirtualOperation vop = (VirtualOperation) dispatchMethodMap.get(methodIndex);
+        VirtualOperation vop = (VirtualOperation) dispatchIndex.get(methodIndex);
         return vop;
     }
 
-    private MethodMap buildDispatchMethodMap() throws Exception {
+    private Index buildDispatchMethodMap() throws Exception {
         Class beanClass = getBeanClass();
 
-        MethodMap dispatchMethodMap = new MethodMap(signatures);
+        Index dispatchIndex = new Index(signatures);
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             InterfaceMethodSignature timeoutSignature = new InterfaceMethodSignature("ejbTimeout", new Class[]{Timer.class}, false);
-            dispatchMethodMap.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
+            dispatchIndex.put(timeoutSignature, EJBTimeoutOperation.INSTANCE);
         }
 
         // build an index from the finder method signatures to the select query
@@ -271,7 +272,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
 
         MethodSignature removeSignature = new MethodSignature("ejbRemove");
         CmpRemoveMethod removeVop = new CmpRemoveMethod(beanClass, removeSignature, ejbCmpEngine);
-        for (Iterator iterator = dispatchMethodMap.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = dispatchIndex.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             InterfaceMethodSignature methodSignature = (InterfaceMethodSignature) entry.getKey();
             String methodName = methodSignature.getMethodName();
@@ -305,7 +306,7 @@ public class CmpEjbDeployment extends AbstractRpcDeployment implements EntityEjb
             }
         }
 
-        return dispatchMethodMap;
+        return dispatchIndex;
     }
 
 
