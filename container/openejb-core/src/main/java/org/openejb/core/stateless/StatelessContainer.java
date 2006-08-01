@@ -103,7 +103,7 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
             Object retValue = _invoke(callMethod, runMethod, args, bean, callContext);
             instanceManager.poolInstance(callContext, bean);
 
-            return deployInfo.convertIfLocalReference(callMethod, retValue);
+            return retValue;
 
         } finally {
             /*

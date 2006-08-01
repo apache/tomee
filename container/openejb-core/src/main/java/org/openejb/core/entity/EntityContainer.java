@@ -115,7 +115,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
             Object retValue = invoke(callMethod, runMethod, args, callContext);
 
-            return deployInfo.convertIfLocalReference(callMethod, retValue);
+            return retValue;
 
         } finally {
             /*

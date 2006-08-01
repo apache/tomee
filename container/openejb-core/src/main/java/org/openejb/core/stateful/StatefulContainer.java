@@ -120,7 +120,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
 
             instanceManager.poolInstance(primKey, bean);
 
-            return deployInfo.convertIfLocalReference(callMethod, returnValue);
+            return returnValue;
 
         } finally {
             /*

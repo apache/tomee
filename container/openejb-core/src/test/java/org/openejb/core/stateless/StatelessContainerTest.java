@@ -17,25 +17,24 @@
 package org.openejb.core.stateless;
 
 import junit.framework.TestCase;
-import org.openejb.jee.StatelessBean;
-import org.openejb.jee.EjbJar;
+import org.openejb.DeploymentInfo;
+import org.openejb.OpenEJBException;
 import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.EjbJarInfoBuilder;
-import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.alt.config.ejb.EjbDeployment;
+import org.openejb.alt.config.ejb.OpenejbJar;
 import org.openejb.assembler.classic.EjbJarBuilder;
 import org.openejb.assembler.classic.EjbJarInfo;
-import org.openejb.DeploymentInfo;
-import org.openejb.ri.sp.PseudoTransactionService;
+import org.openejb.jee.EjbJar;
+import org.openejb.jee.StatelessBean;
 import org.openejb.ri.sp.PseudoSecurityService;
-import org.openejb.OpenEJBException;
+import org.openejb.ri.sp.PseudoTransactionService;
 
 import javax.ejb.SessionContext;
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.Collection;
-import java.util.List;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
@@ -68,10 +67,10 @@ public class StatelessContainerTest extends TestCase {
 
         List expected = Arrays.asList(Lifecycle.values());
 
-        assertEquals(join("\n", expected) ,join("\n", actual));
+        assertEquals(join("\n", expected), join("\n", actual));
     }
 
-    private static String join(String delimeter, List items){
+    private static String join(String delimeter, List items) {
         StringBuffer sb = new StringBuffer();
         for (Object item : items) {
             sb.append(item.toString()).append(delimeter);
@@ -90,6 +89,7 @@ public class StatelessContainerTest extends TestCase {
     public static interface Widget {
         Stack<Lifecycle> getLifecycle();
     }
+
     public static enum Lifecycle {
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
     }
@@ -103,7 +103,8 @@ public class StatelessContainerTest extends TestCase {
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
-        public void setSessionContext(SessionContext sessionContext){
+
+        public void setSessionContext(SessionContext sessionContext) {
             lifecycle.push(Lifecycle.INJECTION);
             this.sessionContext = sessionContext;
         }

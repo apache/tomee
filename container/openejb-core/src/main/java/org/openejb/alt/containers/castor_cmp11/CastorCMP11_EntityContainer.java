@@ -298,7 +298,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
             Object retValue = businessMethod(callMethod, runMethod, args, callContext);
 
-            return deployInfo.convertIfLocalReference(callMethod, retValue);
+            return retValue;
 
         } finally {
             /*

@@ -73,7 +73,6 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
     private HashMap methodTransactionPolicies = new HashMap();
     private HashMap methodMap = new HashMap();
     private HashMap securityRoleReferenceMap = new HashMap();
-    private HashSet methodsWithRemoteReturnTypes = null;
     private EJBLocalHome ejbLocalHomeRef;
     private String jarPath;
 
@@ -285,24 +284,6 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
 
     public void setIsReentrant(boolean reentrant) {
         isReentrant = reentrant;
-    }
-
-    public Object convertIfLocalReference(Method businessMethod, Object returnValue) {
-        if (returnValue == null || methodsWithRemoteReturnTypes == null)
-            return returnValue;
-
-        try {
-            if (methodsWithRemoteReturnTypes.contains(businessMethod)
-                    && ProxyManager.isProxyClass(returnValue.getClass())
-                    && ProxyManager.getInvocationHandler(returnValue) instanceof BaseEjbProxyHandler) {
-
-                return new SpecialProxyInfo(returnValue);
-            }
-        } catch (ClassCastException e) {
-
-        }
-        return returnValue;
-
     }
 
     public Method getMatchingBeanMethod(Method interfaceMethod) {
@@ -554,19 +535,6 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
                 methodMap.put(method, beanMethod);
             } catch (NoSuchMethodException nsme) {
                 throw new RuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
-            }
-            /*
-               check for return type of java.rmi.Remote. If one of the business method returns a
-               java.rmi.Remote type, it may be a org.openejb.ivm.BaseEjbProxyHandler type at runtime,
-               in which case it will need to be converted by the container into a ProxyInfo object.
-               The container will use the convertIfLocalReference() to check.
-               This block of code sets up that method.
-             */
-            if (!isLocal && java.rmi.Remote.class.isAssignableFrom(method.getReturnType())) {
-                if (methodsWithRemoteReturnTypes == null) {
-                    methodsWithRemoteReturnTypes = new HashSet();
-                }
-                methodsWithRemoteReturnTypes.add(method);
             }
         }
     }
