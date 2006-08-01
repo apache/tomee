@@ -61,25 +61,6 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         throw new RuntimeException("Inconsistent internal state");
                 }
             }
-            /*
-            * Business methods that return EJBHome or EJBObject references to local
-            * beans (beans in the same container system) must have the return value
-            * converted to a ProxyInfo object, so that the server can provide the client
-            * with a proper remote reference.  Local remote references are implemented using
-            * the org.openejb.core.ivm.BaseEjbProxyHandler types, which should not be returned
-            * to the client.  Non-local remote references are assumed to be serializable and valid
-            * return types for the clients.
-            *
-            * If the reference is a local remote reference a subtype of ProxyInfo is returned. The subtype
-            * is a org.openejb.core.ivm.SpecialProxyInfo. This class type is useful when the calling server
-            * is the IntraVM server.  Instead of creating a new remote ref from the proxy the IntraVM takes
-            * a short cut and reuses the original local remote reference -- they are thread safe with no synchronization.
-            *
-            * See Section 2.2.1.2.5 Remote References of the OpenEJB specification.
-            */
-
-            if (retValue instanceof SpecialProxyInfo)
-                retValue = ((SpecialProxyInfo) retValue).getProxy();
 
             return retValue;
 

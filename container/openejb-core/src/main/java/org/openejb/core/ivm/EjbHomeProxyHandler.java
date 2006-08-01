@@ -37,12 +37,6 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object createProxy(ProxyInfo proxyInfo) {
 
-        if (proxyInfo instanceof SpecialProxyInfo) {
-            Object proxy = ((SpecialProxyInfo) proxyInfo).getProxy();
-            if (proxy == null) throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
-            return proxy;
-        }
-
         Object newProxy = null;
         try {
             EjbObjectProxyHandler handler = newEjbObjectHandler(proxyInfo.getBeanContainer(), proxyInfo.getPrimaryKey(), proxyInfo.getDeploymentInfo().getDeploymentID());
