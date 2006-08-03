@@ -10,10 +10,12 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.EnterpriseBean;
+import javax.ejb.SessionBean;
 
 import org.openejb.Container;
 import org.openejb.RpcContainer;
 import org.openejb.SystemException;
+import org.openejb.ApplicationException;
 import org.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
 import org.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.openejb.core.entity.EntityEjbHomeHandler;
@@ -32,6 +34,7 @@ import org.openejb.core.transaction.TxNotSupported;
 import org.openejb.core.transaction.TxRequired;
 import org.openejb.core.transaction.TxRequiresNew;
 import org.openejb.core.transaction.TxSupports;
+import org.openejb.core.transaction.TransactionContext;
 import org.openejb.util.proxy.ProxyManager;
 
 /**
@@ -58,6 +61,7 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
     private Container container;
     private URL archiveURL;
     private EJBHome ejbHomeRef;
+    private Object containerData;
 
     private final DeploymentContext context;
 
@@ -138,6 +142,24 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
         this.pkClass = pkClass;
         this.componentType = componentType;
         this.archiveURL = archiveURL;
+
+        if (businessLocal != null && localHomeInterface == null){
+            this.localHomeInterface = BusinessLocalHome.class;
+        }
+
+        if (businessRemote != null && homeInterface == null){
+            this.homeInterface = BusinessRemoteHome.class;
+        }
+
+        if (SessionBean.class.isAssignableFrom(beanClass)){
+            try {
+                this.preDestroy = SessionBean.class.getMethod("ejbRemove");
+                this.prePassivate = SessionBean.class.getMethod("ejbPassivate");
+                this.postActivate = SessionBean.class.getMethod("ejbActivate");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException(e);
+            }
+        }
         createMethodMap();
 
         if (EnterpriseBean.class.isAssignableFrom(beanClass)){
@@ -147,6 +169,14 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
                 throw new SystemException(e);
             }
         }
+    }
+
+    public Object getContainerData() {
+        return containerData;
+    }
+
+    public void setContainerData(Object containerData) {
+        this.containerData = containerData;
     }
 
     public void setContainer(Container cont) {
@@ -190,9 +220,23 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
             }
             methodTransactionPolicies.put(method, policy);
         }
-        return policy;
+        if (policy == null) policy = new NoTransactionPolicy();
+        return policy ;
     }
 
+    private static class NoTransactionPolicy extends TransactionPolicy {
+        public void afterInvoke(Object bean, TransactionContext context) throws ApplicationException, SystemException {
+        }
+
+        public void beforeInvoke(Object bean, TransactionContext context) throws SystemException, ApplicationException {
+        }
+
+        public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+        }
+
+        public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
+        }
+    }
     public String [] getAuthorizedRoles(Method method) {
         HashSet roleSet = (HashSet) methodPermissions.get(method);
         if (roleSet == null) return null;
@@ -443,7 +487,7 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
             mapObjectInterface(remoteInterface, false);
             mapHomeInterface(homeInterface);
         }
-        if (localHomeInterface != null) {
+        if (localInterface != null) {
             mapObjectInterface(localInterface, true);
             mapHomeInterface(localHomeInterface);
         }
@@ -521,6 +565,10 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
     }
 
     private void mapObjectInterface(Class intrface, boolean isLocal) {
+        if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class){
+            return;
+        }
+
         Method [] interfaceMethods = intrface.getMethods();
         for (int i = 0; i < interfaceMethods.length; i++) {
             Method method = interfaceMethods[i];

@@ -58,7 +58,7 @@ public class SimplePassivater implements PassivationStrategy {
         }
         catch (java.io.NotSerializableException nse) {
             logger.info("Passivation failed ", nse);
-            throw new org.openejb.SystemException("The type " + nse.getMessage() + " in the bean class " + ((BeanEntry) state).bean.getClass().getName() + " is not serializable as mandated by the EJB specification.");
+            throw (SystemException) new SystemException("The type " + nse.getMessage() + " in the bean class " + ((BeanEntry) state).bean.getClass().getName() + " is not serializable as mandated by the EJB specification.").initCause(nse);
         }
         catch (Exception t) {
             logger.info("Passivation failed ", t);

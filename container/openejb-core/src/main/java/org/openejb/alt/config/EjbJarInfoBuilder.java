@@ -392,6 +392,8 @@ public class EjbJarInfoBuilder {
         bean.remote = s.getRemote();
         bean.localHome = s.getLocalHome();
         bean.local = s.getLocal();
+        bean.businessLocal = s.getBusinessLocal();
+        bean.businessRemote = s.getBusinessRemote();
         bean.transactionType = s.getTransactionType().toString();
 
         return bean;

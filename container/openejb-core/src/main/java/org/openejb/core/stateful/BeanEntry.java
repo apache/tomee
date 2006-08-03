@@ -4,7 +4,7 @@ import javax.ejb.SessionBean;
 import javax.transaction.Transaction;
 
 public class BeanEntry implements java.io.Serializable {
-    protected final SessionBean bean;
+    protected final Object bean;
     protected Object primaryKey;
     protected Object ancillaryState;
     protected transient Transaction transaction;
@@ -12,7 +12,7 @@ public class BeanEntry implements java.io.Serializable {
     protected long timeOutInterval;
     protected boolean inQue = false;
 
-    protected BeanEntry(SessionBean beanInstance, Object primKey, Object ancillary, long timeOut) {
+    protected BeanEntry(Object beanInstance, Object primKey, Object ancillary, long timeOut) {
         bean = beanInstance;
         primaryKey = primKey;
         ancillaryState = ancillary;

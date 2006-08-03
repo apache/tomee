@@ -66,6 +66,20 @@ public class Index<K,V> extends AbstractMap<K,V> {
     private final IndexEntrySet entrySet;
     private IndexValueList<V> indexValueList;
 
+    public Index(Map<K,V> map) {
+        entries = new IndexEntry[map.size()];
+        keyIndicies = new LinkedHashMap(map.size());
+
+        int i = 0;
+        for (Entry<K, V> entry : map.entrySet()) {
+            entries[i] = new IndexEntry<K,V>(entry);
+            keyIndicies.put(entry.getKey(), new Integer(i));
+            i++;
+        }
+
+        entrySet = new IndexEntrySet();
+    }
+
     public Index(K[] keys) {
         entries = new IndexEntry[keys.length];
         keyIndicies = new LinkedHashMap(keys.length);
@@ -177,6 +191,11 @@ public class Index<K,V> extends AbstractMap<K,V> {
         private IndexEntry(K key, V value) {
             this.key = key;
             this.value = value;
+        }
+
+        private IndexEntry(Map.Entry<K, V> entry) {
+            this.key = entry.getKey();
+            this.value = entry.getValue();
         }
 
         public K getKey() {

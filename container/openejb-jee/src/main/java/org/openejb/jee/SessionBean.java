@@ -500,6 +500,12 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
         return this.prePassivate;
     }
 
+    public void addPrePassivate(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPrePassivate().add(new LifecycleCallback(ejbClass, method));
+    }
+
+
     public List<SecurityRoleRef> getSecurityRoleRef() {
         if (securityRoleRef == null) {
             securityRoleRef = new ArrayList<SecurityRoleRef>();

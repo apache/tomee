@@ -80,22 +80,39 @@ class EnterpriseBeanBuilder {
             local = loadClass(bean.local, "classNotFound.local");
         }
 
+        Class businessLocal = null;
+        if (bean.businessLocal != null) {
+            businessLocal = loadClass(bean.businessLocal, "classNotFound.businessLocal");
+        }
+
+        Class businessRemote = null;
+        if (bean.businessRemote != null) {
+            businessRemote = loadClass(bean.businessRemote, "classNotFound.businessRemote");
+        }
+
         Class primaryKey = null;
         if (ejbType.isEntity() && ((EntityBeanInfo) bean).primKeyClass != null) {
             String className = ((EntityBeanInfo) bean).primKeyClass;
             primaryKey = loadClass(className, "classNotFound.primaryKey");
         }
+
         final String transactionType = bean.transactionType;
 
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType);
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
-        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, null, null, primaryKey, ejbType.getType(), null);
+        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType.getType(), null);
 
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
 
+        if (bean instanceof StatefulBeanInfo) {
+            StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
+            deployment.setPrePassivate(getCallback(ejbClass, statefulBeanInfo.prePassivate));
+            deployment.setPostActivate(getCallback(ejbClass, statefulBeanInfo.postActivate));
+        }
+        
         if (ejbType.isSession()) {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));
         }

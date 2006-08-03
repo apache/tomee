@@ -11,6 +11,8 @@ import org.openejb.core.ivm.IntraVmCopyMonitor;
 import org.openejb.spi.SecurityService;
 import org.openejb.util.Logger;
 import org.openejb.util.SafeToolkit;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.ejb.EJBException;
 import javax.ejb.EnterpriseBean;
@@ -24,6 +26,8 @@ import java.rmi.RemoteException;
 import java.rmi.NoSuchObjectException;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class StatefulInstanceManager {
 
@@ -45,7 +49,11 @@ public class StatefulInstanceManager {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.lruQue = new BeanEntryQue(poolSize);
-        this.bulkPassivationSize = (bulkPassivate > poolSize) ? poolSize : bulkPassivate;
+        if (poolSize == 0){
+            this.bulkPassivationSize = 1;
+        } else {
+            this.bulkPassivationSize = Math.min(bulkPassivate, poolSize);
+        }
         this.timeOut = timeout * 60 * 1000;
 
         try {
@@ -70,32 +78,23 @@ public class StatefulInstanceManager {
 
     }
 
-    public EnterpriseBean newInstance(Object primaryKey, Class beanClass) throws OpenEJBException {
-        return this.newInstance(primaryKey, null, beanClass);
-    }
+    public Object newInstance(Object primaryKey, Class beanClass) throws OpenEJBException {
+        Object bean = null;
 
-    public EnterpriseBean newInstance(Object primaryKey, Object ancillaryState, Class beanClass) throws OpenEJBException {
-
-        SessionBean bean = null;
-
-        try {
-            bean = (SessionBean) toolkit.newInstance(beanClass);
-        } catch (OpenEJBException oee) {
-            logger.error("Can't instantiate new instance of class +" + beanClass.getName() + ". Received exception " + oee, oee);
-            throw (SystemException) oee;
-        }
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         byte currentOperation = threadContext.getCurrentOperation();
         threadContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
+
         try {
-            CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-            bean.setSessionContext(createSessionContext());
+            ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
+            objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
+            bean = objectRecipe.create();
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
             and mark the transaction for rollback.  If there is a transaction to rollback, then the a
-            javax.transaction.TransactionRolledbackException must be throw to the client. Otherwise a
+              javax.transaction.TransactionRolledbackException must be throw to the client. Otherwise a
             java.rmi.RemoteException is thrown to the client.
             See EJB 1.1 specification, section 12.3.2
             See EJB 2.0 specification, section 18.3.3
@@ -105,7 +104,7 @@ public class StatefulInstanceManager {
             threadContext.setCurrentOperation(currentOperation);
         }
 
-        BeanEntry entry = new BeanEntry(bean, primaryKey, ancillaryState, timeOut);
+        BeanEntry entry = new BeanEntry(bean, primaryKey, null, timeOut);
 
         beanIndex.put(primaryKey, entry);
 
@@ -116,7 +115,7 @@ public class StatefulInstanceManager {
         return (SessionContext) new StatefulContext(transactionManager, securityService);
     }
 
-    public SessionBean obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {
+    public Object obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {
         if (primaryKey == null) {
             throw new SystemException(new NullPointerException("Cannot obtain an instance of the stateful session bean with a null session id"));
         }
@@ -140,7 +139,14 @@ public class StatefulInstanceManager {
                 callContext.setCurrentOperation(Operations.OP_ACTIVATE);
 
                 try {
-                    entry.bean.ejbActivate();
+                    Method postActivate = callContext.getDeploymentInfo().getPostActivate();
+                    if (postActivate != null){
+                        try {
+                            postActivate.invoke(entry.bean);
+                        } catch (InvocationTargetException e) {
+                            throw e.getTargetException();
+                        }
+                    }
                 } catch (Throwable callbackException) {
                     /*
                     In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -209,7 +215,14 @@ public class StatefulInstanceManager {
         threadContext.setCurrentOperation(Operations.OP_REMOVE);
 
         try {
-            entry.bean.ejbRemove();
+            Method preDestroy = threadContext.getDeploymentInfo().getPreDestroy();
+            if (preDestroy != null){
+                try {
+                    preDestroy.invoke(entry.bean);
+                } catch (InvocationTargetException e) {
+                    throw e.getTargetException();
+                }
+            }
         } catch (Throwable callbackException) {
             /*
               Exceptions are processed "quietly"; they are not reported to the client since 
@@ -228,7 +241,7 @@ public class StatefulInstanceManager {
         }
     }
 
-    public void poolInstance(Object primaryKey, EnterpriseBean bean) throws OpenEJBException {
+    public void poolInstance(Object primaryKey, Object bean) throws OpenEJBException {
         if (primaryKey == null || bean == null){
             throw new SystemException("Invalid arguments");
         }
@@ -262,7 +275,7 @@ public class StatefulInstanceManager {
         return transactionManager;
     }
 
-    public EnterpriseBean freeInstance(Object primaryKey) throws SystemException {
+    public Object freeInstance(Object primaryKey) throws SystemException {
         BeanEntry entry = null;
         entry = (BeanEntry) beanIndex.remove(primaryKey);// remove frm index
         if (entry == null) {
@@ -284,6 +297,7 @@ public class StatefulInstanceManager {
 
         BeanEntry currentEntry;
         final byte currentOperation = threadContext.getCurrentOperation();
+        Method prePassivate = threadContext.getDeploymentInfo().getPrePassivate();
         try {
             for (int i = 0; i < bulkPassivationSize; ++i) {
                 currentEntry = lruQue.first();
@@ -296,8 +310,14 @@ public class StatefulInstanceManager {
                 } else {
                     threadContext.setCurrentOperation(Operations.OP_PASSIVATE);
                     try {
-
-                        currentEntry.bean.ejbPassivate();
+                        if (prePassivate != null){
+                            // TODO Are all beans in the stateTable the same type?
+                            try {
+                                prePassivate.invoke(currentEntry.bean);
+                            } catch (InvocationTargetException e) {
+                                throw e.getTargetException();
+                            }
+                        }
                     } catch (Throwable e) {
 
                         String logMessage = "An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance; " + e.getClass().getName() + " " + e.getMessage();
@@ -362,7 +382,7 @@ public class StatefulInstanceManager {
         }
         BeanEntry entry = (BeanEntry) beanIndex.get(primaryKey);
         if (entry == null) {
-            EnterpriseBean bean = this.obtainInstance(primaryKey, ThreadContext.getThreadContext());
+            Object bean = this.obtainInstance(primaryKey, ThreadContext.getThreadContext());
             this.poolInstance(primaryKey, bean);
             entry = (BeanEntry) beanIndex.get(primaryKey);
         }
@@ -383,13 +403,14 @@ public class StatefulInstanceManager {
         }
 
         protected synchronized void add(BeanEntry entry) throws SystemException {
-            if (list.size() >= capacity) {// is the LRU QUE full?
-                passivate();
-            }
             entry.resetTimeOut();
 
             list.addLast(entry);
             entry.inQue = true;
+
+            if (list.size() >= capacity) {// is the LRU QUE full?
+                passivate();
+            }
         }
 
         protected synchronized BeanEntry remove(BeanEntry entry) {
@@ -407,7 +428,7 @@ public class StatefulInstanceManager {
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.openejb.util.resources");
 
-    protected void handleCallbackException(Throwable e, EnterpriseBean instance, ThreadContext callContext, String callBack) throws ApplicationException, SystemException {
+    protected void handleCallbackException(Throwable e, Object instance, ThreadContext callContext, String callBack) throws ApplicationException, SystemException {
 
         String remoteMessage = "An unexpected exception occured while invoking the " + callBack + " method on the Stateful SessionBean instance";
         String logMessage = remoteMessage + "; " + e.getClass().getName() + " " + e.getMessage();

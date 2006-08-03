@@ -1,6 +1,7 @@
 package org.openejb.core.stateful;
 
 import org.openejb.RpcContainer;
+import org.openejb.loader.SystemInstance;
 import org.openejb.core.Operations;
 import org.openejb.core.ThreadContext;
 import org.openejb.core.ivm.EjbObjectProxyHandler;
@@ -8,6 +9,8 @@ import org.openejb.spi.SecurityService;
 
 import javax.transaction.TransactionManager;
 import javax.xml.rpc.handler.MessageContext;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 
 public class StatefulContext extends org.openejb.core.CoreContext implements javax.ejb.SessionContext {
 
@@ -107,5 +110,18 @@ public class StatefulContext extends org.openejb.core.CoreContext implements jav
 
     public Class getInvokedBusinessInterface() {
         throw new UnsupportedOperationException("not implemented");
+    }
+
+    private Object writeReplace() throws ObjectStreamException {
+        return new A();
+    }
+
+    private static class A implements Serializable {
+        private Object readResolve() throws ObjectStreamException {
+            // DMB: Could easily be done generically with an recipie
+            TransactionManager transactionManager = (TransactionManager) SystemInstance.get().getComponent(TransactionManager.class);
+            SecurityService securityService = (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
+            return new StatefulContext(transactionManager, securityService);
+        }
     }
 }
