@@ -16,7 +16,9 @@
  */
 package org.openejb.persistence;
 
-import org.openejb.persistence.Persistence.PersistenceUnit;
+import org.openejb.persistence.dd.PersistenceUnit;
+import org.openejb.persistence.dd.Persistence;
+import org.openejb.persistence.dd.TransactionType;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -101,7 +103,7 @@ public class PersistenceDeployer {
 
         try {
 
-            org.openejb.persistence.Persistence persistence = getPersistence(url);
+            org.openejb.persistence.dd.Persistence persistence = getPersistence(url);
 
             List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
@@ -139,9 +141,9 @@ public class PersistenceDeployer {
                 unitInfo.setMappingFileNames(pu.getMappingFile());
 
                 // Handle Properties
-                List<org.openejb.persistence.Persistence.PersistenceUnit.Properties.Property> puiProperties = pu.getProperties().getProperty();
+                List<org.openejb.persistence.dd.Property> puiProperties = pu.getProperties().getProperty();
                 Properties properties = new Properties();
-                for (org.openejb.persistence.Persistence.PersistenceUnit.Properties.Property property : puiProperties) {
+                for (org.openejb.persistence.dd.Property property : puiProperties) {
                     properties.put(property.getName(), property.getValue());
                 }
                 unitInfo.setProperties(properties);
@@ -156,8 +158,8 @@ public class PersistenceDeployer {
                         unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
                     }
                 } else {
-                    PersistentUnitTransactionType tranType = pu.getTransactionType();
-                    if ((tranType == null) || (tranType == PersistentUnitTransactionType.JTA)) {
+                    TransactionType tranType = pu.getTransactionType();
+                    if ((tranType == null) || (tranType == TransactionType.JTA)) {
                         unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
                     } else {
                         unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
@@ -196,14 +198,14 @@ public class PersistenceDeployer {
 
     }
 
-    public org.openejb.persistence.Persistence getPersistence(URL url) throws Exception {
+    public org.openejb.persistence.dd.Persistence getPersistence(URL url) throws Exception {
         InputStream persistenceDescriptor = null;
 
         try {
 
             persistenceDescriptor = url.openStream();
 
-            JAXBContext jc = JAXBContext.newInstance("org.openejb.persistence");
+            JAXBContext jc = JAXBContext.newInstance(Persistence.class);
             Unmarshaller u = jc.createUnmarshaller();
             UnmarshallerHandler uh = u.getUnmarshallerHandler();
 
@@ -223,7 +225,7 @@ public class PersistenceDeployer {
             xmlFilter.setContentHandler(uh);
             SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
 
-            return (org.openejb.persistence.Persistence) u.unmarshal(source);
+            return (org.openejb.persistence.dd.Persistence) u.unmarshal(source);
 
         } finally {
             if (persistenceDescriptor != null) persistenceDescriptor.close();
