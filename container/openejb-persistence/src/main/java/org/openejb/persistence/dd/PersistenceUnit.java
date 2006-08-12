@@ -188,7 +188,8 @@ public class PersistenceUnit {
     }
 
     public TransactionType getTransactionType() {
-        return transactionType;
+        // TODO: Is this the correct default?
+        return (transactionType == null)? TransactionType.JTA: transactionType;
     }
 
     public void setTransactionType(TransactionType value) {

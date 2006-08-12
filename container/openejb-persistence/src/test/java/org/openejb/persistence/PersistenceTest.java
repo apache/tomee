@@ -44,24 +44,25 @@ public class PersistenceTest extends TestCase {
     private String previousFactory = null;
 
     public void testDeployer() throws Exception {
+        String jndiPrefix = "java:openejb/PersistenceFactories";
         try {
             ClassLoader cl = this.getClass().getClassLoader();
 
             // Get a EntityManagerFactory list
-            PersistenceDeployer pm = new PersistenceDeployer();
+            PersistenceDeployer pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null));
             Map<String, EntityManagerFactory> factories = pm.deploy(cl);
             for (Map.Entry<String, EntityManagerFactory> entry : factories.entrySet()) {
                 // Store EntityManagerFactory in the JNDI
-                String name = PersistenceDeployer.FACTORY_JNDI_ROOT + "/" + entry.getKey();
+                String name = jndiPrefix + "/" + entry.getKey();
                 bind(name, entry.getValue(), ctx);
             }
 
-            EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+            EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup(jndiPrefix + "/TestUnit");
             assertNotNull(emf);
 
             assertEntityManagerFactory(emf);
         } finally {
-            cleanupJNDI(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+            cleanupJNDI(jndiPrefix + "/TestUnit");
         }
     }
 

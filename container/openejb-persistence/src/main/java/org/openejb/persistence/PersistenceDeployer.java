@@ -25,11 +25,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import javax.naming.CompositeName;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
@@ -61,10 +56,6 @@ public class PersistenceDeployer {
 
     public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
 
-    public static final String FACTORY_JNDI_ROOT = "java:openejb/PersistenceFactories";
-
-    private InitialContext initialContext = null;
-
     private String providerEnv = null;
 
     private String transactionTypeEnv = null;
@@ -74,15 +65,10 @@ public class PersistenceDeployer {
     private String nonJtaDataSourceEnv = null;
     private final DataSourceResolver dataSourceResolver;
 
-    public PersistenceDeployer() {
-        this(new Properties());
-    }
-
-    public PersistenceDeployer(Properties jndiProperties) {
+    public PersistenceDeployer(DataSourceResolver dataSourceResolver) {
 
         loadSystemProps();
-
-        dataSourceResolver = new GlobalJndiDataSourceResolver(jndiProperties);
+        this.dataSourceResolver = dataSourceResolver;
     }
 
     private void loadSystemProps() {
@@ -90,29 +76,6 @@ public class PersistenceDeployer {
         transactionTypeEnv = System.getProperty(TRANSACTIONTYPE_PROP);
         jtaDataSourceEnv = System.getProperty(JTADATASOURCE_PROP);
         nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
-    }
-
-    public interface DataSourceResolver {
-        DataSource getDataSource(String name) throws Exception;
-    }
-
-    public static class GlobalJndiDataSourceResolver implements DataSourceResolver {
-        private final Properties jndiProperties;
-        private final InitialContext initialContext;
-
-        public GlobalJndiDataSourceResolver(Properties jndiProperties) {
-            this.jndiProperties = jndiProperties;
-
-            try {
-                initialContext = new InitialContext(this.jndiProperties);
-            } catch (NamingException ne) {
-                throw new RuntimeException(ne);
-            }
-        }
-
-        public DataSource getDataSource(String name) throws Exception {
-            return (DataSource) initialContext.lookup(name);
-        }
     }
 
     public Map<String, EntityManagerFactory> loadPersistence(ClassLoader cl, URL url) throws PersistenceDeployerException {
@@ -165,20 +128,17 @@ public class PersistenceDeployer {
 
                 // Persistence Unit Transaction Type
                 if (transactionTypeEnv != null) {
-                    // Override with sys vars
-                    if (transactionTypeEnv.toUpperCase().equals("JTA")) {
-                        unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
-                    }
-                    if (transactionTypeEnv.toUpperCase().equals("RESOURCE_LOCAL")) {
-                        unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
+                    try {
+                        // Override with sys vars
+                        PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, transactionTypeEnv.toUpperCase());
+                        unitInfo.setTransactionType(type);
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("Unknown "+TRANSACTIONTYPE_PROP +", valid options are "+PersistenceUnitTransactionType.JTA+" or "+PersistenceUnitTransactionType.RESOURCE_LOCAL);
                     }
                 } else {
                     TransactionType tranType = pu.getTransactionType();
-                    if ((tranType == null) || (tranType == TransactionType.JTA)) {
-                        unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
-                    } else {
-                        unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
-                    }
+                    PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, tranType.toString());
+                    unitInfo.setTransactionType(type);
                 }
 
                 // Non JTA Datasource
