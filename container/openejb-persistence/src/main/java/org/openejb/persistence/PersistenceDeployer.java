@@ -16,14 +16,12 @@
  */
 package org.openejb.persistence;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import org.openejb.persistence.Persistence.PersistenceUnit;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -40,14 +38,14 @@ import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-
-import org.openejb.persistence.Persistence.PersistenceUnit;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class PersistenceDeployer {
 
@@ -99,15 +97,13 @@ public class PersistenceDeployer {
         nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
     }
 
-    public void loadPersistence(ClassLoader cl, URL url)
-            throws PersistenceDeployerException {
+    public void loadPersistence(ClassLoader cl, URL url) throws PersistenceDeployerException {
 
         try {
 
             org.openejb.persistence.Persistence persistence = getPersistence(url);
 
-            List<PersistenceUnit> persistenceUnits = persistence
-                    .getPersistenceUnit();
+            List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
             PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl();
             for (PersistenceUnit pu : persistenceUnits) {
@@ -117,27 +113,25 @@ public class PersistenceDeployer {
                 } else {
                     unitInfo.setPersistenceProviderClassName(pu.getProvider());
                 }
+
                 unitInfo.setClassLoader(cl);
                 if (pu.isExcludeUnlistedClasses() == null) {
                     unitInfo.setExcludeUnlistedClasses(false);
                 } else {
-                    unitInfo.setExcludeUnlistedClasses(pu
-                            .isExcludeUnlistedClasses().booleanValue());
+                    unitInfo.setExcludeUnlistedClasses(pu.isExcludeUnlistedClasses().booleanValue());
                 }
+
                 unitInfo.setJarFileUrls(pu.getJarFile());
 
                 // JTA Datasource
                 String dataSource = pu.getJtaDataSource();
-                if (jtaDataSourceEnv != null)
-                    dataSource = jtaDataSourceEnv;
+                if (jtaDataSourceEnv != null) dataSource = jtaDataSourceEnv;
 
                 if (dataSource != null) {
                     if (initialContext == null) {
-                        throw new PersistenceDeployerException(
-                                "No InitialContext, are you running in a JTA container?");
+                        throw new PersistenceDeployerException("No InitialContext, are you running in a JTA container?");
                     }
-                    DataSource jtaDataSource = (DataSource) initialContext
-                            .lookup(dataSource);
+                    DataSource jtaDataSource = (DataSource) initialContext.lookup(dataSource);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 }
 
@@ -145,8 +139,7 @@ public class PersistenceDeployer {
                 unitInfo.setMappingFileNames(pu.getMappingFile());
 
                 // Handle Properties
-                List<org.openejb.persistence.Persistence.PersistenceUnit.Properties.Property> puiProperties = pu
-                        .getProperties().getProperty();
+                List<org.openejb.persistence.Persistence.PersistenceUnit.Properties.Property> puiProperties = pu.getProperties().getProperty();
                 Properties properties = new Properties();
                 for (org.openejb.persistence.Persistence.PersistenceUnit.Properties.Property property : puiProperties) {
                     properties.put(property.getName(), property.getValue());
@@ -157,39 +150,29 @@ public class PersistenceDeployer {
                 if (transactionTypeEnv != null) {
                     // Override with sys vars
                     if (transactionTypeEnv.toUpperCase().equals("JTA")) {
-                        unitInfo
-                                .setTransactionType(PersistenceUnitTransactionType.JTA);
+                        unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
                     }
-                    if (transactionTypeEnv.toUpperCase().equals(
-                            "RESOURCE_LOCAL")) {
-                        unitInfo
-                                .setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
+                    if (transactionTypeEnv.toUpperCase().equals("RESOURCE_LOCAL")) {
+                        unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
                     }
-
                 } else {
-                    PersistentUnitTransactionType tranType = pu
-                            .getTransactionType();
-                    if ((tranType == null)
-                            || (tranType == PersistentUnitTransactionType.JTA)) {
-                        unitInfo
-                                .setTransactionType(PersistenceUnitTransactionType.JTA);
+                    PersistentUnitTransactionType tranType = pu.getTransactionType();
+                    if ((tranType == null) || (tranType == PersistentUnitTransactionType.JTA)) {
+                        unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
                     } else {
-                        unitInfo
-                                .setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
+                        unitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
                     }
                 }
 
                 // Non JTA Datasource
                 String nonJta = pu.getNonJtaDataSource();
-                if (nonJtaDataSourceEnv != null)
-                    nonJta = nonJtaDataSourceEnv;
+                if (nonJtaDataSourceEnv != null) nonJta = nonJtaDataSourceEnv;
+
                 if (nonJta != null) {
                     if (initialContext == null) {
-                        throw new PersistenceDeployerException(
-                                "InitialContext is null.");
+                        throw new PersistenceDeployerException("InitialContext is null.");
                     }
-                    DataSource nonJtaDataSource = (DataSource) initialContext
-                            .lookup(nonJta);
+                    DataSource nonJtaDataSource = (DataSource) initialContext.lookup(nonJta);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 }
 
@@ -199,16 +182,12 @@ public class PersistenceDeployer {
                 // TODO - What do we do here?
                 // unitInfo.setNewTempClassLoader(???);
 
-                Class clazz = (Class) cl.loadClass(unitInfo
-                        .getPersistenceProviderClassName());
-                PersistenceProvider persistenceProvider = (PersistenceProvider) clazz
-                        .newInstance();
-                EntityManagerFactory emf = persistenceProvider
-                        .createContainerManagerFactory(unitInfo);
+                Class clazz = (Class) cl.loadClass(unitInfo.getPersistenceProviderClassName());
+                PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
+                EntityManagerFactory emf = persistenceProvider.createContainerManagerFactory(unitInfo);
 
                 // Store EntityManagerFactory in the JNDI
-                bind(FACTORY_JNDI_ROOT + "/"
-                        + unitInfo.getPersistenceUnitName(), emf);
+                bind(FACTORY_JNDI_ROOT + "/" + unitInfo.getPersistenceUnitName(), emf);
 
             }
         } catch (Exception e) {
@@ -217,8 +196,7 @@ public class PersistenceDeployer {
 
     }
 
-    public org.openejb.persistence.Persistence getPersistence(URL url)
-            throws Exception {
+    public org.openejb.persistence.Persistence getPersistence(URL url) throws Exception {
         InputStream persistenceDescriptor = null;
 
         try {
@@ -243,19 +221,16 @@ public class PersistenceDeployer {
             // Be sure the filter has the JAXB content handler set (or it wont
             // work)
             xmlFilter.setContentHandler(uh);
-            SAXSource source = new SAXSource(xmlFilter, new InputSource(
-                    persistenceDescriptor));
+            SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
 
             return (org.openejb.persistence.Persistence) u.unmarshal(source);
 
         } finally {
-            if (persistenceDescriptor != null)
-                persistenceDescriptor.close();
+            if (persistenceDescriptor != null) persistenceDescriptor.close();
         }
     }
 
-    public Map<String, EntityManagerFactory> deploy(ClassLoader cl)
-            throws PersistenceDeployerException {
+    public Map<String, EntityManagerFactory> deploy(ClassLoader cl) throws PersistenceDeployerException {
 
         Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
         // Read the persistence.xml files
@@ -277,7 +252,7 @@ public class PersistenceDeployer {
     private void bind(String name, Object obj) throws NamingException {
         if (name.startsWith("java:"))
             name = name.substring(5);
-        
+
         CompositeName composite = new CompositeName(name);
         Context ctx = initialContext;
         if (composite.size() > 1) {
@@ -294,8 +269,8 @@ public class PersistenceDeployer {
                 }
             }
         }
-        
-        ctx.bind(composite.get(composite.size() -1 ), obj);
+
+        ctx.bind(composite.get(composite.size() - 1), obj);
     }
 
     // Inject the proper namespace
@@ -306,8 +281,7 @@ public class PersistenceDeployer {
         }
 
         @Override
-        public void startElement(String arg0, String arg1, String arg2,
-                Attributes arg3) throws SAXException {
+        public void startElement(String arg0, String arg1, String arg2, Attributes arg3) throws SAXException {
             super.startElement(PERSISTENCE_SCHEMA, arg1, arg2, arg3);
         }
     }
