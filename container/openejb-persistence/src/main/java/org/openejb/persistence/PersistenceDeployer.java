@@ -63,8 +63,6 @@ public class PersistenceDeployer {
 
     public static final String FACTORY_JNDI_ROOT = "java:openejb/PersistenceFactories";
 
-    private Properties jndiProperties = null;
-
     private InitialContext initialContext = null;
 
     private String providerEnv = null;
@@ -74,6 +72,7 @@ public class PersistenceDeployer {
     private String jtaDataSourceEnv = null;
 
     private String nonJtaDataSourceEnv = null;
+    private final DataSourceResolver dataSourceResolver;
 
     public PersistenceDeployer() {
         this(new Properties());
@@ -83,13 +82,7 @@ public class PersistenceDeployer {
 
         loadSystemProps();
 
-        this.jndiProperties = jndiProperties;
-
-        try {
-            initialContext = new InitialContext(this.jndiProperties);
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);
-        }
+        dataSourceResolver = new GlobalJndiDataSourceResolver(jndiProperties);
     }
 
     private void loadSystemProps() {
@@ -99,9 +92,34 @@ public class PersistenceDeployer {
         nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
     }
 
-    public void loadPersistence(ClassLoader cl, URL url) throws PersistenceDeployerException {
+    public interface DataSourceResolver {
+        DataSource getDataSource(String name) throws Exception;
+    }
+
+    public static class GlobalJndiDataSourceResolver implements DataSourceResolver {
+        private final Properties jndiProperties;
+        private final InitialContext initialContext;
+
+        public GlobalJndiDataSourceResolver(Properties jndiProperties) {
+            this.jndiProperties = jndiProperties;
+
+            try {
+                initialContext = new InitialContext(this.jndiProperties);
+            } catch (NamingException ne) {
+                throw new RuntimeException(ne);
+            }
+        }
+
+        public DataSource getDataSource(String name) throws Exception {
+            return (DataSource) initialContext.lookup(name);
+        }
+    }
+
+    public Map<String, EntityManagerFactory> loadPersistence(ClassLoader cl, URL url) throws PersistenceDeployerException {
 
         try {
+
+            Map<String, EntityManagerFactory> factories = new HashMap();
 
             org.openejb.persistence.dd.Persistence persistence = getPersistence(url);
 
@@ -130,10 +148,7 @@ public class PersistenceDeployer {
                 if (jtaDataSourceEnv != null) dataSource = jtaDataSourceEnv;
 
                 if (dataSource != null) {
-                    if (initialContext == null) {
-                        throw new PersistenceDeployerException("No InitialContext, are you running in a JTA container?");
-                    }
-                    DataSource jtaDataSource = (DataSource) initialContext.lookup(dataSource);
+                    DataSource jtaDataSource = dataSourceResolver.getDataSource(dataSource);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 }
 
@@ -171,10 +186,7 @@ public class PersistenceDeployer {
                 if (nonJtaDataSourceEnv != null) nonJta = nonJtaDataSourceEnv;
 
                 if (nonJta != null) {
-                    if (initialContext == null) {
-                        throw new PersistenceDeployerException("InitialContext is null.");
-                    }
-                    DataSource nonJtaDataSource = (DataSource) initialContext.lookup(nonJta);
+                    DataSource nonJtaDataSource = dataSourceResolver.getDataSource(dataSource);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 }
 
@@ -188,10 +200,11 @@ public class PersistenceDeployer {
                 PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
                 EntityManagerFactory emf = persistenceProvider.createContainerManagerFactory(unitInfo);
 
-                // Store EntityManagerFactory in the JNDI
-                bind(FACTORY_JNDI_ROOT + "/" + unitInfo.getPersistenceUnitName(), emf);
 
+                factories.put(unitInfo.getPersistenceUnitName(), emf);
             }
+
+            return factories;
         } catch (Exception e) {
             throw new PersistenceDeployerException(e);
         }
@@ -241,7 +254,7 @@ public class PersistenceDeployer {
 
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                loadPersistence(cl, url);
+                factoryList.putAll(loadPersistence(cl, url));
             }
 
         } catch (IOException e) {
@@ -251,29 +264,6 @@ public class PersistenceDeployer {
         return factoryList;
     }
 
-    private void bind(String name, Object obj) throws NamingException {
-        if (name.startsWith("java:"))
-            name = name.substring(5);
-
-        CompositeName composite = new CompositeName(name);
-        Context ctx = initialContext;
-        if (composite.size() > 1) {
-            for (int i = 0; i < composite.size() - 1; i++) {
-                try {
-                    Object ctxObj = ctx.lookup(composite.get(i));
-                    if (!(ctxObj instanceof Context)) {
-                        throw new NamingException("Invalid JNDI path.");
-                    }
-                    ctx = (Context) ctxObj;
-                } catch (NameNotFoundException e) {
-                    //Name was not found, so add a new subcontext
-                    ctx = ctx.createSubcontext(composite.get(i));
-                }
-            }
-        }
-
-        ctx.bind(composite.get(composite.size() - 1), obj);
-    }
 
     // Inject the proper namespace
     class PersistenceFilter extends XMLFilterImpl {

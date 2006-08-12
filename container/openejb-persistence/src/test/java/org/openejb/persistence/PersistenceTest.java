@@ -16,15 +16,16 @@
  */
 package org.openejb.persistence;
 
-import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map;
 
 import javax.naming.CompositeName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.NameNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -42,20 +43,20 @@ public class PersistenceTest extends TestCase {
 
     private String previousFactory = null;
 
-    public void testParser() throws Exception {
-
+    public void testDeployer() throws Exception {
         try {
             ClassLoader cl = this.getClass().getClassLoader();
 
-            // Load the META-INF/persistence.xml from the classloader
-            URL url = cl.getResource("META-INF/persistence.xml");
-
             // Get a EntityManagerFactory list
             PersistenceDeployer pm = new PersistenceDeployer();
-            pm.loadPersistence(cl, url);
+            Map<String, EntityManagerFactory> factories = pm.deploy(cl);
+            for (Map.Entry<String, EntityManagerFactory> entry : factories.entrySet()) {
+                // Store EntityManagerFactory in the JNDI
+                String name = PersistenceDeployer.FACTORY_JNDI_ROOT + "/" + entry.getKey();
+                bind(name, entry.getValue(), ctx);
+            }
 
-            EntityManagerFactory emf = (EntityManagerFactory) ctx
-                    .lookup(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+            EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
             assertNotNull(emf);
 
             assertEntityManagerFactory(emf);
@@ -64,22 +65,27 @@ public class PersistenceTest extends TestCase {
         }
     }
 
-    public void testDeployer() throws Exception {
-        try {
-            ClassLoader cl = this.getClass().getClassLoader();
+    private void bind(String name, Object obj, Context ctx) throws NamingException {
+        if (name.startsWith("java:"))
+            name = name.substring(5);
 
-            // Get a EntityManagerFactory list
-            PersistenceDeployer pm = new PersistenceDeployer();
-            pm.deploy(cl);
-
-            EntityManagerFactory emf = (EntityManagerFactory) ctx
-                    .lookup(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
-            assertNotNull(emf);
-
-            assertEntityManagerFactory(emf);
-        } finally {
-            cleanupJNDI(PersistenceDeployer.FACTORY_JNDI_ROOT + "/TestUnit");
+        CompositeName composite = new CompositeName(name);
+        if (composite.size() > 1) {
+            for (int i = 0; i < composite.size() - 1; i++) {
+                try {
+                    Object ctxObj = ctx.lookup(composite.get(i));
+                    if (!(ctxObj instanceof Context)) {
+                        throw new NamingException("Invalid JNDI path.");
+                    }
+                    ctx = (Context) ctxObj;
+                } catch (NameNotFoundException e) {
+                    //Name was not found, so add a new subcontext
+                    ctx = ctx.createSubcontext(composite.get(i));
+                }
+            }
         }
+
+        ctx.bind(composite.get(composite.size() - 1), obj);
     }
 
     private void assertEntityManagerFactory(EntityManagerFactory emf) {
@@ -136,10 +142,8 @@ public class PersistenceTest extends TestCase {
 
         // Set up a fake JNDI instance
         Hashtable<String, String> env = new Hashtable<String, String>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.openejb.persistence.JNDIContextFactory");
-        previousFactory = System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                "org.openejb.persistence.JNDIContextFactory");
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.persistence.JNDIContextFactory");
+        previousFactory = System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.persistence.JNDIContextFactory");
 
         ctx = new InitialContext(env);
 
