@@ -16,27 +16,15 @@
  */
 package org.openejb.persistence;
 
+import org.openejb.persistence.dd.JaxbPersistenceFactory;
 import org.openejb.persistence.dd.PersistenceUnit;
-import org.openejb.persistence.dd.Persistence;
 import org.openejb.persistence.dd.TransactionType;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.UnmarshallerHandler;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -84,7 +72,7 @@ public class PersistenceDeployer {
 
             Map<String, EntityManagerFactory> factories = new HashMap();
 
-            org.openejb.persistence.dd.Persistence persistence = getPersistence(url);
+            org.openejb.persistence.dd.Persistence persistence = JaxbPersistenceFactory.getPersistence(url);
 
             List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
@@ -133,7 +121,7 @@ public class PersistenceDeployer {
                         PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, transactionTypeEnv.toUpperCase());
                         unitInfo.setTransactionType(type);
                     } catch (IllegalArgumentException e) {
-                        throw new IllegalArgumentException("Unknown "+TRANSACTIONTYPE_PROP +", valid options are "+PersistenceUnitTransactionType.JTA+" or "+PersistenceUnitTransactionType.RESOURCE_LOCAL);
+                        throw new IllegalArgumentException("Unknown " + TRANSACTIONTYPE_PROP + ", valid options are " + PersistenceUnitTransactionType.JTA + " or " + PersistenceUnitTransactionType.RESOURCE_LOCAL);
                     }
                 } else {
                     TransactionType tranType = pu.getTransactionType();
@@ -171,40 +159,6 @@ public class PersistenceDeployer {
 
     }
 
-    public org.openejb.persistence.dd.Persistence getPersistence(URL url) throws Exception {
-        InputStream persistenceDescriptor = null;
-
-        try {
-
-            persistenceDescriptor = url.openStream();
-
-            JAXBContext jc = JAXBContext.newInstance(Persistence.class);
-            Unmarshaller u = jc.createUnmarshaller();
-            UnmarshallerHandler uh = u.getUnmarshallerHandler();
-
-            // create a new XML parser
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(true);
-            SAXParser parser = factory.newSAXParser();
-
-            XMLReader xmlReader = parser.getXMLReader();
-
-            // Create a filter to intercept events
-            PersistenceFilter xmlFilter = new PersistenceFilter(xmlReader);
-
-            // Be sure the filter has the JAXB content handler set (or it wont
-            // work)
-            xmlFilter.setContentHandler(uh);
-            SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
-
-            return (org.openejb.persistence.dd.Persistence) u.unmarshal(source);
-
-        } finally {
-            if (persistenceDescriptor != null) persistenceDescriptor.close();
-        }
-    }
-
     public Map<String, EntityManagerFactory> deploy(ClassLoader cl) throws PersistenceDeployerException {
 
         Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
@@ -222,20 +176,6 @@ public class PersistenceDeployer {
         }
 
         return factoryList;
-    }
-
-
-    // Inject the proper namespace
-    class PersistenceFilter extends XMLFilterImpl {
-
-        public PersistenceFilter(XMLReader arg0) {
-            super(arg0);
-        }
-
-        @Override
-        public void startElement(String arg0, String arg1, String arg2, Attributes arg3) throws SAXException {
-            super.startElement(PERSISTENCE_SCHEMA, arg1, arg2, arg3);
-        }
     }
 
 }
