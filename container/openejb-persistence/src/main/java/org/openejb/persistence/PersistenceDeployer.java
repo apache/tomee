@@ -138,8 +138,8 @@ public class PersistenceDeployer {
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 }
 
-                // TODO - What do we do here?
-                // unitInfo.setPersistenceUnitRootUrl()
+                String rootUrlPath = url.toExternalForm().replaceFirst("!?META-INF/persistence.xml$","");
+                unitInfo.setPersistenceUnitRootUrl(new URL(rootUrlPath));
 
                 // TODO - What do we do here?
                 // unitInfo.setNewTempClassLoader(???);
