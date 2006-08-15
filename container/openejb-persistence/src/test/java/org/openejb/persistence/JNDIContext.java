@@ -35,7 +35,7 @@ public class JNDIContext implements Context {
 
     private int level = 0;
 
-    protected JNDIContext() {
+    public JNDIContext() {
     }
 
     private JNDIContext(int nextLevel) {

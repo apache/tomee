@@ -20,36 +20,37 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.spi.PersistenceUnitInfo;
+import java.util.Map;
 
 public class FakeEntityManagerFactory implements EntityManagerFactory {
-    
+
     private EntityManager em = null;
     private PersistenceUnitInfo pu = null;
-    
+
     public FakeEntityManagerFactory(PersistenceUnitInfo pu){
-       this.pu = pu; 
+       this.pu = pu;
     }
-    
+
     public PersistenceUnitInfo getPersistenceUnitInfo(){
        return pu;
     }
 
     public EntityManager createEntityManager() {
-        
+
         if (em == null)
             em = new FakeEntityManager(pu);
-        
+
         return em;
     }
 
-    public EntityManager createEntityManager(PersistenceContextType arg0) {
+    public EntityManager createEntityManager(Map context) {
         return createEntityManager();
     }
 
     public EntityManager getEntityManager() {
         if (em != null)
             return em;
-        
+
         return createEntityManager();
     }
 

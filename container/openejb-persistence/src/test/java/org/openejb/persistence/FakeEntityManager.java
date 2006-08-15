@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
+import javax.persistence.LockModeType;
 import javax.persistence.spi.PersistenceUnitInfo;
 
 public class FakeEntityManager implements EntityManager {
@@ -29,7 +30,17 @@ public class FakeEntityManager implements EntityManager {
     public FakeEntityManager(PersistenceUnitInfo pu){
         this.pu = pu;
     }
-    
+
+    public Object getDelegate() {
+        return null;
+    }
+
+    public void joinTransaction() {
+    }
+
+    public void lock(Object object, LockModeType lockModeType) {
+    }
+
     public PersistenceUnitInfo getPersistenceUnitInfo(){
         return pu;
     }

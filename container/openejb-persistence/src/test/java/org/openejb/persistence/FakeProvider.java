@@ -28,8 +28,7 @@ public class FakeProvider implements PersistenceProvider {
         return new FakeEntityManagerFactory(null);
     }
 
-    public EntityManagerFactory createContainerManagerFactory(
-            PersistenceUnitInfo arg0) {
+    public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo arg0, Map map) {
         return new FakeEntityManagerFactory(arg0);
     }
 

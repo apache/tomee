@@ -76,8 +76,8 @@ public class PersistenceDeployer {
 
             List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
-            PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl();
             for (PersistenceUnit pu : persistenceUnits) {
+                PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl();
                 unitInfo.setPersistenceUnitName(pu.getName());
                 if (providerEnv != null) {
                     unitInfo.setPersistenceProviderClassName(providerEnv);
@@ -144,9 +144,13 @@ public class PersistenceDeployer {
                 // TODO - What do we do here?
                 // unitInfo.setNewTempClassLoader(???);
 
-                Class clazz = (Class) cl.loadClass(unitInfo.getPersistenceProviderClassName());
+                String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
+                if (persistenceProviderClassName == null){
+                    continue;
+                }
+                Class clazz = (Class) cl.loadClass(persistenceProviderClassName);
                 PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
-                EntityManagerFactory emf = persistenceProvider.createContainerManagerFactory(unitInfo);
+                EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
 
                 factories.put(unitInfo.getPersistenceUnitName(), emf);
@@ -154,6 +158,7 @@ public class PersistenceDeployer {
 
             return factories;
         } catch (Exception e) {
+            e.printStackTrace(System.err);
             throw new PersistenceDeployerException(e);
         }
 
