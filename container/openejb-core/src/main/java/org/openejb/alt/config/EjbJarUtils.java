@@ -236,7 +236,7 @@ public class EjbJarUtils {
     }
 
     public Bean[] getBeans() {
-        List<Bean> beans = new ArrayList();
+        List<Bean> beans = new ArrayList<Bean>();
         for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             if (enterpriseBean instanceof org.openejb.jee.EntityBean) {
                 beans.add(new EntityBean((org.openejb.jee.EntityBean) enterpriseBean));

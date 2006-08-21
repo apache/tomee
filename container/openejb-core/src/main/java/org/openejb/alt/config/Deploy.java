@@ -1,19 +1,21 @@
 package org.openejb.alt.config;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.ejb.Stateless;
+
 import org.openejb.OpenEJBException;
-import org.openejb.jee.ResourceRef;
-import org.openejb.loader.SystemInstance;
 import org.openejb.alt.config.ejb.EjbDeployment;
 import org.openejb.alt.config.ejb.MethodParams;
 import org.openejb.alt.config.ejb.OpenejbJar;
@@ -22,10 +24,12 @@ import org.openejb.alt.config.ejb.ResourceLink;
 import org.openejb.alt.config.sys.Connector;
 import org.openejb.alt.config.sys.Container;
 import org.openejb.alt.config.sys.Openejb;
+import org.openejb.jee.ResourceRef;
+import org.openejb.loader.SystemInstance;
 import org.openejb.util.JarUtils;
+import org.openejb.util.Logger;
 import org.openejb.util.Messages;
 import org.openejb.util.SafeToolkit;
-import org.openejb.util.Logger;
 
 public class Deploy {
     private static final String helpBase = "META-INF/org.openejb.cli/";
@@ -119,6 +123,9 @@ public class Deploy {
     private void deploy(String jarLocation) throws OpenEJBException {
 
         this.jarLocation = jarLocation;
+        List<String> ejbs = searchForAnnotatedEjbs(jarLocation);
+        System.out.println("@Stateless-annotated beans count: " + ejbs.size());
+        
         EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
 
         EjbValidator validator = new EjbValidator();
@@ -169,6 +176,61 @@ public class Deploy {
 
         saveChanges(jarLocation, openejbJar);
 
+    }
+
+    /**
+     * @param jarPath path of jar to deploy
+     */
+    private List<String> searchForAnnotatedEjbs(String path) {
+        File file = new File(path);
+        if (file.isDirectory()) {
+            return searchEjbsInDirectory(file);
+        } else {
+            return searchEjbsInJar(file);
+        }
+    }
+    
+    private List<String> searchEjbsInJar(File file) {
+    	// TODO: Implement it!
+        return new ArrayList<String>();
+    }
+
+
+    private List<String> searchEjbsInDirectory(File dir) {
+        List<String> beans = new ArrayList<String>();
+        try {
+            ClassLoader loader = new URLClassLoader(new URL[] {dir.toURL()});
+            List<File> files = getClasses(dir);
+            for (File file : files) {
+                String className = file.getPath().substring(dir.getPath().length() + 1);
+                className = className.replace(File.separatorChar, '.');
+                className = className.substring(0, className.lastIndexOf('.'));
+                Class<?> clazz = Class.forName(className, true, loader);
+                if (clazz.isAnnotationPresent(Stateless.class)) {
+                    beans.add(className);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return beans;
+    }
+
+    /**
+     * @param dir directory to look at
+     * @return classes as a {@link List} of {@link File}'s 
+     */
+    private List<File> getClasses(File dir) {
+        List<File> classes = new ArrayList<File>();
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                return getClasses(file);
+            } else {
+                classes.add(file);
+            }
+        }
+        return classes;
     }
 
     private EjbDeployment deployBean(Bean bean, String jarLocation) throws OpenEJBException {
