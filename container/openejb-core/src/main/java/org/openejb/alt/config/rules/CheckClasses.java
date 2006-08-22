@@ -118,7 +118,9 @@ public class CheckClasses implements ValidationRule {
 
         if (b instanceof org.openejb.alt.config.SessionBean) {
 
-            compareTypes(b, b.getEjbClass(), javax.ejb.SessionBean.class);
+            // DMB: Beans in ejb 3 are not required to implement javax.ejb.SessionBean
+            // but it would still be nice to think of some sort of check to do here.
+            // compareTypes(b, b.getEjbClass(), javax.ejb.SessionBean.class);
 
         } else if (b instanceof org.openejb.alt.config.EntityBean) {
 

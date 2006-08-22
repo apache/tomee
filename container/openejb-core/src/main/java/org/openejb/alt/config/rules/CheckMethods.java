@@ -137,6 +137,11 @@ public class CheckMethods implements ValidationRule {
 
     public boolean check_hasCreateMethod(Bean b, Class bean, Class home) {
 
+        if (b instanceof org.openejb.alt.config.SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)){
+            // This is a pojo-style bean
+            return false;
+        }
+
         Method[] homeMethods = home.getMethods();
 
         boolean hasCreateMethod = false;
