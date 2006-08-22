@@ -35,6 +35,9 @@
 	<ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome" container-id="Default Stateless Container">
 		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
 	</ejb-deployment>
+	<ejb-deployment ejb-name="BasicStatelessPojoBean" deployment-id="client/tests/stateless/BasicStatelessPojoHome" container-id="Default Stateless Container">
+		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+	</ejb-deployment>
 	<ejb-deployment ejb-name="Basic BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedBasicStatelessHome" container-id="Default Stateless Container">
 		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
 	</ejb-deployment>

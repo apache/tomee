@@ -552,6 +552,24 @@
             </o:jndiContext>
           </o:statelessDeployment>
         </entry>
+        <entry key="client/tests/stateless/BasicStatelessPojoHome">
+          <o:statelessDeployment id="client/tests/stateless/BasicStatelessPojoHome"
+              homeInterface="org.openejb.test.stateless.BasicStatelessHome"
+              remoteInterface="org.openejb.test.stateless.BasicStatelessObject"
+              beanClass="org.openejb.test.stateless.BasicStatelessPojoBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
       </map>
     </constructor-arg>
   </bean>
