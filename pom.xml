@@ -56,7 +56,12 @@
       </snapshots>
     </repository>
     <repository>
-      <id>apache-snapshot</id>
+      <id>apache-m2-snapshot</id>
+      <name>Apache M2 Snapshot Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+    </repository>
+    <repository>
+      <id>apache-m1-snapshot</id>
       <name>Apache Repository</name>
       <url>http://people.apache.org/repository</url>
       <layout>legacy</layout>
