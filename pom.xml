@@ -13,11 +13,11 @@
   </issueManagement>
   <ciManagement>
     <system>continuum</system>
-    <url>http://ci.gbuild.org/continuum</url>
+    <url>http://vmbuild.apache.org/continuum</url>
     <notifiers>
       <notifier>
         <configuration>
-          <address>scm@openejb.org</address>
+          <address>openejb-commits@incubator.apache.org</address>
         </configuration>
       </notifier>
     </notifiers>
