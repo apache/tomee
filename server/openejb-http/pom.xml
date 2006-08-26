@@ -30,22 +30,22 @@
     <dependency>
       <groupId>org.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openejb</groupId>
       <artifactId>openejb-itests</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${pom.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
