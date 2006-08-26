@@ -22,9 +22,6 @@
       </notifier>
     </notifiers>
   </ciManagement>
-  <properties>
-    <openejbVersion>3.0-SNAPSHOT</openejbVersion>
-  </properties>
   <inceptionYear>1999</inceptionYear>
   <scm>
     <connection>scm:svn:https://svn.codehaus.org/openejb/trunk/openejb3</connection>

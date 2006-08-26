@@ -8,7 +8,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-persistence</artifactId>
   <name>OpenEJB :: Container :: Persistence</name>
-  <version>3.0-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
