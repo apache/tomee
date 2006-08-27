@@ -43,8 +43,22 @@
     <module>openejb-itests</module>
     <module>container</module>
     <module>server</module> 
-    <module>assembly</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>assemble</id>
+      <activation>
+        <property>
+          <name>assemble</name>
+        </property>
+      </activation>
+      <modules>
+        <module>assembly</module>
+      </modules>
+    </profile>
+  </profiles>
+
   <repositories>
     <repository>
       <id>codehaus</id>

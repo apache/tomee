@@ -18,8 +18,9 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
+            <phase>package</phase>
             <goals>
-              <goal>assembly</goal>
+              <goal>attached</goal>
             </goals>
           </execution>
         </executions>
