@@ -24,6 +24,7 @@
     </ejb-deployment>
 	<ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome" container-id="Default Stateful Container"/>
+	<ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome" container-id="Default Stateful Container"/>
 	<ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome" container-id="Default Stateful Container"/>
 	<ejb-deployment ejb-name="BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedTransactionTests/EJBHome" container-id="Default Stateful Container">
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>

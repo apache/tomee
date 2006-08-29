@@ -227,6 +227,28 @@
             </security-role-ref>
         </session>
         
+		<!-- 
+        ########################################################
+        ID:  client/tests/stateful/BasicStatefulPojoHome
+        ########################################################
+        -->
+        
+        <session>
+            <description>A basic stateful session pojo bean with contianer-managed 
+            transaction demarcation.
+            </description>
+            <ejb-name>BasicStatefulPojoBean</ejb-name>
+            <home>org.openejb.test.stateful.BasicStatefulHome</home>
+            <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+            <ejb-class>org.openejb.test.stateful.BasicStatefulPojoBean</ejb-class>
+            <session-type>Stateful</session-type>
+            <transaction-type>Container</transaction-type>
+            <security-role-ref>
+                <role-name>TheMan</role-name>
+                <role-link>Executive</role-link>
+            </security-role-ref>
+        </session>        
+        
         <!-- 
         ########################################################
         ID:  client/tests/stateful/BeanManagedBasicStatefulHome

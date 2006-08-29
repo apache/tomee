@@ -438,6 +438,18 @@
             </o:jndiContext>
           </o:statefulDeployment>
         </entry>
+	  <entry key="client/tests/stateful/BasicStatefulPojoHome">
+          <o:statefulDeployment id="client/tests/stateful/BasicStatefulPojoHome"
+              homeInterface="org.openejb.test.stateful.BasicStatefulHome"
+              remoteInterface="org.openejb.test.stateful.BasicStatefulObject"
+              beanClass="org.openejb.test.stateful.BasicStatefulPojoBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc/>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
       </map>
     </constructor-arg>
   </bean>
