@@ -1,6 +1,18 @@
 package org.openejb.test.stateless;
 
-import java.rmi.RemoteException;import java.sql.Connection;import java.sql.PreparedStatement;import java.sql.ResultSet;import javax.ejb.CreateException;import javax.ejb.EJBException;import javax.ejb.SessionContext;import javax.naming.InitialContext;import javax.sql.DataSource;import javax.transaction.RollbackException;import org.openejb.test.object.Account;
+import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import javax.transaction.RollbackException;
+
+import org.openejb.test.object.Account;
 
 /**
  * 
@@ -110,7 +122,6 @@ public class ContainerTxStatelessBean implements javax.ejb.SessionBean{
     //    
     /**
      * 
-     * @param name
      * @exception javax.ejb.CreateException
      */
     public void ejbCreate() throws javax.ejb.CreateException{

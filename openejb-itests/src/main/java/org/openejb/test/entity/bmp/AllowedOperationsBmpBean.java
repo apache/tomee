@@ -38,7 +38,7 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
      * @param one
      * @param two
      * @return x + y
-     * @see BasicBmpHome.sum
+     * @see BasicBmpHome#sum
      */
     public int ejbHomeSum(int x, int y) {
         testAllowedOperations("ejbHome");

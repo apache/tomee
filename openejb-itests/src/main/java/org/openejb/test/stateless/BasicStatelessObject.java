@@ -16,7 +16,7 @@ public interface BasicStatelessObject extends javax.ejb.EJBObject{
     /**
      * Reverses the string passed in then returns it
      * 
-     * @return 
+     * @return string
      */
     public String businessMethod(String text) throws RemoteException;
     
@@ -39,7 +39,7 @@ public interface BasicStatelessObject extends javax.ejb.EJBObject{
      * Returns a report of the bean's 
      * runtime permissions
      * 
-     * @return 
+     * @return properties
      */
     public Properties getPermissionsReport() throws RemoteException;
     
@@ -48,7 +48,7 @@ public interface BasicStatelessObject extends javax.ejb.EJBObject{
      * for one of the bean's methods.
      * 
      * @param methodName The method for which to get the allowed opperations report
-     * @return 
+     * @return operations policy 
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;
 }

@@ -407,7 +407,6 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean{
     }
     /**
      * 
-     * @param name
      * @exception javax.ejb.CreateException
      */
     public void ejbCreate() throws javax.ejb.CreateException{

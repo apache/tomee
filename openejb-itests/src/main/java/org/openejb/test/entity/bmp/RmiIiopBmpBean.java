@@ -35,7 +35,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
      * @param primaryKey
      * @return 
      * @exception javax.ejb.FinderException
-     * @see RmiIiopBmpHome.sum
+     * @see RmiIiopBmpHome#sum
      */
     public java.util.Collection ejbFindEmptyCollection()
     throws javax.ejb.FinderException, java.rmi.RemoteException {
@@ -48,7 +48,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
      * @param primaryKey
      * @return 
      * @exception javax.ejb.FinderException
-     * @see RmiIiopBmpHome.sum
+     * @see RmiIiopBmpHome#sum
      */
     public Integer ejbFindByPrimaryKey(Integer primaryKey)
     throws javax.ejb.FinderException{
@@ -61,7 +61,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see RmiIiopBmpHome.create
+     * @see RmiIiopBmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{

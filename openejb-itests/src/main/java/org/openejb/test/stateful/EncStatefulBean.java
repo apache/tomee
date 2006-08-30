@@ -36,7 +36,7 @@ public class EncStatefulBean implements javax.ejb.SessionBean, SessionSynchroniz
      * 
      * @param name
      * @exception javax.ejb.CreateException
-     * @see EncStatefulHome.create
+     * @see EncStatefulHome#create
      */
     public void ejbCreate(String name)
     throws javax.ejb.CreateException{

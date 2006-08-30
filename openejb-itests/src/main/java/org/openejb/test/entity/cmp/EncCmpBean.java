@@ -41,7 +41,7 @@ public class EncCmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see EncCmpHome.create
+     * @see EncCmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{

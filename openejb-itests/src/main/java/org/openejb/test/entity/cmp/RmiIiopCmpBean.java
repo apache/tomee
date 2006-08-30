@@ -38,7 +38,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see RmiIiopCmpHome.create
+     * @see RmiIiopCmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{

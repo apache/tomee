@@ -36,10 +36,9 @@ public class EncBmpBean implements javax.ejb.EntityBean{
     /**
      * Maps to EncBmpHome.findEmptyCollection
      * 
-     * @param primaryKey
-     * @return 
+     * @return
      * @exception javax.ejb.FinderException
-     * @see EncBmpHome.sum
+     * @see EncBmpHome#findEmptyCollection()   
      */
     public java.util.Collection ejbFindEmptyCollection()
     throws javax.ejb.FinderException, java.rmi.RemoteException {
@@ -52,7 +51,7 @@ public class EncBmpBean implements javax.ejb.EntityBean{
      * @param primaryKey
      * @return 
      * @exception javax.ejb.FinderException
-     * @see EncBmpHome.sum
+     * @see EncBmpHome#findByPrimaryKey(Integer)
      */
     public Integer ejbFindByPrimaryKey(Integer primaryKey)
     throws javax.ejb.FinderException{
@@ -65,7 +64,7 @@ public class EncBmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see EncBmpHome.create
+     * @see EncBmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{

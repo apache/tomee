@@ -39,7 +39,7 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
      * Maps to BasicStatelessObject.businessMethod
      * 
      * @return 
-     * @see BasicStatelessObject.businessMethod
+     * @see BasicStatelessObject#businessMethod
      */
     public String businessMethod(String text){
         testAllowedOperations("businessMethod");
@@ -74,7 +74,7 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
      * runtime permissions
      * 
      * @return 
-     * @see BasicStatelessObject.getPermissionsReport
+     * @see BasicStatelessObject#getPermissionsReport
      */
     public Properties getPermissionsReport(){
         /* TO DO: */
@@ -89,7 +89,7 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
      * 
      * @param methodName The method for which to get the allowed opperations report
      * @return 
-     * @see BasicStatelessObject.getAllowedOperationsReport
+     * @see BasicStatelessObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
@@ -113,7 +113,6 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
     }
     /**
      * 
-     * @param name
      * @exception javax.ejb.CreateException
      */
     public void ejbCreate() throws javax.ejb.CreateException{

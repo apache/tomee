@@ -14,16 +14,12 @@ public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject{
     
     /**
      * Reverses the string passed in then returns it
-     * 
-     * @return 
      */
     public String businessMethod(String text) throws RemoteException;
     
     /**
      * Returns a report of the bean's 
      * runtime permissions
-     * 
-     * @return 
      */
     public Properties getPermissionsReport() throws RemoteException;
     
@@ -32,7 +28,6 @@ public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject{
      * for one of the bean's methods.
      * 
      * @param methodName The method for which to get the allowed opperations report
-     * @return 
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;
 }

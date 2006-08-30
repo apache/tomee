@@ -42,10 +42,10 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * 
      * Adds x and y and returns the result.
      * 
-     * @param one
-     * @param two
+     * @param x
+     * @param y
      * @return x + y
-     * @see BasicBmpHome.sum
+     * @see BasicBmpHome#sum
      */
     public int ejbHomeSum(int x, int y) {
         testAllowedOperations("ejbHome");
@@ -56,10 +56,9 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
     /**
      * Maps to BasicBmpHome.findEmptyCollection
      * 
-     * @param primaryKey
-     * @return 
+     * @return
      * @exception javax.ejb.FinderException
-     * @see BasicBmpHome.sum
+     * @see BasicBmpHome#sum
      */
     public java.util.Collection ejbFindEmptyCollection()
     throws javax.ejb.FinderException, java.rmi.RemoteException {
@@ -84,7 +83,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * @param primaryKey
      * @return 
      * @exception javax.ejb.FinderException
-     * @see BasicBmpHome.sum
+     * @see BasicBmpHome#sum
      */
     public Integer ejbFindByPrimaryKey(Integer primaryKey)
     throws javax.ejb.FinderException{
@@ -109,10 +108,10 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
     /**
      * Maps to BasicBmpHome.findByPrimaryKey
      * 
-     * @param primaryKey
+     * @param lastName
      * @return 
      * @exception javax.ejb.FinderException
-     * @see BasicBmpHome.sum
+     * @see BasicBmpHome#sum
      */
     public java.util.Collection ejbFindByLastName(String lastName)
     throws javax.ejb.FinderException{
@@ -142,7 +141,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see BasicBmpHome.create
+     * @see BasicBmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{
@@ -200,7 +199,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * Maps to BasicBmpObject.businessMethod
      * 
      * @return 
-     * @see BasicBmpObject.businessMethod
+     * @see BasicBmpObject#businessMethod
      */
     public String businessMethod(String text) {
         testAllowedOperations("businessMethod");
@@ -236,7 +235,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * runtime permissions
      * 
      * @return 
-     * @see BasicBmpObject.getPermissionsReport
+     * @see BasicBmpObject#getPermissionsReport
      */
     public Properties getPermissionsReport() {
         /* TO DO: */
@@ -251,7 +250,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * 
      * @param methodName The method for which to get the allowed opperations report
      * @return 
-     * @see BasicBmpObject.getAllowedOperationsReport
+     * @see BasicBmpObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) {
         return(OperationsPolicy) allowedOperationsTable.get(methodName);

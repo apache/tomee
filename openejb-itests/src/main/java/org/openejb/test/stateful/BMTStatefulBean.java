@@ -31,7 +31,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
      * 
      * @param name
      * @exception javax.ejb.CreateException
-     * @see BasicStatefulHome.create
+     * @see BasicStatefulHome#create
      */
     public void ejbCreate(String name)
     throws javax.ejb.CreateException{
@@ -52,7 +52,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
      * Maps to BasicStatefulObject.businessMethod
      * 
      * @return 
-     * @see BasicStatefulObject.businessMethod
+     * @see BasicStatefulObject#businessMethod
      */
     public String businessMethod(String text){
         testAllowedOperations("businessMethod");
@@ -86,7 +86,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
      * runtime permissions
      * 
      * @return 
-     * @see BasicStatefulObject.getPermissionsReport
+     * @see BasicStatefulObject#getPermissionsReport
      */
     public Properties getPermissionsReport(){
         /* TO DO: */
@@ -101,7 +101,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
      * 
      * @param methodName The method for which to get the allowed opperations report
      * @return 
-     * @see BasicStatefulObject.getAllowedOperationsReport
+     * @see BasicStatefulObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
         return (OperationsPolicy) allowedOperationsTable.get(methodName);

@@ -37,10 +37,10 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * 
      * Adds x and y and returns the result.
      * 
-     * @param one
-     * @param two
+     * @param x
+     * @param y
      * @return x + y
-     * @see BasicCmpHome.sum
+     * @see BasicCmpHome#sum
      */
     public int ejbHomeSum(int x, int y) {
         testAllowedOperations("ejbHome");
@@ -53,7 +53,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see BasicCmpHome.create
+     * @see BasicCmpHome#create
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{
@@ -81,7 +81,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * Maps to BasicCmpObject.businessMethod
      * 
      * @return 
-     * @see BasicCmpObject.businessMethod
+     * @see BasicCmpObject#businessMethod
      */
     public String businessMethod(String text){
         testAllowedOperations("businessMethod");
@@ -117,7 +117,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * runtime permissions
      * 
      * @return 
-     * @see BasicCmpObject.getPermissionsReport
+     * @see BasicCmpObject#getPermissionsReport
      */
     public Properties getPermissionsReport(){
         /* TO DO: */
@@ -132,7 +132,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * 
      * @param methodName The method for which to get the allowed opperations report
      * @return 
-     * @see BasicCmpObject.getAllowedOperationsReport
+     * @see BasicCmpObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
         return (OperationsPolicy) allowedOperationsTable.get(methodName);

@@ -32,7 +32,7 @@ public class BasicStatefulPojoBean {
      * Maps to BasicStatefulObject.businessMethod
      * 
      * @return 
-     * @see BasicStatefulObject.businessMethod
+     * @see BasicStatefulObject#businessMethod
      */
     public String businessMethod(String text){
         testAllowedOperations("businessMethod");
@@ -60,13 +60,13 @@ public class BasicStatefulPojoBean {
     }
     
     /**
-     * Maps to BasicStatefulObject.getPermissionsReport
+     * Maps to BasicStatefulObject#getPermissionsReport
      * 
      * Returns a report of the bean's
      * runtime permissions
      * 
      * @return 
-     * @see BasicStatefulObject.getPermissionsReport
+     * @see BasicStatefulObject#getPermissionsReport
      */
     public Properties getPermissionsReport(){
         /* TO DO: */
@@ -74,14 +74,14 @@ public class BasicStatefulPojoBean {
     }
     
     /**
-     * Maps to BasicStatefulObject.getAllowedOperationsReport
+     * Maps to BasicStatefulObject#getAllowedOperationsReport
      * 
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      * 
      * @param methodName The method for which to get the allowed opperations report
      * @return 
-     * @see BasicStatefulObject.getAllowedOperationsReport
+     * @see BasicStatefulObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
         return (OperationsPolicy) allowedOperationsTable.get(methodName);

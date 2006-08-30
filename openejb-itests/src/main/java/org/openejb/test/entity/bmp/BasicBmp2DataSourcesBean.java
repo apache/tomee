@@ -43,7 +43,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean{
      * @param one
      * @param two
      * @return x + y
-     * @see BasicBmp2DataSourcesHome.sum
+     * @see BasicBmp2DataSourcesHome#sum
      */
     public int ejbHomeSum(int x, int y) {
         testAllowedOperations("ejbHome");

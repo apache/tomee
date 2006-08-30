@@ -39,7 +39,7 @@ public class BeanTxStatefulBean implements javax.ejb.SessionBean{
      * 
      * @param name
      * @exception javax.ejb.CreateException
-     * @see BasicStatefulHome.create
+     * @see BasicStatefulHome#create
      */
     public void ejbCreate(String name)
     throws javax.ejb.CreateException{
@@ -63,7 +63,7 @@ public class BeanTxStatefulBean implements javax.ejb.SessionBean{
      * Maps to BasicStatefulObject.businessMethod
      * 
      * @return 
-     * @see BasicStatefulObject.businessMethod
+     * @see BasicStatefulObject#businessMethod
      */
     public Transaction getUserTransaction() throws RemoteException{
         
