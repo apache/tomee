@@ -7,8 +7,6 @@ public class OpenEJBException extends Exception {
 
     private String message = "error.unknown";
 
-    private Throwable rootCause;
-
     public OpenEJBException() {
         super();
     }
@@ -19,15 +17,16 @@ public class OpenEJBException extends Exception {
     }
 
     public OpenEJBException(Throwable rootCause) {
-        this.rootCause = rootCause;
+        super(rootCause);
     }
 
     public OpenEJBException(String message, Throwable rootCause) {
-        this(message);
-        this.rootCause = rootCause;
+        super(message, rootCause);
+        this.message = message;
     }
 
     public String getMessage() {
+        Throwable rootCause = getCause();
         if (rootCause != null) {
             return super.getMessage() + ": " + rootCause.getMessage();
         } else {
@@ -35,32 +34,7 @@ public class OpenEJBException extends Exception {
         }
     }
 
-    public void printStackTrace() {
-        super.printStackTrace();
-        if (rootCause != null) {
-            System.err.println("Root cause: ");
-            rootCause.printStackTrace();
-        }
-    }
-
-    public void printStackTrace(PrintStream stream) {
-        super.printStackTrace(stream);
-        if (rootCause != null) {
-            stream.print("Root cause: ");
-            rootCause.printStackTrace(stream);
-        }
-    }
-
-    public void printStackTrace(PrintWriter writer) {
-        super.printStackTrace(writer);
-        if (rootCause != null) {
-            writer.print("Root cause: ");
-            rootCause.printStackTrace(writer);
-        }
-    }
-
     public Throwable getRootCause() {
-        return rootCause;
+        return super.getCause();
     }
-
 }
