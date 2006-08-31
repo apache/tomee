@@ -1,0 +1,18 @@
+<!-- $Rev: 2877 $ $Date: 2006-08-27 11:41:37 -0700 (Sun, 27 Aug 2006) $ -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>openejb-parent</artifactId>
+    <groupId>org.openejb</groupId>
+    <version>3.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>examples</artifactId>
+  <packaging>pom</packaging>
+  <name>OpenEJB :: Examples</name>
+
+  <modules>
+    <module>helloworld-stateful-pojo</module>
+  </modules>
+</project>

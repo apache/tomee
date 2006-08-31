@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
+    <enterprise-beans>
+        <session>
+            <ejb-name>FriendlyPerson</ejb-name>
+            <home>org.acme.FriendlyPersonComponent$Home</home>
+            <remote>org.acme.FriendlyPersonComponent$Remote</remote>
+            <local-home>org.acme.FriendlyPersonComponent$LocalHome</local-home>
+            <local>org.acme.FriendlyPersonComponent$Local</local>
+            <ejb-class>org.acme.FriendlyPersonImpl</ejb-class>
+            <session-type>Stateful</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+    </enterprise-beans>
+</ejb-jar>

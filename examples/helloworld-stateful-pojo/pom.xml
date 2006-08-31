@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.acme</groupId>
+  <artifactId>simple-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>OpenEJB :: Examples :: HelloWorld Stateful Pojo</name>
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ejb_3.0_spec</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--
+    Nice thing about maven2 is it has test-only dependencies.
+    This guarantees that non of your runtime code is dependent
+    on any OpenEJB classes.
+
+    For those of you who want to know the minimum steps required
+    to add OpenEJB for testing to an existing maven 2 build, you
+    simply add this dependency below and in your test code create
+    your InitialContext like such:
+
+        Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.client.LocalInitialContextFactory");
+
+        // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
+        properties.setProperty("openejb.deployments.classpath", "true");
+
+        initialContext = new InitialContext(properties);
+
+    -->
+    <dependency>
+      <groupId>org.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>3.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

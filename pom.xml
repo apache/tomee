@@ -43,6 +43,7 @@
     <module>openejb-itests</module>
     <module>container</module>
     <module>server</module> 
+    <module>examples</module> 
   </modules>
 
   <profiles>
