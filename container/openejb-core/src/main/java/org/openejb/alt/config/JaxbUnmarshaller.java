@@ -136,7 +136,7 @@ public class JaxbUnmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, directory.getPath());
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, directory.getPath()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", xmlFile.getPath(), directory.getPath()), e);
         } finally {
             try {
                 if (stream != null) stream.close();

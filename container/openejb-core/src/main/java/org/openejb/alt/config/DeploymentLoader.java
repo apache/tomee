@@ -22,13 +22,12 @@ import org.openejb.loader.FileUtils;
 import org.openejb.loader.SystemInstance;
 import org.openejb.OpenEJBException;
 import org.openejb.OpenEJB;
+import org.openejb.util.Logger;
 import org.openejb.jee.EjbJar;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Arrays;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -125,7 +124,14 @@ public class DeploymentLoader {
     }
 
 
-    public List<DeployedJar> loadDeploymentsList(List<Deployments> deployments, AutoDeployer deployer) throws OpenEJBException {
+    public List<DeployedJar> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
+        if (deployer == null){
+            deployer = new DynamicDeployer(){
+                public OpenejbJar deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
+                    return ejbJarUtils.getOpenejbJar();
+                }
+            };
+        }
         EjbValidator validator = new EjbValidator();
 
         List<DeployedJar> deployedJars = new ArrayList();
@@ -176,25 +182,22 @@ public class DeploymentLoader {
                     classLoader = tempCodebase.getClassLoader();
                 }
 
-                /* If there is no openejb-jar.xml attempt to auto deploy it.
-                */
-                OpenejbJar openejbJar = ejbJarUtils.getOpenejbJar();
-                if (openejbJar == null) {
-                    openejbJar = deployer.deploy(ejbJarUtils, jarLocation, classLoader);
-                }
+                OpenejbJar openejbJar = deployer.deploy(ejbJarUtils, jarLocation, classLoader);
 
                 EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
                 if (set.hasErrors() || set.hasFailures()) {
+                    Logger logger = Logger.getInstance("OpenEJB.startup.validation", "org.openejb.alt.config.rules");
+
                     ValidationError[] errors = set.getErrors();
                     for (int j = 0; j < errors.length; j++) {
                         ValidationError e = errors[j];
                         String ejbName = (e.getBean() != null)? e.getBean().getEjbName(): "null";
-                        ConfigurationFactory.logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
+                        logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
                     }
                     ValidationFailure[] failures = set.getFailures();
                     for (int j = 0; j < failures.length; j++) {
                         ValidationFailure e = failures[j];
-                        ConfigurationFactory.logger.info(e.getPrefix() + " ... " + e.getBean().getEjbName() + ":\t" + e.getMessage(2));
+                        logger.error(e.getPrefix() + " ... " + e.getBean().getEjbName() + ":\t" + e.getMessage(2));
                     }
 
                     throw new OpenEJBException("Jar failed validation.  Use the validation tool for more details");

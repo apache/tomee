@@ -47,7 +47,7 @@ public class OpenejbJar {
 
     public Map<String,EjbDeployment> getDeploymentsById(){
         Map<String,EjbDeployment> map = new LinkedHashMap();
-        for (EjbDeployment deployment : ejbDeployment) {
+        for (EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getDeploymentId(), deployment);
         }
         return map;
@@ -55,7 +55,7 @@ public class OpenejbJar {
 
     public Map<String,EjbDeployment> getDeploymentsByEjbName(){
         Map<String,EjbDeployment> map = new LinkedHashMap();
-        for (EjbDeployment deployment : ejbDeployment) {
+        for (EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getEjbName(), deployment);
         }
         return map;

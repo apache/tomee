@@ -12,7 +12,7 @@ import org.openejb.alt.config.sys.Container;
 import org.openejb.alt.config.sys.Openejb;
 import org.openejb.util.SafeToolkit;
 
-public class AutoDeployer {
+public class AutoDeployer implements DynamicDeployer {
 
     private Openejb config;
     private String configFile;
@@ -29,13 +29,16 @@ public class AutoDeployer {
 
         /* Load resource list */
         this.resources = config.getConnector();
-        System.out.println("resources " + resources.length);
     }
 
     public void init() throws OpenEJBException {
     }
 
     public OpenejbJar deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
+        if (ejbJarUtils.getOpenejbJar() != null){
+            return ejbJarUtils.getOpenejbJar();
+        }
+
         this.jarLocation = jarLocation;
         this.classLoader = classLoader;
         OpenejbJar openejbJar = new OpenejbJar();

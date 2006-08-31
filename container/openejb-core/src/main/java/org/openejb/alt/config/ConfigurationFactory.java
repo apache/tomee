@@ -78,7 +78,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation, props);
-        this.props.setProperty("openejb.configuration", configLocation);
+        if (configLocation != null){
+            this.props.setProperty("openejb.configuration", configLocation);
+        }
 
     }
 
@@ -98,9 +100,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
-        Openejb openejb = ConfigUtils.readConfig(configLocation);
+        Openejb openejb;
+        DynamicDeployer deployer;
+        if (configLocation != null) {
+            openejb = ConfigUtils.readConfig(configLocation);
+            deployer = new AutoDeployer(openejb);
+        } else {
+            openejb = new Openejb();
+            deployer = new AutoConfigAndDeploy(openejb);
+        }
 
-        AutoDeployer deployer = new AutoDeployer(openejb);
 
         List<Deployments> deployments = new ArrayList(Arrays.asList(openejb.getDeployments()));
 
@@ -329,8 +338,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         facilities.connectionManagers = new ConnectionManagerInfo[]{manager};
     }
 
-    private void initProxyFactory(Openejb openejb, FacilitiesInfo facilities)
-            throws OpenEJBException {
+    private void initProxyFactory(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
         String defaultFactory = null;
         try {
             String version = System.getProperty("java.vm.version");
@@ -480,8 +488,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         return initService(service, defaultName, null);
     }
 
-    public Service initService(Service service, String defaultName, Class type)
-            throws OpenEJBException {
+    public Service initService(Service service, String defaultName, Class type) throws OpenEJBException {
 
         if (service == null) {
             try {

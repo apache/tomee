@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.List;
@@ -48,7 +49,11 @@ public class EjbJarUtils {
         try {
             this.openejbJar = readOpenEjbJar(jarLocation);
         } catch (OpenEJBException e) {
-            logger.warning("Reading openejb-jar.xml.", e);
+            if (e.getCause() instanceof FileNotFoundException){
+                logger.warning(e.getMessage());
+            } else {
+                logger.warning("Reading openejb-jar.xml.", e);
+            }
         }
     }
 

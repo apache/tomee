@@ -200,7 +200,7 @@ public class CoreDeploymentInfo implements org.openejb.DeploymentInfo {
 
         TransactionPolicy policy = (TransactionPolicy) methodTransactionPolicies.get(method);
         if (policy == null && !isBeanManagedTransaction) {
-            org.apache.log4j.Logger.getLogger("OpenEJB").warn("The following method doesn't have a transaction policy assigned: " + method);
+            org.apache.log4j.Logger.getLogger("OpenEJB").info("The following method doesn't have a transaction policy assigned: " + method);
         }
         if (policy == null && container instanceof TransactionContainer) {
             if (isBeanManagedTransaction) {

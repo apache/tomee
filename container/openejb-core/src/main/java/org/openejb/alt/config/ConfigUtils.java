@@ -156,15 +156,17 @@ public class ConfigUtils {
 
             File confDir = SystemInstance.get().getBase().getDirectory("conf", false);
 
+            // TODO: DMB: This logic needs to be revisited 
             if (confDir.exists()) {
                 File config = new File(confDir, "openejb.xml");
                 logger.warning("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
                 file = createConfig(config);
             } else {
-                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Using the default configuration.");
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                URL resource = classLoader.getResource("default.openejb.conf");
-                return resource.toExternalForm();
+                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.");
+//                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Using the default configuration.");
+//                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//                URL resource = classLoader.getResource("default.openejb.conf");
+//                return resource.toExternalForm();
             }
 
         } catch (java.io.IOException e) {
