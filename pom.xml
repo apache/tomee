@@ -38,6 +38,13 @@
         </configuration>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-1</version>
+      </extension>
+    </extensions>
   </build>
   <modules>
     <module>openejb-itests</module>
@@ -154,4 +161,19 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-</project>
+  <distributionManagement>
+    <repository>
+      <id>codehaus.org</id>
+      <name>OpenEJB Central Repository</name>
+      <url>dav:https://dav.codehaus.org/repository/openejb/</url>
+    </repository>
+    <snapshotRepository>
+      <id>codehaus.org</id>
+      <name>OpenEJB Central Development Repository</name>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/openejb/</url>
+    </snapshotRepository>
+    <site>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/openejb/</url>
+    </site>
+  </distributionManagement></project>
