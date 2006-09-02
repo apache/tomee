@@ -482,6 +482,8 @@
             <ejb-name>BasicStatelessPojoBean</ejb-name>
             <home>org.openejb.test.stateless.BasicStatelessHome</home>
             <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
+            <local-home>org.openejb.test.stateless.BasicStatelessLocalHome</local-home>
+            <local>org.openejb.test.stateless.BasicStatelessLocalObject</local>
             <ejb-class>org.openejb.test.stateless.BasicStatelessPojoBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>

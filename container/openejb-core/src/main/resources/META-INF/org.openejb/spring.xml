@@ -568,6 +568,8 @@
           <o:statelessDeployment id="client/tests/stateless/BasicStatelessPojoHome"
               homeInterface="org.openejb.test.stateless.BasicStatelessHome"
               remoteInterface="org.openejb.test.stateless.BasicStatelessObject"
+              localHomeInterface="org.openejb.test.stateless.BasicStatelessLocalHome"
+              localInterface="org.openejb.test.stateless.BasicStatelessLocalObject"
               beanClass="org.openejb.test.stateless.BasicStatelessPojoBean"
               jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
