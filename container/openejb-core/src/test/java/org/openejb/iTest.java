@@ -20,9 +20,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.openejb.test.TestManager;
 import org.openejb.test.entity.bmp.BmpTestSuite;
+import org.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.openejb.test.entity.cmp.CmpTestSuite;
+import org.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.openejb.test.stateful.StatefulTestSuite;
+import org.openejb.test.stateful.StatefulLocalTestSuite;
 import org.openejb.test.stateless.StatelessTestSuite;
+import org.openejb.test.stateless.StatelessLocalTestSuite;
 
 import java.util.Collections;
 import java.util.Arrays;
@@ -52,10 +56,10 @@ public class iTest extends org.openejb.test.TestSuite {
 
     public static Test suite() {
         TestSuite suite = new iTest();
-        suite.addTest(StatelessTestSuite.suite());
-        suite.addTest(StatefulTestSuite.suite());
-        suite.addTest(BmpTestSuite.suite());
-        suite.addTest(CmpTestSuite.suite());
+        suite.addTest(StatelessLocalTestSuite.suite());
+        suite.addTest(StatefulLocalTestSuite.suite());
+        suite.addTest(BmpLocalTestSuite.suite());
+        suite.addTest(CmpLocalTestSuite.suite());
         return suite;
     }
 }
