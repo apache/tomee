@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import javax.naming.InitialContext;
 import javax.naming.Context;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -79,8 +80,12 @@ public class FriendlyPersonTest extends TestCase {
         // Amelia took some French, let's see if she remembers
         assertEquals("Bonjour Amelia!", friendlyPerson.greet("fr", "Amelia"));
 
+        // Dave should take some Polish and if he had, he could say Hi in Polish
+        assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
+
+
         // Let's see if I speak Portuguese
-        assertEquals("Sorry, I don't speak Portuguese.", friendlyPerson.greet("pt", "David"));
+        assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
 
         // Ok, well I've been meaning to learn, so...
         friendlyPerson.addGreeting("pt", "Ola {0}!");

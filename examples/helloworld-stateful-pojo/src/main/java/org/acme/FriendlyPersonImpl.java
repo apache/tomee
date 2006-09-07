@@ -42,6 +42,7 @@ public class FriendlyPersonImpl implements FriendlyPerson {
         addGreeting("en", "Hello {0}!");
         addGreeting("es", "Hola {0}!");
         addGreeting("fr", "Bonjour {0}!");
+        addGreeting("pl", "Witaj {0}!");
     }
 
     public String greet(String friend) {
