@@ -627,10 +627,10 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         } finally {
             txPolicy.afterInvoke(bean, txContext);
         }
-        Class callingClass = callMethod.getDeclaringClass();
-        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
 
-        return new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
+        Class callingClass = callMethod.getDeclaringClass();
+        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
     }
 
     protected static final Object[] noArgs = new Object[0];
@@ -741,7 +741,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
             Object primaryKey = null;
             Class callingClass = callMethod.getDeclaringClass();
-            boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
             /*
             The following block of code is responsible for returning ProxyInfo object(s) for each
@@ -762,7 +762,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
                     */
                     primaryKey = kg.getPrimaryKey(bean);
                     /*   create a new ProxyInfo based on the deployment info and primary key and add it to the vector */
-                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
+                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
                 }
                 if (callMethod.getReturnType() == java.util.Enumeration.class)
                     returnValue = new org.openejb.util.Enumerator(proxies);
@@ -780,7 +780,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
                 */
                 primaryKey = kg.getPrimaryKey(bean);
                 /*   create a new ProxyInfo based on the deployment info and primary key */
-                returnValue = new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
+                returnValue = new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
             }
 
         } catch (javax.ejb.FinderException fe) {

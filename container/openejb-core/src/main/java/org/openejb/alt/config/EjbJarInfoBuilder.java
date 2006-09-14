@@ -75,6 +75,7 @@ public class EjbJarInfoBuilder {
     private List<MethodTransactionInfo> methodTransactionInfos = new ArrayList();
     private List<SecurityRoleInfo> securityRoleInfos = new ArrayList();
 
+    
     public EjbJarInfo buildInfo(DeployedJar jar) throws OpenEJBException {
 
         int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();

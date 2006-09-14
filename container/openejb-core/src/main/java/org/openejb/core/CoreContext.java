@@ -101,6 +101,31 @@ public abstract class CoreContext implements java.io.Serializable {
         return (EJBLocalObject) newProxy;
     }
 
+    public Object getBusinessObject(Class interfce) {
+        // TODO: This implementation isn't complete
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        org.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+
+        Class businessLocalInterface = di.getBusinessLocalInterface();
+        if (businessLocalInterface != null && businessLocalInterface.getName().equals(interfce.getName())){
+            handler.setLocal(true);
+        } else if (di.getBusinessRemoteInterface() == null || !di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
+            // TODO: verify if this is the right exception
+            throw new RuntimeException("Component has no such interface "+interfce.getName());
+        }
+
+        Object newProxy = null;
+        try {
+            Class[] interfaces = new Class[]{interfce, org.openejb.core.ivm.IntraVmProxy.class};
+            newProxy = ProxyManager.newProxyInstance(interfaces, handler);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException("Could not create IVM proxy for " + interfce.getName() + " interface");
+        }
+        return newProxy;
+    }
+
     public EJBLocalHome getEJBLocalHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.openejb.core.CoreDeploymentInfo di = (org.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();

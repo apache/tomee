@@ -222,7 +222,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public String toString() {
-        return "proxy=" + getProxyInfo().getInterface().getName() + ";deployment=" + this.deploymentID + ";pk=" + this.primaryKey;
+        String name = null;
+        try {
+            name = getProxyInfo().getInterface().getName();
+        } catch (Exception e) {
+        }
+        return "proxy=" + name + ";deployment=" + this.deploymentID + ";pk=" + this.primaryKey;
     }
 
     public int hashCode() {

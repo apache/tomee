@@ -12,7 +12,7 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
     public StatelessEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+        super(container, pk, depID, null);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {

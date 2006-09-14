@@ -72,7 +72,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         if (preDestroy != null){
             methods.put(preDestroy, MethodType.REMOVE);
 
-            Class businessLocal = deploymentInfo.getBusinessLocal();
+            Class businessLocal = deploymentInfo.getBusinessLocalInterface();
             if (businessLocal != null){
                 try {
                     Method method = businessLocal.getMethod(preDestroy.getName());
@@ -80,7 +80,7 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
                 } catch (NoSuchMethodException thatsFine) {}
             }
 
-            Class businessRemote = deploymentInfo.getBusinessRemote();
+            Class businessRemote = deploymentInfo.getBusinessRemoteInterface();
             if (businessRemote != null){
                 try {
                     Method method = businessRemote.getMethod(preDestroy.getName());
@@ -314,8 +314,8 @@ public class StatefulContainer implements org.openejb.RpcContainer, TransactionC
         instanceManager.poolInstance(primaryKey, bean);
 
         Class callingClass = callMethod.getDeclaringClass();
-        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
-        return new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
+        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
     }
 
     protected Object newPrimaryKey() {

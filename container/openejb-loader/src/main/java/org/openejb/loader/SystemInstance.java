@@ -89,7 +89,7 @@ public class SystemInstance {
         if (component == null){
             throw new IllegalStateException("No such component exists: "+type.getName() +"(scope: "+type.getClassLoader()+")");
         }
-        return components.get(type);
+        return component;
     }
 
     /**

@@ -332,8 +332,8 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         }
 
         Class callingClass = callMethod.getDeclaringClass();
-        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
-        return new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this);
+        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
 
     }
 
@@ -345,7 +345,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
         Class callingClass = callMethod.getDeclaringClass();
-        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
+        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
         /*
         * Find operations return either a single primary key or a collection of primary keys.
@@ -356,7 +356,7 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             java.util.Vector proxies = new java.util.Vector();
             while (keys.hasNext()) {
                 Object primaryKey = keys.next();
-                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
+                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
             }
             returnValue = proxies;
         } else if (returnValue instanceof java.util.Enumeration) {
@@ -364,11 +364,11 @@ public class EntityContainer implements org.openejb.RpcContainer, TransactionCon
             java.util.Vector proxies = new java.util.Vector();
             while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
-                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, isLocalInterface, this));
+                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
             }
             returnValue = new org.openejb.util.ArrayEnumeration(proxies);
         } else
-            returnValue = new ProxyInfo(deploymentInfo, returnValue, isLocalInterface, this);
+            returnValue = new ProxyInfo(deploymentInfo, returnValue, objectInterface, this);
 
         return returnValue;
     }

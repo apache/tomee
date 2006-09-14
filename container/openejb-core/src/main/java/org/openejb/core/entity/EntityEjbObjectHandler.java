@@ -53,7 +53,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     private Object registryId;
 
     public EntityEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+        super(container, pk, depID, null);
     }
 
     /*

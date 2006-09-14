@@ -10,17 +10,17 @@ public class ProxyInfo {
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer cntnr) {
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
         deploymentInfo = depInfo;
         primaryKey = pk;
         type = intrfc;
-        beanContainer = cntnr;
+        beanContainer = container;
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, boolean isLocalInterface, RpcContainer cntnr) {
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, boolean isLocalInterface, RpcContainer container) {
         this.deploymentInfo = depInfo;
         this.primaryKey = pk;
-        this.beanContainer = cntnr;
+        this.beanContainer = container;
         if (isLocalInterface) {
             this.type = deploymentInfo.getLocalInterface();
         } else {

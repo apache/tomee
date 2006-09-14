@@ -22,7 +22,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getEJBHome", new Integer(5));
     }
 
-    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID) {
+    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID, Class homeInterface) {
         super(container, pk, depID);
     }
 

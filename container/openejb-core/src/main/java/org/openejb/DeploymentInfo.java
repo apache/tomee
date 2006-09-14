@@ -54,6 +54,10 @@ public interface DeploymentInfo {
 
     public Class getPrimaryKeyClass();
 
+    public Class getBusinessLocalInterface();
+
+    public Class getBusinessRemoteInterface();
+
     public java.lang.reflect.Field getPrimaryKeyField();
 
     public boolean isReentrant();
@@ -63,5 +67,18 @@ public interface DeploymentInfo {
     }
     public interface BusinessRemoteHome extends javax.ejb.EJBHome {
         Object create();
+    }
+
+    public enum InterfaceType {
+        HOME, REMOTE,
+        LOCAL_HOME, LOCAL,
+        BUSINESS_LOCAL,
+        BUSINESS_REMOTE,
+        SERVICE_ENDPOINT
+    }
+
+    // TODO: Use these instead of the constants above
+    public enum BeanType {
+        STATEFUL, STATELESS, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN
     }
 }

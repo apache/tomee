@@ -19,6 +19,11 @@ package org.openejb.core.stateless;
 import junit.framework.TestCase;
 import org.openejb.DeploymentInfo;
 import org.openejb.OpenEJBException;
+import org.openejb.spi.SecurityService;
+import org.openejb.loader.SystemInstance;
+import org.openejb.util.proxy.ProxyManager;
+import org.openejb.util.proxy.Jdk13ProxyFactory;
+import org.openejb.core.CoreDeploymentInfo;
 import org.openejb.alt.config.DeployedJar;
 import org.openejb.alt.config.EjbJarInfoBuilder;
 import org.openejb.alt.config.ejb.EjbDeployment;
@@ -40,9 +45,45 @@ import java.util.Stack;
  * @version $Revision$ $Date$
  */
 public class StatelessContainerTest extends TestCase {
+    private StatelessContainer container;
+    private DeploymentInfo deploymentInfo;
 
     public void testPojoStyleBean() throws Exception {
 
+        Object result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, null, "");
+        assertTrue("instance of Stack", result instanceof Stack);
+
+        Stack<Lifecycle> actual = (Stack<Lifecycle>) result;
+
+        List expected = Arrays.asList(Lifecycle.values());
+
+        assertEquals(join("\n", expected), join("\n", actual));
+    }
+
+    public void testBusinessLocalInterface() throws Exception {
+
+        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+        DeploymentInfo.BusinessLocalHome businessLocalHome = coreDeploymentInfo.getBusinessLocalHome();
+        assertNotNull("businessLocalHome", businessLocalHome);
+
+        Object object = businessLocalHome.create();
+        assertNotNull("businessLocalHome.create()", businessLocalHome);
+
+        assertTrue("instanceof widget", object instanceof Widget);
+
+        Widget widget = (Widget) object;
+
+        // Do a business method...
+        Stack<Lifecycle> lifecycle = widget.getLifecycle();
+        assertNotNull("lifecycle",lifecycle);
+
+        // Check the lifecycle of the bean
+        List expected = Arrays.asList(Lifecycle.values());
+
+        assertEquals(join("\n", expected) , join("\n", lifecycle));
+    }
+
+    protected void setUp() throws Exception {
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
         bean.addPostConstruct("init");
@@ -57,17 +98,16 @@ public class StatelessContainerTest extends TestCase {
         DeployedJar jar = new DeployedJar("", ejbJar, openejbJar);
 
         HashMap<String, DeploymentInfo> ejbs = build(jar);
+        deploymentInfo = ejbs.get("widget");
 
-        StatelessContainer container = new StatelessContainer("Stateless Container", new PseudoTransactionService(), new PseudoSecurityService(), ejbs, 10, 0, false);
+        PseudoTransactionService transactionManager = new PseudoTransactionService();
+        PseudoSecurityService securityService = new PseudoSecurityService();
+        SystemInstance.get().setComponent(SecurityService.class, securityService);
+        container = new StatelessContainer("Stateless Container", transactionManager, securityService, ejbs, 10, 0, false);
+        ((CoreDeploymentInfo)deploymentInfo).setContainer(container);
 
-        Object result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, null, "");
-        assertTrue("instance of Stack", result instanceof Stack);
-
-        Stack<Lifecycle> actual = (Stack<Lifecycle>) result;
-
-        List expected = Arrays.asList(Lifecycle.values());
-
-        assertEquals(join("\n", expected), join("\n", actual));
+        ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
+        ProxyManager.setDefaultFactory("ivm_server");
     }
 
     private static String join(String delimeter, List items) {
@@ -79,6 +119,7 @@ public class StatelessContainerTest extends TestCase {
     }
 
     private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
+        EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());
         EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);

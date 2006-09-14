@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
     public StatefulEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+        super(container, pk, depID, null);
     }
 
     public Object getRegistryId() {

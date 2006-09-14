@@ -178,8 +178,8 @@ public class StatelessContainer implements org.openejb.RpcContainer, Transaction
 
     protected ProxyInfo createEJBObject(org.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         Class callingClass = callMethod.getDeclaringClass();
-        boolean isLocalInterface = EJBLocalHome.class.isAssignableFrom(callingClass);
-        return new ProxyInfo(deploymentInfo, null, isLocalInterface, this);
+        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        return new ProxyInfo(deploymentInfo, null, objectInterface, this);
     }
 
     public void discardInstance(Object instance, ThreadContext context) {

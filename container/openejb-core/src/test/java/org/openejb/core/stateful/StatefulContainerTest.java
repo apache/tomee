@@ -29,6 +29,8 @@ import org.openejb.ri.sp.PseudoSecurityService;
 import org.openejb.OpenEJBException;
 import org.openejb.DeploymentInfo;
 import org.openejb.ProxyInfo;
+import org.openejb.util.proxy.ProxyManager;
+import org.openejb.util.proxy.Jdk13ProxyFactory;
 import org.openejb.spi.SecurityService;
 import org.openejb.loader.SystemInstance;
 import org.openejb.assembler.classic.EjbJarBuilder;
@@ -43,19 +45,72 @@ import java.util.Arrays;
 import java.lang.reflect.Method;
 import java.io.Serializable;
 
-import com.sun.corba.se.impl.interceptors.PICurrent;
-
 /**
  * @version $Revision$ $Date$
  */
 public class StatefulContainerTest extends TestCase {
+    private StatefulContainer container;
+    private DeploymentInfo deploymentInfo;
 
     public void testPojoStyleBean() throws Exception {
 
+        WidgetBean.lifecycle.clear();
+
+
+        // Do a create...
+        Method createMethod = deploymentInfo.getLocalHomeInterface().getMethod("create");
+
+        Object result = container.invoke("widget", createMethod, new Object[]{}, null, "");
+        assertTrue("instance of ProxyInfo", result instanceof ProxyInfo);
+        ProxyInfo proxyInfo = (ProxyInfo) result;
+
+        // Do a business method...
+        result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
+        assertTrue("instance of Stack", result instanceof Stack);
+
+        // Do a remove...
+        result = container.invoke("widget", Widget.class.getMethod("destroy"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
+
+        // Check the lifecycle of the bean
+        List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
+
+        assertEquals(StatefulContainerTest.join("\n", expected) , join("\n", WidgetBean.lifecycle));
+    }
+
+    public void testBusinessLocalInterface() throws Exception {
+        WidgetBean.lifecycle.clear();
+
+        // Do a create...
+
+        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+        DeploymentInfo.BusinessLocalHome businessLocalHome = coreDeploymentInfo.getBusinessLocalHome();
+        assertNotNull("businessLocalHome", businessLocalHome);
+
+        Object object = businessLocalHome.create();
+        assertNotNull("businessLocalHome.create()", businessLocalHome);
+
+        assertTrue("instanceof widget", object instanceof Widget);
+
+        Widget widget = (Widget) object;
+
+        // Do a business method...
+        Stack<Lifecycle> lifecycle = widget.getLifecycle();
+        assertNotNull("lifecycle",lifecycle);
+
+        // Do a remove...
+        widget.destroy();
+
+        // Check the lifecycle of the bean
+        List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
+
+        assertEquals(StatefulContainerTest.join("\n", expected) , join("\n", WidgetBean.lifecycle));
+    }
+
+    protected void setUp() throws Exception {
         // Setup the descriptor information
 
         StatefulBean bean = new StatefulBean("widget", WidgetBean.class.getName());
-        bean.setBusinessLocal(StatefulContainerTest.Widget.class.getName());
+        bean.setBusinessLocal(Widget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
         bean.addPrePassivate("passivate");
@@ -72,6 +127,7 @@ public class StatefulContainerTest extends TestCase {
         // Build the DeploymentInfos
 
         HashMap<String, DeploymentInfo> ejbs = build(jar);
+        deploymentInfo = ejbs.get("widget");
 
         // Build and register the TransactionManager and SecurityService
 
@@ -83,34 +139,12 @@ public class StatefulContainerTest extends TestCase {
 
         // Create the Container
 
-        StatefulContainer container = new StatefulContainer("Stateful Container", transactionManager, securityService, ejbs,null, 10, 0, 1);
+        container = new StatefulContainer("Stateful Container", transactionManager, securityService, ejbs,null, 10, 0, 1);
+        ((CoreDeploymentInfo)deploymentInfo).setContainer(container);
 
-        WidgetBean.lifecycle.clear();
+        ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
+        ProxyManager.setDefaultFactory("ivm_server");
 
-
-        // Do a create...
-
-        DeploymentInfo deploymentInfo = ejbs.get("widget");
-        Method createMethod = deploymentInfo.getLocalHomeInterface().getMethod("create");
-
-        Object result = container.invoke("widget", createMethod, new Object[]{}, null, "");
-        assertTrue("instance of ProxyInfo", result instanceof ProxyInfo);
-        ProxyInfo proxyInfo = (ProxyInfo) result;
-
-        // Do a business method...
-
-        result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
-        assertTrue("instance of Stack", result instanceof Stack);
-
-        // Do a remove...
-
-        result = container.invoke("widget", Widget.class.getMethod("destroy"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
-
-        // Check the lifecycle of the bean
-
-        List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
-
-        assertEquals(StatefulContainerTest.join("\n", expected) , StatefulContainerTest.join("\n", WidgetBean.lifecycle));
     }
 
     private static String join(String delimeter, List items){
@@ -122,6 +156,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
+        EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());
         EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
