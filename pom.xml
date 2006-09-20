@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <version>3.0-SNAPSHOT</version>
   <name>OpenEJB :: Project</name>
-  <url>http://openejb.org</url>
+  <url>http://incubator.apache.org/projects/openejb</url>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/OPENEJB</url>
@@ -24,8 +24,8 @@
   </ciManagement>
   <inceptionYear>1999</inceptionYear>
   <scm>
-    <connection>scm:svn:https://svn.codehaus.org/openejb/trunk/openejb3</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/openejb/trunk/openejb3</developerConnection>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/</developerConnection>
   </scm>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -176,4 +176,5 @@
       <id>codehaus.org</id>
       <url>dav:https://dav.codehaus.org/openejb/</url>
     </site>
-  </distributionManagement></project>
+  </distributionManagement>
+</project>
