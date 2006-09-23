@@ -11,7 +11,7 @@ import java.util.HashMap;
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
  * instance for that classloader and all children classloaders.
  *
- * @version $Revision: 2172 $ $Date: 2005-09-20 16:58:27 -0700 (Tue, 20 Sep 2005) $
+ * @version $Revision$ $Date$
  */
 public class SystemInstance {
 

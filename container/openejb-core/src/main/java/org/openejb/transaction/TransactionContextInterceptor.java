@@ -40,7 +40,7 @@
  *
  * Copyright 2006 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
+ * $Id$
  */
 package org.openejb.transaction;
 
@@ -52,7 +52,7 @@ import org.apache.geronimo.interceptor.Invocation;
 import org.openejb.EjbInvocation;
 
 /**
- * @version $Revision: 2449 $ $Date: 2006-02-15 22:30:22 -0800 (Wed, 15 Feb 2006) $
+ * @version $Revision$ $Date$
  */
 public class TransactionContextInterceptor implements Interceptor {
     private final Interceptor next;

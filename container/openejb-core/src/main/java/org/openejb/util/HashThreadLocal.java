@@ -9,7 +9,7 @@ import java.util.HashMap;
 *
 * @see org.openejb.resource.SharedLocalConnectionManager
 * @author <a href="richard@monson-haefel.com">Richard Monson-Haefel</a>
-* @version $Rev$ $Id: HashThreadLocal.java,v 1.2 2005/06/19 22:40:33 jlaskowski Exp $
+* @version $Rev$ $Id$
 */
 
 public class HashThreadLocal {

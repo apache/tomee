@@ -40,7 +40,7 @@
  *
  * Copyright 2006 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
+ * $Id$
  */
 package org.openejb.transaction;
 
@@ -51,7 +51,7 @@ import java.util.Collection;
 /**
  * <b>Really</b> stupid implementation of a double keyed map.
  *
- * @version $Rev: 355877 $ $Date: 2005-12-10 18:48:27 -0800 (Sat, 10 Dec 2005) $
+ * @version $Rev$ $Date$
  */
 public final class DoubleKeyedHashMap {
     private final Map map = new HashMap();

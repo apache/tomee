@@ -12,7 +12,7 @@ REM
 REM   Created by David Blevins 
 REM             <david.blevins@visi.com>
 REM _______________________________________________
-REM $Id: openejb.bat,v 1.4 2005/10/11 17:18:58 jcscoobyrs Exp $
+REM $Id$
 REM================================================
 
 SETLOCAL

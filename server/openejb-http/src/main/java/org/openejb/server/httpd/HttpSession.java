@@ -40,7 +40,7 @@
  *
  * Copyright 2001 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: HttpSession.java,v 1.1 2004/12/17 05:10:23 dblevins Exp $
+ * $Id$
  */
 package org.openejb.server.httpd;
 

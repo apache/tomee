@@ -40,7 +40,7 @@
  *
  * Copyright 2005 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: TranqlEjbCmpEngine.java 2465 2006-02-19 06:35:14Z gdamour $
+ * $Id$
  */
 package org.openejb.entity.cmp;
 
@@ -50,7 +50,7 @@ import org.tranql.ejb.EJBSchema;
 import org.tranql.sql.SQLSchema;
 
 /**
- * @version $Revision: 2465 $ $Date: 2006-02-19 17:35:14 +1100 (Sun, 19 Feb 2006) $
+ * @version $Revision$ $Date$
  */
 public class TranqlQueryManager implements QueryManager {
     private final org.tranql.dynamicquery.QueryManager queryManager;

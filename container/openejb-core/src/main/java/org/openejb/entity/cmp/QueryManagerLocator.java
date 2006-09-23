@@ -40,7 +40,7 @@
  *
  * Copyright 2005 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: EjbCmpEngine.java 2324 2006-02-01 11:50:15Z dain $
+ * $Id$
  */
 package org.openejb.entity.cmp;
 
@@ -48,7 +48,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * @version $Revision: 2324 $ $Date: 2006-02-01 22:50:15 +1100 (Wed, 01 Feb 2006) $
+ * @version $Revision$ $Date$
  */
 public class QueryManagerLocator {
     public QueryManager locate(String encName) {

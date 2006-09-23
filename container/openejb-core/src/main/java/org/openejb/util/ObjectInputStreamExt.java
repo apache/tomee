@@ -28,7 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.lang.reflect.Proxy;
 
 /**
- * @version $Rev: 356097 $ $Date: 2005-12-11 17:29:03 -0800 (Sun, 11 Dec 2005) $
+ * @version $Rev$ $Date$
  */
 public class ObjectInputStreamExt extends ObjectInputStream {
 

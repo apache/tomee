@@ -58,7 +58,7 @@ import org.openejb.ProxyInfo;
  *         javax.ejb.* implementations is implementation specific.
  * <p>
  *
- * @version $Revision: 1076 $ $Date: 2004-03-01 01:17:26 -0600 (Mon, 01 Mar 2004) $
+ * @version $Revision$ $Date$
  */
 public interface ApplicationServer {
 

@@ -60,7 +60,7 @@ import org.apache.geronimo.kernel.ClassLoading;
 /**
  *
  *
- * @version $Revision: 2324 $ $Date: 2006-02-01 03:50:15 -0800 (Wed, 01 Feb 2006) $
+ * @version $Revision$ $Date$
  */
 public final class MethodSignature implements Serializable, Comparable {
     private static final long serialVersionUID = -3801134672931277429L;

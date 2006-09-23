@@ -34,7 +34,7 @@ import java.util.HashMap;
  * The classes are loaded using the provided class loader.  For the basic types, the primitive
  * reflection types are returned.
  *
- * @version $Rev: 356097 $
+ * @version $Rev$
  */
 public class ClassLoading {
 

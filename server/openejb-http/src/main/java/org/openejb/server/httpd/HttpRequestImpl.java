@@ -40,7 +40,7 @@
  *
  * Copyright 2001 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: HttpRequestImpl.java,v 1.8 2005/04/05 08:05:08 dblevins Exp $
+ * $Id$
  */
 package org.openejb.server.httpd;
 

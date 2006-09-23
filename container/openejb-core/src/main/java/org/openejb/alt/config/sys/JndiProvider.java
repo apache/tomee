@@ -2,7 +2,7 @@
  * This class was automatically generated with 
  * <a href="http://www.castor.org">Castor 0.9.5.3</a>, using an XML
  * Schema.
- * $Id: JndiProvider.java,v 1.2 2004/03/31 00:45:22 dblevins Exp $
+ * $Id$
  */
 
 package org.openejb.alt.config.sys;

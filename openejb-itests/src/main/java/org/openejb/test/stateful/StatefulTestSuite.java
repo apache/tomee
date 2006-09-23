@@ -41,7 +41,7 @@
  *
  * Copyright 1999 (C) Exoffice Technologies Inc. All Rights Reserved.
  *
- * $Id: StatefulTestSuite.java,v 1.1.1.1 2004/03/26 21:43:40 dblevins Exp $
+ * $Id$
  */
 package org.openejb.test.stateful;
 

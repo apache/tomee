@@ -40,7 +40,7 @@
  *
  * Copyright 2006 (C) The OpenEJB Group. All Rights Reserved.
  *
- * $Id: file,v 1.1 2005/02/18 23:22:00 user Exp $
+ * $Id$
  */
 package org.openejb.assembler.spring;
 
