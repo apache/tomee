@@ -29,6 +29,10 @@ public class OpenJpaProviderTest extends TestCase {
 
     public void testOpenJpaProvider() throws Exception {
         System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, "org.openejb.persistence");
+        // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
+        // Derby creates derby.log file in derby.system.home
+        // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
+        System.setProperty("derby.system.home", "target");
 
         PersistenceDeployer deployer = new PersistenceDeployer(new TestDataSourceResolver());
 
@@ -58,7 +62,7 @@ public class OpenJpaProviderTest extends TestCase {
         public DataSource getDataSource(String name) throws Exception {
             BasicDataSource ds = new BasicDataSource();
             ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-            ds.setUrl("jdbc:derby:target/database/openjpa-test-database;create=true");
+            ds.setUrl("jdbc:derby:database/openjpa-test-database;create=true");
             ds.setMaxActive(100);
             ds.setMaxWait(10000);
             ds.setTestOnBorrow(true);
