@@ -44,6 +44,7 @@ public class PersistenceTest extends TestCase {
     private String previousFactory = null;
 
     public void testNothing() {}
+
     public void _testDeployer() throws Exception {
         String jndiPrefix = "java:openejb/PersistenceFactories";
         try {
@@ -81,7 +82,7 @@ public class PersistenceTest extends TestCase {
                     }
                     ctx = (Context) ctxObj;
                 } catch (NameNotFoundException e) {
-                    //Name was not found, so add a new subcontext
+                    // Name was not found, so add a new subcontext
                     ctx = ctx.createSubcontext(composite.get(i));
                 }
             }
@@ -96,8 +97,7 @@ public class PersistenceTest extends TestCase {
         if (!(em instanceof FakeEntityManager))
             fail("EntityManager is not a FakeEntityManager!");
 
-        PersistenceUnitInfo pu = ((FakeEntityManagerFactory) emf)
-                .getPersistenceUnitInfo();
+        PersistenceUnitInfo pu = ((FakeEntityManagerFactory) emf).getPersistenceUnitInfo();
         assertNotNull(pu);
 
         Properties props = pu.getProperties();
@@ -113,12 +113,10 @@ public class PersistenceTest extends TestCase {
 
         List<String> managedClasses = pu.getManagedClassNames();
         assertTrue(managedClasses.contains("org.openejb.persistence.TestClass"));
-        assertTrue(managedClasses
-                .contains("org.openejb.persistence.TestClass2"));
+        assertTrue(managedClasses.contains("org.openejb.persistence.TestClass2"));
 
     }
 
-    
     private void cleanupJNDI(String jndi) throws Exception {
         CompositeName composite = new CompositeName(jndi);
         for (int i = composite.size(); i > 0; i--) {
@@ -127,8 +125,7 @@ public class PersistenceTest extends TestCase {
                 if (value instanceof Context) {
                     Object parent = ctx;
                     if (i > 1)
-                        parent = ctx.lookup(composite.getPrefix(i - 1)
-                                .toString());
+                        parent = ctx.lookup(composite.getPrefix(i - 1).toString());
                     ((Context) parent).destroySubcontext(composite.get(i - 1));
                 } else
                     ctx.unbind(composite.getPrefix(i).toString());
@@ -145,7 +142,8 @@ public class PersistenceTest extends TestCase {
         // Set up a fake JNDI instance
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.persistence.JNDIContextFactory");
-        previousFactory = System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.persistence.JNDIContextFactory");
+        previousFactory = System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+                "org.openejb.persistence.JNDIContextFactory");
 
         ctx = new InitialContext(env);
 
@@ -156,10 +154,9 @@ public class PersistenceTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        cleanupJNDI("jdbc/MyDataSource");
+        cleanupJNDI(DATASOURCE_NAME);
         if (previousFactory != null)
-            System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                            previousFactory);
+            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, previousFactory);
         else
             System.getProperties().remove(Context.INITIAL_CONTEXT_FACTORY);
     }

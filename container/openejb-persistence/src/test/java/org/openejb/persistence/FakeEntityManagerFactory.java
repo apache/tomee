@@ -16,11 +16,11 @@
  */
 package org.openejb.persistence;
 
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.spi.PersistenceUnitInfo;
-import java.util.Map;
 
 public class FakeEntityManagerFactory implements EntityManagerFactory {
 
