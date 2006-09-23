@@ -123,7 +123,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
     public V put(K key, V value) {
         int i = indexOf((K) key);
         if (i < 0) {
-            throw new IllegalArgumentException("Index does not contain this key and new entries can not be added: " + (K) key);
+            throw new IllegalArgumentException("Index does not contain this key and new entries cannot be added: " + (K) key);
         }
 
         IndexEntry<K,V> entry = entries[i];
@@ -226,7 +226,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
                 }
 
                 public void remove() {
-                    throw new UnsupportedOperationException("Index entries can not be removed");
+                    throw new UnsupportedOperationException("Index entries cannot be removed");
                 }
             };
         }
@@ -263,7 +263,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         }
 
         public void remove() {
-            throw new UnsupportedOperationException("Index entries can not be removed");
+            throw new UnsupportedOperationException("Index entries cannot be removed");
         }
     }
 
@@ -292,8 +292,8 @@ public class Index<K,V> extends AbstractMap<K,V> {
             entries[index].setValue((V) o);
         }
 
-        public void add(Object o) {
-            throw new UnsupportedOperationException("Entries can not be added to a Index");
+        public void add(E o) {
+            throw new UnsupportedOperationException("Entries cannot be added to a Index");
         }
 
     }

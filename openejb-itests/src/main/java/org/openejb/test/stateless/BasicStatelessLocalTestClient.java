@@ -19,32 +19,17 @@ package org.openejb.test.stateless;
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
+ * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
  * 
  * @version $Rev$ $Date$
  */
-public class StatelessPojoLocalJndiTests extends BasicStatelessLocalTestClient {
+public abstract class BasicStatelessLocalTestClient extends StatelessTestClient {
 
-	
-    public StatelessPojoLocalJndiTests(){
-        super("LocalJNDI.");
+    protected BasicStatelessLocalHome   ejbLocalHome;
+    protected BasicStatelessLocalObject ejbLocalObject;
+
+    public BasicStatelessLocalTestClient(String name){
+        super(name);
     }
-
-    public void test01_initialContext(){
-        try{
-            assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-
-    public void test02_Jndi_lookupHome(){
-        try{
-        	// Here we use the Java casting as what is done while looking-up a local bean
-        	ejbLocalHome = (BasicStatelessLocalHome) initialContext.lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
-            assertNotNull("The EJBLocalHome is null", ejbLocalHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-
 }
+
