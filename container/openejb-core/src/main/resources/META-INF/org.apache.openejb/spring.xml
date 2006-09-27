@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
+<beans xmlns:o="http://openejb.org/schemas/core">
+  <o:jdk13ProxyFactory id="proxyFactory"/>
+
+  <o:containerSystem id="containerSystem"/>
+
+  <bean id="jndiContext" factory-bean="containerSystem" factory-method="getJNDIContext"/>
+
+  <o:transactionManagerWrapper id="transactionManager">
+    <o:transactionManager>
+      <o:pseudoTransactionService/>
+    </o:transactionManager>
+  </o:transactionManagerWrapper>
+
+  <o:userTransaction id="userTransaction" transactionManager="#transactionManager"/>
+
+  <o:pseudoSecurityService id="securityService"/>
+
+  <o:sharedLocalConnectionManager id="defaultConnectionManager"
+      transactionManager="#transactionManager"/>
+
+  <o:jdbcConnectionFactory id="defaultJdbcDatabase"
+      defaultUserName="Admin"
+      defaultPassword="pass"
+      url="jdbc:idb:conf/instantdb.properties"
+      driver="org.enhydra.instantdb.jdbc.idbDriver"/>
+
+  <o:jndiBinding id="jndiBinding" context="#jndiContext">
+    <property name="bindings">
+      <map>
+        <entry key="java:openejb/connector/Default JDBC Database">
+          <o:connectorRef manager="#defaultConnectionManager" factory="#defaultJdbcDatabase"/>
+        </entry>
+        <entry key="java:openejb/TransactionManager" value-ref="transactionManager"/>
+        <entry key="java:openejb/SecurityService" value-ref="securityService"/>
+      </map>
+    </property>
+  </o:jndiBinding>
+
+  <!-- ######################### -->
+  <!-- Deployment Specific Beans -->
+  <!-- ######################### -->
+
+  <o:urlClassLoader id="classLoader">
+    <o:urls>
+      <o:url>file:foo/bar</o:url>
+    </o:urls>
+  </o:urlClassLoader>
+
+  <o:castorCmp11Container id="Default CMP Container" depends-on="jndiBinding">
+    id=Default CMP Container
+
+    # The default size of the method ready bean pools.
+    # Every bean class gets its own pool of this size.
+
+    poolSize 100
+
+    engine instantdb
+
+    connectorName Default JDBC Database
+
+    # Driver class name
+
+    jdbcDriver org.enhydra.instantdb.jdbc.idbDriver
+
+    # Url for creating connections
+
+    jdbcUrl jdbc:idb:conf/instantdb.properties
+
+    # Default user name
+
+    userName Admin
+
+    # Default password
+
+    password pass
+
+    transactionManager #transactionManager
+    securityService #securityService
+    registry #cmpDeployments
+  </o:castorCmp11Container>
+
+  <!--
+  # ==========================================================
+  # Default Bean-Managed Persistence EntityBean Container
+  # ==========================================================
+  -->
+  <o:bmpContainer id="Default BMP Container">
+    id Default BMP Container
+
+    # Specifies the size of the bean pools for this
+    # bmp entity container.
+
+    poolSize 10
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    registry #bmpDeployments
+  </o:bmpContainer>
+
+
+  <!--
+  # ==========================================================
+  # Default Stateless SessinBean Container
+  # ==========================================================
+  -->
+  <o:statelessContainer id="Default Stateless Container">
+    id Default Stateless Container
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in milliseconds. A value of 5 would
+    # result in a time-out of 5 milliseconds between invocations.
+    # A value of zero would mean no timeout.
+
+    timeOut 0
+
+    # Specifies the size of the bean pools for this
+    # stateless SessionBean container.
+
+    poolSize 10
+
+    # StrictPooling tells the container what to do when the pool
+    # reaches it's maximum size and there are incoming requests
+    # that need instances.
+    #
+    # With strict pooling, requests will have to wait for instances
+    # to become available. The pool size will never grow beyond the
+    # the set PoolSize value.
+    #
+    # Without strict pooling, the container will create temporary
+    # instances to meet demand. The instances will last for just one
+    # method invocation and then are removed.
+
+    strictPooling true
+
+    transactionManager #transactionManager
+    securityService #securityService
+
+    registry #statelessDeployments
+  </o:statelessContainer>
+
+
+  <!--
+  # ==========================================================
+  # Default Stateful SessinBean Container
+  # ==========================================================
+  -->
+  <o:statefulContainer id="Default Stateful Container">
+    id Default Stateful Container
+
+    # The passivator is responsible for writing beans to disk
+    # at passivation time. Different passivators can be used
+    # by setting this property to the fully qualified class name
+    # of the PassivationStrategy implementation. The passivator
+    # is not responsible for invoking any callbacks or other
+    # processing, its only responsibly is to write the bean state
+    # to disk.
+    #
+    # Known implementations:
+    # org.apache.openejb.core.stateful.RAFPassivater
+    # org.apache.openejb.core.stateful.SimplePassivater
+
+    passivator org.apache.openejb.core.stateful.SimplePassivater
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in minutes. A value of 5 would
+    # result in a time-out of 5 minutes between invocations.
+
+    timeOut 20
+
+    # Specifies the size of the bean pools for this
+    # stateful SessionBean container.
+
+    poolSize 100
+
+    # Property name that specifies the number of instances
+    # to passivate at one time when doing bulk passivation.
+
+    bulkPassivate 50
+
+    transactionManager #transactionManager
+    securityService #securityService
+    registry #statefulDeployments
+  </o:statefulContainer>
+
+  <bean id="cmpDeployments" class="java.util.LinkedHashMap">
+    <constructor-arg index="0">
+      <map>
+        <entry key="client/tests/entity/cmp/RMI-over-IIOP/EJBHome">
+          <o:cmpDeployment id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome"
+              homeInterface="org.apache.openejb.test.entity.cmp.RmiIiopCmpHome"
+              remoteInterface="org.apache.openejb.test.entity.cmp.RmiIiopCmpObject"
+              beanClass="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer" primKeyField="primaryKey">
+            <o:jndiContext>
+              <o:enc>
+                <o:ejbRef name="cmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/cmp/EncBean"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:cmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/cmp/EncBean">
+          <o:cmpDeployment id="client/tests/entity/cmp/EncBean" homeInterface="org.apache.openejb.test.entity.cmp.EncCmpHome"
+              remoteInterface="org.apache.openejb.test.entity.cmp.EncCmpObject"
+              beanClass="org.apache.openejb.test.entity.cmp.EncCmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer" primKeyField="primaryKey">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="entity/cmp/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry name="entity/cmp/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry name="entity/cmp/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry name="entity/cmp/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry name="entity/cmp/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry name="entity/cmp/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry name="entity/cmp/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry name="entity/cmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef name="entity/cmp/beanReferences/cmp_entity" local="false"
+                    ejbId="client/tests/entity/cmp/BasicCmpHome"/>
+                <o:ejbRef name="entity/cmp/beanReferences/stateful" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:ejbRef name="entity/cmp/beanReferences/stateless" local="false"
+                    ejbId="client/tests/stateless/BasicStatelessHome"/>
+                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:cmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/cmp/allowed_operations/EntityHome">
+          <o:cmpDeployment id="client/tests/entity/cmp/allowed_operations/EntityHome"
+              homeInterface="org.apache.openejb.test.entity.cmp.BasicCmpHome"
+              remoteInterface="org.apache.openejb.test.entity.cmp.BasicCmpObject"
+              beanClass="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer" primKeyField="primaryKey">
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:cmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/cmp/BasicCmpHome">
+          <o:cmpDeployment id="client/tests/entity/cmp/BasicCmpHome"
+              homeInterface="org.apache.openejb.test.entity.cmp.BasicCmpHome"
+              remoteInterface="org.apache.openejb.test.entity.cmp.BasicCmpObject"
+              beanClass="org.apache.openejb.test.entity.cmp.BasicCmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer" primKeyField="primaryKey">
+            <o:queries>
+              <o:query method="findByLastName(java.lang.String)">SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean
+                o WHERE o.lastName = $1</o:query>
+            </o:queries>
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:cmpDeployment>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+  <bean id="bmpDeployments" class="java.util.LinkedHashMap">
+    <constructor-arg index="0">
+      <map>
+        <entry key="client/tests/entity/bmp/RMI-over-IIOP/EJBHome">
+          <o:bmpDeployment id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome"
+              homeInterface="org.apache.openejb.test.entity.bmp.RmiIiopBmpHome"
+              remoteInterface="org.apache.openejb.test.entity.bmp.RmiIiopBmpObject"
+              beanClass="org.apache.openejb.test.entity.bmp.RmiIiopBmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer">
+            <o:jndiContext>
+              <o:enc>
+                <o:ejbRef name="bmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/bmp/EncBean"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:bmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/bmp/EncBean">
+          <o:bmpDeployment id="client/tests/entity/bmp/EncBean" homeInterface="org.apache.openejb.test.entity.bmp.EncBmpHome"
+              remoteInterface="org.apache.openejb.test.entity.bmp.EncBmpObject"
+              beanClass="org.apache.openejb.test.entity.bmp.EncBmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="entity/bmp/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry name="entity/bmp/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry name="entity/bmp/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry name="entity/bmp/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry name="entity/bmp/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry name="entity/bmp/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry name="entity/bmp/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry name="entity/bmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef name="entity/bmp/beanReferences/bmp_entity" local="false"
+                    ejbId="client/tests/entity/bmp/BasicBmpHome"/>
+                <o:ejbRef name="entity/bmp/beanReferences/stateful" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:ejbRef name="entity/bmp/beanReferences/stateless" local="false"
+                    ejbId="client/tests/stateless/BasicStatelessHome"/>
+                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:bmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/bmp/allowed_operations/EntityHome">
+          <o:bmpDeployment id="client/tests/entity/bmp/allowed_operations/EntityHome"
+              homeInterface="org.apache.openejb.test.entity.bmp.BasicBmpHome"
+              remoteInterface="org.apache.openejb.test.entity.bmp.BasicBmpObject"
+              beanClass="org.apache.openejb.test.entity.bmp.AllowedOperationsBmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:bmpDeployment>
+        </entry>
+        <entry key="client/tests/entity/bmp/BasicBmpHome">
+          <o:bmpDeployment id="client/tests/entity/bmp/BasicBmpHome"
+              homeInterface="org.apache.openejb.test.entity.bmp.BasicBmpHome"
+              remoteInterface="org.apache.openejb.test.entity.bmp.BasicBmpObject"
+              beanClass="org.apache.openejb.test.entity.bmp.BasicBmpBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
+              pkClass="java.lang.Integer">
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:bmpDeployment>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+  <bean id="statefulDeployments" class="java.util.LinkedHashMap">
+    <constructor-arg index="0">
+      <map>
+        <entry key="client/tests/stateful/RMI-over-IIOP/EJBHome">
+          <o:statefulDeployment id="client/tests/stateful/RMI-over-IIOP/EJBHome"
+              homeInterface="org.apache.openejb.test.stateful.RmiIiopStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.RmiIiopStatefulObject"
+              beanClass="org.apache.openejb.test.stateful.RmiIiopStatefulBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:ejbRef name="stateful/rmi-iiop/home" local="false" ejbId="client/tests/stateful/EncBean"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+        <entry key="client/tests/stateful/EncBean">
+          <o:statefulDeployment id="client/tests/stateful/EncBean"
+              homeInterface="org.apache.openejb.test.stateful.EncStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.EncStatefulObject"
+              beanClass="org.apache.openejb.test.stateful.EncStatefulBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateful/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry name="stateful/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry name="stateful/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry name="stateful/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry name="stateful/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry name="stateful/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry name="stateful/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry name="stateful/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef name="stateful/beanReferences/bmp_entity" local="false"
+                    ejbId="client/tests/entity/bmp/BasicBmpHome"/>
+                <o:ejbRef name="stateful/beanReferences/stateful" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:ejbRef name="stateful/beanReferences/stateless" local="false"
+                    ejbId="client/tests/stateless/BasicStatelessHome"/>
+                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+        <entry key="client/tests/stateful/BeanManagedTransactionTests/EJBHome">
+          <o:statefulDeployment id="client/tests/stateful/BeanManagedTransactionTests/EJBHome"
+              homeInterface="org.apache.openejb.test.stateful.BeanTxStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.BeanTxStatefulObject"
+              beanClass="org.apache.openejb.test.stateful.BeanTxStatefulBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+        <entry key="client/tests/stateful/BeanManagedBasicStatefulHome">
+          <o:statefulDeployment id="client/tests/stateful/BeanManagedBasicStatefulHome"
+              homeInterface="org.apache.openejb.test.stateful.BasicStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.BasicStatefulObject"
+              beanClass="org.apache.openejb.test.stateful.BMTStatefulBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc/>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+        <entry key="client/tests/stateful/BasicStatefulHome">
+          <o:statefulDeployment id="client/tests/stateful/BasicStatefulHome"
+              homeInterface="org.apache.openejb.test.stateful.BasicStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.BasicStatefulObject"
+              beanClass="org.apache.openejb.test.stateful.BasicStatefulBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc/>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+	  <entry key="client/tests/stateful/BasicStatefulPojoHome">
+          <o:statefulDeployment id="client/tests/stateful/BasicStatefulPojoHome"
+              homeInterface="org.apache.openejb.test.stateful.BasicStatefulHome"
+              remoteInterface="org.apache.openejb.test.stateful.BasicStatefulObject"
+              localHomeInterface="org.apache.openejb.test.stateful.BasicStatefulLocalHome"
+              localInterface="org.apache.openejb.test.stateful.BasicStatefulLocalObject"
+              beanClass="org.apache.openejb.test.stateful.BasicStatefulPojoBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc/>
+            </o:jndiContext>
+          </o:statefulDeployment>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+  <bean id="statelessDeployments" class="java.util.LinkedHashMap">
+    <constructor-arg index="0">
+      <map>
+        <entry key="client/tests/stateless/RMI-over-IIOP/EJBHome">
+          <o:statelessDeployment id="client/tests/stateless/RMI-over-IIOP/EJBHome"
+              homeInterface="org.apache.openejb.test.stateless.RmiIiopStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.RmiIiopStatelessObject"
+              beanClass="org.apache.openejb.test.stateless.RmiIiopStatelessBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:ejbRef name="stateless/rmi-iiop/home" local="false" ejbId="client/tests/stateless/EncBean"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tests/stateless/EncBean">
+          <o:statelessDeployment id="client/tests/stateless/EncBean"
+              homeInterface="org.apache.openejb.test.stateless.EncStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.EncStatelessObject"
+              beanClass="org.apache.openejb.test.stateless.EncStatelessBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:envEntry name="stateless/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry name="stateless/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry name="stateless/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry name="stateless/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry name="stateless/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry name="stateless/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry name="stateless/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry name="stateless/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:ejbRef name="stateless/beanReferences/bmp_entity" local="false"
+                    ejbId="client/tests/entity/bmp/BasicBmpHome"/>
+                <o:ejbRef name="stateless/beanReferences/stateful" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:ejbRef name="stateless/beanReferences/stateless" local="false"
+                    ejbId="client/tests/stateless/BasicStatelessHome"/>
+                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tests/stateless/BeanManagedTransactionTests/EJBHome">
+          <o:statelessDeployment id="client/tests/stateless/BeanManagedTransactionTests/EJBHome"
+              homeInterface="org.apache.openejb.test.stateless.BeanTxStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.BeanTxStatelessObject"
+              beanClass="org.apache.openejb.test.stateless.BeanTxStatelessBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="database" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tools/DatabaseHome">
+          <o:statelessDeployment id="client/tools/DatabaseHome" homeInterface="org.apache.openejb.test.beans.DatabaseHome"
+              remoteInterface="org.apache.openejb.test.beans.Database" beanClass="org.apache.openejb.test.beans.DatabaseBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:resourceRef name="database" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tests/stateless/BeanManagedBasicStatelessHome">
+          <o:statelessDeployment id="client/tests/stateless/BeanManagedBasicStatelessHome"
+              homeInterface="org.apache.openejb.test.stateless.BasicStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.BasicStatelessObject"
+              beanClass="org.apache.openejb.test.stateless.BasicStatelessBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tests/stateless/BasicStatelessHome">
+          <o:statelessDeployment id="client/tests/stateless/BasicStatelessHome"
+              homeInterface="org.apache.openejb.test.stateless.BasicStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.BasicStatelessObject"
+              beanClass="org.apache.openejb.test.stateless.BasicStatelessBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+        <entry key="client/tests/stateless/BasicStatelessPojoHome">
+          <o:statelessDeployment id="client/tests/stateless/BasicStatelessPojoHome"
+              homeInterface="org.apache.openejb.test.stateless.BasicStatelessHome"
+              remoteInterface="org.apache.openejb.test.stateless.BasicStatelessObject"
+              localHomeInterface="org.apache.openejb.test.stateless.BasicStatelessLocalHome"
+              localInterface="org.apache.openejb.test.stateless.BasicStatelessLocalObject"
+              beanClass="org.apache.openejb.test.stateless.BasicStatelessPojoBean"
+              jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
+              transactionManager="#transactionManager" assembly="#assembly">
+            <o:jndiContext>
+              <o:enc>
+                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                    value="Success"/>
+                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                    ejbId="client/tests/stateful/BasicStatefulHome"/>
+                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+              </o:enc>
+            </o:jndiContext>
+          </o:statelessDeployment>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <o:assembly id="assembly">
+    <o:roleMapping logical="Accountant" physical="Accountant"/>
+    <o:roleMapping logical="Executive" physical="Executive"/>
+    <o:roleMapping logical="Manager" physical="Manager"/>
+    <o:roleMapping logical="Teller" physical="Teller"/>
+    <o:roleMapping logical="openejb.default.security.role" physical="openejb.default.security.role"/>
+    <o:permission roleNames="Teller">
+      <o:method deploymentId="client/tests/stateless/BasicStatelessHome" name="remove"/>
+    </o:permission>
+    <o:permission roleNames="Accountant, Manager">
+      <o:method deploymentId="client/tests/stateful/BasicStatefulHome"/>
+    </o:permission>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/stateful/BasicStatefulHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/stateless/BasicStatelessHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/cmp/BasicCmpHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/cmp/allowed_operations/EntityHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/cmp/EncBean"/>
+    </o:transaction>
+    <o:transaction transAttribute="Never">
+      <o:method deploymentId="client/tests/entity/cmp/RMI-over-IIOP/EJBHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/stateful/EncBean"/>
+    </o:transaction>
+    <o:transaction transAttribute="Never">
+      <o:method deploymentId="client/tests/stateful/RMI-over-IIOP/EJBHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tools/DatabaseHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/stateless/EncBean"/>
+    </o:transaction>
+    <o:transaction transAttribute="Never">
+      <o:method deploymentId="client/tests/stateless/RMI-over-IIOP/EJBHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/bmp/BasicBmpHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/bmp/allowed_operations/EntityHome"/>
+    </o:transaction>
+    <o:transaction transAttribute="Supports">
+      <o:method deploymentId="client/tests/entity/bmp/EncBean"/>
+    </o:transaction>
+    <o:transaction transAttribute="Never">
+      <o:method deploymentId="client/tests/entity/bmp/RMI-over-IIOP/EJBHome"/>
+    </o:transaction>
+  </o:assembly>
+</beans>

@@ -6,7 +6,7 @@
 
     <servlet>
         <servlet-name>loader</servlet-name>
-        <servlet-class>org.openejb.loader.LoaderServlet</servlet-class>
+        <servlet-class>org.apache.openejb.loader.LoaderServlet</servlet-class>
 
         <init-param>
             <param-name>openejb.loader</param-name>

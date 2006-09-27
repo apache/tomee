@@ -27,7 +27,7 @@
     <!--======================-->
 
     <goal name="test:local" prereqs="setup:openejb">
-      <java classname="org.openejb.test.Main" fork="yes">
+      <java classname="org.apache.openejb.test.Main" fork="yes">
         <classpath>
           <pathelement location="${basedir}/target/openejb-${openejb.version}-test.jar"/>
           <fileset dir="${basedir}/target/openejb-${openejb.version}/lib">

@@ -1,0 +1,13 @@
+package org.apache.openejb.test.object;
+
+import java.io.*;
+
+public class ObjectDD~ implements Serializable{
+
+    private static final long serialVersionUID = 1000000L;
+    public int dd~MemberOneInt = 1234;
+    public char[] dd~MemberTwoCharArray = {'D','A','V','I','D'};
+
+    public ObjectDD~(){}
+
+}

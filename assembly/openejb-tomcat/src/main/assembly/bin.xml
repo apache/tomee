@@ -34,7 +34,7 @@
       <outputDirectory>openejb/WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
       <includes>
-          <include>org.openejb:openejb-loader</include>
+          <include>org.apache.openejb:openejb-loader</include>
       </includes>
     </dependencySet>
   </dependencySets>

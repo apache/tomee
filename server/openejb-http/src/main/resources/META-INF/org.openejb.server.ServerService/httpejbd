@@ -1,5 +1,0 @@
-    server      = org.openejb.server.httpd.HttpEjbServer
-    bind        = 127.0.0.1
-    port        = 4204
-    disabled    = false
-    threads     = 200

@@ -32,7 +32,7 @@ public class FriendlyPersonTest extends TestCase {
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.openejb.client.LocalInitialContextFactory");
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
         properties.setProperty("openejb.deployments.classpath", "true");

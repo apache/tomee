@@ -32,7 +32,7 @@ Both point to this mapping file:
 <mapping>
 
   <!--  Mapping for ProductGroup  -->
-  <class name="org.openejb.test.entity.cmp.BasicCmpBean" 
+  <class name="org.apache.openejb.test.entity.cmp.BasicCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
     
@@ -54,7 +54,7 @@ Both point to this mapping file:
   </class>
   
   <!--  Mapping for AllowedOperationsCmpBean  -->
-  <class name="org.openejb.test.entity.cmp.AllowedOperationsCmpBean" 
+  <class name="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
     
@@ -75,7 +75,7 @@ Both point to this mapping file:
   
   </class>
   
-  <class name="org.openejb.test.entity.cmp.EncCmpBean" 
+  <class name="org.apache.openejb.test.entity.cmp.EncCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
     
@@ -97,7 +97,7 @@ Both point to this mapping file:
   </class>
 
 
-  <class name="org.openejb.test.entity.cmp.RmiIiopCmpBean" 
+  <class name="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
     

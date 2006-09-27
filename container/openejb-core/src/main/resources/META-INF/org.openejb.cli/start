@@ -1,3 +1,0 @@
-main.class = org.openejb.server.Main
-name = start
-description = Start the OpenEJB Remote Server for accessing beans in client/server mode.

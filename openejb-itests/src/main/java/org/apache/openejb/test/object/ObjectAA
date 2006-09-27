@@ -1,0 +1,13 @@
+package org.apache.openejb.test.object;
+
+import java.io.*;
+
+public class ObjectAA~ extends Object implements Serializable{
+
+    public int aa~MemberOneInt = 22;
+    public char aa~MemberTwoChar = '#';
+    public byte[] aa~MemberThreeByteArray = {33,44,55,66,77,88,99};
+
+    public ObjectAA~(){}
+
+}

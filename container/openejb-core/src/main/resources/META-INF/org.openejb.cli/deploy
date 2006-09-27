@@ -1,3 +1,0 @@
-main.class = org.openejb.alt.config.Deploy
-name = deploy
-description = Deploy an ejb jar into OpenEJB.

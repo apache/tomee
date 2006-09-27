@@ -1,0 +1,21 @@
+package org.apache.openejb.test.object;
+
+import java.io.*;
+
+public class ObjectCC~ implements Serializable{
+
+    public int cc~MemberOneInt = 222;
+    public long cc~MemberTwoLong = 123456L;
+    public char[] cc~MemberThreeCharArray = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+    public float cc~MemberFourFloat = 1234.56F;
+    public double cc~MemberFiveDouble = 1.23456;
+    public ObjectDD~ cc~MemberSixObjectDD;
+    public ObjectDD~ cc~MemberSevenObjectDD;
+
+    public ObjectCC~(){}
+
+    public void setObjectDD~(ObjectDD~ o){
+        this.cc~MemberSixObjectDD = o;
+        this.cc~MemberSevenObjectDD = o;
+    }
+}

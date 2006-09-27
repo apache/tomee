@@ -3,14 +3,14 @@
     <!--<description>-->
       <!--This is just a description-->
     <!--</description>-->
-    <!--<provider>org.openejb.persistence.FakeProvider</provider>-->
+    <!--<provider>org.apache.openejb.persistence.FakeProvider</provider>-->
     <!--<jta-data-source>jdbc/MyDataSource</jta-data-source>-->
     <!--<mapping-file>ormap.xml</mapping-file>-->
     <!--<mapping-file>ormap2.xml</mapping-file>-->
     <!--<jar-file>MyPartsApp.jar</jar-file>-->
     <!--<jar-file>MyPartsApp2.jar</jar-file>-->
-    <!--<class>org.openejb.persistence.TestClass</class>-->
-    <!--<class>org.openejb.persistence.TestClass2</class>-->
+    <!--<class>org.apache.openejb.persistence.TestClass</class>-->
+    <!--<class>org.apache.openejb.persistence.TestClass2</class>-->
     <!--<properties>-->
       <!--<property name="test.property" value="true"/>-->
       <!--<property name="test.property2" value="false"/>-->
@@ -20,7 +20,7 @@
   <persistence-unit transaction-type="RESOURCE_LOCAL" name="openjpa-test-unit">
 
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-    <class>org.openejb.persistence.AllFieldTypes</class>
+    <class>org.apache.openejb.persistence.AllFieldTypes</class>
     <non-jta-data-source>jdbc/MyDataSource</non-jta-data-source>
 
     <properties>

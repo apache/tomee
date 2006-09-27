@@ -29,9 +29,9 @@
             the employee records.
             </description>
             <ejb-name>BasicCmpBean</ejb-name>
-            <home>org.openejb.test.entity.cmp.BasicCmpHome</home>
-            <remote>org.openejb.test.entity.cmp.BasicCmpObject</remote>
-            <ejb-class>org.openejb.test.entity.cmp.BasicCmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -57,9 +57,9 @@
              blah, blah, blah
             </description>
             <ejb-name>AOBasicCmpBean</ejb-name>
-            <home>org.openejb.test.entity.cmp.BasicCmpHome</home>
-            <remote>org.openejb.test.entity.cmp.BasicCmpObject</remote>
-            <ejb-class>org.openejb.test.entity.cmp.AllowedOperationsCmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -85,9 +85,9 @@
              blah, blah, blah
             </description>
             <ejb-name>EncCmpBean</ejb-name>
-            <home>org.openejb.test.entity.cmp.EncCmpHome</home>
-            <remote>org.openejb.test.entity.cmp.EncCmpObject</remote>
-            <ejb-class>org.openejb.test.entity.cmp.EncCmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.EncCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -135,22 +135,22 @@
             <ejb-ref> 
                 <ejb-ref-name>entity/cmp/beanReferences/cmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <home>org.openejb.test.entity.cmp.BasicCmpHome</home>
-                <remote>org.openejb.test.entity.cmp.BasicCmpObject</remote>
+                <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+                <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
                 <ejb-link>BasicCmpBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>entity/cmp/beanReferences/stateful</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>entity/cmp/beanReferences/stateless</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateless.BasicStatelessHome</home>
-                <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
                 <ejb-link>BasicStatelessBean</ejb-link>
             </ejb-ref> 
             <resource-ref>
@@ -176,9 +176,9 @@
              blah, blah, blah
             </description>
             <ejb-name>Cmp RMI-IIOP Bean</ejb-name>
-            <home>org.openejb.test.entity.cmp.RmiIiopCmpHome</home>
-            <remote>org.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
-            <ejb-class>org.openejb.test.entity.cmp.RmiIiopCmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp.RmiIiopCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -186,8 +186,8 @@
             <ejb-ref> 
                 <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type> 
-                <home>org.openejb.test.entity.cmp.EncCmpHome</home>
-                <remote>org.openejb.test.entity.cmp.EncCmpObject</remote>
+                <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
+                <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
                 <ejb-link>EncCmpBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -216,9 +216,9 @@
             javax.ejb.SessionSynchronization interface.
             </description>
             <ejb-name>BasicStatefulBean</ejb-name>
-            <home>org.openejb.test.stateful.BasicStatefulHome</home>
-            <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
-            <ejb-class>org.openejb.test.stateful.BasicStatefulBean</ejb-class>
+            <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+            <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+            <ejb-class>org.apache.openejb.test.stateful.BasicStatefulBean</ejb-class>
             <session-type>Stateful</session-type>
             <transaction-type>Container</transaction-type>
             <security-role-ref>
@@ -238,9 +238,9 @@
             transaction demarcation.
             </description>
             <ejb-name>Basic BMT StatefulBean</ejb-name>
-            <home>org.openejb.test.stateful.BasicStatefulHome</home>
-            <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
-            <ejb-class>org.openejb.test.stateful.BMTStatefulBean</ejb-class>
+            <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+            <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+            <ejb-class>org.apache.openejb.test.stateful.BMTStatefulBean</ejb-class>
             <session-type>Stateful</session-type>
             <transaction-type>Bean</transaction-type>
             <security-role-ref>
@@ -260,9 +260,9 @@
             transaction demarcation.
             </description>
             <ejb-name>BMT StatefulBean</ejb-name>
-            <home>org.openejb.test.stateful.BeanTxStatefulHome</home>
-            <remote>org.openejb.test.stateful.BeanTxStatefulObject</remote>
-            <ejb-class>org.openejb.test.stateful.BeanTxStatefulBean</ejb-class>
+            <home>org.apache.openejb.test.stateful.BeanTxStatefulHome</home>
+            <remote>org.apache.openejb.test.stateful.BeanTxStatefulObject</remote>
+            <ejb-class>org.apache.openejb.test.stateful.BeanTxStatefulBean</ejb-class>
             <session-type>Stateful</session-type>
             <transaction-type>Bean</transaction-type>
             <security-role-ref>
@@ -287,9 +287,9 @@
             transaction demarcation.
             </description>
             <ejb-name>EncStatefulBean</ejb-name>
-            <home>org.openejb.test.stateful.EncStatefulHome</home>
-            <remote>org.openejb.test.stateful.EncStatefulObject</remote>
-            <ejb-class>org.openejb.test.stateful.EncStatefulBean</ejb-class>
+            <home>org.apache.openejb.test.stateful.EncStatefulHome</home>
+            <remote>org.apache.openejb.test.stateful.EncStatefulObject</remote>
+            <ejb-class>org.apache.openejb.test.stateful.EncStatefulBean</ejb-class>
             <session-type>Stateful</session-type>
             <transaction-type>Bean</transaction-type>
             <env-entry>
@@ -335,22 +335,22 @@
             <ejb-ref> 
                 <ejb-ref-name>stateful/beanReferences/bmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
-                <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
+                <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+                <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
                 <ejb-link>BasicBmpBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>stateful/beanReferences/stateful</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>stateful/beanReferences/stateless</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateless.BasicStatelessHome</home>
-                <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
                 <ejb-link>BasicStatelessBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -375,16 +375,16 @@
                 The stateful bean for the RMI-IIOP Tests
             </description>
             <ejb-name>Stateful RMI-IIOP Bean</ejb-name>
-            <home>org.openejb.test.stateful.RmiIiopStatefulHome</home>
-            <remote>org.openejb.test.stateful.RmiIiopStatefulObject</remote>
-            <ejb-class>org.openejb.test.stateful.RmiIiopStatefulBean</ejb-class>
+            <home>org.apache.openejb.test.stateful.RmiIiopStatefulHome</home>
+            <remote>org.apache.openejb.test.stateful.RmiIiopStatefulObject</remote>
+            <ejb-class>org.apache.openejb.test.stateful.RmiIiopStatefulBean</ejb-class>
             <session-type>Stateful</session-type>
             <transaction-type>Bean</transaction-type>
             <ejb-ref> 
                 <ejb-ref-name>stateful/rmi-iiop/home</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.EncStatefulHome</home>
-                <remote>org.openejb.test.stateful.EncStatefulBean</remote>
+                <home>org.apache.openejb.test.stateful.EncStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.EncStatefulBean</remote>
                 <ejb-link>EncStatefulBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -412,9 +412,9 @@
             transaction demarcation.
             </description>
             <ejb-name>BasicStatelessBean</ejb-name>
-            <home>org.openejb.test.stateless.BasicStatelessHome</home>
-            <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
-            <ejb-class>org.openejb.test.stateless.BasicStatelessBean</ejb-class>
+            <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.BasicStatelessBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
             <env-entry>
@@ -425,8 +425,8 @@
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -458,9 +458,9 @@
             transaction demarcation.
             </description>
             <ejb-name>Basic BMT StatelessBean</ejb-name>
-            <home>org.openejb.test.stateless.BasicStatelessHome</home>
-            <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
-            <ejb-class>org.openejb.test.stateless.BasicStatelessBean</ejb-class>
+            <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.BasicStatelessBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             <env-entry>
@@ -471,8 +471,8 @@
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -504,9 +504,9 @@
             transaction demarcation.
             </description>
             <ejb-name>DatabaseBean</ejb-name>
-            <home>org.openejb.test.beans.DatabaseHome</home>
-            <remote>org.openejb.test.beans.Database</remote>
-            <ejb-class>org.openejb.test.beans.DatabaseBean</ejb-class>
+            <home>org.apache.openejb.test.beans.DatabaseHome</home>
+            <remote>org.apache.openejb.test.beans.Database</remote>
+            <ejb-class>org.apache.openejb.test.beans.DatabaseBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             <security-role-ref>
@@ -535,9 +535,9 @@
             transaction demarcation.
             </description>
             <ejb-name>BMT StatelessBean</ejb-name>
-            <home>org.openejb.test.stateless.BeanTxStatelessHome</home>
-            <remote>org.openejb.test.stateless.BeanTxStatelessObject</remote>
-            <ejb-class>org.openejb.test.stateless.BeanTxStatelessBean</ejb-class>
+            <home>org.apache.openejb.test.stateless.BeanTxStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.BeanTxStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.BeanTxStatelessBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             <security-role-ref>
@@ -566,9 +566,9 @@
                 The stateless bean for the JNDI ENC tests
             </description>
             <ejb-name>EncStatelessBean</ejb-name>
-            <home>org.openejb.test.stateless.EncStatelessHome</home>
-            <remote>org.openejb.test.stateless.EncStatelessObject</remote>
-            <ejb-class>org.openejb.test.stateless.EncStatelessBean</ejb-class>
+            <home>org.apache.openejb.test.stateless.EncStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.EncStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.EncStatelessBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             
@@ -621,29 +621,29 @@
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/bmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
-                <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
+                <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+                <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
                 <ejb-link>BasicBmpBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/stateful</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/stateless</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateless.BasicStatelessHome</home>
-                <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
                 <ejb-link>BasicStatelessBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -668,16 +668,16 @@
                 The stateless bean for the RMI-IIOP Tests
             </description>
             <ejb-name>Stateless RMI-IIOP Bean</ejb-name>
-            <home>org.openejb.test.stateless.RmiIiopStatelessHome</home>
-            <remote>org.openejb.test.stateless.RmiIiopStatelessObject</remote>
-            <ejb-class>org.openejb.test.stateless.RmiIiopStatelessBean</ejb-class>
+            <home>org.apache.openejb.test.stateless.RmiIiopStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.RmiIiopStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.RmiIiopStatelessBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             <ejb-ref> 
                 <ejb-ref-name>stateless/rmi-iiop/home</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateless.EncStatelessHome</home>
-                <remote>org.openejb.test.stateless.EncStatelessBean</remote>
+                <home>org.apache.openejb.test.stateless.EncStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.EncStatelessBean</remote>
                 <ejb-link>EncStatelessBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>
@@ -709,9 +709,9 @@
             the employee records.
             </description>
             <ejb-name>BasicBmpBean</ejb-name>
-            <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
-            <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
-            <ejb-class>org.openejb.test.entity.bmp.BasicBmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+            <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.bmp.BasicBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -737,9 +737,9 @@
              blah, blah, blah
             </description>
             <ejb-name>AOBasicBmpBean</ejb-name>
-            <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
-            <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
-            <ejb-class>org.openejb.test.entity.bmp.AllowedOperationsBmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+            <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.bmp.AllowedOperationsBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -752,8 +752,8 @@
             <ejb-ref> 
                 <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <resource-ref>
@@ -785,9 +785,9 @@
              blah, blah, blah
             </description>
             <ejb-name>EncBmpBean</ejb-name>
-            <home>org.openejb.test.entity.bmp.EncBmpHome</home>
-            <remote>org.openejb.test.entity.bmp.EncBmpObject</remote>
-            <ejb-class>org.openejb.test.entity.bmp.EncBmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.bmp.EncBmpHome</home>
+            <remote>org.apache.openejb.test.entity.bmp.EncBmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.bmp.EncBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -835,22 +835,22 @@
             <ejb-ref> 
                 <ejb-ref-name>entity/bmp/beanReferences/bmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <home>org.openejb.test.entity.bmp.BasicBmpHome</home>
-                <remote>org.openejb.test.entity.bmp.BasicBmpObject</remote>
+                <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+                <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
                 <ejb-link>BasicBmpBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>entity/bmp/beanReferences/stateful</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateful.BasicStatefulHome</home>
-                <remote>org.openejb.test.stateful.BasicStatefulObject</remote>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
                 <ejb-link>BasicStatefulBean</ejb-link>
             </ejb-ref> 
             <ejb-ref> 
                 <ejb-ref-name>entity/bmp/beanReferences/stateless</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.openejb.test.stateless.BasicStatelessHome</home>
-                <remote>org.openejb.test.stateless.BasicStatelessObject</remote>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
                 <ejb-link>BasicStatelessBean</ejb-link>
             </ejb-ref> 
             <resource-ref>
@@ -876,9 +876,9 @@
              blah, blah, blah
             </description>
             <ejb-name>Bmp RMI-IIOP Bean</ejb-name>
-            <home>org.openejb.test.entity.bmp.RmiIiopBmpHome</home>
-            <remote>org.openejb.test.entity.bmp.RmiIiopBmpObject</remote>
-            <ejb-class>org.openejb.test.entity.bmp.RmiIiopBmpBean</ejb-class>
+            <home>org.apache.openejb.test.entity.bmp.RmiIiopBmpHome</home>
+            <remote>org.apache.openejb.test.entity.bmp.RmiIiopBmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.bmp.RmiIiopBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
@@ -886,8 +886,8 @@
             <ejb-ref> 
                 <ejb-ref-name>bmp/rmi-iiop/home</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type> 
-                <home>org.openejb.test.entity.bmp.EncBmpHome</home>
-                <remote>org.openejb.test.entity.bmp.EncBmpObject</remote>
+                <home>org.apache.openejb.test.entity.bmp.EncBmpHome</home>
+                <remote>org.apache.openejb.test.entity.bmp.EncBmpObject</remote>
                 <ejb-link>EncBmpBean</ejb-link>
             </ejb-ref> 
             <security-role-ref>

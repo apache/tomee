@@ -1,0 +1,151 @@
+Usage: openejb start [options]
+
+Example: Simplest scenario
+
+ openejb start
+
+ That's it.  The ejbd will start up and bind to IP 127.0.0.1 and port 4201.
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+
+   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
+   java.naming.provider.url         = ejbd://127.0.0.1:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+Example: -conf file
+
+ openejb start -conf C:\openejb\conf\mytest.conf
+
+ Sets the openejb.configuration system variable to the file
+ C:\openejb\conf\mytest.conf.  When the server starts up and
+ the initializes OpenEJB, this configuration will be
+ used to assemble the container system and load beans.
+
+Example: --local-copy
+
+ openejb start --local-copy=true
+
+ Instructs the container system to marshal (ie, copy) all
+ calls between beans are required by the EJB 1.1 specification.
+
+ openejb start --local-copy=false
+
+ Instructs the container system to not marshal (copy) calls
+ between beans. The container system as will pass parameters
+ and return values without copying or marshalling as is
+ required for EJB 2.0 Local interfaces.
+
+
+CONFIG OVERRIDE EXAMPLES
+
+
+Example: -D<service>.bind=<address>
+
+ openejb start -Dejbd.bind=10.45.67.8
+
+ This is the most common way to use the EJBd Server Service.  The service will start
+ up and bind to IP 10.45.67.8 and port 4201.
+
+ The following properties would then be used to get an InitialContext
+ from the EJBd Server Service.
+
+   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
+   java.naming.provider.url         = ejbd://10.45.67.8:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+ DNS names can also be used.
+
+ openejb start -Dejbd.bind=myhost.foo.com
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+
+   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
+   java.naming.provider.url         = ejbd://myhost.foo.com:4201
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+ openejb start -Dtelnet.bind=myhost.foo.com
+
+ The following properties would then be used to log into the server
+ via a telnet client as such:
+
+   telnet myhost.foo.com 4202
+
+
+Example: -D<service>.port=<port>
+
+ openejb start -Dejbd.port=8765
+
+ The server will start up and bind to IP 127.0.0.1 and port 8765.
+
+ The following properties would then be used to get an InitialContext
+ from the Remote Server.
+
+   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
+   java.naming.provider.url         = ejbd://127.0.0.1:8765
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+ openejb start -Dhttpejbd.port=8888
+
+ The server will start up and the EJB over HTTP service will bind
+ to IP 127.0.0.1 and port 8888.
+
+ The following properties would then be used to get an InitialContext
+ from the HTTP/Remote Server.
+
+   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
+   java.naming.provider.url         = http://127.0.0.1:8888/openejb
+   java.naming.security.principal   = myuser
+   java.naming.security.credentials = mypass
+
+
+Example: -D<service>.only_from=<addresses>
+
+ openejb start -Dadmin.only_from=192.168.1.12
+
+ Adds 192.168.1.12 to the list of IP addresses that are
+ authorized to shutdown the server or access the server
+ via a telnet client.  The host that this server was
+ started on is always allowed to administer the server.
+
+ Multiple hosts can be given administrative access to
+ this server by listing all the host names separated
+ by commas as such:
+
+ openejb start -Dadmin.only_from=192.168.1.12,joe.foo.com,robert
+
+ The first host in the string names the host explicitly
+ using an IP address (192.168.1.12).
+
+ The second host in uses a DNS name (joe.foo.com) to refer
+ to the hosts IP address.  The DNS name will be resolved
+ and the IP will be added to the admin list.
+
+ The third address refers to a the host by a name (robert)
+ that the opperating system is able to resolve into a valid
+ IP address.  This is usually done via a hosts file, interal
+ DNS server, or Windows Domain Server.
+
+
+Example: -D<service>.threads=<max>
+
+ openejb start -Dejbd.threads=200
+
+ Sets the max number of concurrent threads that can enter the
+ EJBd Server Service to 200.
+
+
+Example: -D<service>.disabled=<true/false>
+
+ openejb start -Dtelnet.disabled=true
+
+ Prevents the Telnet Server Service from starting when the
+ OpenEJB Server starts.
+
+
+Bug Reports to <user@openejb.org>

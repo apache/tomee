@@ -1,0 +1,7 @@
+    server      = org.apache.openejb.server.admin.AdminDaemon
+    bind        = 127.0.0.1
+    port        = 4200
+    disabled    = false
+    threads     = 1
+    only_from   = localhost
+

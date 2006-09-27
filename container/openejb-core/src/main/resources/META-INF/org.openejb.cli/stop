@@ -1,3 +1,0 @@
-main.class = org.openejb.server.admin.Stop
-name = stop
-description = Stop the OpenEJB Remote Server.

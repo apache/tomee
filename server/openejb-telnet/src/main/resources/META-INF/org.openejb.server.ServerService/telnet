@@ -1,7 +1,0 @@
-    server      = org.openejb.server.telnet.TelnetServer
-    bind        = 127.0.0.1
-    port        = 4202
-    disabled    = false
-    threads     = 5
-#   only_from   = 192.168.1.123
-

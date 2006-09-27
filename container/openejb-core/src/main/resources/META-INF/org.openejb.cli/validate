@@ -1,3 +1,0 @@
-main.class = org.openejb.alt.config.EjbValidator
-name = validate
-description = Validate an ejb jar
