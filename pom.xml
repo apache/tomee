@@ -26,7 +26,7 @@
   <groupId>org.apache.openejb</groupId>
   <artifactId>openejb-parent</artifactId>
   <packaging>pom</packaging>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0-incubating-SNAPSHOT</version>
   <name>OpenEJB :: Project</name>
   <url>http://incubator.apache.org/projects/openejb</url>
   <issueManagement>
