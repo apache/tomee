@@ -567,7 +567,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     private void createMethodMap() throws org.apache.openejb.SystemException {
-        if (homeInterface != null) {
+        if (remoteInterface != null) {
             mapObjectInterface(remoteInterface, false);
             mapHomeInterface(homeInterface);
         }
