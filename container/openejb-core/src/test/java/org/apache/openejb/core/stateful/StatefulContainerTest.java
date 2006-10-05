@@ -55,9 +55,6 @@ public class StatefulContainerTest extends TestCase {
 
     public void testPojoStyleBean() throws Exception {
 
-        WidgetBean.lifecycle.clear();
-
-
         // Do a create...
         Method createMethod = deploymentInfo.getLocalHomeInterface().getMethod("create");
 
@@ -79,7 +76,6 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessLocalInterface() throws Exception {
-        WidgetBean.lifecycle.clear();
 
         // Do a create...
 
@@ -107,11 +103,42 @@ public class StatefulContainerTest extends TestCase {
         assertEquals(StatefulContainerTest.join("\n", expected) , join("\n", WidgetBean.lifecycle));
     }
 
+    public void testBusinessRemoteInterface() throws Exception {
+        WidgetBean.lifecycle.clear();
+
+        // Do a create...
+
+        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+        DeploymentInfo.BusinessRemoteHome businessRemoteHome = coreDeploymentInfo.getBusinessRemoteHome();
+        assertNotNull("businessRemoteHome", businessRemoteHome);
+
+        Object object = businessRemoteHome.create();
+        assertNotNull("businessRemoteHome.create()", businessRemoteHome);
+
+        assertTrue("instanceof widget", object instanceof RemoteWidget);
+
+        RemoteWidget widget = (RemoteWidget) object;
+
+        // Do a business method...
+        Stack<Lifecycle> lifecycle = widget.getLifecycle();
+        assertNotNull("lifecycle",lifecycle);
+        assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
+
+        // Do a remove...
+        widget.destroy();
+
+        // Check the lifecycle of the bean
+        List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
+
+        assertEquals(StatefulContainerTest.join("\n", expected) , join("\n", WidgetBean.lifecycle));
+    }
+
     protected void setUp() throws Exception {
         // Setup the descriptor information
 
         StatefulBean bean = new StatefulBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
+        bean.setBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
         bean.addPrePassivate("passivate");
@@ -146,6 +173,9 @@ public class StatefulContainerTest extends TestCase {
         ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
         ProxyManager.setDefaultFactory("ivm_server");
 
+
+        WidgetBean.lifecycle.clear();
+
     }
 
     private static String join(String delimeter, List items){
@@ -169,11 +199,16 @@ public class StatefulContainerTest extends TestCase {
         Stack<Lifecycle> getLifecycle();
         void destroy();
     }
+
+    public static interface RemoteWidget extends Widget {
+
+    }
+
     public static enum Lifecycle {
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2, PRE_DESTROY
     }
 
-    public static class WidgetBean implements Widget, Serializable {
+    public static class WidgetBean implements Widget, RemoteWidget, Serializable {
 
         private int activates = 0;
         private int passivates = 0;
