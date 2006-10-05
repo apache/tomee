@@ -100,6 +100,7 @@ public class StatelessContainerTest extends TestCase {
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
         assertNotNull("lifecycle",lifecycle);
+        assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
 
         // Check the lifecycle of the bean
         List expected = Arrays.asList(Lifecycle.values());
@@ -133,6 +134,8 @@ public class StatelessContainerTest extends TestCase {
 
         ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
         ProxyManager.setDefaultFactory("ivm_server");
+
+        WidgetBean.lifecycle.clear();
     }
 
     private static String join(String delimeter, List items) {
@@ -166,7 +169,7 @@ public class StatelessContainerTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        private Stack<Lifecycle> lifecycle = new Stack();
+        private static Stack<Lifecycle> lifecycle = new Stack();
 
         private SessionContext sessionContext;
 
