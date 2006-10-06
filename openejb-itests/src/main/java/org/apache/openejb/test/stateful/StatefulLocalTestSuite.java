@@ -18,6 +18,7 @@ package org.apache.openejb.test.stateful;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.openejb.test.stateless.StatelessLocalBusinessIntfcTests;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -36,6 +37,7 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatefulJndiTests());
         suite.addTest(new StatefulPojoLocalJndiTests());
         suite.addTest(new StatefulHomeIntfcTests());
+        suite.addTest(new StatefulLocalBusinessIntfcTests());
         suite.addTest(new StatefulEjbHomeTests());
         suite.addTest(new StatefulEjbObjectTests());
         suite.addTest(new StatefulRemoteIntfcTests());

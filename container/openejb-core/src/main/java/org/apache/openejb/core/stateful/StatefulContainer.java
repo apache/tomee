@@ -120,6 +120,28 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
             } catch (NoSuchMethodException thatsFine) {}
         }
 
+        Class businessLocalHomeInterface = deploymentInfo.getBusinessLocalInterface();
+        if (businessLocalHomeInterface != null){
+            for (Method method : DeploymentInfo.BusinessLocalHome.class.getMethods()) {
+                if (method.getName().startsWith("create")){
+                    methods.put(method, MethodType.CREATE);
+                } else if (method.getName().equals("remove")){
+                    methods.put(method, MethodType.REMOVE);
+                }
+            }
+        }
+
+        Class businessRemoteHomeInterface = deploymentInfo.getBusinessRemoteInterface();
+        if (businessRemoteHomeInterface != null){
+            for (Method method : DeploymentInfo.BusinessRemoteHome.class.getMethods()) {
+                if (method.getName().startsWith("create")){
+                    methods.put(method, MethodType.CREATE);
+                } else if (method.getName().equals("remove")){
+                    methods.put(method, MethodType.REMOVE);
+                }
+            }
+        }
+
         Class homeInterface = deploymentInfo.getHomeInterface();
         if (homeInterface != null){
             for (Method method : homeInterface.getMethods()) {

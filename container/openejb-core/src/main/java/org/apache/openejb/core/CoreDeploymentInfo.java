@@ -163,13 +163,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.componentType = componentType;
         this.archiveURL = archiveURL;
 
-        if (businessLocal != null && localHomeInterface == null){
-            this.localHomeInterface = BusinessLocalHome.class;
-        }
-
-        if (businessRemote != null && homeInterface == null){
-            this.homeInterface = BusinessRemoteHome.class;
-        }
+//        if (businessLocal != null && localHomeInterface == null){
+//            this.localHomeInterface = BusinessLocalHome.class;
+//        }
+//
+//        if (businessRemote != null && homeInterface == null){
+//            this.homeInterface = BusinessRemoteHome.class;
+//        }
 
         if (SessionBean.class.isAssignableFrom(beanClass)){
             try {

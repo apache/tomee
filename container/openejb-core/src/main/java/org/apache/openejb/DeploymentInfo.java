@@ -81,6 +81,7 @@ public interface DeploymentInfo {
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();
     }
+
     public interface BusinessRemoteHome extends javax.ejb.EJBHome {
         Object create();
     }

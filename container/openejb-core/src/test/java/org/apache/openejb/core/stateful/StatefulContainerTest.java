@@ -56,7 +56,7 @@ public class StatefulContainerTest extends TestCase {
     public void testPojoStyleBean() throws Exception {
 
         // Do a create...
-        Method createMethod = deploymentInfo.getLocalHomeInterface().getMethod("create");
+        Method createMethod = DeploymentInfo.BusinessLocalHome.class.getMethod("create");
 
         Object result = container.invoke("widget", createMethod, new Object[]{}, null, "");
         assertTrue("instance of ProxyInfo", result instanceof ProxyInfo);
