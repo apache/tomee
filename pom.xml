@@ -27,9 +27,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache</groupId>
-        <artifactId>apache</artifactId>
-        <version>3</version>
+        <groupId>org.apache.geronimo.genesis.config</groupId>
+        <artifactId>project-config</artifactId>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.openejb</groupId>
@@ -222,18 +222,6 @@
         </dependencies>
     </dependencyManagement>
     <distributionManagement>
-        <repository>
-            <id>apache-releases</id>
-            <name>Apache Release Distribution Repository</name>
-            <url>scp://people.apache.org/www/people.apache.org/repo/m2-incubating-repository/</url>
-	</repository>
-        
-        <snapshotRepository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
-	</snapshotRepository>
-        
         <site>
             <id>openejb-website</id>
             <url>scp://people.apache.org/www/incubator.apache.org/openejb/maven</url>
