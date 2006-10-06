@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
-<beans xmlns:o="http://openejb.org/schemas/core">
+<beans xmlns:o="http://openejb.apache.org/schemas/core">
 
   <bean id="proxyFactory" class="org.apache.openejb.util.proxy.Jdk13ProxyFactory" init-method="start"/>
 

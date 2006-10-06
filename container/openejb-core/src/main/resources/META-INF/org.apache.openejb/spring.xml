@@ -21,7 +21,7 @@
 <!-- $Rev$ $Date$ -->
 
 <!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
-<beans xmlns:o="http://openejb.org/schemas/core">
+<beans xmlns:o="http://openejb.apache.org/schemas/core">
   <o:jdk13ProxyFactory id="proxyFactory"/>
 
   <o:containerSystem id="containerSystem"/>

@@ -23,7 +23,15 @@ import java.util.Properties;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarUtils;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.apache.xbean.spring.context.SpringApplicationContext;
+import org.apache.xbean.spring.context.v2.XBeanXmlBeanFactory;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
+/**
+ * Assemble OpenEJB instance and boot it up 
+ */
 public class Main {
 
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
@@ -44,6 +52,13 @@ public class Main {
         }
     }
 
+    /**
+     * Parse arguments and override any {@link System} properties returned via {@link System#getProperties()}.
+     *  
+     * @param args command line arguments
+     * @return properties as defined in System and on the command line
+     * @throws DontStartServerException thrown as an indication to not boot up OpenEJB instance, e.g. after printing out properties, help, etc. 
+     */
     private static Properties parseArguments(String args[]) throws DontStartServerException {
         Properties props = new Properties();
         props.putAll(System.getProperties());
@@ -173,7 +188,12 @@ public class Main {
     }
 
     private static void initServer(Properties props) throws Exception {
-        Server server = new Server();
+        //Server server = new Server();
+// FIXME: XBeanXmlBeanFactory vs AbstractXmlApplicationContext
+//        XBeanXmlBeanFactory factory = new XBeanXmlBeanFactory(new ClassPathResource("META-INF/openejb-server.xml"));
+//        Server server = (Server) factory.getBean("server");
+        SpringApplicationContext factory = new ClassPathXmlApplicationContext("META-INF/openejb-server.xml");
+        Server server = (Server) factory.getBean("server");
         server.init(props);
         server.start();
     }

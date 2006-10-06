@@ -25,6 +25,14 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 
+/**
+ * @org.apache.xbean.XBean 
+ *   namespace="http://openejb.apache.org/schemas/openejb" 
+ *   element="server"
+ *   description="OpenEJB Server"
+ * 
+ * @version $Rev$ $Date$
+ */
 public class Server implements org.apache.openejb.spi.Service {
 
     private SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB EJB Server");
@@ -53,7 +61,10 @@ public class Server implements org.apache.openejb.spi.Service {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        manager = ServiceManager.getManager();
+        // it's injected by XBean
+        // @see openejb-server.xml
+        // FIXME: Remove it once we're certain it works well (which should be in a couple of commits)
+        //manager = ServiceManager.getManager();
         manager.init();
     }
 
@@ -69,8 +80,6 @@ public class Server implements org.apache.openejb.spi.Service {
 
     }
 
-//    public void addService(ServerService )
-
     public static class ServerServiceFactory {
         public ServerService createService(URI location) throws IOException {
             String scheme = location.getScheme();
@@ -79,5 +88,8 @@ public class Server implements org.apache.openejb.spi.Service {
         }
     }
 
+    public void setServiceManager(ServiceManager serviceManager) {
+        this.manager = serviceManager;
+    }
 }
 
