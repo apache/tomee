@@ -33,6 +33,7 @@ import org.apache.xbean.spring.context.SpringApplicationContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.assembler.classic.JndiBuilder;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -173,6 +174,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
         //
         // Create the containers
         //
+        JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
         List<Container> containers = wrapContainers(AssemblerUtil.getBeans(factory, Container.class));
         List<CoreDeploymentInfo> deployments = new ArrayList<CoreDeploymentInfo>();
         for (Container container : containers) {
@@ -182,6 +184,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
                 deployment.setContainer(container);
                 deployments.add(deployment);
                 containerSystem.addDeployment(deployment);
+                jndiBuilder.bind(deployment);
             }
         }
 

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.transaction.TransactionManager;
 
@@ -35,11 +37,13 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 
-public class ContainerBuilder {
+public class ContainersBuilder {
 
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
@@ -48,12 +52,13 @@ public class ContainerBuilder {
     private final ContainerInfo[] containerInfos;
     private final String[] decorators;
 
-    public ContainerBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
+    public ContainersBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
         this.props = props;
         this.ejbJars = containerSystemInfo.ejbJars;
         this.containerInfos = containerSystemInfo.containers;
         String decorators = props.getProperty("openejb.container.decorators");
         this.decorators = (decorators == null) ? new String[]{} : decorators.split(":");
+
     }
 
     public Object build() throws OpenEJBException {
@@ -99,7 +104,7 @@ public class ContainerBuilder {
         }
         return containers;
     }
-
+    
     private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
         String containerName = containerInfo.containerName;
         ContainerInfo service = containerInfo;

@@ -74,44 +74,8 @@ public class ContainerSystem implements org.apache.openejb.spi.ContainerSystem {
 
         this.deployments.put(deployment.getDeploymentID(), deployment);
 
-        if (deployment.getHomeInterface() != null) {
-            bindProxy(deployment, deployment.getEJBHome(), false);
-        }
-        if (deployment.getLocalHomeInterface() != null) {
-            bindProxy(deployment, deployment.getEJBLocalHome(), true);
-        }
     }
 
-    private void bindProxy(org.apache.openejb.core.CoreDeploymentInfo deployment, Object proxy, boolean isLocal) {
-        Reference ref = new ObjectReference(proxy);
-
-        if (deployment.getComponentType() == DeploymentInfo.STATEFUL) {
-            ref = new org.apache.openejb.core.stateful.EncReference(ref);
-        } else if (deployment.getComponentType() == DeploymentInfo.STATELESS) {
-            ref = new org.apache.openejb.core.stateless.EncReference(ref);
-        } else {
-            ref = new org.apache.openejb.core.entity.EncReference(ref);
-        }
-
-        try {
-
-            String bindName = deployment.getDeploymentID().toString();
-
-            if (bindName.charAt(0) == '/') {
-                bindName = bindName.substring(1);
-            }
-
-            bindName = "openejb/ejb/" + bindName;
-            if (isLocal) {
-                bindName += "Local";
-            }
-            jndiRootContext.bind(bindName, ref);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
 
     public javax.naming.Context getJNDIContext() {
         return jndiRootContext;

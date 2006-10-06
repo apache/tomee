@@ -221,15 +221,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
+
         /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
-        ContainerBuilder containerBuilder = new ContainerBuilder(containerSystemInfo, ((AssemblerTool)this).props);
-        List containers = (List) containerBuilder.build();
+        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool)this).props);
+        List containers = (List) containersBuilder.build();
         for (int i1 = 0; i1 < containers.size(); i1++) {
             Container container1 = (Container) containers.get(i1);
             containerSystem.addContainer(container1.getContainerID(), container1);
             org.apache.openejb.DeploymentInfo[] deployments1 = container1.deployments();
             for (int j = 0; j < deployments1.length; j++) {
-                containerSystem.addDeployment((CoreDeploymentInfo) deployments1[j]);
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments1[j];
+                containerSystem.addDeployment(deployment);
+                jndiBuilder.bind(deployment);
             }
         }
 
