@@ -141,6 +141,12 @@
             <id>apache-m2-snapshot</id>
             <name>Apache M2 Snapshot Repository</name>
             <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>apache-m1-snapshot</id>
@@ -156,9 +162,15 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>DainDevRepo</id>
-            <name>Dain's Development Repository</name>
-            <url>http://people.apache.org/~dain/repository/m2-dev</url>
+            <id>apache-m2-snapshot</id>
+            <name>Apache Software Foundation M2 Snapshot Repository</name>
+            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
     <dependencyManagement>
