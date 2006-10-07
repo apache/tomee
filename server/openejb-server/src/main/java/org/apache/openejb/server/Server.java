@@ -26,9 +26,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 
 /**
- * @org.apache.xbean.XBean 
- *   namespace="http://openejb.apache.org/schemas/openejb" 
- *   element="server"
+ * @org.apache.xbean.XBean element="server"
  *   description="OpenEJB Server"
  * 
  * @version $Rev$ $Date$

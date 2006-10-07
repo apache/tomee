@@ -34,6 +34,13 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+
+/**
+ * @org.apache.xbean.XBean 
+ *   element="serviceManager"
+ * 
+ * @version $Rev$ $Date$
+ */
 public class ServiceManager {
 
     static Messages messages = new Messages("org.apache.openejb.server.util.resources");
