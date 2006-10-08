@@ -52,6 +52,7 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,6 +63,7 @@ import java.util.Properties;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Enumeration;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -190,22 +192,36 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploys[x];
             di.setContainer(this);
 
-            URL url = null;
-            try {
-                String jarPath = di.getJarPath();
-                File file = new File(jarPath);
-
-                if (file.isDirectory()){
-                    file = new File(file, "META-INF");
-                    file = new File(file, "cmp.mapping.xml");
-                    url = file.toURL();
-                } else {
-                    url = file.toURL();
-                    url = new URL("jar:"+ url.toExternalForm() + "!/META-INF/cmp.mapping.xml");
+            if (di.getJarPath() == null){
+                // DMB: This may pull in more than we like
+                try {
+                    ClassLoader classLoader = di.getBeanClass().getClassLoader();
+                    Enumeration<URL> resources = classLoader.getResources("META-INF/cmp.mapping.xml");
+                    while (resources.hasMoreElements()) {
+                        URL url = resources.nextElement();
+                        mappings.put(url.toExternalForm(), url);
+                    }
+                } catch (IOException e) {
+                    throw new OpenEJBException("Error locating mapping file via classloader for deployment "+di.getDeploymentID(), e);
                 }
-                mappings.put(url.toExternalForm(), url);
-            } catch (MalformedURLException e) {
-                throw new OpenEJBException("Error locating mapping file "+url+" for deployment "+di.getDeploymentID(), e);
+            } else {
+                URL url = null;
+                try {
+                    String jarPath = di.getJarPath();
+                    File file = new File(jarPath);
+
+                    if (file.isDirectory()){
+                        file = new File(file, "META-INF");
+                        file = new File(file, "cmp.mapping.xml");
+                        url = file.toURL();
+                    } else {
+                        url = file.toURL();
+                        url = new URL("jar:"+ url.toExternalForm() + "!/META-INF/cmp.mapping.xml");
+                    }
+                    mappings.put(url.toExternalForm(), url);
+                } catch (MalformedURLException e) {
+                    throw new OpenEJBException("Error locating mapping file "+url+" for deployment "+di.getDeploymentID(), e);
+                }
             }
             methodReadyPoolMap.put(di.getDeploymentID(), new LinkedListStack(poolsize / 2));
 

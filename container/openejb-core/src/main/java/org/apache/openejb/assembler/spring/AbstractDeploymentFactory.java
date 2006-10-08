@@ -130,12 +130,12 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     public String getJarPath() {
-        try {
-            File file = SystemInstance.get().getHome().getFile(jarPath, false).getCanonicalFile();
-            return file.getAbsolutePath();
-        } catch (IOException e) {
+//        try {
+//            File file = SystemInstance.get().getHome().getFile(jarPath, false).getCanonicalFile();
+//            return file.getAbsolutePath();
+//        } catch (IOException e) {
             return jarPath;
-        }
+//        }
     }
 
     public void setJarPath(String jarPath) {
@@ -203,7 +203,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 loadClass(getPkClass(), classLoader),
                 getComponentType(),
                 null);
-        deploymentInfo.setJarPath(getJarPath());
+        //deploymentInfo.setJarPath(getJarPath());
         if (assembly != null) {
             applySecurityRoleReference(deploymentInfo);
             // todo we should be able to apply tx attributes and security permissions here
