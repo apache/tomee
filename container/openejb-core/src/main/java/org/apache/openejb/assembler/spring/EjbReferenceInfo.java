@@ -22,18 +22,18 @@ import org.apache.openejb.assembler.classic.InfoObject;
  * @org.apache.xbean.XBean element="ejbRef"
  */
 public class EjbReferenceInfo extends InfoObject {
-    private String name;
+    private String jndiName;
     private boolean local;
     private String ejbId;
     private String remoteName;
     private String remoteContextId;
 
-    public String getName() {
-        return name;
+    public String getJndiName() {
+        return jndiName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
     }
 
     public boolean isLocal() {

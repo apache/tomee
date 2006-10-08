@@ -39,6 +39,8 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     protected String remoteInterface;
     protected String localHomeInterface;
     protected String localInterface;
+    protected String businessLocalInterface;
+    protected String businessRemoteInterface;
     protected String beanClass;
     protected ClassLoader classLoader;
     protected EncInfo jndiContext;
@@ -53,6 +55,22 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBusinessLocalInterface() {
+        return businessLocalInterface;
+    }
+
+    public void setBusinessLocalInterface(String businessLocalInterface) {
+        this.businessLocalInterface = businessLocalInterface;
+    }
+
+    public String getBusinessRemoteInterface() {
+        return businessRemoteInterface;
+    }
+
+    public void setBusinessRemoteInterface(String businessRemoteInterface) {
+        this.businessRemoteInterface = businessRemoteInterface;
     }
 
     public String getHomeInterface() {
@@ -180,7 +198,9 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 loadClass(remoteInterface, classLoader),
                 loadClass(localHomeInterface, classLoader),
                 loadClass(localInterface, classLoader),
-                null, null, loadClass(getPkClass(), classLoader),
+                loadClass(businessLocalInterface, classLoader),
+                loadClass(businessRemoteInterface, classLoader),
+                loadClass(getPkClass(), classLoader),
                 getComponentType(),
                 null);
         deploymentInfo.setJarPath(getJarPath());

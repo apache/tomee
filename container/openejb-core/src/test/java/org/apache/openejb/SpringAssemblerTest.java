@@ -23,11 +23,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  */
 public class SpringAssemblerTest extends TestCase {
-    public void testNothing(){
-        // The spring.xml file points to files in the form of ../../../
-        // this does not work in Continuum as *all* modules are side-by-side
-    }
-    public static Test _suite() {
+    public static Test suite() {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
         System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
         return org.apache.openejb.iTest.suite();

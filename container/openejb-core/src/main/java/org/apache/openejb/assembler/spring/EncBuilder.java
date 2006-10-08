@@ -112,7 +112,7 @@ public class EncBuilder {
                 String openEjbSubContextName = "java:openejb/remote_jndi_contexts/" + referenceInfo.getRemoteContextId();
                 reference = new JndiReference(openEjbSubContextName, referenceInfo.getRemoteName());
             }
-            bindings.put(normalize(referenceInfo.getName()), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.getJndiName()), wrapReference(reference));
         }
 
         for (EnvEntryInfo entry : encInfo.envEntries) {
@@ -139,11 +139,11 @@ public class EncBuilder {
                     throw new IllegalArgumentException("Invalid env-ref-type " + type);
                 }
 
-                bindings.put(normalize(entry.getName()), obj);
+                bindings.put(normalize(entry.getJndiName()), obj);
             } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Invalid environment entry type: " + entry.getType().trim() + " for entry: " + entry.getName());
+                throw new IllegalArgumentException("Invalid environment entry type: " + entry.getType().trim() + " for entry: " + entry.getJndiName());
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The env-entry-value for entry " + entry.getName() + " was not recognizable as type " + entry.getType() + ". Received Message: " + e.getLocalizedMessage());
+                throw new IllegalArgumentException("The env-entry-value for entry " + entry.getJndiName() + " was not recognizable as type " + entry.getType() + ". Received Message: " + e.getLocalizedMessage());
             }
         }
 
@@ -157,7 +157,7 @@ public class EncBuilder {
                 String jndiName2 = referenceInfo.getRemoteName();
                 reference = new JndiReference(openEjbSubContextName1, jndiName2);
             }
-            bindings.put(normalize(referenceInfo.getName()), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.getJndiName()), wrapReference(reference));
         }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));

@@ -22,16 +22,16 @@ import org.apache.openejb.assembler.classic.InfoObject;
  * @org.apache.xbean.XBean element="envEntry"
  */
 public class EnvEntryInfo extends InfoObject {
-    private String name;
+    private String jndiName;
     private String type;
     private String value;
 
-    public String getName() {
-        return name;
+    public String getJndiName() {
+        return jndiName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
     }
 
     public String getType() {

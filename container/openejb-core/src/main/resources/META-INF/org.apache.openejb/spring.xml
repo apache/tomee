@@ -219,7 +219,7 @@
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
               <o:enc>
-                <o:ejbRef name="cmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/cmp/EncBean"/>
+                <o:ejbRef jndiName="cmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/cmp/EncBean"/>
               </o:enc>
             </o:jndiContext>
           </o:cmpDeployment>
@@ -233,22 +233,22 @@
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="entity/cmp/references/Boolean" type="java.lang.Boolean" value="true"/>
-                <o:envEntry name="entity/cmp/references/String" type="java.lang.String" value="1"/>
-                <o:envEntry name="entity/cmp/references/Double" type="java.lang.Double" value="1"/>
-                <o:envEntry name="entity/cmp/references/Long" type="java.lang.Long" value="1"/>
-                <o:envEntry name="entity/cmp/references/Float" type="java.lang.Float" value="1"/>
-                <o:envEntry name="entity/cmp/references/Integer" type="java.lang.Integer" value="1"/>
-                <o:envEntry name="entity/cmp/references/Short" type="java.lang.Short" value="1"/>
-                <o:envEntry name="entity/cmp/references/Byte" type="java.lang.Byte" value="1"/>
-                <o:ejbRef name="entity/cmp/beanReferences/cmp_entity" local="false"
+                <o:envEntry jndiName="entity/cmp/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry jndiName="entity/cmp/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef jndiName="entity/cmp/beanReferences/cmp_entity" local="false"
                     ejbId="client/tests/entity/cmp/BasicCmpHome"/>
-                <o:ejbRef name="entity/cmp/beanReferences/stateful" local="false"
+                <o:ejbRef jndiName="entity/cmp/beanReferences/stateful" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:ejbRef name="entity/cmp/beanReferences/stateless" local="false"
+                <o:ejbRef jndiName="entity/cmp/beanReferences/stateless" local="false"
                     ejbId="client/tests/stateless/BasicStatelessHome"/>
-                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:cmpDeployment>
@@ -263,7 +263,7 @@
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:cmpDeployment>
@@ -282,7 +282,7 @@
             </o:queries>
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:cmpDeployment>
@@ -303,7 +303,7 @@
               pkClass="java.lang.Integer">
             <o:jndiContext>
               <o:enc>
-                <o:ejbRef name="bmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/bmp/EncBean"/>
+                <o:ejbRef jndiName="bmp/rmi-iiop/home" local="false" ejbId="client/tests/entity/bmp/EncBean"/>
               </o:enc>
             </o:jndiContext>
           </o:bmpDeployment>
@@ -317,22 +317,22 @@
               pkClass="java.lang.Integer">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="entity/bmp/references/Boolean" type="java.lang.Boolean" value="true"/>
-                <o:envEntry name="entity/bmp/references/String" type="java.lang.String" value="1"/>
-                <o:envEntry name="entity/bmp/references/Double" type="java.lang.Double" value="1"/>
-                <o:envEntry name="entity/bmp/references/Long" type="java.lang.Long" value="1"/>
-                <o:envEntry name="entity/bmp/references/Float" type="java.lang.Float" value="1"/>
-                <o:envEntry name="entity/bmp/references/Integer" type="java.lang.Integer" value="1"/>
-                <o:envEntry name="entity/bmp/references/Short" type="java.lang.Short" value="1"/>
-                <o:envEntry name="entity/bmp/references/Byte" type="java.lang.Byte" value="1"/>
-                <o:ejbRef name="entity/bmp/beanReferences/bmp_entity" local="false"
+                <o:envEntry jndiName="entity/bmp/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry jndiName="entity/bmp/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef jndiName="entity/bmp/beanReferences/bmp_entity" local="false"
                     ejbId="client/tests/entity/bmp/BasicBmpHome"/>
-                <o:ejbRef name="entity/bmp/beanReferences/stateful" local="false"
+                <o:ejbRef jndiName="entity/bmp/beanReferences/stateful" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:ejbRef name="entity/bmp/beanReferences/stateless" local="false"
+                <o:ejbRef jndiName="entity/bmp/beanReferences/stateless" local="false"
                     ejbId="client/tests/stateless/BasicStatelessHome"/>
-                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:bmpDeployment>
@@ -347,12 +347,12 @@
               pkClass="java.lang.Integer">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                <o:envEntry jndiName="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
                     value="Success"/>
-                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
-                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:bmpDeployment>
@@ -367,7 +367,7 @@
               pkClass="java.lang.Integer">
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="jdbc/basic/entityDatabase" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:bmpDeployment>
@@ -387,7 +387,7 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:ejbRef name="stateful/rmi-iiop/home" local="false" ejbId="client/tests/stateful/EncBean"/>
+                <o:ejbRef jndiName="stateful/rmi-iiop/home" local="false" ejbId="client/tests/stateful/EncBean"/>
               </o:enc>
             </o:jndiContext>
           </o:statefulDeployment>
@@ -401,21 +401,21 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateful/references/Boolean" type="java.lang.Boolean" value="true"/>
-                <o:envEntry name="stateful/references/String" type="java.lang.String" value="1"/>
-                <o:envEntry name="stateful/references/Double" type="java.lang.Double" value="1"/>
-                <o:envEntry name="stateful/references/Long" type="java.lang.Long" value="1"/>
-                <o:envEntry name="stateful/references/Float" type="java.lang.Float" value="1"/>
-                <o:envEntry name="stateful/references/Integer" type="java.lang.Integer" value="1"/>
-                <o:envEntry name="stateful/references/Short" type="java.lang.Short" value="1"/>
-                <o:envEntry name="stateful/references/Byte" type="java.lang.Byte" value="1"/>
-                <o:ejbRef name="stateful/beanReferences/bmp_entity" local="false"
+                <o:envEntry jndiName="stateful/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry jndiName="stateful/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry jndiName="stateful/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry jndiName="stateful/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry jndiName="stateful/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry jndiName="stateful/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry jndiName="stateful/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry jndiName="stateful/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef jndiName="stateful/beanReferences/bmp_entity" local="false"
                     ejbId="client/tests/entity/bmp/BasicBmpHome"/>
-                <o:ejbRef name="stateful/beanReferences/stateful" local="false"
+                <o:ejbRef jndiName="stateful/beanReferences/stateful" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:ejbRef name="stateful/beanReferences/stateless" local="false"
+                <o:ejbRef jndiName="stateful/beanReferences/stateless" local="false"
                     ejbId="client/tests/stateless/BasicStatelessHome"/>
-                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="datasource" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statefulDeployment>
@@ -429,7 +429,7 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="datasource" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statefulDeployment>
@@ -464,6 +464,7 @@
               remoteInterface="org.apache.openejb.test.stateful.BasicStatefulObject"
               localHomeInterface="org.apache.openejb.test.stateful.BasicStatefulLocalHome"
               localInterface="org.apache.openejb.test.stateful.BasicStatefulLocalObject"
+              businessLocalInterface="org.apache.openejb.test.stateful.BasicStatefulBusinessLocal"
               beanClass="org.apache.openejb.test.stateful.BasicStatefulPojoBean"
               jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
@@ -487,7 +488,7 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:ejbRef name="stateless/rmi-iiop/home" local="false" ejbId="client/tests/stateless/EncBean"/>
+                <o:ejbRef jndiName="stateless/rmi-iiop/home" local="false" ejbId="client/tests/stateless/EncBean"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -501,25 +502,25 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                <o:envEntry jndiName="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
                     value="Success"/>
-                <o:envEntry name="stateless/references/Boolean" type="java.lang.Boolean" value="true"/>
-                <o:envEntry name="stateless/references/String" type="java.lang.String" value="1"/>
-                <o:envEntry name="stateless/references/Double" type="java.lang.Double" value="1"/>
-                <o:envEntry name="stateless/references/Long" type="java.lang.Long" value="1"/>
-                <o:envEntry name="stateless/references/Float" type="java.lang.Float" value="1"/>
-                <o:envEntry name="stateless/references/Integer" type="java.lang.Integer" value="1"/>
-                <o:envEntry name="stateless/references/Short" type="java.lang.Short" value="1"/>
-                <o:envEntry name="stateless/references/Byte" type="java.lang.Byte" value="1"/>
-                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                <o:envEntry jndiName="stateless/references/Boolean" type="java.lang.Boolean" value="true"/>
+                <o:envEntry jndiName="stateless/references/String" type="java.lang.String" value="1"/>
+                <o:envEntry jndiName="stateless/references/Double" type="java.lang.Double" value="1"/>
+                <o:envEntry jndiName="stateless/references/Long" type="java.lang.Long" value="1"/>
+                <o:envEntry jndiName="stateless/references/Float" type="java.lang.Float" value="1"/>
+                <o:envEntry jndiName="stateless/references/Integer" type="java.lang.Integer" value="1"/>
+                <o:envEntry jndiName="stateless/references/Short" type="java.lang.Short" value="1"/>
+                <o:envEntry jndiName="stateless/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:ejbRef name="stateless/beanReferences/bmp_entity" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/bmp_entity" local="false"
                     ejbId="client/tests/entity/bmp/BasicBmpHome"/>
-                <o:ejbRef name="stateless/beanReferences/stateful" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/stateful" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:ejbRef name="stateless/beanReferences/stateless" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/stateless" local="false"
                     ejbId="client/tests/stateless/BasicStatelessHome"/>
-                <o:resourceRef name="datasource" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="datasource" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -533,7 +534,7 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="database" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="database" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -545,7 +546,7 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:resourceRef name="database" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="database" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -559,11 +560,11 @@
               transactionManager="#transactionManager" assembly="#assembly" beanManagedTransaction="true">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                <o:envEntry jndiName="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
                     value="Success"/>
-                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -577,11 +578,11 @@
               transactionManager="#transactionManager" assembly="#assembly">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                <o:envEntry jndiName="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
                     value="Success"/>
-                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>
@@ -592,16 +593,17 @@
               remoteInterface="org.apache.openejb.test.stateless.BasicStatelessObject"
               localHomeInterface="org.apache.openejb.test.stateless.BasicStatelessLocalHome"
               localInterface="org.apache.openejb.test.stateless.BasicStatelessLocalObject"
+              businessLocalInterface="org.apache.openejb.test.stateless.BasicStatelessBusinessLocal"
               beanClass="org.apache.openejb.test.stateless.BasicStatelessPojoBean"
               jarPath="../../../../openejb-itests/target/classes/" classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
             <o:jndiContext>
               <o:enc>
-                <o:envEntry name="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
+                <o:envEntry jndiName="stateless/references/JNDI_access_to_java_comp_env" type="java.lang.String"
                     value="Success"/>
-                <o:ejbRef name="stateless/beanReferences/Enterprise_bean_access" local="false"
+                <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
-                <o:resourceRef name="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
+                <o:resourceRef jndiName="stateless/references/Resource_manager_access" resourceId="Default JDBC Database"/>
               </o:enc>
             </o:jndiContext>
           </o:statelessDeployment>

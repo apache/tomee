@@ -22,17 +22,17 @@ import org.apache.openejb.assembler.classic.InfoObject;
  * @org.apache.xbean.XBean element="resourceRef"
  */
 public class ResourceReferenceInfo extends InfoObject {
-    private String name;
+    private String jndiName;
     private String resourceId;
     private String remoteContextId;
     private String remoteName;
 
-    public String getName() {
-        return name;
+    public String getJndiName() {
+        return jndiName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
     }
 
     public String getResourceId() {
