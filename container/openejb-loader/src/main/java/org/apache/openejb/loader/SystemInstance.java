@@ -21,13 +21,15 @@ import java.util.HashMap;
 
 /**
  * This class aims to be the one and only static in the entire system
- * A static, singleton, instance of this class can be created with the init(props) method
+ * A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
  *
  * It is assumed that only one singleton per classloader is possible in any given VM
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
  * instance for that classloader and all children classloaders.
  *
  * @version $Revision$ $Date$
+ * 
+ * @org.apache.xbean.XBean element="system"
  */
 public class SystemInstance {
 
@@ -38,7 +40,7 @@ public class SystemInstance {
     private final ClassLoader classLoader;
     private final HashMap components;
     private final ClassPath classPath;
-
+    
     private SystemInstance(Properties properties) throws Exception {
         this.components = new HashMap();
         this.properties = new Properties();
@@ -133,9 +135,8 @@ public class SystemInstance {
         system = new SystemInstance(properties);
         initialized = true;
     }
-
+    
     public static SystemInstance get() {
         return system;
     }
-
 }
