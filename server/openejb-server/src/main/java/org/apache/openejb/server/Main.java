@@ -23,28 +23,41 @@ import java.util.Properties;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarUtils;
+import org.apache.openejb.util.PropertiesService;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.apache.xbean.spring.context.SpringApplicationContext;
-import org.apache.xbean.spring.context.v2.XBeanXmlBeanFactory;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 
 /**
- * Assemble OpenEJB instance and boot it up 
+ * Assemble OpenEJB instance and boot it up
  */
 public class Main {
 
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
 
+    // TODO: Remove the static initializer once Main is fully XBean-ized
+    private static final SpringApplicationContext factory;
+    static {
+        factory = new ClassPathXmlApplicationContext("META-INF/openejb-server.xml");
+    }
+
     public static void main(String args[]) {
 
         try {
+            PropertiesService propertiesService = (PropertiesService) factory.getBean("propertiesService");
             Properties props = parseArguments(args);
-            SystemInstance.init(props);
+            // FIXME: Remove parseArguments and let propertiesService take care of properties mgmt
+            propertiesService.putAll(props);
+            
+            // FIXME: Enable XBean-ized SystemInstance 
+            //SystemInstance system = (SystemInstance) factory.getBean("system");
+            
+            SystemInstance.init(propertiesService.getProperties());
             SystemInstance system = SystemInstance.get();
             File libs = system.getHome().getDirectory("lib");
             system.getClassPath().addJarsToPath(libs);
-            initServer(props);
+
+            Server server = (Server) factory.getBean("server");
+            server.start();
         } catch (DontStartServerException e) {
 
         } catch (Exception e) {
@@ -53,11 +66,15 @@ public class Main {
     }
 
     /**
-     * Parse arguments and override any {@link System} properties returned via {@link System#getProperties()}.
-     *  
-     * @param args command line arguments
+     * Parse arguments and override any {@link System} properties returned via
+     * {@link System#getProperties()}.
+     * 
+     * @param args
+     *            command line arguments
      * @return properties as defined in System and on the command line
-     * @throws DontStartServerException thrown as an indication to not boot up OpenEJB instance, e.g. after printing out properties, help, etc. 
+     * @throws DontStartServerException
+     *             thrown as an indication to not boot up OpenEJB instance, e.g.
+     *             after printing out properties, help, etc.
      */
     private static Properties parseArguments(String args[]) throws DontStartServerException {
         Properties props = new Properties();
@@ -99,10 +116,8 @@ public class Main {
                     props.setProperty("openejb.server.admin-ip", args[++i]);
                 }
             } else if (args[i].startsWith("--local-copy")) {
-                if (args[i].endsWith("false") ||
-                        args[i].endsWith("FALSE") ||
-                        args[i].endsWith("no") ||
-                        args[i].endsWith("NO")) {
+                if (args[i].endsWith("false") || args[i].endsWith("FALSE") || args[i].endsWith("no")
+                        || args[i].endsWith("NO")) {
                     props.setProperty("openejb.localcopy", "false");
                 } else {
                     props.setProperty("openejb.localcopy", "true");
@@ -133,9 +148,9 @@ public class Main {
         try {
             JarUtils.setHandlerSystemProperty();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-        } catch (java.io.IOException e) {
-        }
-        System.out.println("OpenEJB Remote Server " + versionInfo.get("version") + "    build: " + versionInfo.get("date") + "-" + versionInfo.get("time"));
+        } catch (java.io.IOException e) {}
+        System.out.println("OpenEJB Remote Server " + versionInfo.get("version") + "    build: "
+                + versionInfo.get("date") + "-" + versionInfo.get("time"));
         System.out.println("" + versionInfo.get("url"));
     }
 
@@ -146,8 +161,7 @@ public class Main {
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+        } catch (java.io.IOException e) {}
 
         System.out.println(header);
 
@@ -159,8 +173,7 @@ public class Main {
                 System.out.write(b);
                 b = in.read();
             }
-        } catch (java.io.IOException e) {
-        }
+        } catch (java.io.IOException e) {}
     }
 
     private static void printExamples() {
@@ -170,8 +183,7 @@ public class Main {
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+        } catch (java.io.IOException e) {}
 
         System.out.println(header);
 
@@ -183,22 +195,8 @@ public class Main {
                 System.out.write(b);
                 b = in.read();
             }
-        } catch (java.io.IOException e) {
-        }
-    }
-
-    private static void initServer(Properties props) throws Exception {
-        //Server server = new Server();
-// FIXME: XBeanXmlBeanFactory vs AbstractXmlApplicationContext
-//        XBeanXmlBeanFactory factory = new XBeanXmlBeanFactory(new ClassPathResource("META-INF/openejb-server.xml"));
-//        Server server = (Server) factory.getBean("server");
-        SpringApplicationContext factory = new ClassPathXmlApplicationContext("META-INF/openejb-server.xml");
-        Server server = (Server) factory.getBean("server");
-        server.init(props);
-        server.start();
+        } catch (java.io.IOException e) {}
     }
 }
 
-class DontStartServerException extends Exception {
-}
-
+class DontStartServerException extends Exception {}

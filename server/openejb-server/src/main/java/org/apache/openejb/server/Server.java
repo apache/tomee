@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.PropertiesService;
 import org.apache.openejb.util.SafeToolkit;
 
 /**
@@ -37,7 +38,10 @@ public class Server implements org.apache.openejb.spi.Service {
     private Messages _messages = new Messages("org.apache.openejb.server");
     private Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server");
 
+    // FIXME: Remove it completely once we ensure PropertiesService (below) works well
     Properties props;
+    
+    private PropertiesService propertiesService;
 
     static Server server;
     private ServiceManager manager;
@@ -50,19 +54,32 @@ public class Server implements org.apache.openejb.spi.Service {
         return server;
     }
 
+    // TODO: Remove it once init() suits our (initialisation) needs 
     public void init(java.util.Properties props) throws Exception {
         this.props = props;
 
-        OpenEJB.init(props, new ServerFederation());
+        OpenEJB.init(propertiesService.getProperties(), new ServerFederation());
 
         if (System.getProperty("openejb.nobanner") == null) {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        // it's injected by XBean
-        // @see openejb-server.xml
-        // FIXME: Remove it once we're certain it works well (which should be in a couple of commits)
-        //manager = ServiceManager.getManager();
+        manager.init();
+    }
+
+    /**
+     * Copy of {@link #init(Properties)} to XBean-ize it
+     * 
+     * @throws Exception
+     */
+    public void init() throws Exception {
+
+        OpenEJB.init(propertiesService.getProperties(), new ServerFederation());
+
+        if (!propertiesService.isSet("openejb.nobanner")) {
+            System.out.println("[init] OpenEJB Remote Server");
+        }
+
         manager.init();
     }
 
@@ -88,6 +105,10 @@ public class Server implements org.apache.openejb.spi.Service {
 
     public void setServiceManager(ServiceManager serviceManager) {
         this.manager = serviceManager;
+    }
+    
+    public void setPropertiesService(PropertiesService propertiesService) {
+        this.propertiesService = propertiesService;
     }
 }
 
