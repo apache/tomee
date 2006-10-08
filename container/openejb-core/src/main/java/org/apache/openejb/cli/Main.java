@@ -228,7 +228,7 @@ public class Main {
         System.out.println("\nTry 'openejb help <command>' for more information about the command.\n");
         System.out.println("OpenEJB -- EJB Container System and EJB Server.");
         System.out.println("For updates and additional information, visit");
-        System.out.println("http://www.openejb.org\n");
-        System.out.println("Bug Reports to <user@openejb.org>");
+        System.out.println("http://incubator.apache.org/openejb\n");
+        System.out.println("Bug Reports to <openejb-user@incubator.apache.org>");
     }
 }

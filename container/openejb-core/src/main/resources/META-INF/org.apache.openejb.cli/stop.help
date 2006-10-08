@@ -14,10 +14,10 @@ OPTIONS
  -examples  Show examples of the stop command
 
 
-See http://www.openejb.org/remote-server.html for more information.
+See http://incubator.apache.org/openejb/remote-server.html for more information.
 
 OpenEJB -- EJB Container System and EJB Server.
 For OpenEJB updates and additional information, visit
-http://www.openejb.org
+http://incubator.apache.org/openejb
 
-Bug Reports to <user@openejb.org>
+Bug Reports to <openejb-user@incubator.apache.org>
