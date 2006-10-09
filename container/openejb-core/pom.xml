@@ -31,6 +31,12 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Core</name>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -57,20 +63,13 @@
             </goals>
             <configuration>
               <tasks>
-                <tstamp/>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@VERSION-REPLACED-BY-MAVEN@" value="3.0-incubating-SNAPSHOT"/>
+                <tstamp>
+                  <format property="TSTAMP" pattern="hh:mm" />
+                </tstamp>
                 <replace file="target/classes/openejb-version.properties"
                          token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
                 <replace file="target/classes/openejb-version.properties"
                          token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
-
-                <!-- Add *.properties files -->
-                <copy todir="target/classes">
-                  <fileset dir="src/main/java">
-                    <include name="**/*.properties"/>
-                  </fileset>
-                </copy>
               </tasks>
             </configuration>
           </execution>
