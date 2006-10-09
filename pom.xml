@@ -43,7 +43,7 @@
     OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
   </description>
 
-  <url>http://cwiki.apache.org/OPENEJB</url>
+  <url>http://incubator.apache.org/openejb</url>
 
   <issueManagement>
     <system>jira</system>
