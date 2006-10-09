@@ -1,3 +1,5 @@
 main.class = org.apache.openejb.alt.config.Deploy
 name = deploy
 description = Deploy an ejb jar into OpenEJB.
+description.pl = Zainstaluj ejb jar w OpenEJB
+

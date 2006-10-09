@@ -1,3 +1,5 @@
 main.class = org.apache.openejb.server.Main
 name = start
 description = Start the OpenEJB Remote Server for accessing beans in client/server mode.
+description.pl = Uruchom OpenEJB Remote Server udost\u0119pniaj\u0105c komponenty EJB w trybie klient/serwer.
+

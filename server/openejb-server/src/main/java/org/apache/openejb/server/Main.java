@@ -43,8 +43,11 @@ public class Main {
     public static void main(String args[]) {
 
         try {
-            PropertiesService propertiesService = (PropertiesService) factory.getBean("propertiesService");
+            // Parse command-line arguments before OpenEJB is assembled by XBean
+            // Some arguments cause DontStartServerException to be thrown
             Properties props = parseArguments(args);
+
+            PropertiesService propertiesService = (PropertiesService) factory.getBean("propertiesService");
             // FIXME: Remove parseArguments and let propertiesService take care of properties mgmt
             propertiesService.putAll(props);
             

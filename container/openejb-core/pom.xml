@@ -85,7 +85,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-3.0-incubating-SNAPSHOT.jar xbean-finder-2.6.jar</Class-Path>
+              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-2.6.jar</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>

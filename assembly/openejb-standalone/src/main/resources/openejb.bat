@@ -12,14 +12,16 @@ REM
 REM   Created by David Blevins 
 REM             <david.blevins@visi.com>
 REM _______________________________________________
-REM $Id$
+REM $Rev$ $Date$
 REM================================================
 
 SETLOCAL
 
+set OPENEJB_CORE_JAR=%OPENEJB_HOME%/lib/openejb-core-${pom.version}.jar
+
 rem find OPENEJB_HOME if it does not exist due to either an invalid value passed
 rem by the user or the %0 problem on Windows 9x
-if exist "%OPENEJB_HOME%\lib\openejb-core-*.jar" goto openejbHomeSet
+if exist "%OPENEJB_CORE_JAR%" goto openejbHomeSet
 
 :noOpenEJBHome
 echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located. Please set OPENEJB_HOME.
@@ -44,7 +46,7 @@ goto EOF
 REM================================================
 :HELP
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar
+	java -jar %OPENEJB_CORE_JAR%
 
 goto EOF
 REM================================================
@@ -61,25 +63,25 @@ goto EOF
 REM================================================
 :VALIDATE 
    shift
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar validate %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -jar %OPENEJB_CORE_JAR% validate %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :DEPLOY 
    shift
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar deploy %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -jar %OPENEJB_CORE_JAR% deploy %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :START_SERVER
    shift
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar start %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -jar %OPENEJB_CORE_JAR% start %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :STOP_SERVER
    shift
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar stop %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -jar %OPENEJB_CORE_JAR% stop %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
@@ -89,44 +91,44 @@ goto EOF
 REM================================================
 :TEST_INTRAVM
 
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar test local
+   java -jar %OPENEJB_CORE_JAR% test local
          
 if /I %P2% EQU _ goto TEST_SERVER
 goto EOF
 REM================================================
 :TEST_SERVER
 
-   java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar test remote
+   java -jar %OPENEJB_CORE_JAR% test remote
    
 goto EOF
 REM================================================
 :HELP_TEST
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar test --help
+	java -jar %OPENEJB_CORE_JAR% test --help
 
 goto EOF
 REM================================================
 :HELP_DEPLOY
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar deploy --help
+	java -jar %OPENEJB_CORE_JAR% deploy --help
 	
 goto EOF
 REM================================================
 :HELP_VALIDATE
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar validate --help
+	java -jar %OPENEJB_CORE_JAR% validate --help
 
 goto EOF
 REM================================================
 :HELP_START
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar start --help
+	java -jar %OPENEJB_CORE_JAR% start --help
 
 goto EOF
 REM================================================
 :HELP_STOP
    
-	java -jar %OPENEJB_HOME%/lib/openejb-core-@REPLACED-BY-MAVEN-XML@.jar stop --help
+	java -jar %OPENEJB_CORE_JAR% stop --help
 
 goto EOF
 

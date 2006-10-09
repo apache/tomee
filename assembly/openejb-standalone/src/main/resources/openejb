@@ -13,7 +13,7 @@
 #             
 #               
 # ___________________________________________________________
-# $Id$
+# $Rev$ $Date$
 #============================================================
 
 cygwin=false
@@ -61,27 +61,29 @@ echo OPENEJB_HOME = $OPENEJB_HOME
 
 OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
 
+OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${pom.version}.jar"
+
 #============================================================
 _command_help()
 {
     case $2 in
         "validate")
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar validate --help
+            java -jar $OPENEJB_CORE_JAR validate --help
         ;;
         "deploy")
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar deploy --help
+            java -jar $OPENEJB_CORE_JAR deploy --help
         ;;
         "start")
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar start --help
+            java -jar $OPENEJB_CORE_JAR start --help
         ;;
         "stop")
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar stop --help
+            java -jar $OPENEJB_CORE_JAR stop --help
         ;;
         "test")
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test --help
+            java -jar $OPENEJB_CORE_JAR test --help
         ;;
         *)
-            java -jar $OPENEJB_HOME/lib/openejb-core-*.jar
+            java -jar $OPENEJB_CORE_JAR
         ;;
     esac
 }
@@ -89,33 +91,33 @@ _command_help()
 _command_deploy()
 {
    shift
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar deploy $@
+   java -jar $OPENEJB_CORE_JAR deploy $@
 }
 #============================================================
 _command_validate()
 {
    shift
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar validate $@
+   java -jar $OPENEJB_CORE_JAR validate $@
 }
 #============================================================
 _command_start()
 {
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar start $@
+   java -jar $OPENEJB_CORE_JARr start $@
 }
 #============================================================
 _command_stop()
 {
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar stop $@
+   java -jar $OPENEJB_CORE_JAR stop $@
 }
 #============================================================
 _test_intravm()
 {
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test local
+   java -jar $OPENEJB_CORE_JAR test local
 }
 #============================================================
 _test_server()
 {
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test remote
+   java -jar $OPENEJB_CORE_JAR test remote
 }
 #============================================================
 _command_test()
@@ -138,7 +140,7 @@ esac
 #============================================================
 _test_help()
 {
-   java -jar $OPENEJB_HOME/lib/openejb-core-*.jar test --help
+   java -jar $OPENEJB_CORE_JAR test --help
 }
 #============================================================
 _test_noargs()
