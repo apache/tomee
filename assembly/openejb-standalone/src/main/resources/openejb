@@ -102,7 +102,7 @@ _command_validate()
 #============================================================
 _command_start()
 {
-   java -jar $OPENEJB_CORE_JARr start $@
+   java -jar $OPENEJB_CORE_JAR start $@
 }
 #============================================================
 _command_stop()

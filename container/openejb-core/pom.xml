@@ -85,7 +85,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-2.6.jar</Class-Path>
+              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>
@@ -93,7 +93,7 @@
       <plugin>
         <groupId>org.apache.xbean</groupId>
         <artifactId>maven-xbean-plugin</artifactId>
-        <version>2.7-SNAPSHOT</version>
+        <version>${xbeanVersion}</version>
         <executions>
           <execution>
             <goals>
@@ -252,10 +252,20 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
-      <version>2.7-SNAPSHOT</version>
+      <version>${xbeanVersion}</version>
     </dependency>
-    <!-- FIXME: Why should it be specified here? -->
-    <!-- TODO: Bump up the version to rc4 -->
+    <!-- 
+     FIXME: Why should it be specified here? Shouldn't xbean download what's necessary?
+    -->
+    <!-- 
+     TODO: Bump up the version to the latest 2.0 release once XBean accepts it
+           Impossible now as XBean reports NoClassDefFoundError due to the class re-packaging
+           Caused by: java.lang.NoClassDefFoundError: org/springframework/beans/factory/support/ComponentDefinition
+   	               at java.lang.Class.forName0(Native Method)
+                   at java.lang.Class.forName(Class.java:164)
+   	               at org.apache.xbean.spring.context.v2.XBeanV2Helper.createNamespaceHandler(XBeanV2Helper.java:45)
+   	               ... 33 more
+    -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>

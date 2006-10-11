@@ -46,6 +46,7 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
+      <outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
