@@ -92,10 +92,6 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         DeploymentInfo deployment = proxyInfo.getDeploymentInfo();
         String deploymentID = deployment.getDeploymentID().toString();
 
-        //DMB: HACK as proxyInfo.getInterface() reports the wrong interface, will fix that next.
-        Class interfce = proxyInfo.getInterface();
-//        Class interfce = getProxyInterface(object);
-
         switch(proxyInfo.getInterfaceType()){
             case EJB_HOME: {
                 res.setResponseCode(JNDI_EJBHOME);
@@ -148,24 +144,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                 res.setResult(new NamingException("Not remotable: '"+name+"'."));
             }
         }
-//        if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getHomeInterface())){
-//        } else if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getLocalHomeInterface())){
-//        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessRemoteInterface())){
-//        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessLocalInterface())){
-//        } else {
-//        }
 
         res.writeExternal(out);
-    }
-
-    private Class getProxyInterface(Object proxy) {
-        Class[] interfaces = proxy.getClass().getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            Class clazz = interfaces[i];
-            if (!IntraVmProxy.class.isAssignableFrom(clazz)){
-                return clazz;
-            }
-        }
-        throw new IllegalStateException("Invalid Proxy.  Cannot determine interface.");
     }
 }
