@@ -23,6 +23,7 @@ import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
 
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
@@ -73,13 +74,13 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 
             case org.apache.openejb.DeploymentInfo.BMP_ENTITY:
             case org.apache.openejb.DeploymentInfo.CMP_ENTITY:
-                return new EntityEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID());
+                return new EntityEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
 
             case org.apache.openejb.DeploymentInfo.STATEFUL:
-                return new StatefulEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID());
+                return new StatefulEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
 
             case org.apache.openejb.DeploymentInfo.STATELESS:
-                return new StatelessEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID());
+                return new StatelessEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
             default:
                 throw new RuntimeException("Unknown EJB type: " + pi.getDeploymentInfo());
         }

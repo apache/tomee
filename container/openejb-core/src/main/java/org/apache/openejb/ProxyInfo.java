@@ -20,28 +20,27 @@ public class ProxyInfo {
 
     protected DeploymentInfo deploymentInfo;
     protected Object primaryKey;
-    protected Class type;
+    protected Class proxyInterface;
     protected RpcContainer beanContainer;
+    protected InterfaceType interfaceType;
 
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
-        deploymentInfo = depInfo;
-        primaryKey = pk;
-        type = intrfc;
-        beanContainer = container;
-    }
-
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, boolean isLocalInterface, RpcContainer container) {
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container, InterfaceType proxyType) {
         this.deploymentInfo = depInfo;
         this.primaryKey = pk;
+        this.proxyInterface = intrfc;
+        this.interfaceType = proxyType;
         this.beanContainer = container;
-        if (isLocalInterface) {
-            this.type = deploymentInfo.getLocalInterface();
-        } else {
-            this.type = deploymentInfo.getRemoteInterface();
-        }
+    }
+
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
+        this(depInfo, pk, intrfc, container, InterfaceType.UNKNOWN);
+    }
+
+    public InterfaceType getInterfaceType() {
+        return interfaceType;
     }
 
     public DeploymentInfo getDeploymentInfo() {
@@ -53,10 +52,11 @@ public class ProxyInfo {
     }
 
     public Class getInterface() {
-        return type;
+        return proxyInterface;
     }
 
     public RpcContainer getBeanContainer() {
         return beanContainer;
     }
+
 }

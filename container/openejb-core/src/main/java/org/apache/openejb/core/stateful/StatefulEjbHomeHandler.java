@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -27,8 +28,8 @@ import java.rmi.RemoteException;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+    public StatefulEjbHomeHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        super(container, pk, depID, interfaceType);
     }
 
     protected Object createProxy(ProxyInfo proxyInfo) {
@@ -49,8 +50,8 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        return new StatefulEjbObjectHandler(container, pk, depID);
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        return new StatefulEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
 }

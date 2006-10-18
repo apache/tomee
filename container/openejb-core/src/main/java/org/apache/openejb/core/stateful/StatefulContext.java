@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.Operations;
 import org.apache.openejb.core.ThreadContext;
@@ -112,8 +113,8 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
 
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        return new StatefulEjbObjectHandler(container, pk, depID);
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        return new StatefulEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
     public MessageContext getMessageContext() {

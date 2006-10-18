@@ -24,6 +24,8 @@ import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -90,7 +92,7 @@ public abstract class CoreContext implements java.io.Serializable {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
 
-        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_OBJECT);
         Object newProxy = null;
         try {
             Class[] interfaces = new Class[]{di.getRemoteInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
@@ -105,7 +107,7 @@ public abstract class CoreContext implements java.io.Serializable {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
 
-        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_LOCAL);
         handler.setLocal(true);
         Object newProxy = null;
         try {
@@ -120,20 +122,25 @@ public abstract class CoreContext implements java.io.Serializable {
     public Object getBusinessObject(Class interfce) {
         // TODO: This implementation isn't complete
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
 
-        EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID());
+
+        InterfaceType interfaceType;
+
 
         Class businessLocalInterface = di.getBusinessLocalInterface();
         if (businessLocalInterface != null && businessLocalInterface.getName().equals(interfce.getName())){
-            handler.setLocal(true);
-        } else if (di.getBusinessRemoteInterface() == null || !di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
+            interfaceType = InterfaceType.BUSINESS_LOCAL;
+        } else if (di.getBusinessRemoteInterface() == null && di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
+            interfaceType = InterfaceType.BUSINESS_REMOTE;
+        } else {
             // TODO: verify if this is the right exception
             throw new RuntimeException("Component has no such interface "+interfce.getName());
         }
 
         Object newProxy = null;
         try {
+            EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
             Class[] interfaces = new Class[]{interfce, org.apache.openejb.core.ivm.IntraVmProxy.class};
             newProxy = ProxyManager.newProxyInstance(interfaces, handler);
         } catch (IllegalAccessException iae) {
@@ -233,5 +240,5 @@ public abstract class CoreContext implements java.io.Serializable {
         throw new java.lang.UnsupportedOperationException();
     }
 
-    protected abstract EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID);
+    protected abstract EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType);
 }

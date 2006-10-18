@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -28,8 +29,8 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public EntityEjbHomeHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+    public EntityEjbHomeHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        super(container, pk, depID, interfaceType);
     }
 
     protected Object createProxy(ProxyInfo proxyInfo) {
@@ -93,8 +94,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        return new EntityEjbObjectHandler(container, pk, depID);
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        return new EntityEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
 }

@@ -17,6 +17,7 @@
 package org.apache.openejb.core.entity;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.Operations;
 import org.apache.openejb.core.ThreadContext;
@@ -128,8 +129,8 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
 
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        return new EntityEjbObjectHandler(container, pk, depID);
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        return new EntityEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
 }

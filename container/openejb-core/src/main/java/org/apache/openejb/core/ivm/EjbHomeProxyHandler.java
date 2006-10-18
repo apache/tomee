@@ -25,6 +25,7 @@ import javax.ejb.EJBException;
 
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.core.ThreadContext;
@@ -43,8 +44,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("remove", new Integer(4));
     }
 
-    public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+    public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        super(container, pk, depID, interfaceType);
     }
 
     public void invalidateReference() {
@@ -55,7 +56,15 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
         Object newProxy = null;
         try {
-            EjbObjectProxyHandler handler = newEjbObjectHandler(proxyInfo.getBeanContainer(), proxyInfo.getPrimaryKey(), proxyInfo.getDeploymentInfo().getDeploymentID());
+
+            InterfaceType interfaceType = InterfaceType.EJB_OBJECT;
+            switch(this.interfaceType){
+                case EJB_HOME: interfaceType = InterfaceType.EJB_OBJECT; break;
+                case EJB_LOCAL_HOME: interfaceType = InterfaceType.EJB_LOCAL; break;
+                case BUSINESS_REMOTE_HOME: interfaceType = InterfaceType.BUSINESS_REMOTE; break;
+                case BUSINESS_LOCAL_HOME: interfaceType = InterfaceType.BUSINESS_LOCAL; break;
+            }
+            EjbObjectProxyHandler handler = newEjbObjectHandler(proxyInfo.getBeanContainer(), proxyInfo.getPrimaryKey(), proxyInfo.getDeploymentInfo().getDeploymentID(), interfaceType);
             handler.setLocal(isLocal());
             handler.doIntraVmCopy = this.doIntraVmCopy;
             Class[] interfaces = new Class[]{proxyInfo.getInterface(), IntraVmProxy.class};
@@ -68,7 +77,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         return newProxy;
     }
 
-    protected abstract EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID);
+    protected abstract EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType);
 
     protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
@@ -204,7 +213,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(deploymentInfo, null, deploymentInfo.getHomeInterface(), container);
+        return new org.apache.openejb.ProxyInfo(deploymentInfo, null, deploymentInfo.getHomeInterface(), container, interfaceType);
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {

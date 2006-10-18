@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -27,8 +28,8 @@ import java.rmi.RemoteException;
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
-    public StatelessEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID, null);
+    public StatelessEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        super(container, pk, depID, null, interfaceType);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {

@@ -93,51 +93,67 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         String deploymentID = deployment.getDeploymentID().toString();
 
         //DMB: HACK as proxyInfo.getInterface() reports the wrong interface, will fix that next.
-        //Class interfce = proxyInfo.getInterface();
-        Class interfce = getProxyInterface(object);
+        Class interfce = proxyInfo.getInterface();
+//        Class interfce = getProxyInterface(object);
 
-        if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getHomeInterface())){
-            res.setResponseCode(JNDI_EJBHOME);
-            EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                    deployment.getRemoteInterface(),
-                    deployment.getPrimaryKeyClass(),
-                    deployment.getComponentType(),
-                    deploymentID,
-                    this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
-            res.setResult(metaData);
-        } else if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getLocalHomeInterface())){
-            res.setResponseCode(JNDI_NAMING_EXCEPTION);
-            res.setResult(new NamingException("Not remotable: '"+name+"'. EJBLocalHome interfaces are not remotable as per the EJB specification."));
-        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessRemoteInterface())){
-            res.setResponseCode(JNDI_BUSINESS_OBJECT);
-            EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                    deployment.getBusinessRemoteInterface(),
-                    deployment.getPrimaryKeyClass(),
-                    deployment.getComponentType(),
-                    deploymentID,
-                    this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
-            Object[] data = {metaData, proxyInfo.getPrimaryKey()};
-            res.setResult(data);
-        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessLocalInterface())){
-            String property = SystemInstance.get().getProperty("openejb.businessLocal", "remotable");
-            if (property.equalsIgnoreCase("remotable")) {
+        switch(proxyInfo.getInterfaceType()){
+            case EJB_HOME: {
+                res.setResponseCode(JNDI_EJBHOME);
+                EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
+                        deployment.getRemoteInterface(),
+                        deployment.getPrimaryKeyClass(),
+                        deployment.getComponentType(),
+                        deploymentID,
+                        this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                res.setResult(metaData);
+                break;
+            }
+            case EJB_LOCAL_HOME: {
+                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResult(new NamingException("Not remotable: '"+name+"'. EJBLocalHome interfaces are not remotable as per the EJB specification."));
+                break;
+            }
+            case BUSINESS_REMOTE: {
                 res.setResponseCode(JNDI_BUSINESS_OBJECT);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                        deployment.getBusinessLocalInterface(),
+                        deployment.getBusinessRemoteInterface(),
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType(),
                         deploymentID,
                         this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
                 Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                 res.setResult(data);
-            } else {
-                res.setResponseCode(JNDI_NAMING_EXCEPTION);
-                res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.businessLocal=remotable' in the server."));
+                break;
             }
-        } else {
-            res.setResponseCode(JNDI_NAMING_EXCEPTION);
-            res.setResult(new NamingException("Not remotable: '"+name+"'."));
+            case BUSINESS_LOCAL: {
+                String property = SystemInstance.get().getProperty("openejb.businessLocal", "remotable");
+                if (property.equalsIgnoreCase("remotable")) {
+                    res.setResponseCode(JNDI_BUSINESS_OBJECT);
+                    EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
+                            deployment.getBusinessLocalInterface(),
+                            deployment.getPrimaryKeyClass(),
+                            deployment.getComponentType(),
+                            deploymentID,
+                            this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                    Object[] data = {metaData, proxyInfo.getPrimaryKey()};
+                    res.setResult(data);
+                } else {
+                    res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                    res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.businessLocal=remotable' in the server."));
+                }
+                break;
+            }
+            default: {
+                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResult(new NamingException("Not remotable: '"+name+"'."));
+            }
         }
+//        if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getHomeInterface())){
+//        } else if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getLocalHomeInterface())){
+//        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessRemoteInterface())){
+//        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessLocalInterface())){
+//        } else {
+//        }
 
         res.writeExternal(out);
     }

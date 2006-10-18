@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 
@@ -38,8 +39,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getEJBHome", new Integer(5));
     }
 
-    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID, Class homeInterface) {
-        super(container, pk, depID);
+    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID, Class homeInterface, InterfaceType interfaceType) {
+        super(container, pk, depID, interfaceType);
     }
 
     public abstract Object getRegistryId();
@@ -137,7 +138,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(deploymentInfo, primaryKey, isLocal(), container);
+        return new org.apache.openejb.ProxyInfo(deploymentInfo, primaryKey, deploymentInfo.getInterface(interfaceType), container, interfaceType);
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {

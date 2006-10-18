@@ -32,6 +32,7 @@ import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
@@ -117,11 +118,26 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 getComponentType(ejbType), null);
     }
 
+
     private static Class loadClass(String name, ClassLoader classLoader) throws SystemException {
         try {
             return classLoader.loadClass(name);
         } catch (ClassNotFoundException e) {
             throw new SystemException(e);
+        }
+    }
+
+    public Class getInterface(InterfaceType interfaceType) {
+        switch(interfaceType){
+            case EJB_HOME: return getHomeInterface();
+            case EJB_OBJECT: return getRemoteInterface();
+            case EJB_LOCAL_HOME: return getLocalHomeInterface();
+            case EJB_LOCAL: return getLocalInterface();
+            case BUSINESS_LOCAL: return getBusinessLocalInterface();
+            case BUSINESS_REMOTE: return getBusinessRemoteInterface();
+            case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
+            case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
+            default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
         }
     }
 
@@ -466,15 +482,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         switch (getComponentType()) {
             case STATEFUL:
-                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_HOME);
                 break;
 
             case STATELESS:
-                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_HOME);
                 break;
             case CMP_ENTITY:
             case BMP_ENTITY:
-                handler = new EntityEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new EntityEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_HOME);
                 break;
         }
 
@@ -497,15 +513,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         switch (getComponentType()) {
             case STATEFUL:
-                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_LOCAL_HOME);
                 break;
 
             case STATELESS:
-                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_LOCAL_HOME);
                 break;
             case CMP_ENTITY:
             case BMP_ENTITY:
-                handler = new EntityEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new EntityEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.EJB_LOCAL_HOME);
                 break;
         }
         handler.setLocal(true);
@@ -527,11 +543,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         switch (getComponentType()) {
             case STATEFUL:
-                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.BUSINESS_LOCAL_HOME);
                 break;
 
             case STATELESS:
-                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.BUSINESS_LOCAL_HOME);
                 break;
         }
         handler.setLocal(true);
@@ -550,11 +566,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         switch (getComponentType()) {
             case STATEFUL:
-                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatefulEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.BUSINESS_REMOTE_HOME);
                 break;
 
             case STATELESS:
-                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID());
+                handler = new StatelessEjbHomeHandler((RpcContainer) container, null, getDeploymentID(), InterfaceType.BUSINESS_REMOTE_HOME);
                 break;
         }
         try {

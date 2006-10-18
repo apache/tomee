@@ -34,6 +34,7 @@ import java.util.Properties;
 import javax.ejb.EJBException;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
@@ -72,8 +73,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     */
     protected boolean doIntraVmCopy;
     private boolean isLocal;
+    protected final InterfaceType interfaceType;
 
-    public BaseEjbProxyHandler(RpcContainer container, Object pk, Object depID) {
+    public BaseEjbProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        this.interfaceType = interfaceType;
         this.container = container;
         this.primaryKey = pk;
         this.deploymentID = depID;

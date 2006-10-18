@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -28,8 +29,8 @@ import java.rmi.RemoteException;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatelessEjbHomeHandler(RpcContainer container, Object pk, Object depID) {
-        super(container, pk, depID);
+    public StatelessEjbHomeHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        super(container, pk, depID, interfaceType);
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
@@ -66,8 +67,8 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID) {
-        return new StatelessEjbObjectHandler(container, pk, depID);
+    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+        return new StatelessEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
 }
