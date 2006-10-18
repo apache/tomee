@@ -465,6 +465,7 @@
               localHomeInterface="org.apache.openejb.test.stateful.BasicStatefulLocalHome"
               localInterface="org.apache.openejb.test.stateful.BasicStatefulLocalObject"
               businessLocalInterface="org.apache.openejb.test.stateful.BasicStatefulBusinessLocal"
+              businessRemoteInterface="org.apache.openejb.test.stateful.BasicStatefulBusinessRemote"
               beanClass="org.apache.openejb.test.stateful.BasicStatefulPojoBean"
               classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">
@@ -594,6 +595,7 @@
               localHomeInterface="org.apache.openejb.test.stateless.BasicStatelessLocalHome"
               localInterface="org.apache.openejb.test.stateless.BasicStatelessLocalObject"
               businessLocalInterface="org.apache.openejb.test.stateless.BasicStatelessBusinessLocal"
+              businessRemoteInterface="org.apache.openejb.test.stateless.BasicStatelessBusinessRemote"
               beanClass="org.apache.openejb.test.stateless.BasicStatelessPojoBean"
               classLoader="#classLoader"
               transactionManager="#transactionManager" assembly="#assembly">

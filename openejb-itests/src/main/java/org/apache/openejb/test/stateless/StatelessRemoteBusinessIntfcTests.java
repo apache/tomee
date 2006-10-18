@@ -14,18 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.stateful;
+package org.apache.openejb.test.stateless;
 
 /**
  *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
-    private BasicStatefulBusinessLocal businessLocal;
+public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
+    private BasicStatelessBusinessRemote businessRemote;
 
-    public StatefulLocalBusinessIntfcTests(){
-        super("LocalBusinessIntfc.");
+    public StatelessRemoteBusinessIntfcTests(){
+        super("RemoteBusinessIntfc.");
     }
 
     protected void setUp() throws Exception{
@@ -36,16 +36,16 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
     // Test remote interface methods
     //
     public void test00_lookupBusinessInterface() throws Exception {
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeBusinessLocal");
+        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHomeBusinessRemote");
         assertNotNull(obj);
-        assertTrue("instance of BasicStatefulBusinessLocal", obj instanceof BasicStatefulBusinessLocal);
-        businessLocal = (BasicStatefulBusinessLocal) obj;
+        assertTrue("instance of BasicStatelessBusinessRemote", obj instanceof BasicStatelessBusinessRemote);
+        businessRemote = (BasicStatelessBusinessRemote) obj;
     }
 
     public void test01_businessMethod(){
         try{
             String expected = "Success";
-            String actual = businessLocal.businessMethod("sseccuS");
+            String actual = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -53,8 +53,9 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
 
         try{
             Integer expected = new Integer(42);
-            Object actual = businessLocal.echo(expected);
-            assertSame("pass by reference", expected, actual);
+            Object actual = businessRemote.echo(expected);
+            assertEquals(expected, actual);
+            assertNotSame("pass by value", expected, actual);
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
@@ -66,7 +67,7 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
      */
     public void test02_throwApplicationException(){
         try{
-            businessLocal.throwApplicationException();
+            businessRemote.throwApplicationException();
         } catch (org.apache.openejb.test.ApplicationException e){
             //Good.  This is the correct behaviour
             return;
@@ -83,7 +84,7 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
     public void test03_invokeAfterApplicationException(){
         try{
             String expected = "Success";
-            String actual   = businessLocal.businessMethod("sseccuS");
+            String actual   = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
         } catch (Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -93,7 +94,7 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
     // TODO: check which exception should be thrown
     public void _test04_throwSystemException(){
         try{
-            businessLocal.throwSystemException_NullPointer();
+            businessRemote.throwSystemException_NullPointer();
         } catch (Exception e){
             //Good, so far.
             Throwable n = e.getCause();
@@ -115,7 +116,7 @@ public class StatefulLocalBusinessIntfcTests extends StatefulTestClient {
     //TODO: implement
     public void TODO_test05_invokeAfterSystemException(){
 //        try{
-//        businessLocal.businessMethod("This refernce is invalid");
+//        businessRemote.businessMethod("This refernce is invalid");
 //        fail("A java.rmi.NoSuchObjectException should have been thrown.");
 //        } catch (java.rmi.NoSuchObjectException e){
 //            // Good.

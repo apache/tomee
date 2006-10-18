@@ -53,6 +53,7 @@ public class JNDIResponse implements Response {
         responseCode = in.readByte();
 
         switch (responseCode) {
+            case JNDI_BUSINESS_OBJECT:
             case JNDI_OK:
             case JNDI_NAMING_EXCEPTION:
             case JNDI_RUNTIME_EXCEPTION:
@@ -75,6 +76,7 @@ public class JNDIResponse implements Response {
         out.writeByte((byte) responseCode);
 
         switch (responseCode) {
+            case JNDI_BUSINESS_OBJECT:
             case JNDI_OK:
             case JNDI_NAMING_EXCEPTION:
             case JNDI_RUNTIME_EXCEPTION:

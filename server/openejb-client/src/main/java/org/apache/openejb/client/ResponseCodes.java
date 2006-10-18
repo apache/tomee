@@ -38,5 +38,6 @@ public interface ResponseCodes {
     public static final int JNDI_RUNTIME_EXCEPTION = 18;
     public static final int JNDI_ERROR = 19;
     public static final int EJB_OK_FOUND_ENUMERATION = 20;
+    public static final int JNDI_BUSINESS_OBJECT = 21;
 }
 

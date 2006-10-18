@@ -50,6 +50,14 @@ public class StatelessLocalBusinessIntfcTests extends StatelessTestClient {
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
+
+        try{
+            Integer expected = new Integer(42);
+            Object actual = businessLocal.echo(expected);
+            assertSame("pass by reference", expected, actual);
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
     }
 
     /**

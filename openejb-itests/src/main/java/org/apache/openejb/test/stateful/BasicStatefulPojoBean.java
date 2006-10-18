@@ -32,7 +32,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
  */
-public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal {
+public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicStatefulBusinessRemote {
 
     /**
      * Maps to BasicStatelessObject.businessMethod
@@ -45,6 +45,9 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal {
         return b.reverse().toString();
     }
 
+    public Object echo(Object object) {
+        return object;
+    }
 
     /**
      * Throws an ApplicationException when invoked

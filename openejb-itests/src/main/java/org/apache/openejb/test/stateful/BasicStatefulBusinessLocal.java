@@ -35,6 +35,8 @@ public interface BasicStatefulBusinessLocal {
      */
     public String businessMethod(String text);
 
+    public Object echo(Object object);
+
     /**
      * Throws an ApplicationException when invoked
      *

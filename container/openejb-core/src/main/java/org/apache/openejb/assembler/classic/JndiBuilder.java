@@ -149,7 +149,7 @@ public class JndiBuilder {
         try {
             Class businessRemoteInterface = deployment.getBusinessRemoteInterface();
             if (businessRemoteInterface != null) {
-                String name = strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                String name = strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 DeploymentInfo.BusinessRemoteHome businessRemoteHome = deployment.getBusinessRemoteHome();
                 context.bind("openejb/ejb/" + name, new BusinessRemoteReference(businessRemoteHome));
             }

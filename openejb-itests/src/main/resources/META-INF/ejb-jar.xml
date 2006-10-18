@@ -263,6 +263,7 @@
             <local>org.apache.openejb.test.stateful.BasicStatefulLocalObject</local>
             <ejb-class>org.apache.openejb.test.stateful.BasicStatefulPojoBean</ejb-class>
             <business-local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</business-local>
+            <business-remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</business-remote>
             <session-type>Stateful</session-type>
             <transaction-type>Container</transaction-type>
             <security-role-ref>
@@ -507,6 +508,7 @@
             <local-home>org.apache.openejb.test.stateless.BasicStatelessLocalHome</local-home>
             <local>org.apache.openejb.test.stateless.BasicStatelessLocalObject</local>
             <business-local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</business-local>
+            <business-remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</business-remote>
             <ejb-class>org.apache.openejb.test.stateless.BasicStatelessPojoBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>

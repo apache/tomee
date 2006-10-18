@@ -24,7 +24,7 @@ import javax.ejb.EJBException;
 import java.util.Properties;
 import java.rmi.RemoteException;
 
-public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal{
+public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal, BasicStatelessBusinessRemote {
 
     /**
      * Maps to BasicStatelessObject.businessMethod
@@ -37,6 +37,9 @@ public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal{
         return b.reverse().toString();
     }
 
+    public Object echo(Object object) {
+        return object;
+    }
 
     /**
      * Throws an ApplicationException when invoked

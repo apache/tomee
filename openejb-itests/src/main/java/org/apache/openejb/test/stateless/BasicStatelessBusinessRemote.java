@@ -26,7 +26,7 @@ import java.util.Properties;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public interface BasicStatelessBusinessLocal {
+public interface BasicStatelessBusinessRemote {
 
     /**
      * Reverses the string passed in then returns it

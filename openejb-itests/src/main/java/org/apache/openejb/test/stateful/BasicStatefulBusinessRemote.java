@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.stateless;
+package org.apache.openejb.test.stateful;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
@@ -26,7 +26,7 @@ import java.util.Properties;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public interface BasicStatelessBusinessLocal {
+public interface BasicStatefulBusinessRemote {
 
     /**
      * Reverses the string passed in then returns it

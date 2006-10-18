@@ -145,6 +145,15 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     }
 
+    private Object createBusinessObject(Object result) {
+        Object[] data = (Object[]) result;
+        EJBMetaDataImpl ejb = (EJBMetaDataImpl) data[0];
+        Object primaryKey = data[1];
+
+        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        return handler.createEJBObjectProxy();
+    }
+
     public Object lookup(String name) throws NamingException {
 
         if (name == null) throw new InvalidNameException("The name cannot be null");
@@ -167,6 +176,9 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             case JNDI_EJBHOME:
 
                 return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
+
+            case JNDI_BUSINESS_OBJECT:
+                return createBusinessObject(res.getResult());
 
             case JNDI_OK:
                 return res.getResult();

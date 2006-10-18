@@ -24,6 +24,12 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBMetaDataImpl;
@@ -35,11 +41,11 @@ import org.apache.openejb.client.ResponseCodes;
 class JndiRequestHandler implements ResponseCodes, RequestMethods {
     private final EjbDaemon daemon;
 
-    javax.naming.Context clientJndi;
+    javax.naming.Context ejbJndiTree;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        clientJndi = (javax.naming.Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
+        ejbJndiTree = (javax.naming.Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
         this.daemon = daemon;
     }
 
@@ -51,34 +57,99 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         String name = req.getRequestString();
         if (name.startsWith("/")) name = name.substring(1);
 
-        DeploymentInfo deployment = daemon.deploymentIndex.getDeployment(name);
+        Object object = null;
+        try {
+            object = ejbJndiTree.lookup(name);
 
-        if (deployment == null) {
-            try {
-                Object obj = clientJndi.lookup(name);
-
-                if (obj instanceof Context) {
-                    res.setResponseCode(JNDI_CONTEXT);
-                } else
-                    res.setResponseCode(JNDI_NOT_FOUND);
-
-            } catch (NameNotFoundException e) {
-                res.setResponseCode(JNDI_NOT_FOUND);
-            } catch (NamingException e) {
-                res.setResponseCode(JNDI_NAMING_EXCEPTION);
-                res.setResult(e);
+            if (object instanceof Context) {
+                res.setResponseCode(JNDI_CONTEXT);
+                res.writeExternal(out);
+                return;
+            } else if (object == null) {
+                throw new NullPointerException("lookup of '"+name+"' returned null");
             }
-        } else {
+        } catch (NameNotFoundException e) {
+            res.setResponseCode(JNDI_NOT_FOUND);
+            res.writeExternal(out);
+            return;
+        } catch (NamingException e) {
+            res.setResponseCode(JNDI_NAMING_EXCEPTION);
+            res.setResult(e);
+            res.writeExternal(out);
+            return;
+        }
+
+
+        BaseEjbProxyHandler handler = null;
+        try {
+            handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
+        } catch (ClassCastException e) {
+            res.setResponseCode(JNDI_NAMING_EXCEPTION);
+            res.setResult(new NamingException("Expected an ejb proxy, found unknown object: type="+object.getClass().getName() + ", toString="+object));
+        }
+
+        ProxyInfo proxyInfo = handler.getProxyInfo();
+        DeploymentInfo deployment = proxyInfo.getDeploymentInfo();
+        String deploymentID = deployment.getDeploymentID().toString();
+
+        //DMB: HACK as proxyInfo.getInterface() reports the wrong interface, will fix that next.
+        //Class interfce = proxyInfo.getInterface();
+        Class interfce = getProxyInterface(object);
+
+        if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getHomeInterface())){
             res.setResponseCode(JNDI_EJBHOME);
             EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                     deployment.getRemoteInterface(),
                     deployment.getPrimaryKeyClass(),
                     deployment.getComponentType(),
-                    deployment.getDeploymentID().toString(),
-                    this.daemon.deploymentIndex.getDeploymentIndex(name));
+                    deploymentID,
+                    this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
             res.setResult(metaData);
+        } else if (handler instanceof EjbHomeProxyHandler && interfce.isAssignableFrom(deployment.getLocalHomeInterface())){
+            res.setResponseCode(JNDI_NAMING_EXCEPTION);
+            res.setResult(new NamingException("Not remotable: '"+name+"'. EJBLocalHome interfaces are not remotable as per the EJB specification."));
+        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessRemoteInterface())){
+            res.setResponseCode(JNDI_BUSINESS_OBJECT);
+            EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
+                    deployment.getBusinessRemoteInterface(),
+                    deployment.getPrimaryKeyClass(),
+                    deployment.getComponentType(),
+                    deploymentID,
+                    this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+            Object[] data = {metaData, proxyInfo.getPrimaryKey()};
+            res.setResult(data);
+        } else if (handler instanceof EjbObjectProxyHandler && interfce.isAssignableFrom(deployment.getBusinessLocalInterface())){
+            String property = SystemInstance.get().getProperty("openejb.businessLocal", "remotable");
+            if (property.equalsIgnoreCase("remotable")) {
+                res.setResponseCode(JNDI_BUSINESS_OBJECT);
+                EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
+                        deployment.getBusinessLocalInterface(),
+                        deployment.getPrimaryKeyClass(),
+                        deployment.getComponentType(),
+                        deploymentID,
+                        this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                Object[] data = {metaData, proxyInfo.getPrimaryKey()};
+                res.setResult(data);
+            } else {
+                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.businessLocal=remotable' in the server."));
+            }
+        } else {
+            res.setResponseCode(JNDI_NAMING_EXCEPTION);
+            res.setResult(new NamingException("Not remotable: '"+name+"'."));
         }
 
         res.writeExternal(out);
+    }
+
+    private Class getProxyInterface(Object proxy) {
+        Class[] interfaces = proxy.getClass().getInterfaces();
+        for (int i = 0; i < interfaces.length; i++) {
+            Class clazz = interfaces[i];
+            if (!IntraVmProxy.class.isAssignableFrom(clazz)){
+                return clazz;
+            }
+        }
+        throw new IllegalStateException("Invalid Proxy.  Cannot determine interface.");
     }
 }

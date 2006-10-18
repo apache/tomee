@@ -30,12 +30,14 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         super(name);
     }
 
+
     public static junit.framework.Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTest(new StatelessJndiTests());
         suite.addTest(new StatelessPojoRemoteJndiTests());
         suite.addTest(new StatelessHomeIntfcTests());
         suite.addTest(new StatelessPojoHomeIntfcTests());
+        suite.addTest(new StatelessRemoteBusinessIntfcTests());
         suite.addTest(new StatelessEjbHomeTests() );
         suite.addTest(new StatelessEjbObjectTests());    
         suite.addTest(new StatelessRemoteIntfcTests());
