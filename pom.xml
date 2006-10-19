@@ -27,9 +27,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.geronimo.genesis.config</groupId>
-    <artifactId>project-config</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>3</version>
   </parent>
 
   <groupId>org.apache.openejb</groupId>
@@ -97,7 +97,7 @@
     <!--
        - Used in openejb-core pom.xml 
       -->
-    <xbeanVersion>2.7-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>2.7</xbeanVersion>
     <!--
        - Remove the property once it's been figured out how to instruct maven-assembly-plugin
        - to copy SNAPSHOTs as SNAPSHOTs not 20061004.144417-3.
@@ -107,7 +107,7 @@
        -
        - Used in maven-jar-plugin in openejb-core pom.xml and below to declare xbean-finder dependency
       -->
-    <removePropertyFromCorePomXbeanVersion>2.6</removePropertyFromCorePomXbeanVersion>
+    <removePropertyFromCorePomXbeanVersion>2.7</removePropertyFromCorePomXbeanVersion>
   </properties>
 
   <build>
@@ -119,6 +119,33 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.geronimo.genesis.plugins</groupId>
+        <artifactId>tools-maven-plugin</artifactId>
+
+        <!-- Tools includes custom packagings, install as extension to pick them up -->
+        <extensions>true</extensions>
+
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>require-java-version</goal>
+            </goals>
+            <configuration>
+              <version>1.5+</version>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>install-legal-files</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-legal-files</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -150,6 +177,17 @@
       <name>Codehaus Repository</name>
       <url>http://dist.codehaus.org</url>
       <layout>legacy</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache-m2-ibiblio-rsync-repository</id>
+      <name>Apache M2 iBiblio rsync Repository</name>
+      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -187,6 +225,17 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>apache-m2-ibiblio-rsync-repository</id>
+      <name>Apache M2 iBiblio rsync Repository</name>
+      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
