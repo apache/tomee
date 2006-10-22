@@ -78,7 +78,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private boolean isBeanManagedTransaction;
     private boolean isReentrant;
     private Container container;
-    private URL archiveURL;
     private EJBHome ejbHomeRef;
     private EJBLocalHome ejbLocalHomeRef;
     private BusinessLocalHome businessLocalHomeRef;
@@ -120,8 +119,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class localHomeInterface,
                               Class localInterface,
                               Class businessLocal, Class businessRemote, Class pkClass,
-                              BeanType componentType,
-                              URL archiveURL) throws SystemException {
+                              BeanType componentType
+    ) throws SystemException {
 
         this.context = context;
         this.pkClass = pkClass;
@@ -137,7 +136,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.pkClass = pkClass;
 
         this.componentType = componentType;
-        this.archiveURL = archiveURL;
 
 //        if (businessLocal != null && localHomeInterface == null){
 //            this.localHomeInterface = BusinessLocalHome.class;

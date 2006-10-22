@@ -19,14 +19,11 @@ package org.apache.openejb.assembler.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.io.File;
-import java.io.IOException;
 import javax.naming.Context;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
@@ -202,8 +199,8 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 loadClass(businessLocalInterface, classLoader),
                 loadClass(businessRemoteInterface, classLoader),
                 loadClass(getPkClass(), classLoader),
-                getComponentType(),
-                null);
+                getComponentType()
+        );
         //deploymentInfo.setJarPath(getJarPath());
         if (assembly != null) {
             applySecurityRoleReference(deploymentInfo);

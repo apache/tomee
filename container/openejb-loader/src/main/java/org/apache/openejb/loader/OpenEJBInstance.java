@@ -16,28 +16,24 @@
  */
 package org.apache.openejb.loader;
 
-import org.apache.openejb.loader.ClassPath;
-import org.apache.openejb.loader.SystemInstance;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.io.File;
 
 public class OpenEJBInstance {
-    private final Class openejb;
     private final Method init;
     private final Method isInitialized;
 
     public OpenEJBInstance() throws Exception {
-        this.openejb = loadOpenEJBClass();
-        this.init = openejb.getMethod("init", new Class[]{Properties.class});
-        this.isInitialized = openejb.getMethod("isInitialized", new Class[]{});
+        Class openejb = loadOpenEJBClass();
+        this.init = openejb.getMethod("init", Properties.class);
+        this.isInitialized = openejb.getMethod("isInitialized");
     }
 
     public void init(Properties props) throws Exception {
         try {
-            init.invoke(null, new Object[]{props});
+            init.invoke(null, props);
         } catch (InvocationTargetException e) {
             throw (Exception) e.getCause();
         } catch (Exception e) {
@@ -47,7 +43,7 @@ public class OpenEJBInstance {
 
     public boolean isInitialized() {
         try {
-            Boolean b = (Boolean) isInitialized.invoke(null, new Object[]{});
+            Boolean b = (Boolean) isInitialized.invoke(null);
             return b.booleanValue();
         } catch (InvocationTargetException e) {
             throw new RuntimeException("OpenEJB.isInitialized: ", e.getCause());
@@ -127,13 +123,4 @@ public class OpenEJBInstance {
         System.err.println("---------------------------------------------------");
         throw new Exception(m1 + " " + m2 + " " + m3);
     }
-
-    private void handleError(String m1, String m2) throws Exception {
-        System.err.println("--[PLEASE FIX]-------------------------------------");
-        System.err.println(m1);
-        System.err.println(m2);
-        System.err.println("---------------------------------------------------");
-        throw new Exception(m1 + " " + m2);
-    }
-
 }

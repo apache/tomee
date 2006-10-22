@@ -40,10 +40,6 @@ public class HttpRequestImpl implements HttpRequest {
     public static final String NAME = "name";
 
     /**
-     * 5.1   Request-Line
-     */
-    private String line;
-    /**
      * 5.1.1    Method
      */
     private int method;
@@ -192,6 +188,7 @@ public class HttpRequestImpl implements HttpRequest {
      * @throws java.io.IOException if an exception is thrown
      */
     private void readRequestLine(DataInput in) throws IOException {
+        String line;
         try {
             line = in.readLine();
 //            System.out.println(line);

@@ -26,11 +26,8 @@ import org.apache.openejb.client.RequestMethods;
 import org.apache.openejb.client.ResponseCodes;
 
 class AuthRequestHandler implements ResponseCodes, RequestMethods {
-    private final EjbDaemon daemon;
 
     AuthRequestHandler(EjbDaemon daemon) {
-        this.daemon = daemon;
-
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {

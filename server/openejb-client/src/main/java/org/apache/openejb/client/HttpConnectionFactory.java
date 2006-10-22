@@ -38,11 +38,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
     public static class HttpConnection implements Connection {
 
-        private final ServerMetaData server;
         private HttpURLConnection httpURLConnection;
 
         public HttpConnection(ServerMetaData server) throws IOException {
-            this.server = server;
             String host = "localhost";
 //            String host = server.getLocation().getHost();
             // TODO: Use the URI for making the URL

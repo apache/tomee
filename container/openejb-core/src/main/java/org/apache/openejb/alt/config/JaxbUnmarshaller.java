@@ -37,13 +37,11 @@ import java.util.jar.JarFile;
 
 public class JaxbUnmarshaller {
 
-    private final Class clazz;
     private final File xmlFile;
 
     private javax.xml.bind.Unmarshaller unmarshaller;
 
     public JaxbUnmarshaller(Class type, String xmlFileName) throws OpenEJBException {
-        this.clazz = type;
         this.xmlFile = new File(xmlFileName);
         try {
             JAXBContext ctx = JAXBContext.newInstance(type);

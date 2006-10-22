@@ -40,7 +40,6 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     private final Openejb config;
     private ClassLoader classLoader;
     private String jarLocation;
-    private OpenejbJar openejbJar;
 
     public AutoConfigAndDeploy(Openejb config) {
         this.config = config;
@@ -53,6 +52,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         this.jarLocation = jarLocation;
         this.classLoader = classLoader;
 
+        OpenejbJar openejbJar;
         if (ejbJarUtils.getOpenejbJar() != null) {
             openejbJar = ejbJarUtils.getOpenejbJar();
         } else {

@@ -40,8 +40,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer, Resp
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
 
-    private Properties props;
-
     ClientObjectFactory clientObjectFactory;
     DeploymentIndex deploymentIndex;
     EjbRequestHandler ejbHandler;
@@ -63,8 +61,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer, Resp
     }
 
     public void init(Properties props) throws Exception {
-        this.props = props;
-
         // TODO: DMB: Naughty naugty, static badness
         ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         deploymentIndex = new DeploymentIndex(containerSystem.deployments());

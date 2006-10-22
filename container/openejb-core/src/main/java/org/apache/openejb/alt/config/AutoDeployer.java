@@ -30,16 +30,12 @@ import org.apache.openejb.util.SafeToolkit;
 
 public class AutoDeployer implements DynamicDeployer {
 
-    private Openejb config;
-    private String configFile;
     private Container[] containers;
     private Connector[] resources;
     private ClassLoader classLoader;
     private String jarLocation;
 
     public AutoDeployer(Openejb config) {
-        this.config = config;
-
         /* Load container list */
         this.containers = config.getContainer();
 
@@ -112,8 +108,7 @@ public class AutoDeployer implements DynamicDeployer {
         }
     }
 
-    private boolean hasFinderMethods(Class bean)
-            throws OpenEJBException {
+    private boolean hasFinderMethods(Class bean) throws OpenEJBException {
 
         Method[] methods = bean.getMethods();
 
@@ -131,9 +126,6 @@ public class AutoDeployer implements DynamicDeployer {
     }
 
     private String autoAssignContainerId(Bean bean) throws OpenEJBException {
-        String answer = null;
-        boolean replied = false;
-
         Container[] cs = getUsableContainers(bean);
 
         if (cs.length == 0) {

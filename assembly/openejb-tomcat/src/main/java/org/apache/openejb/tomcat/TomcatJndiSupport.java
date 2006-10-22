@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Properties;
 
 public class TomcatJndiSupport extends RpcContainerWrapper {
-    private final Class contextBindings;
     private final Method bindContext;
     private final Method bindThread;
     private final Method unbindThread;
@@ -36,11 +35,12 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
     public TomcatJndiSupport(RpcContainer container) throws OpenEJBException {
         super(container);
         try {
+            ;
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            contextBindings = classLoader.loadClass("org.apache.naming.ContextBindings");
-            bindContext = contextBindings.getMethod("bindContext", new Class[]{Object.class, Context.class, Object.class});
-            bindThread = contextBindings.getMethod("bindThread", new Class[]{Object.class, Object.class});
-            unbindThread = contextBindings.getMethod("unbindThread", new Class[]{Object.class, Object.class});
+            Class contextBindings = classLoader.loadClass("org.apache.naming.ContextBindings");
+            bindContext = contextBindings.getMethod("bindContext", Object.class, Context.class, Object.class);
+            bindThread = contextBindings.getMethod("bindThread", Object.class, Object.class);
+            unbindThread = contextBindings.getMethod("unbindThread", Object.class, Object.class);
         } catch (ClassNotFoundException e) {
             throw new OpenEJBException("Unable to setup Tomcat JNDI support.  Support requires the org.apache.naming.ContextBindings class to be available.");
         } catch (NoSuchMethodException e) {
@@ -85,7 +85,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void bindContext(Object name, Context context) {
         try {
-            bindContext.invoke(null, new Object[]{name, context, name});
+            bindContext.invoke(null, name, context, name);
         } catch (Throwable e) {
             throw convertToRuntimeException(e, "bindContext");
         }
@@ -93,7 +93,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void bindThread(Object name) {
         try {
-            bindThread.invoke(null, new Object[]{name, name});
+            bindThread.invoke(null, name, name);
         } catch (Throwable e) {
             throw convertToRuntimeException(e, "bindThread");
         }
@@ -101,7 +101,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
 
     public void unbindThread(Object name) {
         try {
-            unbindThread.invoke(null, new Object[]{name, name});
+            unbindThread.invoke(null, name, name);
         } catch (Throwable e) {
             throw convertToRuntimeException(e, "unbindThread");
         }

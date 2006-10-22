@@ -18,15 +18,12 @@ package org.apache.openejb;
 
 public class OpenEJBException extends Exception {
 
-    private String message = "error.unknown";
-
     public OpenEJBException() {
         super();
     }
 
     public OpenEJBException(String message) {
         super(message);
-        this.message = message;
     }
 
     public OpenEJBException(Throwable rootCause) {
@@ -35,7 +32,6 @@ public class OpenEJBException extends Exception {
 
     public OpenEJBException(String message, Throwable rootCause) {
         super(message, rootCause);
-        this.message = message;
     }
 
     public String getMessage() {

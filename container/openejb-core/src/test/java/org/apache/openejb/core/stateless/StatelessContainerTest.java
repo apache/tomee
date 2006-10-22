@@ -171,15 +171,12 @@ public class StatelessContainerTest extends TestCase {
 
         private static Stack<Lifecycle> lifecycle = new Stack();
 
-        private SessionContext sessionContext;
-
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
 
         public void setSessionContext(SessionContext sessionContext) {
             lifecycle.push(Lifecycle.INJECTION);
-            this.sessionContext = sessionContext;
         }
 
         public Stack<Lifecycle> getLifecycle() {

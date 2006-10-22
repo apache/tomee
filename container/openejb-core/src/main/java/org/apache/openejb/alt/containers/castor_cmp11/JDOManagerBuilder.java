@@ -54,13 +54,11 @@ public class JDOManagerBuilder {
 //
     private final String engine;
     private final String transactionManagerJndiName;
-    private final javax.transaction.TransactionManager transactionManager;
     private final List<Mapping> mappings = new ArrayList<Mapping>();
 
-    public JDOManagerBuilder(String engine, String transactionManagerJndiName, javax.transaction.TransactionManager transactionManager) {
+    public JDOManagerBuilder(String engine, String transactionManagerJndiName) {
         this.engine = engine;
         this.transactionManagerJndiName = transactionManagerJndiName;
-        this.transactionManager = transactionManager;
     }
 
     public void addMapping(URL location){

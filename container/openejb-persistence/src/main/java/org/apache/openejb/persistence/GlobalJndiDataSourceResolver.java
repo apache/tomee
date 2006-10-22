@@ -26,14 +26,11 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  */
 public class GlobalJndiDataSourceResolver implements DataSourceResolver {
-    private final Properties jndiProperties;
     private final InitialContext initialContext;
 
     public GlobalJndiDataSourceResolver(Properties jndiProperties) {
-        this.jndiProperties = jndiProperties;
-
         try {
-            initialContext = new InitialContext(this.jndiProperties);
+            initialContext = new InitialContext(jndiProperties);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
         }

@@ -27,7 +27,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Map;
 
@@ -48,16 +47,11 @@ public class ServiceManager {
 
     private static ServiceManager manager;
 
-    private static HashMap propsByFile = new HashMap();
-    private static HashMap fileByProps = new HashMap();
-
     private static ServerService[] daemons;
 
     private boolean stop = false;
-    private final ResourceFinder resourceFinder;
 
     private ServiceManager() {
-        resourceFinder = new ResourceFinder("META-INF/");
     }
 
     public static ServiceManager getManager() {
@@ -222,7 +216,7 @@ public class ServiceManager {
 
     }
 
-    private boolean isEnabled(Properties props) throws ServiceException {
+    private boolean isEnabled(Properties props) {
         // if it should be started, continue
         String disabled = props.getProperty("disabled", "");
 
