@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
 
 public class Command {
 
-    protected static final HashMap commands = new HashMap();
+    protected static final HashMap<String,Object> commands = new HashMap();
 
     static
 

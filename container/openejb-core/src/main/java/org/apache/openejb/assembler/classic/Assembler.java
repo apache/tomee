@@ -245,25 +245,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
         }
 
-        ArrayList list = new ArrayList();
+        List<ContainerInfo> list = new ArrayList();
         if (containerSystemInfo.entityContainers != null) list.addAll(Arrays.asList(containerSystemInfo.entityContainers));
         if (containerSystemInfo.statefulContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statefulContainers));
         if (containerSystemInfo.statelessContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statelessContainers));
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            ContainerInfo container = (ContainerInfo) iterator.next();
-            for (int z = 0; z < container.ejbeans.length; z++) {
-                CoreDeploymentInfo deployment = (org.apache.openejb.core.CoreDeploymentInfo) containerSystem.getDeploymentInfo(container.ejbeans[z].ejbDeploymentId);
-                applySecurityRoleReference(deployment, container.ejbeans[z], roleMapping);
+
+        for (ContainerInfo container : list) {
+            for (EnterpriseBeanInfo beanInfo : container.ejbeans) {
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId);
+                applySecurityRoleReference(deployment, beanInfo, roleMapping);
             }
         }
         /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
         if (configInfo.facilities.remoteJndiContexts != null) {
-            for (int i = 0; i < configInfo.facilities.remoteJndiContexts.length; i++) {
-                javax.naming.InitialContext cntx = assembleRemoteJndiContext(configInfo.facilities.remoteJndiContexts[i]);
-                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + configInfo.facilities.remoteJndiContexts[i].jndiContextId, cntx);
+            for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
+                javax.naming.InitialContext cntx = assembleRemoteJndiContext(contextInfo);
+                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.jndiContextId, cntx);
             }
-
         }
 
         return containerSystem;

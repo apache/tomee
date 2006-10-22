@@ -100,34 +100,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private HashMap securityRoleReferenceMap = new HashMap();
     private String jarPath;
 
-    public CoreDeploymentInfo(DeploymentContext context,
-                              String beanClass, String homeInterface,
-                              String remoteInterface,
-                              String localHomeInterface,
-                              String localInterface,
-                              String businessLocal, String businessRemote, String pkClass,
-                              String ejbType,
-                              ClassLoader classLoader) throws SystemException {
-        this(context,
-                loadClass(beanClass, classLoader), loadClass(homeInterface, classLoader),
-                loadClass(remoteInterface, classLoader),
-                loadClass(localHomeInterface, classLoader),
-                loadClass(localInterface, classLoader),
-                loadClass(businessLocal, classLoader),
-                loadClass(businessRemote, classLoader),
-                loadClass(pkClass, classLoader),
-                getComponentType(ejbType), null);
-    }
-
-
-    private static Class loadClass(String name, ClassLoader classLoader) throws SystemException {
-        try {
-            return classLoader.loadClass(name);
-        } catch (ClassNotFoundException e) {
-            throw new SystemException(e);
-        }
-    }
-
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
             case EJB_HOME: return getHomeInterface();
@@ -139,20 +111,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
             case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
             default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
-        }
-    }
-
-    private static BeanType getComponentType(String name) throws SystemException {
-        if ("cmp".equalsIgnoreCase(name)) {
-            return BeanType.CMP_ENTITY;
-        } else if ("bmp".equalsIgnoreCase(name)) {
-            return BeanType.BMP_ENTITY;
-        } else if ("stateful".equalsIgnoreCase(name)) {
-            return BeanType.STATEFUL;
-        } else if ("stateless".equalsIgnoreCase(name)) {
-            return BeanType.STATELESS;
-        } else {
-            throw new SystemException("Unknown component type: " + name);
         }
     }
 

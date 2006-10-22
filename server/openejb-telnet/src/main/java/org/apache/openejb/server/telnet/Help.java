@@ -30,14 +30,10 @@ public class Help extends Command {
     }
 
     public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
-        HashMap hash = Command.commands;
-        Set set = hash.keySet();
-        Iterator cmds = set.iterator();
-        while (cmds.hasNext()) {
-            out.print(" " + cmds.next());
+        for (String command : Command.commands.keySet()) {
+            out.print(" " + command);
             out.println("");
         }
-
     }
 
 }

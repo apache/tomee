@@ -31,7 +31,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static final Method HASHCODE = getMethod(Object.class, "hashCode", null);
     protected static final Method TOSTRING = getMethod(Object.class, "toString", null);
 
-    protected static final Hashtable liveHandleRegistry = new Hashtable();
+    protected static final Hashtable<Object,HashSet> liveHandleRegistry = new Hashtable();
 
     protected transient boolean inProxyMap = false;
 
@@ -78,14 +78,6 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected abstract Object _invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
-    public static void print(String s) {
-
-    }
-
-    public static void println(String s) {
-
-    }
-
     protected EJBResponse request(EJBRequest req) throws Exception {
         return (EJBResponse) Client.request(req, new EJBResponse(), server);
     }
@@ -101,13 +93,11 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected static void invalidateAllHandlers(Object key) {
 
-        HashSet set = (HashSet) liveHandleRegistry.remove(key);
+        HashSet<EJBInvocationHandler> set = liveHandleRegistry.remove(key);
         if (set == null) return;
 
         synchronized (set) {
-            Iterator handlers = set.iterator();
-            while (handlers.hasNext()) {
-                EJBInvocationHandler handler = (EJBInvocationHandler) handlers.next();
+            for (EJBInvocationHandler handler : set) {
                 handler.invalidateReference();
             }
             set.clear();

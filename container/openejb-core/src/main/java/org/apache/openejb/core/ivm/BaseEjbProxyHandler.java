@@ -309,13 +309,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     protected static void invalidateAllHandlers(Object key) {
-        HashSet set = (HashSet) liveHandleRegistry.remove(key);
+        HashSet<BaseEjbProxyHandler> set = (HashSet) liveHandleRegistry.remove(key);
         if (set == null) return;
         synchronized (set) {
-            Iterator handlers = set.iterator();
-            while (handlers.hasNext()) {
-                BaseEjbProxyHandler aHandler = (BaseEjbProxyHandler) handlers.next();
-                aHandler.invalidateReference();
+            for (BaseEjbProxyHandler handler : set) {
+                handler.invalidateReference();
             }
         }
     }

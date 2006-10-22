@@ -44,7 +44,7 @@ public class HttpResponseImpl implements HttpResponse {
     private int code = 200;
     
     /** Response headers */
-    private HashMap headers;
+    private HashMap<String,String> headers;
     
     /** Response body */
     private byte[] body = new byte[0];
@@ -85,7 +85,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @return the value of the header
      */    
     public String getHeader(String name){
-        return (String) headers.get(name);
+        return headers.get(name);
     }
 
     /** Gets the PrintWriter to send data to the browser
@@ -294,10 +294,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */    
     private void writeHeaders(DataOutput out) throws IOException{
-        Iterator it =  headers.entrySet().iterator();
-
-        while (it.hasNext()){
-            Map.Entry entry = (Map.Entry)it.next();
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
             out.writeBytes(""+entry.getKey());
             out.writeBytes(CSP);
             out.writeBytes(""+entry.getValue());
