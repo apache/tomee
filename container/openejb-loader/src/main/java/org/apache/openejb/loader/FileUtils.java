@@ -30,7 +30,7 @@ public class FileUtils {
     private File home;
 
     private FileUtils(String homeDir, String defaultDir) {
-        this(homeDir, defaultDir, System.getProperties());
+        this(homeDir, defaultDir, SystemInstance.get().getProperties());
     }
 
     public FileUtils(String homeDir, String defaultDir, Hashtable env) {

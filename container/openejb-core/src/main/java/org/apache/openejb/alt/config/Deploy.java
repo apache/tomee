@@ -96,7 +96,7 @@ public class Deploy {
     public void init(String openejbConfigFile) throws OpenEJBException {
         try {
 
-            Logger.initialize(System.getProperties());
+            Logger.initialize(SystemInstance.get().getProperties());
 
             if (System.getProperty("openejb.nobanner") == null) {
                 printVersion();

@@ -343,7 +343,7 @@ public class EjbValidator {
         } catch (Exception e) {
 
         }
-        Logger.initialize(System.getProperties());
+        Logger.initialize(SystemInstance.get().getProperties());
 
         try {
             EjbValidator v = new EjbValidator();

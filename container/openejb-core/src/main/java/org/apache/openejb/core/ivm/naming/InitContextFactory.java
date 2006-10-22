@@ -52,7 +52,7 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             props.put(EnvProps.CONFIGURATION_FACTORY, "org.apache.openejb.alt.config.ConfigurationFactory");
             props.put(EnvProps.CONFIGURATION, "conf/default.openejb.conf");
 
-            props.putAll(System.getProperties());
+            props.putAll(SystemInstance.get().getProperties());
 
             props.putAll(env);
 

@@ -93,7 +93,7 @@ public final class OpenEJB {
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
-            Properties props = new Properties(System.getProperties());
+            Properties props = new Properties(SystemInstance.get().getProperties());
 
             if (initProps == null) {
                 logger.i18n.debug("startup.noInitializationProperties");
