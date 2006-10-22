@@ -49,25 +49,33 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, byte typeOfBean) {
-        this.type = typeOfBean;
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean) {
+        if ("STATEFUL".equalsIgnoreCase(typeOfBean)){
+            this.type = STATEFUL;
+        } else if ("STATELESS".equalsIgnoreCase(typeOfBean)){
+            this.type = STATELESS;
+        } else if ("BMP_ENTITY".equalsIgnoreCase(typeOfBean)){
+            this.type = BMP_ENTITY;
+        } else if ("CMP_ENTITY".equalsIgnoreCase(typeOfBean)){
+            this.type = CMP_ENTITY;
+        }
         this.homeClass = homeInterface;
         this.remoteClass = remoteInterface;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean) {
         this(homeInterface, remoteInterface, typeOfBean);
         if (type == CMP_ENTITY || type == BMP_ENTITY) {
             this.keyClass = primaryKeyClass;
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean, String deploymentID) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean);
         this.deploymentID = deploymentID;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean, String deploymentID, int deploymentCode) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID);
         this.deploymentCode = deploymentCode;
     }

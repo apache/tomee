@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.spring;
 
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
 /**
@@ -33,8 +34,8 @@ public class StatelessDeploymentFactory extends AbstractDeploymentFactory {
         this.beanManagedTransaction = beanManagedTransaction;
     }
 
-    protected byte getComponentType() {
-        return CoreDeploymentInfo.STATELESS;
+    protected BeanType getComponentType() {
+        return BeanType.STATELESS;
     }
 
     protected String getPkClass() {

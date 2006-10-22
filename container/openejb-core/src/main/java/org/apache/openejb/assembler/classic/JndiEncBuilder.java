@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -42,12 +43,12 @@ public class JndiEncBuilder {
     private final EnvEntryInfo[] envEntries;
     private final ResourceReferenceInfo[] resourceRefs;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, EjbType ejbType) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType) throws OpenEJBException {
         if (ejbType.isEntity()) {
             referenceWrapper = new EntityRefereceWrapper();
-        } else if (ejbType == EjbType.STATEFUL) {
+        } else if (ejbType == BeanType.STATEFUL) {
             referenceWrapper = new StatefulRefereceWrapper();
-        } else if (ejbType == EjbType.STATELESS) {
+        } else if (ejbType == BeanType.STATELESS) {
             referenceWrapper = new StatelessRefereceWrapper();
         } else {
             throw new org.apache.openejb.OpenEJBException("Unknown component type");

@@ -32,19 +32,9 @@ public interface DeploymentInfo {
 
     final public static byte TX_REQUIRES_NEW = (byte) 5;
 
-    final public static byte STATEFUL = (byte) 6;
-
-    final public static byte STATELESS = (byte) 7;
-
-    final public static byte BMP_ENTITY = (byte) 8;
-
-    final public static byte CMP_ENTITY = (byte) 9;
-
-    final public static byte MESSAGE_DRIVEN = (byte) 10;
-
     final public static String AC_CREATE_EJBHOME = "create.ejbhome";
 
-    public byte getComponentType();
+    public BeanType getComponentType();
 
     public byte getTransactionAttribute(Method method);
 

@@ -34,6 +34,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
@@ -90,7 +91,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Method createMethod = null;
 
     private HashMap postCreateMethodMap = new HashMap();
-    private final byte componentType;
+    private final BeanType componentType;
 
     private HashMap methodPermissions = new HashMap();
     private HashMap methodTransactionAttributes = new HashMap();
@@ -141,15 +142,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    private static byte getComponentType(String name) throws SystemException {
+    private static BeanType getComponentType(String name) throws SystemException {
         if ("cmp".equalsIgnoreCase(name)) {
-            return CMP_ENTITY;
+            return BeanType.CMP_ENTITY;
         } else if ("bmp".equalsIgnoreCase(name)) {
-            return BMP_ENTITY;
+            return BeanType.BMP_ENTITY;
         } else if ("stateful".equalsIgnoreCase(name)) {
-            return STATEFUL;
+            return BeanType.STATEFUL;
         } else if ("stateless".equalsIgnoreCase(name)) {
-            return STATELESS;
+            return BeanType.STATELESS;
         } else {
             throw new SystemException("Unknown component type: " + name);
         }
@@ -161,7 +162,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class localHomeInterface,
                               Class localInterface,
                               Class businessLocal, Class businessRemote, Class pkClass,
-                              byte componentType,
+                              BeanType componentType,
                               URL archiveURL) throws SystemException {
 
         this.context = context;
@@ -176,6 +177,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.remoteInterface = remoteInterface;
         this.beanClass = beanClass;
         this.pkClass = pkClass;
+
         this.componentType = componentType;
         this.archiveURL = archiveURL;
 
@@ -219,7 +221,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         container = cont;
     }
 
-    public byte getComponentType() {
+    public BeanType getComponentType() {
         return componentType;
     }
 
@@ -240,15 +242,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
         if (policy == null && container instanceof TransactionContainer) {
             if (isBeanManagedTransaction) {
-                if (componentType == STATEFUL) {
+                if (componentType == BeanType.STATEFUL) {
                     policy = new StatefulBeanManagedTxPolicy((TransactionContainer) container);
-                } else if (componentType == STATELESS) {
+                } else if (componentType == BeanType.STATELESS) {
                     policy = new StatelessBeanManagedTxPolicy((TransactionContainer) container);
                 }
-            } else if (componentType == STATEFUL) {
+            } else if (componentType == BeanType.STATEFUL) {
                 policy = new TxNotSupported((TransactionContainer) container);
                 policy = new StatefulContainerManagedTxPolicy(policy);
-            } else if (componentType == CMP_ENTITY) {
+            } else if (componentType == BeanType.CMP_ENTITY) {
                 policy = new TxNotSupported((TransactionContainer) container);
                 policy = new CastorCmpEntityTxPolicy(policy);
             } else {
@@ -457,7 +459,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
          interface.
          */
 
-        if (componentType == STATEFUL && !isBeanManagedTransaction && container instanceof TransactionContainer) {
+        if (componentType == BeanType.STATEFUL && !isBeanManagedTransaction && container instanceof TransactionContainer) {
 
             if (SessionSynchronization.class.isAssignableFrom(beanClass)) {
                 if (!transAttribute.equals("Never") && !transAttribute.equals("NotSupported")) {
@@ -469,7 +471,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 policy = new StatefulContainerManagedTxPolicy(policy);
             }
 
-        } else if (componentType == CMP_ENTITY) {
+        } else if (componentType == BeanType.CMP_ENTITY) {
             policy = new CastorCmpEntityTxPolicy(policy);
         }
         methodTransactionAttributes.put(method, byteValue);
@@ -595,7 +597,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         try {
 
-            if (componentType == STATEFUL || componentType == STATELESS) {
+            if (componentType == BeanType.STATEFUL || componentType == BeanType.STATELESS) {
                 Method beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove", new Class []{});
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{javax.ejb.Handle.class});
                 methodMap.put(clientMethod, beanMethod);
@@ -603,7 +605,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 methodMap.put(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove", null);
                 methodMap.put(clientMethod, beanMethod);
-            } else if (componentType == BMP_ENTITY || componentType == CMP_ENTITY) {
+            } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
                 Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove", new Class []{});
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{javax.ejb.Handle.class});
                 methodMap.put(clientMethod, beanMethod);
@@ -636,7 +638,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     Entity beans have a ejbCreate and ejbPostCreate methods with matching 
                     parameters. This code maps that relationship.
                     */
-                    if (this.componentType == BMP_ENTITY || this.componentType == CMP_ENTITY) {
+                    if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
                         Method postCreateMethod = beanClass.getMethod("ejbPostCreate", method.getParameterTypes());
                         postCreateMethodMap.put(createMethod, postCreateMethod);
                     }
@@ -646,7 +648,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                      * method for obtaining the ejbCreate method.
                     */
                 } else if (method.getName().startsWith("find")) {
-                    if (this.componentType == BMP_ENTITY) {
+                    if (this.componentType == BeanType.BMP_ENTITY) {
 
                         String beanMethodName = "ejbF" + method.getName().substring(1);
                         beanMethod = beanClass.getMethod(beanMethodName, method.getParameterTypes());
@@ -761,7 +763,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setPrimKeyField(String fieldName)
             throws java.lang.NoSuchFieldException {
-        if (componentType == CMP_ENTITY) {
+        if (componentType == BeanType.CMP_ENTITY) {
 
             primKeyField = beanClass.getField(fieldName);
         }

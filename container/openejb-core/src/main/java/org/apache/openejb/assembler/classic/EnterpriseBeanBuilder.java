@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
-    private final EjbType ejbType;
+    private final BeanType ejbType;
     private final ClassLoader cl;
     private List<Exception> warnings = new ArrayList();
 
@@ -44,12 +45,12 @@ class EnterpriseBeanBuilder {
         this.bean = bean;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
-            ejbType = EjbType.STATEFUL;
+            ejbType = BeanType.STATEFUL;
         } else if (bean.type == EnterpriseBeanInfo.STATELESS) {
-            ejbType = EjbType.STATELESS;
+            ejbType = BeanType.STATELESS;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {
             String persistenceType = ((EntityBeanInfo) bean).persistenceType;
-            ejbType = (persistenceType.equalsIgnoreCase("Container")) ? EjbType.CMP_ENTITY : EjbType.BMP_ENTITY;
+            ejbType = (persistenceType.equalsIgnoreCase("Container")) ? BeanType.CMP_ENTITY : BeanType.BMP_ENTITY;
         } else {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }
@@ -118,7 +119,7 @@ class EnterpriseBeanBuilder {
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
-        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType.getType(), null);
+        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType, null);
 
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
@@ -138,7 +139,7 @@ class EnterpriseBeanBuilder {
 
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
-            if (ejbType == EjbType.CMP_ENTITY) {
+            if (ejbType == BeanType.CMP_ENTITY) {
                 QueryInfo[] queries = (entity.queries == null) ? new QueryInfo[]{} : entity.queries;
                 for (int i = 0; i < queries.length; i++) {
                     QueryInfo query = queries[i];

@@ -190,16 +190,16 @@ public final class OpenEJB {
                     for (int i = 0; i < d.length; i++) {
                         String entry = "   ";
                         switch (d[i].getComponentType()) {
-                            case DeploymentInfo.BMP_ENTITY:
+                            case BMP_ENTITY:
                                 entry += "BMP_ENTITY  ";
                                 break;
-                            case DeploymentInfo.CMP_ENTITY:
+                            case CMP_ENTITY:
                                 entry += "CMP_ENTITY  ";
                                 break;
-                            case DeploymentInfo.STATEFUL:
+                            case STATEFUL:
                                 entry += "STATEFUL    ";
                                 break;
-                            case DeploymentInfo.STATELESS:
+                            case STATELESS:
                                 entry += "STATELESS   ";
                                 break;
                         }

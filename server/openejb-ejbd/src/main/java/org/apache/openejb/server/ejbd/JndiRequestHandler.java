@@ -98,7 +98,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                         deployment.getRemoteInterface(),
                         deployment.getPrimaryKeyClass(),
-                        deployment.getComponentType(),
+                        deployment.getComponentType().toString(),
                         deploymentID,
                         this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
                 res.setResult(metaData);
@@ -114,7 +114,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                         deployment.getBusinessRemoteInterface(),
                         deployment.getPrimaryKeyClass(),
-                        deployment.getComponentType(),
+                        deployment.getComponentType().toString(),
                         deploymentID,
                         this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
                 Object[] data = {metaData, proxyInfo.getPrimaryKey()};
@@ -128,7 +128,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                     EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                             deployment.getBusinessLocalInterface(),
                             deployment.getPrimaryKeyClass(),
-                            deployment.getComponentType(),
+                            deployment.getComponentType().toString(),
                             deploymentID,
                             this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
                     Object[] data = {metaData, proxyInfo.getPrimaryKey()};

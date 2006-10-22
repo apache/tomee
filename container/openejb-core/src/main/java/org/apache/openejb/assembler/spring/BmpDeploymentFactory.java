@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.spring;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 
 /**
  * @org.apache.xbean.XBean element="bmpDeployment"
@@ -38,8 +39,8 @@ public class BmpDeploymentFactory extends AbstractDeploymentFactory {
         return false;
     }
 
-    protected byte getComponentType() {
-        return CoreDeploymentInfo.BMP_ENTITY;
+    protected BeanType getComponentType() {
+        return BeanType.BMP_ENTITY;
     }
 
     protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {

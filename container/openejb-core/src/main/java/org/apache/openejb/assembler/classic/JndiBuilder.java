@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
@@ -161,9 +162,9 @@ public class JndiBuilder {
     private Reference getReference(Object proxy, CoreDeploymentInfo deployment) {
         Reference ref = new ObjectReference(proxy);
 
-        if (deployment.getComponentType() == DeploymentInfo.STATEFUL) {
+        if (deployment.getComponentType() == BeanType.STATEFUL) {
             ref = new org.apache.openejb.core.stateful.EncReference(ref);
-        } else if (deployment.getComponentType() == DeploymentInfo.STATELESS) {
+        } else if (deployment.getComponentType() == BeanType.STATELESS) {
             ref = new org.apache.openejb.core.stateless.EncReference(ref);
         } else {
             ref = new org.apache.openejb.core.entity.EncReference(ref);

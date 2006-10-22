@@ -72,14 +72,14 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 
         switch (pi.getDeploymentInfo().getComponentType()) {
 
-            case org.apache.openejb.DeploymentInfo.BMP_ENTITY:
-            case org.apache.openejb.DeploymentInfo.CMP_ENTITY:
+            case BMP_ENTITY:
+            case CMP_ENTITY:
                 return new EntityEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
 
-            case org.apache.openejb.DeploymentInfo.STATEFUL:
+            case STATEFUL:
                 return new StatefulEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
 
-            case org.apache.openejb.DeploymentInfo.STATELESS:
+            case STATELESS:
                 return new StatelessEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
             default:
                 throw new RuntimeException("Unknown EJB type: " + pi.getDeploymentInfo());

@@ -25,6 +25,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
@@ -36,7 +37,7 @@ import org.apache.openejb.core.ivm.naming.Reference;
 
 public class EncBuilder {
     private EncInfo encInfo;
-    private byte ejbType;
+    private BeanType ejbType;
     private boolean beanManagedTransaction;
     private TransactionManager transactionManager;
     private EncBuilder.ReferenceWrapper referenceWrapper;
@@ -44,7 +45,7 @@ public class EncBuilder {
     public EncBuilder() {
     }
 
-    public EncBuilder(EncInfo encInfo, byte ejbType, boolean beanManagedTransaction, TransactionManager transactionManager) throws SystemException {
+    public EncBuilder(EncInfo encInfo, BeanType ejbType, boolean beanManagedTransaction, TransactionManager transactionManager) throws SystemException {
         this.encInfo = encInfo;
         setEjbType(ejbType);
         this.beanManagedTransaction = beanManagedTransaction;
@@ -59,18 +60,17 @@ public class EncBuilder {
         this.encInfo = encInfo;
     }
 
-    public byte getEjbType() {
+    public BeanType getEjbType() {
         return ejbType;
     }
 
-    public void setEjbType(byte ejbType) throws SystemException {
+    public void setEjbType(BeanType ejbType) throws SystemException {
         this.ejbType = ejbType;
-        if (CoreDeploymentInfo.BMP_ENTITY == ejbType ||
-                CoreDeploymentInfo.CMP_ENTITY == ejbType) {
+        if (BeanType.BMP_ENTITY == ejbType || BeanType.CMP_ENTITY == ejbType) {
             referenceWrapper = new EntityRefereceWrapper();
-        } else if (CoreDeploymentInfo.STATEFUL == ejbType ) {
+        } else if (BeanType.STATEFUL == ejbType ) {
             referenceWrapper = new StatefulRefereceWrapper();
-        } else if (CoreDeploymentInfo.STATELESS == ejbType ) {
+        } else if (BeanType.STATELESS == ejbType ) {
             referenceWrapper = new StatelessRefereceWrapper();
         } else {
             throw new SystemException("Unknown component type: " + ejbType);

@@ -21,4 +21,12 @@ package org.apache.openejb;
  */
 public enum BeanType {
     STATEFUL, STATELESS, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN;
+
+    public boolean isEntity(){
+        return this == CMP_ENTITY || this == BMP_ENTITY;
+    }
+
+    public boolean isSession(){
+        return this == STATEFUL || this == STATELESS;
+    }
 }

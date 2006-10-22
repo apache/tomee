@@ -77,7 +77,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
                 deployment.getPrimaryKeyClass(),
-                deployment.getComponentType(),
+                deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode);
         return metaData;
@@ -98,7 +98,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
                 deployment.getPrimaryKeyClass(),
-                deployment.getComponentType(),
+                deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode);
         Object primKey = info.getPrimaryKey();
@@ -123,7 +123,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
                 deployment.getPrimaryKeyClass(),
-                deployment.getComponentType(),
+                deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode);
 
@@ -147,7 +147,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
                 deployment.getPrimaryKeyClass(),
-                deployment.getComponentType(),
+                deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode);
         Object primKey = info.getPrimaryKey();
@@ -172,7 +172,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
                 deployment.getPrimaryKeyClass(),
-                deployment.getComponentType(),
+                deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode);
 

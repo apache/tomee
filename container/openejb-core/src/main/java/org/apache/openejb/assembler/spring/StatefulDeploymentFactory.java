@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.spring;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 
 /**
  * @org.apache.xbean.XBean element="statefulDeployment"
@@ -33,8 +34,8 @@ public class StatefulDeploymentFactory extends AbstractDeploymentFactory {
         this.beanManagedTransaction = beanManagedTransaction;
     }
 
-    protected byte getComponentType() {
-        return CoreDeploymentInfo.STATEFUL;
+    protected BeanType getComponentType() {
+        return BeanType.STATEFUL;
     }
 
     protected String getPkClass() {

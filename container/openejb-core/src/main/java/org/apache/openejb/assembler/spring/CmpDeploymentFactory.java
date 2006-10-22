@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
 /**
@@ -81,8 +82,8 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
         return false;
     }
 
-    protected byte getComponentType() {
-        return CoreDeploymentInfo.CMP_ENTITY;
+    protected BeanType getComponentType() {
+        return BeanType.CMP_ENTITY;
     }
 
     protected CoreDeploymentInfo createDeploymentInfo() throws SystemException {

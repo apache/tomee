@@ -104,7 +104,7 @@
         <configuration>
           <!--  namespace>http://openejb.org/schemas/core</namespace -->
           <namespace>http://openejb.apache.org/schemas/core</namespace>
-          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType</excludedClasses>
+          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
         </configuration>
       </plugin>
     </plugins>

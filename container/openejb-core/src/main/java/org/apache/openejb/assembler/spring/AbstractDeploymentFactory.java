@@ -25,6 +25,7 @@ import javax.naming.Context;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.SystemException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -182,7 +183,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         return deploymentInfo;
     }
 
-    protected abstract byte getComponentType();
+    protected abstract BeanType getComponentType();
 
     protected abstract boolean isBeanManagedTransaction();
 

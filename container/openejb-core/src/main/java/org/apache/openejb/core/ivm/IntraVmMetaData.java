@@ -21,17 +21,12 @@ import java.io.ObjectStreamException;
 import javax.ejb.EJBHome;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializable {
-
-    final public static byte ENTITY = DeploymentInfo.BMP_ENTITY;
-
-    final public static byte STATEFUL = DeploymentInfo.STATEFUL;
-
-    final public static byte STATELESS = DeploymentInfo.STATELESS;
 
     protected Class homeClass;
 
@@ -41,25 +36,19 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
 
     protected EJBHome homeStub;
 
-    protected byte type;
+    protected BeanType type;
 
-    public IntraVmMetaData(Class homeInterface, Class remoteInterface, byte typeOfBean) {
+    public IntraVmMetaData(Class homeInterface, Class remoteInterface, BeanType typeOfBean) {
         this(homeInterface, remoteInterface, null, typeOfBean);
     }
 
-    public IntraVmMetaData(Class homeInterface, Class remoteInterface, Class primaryKeyClass, byte typeOfBean) {
-        if (typeOfBean != ENTITY && typeOfBean != STATEFUL && typeOfBean != STATELESS) {
-            if (typeOfBean == DeploymentInfo.CMP_ENTITY) {
-                typeOfBean = ENTITY;
-            } else {
-                throw new IllegalArgumentException("typeOfBean parameter not in range: " + typeOfBean);
-            }
-        }
+    public IntraVmMetaData(Class homeInterface, Class remoteInterface, Class primaryKeyClass, BeanType typeOfBean) {
+        this.type = typeOfBean;
         if (homeInterface == null || remoteInterface == null) {
             throw new IllegalArgumentException();
         }
-        if (typeOfBean == ENTITY && primaryKeyClass == null) {
-            throw new IllegalArgumentException();
+        if (typeOfBean.isEntity() && primaryKeyClass == null) {
+            throw new IllegalArgumentException("Entity beans must have a primary key class");
         }
         type = typeOfBean;
         homeClass = homeInterface;
@@ -76,18 +65,18 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
     }
 
     public Class getPrimaryKeyClass() {
-        if (type == ENTITY)
+        if (type.isEntity())
             return keyClass;
         else
             throw new UnsupportedOperationException("Session objects are private resources and do not have primary keys");
     }
 
     public boolean isSession() {
-        return (type == STATEFUL || type == STATELESS);
+        return type.isSession();
     }
 
     public boolean isStatelessSession() {
-        return type == STATELESS;
+        return type == BeanType.STATELESS;
     }
 
     public void setEJBHome(EJBHome home) {
