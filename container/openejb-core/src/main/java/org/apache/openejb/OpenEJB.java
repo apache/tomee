@@ -83,7 +83,7 @@ public final class OpenEJB {
             } catch (java.io.IOException e) {
             }
             if (initProps.getProperty("openejb.nobanner") == null) {
-                System.out.println("OpenEJB " + versionInfo.get("version") + "    build: " + versionInfo.get("date") + "-" + versionInfo.get("time"));
+                System.out.println("Apache OpenEJB " + versionInfo.get("version") + "    build: " + versionInfo.get("date") + "-" + versionInfo.get("time"));
                 System.out.println("" + versionInfo.get("url"));
             }
 
@@ -160,7 +160,7 @@ public final class OpenEJB {
             system.setComponent(ContainerSystem.class, containerSystem);
 
             if (logger.isDebugEnabled()) {
-                logger.i18n.debug("startup.debugContainers", new Integer(containerSystem.containers().length));
+                logger.i18n.debug("startup.debugContainers", containerSystem.containers().length);
 
                 if (containerSystem.containers().length > 0) {
                     Container[] c = containerSystem.containers();
@@ -183,7 +183,7 @@ public final class OpenEJB {
                     }
                 }
 
-                logger.i18n.debug("startup.debugDeployments", new Integer(containerSystem.deployments().length));
+                logger.i18n.debug("startup.debugDeployments", containerSystem.deployments().length);
                 if (containerSystem.deployments().length > 0) {
                     logger.i18n.debug("startup.debugDeploymentsType");
                     DeploymentInfo[] d = containerSystem.deployments();
@@ -259,8 +259,7 @@ public final class OpenEJB {
      * 2 usages
      */
     public static void init(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
-        if (instance != null) {
-
+        if (isInitialized()) {
             String msg = messages.message("startup.alreadyInitialzied");
             logger.i18n.error(msg);
             throw new OpenEJBException(msg);

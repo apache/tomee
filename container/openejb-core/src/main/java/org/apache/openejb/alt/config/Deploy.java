@@ -27,7 +27,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.ejb.Stateless;
 
@@ -47,9 +46,14 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 
+/**
+ * Deploy EJB beans
+ */
 public class Deploy {
-    private static final String helpBase = "META-INF/org.apache.openejb.cli/";
+    private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
+    private static final String DEPLOY_TOOL_MSG_HEADER = "Apache OpenEJB Deploy Tool";
+    
     protected static final Messages _messages = new Messages("org.apache.openejb.alt.util.resources");
 
     private static final String DEPLOYMENT_ID_HELP = "\nDeployment ID ----- \n\nA name for the ejb that is unique not only in this jar, but \nin all the jars in the container system.  This name will \nallow OpenEJB to place the bean in a global index and \nreference the bean quickly.  OpenEJB will also use this name \nas the global JNDI name for the Remote Server and the Local \nServer.  Clients of the Remote or Local servers can use this\nname to perform JNDI lookups.\n\nThe other EJB Server's using OpenEJB as the EJB Container \nSystem may also use this name to as part of a global JNDI \nnamespace available to remote application clients.\n\nExample: /my/acme/bugsBunnyBean";
@@ -96,9 +100,11 @@ public class Deploy {
     public void init(String openejbConfigFile) throws OpenEJBException {
         try {
 
-            Logger.initialize(SystemInstance.get().getProperties());
+            Logger.init();
 
-            if (System.getProperty("openejb.nobanner") == null) {
+            SystemInstance system = SystemInstance.get();
+
+            if (system.isPropertySet("openejb.nobanner")) {
                 printVersion();
                 System.out.println("");
             }
@@ -109,7 +115,7 @@ public class Deploy {
             configFile = openejbConfigFile;
             if (configFile == null) {
                 try {
-                    configFile = System.getProperty("openejb.configuration");
+                    configFile = system.getProperty("openejb.configuration");
                 } catch (Exception e) {
                 }
             }
@@ -340,16 +346,10 @@ public class Deploy {
 
         Method[] methods = bean.getMethods();
         Class[] parameterList;
-        Class[] exceptionList;
         String answer = null;
-        String parameters;
-
-        StringTokenizer parameterTokens;
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().startsWith("find")
-                    && !methods[i].getName().equals("findByPrimaryKey")) {
-
+            if (methods[i].getName().startsWith("find") && !methods[i].getName().equals("findByPrimaryKey")) {
                 if (!instructionsPrinted) {
                     out.println("\n==--- Step 4 ---==");
                     out.println(
@@ -556,8 +556,6 @@ public class Deploy {
     }
 
     private String autoAssignContainerId(Bean bean) throws OpenEJBException {
-        String answer = null;
-        boolean replied = false;
         out.println("\n==--- Step 2 ---==");
         out.println("\nAuto assigning the container the bean will run in.");
 
@@ -701,21 +699,6 @@ public class Deploy {
     }
 
     /*------------------------------------------------------*/
-    /*    Methods for exception handling                    */
-    /*------------------------------------------------------*/
-    private void logException(String m) throws OpenEJBException {
-        System.out.println("[OpenEJB] " + m);
-        throw new OpenEJBException(m);
-    }
-
-    private void logException(String m, Exception e) throws OpenEJBException {
-        m += " : " + e.getMessage();
-        System.out.println("[OpenEJB] " + m);
-
-        throw new OpenEJBException(m);
-    }
-
-    /*------------------------------------------------------*/
     /*    Static methods                                    */
     /*------------------------------------------------------*/
 
@@ -723,11 +706,12 @@ public class Deploy {
     private static final String INCORRECT_OPTION = "Incorrect option: ";
 
     public static void main(String args[]) {
+        SystemInstance system = SystemInstance.get();
         try {
             File directory = SystemInstance.get().getHome().getDirectory("lib");
-            SystemInstance.get().getClassPath().addJarsToPath(directory);
+            system.getClassPath().addJarsToPath(directory);
             File directory1 = SystemInstance.get().getHome().getDirectory("dist");
-            SystemInstance.get().getClassPath().addJarsToPath(directory1);
+            system.getClassPath().addJarsToPath(directory1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -758,15 +742,15 @@ public class Deploy {
                     d.GENERATE_DEPLOYMENT_ID = true;
                 } else if (args[i].equals("-conf")) {
                     if (args.length > i + 1) {
-                        System.setProperty("openejb.configuration", args[++i]);
+                        system.setProperty("openejb.configuration", args[++i]);
                     }
                 } else if (args[i].equals("-l")) {
                     if (args.length > i + 1) {
-                        System.setProperty("log4j.configuration", args[++i]);
+                        system.setProperty("log4j.configuration", args[++i]);
                     }
                 } else if (args[i].equals("-d")) {
                     if (args.length > i + 1) {
-                        System.setProperty("openejb.home", args[++i]);
+                        system.setProperty("openejb.home", args[++i]);
                     }
                 } else if (args[i].equals("-examples")) {
                     printExamples();
@@ -778,7 +762,6 @@ public class Deploy {
                     error(INCORRECT_OPTION + args[i]);
                     printHelp();
                 } else {
-
                     noBeansToDeploySpecified = false;
                     d.init(null);
                     for (; i < args.length; i++) {
@@ -811,13 +794,12 @@ public class Deploy {
 
         try {
             JarUtils.setHandlerSystemProperty();
-            versionInfo.load(
-                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
         } catch (java.io.IOException e) {
         }
 
         System.out.println(
-                "OpenEJB Deploy Tool "
+                DEPLOY_TOOL_MSG_HEADER + " "
                         + versionInfo.get("version")
                         + "    build: "
                         + versionInfo.get("date")
@@ -827,12 +809,11 @@ public class Deploy {
     }
 
     private static void printHelp() {
-        String header = "OpenEJB Deploy Tool ";
+        String header = DEPLOY_TOOL_MSG_HEADER + " ";
         try {
             JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
-            versionInfo.load(
-                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }
@@ -840,7 +821,7 @@ public class Deploy {
         System.out.println(header);
 
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "deploy.help").openConnection().getInputStream();
+            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "deploy.help").openConnection().getInputStream();
 
             int b = in.read();
             while (b != -1) {
@@ -852,7 +833,7 @@ public class Deploy {
     }
 
     private static void printExamples() {
-        String header = "OpenEJB Deploy Tool ";
+        String header = DEPLOY_TOOL_MSG_HEADER + " ";
         try {
             JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
@@ -865,7 +846,7 @@ public class Deploy {
         System.out.println(header);
 
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "deploy.examples").openConnection().getInputStream();
+            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "deploy.examples").openConnection().getInputStream();
 
             int b = in.read();
             while (b != -1) {

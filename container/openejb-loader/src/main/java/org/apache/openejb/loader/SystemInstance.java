@@ -38,11 +38,12 @@ public class SystemInstance {
     private final FileUtils home;
     private final FileUtils base;
     private final ClassLoader classLoader;
-    private final HashMap components;
+    private final HashMap<Class, Object> components;
     private final ClassPath classPath;
-    
+
+    // FIXME: Why is Exception thrown at all? It's almost impossible that it'll happen.
     private SystemInstance(Properties properties) throws Exception {
-        this.components = new HashMap();
+        this.components = new HashMap<Class, Object>();
         this.properties = new Properties();
         this.properties.putAll(System.getProperties());
         this.properties.putAll(properties);
@@ -111,7 +112,6 @@ public class SystemInstance {
     }
 
     /**
-     *
      * @param type the class type of the component required
      */
     public Object setComponent(Class type, Object value) {
@@ -138,5 +138,14 @@ public class SystemInstance {
     
     public static SystemInstance get() {
         return system;
+    }
+    
+    /**
+     * @param propName property name
+     * 
+     * @return true when property is set; false otherwise
+     */
+    public boolean isPropertySet(String propName) {
+        return this.properties.get(propName) != null;
     }
 }

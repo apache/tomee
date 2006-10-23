@@ -17,6 +17,7 @@
 package org.apache.openejb.cli;
 
 import org.apache.openejb.loader.SystemClassPath;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
@@ -41,13 +42,13 @@ import java.util.jar.JarFile;
  */
 public class Main {
     private static ResourceFinder finder = null;
-    private static String basePath = "META-INF/org.apache.openejb.cli/";
+    private static final String BASE_PATH = "META-INF/org.apache.openejb.cli/";
     private static String locale = "";
     private static String descriptionBase = "description";
 
     private static void setupHome() {
         try {
-            URL classURL = Thread.currentThread().getContextClassLoader().getResource(basePath + "start");
+            URL classURL = Thread.currentThread().getContextClassLoader().getResource(BASE_PATH + "start");
 
             if (classURL != null) {
                 String propsString = classURL.getFile();
@@ -80,9 +81,26 @@ public class Main {
         }
     }
 
+    /**
+     * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
+     * 
+     * TODO: There must be a better way to read command line args and spawn a command
+     */
     public static void main(String[] args) {
-        ArrayList argsList = new ArrayList();
+        ArrayList<String> argsList = new ArrayList<String>();
 
+        // get SystemInstance (the only static class in the system)
+        // so we'll set up all the props in it
+        // FIXME: The first candidate for XBean'ization - external dependency
+        SystemInstance system = null;
+        try {
+            SystemInstance.init(System.getProperties());
+            system = SystemInstance.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        // FIXME: Why do we bother to process env vars? Remove it and leave it to JVM
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.indexOf("-D") == -1) {
@@ -91,13 +109,16 @@ public class Main {
                 String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
                 String val = arg.substring(arg.indexOf("=") + 1);
 
+                // It might confuse readers - watch out lower-case system is ours...
+                system.setProperty(prop, val);
+                // ...whereas System is Java's and should be removed as the lower-case version has been verified to work fine
                 System.setProperty(prop, val);
             }
         }
 
         args = (String[]) argsList.toArray(new String[argsList.size()]);
 
-        finder = new ResourceFinder(basePath);
+        finder = new ResourceFinder(BASE_PATH);
         locale = Locale.getDefault().getLanguage();
 
         setupHome();
@@ -111,7 +132,6 @@ public class Main {
             return;
         }
 
-        Properties props = null;
         boolean help = false;
         int argIndex = 0;
 
@@ -129,6 +149,7 @@ public class Main {
 
         String commandName = args[argIndex];
 
+        Properties props = null;
         try {
             props = finder.findProperties(commandName);
         } catch (IOException e1) {
@@ -164,7 +185,8 @@ public class Main {
             throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass);
         }
 
-        argsList = new ArrayList();
+        argsList.clear();
+        
         int startPoint = 1;
 
         if (help) {
@@ -207,7 +229,7 @@ public class Main {
                         while (commands.hasMoreElements()) {
                             JarEntry je = (JarEntry) commands.nextElement();
 
-                            if (je.getName().indexOf(basePath) > -1 && !je.getName().equals(basePath) && !je.getName().endsWith(".help") && !je.getName().endsWith(".examples"))
+                            if (je.getName().indexOf(BASE_PATH) > -1 && !je.getName().equals(BASE_PATH) && !je.getName().endsWith(".help") && !je.getName().endsWith(".examples"))
                             {
                                 Properties props = finder.findProperties(je.getName().substring(je.getName().lastIndexOf("/") + 1));
 
@@ -226,9 +248,9 @@ public class Main {
         }
 
         System.out.println("\nTry 'openejb help <command>' for more information about the command.\n");
-        System.out.println("OpenEJB -- EJB Container System and EJB Server.");
-        System.out.println("For updates and additional information, visit");
-        System.out.println("http://incubator.apache.org/openejb\n");
+        System.out.println("Apache OpenEJB -- EJB Container System and EJB Server.");
+        System.out.println("For updates and additional information, visit\n");
+        System.out.println("   http://incubator.apache.org/openejb\n");
         System.out.println("Bug Reports to <openejb-user@incubator.apache.org>");
     }
 }

@@ -32,7 +32,7 @@ import org.apache.xbean.spring.context.SpringApplicationContext;
  */
 public class Main {
 
-    private static final String helpBase = "META-INF/org.apache.openejb.cli/";
+    private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
     // TODO: Remove the static initializer once Main is fully XBean-ized
     private static final SpringApplicationContext factory;
@@ -169,7 +169,7 @@ public class Main {
         System.out.println(header);
 
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "start.help").openConnection().getInputStream();
+            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "start.help").openConnection().getInputStream();
 
             int b = in.read();
             while (b != -1) {
@@ -191,7 +191,7 @@ public class Main {
         System.out.println(header);
 
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "start.examples").openConnection().getInputStream();
+            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "start.examples").openConnection().getInputStream();
 
             int b = in.read();
             while (b != -1) {

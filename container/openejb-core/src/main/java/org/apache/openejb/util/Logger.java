@@ -44,10 +44,20 @@ public class Logger {
     protected Category _logger = null;
     public I18N i18n = null;
 
+    /**
+     * @deprecated Use {@link #init()} instead
+     */
     public static void initialize(Properties props) {
         Log4jConfigUtils log4j = new Logger.Log4jConfigUtils(props);
 
         log4j.configure();
+    }
+
+    /**
+     * Initialise using {@link SystemInstance} as the source of properties
+     */
+    public static void init() {
+        initialize(SystemInstance.get().getProperties());
     }
 
     static public Logger getInstance(String category, String resourceName) {
