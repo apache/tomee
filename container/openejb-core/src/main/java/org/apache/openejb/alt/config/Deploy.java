@@ -97,6 +97,10 @@ public class Deploy {
     public Deploy() throws OpenEJBException {
     }
 
+    public void init() throws OpenEJBException {
+        init(null);
+    }
+    
     public void init(String openejbConfigFile) throws OpenEJBException {
         try {
 
@@ -104,7 +108,7 @@ public class Deploy {
 
             SystemInstance system = SystemInstance.get();
 
-            if (system.isPropertySet("openejb.nobanner")) {
+            if (system.hasProperty("openejb.nobanner")) {
                 printVersion();
                 System.out.println("");
             }
@@ -754,16 +758,20 @@ public class Deploy {
                     }
                 } else if (args[i].equals("-examples")) {
                     printExamples();
+                    noBeansToDeploySpecified = false;
                 } else if (args[i].equals("-version")) {
                     printVersion();
+                    noBeansToDeploySpecified = false;
                 } else if (args[i].equals("--help")) {
                     printHelp();
+                    noBeansToDeploySpecified = false;
                 } else if (args[i].startsWith("-")) {
                     error(INCORRECT_OPTION + args[i]);
                     printHelp();
+                    noBeansToDeploySpecified = false;
                 } else {
                     noBeansToDeploySpecified = false;
-                    d.init(null);
+                    d.init();
                     for (; i < args.length; i++) {
                         try {
                             d.deploy(args[i]);

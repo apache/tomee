@@ -42,8 +42,13 @@ public class ConfigUtils {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    public static Openejb readConfig(String confFile) throws OpenEJBException {
-        return (Openejb) Unmarshaller.unmarshal(Openejb.class, confFile);
+    /**
+     * @param config configuration file to read
+     * @return unmarshalled configuration of type {@link OpenEJB}
+     * @throws OpenEJBException something wrong with file reading
+     */
+    public static Openejb readConfig(String config) throws OpenEJBException {
+        return (Openejb) Unmarshaller.unmarshal(Openejb.class, config);
     }
 
     public static void writeConfig(String confFile, Openejb confObject) throws OpenEJBException {

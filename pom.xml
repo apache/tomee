@@ -181,6 +181,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+<!--
     <repository>
       <id>apache-m2-ibiblio-rsync-repository</id>
       <name>Apache M2 iBiblio rsync Repository</name>
@@ -214,6 +215,7 @@
       <name>Dain's Development Repository</name>
       <url>http://people.apache.org/~dain/repository/m2-dev</url>
     </repository>
+-->
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -289,7 +291,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>3.8.1</version>
+        <version>4.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>

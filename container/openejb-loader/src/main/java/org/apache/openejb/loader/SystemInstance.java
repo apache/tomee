@@ -34,7 +34,18 @@ import java.util.HashMap;
 public class SystemInstance {
 
     private final long startTime = System.currentTimeMillis();
-    private final Properties properties;
+    
+    /**
+     * Properties that have to be away from System (i.e. {@link System#setProperty(String, String)} must not be called)
+     */
+    private final Properties internalProperties = new Properties();
+    
+    /**
+     * Properties that need to be set to System via {@link System#setProperty(String, String)}
+     * FIXME: Some properties are doubled in internal and external prop sets, but it simplifies get's
+     */
+    private final Properties externalProperties = new Properties();
+    
     private final FileUtils home;
     private final FileUtils base;
     private final ClassLoader classLoader;
@@ -44,17 +55,17 @@ public class SystemInstance {
     // FIXME: Why is Exception thrown at all? It's almost impossible that it'll happen.
     private SystemInstance(Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
-        this.properties = new Properties();
-        this.properties.putAll(System.getProperties());
-        this.properties.putAll(properties);
 
-        this.home = new FileUtils("openejb.home", "user.dir", this.properties);
-        this.base = new FileUtils("openejb.base", "openejb.home", this.properties);
-        this.classPath = ClassPathFactory.createClassPath(this.properties.getProperty("openejb.loader", "context"));
+        this.internalProperties.putAll(System.getProperties());
+        this.internalProperties.putAll(properties);
+
+        this.home = new FileUtils("openejb.home", "user.dir", this.internalProperties);
+        this.base = new FileUtils("openejb.base", "openejb.home", this.internalProperties);
+        this.classPath = ClassPathFactory.createClassPath(this.internalProperties.getProperty("openejb.loader", "context"));
         this.classLoader = classPath.getClassLoader();
 
-        this.properties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
-        this.properties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
+        this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
+        this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
     }
 
     public long getStartTime() {
@@ -62,21 +73,35 @@ public class SystemInstance {
     }
 
     public Properties getProperties() {
-        return properties;
+        return internalProperties;
     }
 
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        return internalProperties.getProperty(key);
     }
 
     public String getProperty(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        return internalProperties.getProperty(key, defaultValue);
     }
 
     public Object setProperty(String key, String value) {
-        return properties.setProperty(key, value);
+        return setProperty(key, value, false);
     }
 
+    /**
+     * @param key property name
+     * @param value property value
+     * @param isExternalProperty should the property be set to System by {@link System#setProperty(String, String)}
+     * @return property value
+     */
+    public Object setProperty(String key, String value, boolean isExternalProperty) {
+        if (isExternalProperty) {
+            this.externalProperties.setProperty(key, value);
+            System.setProperty(key, value);
+        }
+        return internalProperties.setProperty(key, value);
+    }
+    
     public FileUtils getHome() {
         return home;
     }
@@ -145,7 +170,7 @@ public class SystemInstance {
      * 
      * @return true when property is set; false otherwise
      */
-    public boolean isPropertySet(String propName) {
-        return this.properties.get(propName) != null;
+    public boolean hasProperty(String propName) {
+        return this.internalProperties.get(propName) != null;
     }
 }
