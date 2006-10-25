@@ -24,15 +24,15 @@ import javax.ejb.EJBMetaData;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class StatelessEjbHomeTests extends BasicStatelessTestClient {
+public class StatelessPojoEjbHomeTests extends BasicStatelessTestClient {
 
-    public StatelessEjbHomeTests(){
-        super("EJBHome.");
+    public StatelessPojoEjbHomeTests(){
+        super("PojoEJBHome.");
     }
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
+        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
     }
 
@@ -41,8 +41,8 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
     //
     public void test01_getEJBMetaData(){
         try{
-        EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
-        assertNotNull( "EJBMetaData is null", ejbMetaData );
+        	EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
+        	assertNotNull( "EJBMetaData is null", ejbMetaData );
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
@@ -85,6 +85,9 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
      * throw java.rmi.RemoteException.
      *
      * For now, we are going with java.rmi.RemoteException.
+     * ==============================================================================================
+     * TODO - MNour: Please add related sections from EJB3.0 Core contracts and requirements specification
+     * 		(Sections: 3.6.2.2, 3.6.3.2 and 3.6.5)
      */
     public void test03_removeByPrimaryKey(){
         try{

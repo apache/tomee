@@ -16,7 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBMetaData;
+import javax.ejb.EJBException;
+
 
 /**
  * [3] Should be run as the third test suite of the BasicStatelessTestClients
@@ -24,38 +25,20 @@ import javax.ejb.EJBMetaData;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class StatelessEjbHomeTests extends BasicStatelessTestClient {
+public class StatelessPojoEjbLocalHomeTests extends BasicStatelessLocalTestClient {
 
-    public StatelessEjbHomeTests(){
-        super("EJBHome.");
+    public StatelessPojoEjbLocalHomeTests(){
+        super("PojoEJBLocalHome.");
     }
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
+        ejbLocalHome = (BasicStatelessLocalHome) initialContext.lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
     }
 
     //===============================
-    // Test ejb home methods
+    // Test ejb local-home methods
     //
-    public void test01_getEJBMetaData(){
-        try{
-        EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
-        assertNotNull( "EJBMetaData is null", ejbMetaData );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-
-    public void test02_getHomeHandle(){
-        try{
-            ejbHomeHandle = ejbHome.getHomeHandle();
-            assertNotNull("The HomeHandle is null", ejbHomeHandle );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
 
     /**
      * ------------------------------------
@@ -85,19 +68,22 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
      * throw java.rmi.RemoteException.
      *
      * For now, we are going with java.rmi.RemoteException.
+     * ==============================================================================================
+     * TODO - MNour: Please add related sections from EJB3.0 Core contracts and requirements specification
+     * 		(Sections: 3.6.2.2, 3.6.3.2 and 3.6.5)
      */
     public void test03_removeByPrimaryKey(){
         try{
-            ejbHome.remove("primaryKey");
-        } catch (java.rmi.RemoteException e){
+            ejbLocalHome.remove("primaryKey");
+        } catch (EJBException e){
             assertTrue( true );
             return;
         } catch (Exception e){
-            fail("Received "+e.getClass()+" instead of java.rmi.RemoteException");
+            fail("Received "+e.getClass()+" instead of javax.ejb.EJBException");
         }
-        assertTrue("java.rmi.RemoteException should have been thrown", false );
+        assertTrue("javax.ejb.EJBException should have been thrown", false );
     }
     //
-    // Test ejb home methods
+    // Test ejb local-home methods
     //===============================
 }
