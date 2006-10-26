@@ -21,6 +21,17 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 
 /**
+ * Surefire hack for running HttpEjbServerTest class via maven.  Not for use in IDEs
+ *
+ * At some point Surefire decided it wasn't going to run anything that wasn't an
+ * immediate subclass of TestCase, even if your parent's parent was TestCase or
+ * your class was assignable to TestCase.
+ *
+ * So this class is a dirty hack to get the HttpEjbServerTest class to run with the build.
+ *
+ * NOTE: use the HttpEjbServerTest class in your IDE instead of this one.
+ *
+ * @see HttpEjbServerTest
  * @version $Revision$ $Date$
  */
 public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
