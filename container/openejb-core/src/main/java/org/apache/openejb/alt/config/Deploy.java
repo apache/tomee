@@ -53,7 +53,7 @@ public class Deploy {
     private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
     private static final String DEPLOY_TOOL_MSG_HEADER = "Apache OpenEJB Deploy Tool";
-    
+
     protected static final Messages _messages = new Messages("org.apache.openejb.alt.util.resources");
 
     private static final String DEPLOYMENT_ID_HELP = "\nDeployment ID ----- \n\nA name for the ejb that is unique not only in this jar, but \nin all the jars in the container system.  This name will \nallow OpenEJB to place the bean in a global index and \nreference the bean quickly.  OpenEJB will also use this name \nas the global JNDI name for the Remote Server and the Local \nServer.  Clients of the Remote or Local servers can use this\nname to perform JNDI lookups.\n\nThe other EJB Server's using OpenEJB as the EJB Container \nSystem may also use this name to as part of a global JNDI \nnamespace available to remote application clients.\n\nExample: /my/acme/bugsBunnyBean";
@@ -100,7 +100,7 @@ public class Deploy {
     public void init() throws OpenEJBException {
         init(null);
     }
-    
+
     public void init(String openejbConfigFile) throws OpenEJBException {
         try {
 
@@ -151,7 +151,7 @@ public class Deploy {
         this.jarLocation = jarLocation;
         List<String> ejbs = searchForAnnotatedEjbs(jarLocation);
         System.out.println("@Stateless-annotated beans count: " + ejbs.size());
-        
+
         EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
 
         EjbValidator validator = new EjbValidator();
@@ -179,7 +179,7 @@ public class Deploy {
 
         OpenejbJar openejbJar = new OpenejbJar();
 
-        Bean[] beans = ejbJarUtils.getBeans();
+        Bean[] beans = EjbJarUtils.getBeans(ejbJarUtils.getEjbJar());;
 
         listBeanNames(beans);
 
@@ -205,7 +205,7 @@ public class Deploy {
     }
 
     /**
-     * @param jarPath path of jar to deploy
+     * @param path path of jar to deploy
      */
     private List<String> searchForAnnotatedEjbs(String path) {
         File file = new File(path);
@@ -215,7 +215,7 @@ public class Deploy {
             return searchEjbsInJar(file);
         }
     }
-    
+
     private List<String> searchEjbsInJar(File file) {
     	// TODO: Implement it!
         return new ArrayList<String>();
@@ -244,7 +244,7 @@ public class Deploy {
 
     /**
      * @param dir directory to look at
-     * @return classes as a {@link List} of {@link File}'s 
+     * @return classes as a {@link List} of {@link File}'s
      */
     private List<File> getClasses(File dir) {
         List<File> classes = new ArrayList<File>();

@@ -77,7 +77,7 @@ public class EjbJarInfoBuilder {
     private List<SecurityRoleInfo> securityRoleInfos = new ArrayList();
 
     
-    public EjbJarInfo buildInfo(DeployedJar jar) throws OpenEJBException {
+    public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
 
         int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
         int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
@@ -257,7 +257,7 @@ public class EjbJarInfoBuilder {
         return infos.toArray(new EnvEntryInfo[]{});
     }
 
-    private void initMethodTransactions(DeployedJar jar, Map ejbds) {
+    private void initMethodTransactions(EjbModule jar, Map ejbds) {
 
         List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
         List<MethodTransactionInfo> infos = new ArrayList();
@@ -272,7 +272,7 @@ public class EjbJarInfoBuilder {
         getMethodTransactionInfos().addAll(infos);
     }
 
-    private void initSecurityRoles(DeployedJar jar) {
+    private void initSecurityRoles(EjbModule jar) {
 
         List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
         List<SecurityRoleInfo> infos = new ArrayList();
@@ -293,7 +293,7 @@ public class EjbJarInfoBuilder {
         getSecurityRoleInfos().addAll(infos);
     }
 
-    private void initMethodPermissions(DeployedJar jar, Map ejbds) {
+    private void initMethodPermissions(EjbModule jar, Map ejbds) {
 
         List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
         List<MethodPermissionInfo> infos = new ArrayList();
@@ -311,7 +311,7 @@ public class EjbJarInfoBuilder {
         getMethodPermissionInfos().addAll(infos);
     }
 
-    private void resolveRoleLinks(DeployedJar jar, EnterpriseBeanInfo bean, EnterpriseBean item) {
+    private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, EnterpriseBean item) {
         if (!(item instanceof RemoteBean)) {
             return;
         }

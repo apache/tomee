@@ -21,20 +21,29 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 
 /**
+ * Class is to remain "dumb" and should not have deployment logic added to it.
+ * Class is intentionally not an interface as that would encourage "smart" implementations
  * @version $Revision$ $Date$
  */
-public class DeployedJar {
+public class EjbModule {
 
+    private ClassLoader classLoader;
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
     private String jarURI;
 
-    public DeployedJar(String jar, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(String jar, EjbJar ejbJar, OpenejbJar openejbJar) {
         this.ejbJar = ejbJar;
         this.openejbJar = openejbJar;
         this.jarURI = jar;
     }
 
+    public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+        this.classLoader = classLoader;
+        this.ejbJar = ejbJar;
+        this.jarURI = jarURI;
+        this.openejbJar = openejbJar;
+    }
 
     public EjbJar getEjbJar() {
         return ejbJar;
@@ -46,5 +55,9 @@ public class DeployedJar {
 
     public String getJarURI() {
         return jarURI;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 }

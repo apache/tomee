@@ -25,7 +25,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.proxy.Jdk13ProxyFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.alt.config.DeployedJar;
+import org.apache.openejb.alt.config.EjbModule;
 import org.apache.openejb.alt.config.EjbJarInfoBuilder;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
@@ -121,7 +121,7 @@ public class StatelessContainerTest extends TestCase {
         OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment("Stateless Container", "widget", "widget"));
 
-        DeployedJar jar = new DeployedJar("", ejbJar, openejbJar);
+        EjbModule jar = new EjbModule("", ejbJar, openejbJar);
 
         HashMap<String, DeploymentInfo> ejbs = build(jar);
         deploymentInfo = ejbs.get("widget");
@@ -146,7 +146,7 @@ public class StatelessContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(EjbModule jar) throws OpenEJBException {
         EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());

@@ -83,7 +83,7 @@ public class Main {
 
     /**
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
-     * 
+     *
      * TODO: There must be a better way to read command line args and spawn a command
      */
     public static void main(String[] args) {
@@ -186,7 +186,7 @@ public class Main {
         }
 
         argsList.clear();
-        
+
         int startPoint = 1;
 
         if (help) {
@@ -212,11 +212,16 @@ public class Main {
         }
     }
 
+    //DMB: TODO: Delete me
+    public static Enumeration doFindCommands() throws IOException {
+        return Thread.currentThread().getContextClassLoader().getResources(BASE_PATH);
+    }
+
     private static void printAvailableCommands() {
         System.out.println("COMMANDS:");
 
         try {
-            Enumeration commandHomes = finder.doFindCommands();
+            Enumeration commandHomes = doFindCommands();
 
             if (commandHomes != null) {
                 for (; commandHomes.hasMoreElements();) {

@@ -252,7 +252,7 @@ public class EjbJarUtils {
         return useableContainers;
     }
 
-    public Bean[] getBeans() {
+    public static Bean[] getBeans(EjbJar ejbJar) {
         List<Bean> beans = new ArrayList<Bean>();
         for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             if (enterpriseBean instanceof org.apache.openejb.jee.EntityBean) {

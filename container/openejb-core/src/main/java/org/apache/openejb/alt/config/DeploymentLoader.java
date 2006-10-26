@@ -111,7 +111,7 @@ public class DeploymentLoader {
         JAR, DIR, CLASSPATH
     }
 
-    public List<DeployedJar> load(Type type, Object source) throws OpenEJBException {
+    public List<EjbModule> load(Type type, Object source) throws OpenEJBException {
         Deployments deployments = new Deployments();
         switch(type){
             case JAR: deployments.setJar((String) source); break;
@@ -125,17 +125,17 @@ public class DeploymentLoader {
     }
 
 
-    public List<DeployedJar> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
+    public List<EjbModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
         if (deployer == null){
             deployer = new DynamicDeployer(){
-                public OpenejbJar deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
-                    return ejbJarUtils.getOpenejbJar();
+                public EjbModule deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
+                    return new EjbModule(jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
                 }
             };
         }
         EjbValidator validator = new EjbValidator();
 
-        List<DeployedJar> deployedJars = new ArrayList();
+        List<EjbModule> deployedJars = new ArrayList();
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
 
@@ -164,7 +164,6 @@ public class DeploymentLoader {
             String jarLocation = jarsToLoad[i];
             try {
                 EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
-                EjbJar ejbJar = ejbJarUtils.getEjbJar();
 
                 ClassLoader classLoader;
 
@@ -183,7 +182,7 @@ public class DeploymentLoader {
                     classLoader = tempCodebase.getClassLoader();
                 }
 
-                OpenejbJar openejbJar = deployer.deploy(ejbJarUtils, jarLocation, classLoader);
+                EjbModule ejbModule = deployer.deploy(ejbJarUtils, jarLocation, classLoader);
 
                 EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
                 if (set.hasErrors() || set.hasFailures()) {
@@ -206,7 +205,7 @@ public class DeploymentLoader {
 
                 /* Add it to the Vector ***************/
                 ConfigurationFactory.logger.info("Loaded EJBs from " + jarLocation);
-                deployedJars.add(new DeployedJar(jarLocation, ejbJar, openejbJar));
+                deployedJars.add(ejbModule);
             } catch (OpenEJBException e) {
                 ConfigUtils.logger.i18n.warning("conf.0004", jarLocation, e.getMessage());
             }

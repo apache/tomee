@@ -22,7 +22,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.DeployedJar;
+import org.apache.openejb.alt.config.EjbModule;
 import org.apache.openejb.alt.config.EjbJarInfoBuilder;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.ri.sp.PseudoTransactionService;
@@ -150,7 +150,7 @@ public class StatefulContainerTest extends TestCase {
         OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment("Stateful Container", "widget", "widget"));
 
-        DeployedJar jar = new DeployedJar("", ejbJar, openejbJar);
+        EjbModule jar = new EjbModule("", ejbJar, openejbJar);
 
         // Build the DeploymentInfos
 
@@ -186,7 +186,7 @@ public class StatefulContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(DeployedJar jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(EjbModule jar) throws OpenEJBException {
         EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());

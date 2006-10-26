@@ -71,7 +71,7 @@ public class EjbValidator {
         EjbSet set = null;
 
         try {
-            set = new EjbSet(ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), ejbJarUtils.getBeans(), classLoader);
+            set = new EjbSet(ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), EjbJarUtils.getBeans(ejbJarUtils.getEjbJar()), classLoader);
             ValidationRule[] rules = getValidationRules();
             for (int i = 0; i < rules.length; i++) {
                 rules[i].validate(set);

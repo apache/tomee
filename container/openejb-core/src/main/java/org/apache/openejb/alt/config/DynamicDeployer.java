@@ -17,12 +17,11 @@
  */
 package org.apache.openejb.alt.config;
 
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.OpenEJBException;
 
 /**
  * @version $Revision$ $Date$
  */
 public interface DynamicDeployer {
-    OpenejbJar deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException;
+    EjbModule deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException;
 }

@@ -140,9 +140,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             deployments.add(deployment);
         }
 
-        List<DeployedJar> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
+        List<EjbModule> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
 
-        DeployedJar[] jars = deployedJars.toArray(new DeployedJar[]{});
+        EjbModule[] jars = deployedJars.toArray(new EjbModule[]{});
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
@@ -163,7 +163,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         ArrayList ejbs = new ArrayList();
         ArrayList ejbJars = new ArrayList();
-        for (DeployedJar jar : jars) {
+        for (EjbModule jar : jars) {
             try {
                 EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(jar);
                 if (ejbJarInfo == null) {

@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.alt.config.DeployedJar;
+import org.apache.openejb.alt.config.EjbModule;
 import org.apache.openejb.alt.config.DeploymentLoader;
 import org.apache.openejb.alt.config.EjbJarInfoBuilder;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
@@ -99,7 +99,7 @@ public class DeploymentsFactory implements FactoryBean {
         org.apache.openejb.assembler.classic.Assembler.setContext(context);
 
         DeploymentLoader loader = new DeploymentLoader();
-        List<DeployedJar> deployedJars = loader.load(type, value);
+        List<EjbModule> deployedJars = loader.load(type, value);
 
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
 
@@ -109,7 +109,7 @@ public class DeploymentsFactory implements FactoryBean {
         System.out.println("DeploymentsFactory.getObject");
 
         deployments = new HashMap();
-        for (DeployedJar jar : deployedJars) {
+        for (EjbModule jar : deployedJars) {
             EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
             if (jarInfo == null){
                 // This means the jar failed validation or otherwise could not be deployed

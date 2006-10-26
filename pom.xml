@@ -107,7 +107,7 @@
        -
        - Used in maven-jar-plugin in openejb-core pom.xml and below to declare xbean-finder dependency
       -->
-    <removePropertyFromCorePomXbeanVersion>2.7</removePropertyFromCorePomXbeanVersion>
+    <removePropertyFromCorePomXbeanVersion>2.8-SNAPSHOT</removePropertyFromCorePomXbeanVersion>
   </properties>
 
   <build>
