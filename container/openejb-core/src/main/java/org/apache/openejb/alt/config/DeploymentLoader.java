@@ -128,8 +128,8 @@ public class DeploymentLoader {
     public List<EjbModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
         if (deployer == null){
             deployer = new DynamicDeployer(){
-                public EjbModule deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
-                    return new EjbModule(jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+                public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+                    return ejbModule;
                 }
             };
         }
@@ -182,7 +182,8 @@ public class DeploymentLoader {
                     classLoader = tempCodebase.getClassLoader();
                 }
 
-                EjbModule ejbModule = deployer.deploy(ejbJarUtils, jarLocation, classLoader);
+                EjbModule undeployedModule = new EjbModule(classLoader, jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+                EjbModule ejbModule = deployer.deploy(undeployedModule);
 
                 EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
                 if (set.hasErrors() || set.hasFailures()) {

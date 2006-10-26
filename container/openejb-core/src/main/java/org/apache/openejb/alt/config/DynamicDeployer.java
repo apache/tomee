@@ -23,5 +23,5 @@ import org.apache.openejb.OpenEJBException;
  * @version $Revision$ $Date$
  */
 public interface DynamicDeployer {
-    EjbModule deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException;
+    EjbModule deploy(EjbModule ejbModule) throws OpenEJBException;
 }

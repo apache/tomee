@@ -48,18 +48,18 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     public void init() throws OpenEJBException {
     }
 
-    public EjbModule deploy(EjbJarUtils ejbJarUtils, String jarLocation, ClassLoader classLoader) throws OpenEJBException {
-        this.jarLocation = jarLocation;
-        this.classLoader = classLoader;
+    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+        this.jarLocation = ejbModule.getJarURI();
+        this.classLoader = ejbModule.getClassLoader();
 
         OpenejbJar openejbJar;
-        if (ejbJarUtils.getOpenejbJar() != null) {
-            openejbJar = ejbJarUtils.getOpenejbJar();
+        if (ejbModule.getOpenejbJar() != null) {
+            openejbJar = ejbModule.getOpenejbJar();
         } else {
             openejbJar = new OpenejbJar();
         }
 
-        Bean[] beans = EjbJarUtils.getBeans(ejbJarUtils.getEjbJar());
+        Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
 
         for (int i = 0; i < beans.length; i++) {
             final Bean bean = beans[i];
@@ -141,7 +141,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         }
 
 
-        return new EjbModule(jarLocation, ejbJarUtils.getEjbJar(), openejbJar);
+        return new EjbModule(this.jarLocation, ejbModule.getEjbJar(), openejbJar);
     }
 
     private Map<String, Connector> getConnectorsById() {
