@@ -165,7 +165,8 @@ public class Deploy {
             throw new OpenEJBException("Unable to create a classloader to load classes from '" + jarLocation + "'", e);
         }
 
-        EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
+        final EjbModule ejbModule = new EjbModule(classLoader, ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+        EjbSet set = validator.validateJar(ejbModule);
 
         if (set.hasErrors() || set.hasFailures()) {
             validator.printResults(set);

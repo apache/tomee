@@ -18,13 +18,10 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.alt.config.sys.Deployments;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.jee.EjbJar;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -133,7 +130,10 @@ public class DeploymentLoader {
                 }
             };
         }
-        EjbValidator validator = new EjbValidator();
+
+        if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")){
+            deployer = new ValidateEjbModule(deployer);
+        }
 
         List<EjbModule> deployedJars = new ArrayList();
 
@@ -184,25 +184,6 @@ public class DeploymentLoader {
 
                 EjbModule undeployedModule = new EjbModule(classLoader, jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
                 EjbModule ejbModule = deployer.deploy(undeployedModule);
-
-                EjbSet set = validator.validateJar(ejbJarUtils, classLoader);
-                if (set.hasErrors() || set.hasFailures()) {
-                    Logger logger = Logger.getInstance("OpenEJB.startup.validation", "org.apache.openejb.alt.config.rules");
-
-                    ValidationError[] errors = set.getErrors();
-                    for (int j = 0; j < errors.length; j++) {
-                        ValidationError e = errors[j];
-                        String ejbName = (e.getBean() != null)? e.getBean().getEjbName(): "null";
-                        logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
-                    }
-                    ValidationFailure[] failures = set.getFailures();
-                    for (int j = 0; j < failures.length; j++) {
-                        ValidationFailure e = failures[j];
-                        logger.error(e.getPrefix() + " ... " + e.getBean().getEjbName() + ":\t" + e.getMessage(2));
-                    }
-
-                    throw new OpenEJBException("Jar failed validation.  Use the validation tool for more details");
-                }
 
                 /* Add it to the Vector ***************/
                 ConfigurationFactory.logger.info("Loaded EJBs from " + jarLocation);

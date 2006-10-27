@@ -95,9 +95,9 @@
 
   <properties>
     <!--
-       - Used in openejb-core pom.xml 
+       - Used in openejb-core pom.xml
       -->
-    <xbeanVersion>2.7</xbeanVersion>
+    <xbeanVersion>2.8-SNAPSHOT</xbeanVersion>
     <!--
        - Remove the property once it's been figured out how to instruct maven-assembly-plugin
        - to copy SNAPSHOTs as SNAPSHOTs not 20061004.144417-3.

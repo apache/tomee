@@ -150,7 +150,7 @@ public class StatefulContainerTest extends TestCase {
         OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment("Stateful Container", "widget", "widget"));
 
-        EjbModule jar = new EjbModule("", ejbJar, openejbJar);
+        EjbModule jar = new EjbModule(this.getClass().getClassLoader(), "", ejbJar, openejbJar);
 
         // Build the DeploymentInfos
 

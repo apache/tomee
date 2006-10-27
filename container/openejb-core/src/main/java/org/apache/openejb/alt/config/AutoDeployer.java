@@ -48,7 +48,7 @@ public class AutoDeployer implements DynamicDeployer {
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
         if (ejbModule.getOpenejbJar() != null){
-            return new EjbModule(ejbModule.getJarURI(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar());
+            return new EjbModule(ejbModule.getClassLoader(), ejbModule.getJarURI(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar());
         }
 
         this.jarLocation = ejbModule.getJarURI();
@@ -61,7 +61,7 @@ public class AutoDeployer implements DynamicDeployer {
         for (int i = 0; i < beans.length; i++) {
             openejbJar.getEjbDeployment().add(deployBean(beans[i], this.jarLocation));
         }
-        return new EjbModule(this.jarLocation, ejbModule.getEjbJar(), openejbJar);
+        return new EjbModule(ejbModule.getClassLoader(), this.jarLocation, ejbModule.getEjbJar(), openejbJar);
     }
 
     private EjbDeployment deployBean(Bean bean, String jarLocation) throws OpenEJBException {

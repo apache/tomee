@@ -32,12 +32,6 @@ public class EjbModule {
     private OpenejbJar openejbJar;
     private String jarURI;
 
-    public EjbModule(String jar, EjbJar ejbJar, OpenejbJar openejbJar) {
-        this.ejbJar = ejbJar;
-        this.openejbJar = openejbJar;
-        this.jarURI = jar;
-    }
-
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         this.classLoader = classLoader;
         this.ejbJar = ejbJar;
@@ -55,6 +49,10 @@ public class EjbModule {
 
     public String getJarURI() {
         return jarURI;
+    }
+
+    public String getJarLocation() {
+        return getJarURI();
     }
 
     public ClassLoader getClassLoader() {

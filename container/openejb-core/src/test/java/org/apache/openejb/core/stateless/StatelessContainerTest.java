@@ -121,7 +121,7 @@ public class StatelessContainerTest extends TestCase {
         OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment("Stateless Container", "widget", "widget"));
 
-        EjbModule jar = new EjbModule("", ejbJar, openejbJar);
+        EjbModule jar = new EjbModule(this.getClass().getClassLoader(), "", ejbJar, openejbJar);
 
         HashMap<String, DeploymentInfo> ejbs = build(jar);
         deploymentInfo = ejbs.get("widget");

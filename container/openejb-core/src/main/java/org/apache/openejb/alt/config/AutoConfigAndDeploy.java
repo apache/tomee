@@ -141,7 +141,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         }
 
 
-        return new EjbModule(this.jarLocation, ejbModule.getEjbJar(), openejbJar);
+        return new EjbModule(classLoader, this.jarLocation, ejbModule.getEjbJar(), openejbJar);
     }
 
     private Map<String, Connector> getConnectorsById() {
