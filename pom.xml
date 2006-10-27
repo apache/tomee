@@ -147,6 +147,27 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <jdk>1.5</jdk>
+          <excludes>
+            <exclude>**/package-info.java</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>aggregate</goal>
+              <goal>save-history</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -342,6 +363,12 @@
         <version>2.1</version>
         <configuration>
           <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHistorical>true</generateHistorical>
         </configuration>
       </plugin>
     </plugins>
