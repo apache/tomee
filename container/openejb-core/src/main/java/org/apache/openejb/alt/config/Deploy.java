@@ -135,9 +135,7 @@ public class Deploy {
             resources = config.getConnector();
 
         } catch (Exception e) {
-
-            e.printStackTrace();
-            throw new OpenEJBException(e.getMessage());
+            throw new OpenEJBException(e);
         }
 
     }
@@ -146,13 +144,16 @@ public class Deploy {
     /*    Methods for starting the deployment process       */
     /*------------------------------------------------------*/
 
-    private void deploy(String jarLocation) throws OpenEJBException {
+    /**
+     * Deploy EJBs from jarLocation (be it a jar file or a unpacked directory
+     */
+    public void deploy(String path) throws OpenEJBException {
 
-        this.jarLocation = jarLocation;
-        List<String> ejbs = searchForAnnotatedEjbs(jarLocation);
+        this.jarLocation = path;
+        List<String> ejbs = searchForAnnotatedEjbs(path);
         System.out.println("@Stateless-annotated beans count: " + ejbs.size());
 
-        EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
+        EjbJarUtils ejbJarUtils = new EjbJarUtils(path);
 
         EjbValidator validator = new EjbValidator();
 
@@ -162,7 +163,7 @@ public class Deploy {
             URL[] classpath = new URL[]{jarFile.toURL()};
             classLoader = new URLClassLoader(classpath, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException("Unable to create a classloader to load classes from '" + jarLocation + "'", e);
+            throw new OpenEJBException("Unable to create a classloader to load classes from '" + path + "'", e);
         }
 
         final EjbModule ejbModule = new EjbModule(classLoader, ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
@@ -185,13 +186,14 @@ public class Deploy {
         listBeanNames(beans);
 
         for (int i = 0; i < beans.length; i++) {
-            openejbJar.addEjbDeployment(deployBean(beans[i], jarLocation));
+            EjbDeployment ejbDeployment = deployBean(beans[i], path);
+            openejbJar.addEjbDeployment(ejbDeployment);
         }
 
         if (MOVE_JAR) {
-            jarLocation = moveJar(jarLocation);
+            path = moveJar(path);
         } else if (COPY_JAR) {
-            jarLocation = copyJar(jarLocation);
+            path = copyJar(path);
         }
 
         /* TODO: Automatically updating the users
@@ -199,14 +201,14 @@ public class Deploy {
         some people.  We could make this a
         configurable option.
         */
-        addDeploymentEntryToConfig(jarLocation);
+        addDeploymentEntryToConfig(path);
 
-        saveChanges(jarLocation, openejbJar);
+        saveChanges(path, openejbJar);
 
     }
 
     /**
-     * @param path path of jar to deploy
+     * @param path a jar or a unpacked directory path to deploy
      */
     private List<String> searchForAnnotatedEjbs(String path) {
         File file = new File(path);

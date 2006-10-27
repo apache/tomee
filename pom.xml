@@ -172,6 +172,7 @@
   </profiles>
 
   <repositories>
+<!--
     <repository>
       <id>codehaus</id>
       <name>Codehaus Repository</name>
@@ -181,7 +182,18 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-<!--
+-->
+    <repository>
+      <id>codehaus-snapshot</id>
+      <name>CodeHaus SNAPSHOT repository</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>apache-m2-ibiblio-rsync-repository</id>
       <name>Apache M2 iBiblio rsync Repository</name>
@@ -215,7 +227,6 @@
       <name>Dain's Development Repository</name>
       <url>http://people.apache.org/~dain/repository/m2-dev</url>
     </repository>
--->
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -247,6 +258,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-ejb_3.0_spec</artifactId>
         <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
@@ -298,6 +314,11 @@
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.tranql</groupId>
+        <artifactId>tranql</artifactId>
+        <version>1.4-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

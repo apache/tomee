@@ -93,7 +93,7 @@ public class ConfigUtils {
     }
 
     public static String searchForConfiguration() throws OpenEJBException {
-        return searchForConfiguration(System.getProperty("openejb.configuration"));
+        return searchForConfiguration(SystemInstance.get().getProperty("openejb.configuration"));
     }
 
     public static String searchForConfiguration(String path) throws OpenEJBException {
