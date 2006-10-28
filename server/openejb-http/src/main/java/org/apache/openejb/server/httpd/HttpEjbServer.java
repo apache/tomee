@@ -20,6 +20,7 @@ package org.apache.openejb.server.httpd;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Properties;
 import java.net.Socket;
@@ -39,7 +40,12 @@ public class HttpEjbServer implements ServerService {
         name = props.getProperty("name");
         EjbServer ejbServer = new EjbServer();
         ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
-        httpServer = new HttpServer(adapter);
+
+        HttpListenerRegistry registry = new HttpListenerRegistry();
+        SystemInstance.get().setComponent(HttpListenerRegistry.class, registry);
+        registry.addHttpListener(adapter, "/ejb/.*");
+
+        httpServer = new HttpServer(registry);
         httpServer.init(props);
         ejbServer.init(props);
     }
