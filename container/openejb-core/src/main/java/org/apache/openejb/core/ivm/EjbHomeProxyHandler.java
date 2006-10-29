@@ -234,7 +234,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBHome(this.getProxyInfo());
+            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            return applicationServer.getEJBHome(this.getProxyInfo());
         }
     }
 

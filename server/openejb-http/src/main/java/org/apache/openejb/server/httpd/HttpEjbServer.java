@@ -42,7 +42,7 @@ public class HttpEjbServer implements ServerService {
         ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
 
         SystemInstance systemInstance = SystemInstance.get();
-        HttpListenerRegistry registry = (HttpListenerRegistry) systemInstance.getComponent(HttpListenerRegistry.class);
+        HttpListenerRegistry registry = systemInstance.getComponent(HttpListenerRegistry.class);
         if (registry == null){
             registry = new HttpListenerRegistry();
             systemInstance.setComponent(HttpListenerRegistry.class, registry);

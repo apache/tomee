@@ -94,7 +94,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         in.defaultReadObject();
 
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID);
         container = (RpcContainer) deploymentInfo.getContainer();
     }
@@ -107,7 +107,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     private SecurityService getSecurityService() {
-        return (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        return SystemInstance.get().getComponent(SecurityService.class);
     }
 
     protected Object getThreadSpecificSecurityIdentity() {

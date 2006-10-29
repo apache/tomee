@@ -72,7 +72,7 @@ public class JndiReference implements Reference {
     protected Context getContext() throws NamingException {
         if (context == null) {
             if (contextJndiName != null) {
-                ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                 context = (Context) containerSystem.getJNDIContext().lookup(contextJndiName);
             } else {
                 context = new InitialContext(envProperties);

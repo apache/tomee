@@ -46,7 +46,7 @@ public class TomcatLoader implements Loader {
     public void init(ServletConfig config) throws ServletException {
         // Not thread safe
         if (OpenEJB.isInitialized()) {
-            ejbServer = (EjbServer) SystemInstance.get().getComponent(EjbServer.class);
+            ejbServer = SystemInstance.get().getComponent(EjbServer.class);
             return;
         }
 

@@ -107,7 +107,8 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
             */
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
-            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBMetaData(handler.getProxyInfo());
+            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            return applicationServer.getEJBMetaData(handler.getProxyInfo());
         }
     }
 }

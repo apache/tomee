@@ -44,7 +44,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
     javax.naming.Context ejbJndiTree;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (javax.naming.Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
         this.daemon = daemon;
     }

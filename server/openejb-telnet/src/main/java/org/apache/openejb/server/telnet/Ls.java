@@ -35,7 +35,7 @@ public class Ls extends Command {
 
     public void exec(Arguments args, DataInputStream in, PrintStream out) throws IOException {
 
-        ContainerSystem containerSystem1 = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem1 = SystemInstance.get().getComponent(ContainerSystem.class);
         Container[] c = containerSystem1.containers();
         out.println("Containers:");
 
@@ -47,7 +47,7 @@ public class Ls extends Command {
 
         out.println("Deployments:");
 
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         DeploymentInfo[] d = containerSystem.deployments();
         for (int i = 0; i < d.length; i++) {
             out.print(" " + d[i].getDeploymentID());

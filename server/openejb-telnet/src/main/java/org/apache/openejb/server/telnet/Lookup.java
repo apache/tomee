@@ -36,7 +36,7 @@ public class Lookup extends Command {
     javax.naming.Context ctx;
 
     {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ctx = containerSystem.getJNDIContext();
     }
 

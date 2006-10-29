@@ -64,9 +64,11 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy);
             if (theProxy instanceof javax.ejb.EJBObject) {
-                return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getHandle(handler.getProxyInfo());
+                ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+                return applicationServer.getHandle(handler.getProxyInfo());
             } else if (theProxy instanceof javax.ejb.EJBHome) {
-                return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getHomeHandle(handler.getProxyInfo());
+                ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+                return applicationServer.getHomeHandle(handler.getProxyInfo());
             } else {
                 throw new RuntimeException("Invalid proxy type. Handles are only supported by EJBObject types in EJB 1.1");
             }

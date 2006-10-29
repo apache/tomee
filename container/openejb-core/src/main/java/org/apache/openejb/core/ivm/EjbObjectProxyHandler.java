@@ -159,7 +159,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class)).getEJBObject(this.getProxyInfo());
+            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            return applicationServer.getEJBObject(this.getProxyInfo());
         }
     }
 

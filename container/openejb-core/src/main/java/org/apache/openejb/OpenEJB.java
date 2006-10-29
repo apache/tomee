@@ -36,7 +36,7 @@ public final class OpenEJB {
     private static Instance instance;
 
     public static ApplicationServer getApplicationServer() {
-        return ((ApplicationServer) SystemInstance.get().getComponent(ApplicationServer.class));
+        return SystemInstance.get().getComponent(ApplicationServer.class);
     }
 
     public static class Instance {

@@ -67,7 +67,7 @@ public class javaURLContextFactory implements ObjectFactory, InitialContextFacto
         Context jndiCtx = null;
 
         if (!ThreadContext.isValid()) {
-            ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             return containerSystem.getJNDIContext();
         }
 
@@ -75,7 +75,7 @@ public class javaURLContextFactory implements ObjectFactory, InitialContextFacto
         if (di != null) {
             return di.getJndiEnc();
         } else {
-            ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             return containerSystem.getJNDIContext();
         }
     }

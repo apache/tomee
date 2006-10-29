@@ -18,6 +18,7 @@ package org.apache.openejb.loader;
 
 import java.util.Properties;
 import java.util.HashMap;
+import java.lang.annotation.Annotation;
 
 /**
  * This class aims to be the one and only static in the entire system
@@ -34,18 +35,18 @@ import java.util.HashMap;
 public class SystemInstance {
 
     private final long startTime = System.currentTimeMillis();
-    
+
     /**
      * Properties that have to be away from System (i.e. {@link System#setProperty(String, String)} must not be called)
      */
     private final Properties internalProperties = new Properties();
-    
+
     /**
      * Properties that need to be set to System via {@link System#setProperty(String, String)}
      * FIXME: Some properties are doubled in internal and external prop sets, but it simplifies get's
      */
     private final Properties externalProperties = new Properties();
-    
+
     private final FileUtils home;
     private final FileUtils base;
     private final ClassLoader classLoader;
@@ -101,7 +102,7 @@ public class SystemInstance {
         }
         return internalProperties.setProperty(key, value);
     }
-    
+
     public FileUtils getHome() {
         return home;
     }
@@ -128,12 +129,12 @@ public class SystemInstance {
      * @return the object associated with the class type or null
      * @throws IllegalStateException of the component isn't found
      */
-    public Object getComponent(Class type) throws IllegalStateException {
+    public <T> T getComponent(Class<T> type) throws IllegalStateException {
         Object component = components.get(type);
         if (component == null){
             throw new IllegalStateException("No such component exists: "+type.getName() +"(scope: "+type.getClassLoader()+")");
         }
-        return component;
+        return (T)component;
     }
 
     /**
@@ -160,11 +161,11 @@ public class SystemInstance {
         system = new SystemInstance(properties);
         initialized = true;
     }
-    
+
     public static SystemInstance get() {
         return system;
     }
-    
+
     /**
      * @param propName property name
      * 

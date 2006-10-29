@@ -136,8 +136,8 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
     private static class A implements Serializable {
         private Object readResolve() throws ObjectStreamException {
             // DMB: Could easily be done generically with an recipie
-            TransactionManager transactionManager = (TransactionManager) SystemInstance.get().getComponent(TransactionManager.class);
-            SecurityService securityService = (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
+            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
             return new StatefulContext(transactionManager, securityService);
         }
     }

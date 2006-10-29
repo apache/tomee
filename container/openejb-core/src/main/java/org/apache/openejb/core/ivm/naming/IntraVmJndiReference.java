@@ -30,7 +30,7 @@ public class IntraVmJndiReference implements Reference {
     }
 
     public Object getObject() throws NamingException {
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         return containerSystem.getJNDIContext().lookup(jndiName);
     }
 }

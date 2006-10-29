@@ -62,7 +62,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer, Resp
 
     public void init(Properties props) throws Exception {
         // TODO: DMB: Naughty naugty, static badness
-        ContainerSystem containerSystem = (ContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
         clientObjectFactory = new ClientObjectFactory(this);

@@ -351,7 +351,7 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
 
     protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
 
-        SecurityService sec = (SecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        SecurityService sec = SystemInstance.get().getComponent(SecurityService.class);
         CallContext caller = CallContext.getCallContext();
         DeploymentInfo di = caller.getDeploymentInfo();
         String[] authRoles = di.getAuthorizedRoles(req.getMethodInstance());
