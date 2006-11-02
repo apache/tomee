@@ -145,7 +145,7 @@ public class Deploy {
     /*------------------------------------------------------*/
 
     /**
-     * Deploy EJBs from jarLocation (be it a jar file or a unpacked directory
+     * Deploy EJBs from path (be it a jar file or a unpacked directory)
      */
     public void deploy(String path) throws OpenEJBException {
 

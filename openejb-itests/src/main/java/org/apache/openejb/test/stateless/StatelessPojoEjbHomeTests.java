@@ -17,6 +17,7 @@
 package org.apache.openejb.test.stateless;
 
 import javax.ejb.EJBMetaData;
+import javax.ejb.RemoveException;
 
 /**
  * [3] Should be run as the third test suite of the BasicStatelessTestClients
@@ -92,13 +93,13 @@ public class StatelessPojoEjbHomeTests extends BasicStatelessTestClient {
     public void test03_removeByPrimaryKey(){
         try{
             ejbHome.remove("primaryKey");
-        } catch (java.rmi.RemoteException e){
+        } catch (RemoveException e){
             assertTrue( true );
             return;
         } catch (Exception e){
-            fail("Received "+e.getClass()+" instead of java.rmi.RemoteException");
+            fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
         }
-        assertTrue("java.rmi.RemoteException should have been thrown", false );
+        assertTrue("javax.ejb.RemoveException should have been thrown", false );
     }
     //
     // Test ejb home methods

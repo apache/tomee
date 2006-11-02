@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateful;
 
-import javax.ejb.EJBException;
+import javax.ejb.RemoveException;
 
 /**
  * [3] Should be run as the third test suite of the BasicStatefulTestClients
@@ -73,13 +73,13 @@ public class StatefulPojoEjbLocalHomeTests extends BasicStatefulLocalTestClient 
     public void test03_removeByPrimaryKey(){
         try{
             ejbLocalHome.remove("primaryKey");
-        } catch (EJBException e){
+        } catch (RemoveException e){
             assertTrue( true );
             return;
         } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
         }
-        assertTrue("javx.ejb.EJBException should have been thrown", false );
+        assertTrue("javax.ejb.RemoveException should have been thrown", false );
     }
     //
     // Test ejb home methods

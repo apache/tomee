@@ -34,14 +34,13 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase{
     public static junit.framework.Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTest(new StatelessJndiTests());
-        suite.addTest(new StatelessPojoRemoteJndiTests());
         suite.addTest(new StatelessPojoLocalJndiTests());
         suite.addTest(new StatelessHomeIntfcTests());
         suite.addTest(new StatelessPojoLocalHomeIntfcTests());
         suite.addTest(new StatelessLocalBusinessIntfcTests());
+        // MNour: Why we put this remote test into this suite of local tests ???
         suite.addTest(new StatelessRemoteBusinessIntfcTests());
         suite.addTest(new StatelessEjbHomeTests() );
-        suite.addTest(new StatelessPojoEjbHomeTests() );
         suite.addTest(new StatelessPojoEjbLocalHomeTests() );
         suite.addTest(new StatelessEjbObjectTests());
         suite.addTest(new StatelessRemoteIntfcTests());

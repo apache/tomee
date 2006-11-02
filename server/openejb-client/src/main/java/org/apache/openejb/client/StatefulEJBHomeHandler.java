@@ -17,7 +17,8 @@
 package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
+
+import javax.ejb.RemoveException;
 
 public class StatefulEJBHomeHandler extends EJBHomeHandler {
 
@@ -33,7 +34,7 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new RemoteException("Session objects are private resources and do not have primary keys");
+        throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
     protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {

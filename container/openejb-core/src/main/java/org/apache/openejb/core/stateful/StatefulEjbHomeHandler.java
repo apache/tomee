@@ -16,15 +16,16 @@
  */
 package org.apache.openejb.core.stateful;
 
+import java.lang.reflect.Method;
+
+import javax.ejb.RemoveException;
+
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
-
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
@@ -47,7 +48,7 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new RemoteException("Session objects are private resources and do not have primary keys");
+        throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
     protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
