@@ -161,7 +161,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
     @XmlElement(name = "remove-method", required = true)
     protected List<RemoveMethod> removeMethod;
     @XmlElement(name = "transaction-type")
-    protected TransactionType transactionType = TransactionType.BEAN;
+    protected TransactionType transactionType;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "env-entry", required = true)
@@ -391,6 +391,11 @@ public class SessionBean implements EnterpriseBean, RemoteBean {
         return this.aroundInvoke;
     }
 
+    public void addAroundInvoke(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getAroundInvoke().add(new AroundInvoke(ejbClass, method));
+    }
+    
     public List<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
             envEntry = new ArrayList<EnvEntry>();

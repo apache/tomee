@@ -24,10 +24,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 /**
@@ -99,6 +102,25 @@ public class AssemblyDescriptor {
             containerTransaction = new ArrayList<ContainerTransaction>();
         }
         return this.containerTransaction;
+    }
+
+    public Map<String,List<MethodTransaction>> getMethodTransactions(String ejbName) {
+        Map<String,List<MethodTransaction>> methods = new LinkedHashMap();
+        for (ContainerTransaction transaction : getContainerTransaction()) {
+
+            for (Method method : transaction.getMethod()) {
+                if (method.getEjbName().equals(ejbName)){
+                    String methodName = method.getMethodName();
+                    List<MethodTransaction> list = methods.get(methodName);
+                    if (list == null){
+                        list = new ArrayList();
+                        methods.put(methodName, list);
+                    }
+                    list.add(new MethodTransaction(transaction.getTransAttribute(), method));
+                }
+            }
+        }
+        return methods;
     }
 
     public List<InterceptorBinding> getInterceptorBinding() {

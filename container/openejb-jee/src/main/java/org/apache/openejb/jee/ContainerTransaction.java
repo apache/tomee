@@ -64,6 +64,18 @@ public class ContainerTransaction {
         return description.toArray();
     }
 
+    public ContainerTransaction() {
+    }
+
+
+    public ContainerTransaction(TransAttribute transAttribute, String ejbName, String methodName, String... parameters) {
+        this(transAttribute, new Method(ejbName, methodName, parameters));
+    }
+    public ContainerTransaction(TransAttribute transAttribute, Method method) {
+        this.transAttribute = transAttribute;
+        getMethod().add(method);
+    }
+
     public void setDescriptions(Text[] text) {
         description.set(text);
     }

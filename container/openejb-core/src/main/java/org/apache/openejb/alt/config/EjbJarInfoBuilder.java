@@ -56,6 +56,7 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -396,7 +397,8 @@ public class EjbJarInfoBuilder {
         bean.local = s.getLocal();
         bean.businessLocal = s.getBusinessLocal();
         bean.businessRemote = s.getBusinessRemote();
-        bean.transactionType = s.getTransactionType().toString();
+        TransactionType txType = s.getTransactionType();
+        bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
 
         return bean;
     }

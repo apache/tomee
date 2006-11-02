@@ -17,7 +17,7 @@
 
 -->
 
-<!-- $Rev$ $Date$ -->
+        <!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -64,7 +64,7 @@
             <configuration>
               <tasks>
                 <tstamp>
-                  <format property="TSTAMP" pattern="hh:mm" />
+                  <format property="TSTAMP" pattern="hh:mm"/>
                 </tstamp>
                 <replace file="target/classes/openejb-version.properties"
                          token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
@@ -85,7 +85,8 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
+              <Class-Path>openejb-loader-${pom.version}.jar
+                xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>
@@ -103,7 +104,8 @@
         </executions>
         <configuration>
           <namespace>http://openejb.apache.org/schemas/core</namespace>
-          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
+          <excludedClasses>
+            org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
         </configuration>
       </plugin>
     </plugins>
@@ -170,6 +172,16 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>2.2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-commons</artifactId>
+      <version>2.2.3</version>
     </dependency>
     <dependency>
       <groupId>geronimo</groupId>

@@ -49,6 +49,14 @@ public class AroundInvoke {
     @XmlElement(name = "method-name", required = true)
     protected String methodName;
 
+    public AroundInvoke() {
+    }
+
+    public AroundInvoke(String clazz, String methodName) {
+        this.clazz = clazz;
+        this.methodName = methodName;
+    }
+
     public String getClazz() {
         return clazz;
     }

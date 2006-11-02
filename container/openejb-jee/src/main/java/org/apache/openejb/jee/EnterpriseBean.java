@@ -43,6 +43,8 @@ public interface EnterpriseBean {
 
     public List<AroundInvoke> getAroundInvoke();
 
+    public void addAroundInvoke(String method);
+
     public List<EnvEntry> getEnvEntry();
 
     public List<EjbRef> getEjbRef();
@@ -65,6 +67,10 @@ public interface EnterpriseBean {
 
     public List<LifecycleCallback> getPreDestroy();
 
+    public void addPostConstruct(String method);
+
+    public void addPreDestroy(String method);
+
     public SecurityIdentity getSecurityIdentity();
 
     public void setSecurityIdentity(SecurityIdentity value);
@@ -72,5 +78,9 @@ public interface EnterpriseBean {
     public String getId();
 
     public void setId(String value);
+
+    public TransactionType getTransactionType();
+
+    public void setTransactionType(TransactionType type);
 
 }

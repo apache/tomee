@@ -164,6 +164,13 @@ public class MessageDrivenBean implements EnterpriseBean {
     @XmlID
     protected String id;
 
+    public MessageDrivenBean() {
+    }
+
+    public MessageDrivenBean(String ejbName) {
+        this.ejbName = ejbName;
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();
@@ -318,6 +325,11 @@ public class MessageDrivenBean implements EnterpriseBean {
         return this.aroundInvoke;
     }
 
+    public void addAroundInvoke(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getAroundInvoke().add(new AroundInvoke(ejbClass, method));
+    }
+
     public List<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
             envEntry = new ArrayList<EnvEntry>();
@@ -388,12 +400,23 @@ public class MessageDrivenBean implements EnterpriseBean {
         return this.postConstruct;
     }
 
+    public void addPostConstruct(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPostConstruct().add(new LifecycleCallback(ejbClass, method));
+    }
+
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
             preDestroy = new ArrayList<LifecycleCallback>();
         }
         return this.preDestroy;
     }
+
+    public void addPreDestroy(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPreDestroy().add(new LifecycleCallback(ejbClass, method));
+    }
+
 
     public SecurityIdentity getSecurityIdentity() {
         return securityIdentity;

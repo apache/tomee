@@ -22,7 +22,10 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.ClassFinder;
 
+import javax.ejb.Stateless;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -37,6 +40,8 @@ import java.net.MalformedURLException;
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader {
+
+    public static final Logger logger = Logger.getInstance("OpenEJB.startup", DeploymentLoader.class.getPackage().getName());
 
     public DeploymentLoader(){
 
@@ -121,7 +126,6 @@ public class DeploymentLoader {
         return loadDeploymentsList(list, null);
     }
 
-
     public List<EjbModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
         if (deployer == null){
             deployer = new DynamicDeployer(){
@@ -131,6 +135,8 @@ public class DeploymentLoader {
             };
         }
 
+        deployer = new AnnotationDeployer(deployer);
+        
         if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")){
             deployer = new ValidateEjbModule(deployer);
         }

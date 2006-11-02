@@ -463,11 +463,21 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         return this.postConstruct;
     }
 
+    public void addPostConstruct(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPostConstruct().add(new LifecycleCallback(ejbClass, method));
+    }
+
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
             preDestroy = new ArrayList<LifecycleCallback>();
         }
         return this.preDestroy;
+    }
+
+    public void addPreDestroy(String method){
+        assert ejbClass != null: "Set the ejbClass before calling this method";
+        getPreDestroy().add(new LifecycleCallback(ejbClass, method));
     }
 
     public List<SecurityRoleRef> getSecurityRoleRef() {
@@ -503,4 +513,18 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     public List<AroundInvoke> getAroundInvoke() {
         return Collections.EMPTY_LIST;
     }
+
+
+    public void addAroundInvoke(String method){
+    }
+
+    public TransactionType getTransactionType() {
+        return TransactionType.CONTAINER;
+    }
+
+    public void setTransactionType(TransactionType type){
+    }
+
+
+
 }

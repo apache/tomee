@@ -231,9 +231,30 @@ public class Method {
     @XmlTransient
     protected TextMap description = new TextMap();
 
+    public Method(String ejbName, String methodName, String... parameters) {
+        this.ejbName = ejbName;
+        this.methodName = methodName;
+
+        if (parameters.length > 0){
+            MethodParams params = new MethodParams();
+            for (String paramName : parameters) {
+                params.getMethodParam().add(paramName);
+            }
+            this.methodParams = params;
+        }
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();
+    }
+
+    public Method() {
+    }
+
+    public Method(String ejbName, String methodName) {
+        this.ejbName = ejbName;
+        this.methodName = methodName;
     }
 
     public void setDescriptions(Text[] text) {
