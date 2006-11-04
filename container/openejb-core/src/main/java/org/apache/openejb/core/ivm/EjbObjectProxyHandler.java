@@ -37,6 +37,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("isIdentical", new Integer(3));
         dispatchTable.put("remove", new Integer(4));
         dispatchTable.put("getEJBHome", new Integer(5));
+        dispatchTable.put("getEJBLocalHome", new Integer(6));
     }
 
     public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID, Class homeInterface, InterfaceType interfaceType) {
@@ -73,6 +74,9 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         break;
                     case 5:
                         retValue = getEJBHome(m, a, p);
+                        break;
+                    case 6:
+                        retValue = getEJBLocalHome(m, a, p);
                         break;
                     default:
                         throw new RuntimeException("Inconsistent internal state");
@@ -130,6 +134,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
         return deploymentInfo.getEJBHome();
+    }
+
+    protected Object getEJBLocalHome(Method method, Object[] args, Object proxy) throws Throwable {
+        checkAuthorization(method);
+        return deploymentInfo.getEJBLocalHome();
     }
 
     protected Object getHandle(Method method, Object[] args, Object proxy) throws Throwable {
