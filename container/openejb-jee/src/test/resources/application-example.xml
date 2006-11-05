@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application xmlns="http://java.sun.com/xml/ns/javaee" version="3.0">
+    <description>String</description>
+    <display-name>token</display-name>
+    <icon>
+        <small-icon>token</small-icon>
+        <large-icon>token</large-icon>
+    </icon>
+    <module>
+        <connector>token</connector>
+    </module>
+    <module>
+        <ejb>token</ejb>
+    </module>
+    <module>
+        <java>token</java>
+    </module>
+    <module>
+        <web>
+            <web-uri>token</web-uri>
+            <context-root>token</context-root>
+        </web>
+    </module>
+    <module>
+        <alt-dd>token</alt-dd>
+    </module>
+    <security-role>
+        <description>String</description>
+        <role-name>token</role-name>
+    </security-role>
+    <library-directory>token</library-directory>
+</application>

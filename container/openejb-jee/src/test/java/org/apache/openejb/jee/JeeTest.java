@@ -20,46 +20,57 @@ package org.apache.openejb.jee;
 import junit.framework.TestCase;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @version $Revision$ $Date$
  */
-public class EjbJarTest extends TestCase {
+public class JeeTest extends TestCase {
 
     /**
-     * TODO: What does the test test out? The comparision using assertEquals doesn't seem to work well with xml files.
-     * 
      * @throws Exception
      */
-    public void testAll() throws Exception {
-        JAXBContext ctx = JAXBContext.newInstance(EjbJar.class);
+    public void testEjbJar() throws Exception {
+        marshalAndUnmarshal(EjbJar.class, "ejb-jar-example1.xml");
+    }
+
+    public void testApplication() throws Exception {
+        marshalAndUnmarshal(Application.class, "application-example.xml");
+    }
+
+    public void testApplicationClient() throws Exception {
+        marshalAndUnmarshal(ApplicationClient.class, "application-client-example.xml");
+    }
+
+    private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws JAXBException, IOException {
+        JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("ejb-jar-example1.xml");
-        java.lang.String expected = readContent(in);
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
+        String expected = readContent(in);
 
-        JAXBElement element =  (JAXBElement) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+//        JAXBElement element =  (JAXBElement) object;
         unmarshaller.setEventHandler(new TestValidationEventHandler());
-        EjbJar ejbJar = (EjbJar) element.getValue();
-        System.out.println("unmarshalled");
+//        T app = (T) element.getValue();
+//        System.out.println("unmarshalled");
 
         Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(element, baos);
+        marshaller.marshal(object, baos);
 
-        java.lang.String actual = new java.lang.String(baos.toByteArray());
+        String actual = new String(baos.toByteArray());
 
         assertEquals(expected, actual);
     }
@@ -69,7 +80,7 @@ public class EjbJarTest extends TestCase {
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {
-            sb.append((char)i);
+            sb.append((char) i);
             i = in.read();
         }
         java.lang.String content = sb.toString();

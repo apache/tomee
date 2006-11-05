@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Map;
@@ -51,6 +52,7 @@ import java.util.LinkedHashMap;
  * - an optional name of an ejb-client-jar file for the
  * ejb-jar.
  */
+@XmlRootElement(name = "ejb-jar")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-jarType", propOrder = {
         "descriptions",
