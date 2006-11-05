@@ -87,6 +87,7 @@
             <manifestEntries>
               <Class-Path>openejb-loader-${pom.version}.jar
                 xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
+              <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.alt.config.OpenEJBDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -160,6 +161,11 @@
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jaxrpc_1.1_spec</artifactId>
       <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
