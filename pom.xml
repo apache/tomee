@@ -172,7 +172,7 @@
   </build>
 
   <modules>
-    <module>openejb-itests</module>
+    <module>itests</module>
     <module>container</module>
     <module>server</module>
     <module>examples</module>

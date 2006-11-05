@@ -12,7 +12,8 @@
           <include>org.apache.geronimo.specs:geronimo-ejb_3.0_spec</include>
           <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
           <include>junit:junit</include>
-          <include>org.apache.openejb:openejb-itests</include>
+          <include>org.apache.openejb:openejb-itests-beans</include>
+          <include>org.apache.openejb:openejb-itests-client</include>
           <include>org.apache.openejb:openejb-client</include>
       </includes>
       <scope>test</scope>

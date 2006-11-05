@@ -81,7 +81,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.apache.openejb.cli.Main</mainClass>
+              <mainClass>org.apache.openejb.cli.Bootstrap</mainClass>
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
@@ -253,7 +253,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests</artifactId>
+      <artifactId>openejb-itests-client</artifactId>
       <version>${pom.version}</version>
       <scope>test</scope>
     </dependency>

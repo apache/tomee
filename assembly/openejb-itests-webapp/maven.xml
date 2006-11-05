@@ -152,7 +152,7 @@
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:itests-webapp"/>
       <!--<attainGoal name="start:tomcat"/>-->
-      <java jar="target/openejb-itests-client-test.jar" fork="yes">
+      <java jar="target/openejb-itests-webappclient-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.serlvet.url" value="http://127.0.0.1:8080/itests/remote"/>

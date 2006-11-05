@@ -129,12 +129,8 @@ public class SystemInstance {
      * @return the object associated with the class type or null
      * @throws IllegalStateException of the component isn't found
      */
-    public <T> T getComponent(Class<T> type) throws IllegalStateException {
-        Object component = components.get(type);
-        if (component == null){
-            throw new IllegalStateException("No such component exists: "+type.getName() +"(scope: "+type.getClassLoader()+")");
-        }
-        return (T)component;
+    public <T> T getComponent(Class<T> type) {
+        return (T)components.get(type);
     }
 
     /**

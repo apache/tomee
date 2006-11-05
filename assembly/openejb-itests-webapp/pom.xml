@@ -33,7 +33,7 @@
               <mainClass>org.apache.openejb.test.Main</mainClass>
             </manifest>
           </archive>
-          <finalName>openejb-itests-client</finalName>
+          <finalName>openejb-itests-webappclient</finalName>
         </configuration>
       </plugin>
     </plugins>
@@ -70,7 +70,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests</artifactId>
+      <artifactId>openejb-itests-client</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-beans</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>
