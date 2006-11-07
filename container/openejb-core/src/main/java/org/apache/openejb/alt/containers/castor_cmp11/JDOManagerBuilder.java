@@ -28,6 +28,7 @@ import org.castor.jdo.conf.TransactionDemarcation;
 import org.castor.jdo.conf.TransactionManager;
 import org.exolab.castor.jdo.JDOManager;
 import org.exolab.castor.mapping.MappingException;
+import org.apache.openejb.util.Logger;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import java.util.List;
 public class JDOManagerBuilder {
     private static final String GLOBAL_TX_DATABASE = "Global_TX_Database";
     private static final String LOCAL_TX_DATABASE = "Local_TX_Database";
+    public Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.alt.util.resources");
 
 //    // todo replace with ConfigKeys.TRANSACTION_MANAGER_FACTORIES after upgrade to 1.0.1
 //    public static final String TRANSACTION_MANAGER_FACTORIES = "org.castor.transactionmanager.Factories";
@@ -63,7 +65,8 @@ public class JDOManagerBuilder {
 
     public void addMapping(URL location){
         Mapping mapping = new Mapping();
-        mapping.setHref(location.toExternalForm());
+        String mappingURI = location.toExternalForm();
+        mapping.setHref(mappingURI);
         mappings.add(mapping);
     }
 

@@ -87,7 +87,8 @@ public final class OpenEJB {
                 System.out.println("" + versionInfo.get("url"));
             }
 
-            logger.i18n.info("startup.banner", versionInfo.get("url"), new Date(), versionInfo.get("copyright"),
+            Logger logger2 = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+            logger2.i18n.info("startup.banner", versionInfo.get("url"), new Date(), versionInfo.get("copyright"),
                     versionInfo.get("version"), versionInfo.get("date"), versionInfo.get("time"));
 
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());

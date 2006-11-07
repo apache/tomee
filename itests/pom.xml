@@ -12,5 +12,6 @@
   <modules>
     <module>openejb-itests-client</module>
     <module>openejb-itests-beans</module>
+    <module>openejb-itests-app</module>
   </modules>
 </project>

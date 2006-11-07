@@ -26,6 +26,7 @@ public class SpringAssemblerTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
         System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
+        System.setProperty("openejb.deployments.classpath.exclude", ".*openejb-itests-app.*");
         return org.apache.openejb.iTest.suite();
     }
 }

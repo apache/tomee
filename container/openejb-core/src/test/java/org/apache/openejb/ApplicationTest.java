@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,23 +20,13 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 
 /**
- * Surefire hack for running iTest class via maven.  Not for use in IDEs
- *
- * At some point Surefire decided it wasn't going to run anything that wasn't an
- * immediate subclass of TestCase, even if your parent's parent was TestCase or
- * your class was assignable to TestCase.
- *
- * So this class is a dirty hack to get the iTest class to run with the build.
- *
- * NOTE: use the iTest class in your IDE instead of this one.
- *
- * @see iTest
- * @version $Revision$ $Date$
+ * To run this from your ide, set -Dopenejb.home=target/test-classes/
  */
-public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
+public class ApplicationTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
-        System.setProperty("openejb.deployments.classpath.exclude", ".*openejb-itests-app.*");
+        System.setProperty("openejb.deployments.classpath", "true");
+        System.setProperty("openejb.deployments.classpath.exclude", ".*openejb-itests-beans.*");
         return iTest.suite();
     }
 }

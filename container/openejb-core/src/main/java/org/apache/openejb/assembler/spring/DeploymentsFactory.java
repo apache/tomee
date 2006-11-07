@@ -106,8 +106,6 @@ public class DeploymentsFactory implements FactoryBean {
         ClassLoader classLoader = (value instanceof ClassLoader) ? (ClassLoader) value : Thread.currentThread().getContextClassLoader();
         EjbJarBuilder builder = new EjbJarBuilder(classLoader);
 
-        System.out.println("DeploymentsFactory.getObject");
-
         deployments = new HashMap();
         for (EjbModule jar : deployedJars) {
             EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);

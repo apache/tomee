@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Enumeration;
 
 public class Logger {
 
@@ -766,18 +767,28 @@ public class Logger {
         }
 
         private org.apache.log4j.Logger doFallbackConfiguration() {
-            org.apache.log4j.Logger.getLogger("CastorCMP").setLevel(Level.ERROR);
-            org.apache.log4j.Logger.getLogger("org.exolab.castor").setLevel(Level.ERROR);
+            set("CastorCMP", Level.ERROR);
+            set("org.exolab.castor", Level.ERROR);
             java.util.logging.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(java.util.logging.Level.SEVERE);
-            org.apache.log4j.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(Level.ERROR);
+            set("org.exolab.castor.jdo.engine.DatabaseImpl", Level.ERROR);
             //org/exolab/castor.jdo.engine.DatabaseImpl
-            org.apache.log4j.Logger.getLogger("org.castor").setLevel(Level.ERROR);
-            org.apache.log4j.Logger.getLogger("org.apache.openejb").setLevel(Level.WARN);
-            org.apache.log4j.Logger.getLogger("Transaction").setLevel(Level.WARN);
-            org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB");
-            logger.setLevel(Level.WARN);
-            return logger;
+            set("org.castor", Level.ERROR);
+            set("org.apache.openejb", Level.WARN);
+            set("Transaction", Level.WARN);
+            set("OpenEJB.startup", Level.INFO);
+            set("OpenEJB", Level.WARN);
+            return org.apache.log4j.Logger.getLogger("OpenEJB");
         }
+
+        private void set(String category, Level level) {
+            org.apache.log4j.Logger.getLogger(category).setLevel(level);
+            Enumeration allAppenders = org.apache.log4j.Logger.getLogger(category).getAllAppenders();
+            while (allAppenders.hasMoreElements()) {
+                Object object = allAppenders.nextElement();
+                System.out.println(category +" = " + object);
+            }
+        }
+
 
     }
 }

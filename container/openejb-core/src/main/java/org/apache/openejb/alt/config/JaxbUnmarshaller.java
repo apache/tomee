@@ -18,11 +18,19 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.Application;
 import org.apache.openejb.util.JarUtils;
+import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLFilterImpl;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.*;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.sax.SAXSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -153,7 +161,12 @@ public class JaxbUnmarshaller {
         InputStream stream = null;
 
         try {
-            URL fullURL = new URL(url, xmlFile.getPath());
+            URL fullURL;
+            if (!url.toExternalForm().endsWith(xmlFile.getPath())) {
+                fullURL = new URL(url, xmlFile.getPath());
+            } else {
+                fullURL = url;
+            }
             stream = fullURL.openConnection().getInputStream();
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, fullURL.getPath());
@@ -173,7 +186,22 @@ public class JaxbUnmarshaller {
 
     private Object unmarshalObject(Reader reader, String file, String jarLocation) throws OpenEJBException {
         try {
-            Object object = unmarshaller.unmarshal(reader);
+            // create a new XML parser
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setValidating(true);
+            SAXParser parser = factory.newSAXParser();
+
+            // Create a filter to intercept events
+            NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+
+            // Be sure the filter has the JAXB content handler set (or it wont
+            // work)
+            xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+
+            SAXSource source = new SAXSource(xmlFilter, new InputSource(reader));
+
+            Object object = unmarshaller.unmarshal(source);
             if (object instanceof JAXBElement) {
                 JAXBElement element = (JAXBElement) object;
                 object = element.getValue();
@@ -182,6 +210,26 @@ public class JaxbUnmarshaller {
         } catch (JAXBException e) {
             e.printStackTrace();
             throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()));
+        } catch (ParserConfigurationException e) {
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()));
+        } catch (SAXException e) {
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()));
         }
     }
+
+    public static class NamespaceFilter extends XMLFilterImpl {
+
+        public NamespaceFilter(XMLReader xmlReader) {
+            super(xmlReader);
+        }
+
+        public void startElement(String arg0, String arg1, String arg2, Attributes arg3) throws SAXException {
+            if (arg0.equals("http://www.openejb.org/openejb-jar/1.1")){
+                super.startElement(arg0, arg1, arg2, arg3);
+            } else {
+                super.startElement("http://java.sun.com/xml/ns/javaee", arg1, arg2, arg3);
+            }
+        }
+    }
+
 }

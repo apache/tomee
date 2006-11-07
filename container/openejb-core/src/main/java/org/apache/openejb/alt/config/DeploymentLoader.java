@@ -18,23 +18,33 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.alt.config.sys.Deployments;
+import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.ClassFinder;
 
-import javax.ejb.Stateless;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
+import java.net.JarURLConnection;
+import java.nio.channels.FileChannel;
 
 /**
  * @version $Revision$ $Date$
@@ -86,6 +96,14 @@ public class DeploymentLoader {
             return;
         }
 
+        File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
+        if (appXml.exists()) {
+            if (!jarList.contains(dir.getAbsolutePath())) {
+                jarList.add(dir.getAbsolutePath());
+            }
+            return;
+        }
+
         ////////////////////////////////
         //
         //  Directory container Jar files
@@ -93,7 +111,7 @@ public class DeploymentLoader {
         ////////////////////////////////
         String[] jarFiles = dir.list(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
+                return name.endsWith(".jar") || name.endsWith(".ear");
             }
         });
 
@@ -136,9 +154,11 @@ public class DeploymentLoader {
         }
 
         deployer = new AnnotationDeployer(deployer);
-        
+
         if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")){
             deployer = new ValidateEjbModule(deployer);
+        } else {
+            logger.info("Validation is disabled.");
         }
 
         List<EjbModule> deployedJars = new ArrayList();
@@ -152,7 +172,21 @@ public class DeploymentLoader {
         try {
             for (Deployments deployment : deployments) {
                 if (deployment.getClasspath() != null){
-                    loadFromClasspath(base, jarList, deployment.getClasspath());
+                    ClassLoader classLoader = deployment.getClasspath();
+                    if (logger.isDebugEnabled()){
+                        Enumeration<URL> resources = null;
+                        try {
+                            resources = classLoader.getResources("META-INF");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        while (resources.hasMoreElements()) {
+                            URL url = resources.nextElement();
+                            logger.debug("Searching: "+ url.toExternalForm());
+                        }
+                    }
+                    loadFromClasspath(base, jarList, classLoader, "META-INF/ejb-jar.xml", "ejbs");
+                    loadFromClasspath(base, jarList, deployment.getClasspath(), "META-INF/application.xml", "ear");
                 } else {
                     loadFrom(deployment, base, jarList);
                 }
@@ -169,14 +203,12 @@ public class DeploymentLoader {
 
             String jarLocation = jarsToLoad[i];
             try {
-                EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
 
                 ClassLoader classLoader;
-
-                File jarFile = new File(jarLocation);
-                if (jarFile.isDirectory()) {
+                File file = new File(jarLocation);
+                if (file.isDirectory()) {
                     try {
-                        URL[] urls = new URL[]{jarFile.toURL()};
+                        URL[] urls = new URL[]{file.toURL()};
                         classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
         //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
 
@@ -188,25 +220,142 @@ public class DeploymentLoader {
                     classLoader = tempCodebase.getClassLoader();
                 }
 
-                EjbModule undeployedModule = new EjbModule(classLoader, jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
-                EjbModule ejbModule = deployer.deploy(undeployedModule);
+                URL baseUrl = null;
+                try {
+                    baseUrl = file.toURL();
+                } catch (MalformedURLException e) {
+                    throw new OpenEJBException("Malformed URL to app. "+e.getMessage(), e);
+                }
 
-                /* Add it to the Vector ***************/
-                ConfigurationFactory.logger.info("Loaded EJBs from " + jarLocation);
-                deployedJars.add(ejbModule);
+                URL appXmlUrl = getResource(baseUrl, classLoader, "META-INF/application.xml");
+                if (appXmlUrl != null) {
+                    if (appXmlUrl.getProtocol().equals("jar")){
+                        String name = file.getName();
+                        if (name.endsWith(".jar") || name.endsWith(".ear")|| name.endsWith(".zip")){
+                            name = name.replaceFirst("....$","");
+                        } else {
+                            name += "_app";
+                        }
+                        try {
+                            logger.info("Extracting jar: "+appXmlUrl.toExternalForm());
+                            jarLocation = JarExtractor.extract(appXmlUrl, name);
+                            logger.info("Extracted path: "+jarLocation);
+                            file = new File(jarLocation);
+                            baseUrl = file.toURL();
+                            classLoader = new URLClassLoader(new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                        } catch (IOException e) {
+                            throw new OpenEJBException("Unable to extract jar. "+e.getMessage(), e);
+                        }
+                    } else if (!file.isDirectory()) {
+                        throw new OpenEJBException("Application file must be a directory or jar");
+                    }
+
+                    File appDirectory = file;
+
+                    try {
+                        JaxbUnmarshaller appUnmarshaller = new JaxbUnmarshaller(Application.class, "META-INF/application.xml");
+                        JaxbUnmarshaller ejbUnmarshaller = new JaxbUnmarshaller(EjbJar.class, "META-INF/ejb-jar.xml");
+                        JaxbUnmarshaller openejbUnmarshaller = new JaxbUnmarshaller(OpenejbJar.class, "META-INF/openejb-jar.xml");
+                        Application application = (Application) appUnmarshaller.unmarshal(appXmlUrl);
+                        String[] files = appDirectory.list(new FilenameFilter(){
+                            public boolean accept(File dir, String name) {
+                                return name.endsWith(".jar") || name.endsWith(".zip");
+                            }
+                        });
+
+                        List<URL> appUrls = new ArrayList();
+                        for (String fileName : files) {
+                            File lib = new File(file, fileName);
+                            try {
+                                appUrls.add(lib.toURL());
+                            } catch (MalformedURLException e) {
+                                logger.error("Bad resource in classpath.  Unable to search for entries. ",e);
+                            }
+                        }
+                        ClassLoader appClassLoader = new URLClassLoader(appUrls.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+                        for (Module module : application.getModule()) {
+                            String ejbLocation = module.getEjb();
+                            if (ejbLocation != null){
+                                try {
+                                    URL ejbUrl = new File(appDirectory,ejbLocation).toURL();
+//                                    ClassLoader ejbClassLoader = new URLClassLoader(new URL[]{ejbUrl}, classLoader);
+
+                                    URL ejbXmlUrl = getResource(ejbUrl, appClassLoader, "META-INF/ejb-jar.xml");
+
+                                    if (ejbXmlUrl == null) {
+                                        throw new OpenEJBException("ejb-jar.xml not found.");
+                                    }
+                                    EjbJar ejbJar = (EjbJar) ejbUnmarshaller.unmarshal(ejbXmlUrl);
+
+                                    URL openejbXmlUrl = getResource(ejbUrl, appClassLoader, "META-INF/openejb-jar.xml");
+                                    OpenejbJar openejbJar = null;
+                                    if (openejbXmlUrl != null) {
+                                        openejbJar = (OpenejbJar) openejbUnmarshaller.unmarshal(openejbXmlUrl);
+                                    }
+                                    String jarURI = new File(ejbUrl.getFile()).getAbsolutePath();
+                                    EjbModule ejbModule = new EjbModule(classLoader, jarURI, ejbJar, openejbJar);
+                                    deployedJars.add(ejbModule);
+                                } catch (OpenEJBException e) {
+                                    logger.error("Unable to load EJBs from EAR: "+  appDirectory.getAbsolutePath() +", module: "+ejbLocation +". Exception: "+e.getMessage(), e);
+                                } catch (MalformedURLException e) {
+                                    logger.error("Bad resource in classpath.  Unable to search for entries. ",e);
+                                }
+                            }
+                        }
+                    } catch (OpenEJBException e) {
+                        logger.error("Unable to load EAR: "+ appXmlUrl.toExternalForm(), e);
+                    }
+                } else {
+                    EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
+                    EjbModule undeployedModule = new EjbModule(classLoader, jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+                    EjbModule ejbModule = deployer.deploy(undeployedModule);
+
+                    /* Add it to the Vector ***************/
+                    deployedJars.add(ejbModule);
+                }
+
             } catch (OpenEJBException e) {
                 ConfigUtils.logger.i18n.warning("conf.0004", jarLocation, e.getMessage());
             }
         }
+
+        for (EjbModule ejbModule : deployedJars) {
+            logger.info("Loaded EJBs: "+ejbModule.getJarLocation());
+        }
         return deployedJars;
     }
 
-    private void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
+    private URL getResource(URL baseUrl, ClassLoader classLoader, String name) {
         try {
-            Enumeration resources = classLoader.getResources("META-INF/ejb-jar.xml");
+            String fileUrl = baseUrl.toExternalForm();
+            URL appXmlUrl = null;
+            Enumeration<URL> urls = classLoader.getResources(name);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                String location = url.toExternalForm();
+                location = location.replaceFirst("^jar:","");
+                if (location.startsWith(fileUrl)){
+                    appXmlUrl = url;
+                    break;
+                }
+            }
+            return appXmlUrl;
+        } catch (IOException e) {
+            throw new IllegalStateException("Bad resource in classpath.  Unable to search for entries. ",e);
+        }
+    }
+
+    private void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader, String descriptor, String type) {
+        try {
+            String exclude = SystemInstance.get().getProperty("openejb.deployments.classpath.exclude", "");
+            Enumeration resources = classLoader.getResources(descriptor);
             while (resources.hasMoreElements()) {
                 URL ejbJar1 = (URL) resources.nextElement();
-
+                String urlString = ejbJar1.toExternalForm();
+                if (urlString.matches(exclude)) {
+                    ConfigurationFactory.logger.info("Excluding: "+urlString);
+                    continue;
+                }
                 String path = null;
                 Deployments deployment = new Deployments();
                 if (ejbJar1.getProtocol().equals("jar")){
@@ -221,17 +370,250 @@ public class DeploymentLoader {
                     path = ejbPackage.getAbsolutePath();
                     deployment.setDir(path);
                 } else {
-                    ConfigurationFactory.logger.warning("Not loading ejbs.  Unknown protocol "+ejbJar1.getProtocol());
+                    ConfigurationFactory.logger.warning("Not loading "+type +".  Unknown protocol "+ejbJar1.getProtocol());
                     continue;
                 }
 
-                ConfigurationFactory.logger.info("Found ejb in classpath: "+path);
+                ConfigurationFactory.logger.info("Found "+type +" in classpath: "+path);
                 loadFrom(deployment, base, jarList);
             }
         } catch (IOException e1) {
             e1.printStackTrace();
-            ConfigurationFactory.logger.warning("Unable to search classpath for ejbs: Received Exception: "+e1.getClass().getName()+" "+e1.getMessage(),e1);
+            ConfigurationFactory.logger.warning("Unable to search classpath for "+type +": Received Exception: "+e1.getClass().getName()+" "+e1.getMessage(),e1);
         }
     }
 
+    public static class JarExtractor {
+
+        /**
+         * Extract the WAR file found at the specified URL into an unpacked
+         * directory structure, and return the absolute pathname to the extracted
+         * directory.
+         *
+         * @param jar URL of the web application archive to be extracted
+         *  (must start with "jar:")
+         * @param pathname Context path name for web application
+         *
+         * @exception IllegalArgumentException if this is not a "jar:" URL
+         * @exception IOException if an input/output error was encountered
+         *  during expansion
+         */
+        public static String extract(URL jar, String pathname)
+            throws IOException {
+
+            // Make sure that there is no such directory already existing
+            FileUtils base = SystemInstance.get().getBase();
+            File appBase = base.getDirectory("apps", true);
+            if (!appBase.exists() || !appBase.isDirectory()) {
+                throw new IOException("" + appBase.getAbsolutePath());
+            }
+
+            File docBase = new File(appBase, pathname);
+            if (docBase.exists()) {
+                // War file is already installed
+                return (docBase.getAbsolutePath());
+            }
+
+            // Create the new document base directory
+            docBase.mkdir();
+
+            // Extract the JAR into the new directory
+            JarURLConnection jarURLConnection = (JarURLConnection) jar.openConnection();
+            jarURLConnection.setUseCaches(false);
+            JarFile jarFile = null;
+            InputStream input = null;
+            try {
+                jarFile = jarURLConnection.getJarFile();
+                Enumeration jarEntries = jarFile.entries();
+                while (jarEntries.hasMoreElements()) {
+                    JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+                    String name = jarEntry.getName();
+                    int last = name.lastIndexOf('/');
+                    if (last >= 0) {
+                        File parent = new File(docBase,
+                                               name.substring(0, last));
+                        parent.mkdirs();
+                    }
+                    if (name.endsWith("/")) {
+                        continue;
+                    }
+                    input = jarFile.getInputStream(jarEntry);
+
+                    File extractedFile = extract(input, docBase, name);
+                    long lastModified = jarEntry.getTime();
+                    if ((lastModified != -1) && (lastModified != 0) && (extractedFile != null)) {
+                        extractedFile.setLastModified(lastModified);
+                    }
+
+                    input.close();
+                    input = null;
+                }
+            } catch (IOException e) {
+                // If something went wrong, delete extracted dir to keep things
+                // clean
+                deleteDir(docBase);
+                throw e;
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (Throwable t) {
+                        ;
+                    }
+                    input = null;
+                }
+                if (jarFile != null) {
+                    try {
+                        jarFile.close();
+                    } catch (Throwable t) {
+                        ;
+                    }
+                    jarFile = null;
+                }
+            }
+
+            // Return the absolute path to our new document base directory
+            return (docBase.getAbsolutePath());
+
+        }
+
+
+        /**
+         * Copy the specified file or directory to the destination.
+         *
+         * @param src File object representing the source
+         * @param dest File object representing the destination
+         */
+        public static boolean copy(File src, File dest) {
+
+            boolean result = true;
+
+            String files[] = null;
+            if (src.isDirectory()) {
+                files = src.list();
+                result = dest.mkdir();
+            } else {
+                files = new String[1];
+                files[0] = "";
+            }
+            if (files == null) {
+                files = new String[0];
+            }
+            for (int i = 0; (i < files.length) && result; i++) {
+                File fileSrc = new File(src, files[i]);
+                File fileDest = new File(dest, files[i]);
+                if (fileSrc.isDirectory()) {
+                    result = copy(fileSrc, fileDest);
+                } else {
+                    FileChannel ic = null;
+                    FileChannel oc = null;
+                    try {
+                        ic = (new FileInputStream(fileSrc)).getChannel();
+                        oc = (new FileOutputStream(fileDest)).getChannel();
+                        ic.transferTo(0, ic.size(), oc);
+                    } catch (IOException e) {
+                        logger.error("Copy failed: src: "+ fileSrc +", dest: "+ fileDest, e);
+                        result = false;
+                    } finally {
+                        if (ic != null) {
+                            try {
+                                ic.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                        if (oc != null) {
+                            try {
+                                oc.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+
+        }
+
+
+        /**
+         * Delete the specified directory, including all of its contents and
+         * subdirectories recursively.
+         *
+         * @param dir File object representing the directory to be deleted
+         */
+        public static boolean delete(File dir) {
+            if (dir.isDirectory()) {
+                return deleteDir(dir);
+            } else {
+                return dir.delete();
+            }
+        }
+
+
+        /**
+         * Delete the specified directory, including all of its contents and
+         * subdirectories recursively.
+         *
+         * @param dir File object representing the directory to be deleted
+         */
+        public static boolean deleteDir(File dir) {
+
+            String files[] = dir.list();
+            if (files == null) {
+                files = new String[0];
+            }
+            for (int i = 0; i < files.length; i++) {
+                File file = new File(dir, files[i]);
+                if (file.isDirectory()) {
+                    deleteDir(file);
+                } else {
+                    file.delete();
+                }
+            }
+            return dir.delete();
+
+        }
+
+
+        /**
+         * Extract the specified input stream into the specified directory, creating
+         * a file named from the specified relative path.
+         *
+         * @param input InputStream to be copied
+         * @param docBase Document base directory into which we are extracting
+         * @param name Relative pathname of the file to be created
+         * @return A handle to the extracted File
+         *
+         * @exception IOException if an input/output error occurs
+         */
+        protected static File extract(InputStream input, File docBase, String name)
+            throws IOException {
+
+            File file = new File(docBase, name);
+            BufferedOutputStream output = null;
+            try {
+                output =
+                    new BufferedOutputStream(new FileOutputStream(file));
+                byte buffer[] = new byte[2048];
+                while (true) {
+                    int n = input.read(buffer);
+                    if (n <= 0)
+                        break;
+                    output.write(buffer, 0, n);
+                }
+            } finally {
+                if (output != null) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                }
+            }
+
+            return file;
+        }
+
+
+    }
 }
