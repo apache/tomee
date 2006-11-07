@@ -17,85 +17,63 @@
 package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.DeploymentInfo;
-
 import org.apache.openejb.client.EJBRequest;
 
-import org.apache.openejb.util.FastThreadLocal;
+import java.util.HashMap;
 
 public class CallContext {
 
-    protected static final FastThreadLocal threads = new FastThreadLocal();
-
-    protected DeploymentInfo deploymentInfo;
-
-    protected EJBRequest request;
+    private static final ThreadLocal threads = new ThreadLocal();
+    private final HashMap<Class, Object> data = new HashMap();
 
     public CallContext() {
-
     }
 
     public void reset() {
+        data.clear();
+    }
 
-        deploymentInfo = null;
+    public <T> T get(Class<T> type) {
+        return (T)data.get(type);
+    }
 
-        request = null;
-
+    public <T> T set(Class<T> type, T value) {
+        return (T) data.put(type, value);
     }
 
     public DeploymentInfo getDeploymentInfo() {
-
-        return deploymentInfo;
-
+        return get(DeploymentInfo.class);
     }
 
     public void setDeploymentInfo(DeploymentInfo info) {
-
-        deploymentInfo = info;
-
+        set(DeploymentInfo.class, info);
     }
 
     public EJBRequest getEJBRequest() {
-
-        return request;
-
+        return get(EJBRequest.class);
     }
 
     public void setEJBRequest(EJBRequest request) {
-
-        this.request = request;
-
+        set(EJBRequest.class, request);
     }
 
     public static void setCallContext(CallContext ctx) {
-
         if (ctx == null) {
-
             ctx = (CallContext) threads.get();
-
             if (ctx != null) ctx.reset();
-
         } else {
-
             threads.set(ctx);
-
         }
-
     }
 
     public static CallContext getCallContext() {
-
         CallContext ctx = (CallContext) threads.get();
-
         if (ctx == null) {
-
             ctx = new CallContext();
-
             threads.set(ctx);
-
         }
 
         return ctx;
-
     }
 
 }
