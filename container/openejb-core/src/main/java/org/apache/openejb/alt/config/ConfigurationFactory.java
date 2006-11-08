@@ -17,6 +17,7 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.sys.ConnectionManager;
 import org.apache.openejb.alt.config.sys.Connector;
@@ -194,6 +195,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.containerSystem.methodTransactions = ejbJarInfoBuilder.getMethodTransactionInfos().toArray(new MethodTransactionInfo[]{});
 
         initSecutityService(openejb, sys.facilities);
+
+        SystemInstance.get().setComponent(OpenEjbConfiguration.class, sys);
         return sys;
     }
 

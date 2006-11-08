@@ -136,8 +136,9 @@ public class SystemInstance {
     /**
      * @param type the class type of the component required
      */
-    public Object setComponent(Class type, Object value) {
-        return components.put(type, value);
+    public <T> T setComponent(Class<T> type, T value) {
+//    public Object setComponent(Class type, Object value) {
+        return (T)components.put(type, value);
     }
 
     private static SystemInstance system;
