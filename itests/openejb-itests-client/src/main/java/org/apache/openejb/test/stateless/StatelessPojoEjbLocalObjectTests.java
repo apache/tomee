@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 
 /**
@@ -26,82 +25,82 @@ import javax.ejb.EJBLocalHome;
  */
 public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestClient {
 
-	public StatelessPojoEjbLocalObjectTests() {
-		super("PojoEJBLocalObject.");
-		// TODO Auto-generated constructor stub
-	}
+    public StatelessPojoEjbLocalObjectTests() {
+        super("PojoEJBLocalObject.");
+        // TODO Auto-generated constructor stub
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		Object obj = initialContext
-				.lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
-		ejbLocalHome = (BasicStatelessLocalHome) javax.rmi.PortableRemoteObject
-				.narrow(obj, BasicStatelessLocalHome.class);
-		ejbLocalObject = ejbLocalHome.create();
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        Object obj = initialContext
+                .lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
+        ejbLocalHome = (BasicStatelessLocalHome) javax.rmi.PortableRemoteObject
+                .narrow(obj, BasicStatelessLocalHome.class);
+        ejbLocalObject = ejbLocalHome.create();
+    }
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
 
-	// ===============================
-	// Test ejb object methods
-	//
-	 public void test01_isIdentical(){
-	        try{
-	            assertTrue( "The EJBLocalObjects are not equal", ejbLocalObject.isIdentical(ejbLocalObject) );
-	        } catch (Exception e){
-	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-	        }
-	    }
+    // ===============================
+    // Test ejb object methods
+    //
+    public void test01_isIdentical() {
+        try {
+            assertTrue("The EJBLocalObjects are not equal", ejbLocalObject.isIdentical(ejbLocalObject));
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
 
-	    public void test02_getEjbLocalHome(){
-	        try{
-	            EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
-	            assertNotNull( "The EJBLocalHome is null", localHome );
-	        } catch (Exception e){
-	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-	        }
-	    }
+    public void test02_getEjbLocalHome() {
+        try {
+            EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
+            assertNotNull("The EJBLocalHome is null", localHome);
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
 
-	    /**
-	     * 3.6.5 Session object identity
-	     *
-	     * Session objects are intended to be private resources used only by the
-	     * client that created them. For this reason, session objects, from the
-	     * client’s perspective, appear anonymous. In contrast to entity objects,
-	     * which expose their identity as a primary key, session objects hide their
-	     * identity. As a result, the EJBLocalObject.getPrimaryKey() method results in a
-	     * javax.ejb.EJBException, and EJBLocalHome.remove(Object primaryKey) method results
-	     * in a javax.ejb.RemoveException. If the EJBMetaData.getPrimaryKeyClass()
-	     * method is invoked on a EJBMetaData object for a Session bean, the method throws
-	     * the java.lang.RuntimeException.
-	     */
-	    public void test03_getPrimaryKey(){
-	        try{
-	            Object key = ejbLocalObject.getPrimaryKey();
-	        } catch (javax.ejb.EJBException e){
-	            assertTrue(true);
-	            return;
-	        } catch (Exception e){
-	            fail("A RuntimeException should have been thrown.  Received Exception "+e.getClass()+ " : "+e.getMessage());
-	        }
-	        fail("A RuntimeException should have been thrown.");
-	    }
+    /**
+     * 3.6.5 Session object identity
+     * <p/>
+     * Session objects are intended to be private resources used only by the
+     * client that created them. For this reason, session objects, from the
+     * client’s perspective, appear anonymous. In contrast to entity objects,
+     * which expose their identity as a primary key, session objects hide their
+     * identity. As a result, the EJBLocalObject.getPrimaryKey() method results in a
+     * javax.ejb.EJBException, and EJBLocalHome.remove(Object primaryKey) method results
+     * in a javax.ejb.RemoveException. If the EJBMetaData.getPrimaryKeyClass()
+     * method is invoked on a EJBMetaData object for a Session bean, the method throws
+     * the java.lang.RuntimeException.
+     */
+    public void test03_getPrimaryKey() {
+        try {
+            Object key = ejbLocalObject.getPrimaryKey();
+        } catch (javax.ejb.EJBException e) {
+            assertTrue(true);
+            return;
+        } catch (Exception e) {
+            fail("A RuntimeException should have been thrown.  Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+        fail("A RuntimeException should have been thrown.");
+    }
 
-	    public void test04_remove(){
-	        try{
-	            try{
-	            	ejbLocalObject.remove();
-	                ejbLocalObject.businessMethod("Should throw an exception");
-	                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-	            } catch (Exception e){
-	                assertTrue( true );
-	                return;
-	            }
-	        } catch (Exception e){
-	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-	        }
-	    }
+    public void test04_remove() {
+        try {
+            try {
+                ejbLocalObject.remove();
+                ejbLocalObject.businessMethod("Should throw an exception");
+                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
+            } catch (Exception e) {
+                assertTrue(true);
+                return;
+            }
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
 
-	}
+}
