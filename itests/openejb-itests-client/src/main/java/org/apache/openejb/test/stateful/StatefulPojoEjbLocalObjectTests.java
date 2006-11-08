@@ -24,9 +24,9 @@ import javax.ejb.EJBLocalHome;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  * @author <a href="mailto:manu.t.george@gmail.com">Manu George</a>
  */
-public class StatefulEjbLocalObjectTests extends BasicStatefulLocalTestClient {
+public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClient {
 
-    public StatefulEjbLocalObjectTests(){
+    public StatefulPojoEjbLocalObjectTests(){
         super("EJBLocalObject.");
     }
 
