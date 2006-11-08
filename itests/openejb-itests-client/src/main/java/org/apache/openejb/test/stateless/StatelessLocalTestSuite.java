@@ -45,6 +45,7 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessPojoEjbLocalObjectTests() );
         suite.addTest(new StatelessEjbObjectTests());
         suite.addTest(new StatelessRemoteIntfcTests());
+        suite.addTest(new StatelessLocalIntfcTests());
         suite.addTest(new StatelessHomeHandleTests());
         suite.addTest(new StatelessHandleTests());
         suite.addTest(new StatelessEjbMetaDataTests());
