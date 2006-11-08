@@ -17,34 +17,36 @@
  */
 package org.apache.openejb.alt.config;
 
-import org.apache.openejb.alt.config.sys.Deployments;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.alt.config.sys.Deployments;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Module;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.util.Logger;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import java.net.JarURLConnection;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @version $Revision$ $Date$
@@ -53,7 +55,7 @@ public class DeploymentLoader {
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", DeploymentLoader.class.getPackage().getName());
 
-    public DeploymentLoader(){
+    public DeploymentLoader() {
 
     }
 
@@ -127,16 +129,23 @@ public class DeploymentLoader {
             jarList.add(jar.getAbsolutePath());
         }
     }
+
     public static enum Type {
         JAR, DIR, CLASSPATH
     }
 
     public List<EjbModule> load(Type type, Object source) throws OpenEJBException {
         Deployments deployments = new Deployments();
-        switch(type){
-            case JAR: deployments.setJar((String) source); break;
-            case DIR: deployments.setDir((String) source); break;
-            case CLASSPATH: deployments.setClasspath((ClassLoader) source); break;
+        switch (type) {
+            case JAR:
+                deployments.setJar((String) source);
+                break;
+            case DIR:
+                deployments.setDir((String) source);
+                break;
+            case CLASSPATH:
+                deployments.setClasspath((ClassLoader) source);
+                break;
         }
 
         List<Deployments> list = new ArrayList();
@@ -145,8 +154,8 @@ public class DeploymentLoader {
     }
 
     public List<EjbModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
-        if (deployer == null){
-            deployer = new DynamicDeployer(){
+        if (deployer == null) {
+            deployer = new DynamicDeployer() {
                 public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
                     return ejbModule;
                 }
@@ -155,7 +164,7 @@ public class DeploymentLoader {
 
         deployer = new AnnotationDeployer(deployer);
 
-        if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")){
+        if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")) {
             deployer = new ValidateEjbModule(deployer);
         } else {
             logger.info("Validation is disabled.");
@@ -171,9 +180,9 @@ public class DeploymentLoader {
         List<String> jarList = new ArrayList(deployments.size());
         try {
             for (Deployments deployment : deployments) {
-                if (deployment.getClasspath() != null){
+                if (deployment.getClasspath() != null) {
                     ClassLoader classLoader = deployment.getClasspath();
-                    if (logger.isDebugEnabled()){
+                    if (logger.isDebugEnabled()) {
                         Enumeration<URL> resources = null;
                         try {
                             resources = classLoader.getResources("META-INF");
@@ -182,7 +191,7 @@ public class DeploymentLoader {
                         }
                         while (resources.hasMoreElements()) {
                             URL url = resources.nextElement();
-                            logger.debug("Searching: "+ url.toExternalForm());
+                            logger.debug("Searching: " + url.toExternalForm());
                         }
                     }
                     loadFromClasspath(base, jarList, classLoader, "META-INF/ejb-jar.xml", "ejbs");
@@ -201,63 +210,32 @@ public class DeploymentLoader {
         /*[1]  Put all EjbJar & OpenejbJar objects in a vector ***************/
         for (int i = 0; i < jarsToLoad.length; i++) {
 
-            String jarLocation = jarsToLoad[i];
+            String pathname = jarsToLoad[i];
+
+            logger.debug("Beginning load: "+pathname);
+
+            File jarFile = new File(pathname);
+
             try {
 
-                ClassLoader classLoader;
-                File file = new File(jarLocation);
-                if (file.isDirectory()) {
-                    try {
-                        URL[] urls = new URL[]{file.toURL()};
-                        classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
-        //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+                ClassLoader classLoader = getClassLoader(jarFile);
 
-                    } catch (MalformedURLException e) {
-                        throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarLocation, e.getMessage()));
-                    }
-                } else {
-                    TempCodebase tempCodebase = new TempCodebase(jarLocation);
-                    classLoader = tempCodebase.getClassLoader();
-                }
+                URL baseUrl = getFileUrl(jarFile);
 
-                URL baseUrl = null;
-                try {
-                    baseUrl = file.toURL();
-                } catch (MalformedURLException e) {
-                    throw new OpenEJBException("Malformed URL to app. "+e.getMessage(), e);
-                }
+                URL appXml = getResource(baseUrl, classLoader, "META-INF/application.xml");
 
-                URL appXmlUrl = getResource(baseUrl, classLoader, "META-INF/application.xml");
-                if (appXmlUrl != null) {
-                    if (appXmlUrl.getProtocol().equals("jar")){
-                        String name = file.getName();
-                        if (name.endsWith(".jar") || name.endsWith(".ear")|| name.endsWith(".zip")){
-                            name = name.replaceFirst("....$","");
-                        } else {
-                            name += "_app";
-                        }
-                        try {
-                            logger.info("Extracting jar: "+appXmlUrl.toExternalForm());
-                            jarLocation = JarExtractor.extract(appXmlUrl, name);
-                            logger.info("Extracted path: "+jarLocation);
-                            file = new File(jarLocation);
-                            baseUrl = file.toURL();
-                            classLoader = new URLClassLoader(new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
-                        } catch (IOException e) {
-                            throw new OpenEJBException("Unable to extract jar. "+e.getMessage(), e);
-                        }
-                    } else if (!file.isDirectory()) {
-                        throw new OpenEJBException("Application file must be a directory or jar");
-                    }
+                if (appXml != null) {
 
-                    File appDirectory = file;
+                    jarFile = unpack(appXml, jarFile);
+
+                    baseUrl = getFileUrl(jarFile);
+
+                    classLoader = new URLClassLoader(new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
 
                     try {
-                        JaxbUnmarshaller appUnmarshaller = new JaxbUnmarshaller(Application.class, "META-INF/application.xml");
-                        JaxbUnmarshaller ejbUnmarshaller = new JaxbUnmarshaller(EjbJar.class, "META-INF/ejb-jar.xml");
-                        JaxbUnmarshaller openejbUnmarshaller = new JaxbUnmarshaller(OpenejbJar.class, "META-INF/openejb-jar.xml");
-                        Application application = (Application) appUnmarshaller.unmarshal(appXmlUrl);
-                        String[] files = appDirectory.list(new FilenameFilter(){
+
+                        Application application = unmarshal(Application.class, "META-INF/application.xml", classLoader, baseUrl);
+                        String[] files = jarFile.list(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.endsWith(".jar") || name.endsWith(".zip");
                             }
@@ -265,49 +243,53 @@ public class DeploymentLoader {
 
                         List<URL> appUrls = new ArrayList();
                         for (String fileName : files) {
-                            File lib = new File(file, fileName);
+                            File lib = new File(jarFile, fileName);
                             try {
                                 appUrls.add(lib.toURL());
                             } catch (MalformedURLException e) {
-                                logger.error("Bad resource in classpath.  Unable to search for entries. ",e);
+                                logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
                             }
                         }
+
                         ClassLoader appClassLoader = new URLClassLoader(appUrls.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+
                         for (Module module : application.getModule()) {
-                            String ejbLocation = module.getEjb();
-                            if (ejbLocation != null){
+                            if (module.getEjb() != null) {
                                 try {
-                                    URL ejbUrl = new File(appDirectory,ejbLocation).toURL();
+                                    URL ejbUrl = new File(jarFile, module.getEjb()).toURL();
 //                                    ClassLoader ejbClassLoader = new URLClassLoader(new URL[]{ejbUrl}, classLoader);
 
-                                    URL ejbXmlUrl = getResource(ejbUrl, appClassLoader, "META-INF/ejb-jar.xml");
+                                    EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", appClassLoader, ejbUrl);
 
-                                    if (ejbXmlUrl == null) {
-                                        throw new OpenEJBException("ejb-jar.xml not found.");
-                                    }
-                                    EjbJar ejbJar = (EjbJar) ejbUnmarshaller.unmarshal(ejbXmlUrl);
-
-                                    URL openejbXmlUrl = getResource(ejbUrl, appClassLoader, "META-INF/openejb-jar.xml");
                                     OpenejbJar openejbJar = null;
-                                    if (openejbXmlUrl != null) {
-                                        openejbJar = (OpenejbJar) openejbUnmarshaller.unmarshal(openejbXmlUrl);
+
+                                    URL openejbjarUrl = getResource(ejbUrl, appClassLoader, "META-INF/openejb-jar.xml");
+
+                                    if (openejbjarUrl != null) {
+
+                                        openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", appClassLoader, ejbUrl);
+
                                     }
-                                    String jarURI = new File(ejbUrl.getFile()).getAbsolutePath();
-                                    EjbModule ejbModule = new EjbModule(classLoader, jarURI, ejbJar, openejbJar);
+
+                                    String jarPath = new File(ejbUrl.getFile()).getAbsolutePath();
+
+                                    EjbModule ejbModule = new EjbModule(classLoader, jarPath, ejbJar, openejbJar);
+
                                     deployedJars.add(ejbModule);
+                                    
                                 } catch (OpenEJBException e) {
-                                    logger.error("Unable to load EJBs from EAR: "+  appDirectory.getAbsolutePath() +", module: "+ejbLocation +". Exception: "+e.getMessage(), e);
+                                    logger.error("Unable to load EJBs from EAR: " + jarFile.getAbsolutePath() + ", module: " + module.getEjb() + ". Exception: " + e.getMessage(), e);
                                 } catch (MalformedURLException e) {
-                                    logger.error("Bad resource in classpath.  Unable to search for entries. ",e);
+                                    logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
                                 }
                             }
                         }
                     } catch (OpenEJBException e) {
-                        logger.error("Unable to load EAR: "+ appXmlUrl.toExternalForm(), e);
+                        logger.error("Unable to load EAR: " + appXml.toExternalForm(), e);
                     }
                 } else {
-                    EjbJarUtils ejbJarUtils = new EjbJarUtils(jarLocation);
-                    EjbModule undeployedModule = new EjbModule(classLoader, jarLocation, ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+                    EjbJarUtils ejbJarUtils = new EjbJarUtils(jarFile.getAbsolutePath());
+                    EjbModule undeployedModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
                     EjbModule ejbModule = deployer.deploy(undeployedModule);
 
                     /* Add it to the Vector ***************/
@@ -315,14 +297,84 @@ public class DeploymentLoader {
                 }
 
             } catch (OpenEJBException e) {
-                ConfigUtils.logger.i18n.warning("conf.0004", jarLocation, e.getMessage());
+                ConfigUtils.logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             }
         }
 
         for (EjbModule ejbModule : deployedJars) {
-            logger.info("Loaded EJBs: "+ejbModule.getJarLocation());
+            logger.info("Loaded EJBs: " + ejbModule.getJarLocation());
         }
         return deployedJars;
+    }
+
+    private final Map<Class,JaxbUnmarshaller> unmarshallers = new HashMap();
+
+    private <T> T unmarshal(Class<T> type, String descriptor, ClassLoader classLoader, URL jarUrl) throws OpenEJBException {
+        URL descriptorUrl = getResource(jarUrl, classLoader, descriptor);
+
+        if (descriptorUrl == null) {
+            throw new OpenEJBException(descriptor + " not found.");
+        }
+
+        return unmarshal(type, descriptor, descriptorUrl);
+    }
+
+    private <T>T unmarshal(Class<T> type, String descriptor, URL descriptorUrl) throws OpenEJBException {
+        JaxbUnmarshaller unmarshaller = unmarshallers.get(type);
+        if (unmarshaller == null) {
+            unmarshaller = new JaxbUnmarshaller(type, descriptor);
+            unmarshallers.put(type, unmarshaller);
+        }
+        return (T) unmarshaller.unmarshal(descriptorUrl);
+    }
+
+    private File unpack(URL appXml, File jarFile) throws OpenEJBException {
+        if (appXml.getProtocol().equals("jar")) {
+
+            String name = jarFile.getName();
+            if (name.endsWith(".jar") || name.endsWith(".ear") || name.endsWith(".zip")) {
+                name = name.replaceFirst("....$", "");
+            } else {
+                name += "_app";
+            }
+
+            try {
+                jarFile = JarExtractor.extract(appXml, name, jarFile);
+            } catch (IOException e) {
+                throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
+            }
+        } else if (!jarFile.isDirectory()) {
+            throw new OpenEJBException("Application file must be a directory or jar");
+        }
+        return jarFile;
+    }
+
+    private URL getFileUrl(File jarFile) throws OpenEJBException {
+        URL baseUrl = null;
+        try {
+            baseUrl = jarFile.toURL();
+        } catch (MalformedURLException e) {
+            throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
+        }
+        return baseUrl;
+    }
+
+    private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
+        ClassLoader classLoader;
+        if (jarFile.isDirectory()) {
+            try {
+                URL[] urls = new URL[]{jarFile.toURL()};
+                classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
+                //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+
+            } catch (MalformedURLException e) {
+                throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
+            }
+        } else {
+            TempCodebase tempCodebase = new TempCodebase(jarFile.getAbsolutePath());
+            classLoader = tempCodebase.getClassLoader();
+        }
+        return classLoader;
     }
 
     private URL getResource(URL baseUrl, ClassLoader classLoader, String name) {
@@ -333,15 +385,15 @@ public class DeploymentLoader {
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 String location = url.toExternalForm();
-                location = location.replaceFirst("^jar:","");
-                if (location.startsWith(fileUrl)){
+                location = location.replaceFirst("^jar:", "");
+                if (location.startsWith(fileUrl)) {
                     appXmlUrl = url;
                     break;
                 }
             }
             return appXmlUrl;
         } catch (IOException e) {
-            throw new IllegalStateException("Bad resource in classpath.  Unable to search for entries. ",e);
+            throw new IllegalStateException("Bad resource in classpath.  Unable to search for entries. ", e);
         }
     }
 
@@ -353,12 +405,12 @@ public class DeploymentLoader {
                 URL ejbJar1 = (URL) resources.nextElement();
                 String urlString = ejbJar1.toExternalForm();
                 if (urlString.matches(exclude)) {
-                    ConfigurationFactory.logger.info("Excluding: "+urlString);
+                    ConfigurationFactory.logger.info("Excluding: " + urlString);
                     continue;
                 }
                 String path = null;
                 Deployments deployment = new Deployments();
-                if (ejbJar1.getProtocol().equals("jar")){
+                if (ejbJar1.getProtocol().equals("jar")) {
                     ejbJar1 = new URL(ejbJar1.getFile().replaceFirst("!.*$", ""));
                     File file = new File(ejbJar1.getFile());
                     path = file.getAbsolutePath();
@@ -370,16 +422,16 @@ public class DeploymentLoader {
                     path = ejbPackage.getAbsolutePath();
                     deployment.setDir(path);
                 } else {
-                    ConfigurationFactory.logger.warning("Not loading "+type +".  Unknown protocol "+ejbJar1.getProtocol());
+                    ConfigurationFactory.logger.warning("Not loading " + type + ".  Unknown protocol " + ejbJar1.getProtocol());
                     continue;
                 }
 
-                ConfigurationFactory.logger.info("Found "+type +" in classpath: "+path);
+                ConfigurationFactory.logger.info("Found " + type + " in classpath: " + path);
                 loadFrom(deployment, base, jarList);
             }
         } catch (IOException e1) {
             e1.printStackTrace();
-            ConfigurationFactory.logger.warning("Unable to search classpath for "+type +": Received Exception: "+e1.getClass().getName()+" "+e1.getMessage(),e1);
+            ConfigurationFactory.logger.warning("Unable to search classpath for " + type + ": Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
     }
 
@@ -390,16 +442,16 @@ public class DeploymentLoader {
          * directory structure, and return the absolute pathname to the extracted
          * directory.
          *
-         * @param jar URL of the web application archive to be extracted
-         *  (must start with "jar:")
+         * @param jar      URL of the web application archive to be extracted
+         *                 (must start with "jar:")
          * @param pathname Context path name for web application
-         *
-         * @exception IllegalArgumentException if this is not a "jar:" URL
-         * @exception IOException if an input/output error was encountered
-         *  during expansion
+         * @param file
+         * @throws IllegalArgumentException if this is not a "jar:" URL
+         * @throws IOException              if an input/output error was encountered
+         *                                  during expansion
          */
-        public static String extract(URL jar, String pathname)
-            throws IOException {
+        public static File extract(URL jar, String pathname, File file)
+                throws IOException {
 
             // Make sure that there is no such directory already existing
             FileUtils base = SystemInstance.get().getBase();
@@ -410,9 +462,11 @@ public class DeploymentLoader {
 
             File docBase = new File(appBase, pathname);
             if (docBase.exists()) {
-                // War file is already installed
-                return (docBase.getAbsolutePath());
+                // Ear file is already installed
+                return docBase;
             }
+
+            logger.info("Extracting jar: " + file.getAbsolutePath());
 
             // Create the new document base directory
             docBase.mkdir();
@@ -431,7 +485,7 @@ public class DeploymentLoader {
                     int last = name.lastIndexOf('/');
                     if (last >= 0) {
                         File parent = new File(docBase,
-                                               name.substring(0, last));
+                                name.substring(0, last));
                         parent.mkdirs();
                     }
                     if (name.endsWith("/")) {
@@ -473,7 +527,9 @@ public class DeploymentLoader {
             }
 
             // Return the absolute path to our new document base directory
-            return (docBase.getAbsolutePath());
+            logger.info("Extracted path: " + docBase.getAbsolutePath());
+
+            return docBase;
 
         }
 
@@ -481,7 +537,7 @@ public class DeploymentLoader {
         /**
          * Copy the specified file or directory to the destination.
          *
-         * @param src File object representing the source
+         * @param src  File object representing the source
          * @param dest File object representing the destination
          */
         public static boolean copy(File src, File dest) {
@@ -512,7 +568,7 @@ public class DeploymentLoader {
                         oc = (new FileOutputStream(fileDest)).getChannel();
                         ic.transferTo(0, ic.size(), oc);
                     } catch (IOException e) {
-                        logger.error("Copy failed: src: "+ fileSrc +", dest: "+ fileDest, e);
+                        logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);
                         result = false;
                     } finally {
                         if (ic != null) {
@@ -579,21 +635,20 @@ public class DeploymentLoader {
          * Extract the specified input stream into the specified directory, creating
          * a file named from the specified relative path.
          *
-         * @param input InputStream to be copied
+         * @param input   InputStream to be copied
          * @param docBase Document base directory into which we are extracting
-         * @param name Relative pathname of the file to be created
+         * @param name    Relative pathname of the file to be created
          * @return A handle to the extracted File
-         *
-         * @exception IOException if an input/output error occurs
+         * @throws IOException if an input/output error occurs
          */
         protected static File extract(InputStream input, File docBase, String name)
-            throws IOException {
+                throws IOException {
 
             File file = new File(docBase, name);
             BufferedOutputStream output = null;
             try {
                 output =
-                    new BufferedOutputStream(new FileOutputStream(file));
+                        new BufferedOutputStream(new FileOutputStream(file));
                 byte buffer[] = new byte[2048];
                 while (true) {
                     int n = input.read(buffer);

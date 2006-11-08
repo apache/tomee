@@ -20,6 +20,7 @@ public class ContainerSystemInfo extends InfoObject {
 
     public ContainerInfo[] containers;
     public EnterpriseBeanInfo[] enterpriseBeans;
+    public ClientInfo[] clients; 
     public EjbJarInfo[] ejbJars;
 
     public EntityContainerInfo[] entityContainers;

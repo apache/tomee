@@ -24,6 +24,7 @@ public class JNDIRequest implements Request {
 
     private transient int requestMethod = -1;
     private transient String requestString;
+    private transient String moduleId;
 
     public JNDIRequest() {
     }
@@ -45,6 +46,14 @@ public class JNDIRequest implements Request {
         return requestString;
     }
 
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
+    }
+
     public void setRequestMethod(int requestMethod) {
         this.requestMethod = requestMethod;
     }
@@ -56,12 +65,13 @@ public class JNDIRequest implements Request {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         requestMethod = in.readByte();
         requestString = in.readUTF();
+        moduleId = (String) in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeByte((byte) requestMethod);
         out.writeUTF(requestString);
+        out.writeObject(moduleId);
     }
-
 }
 

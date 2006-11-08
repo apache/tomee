@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,47 +16,37 @@
  */
 package org.apache.openejb.alt.config;
 
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
 
 /**
- * Class is to remain "dumb" and should not have deployment logic added to it.
- * Class is intentionally not an interface as that would encourage "smart" implementations
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
-public class EjbModule implements Module {
-
+public class ClientModule {
+    private final ApplicationClient applicationClient;
+    private final String jarLocation;
     private final ClassLoader classLoader;
-    private final EjbJar ejbJar;
-    private final OpenejbJar openejbJar;
-    private final String jarURI;
+    private final String mainClass;
 
-    public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
+        this.applicationClient = applicationClient;
         this.classLoader = classLoader;
-        this.ejbJar = ejbJar;
-        this.jarURI = jarURI;
-        this.openejbJar = openejbJar;
+        this.jarLocation = jarLocation;
+        this.mainClass = mainClass;
     }
 
-    public EjbJar getEjbJar() {
-        return ejbJar;
-    }
-
-    public OpenejbJar getOpenejbJar() {
-        return openejbJar;
-    }
-
-    public String getJarURI() {
-        return jarURI;
-    }
-
-    public String getJarLocation() {
-        return getJarURI();
+    public ApplicationClient getApplicationClient() {
+        return applicationClient;
     }
 
     public ClassLoader getClassLoader() {
         return classLoader;
     }
 
+    public String getJarLocation() {
+        return jarLocation;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
 }

@@ -41,11 +41,16 @@ import org.apache.openejb.client.ResponseCodes;
 class JndiRequestHandler implements ResponseCodes, RequestMethods {
     private final EjbDaemon daemon;
 
-    javax.naming.Context ejbJndiTree;
+    private Context ejbJndiTree;
+    private Context clientJndiTree;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        ejbJndiTree = (javax.naming.Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
+        ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
+        try {
+            clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
+        } catch (NamingException e) {
+        }
         this.daemon = daemon;
     }
 
@@ -59,7 +64,12 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
 
         Object object = null;
         try {
-            object = ejbJndiTree.lookup(name);
+            if (req.getModuleId()!= null && clientJndiTree != null){
+                Context moduleContext = (Context) clientJndiTree.lookup(req.getModuleId());
+                object = moduleContext.lookup(name);
+            } else {
+                object = ejbJndiTree.lookup(name);
+            }
 
             if (object instanceof Context) {
                 res.setResponseCode(JNDI_CONTEXT);
