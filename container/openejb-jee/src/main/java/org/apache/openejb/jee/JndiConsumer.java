@@ -14,12 +14,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.alt.config;
+package org.apache.openejb.jee;
+
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
-public interface Module {
-    public ClassLoader getClassLoader();
-    public String getJarLocation();
+public interface JndiConsumer {
+    List<EnvEntry> getEnvEntry();
+
+    List<EjbRef> getEjbRef();
+
+    List<EjbLocalRef> getEjbLocalRef();
+
+    List<ServiceRef> getServiceRef();
+
+    List<ResourceRef> getResourceRef();
+
+    List<ResourceEnvRef> getResourceEnvRef();
+
+    List<MessageDestinationRef> getMessageDestinationRef();
+
+    List<PersistenceContextRef> getPersistenceContextRef();
+
+    List<PersistenceUnitRef> getPersistenceUnitRef();
+
+    List<LifecycleCallback> getPostConstruct();
+
+    List<LifecycleCallback> getPreDestroy();
+
+    void addPostConstruct(String method);
+
+    void addPreDestroy(String method);
 }

@@ -20,10 +20,9 @@ package org.apache.openejb.alt.config;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.sys.Deployments;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -134,7 +133,7 @@ public class DeploymentLoader {
         JAR, DIR, CLASSPATH
     }
 
-    public List<EjbModule> load(Type type, Object source) throws OpenEJBException {
+    public List<DeploymentModule> load(Type type, Object source) throws OpenEJBException {
         Deployments deployments = new Deployments();
         switch (type) {
             case JAR:
@@ -153,7 +152,7 @@ public class DeploymentLoader {
         return loadDeploymentsList(list, null);
     }
 
-    public List<EjbModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
+    public List<DeploymentModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
         if (deployer == null) {
             deployer = new DynamicDeployer() {
                 public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -170,7 +169,7 @@ public class DeploymentLoader {
             logger.info("Validation is disabled.");
         }
 
-        List<EjbModule> deployedJars = new ArrayList();
+        List<DeploymentModule> deployedJars = new ArrayList();
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
 
@@ -235,6 +234,7 @@ public class DeploymentLoader {
                     try {
 
                         Application application = unmarshal(Application.class, "META-INF/application.xml", classLoader, baseUrl);
+                        
                         String[] files = jarFile.list(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.endsWith(".jar") || name.endsWith(".zip");
@@ -257,7 +257,6 @@ public class DeploymentLoader {
                             if (module.getEjb() != null) {
                                 try {
                                     URL ejbUrl = new File(jarFile, module.getEjb()).toURL();
-//                                    ClassLoader ejbClassLoader = new URLClassLoader(new URL[]{ejbUrl}, classLoader);
 
                                     EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", appClassLoader, ejbUrl);
 
@@ -273,12 +272,29 @@ public class DeploymentLoader {
 
                                     String jarPath = new File(ejbUrl.getFile()).getAbsolutePath();
 
-                                    EjbModule ejbModule = new EjbModule(classLoader, jarPath, ejbJar, openejbJar);
+                                    EjbModule ejbModule = new EjbModule(appClassLoader, jarPath, ejbJar, openejbJar);
 
                                     deployedJars.add(ejbModule);
                                     
                                 } catch (OpenEJBException e) {
                                     logger.error("Unable to load EJBs from EAR: " + jarFile.getAbsolutePath() + ", module: " + module.getEjb() + ". Exception: " + e.getMessage(), e);
+                                } catch (MalformedURLException e) {
+                                    logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
+                                }
+                            } else if (module.getJava() != null) {
+                                try {
+                                    URL clientUrl = new File(jarFile, module.getJava()).toURL();
+
+                                    ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClassLoader, clientUrl);
+
+                                    String jarPath = new File(clientUrl.getFile()).getAbsolutePath();
+
+                                    ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, jarPath, null);
+
+                                    deployedJars.add(clientModule);
+
+                                } catch (OpenEJBException e) {
+                                    logger.error("Unable to load App Client from EAR: " + jarFile.getAbsolutePath() + ", module: " + module.getJava() + ". Exception: " + e.getMessage(), e);
                                 } catch (MalformedURLException e) {
                                     logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
                                 }
@@ -301,10 +317,66 @@ public class DeploymentLoader {
             }
         }
 
-        for (EjbModule ejbModule : deployedJars) {
-            logger.info("Loaded EJBs: " + ejbModule.getJarLocation());
+        for (DeploymentModule ejbModule : deployedJars) {
+            logger.info("Loaded Module: " + ejbModule.getJarLocation());
         }
         return deployedJars;
+    }
+
+    private void printEjbRefs(EjbModule ejbModule) {
+        Map<String, EjbDeployment> deployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+        EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
+//        System.out.println("<!-- enterpriseBeans.length = " + enterpriseBeans.length +"-->");
+
+        int count = 0;
+        for (EnterpriseBean b : enterpriseBeans) {
+            count++;
+
+            System.out.println("<!-- " + b.getEjbName() +" -->");
+
+            if (!(b instanceof RemoteBean)) {
+                continue;
+            }
+            RemoteBean bean = (RemoteBean) b;
+
+            String beanType;
+            if (bean instanceof SessionBean) {
+                beanType = "Session";
+            } else {
+                beanType = "Entity";
+            }
+
+            EjbDeployment deployment = deployments.get(bean.getEjbName());
+            String deploymentId = deployment.getDeploymentId();
+
+            if (bean.getHome() != null){
+                StringBuilder sb = new StringBuilder();
+                sb.append("  <ejb-ref>\n");
+                sb.append("    <ejb-ref-name>"+deploymentId +"</ejb-ref-name>\n");
+                sb.append("    <ejb-ref-type>"+beanType+"</ejb-ref-type>\n");
+                sb.append("    <home>"+bean.getHome() +"</home>\n");
+                sb.append("    <remote>"+bean.getRemote()+"</remote>\n");
+                sb.append("    <ejb-link>"+bean.getEjbName()+"</ejb-link>\n");
+                sb.append("  </ejb-ref>");
+                System.out.println(sb.toString());
+            }
+
+            if (!(bean instanceof org.apache.openejb.jee.SessionBean)) {
+                continue;
+            }
+            org.apache.openejb.jee.SessionBean sbean =  (org.apache.openejb.jee.SessionBean) bean;
+
+            if (sbean.getBusinessRemote() != null){
+                StringBuilder sb = new StringBuilder();
+                sb.append("  <ejb-ref>\n");
+                sb.append("    <ejb-ref-name>"+deploymentId +"BusinessRemote</ejb-ref-name>\n");
+                sb.append("    <ejb-ref-type>"+beanType+"</ejb-ref-type>\n");
+                sb.append("    <remote>"+sbean.getBusinessRemote()+"</remote>\n");
+                sb.append("    <ejb-link>"+sbean.getEjbName()+"</ejb-link>\n");
+                sb.append("  </ejb-ref>");
+                System.out.println(sb.toString());
+            }
+        }
     }
 
     private final Map<Class,JaxbUnmarshaller> unmarshallers = new HashMap();

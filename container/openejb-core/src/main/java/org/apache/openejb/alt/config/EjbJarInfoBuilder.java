@@ -19,7 +19,6 @@ package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.ejb.ResourceLink;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -57,6 +56,7 @@ import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -133,7 +133,7 @@ public class EjbJarInfoBuilder {
             initMethodTransactions(jar, ejbds);
 
             for (int x = 0; x < beans.length; x++) {
-                resolveRoleLinks(jar, beans[x], (EnterpriseBean) items.get(beans[x].ejbName));
+                resolveRoleLinks(jar, beans[x], items.get(beans[x].ejbName));
             }
         }
 
@@ -149,30 +149,41 @@ public class EjbJarInfoBuilder {
         return ejbJar;
     }
 
-    private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> infos, Map<String, EnterpriseBean> items) throws OpenEJBException {
+    private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> beanInfos, Map<String, EnterpriseBean> beanData) throws OpenEJBException {
 
-        for (EnterpriseBeanInfo bean : infos.values()) {
-            JndiEncInfo jndi = new JndiEncInfo();
+        for (EnterpriseBeanInfo beanInfo : beanInfos.values()) {
 
-            EnterpriseBean item = (EnterpriseBean) items.get(bean.ejbName);
-            EjbDeployment dep = (EjbDeployment) ejbds.get(bean.ejbName);
+            JndiConsumer jndiConsumer = beanData.get(beanInfo.ejbName);
+
+            EjbDeployment ejbDeployment = (EjbDeployment) ejbds.get(beanInfo.ejbName);
+
+            // Link all the resource refs
+            List<ResourceRef> resourceRefs = jndiConsumer.getResourceRef();
+            for (ResourceRef res : resourceRefs) {
+                String resId = ejbDeployment.getResourceLink(res.getResRefName()).getResId();
+                if (resId != null /* don't overwrite with null */) {
+                    res.setResLink(resId);
+                }
+            }
 
             /* Build Environment entries *****************/
-            jndi.envEntries = buildEnvEntryInfos(item);
+            JndiEncInfo jndi = new JndiEncInfo();
+
+            jndi.envEntries = buildEnvEntryInfos(jndiConsumer);
 
             /* Build Resource References *****************/
-            jndi.resourceRefs = buildResourceRefInfos(item, dep);
+            jndi.resourceRefs = buildResourceRefInfos(jndiConsumer);
 
-            jndi.ejbReferences = buildEjbRefInfos(item, dep, infos, bean);
+            jndi.ejbReferences = buildEjbRefInfos(jndiConsumer, beanInfos, beanInfo.ejbName);
 
-            jndi.ejbLocalReferences = buildEjbLocalRefInfos(item, infos, bean);
+            jndi.ejbLocalReferences = buildEjbLocalRefInfos(jndiConsumer, beanInfos, beanInfo.ejbName);
 
-            bean.jndiEnc = jndi;
+            beanInfo.jndiEnc = jndi;
         }
 
     }
 
-    private EjbLocalReferenceInfo[] buildEjbLocalRefInfos(EnterpriseBean item, Map<String, EnterpriseBeanInfo> beanInfos, EnterpriseBeanInfo bean) throws OpenEJBException {
+    private EjbLocalReferenceInfo[] buildEjbLocalRefInfos(JndiConsumer item, Map<String, EnterpriseBeanInfo> beanInfos, String referringComponent) throws OpenEJBException {
         List<EjbLocalReferenceInfo> infos = new ArrayList();
         for (EjbLocalRef ejb : item.getEjbLocalRef()) {
             EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
@@ -190,7 +201,7 @@ public class EjbJarInfoBuilder {
 
             EnterpriseBeanInfo otherBean = (EnterpriseBeanInfo) beanInfos.get(ejbLink);
             if (otherBean == null) {
-                String msg = ConfigurationFactory.messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
+                String msg = ConfigurationFactory.messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
 
                 ConfigurationFactory.logger.fatal(msg);
                 throw new OpenEJBException(msg);
@@ -201,7 +212,7 @@ public class EjbJarInfoBuilder {
         return infos.toArray(new EjbLocalReferenceInfo[]{});
     }
 
-    private EjbReferenceInfo[] buildEjbRefInfos(EnterpriseBean item, EjbDeployment dep, Map<String, EnterpriseBeanInfo> beanInfos, EnterpriseBeanInfo bean) throws OpenEJBException {
+    private EjbReferenceInfo[] buildEjbRefInfos(JndiConsumer item, Map<String, EnterpriseBeanInfo> beanInfos, String referringComponent) throws OpenEJBException {
         List<EjbReferenceInfo> infos = new ArrayList();
         for (EjbRef ejb : item.getEjbRef()) {
             EjbReferenceInfo info = new EjbReferenceInfo();
@@ -210,16 +221,11 @@ public class EjbJarInfoBuilder {
             info.referenceName = ejb.getEjbRefName();
             info.location = new EjbReferenceLocationInfo();
 
-            String ejbLink;
-            if (ejb.getEjbLink() == null) {
-                ejbLink = ((ResourceLink) dep.getResourceLink(ejb.getEjbRefName())).getResId();
-            } else {
-                ejbLink = ejb.getEjbLink();
-            }
+            String ejbLink = ejb.getEjbLink();
 
             EnterpriseBeanInfo otherBean = (EnterpriseBeanInfo) beanInfos.get(ejbLink);
             if (otherBean == null) {
-                String msg = ConfigurationFactory.messages.format("config.noBeanFound", ejb.getEjbRefName(), bean.ejbName);
+                String msg = ConfigurationFactory.messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
 
                 ConfigurationFactory.logger.fatal(msg);
                 throw new OpenEJBException(msg);
@@ -230,7 +236,7 @@ public class EjbJarInfoBuilder {
         return infos.toArray(new EjbReferenceInfo[]{});
     }
 
-    private ResourceReferenceInfo[] buildResourceRefInfos(EnterpriseBean item, EjbDeployment dep) {
+    private ResourceReferenceInfo[] buildResourceRefInfos(JndiConsumer item) {
         List<ResourceReferenceInfo> infos = new ArrayList();
         for (ResourceRef res : item.getResourceRef()) {
             ResourceReferenceInfo info = new ResourceReferenceInfo();
@@ -238,13 +244,13 @@ public class EjbJarInfoBuilder {
             info.referenceAuth = res.getResAuth().toString();
             info.referenceName = res.getResRefName();
             info.referenceType = res.getResType();
-            info.resourceID = dep.getResourceLink(res.getResRefName()).getResId();
+            info.resourceID = res.getResLink();
             infos.add(info);
         }
         return infos.toArray(new ResourceReferenceInfo[]{});
     }
 
-    private EnvEntryInfo[] buildEnvEntryInfos(EnterpriseBean item) {
+    private EnvEntryInfo[] buildEnvEntryInfos(JndiConsumer item) {
         List<EnvEntryInfo> infos = new ArrayList();
         for (EnvEntry env : item.getEnvEntry()) {
             EnvEntryInfo info = new EnvEntryInfo();
@@ -312,7 +318,7 @@ public class EjbJarInfoBuilder {
         getMethodPermissionInfos().addAll(infos);
     }
 
-    private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, EnterpriseBean item) {
+    private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, JndiConsumer item) {
         if (!(item instanceof RemoteBean)) {
             return;
         }

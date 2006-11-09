@@ -18,7 +18,6 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 
 /**
@@ -26,7 +25,7 @@ import org.apache.openejb.alt.config.ejb.OpenejbJar;
  * Class is intentionally not an interface as that would encourage "smart" implementations
  * @version $Revision$ $Date$
  */
-public class EjbModule implements Module {
+public class EjbModule implements DeploymentModule {
 
     private final ClassLoader classLoader;
     private final EjbJar ejbJar;

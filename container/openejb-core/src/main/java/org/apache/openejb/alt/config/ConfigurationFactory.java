@@ -141,9 +141,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             deployments.add(deployment);
         }
 
-        List<EjbModule> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
+        List<DeploymentModule> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
 
-        EjbModule[] jars = deployedJars.toArray(new EjbModule[]{});
+        DeploymentModule[] jars = deployedJars.toArray(new DeploymentModule[]{});
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
@@ -164,18 +164,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         ArrayList ejbs = new ArrayList();
         ArrayList ejbJars = new ArrayList();
-        for (EjbModule jar : jars) {
+        for (DeploymentModule jar : jars) {
+            if (!(jar instanceof EjbModule)) {
+                continue;
+            }
+            EjbModule ejbModule = (EjbModule) jar;
             try {
-                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(jar);
+                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
                 if (ejbJarInfo == null) {
                     continue;
                 }
-                assignBeansToContainers(ejbJarInfo.enterpriseBeans, jar.getOpenejbJar().getDeploymentsByEjbName());
+                assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
                 ejbJars.add(ejbJarInfo);
                 ejbs.addAll(Arrays.asList(ejbJarInfo.enterpriseBeans));
             } catch (Exception e) {
                 e.printStackTrace();
-                ConfigUtils.logger.i18n.warning("conf.0004", jar.getJarURI(), e.getMessage());
+                ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
             }
         }
         sys.containerSystem.enterpriseBeans = (EnterpriseBeanInfo[]) ejbs.toArray(new EnterpriseBeanInfo[]{});

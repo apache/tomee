@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,30 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee;
-
-import java.util.List;
+package org.apache.openejb.alt.config;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
-public interface RemoteBean extends EnterpriseBean {
-
-    public String getHome();
-
-    public void setHome(String value);
-
-    public String getRemote();
-
-    public void setRemote(String value);
-
-    public String getLocalHome();
-
-    public void setLocalHome(String value);
-
-    public String getLocal();
-
-    public void setLocal(String value);
-
-    public List<SecurityRoleRef> getSecurityRoleRef();
+public interface DeploymentModule {
+    public ClassLoader getClassLoader();
+    public String getJarLocation();
 }

@@ -21,7 +21,7 @@ import org.apache.openejb.jee.ApplicationClient;
 /**
  * @version $Rev$ $Date$
  */
-public class ClientModule {
+public class ClientModule implements DeploymentModule {
     private final ApplicationClient applicationClient;
     private final String jarLocation;
     private final ClassLoader classLoader;

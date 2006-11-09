@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -90,6 +91,9 @@ public class ResourceRef {
     @XmlID
     protected String id;
 
+    @XmlTransient
+    protected String resLink;
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -150,6 +154,14 @@ public class ResourceRef {
 
     public void setId(String value) {
         this.id = value;
+    }
+
+    public String getResLink() {
+        return resLink;
+    }
+
+    public void setResLink(String resLink) {
+        this.resLink = resLink;
     }
 
 }

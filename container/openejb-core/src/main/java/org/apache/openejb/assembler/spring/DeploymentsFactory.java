@@ -29,11 +29,13 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.alt.config.EjbModule;
 import org.apache.openejb.alt.config.DeploymentLoader;
 import org.apache.openejb.alt.config.EjbJarInfoBuilder;
+import org.apache.openejb.alt.config.DeploymentModule;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.assembler.classic.EjbJarBuilder;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.springframework.beans.factory.FactoryBean;
+import sun.tools.jar.resources.jar;
 
 /**
  * @org.apache.xbean.XBean element="deployments"
@@ -99,7 +101,7 @@ public class DeploymentsFactory implements FactoryBean {
         org.apache.openejb.assembler.classic.Assembler.setContext(context);
 
         DeploymentLoader loader = new DeploymentLoader();
-        List<EjbModule> deployedJars = loader.load(type, value);
+        List<DeploymentModule> deployedJars = loader.load(type, value);
 
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
 
@@ -107,7 +109,12 @@ public class DeploymentsFactory implements FactoryBean {
         EjbJarBuilder builder = new EjbJarBuilder(classLoader);
 
         deployments = new HashMap();
-        for (EjbModule jar : deployedJars) {
+        for (DeploymentModule module : deployedJars) {
+            if (!(module instanceof EjbModule)) {
+                continue;
+            }
+            EjbModule jar = (EjbModule) module;
+
             EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
             if (jarInfo == null){
                 // This means the jar failed validation or otherwise could not be deployed

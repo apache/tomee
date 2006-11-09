@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application-client>
+
+  <!-- BasicCmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/cmp/BasicCmpHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+    <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+    <ejb-link>BasicCmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- AOBasicCmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/cmp/allowed_operations/EntityHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+    <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+    <ejb-link>AOBasicCmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- EncCmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/cmp/EncBean</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
+    <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
+    <ejb-link>EncCmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Cmp RMI-IIOP Bean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/cmp/RMI-over-IIOP/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.cmp.RmiIiopCmpHome</home>
+    <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
+    <ejb-link>Cmp RMI-IIOP Bean</ejb-link>
+  </ejb-ref>
+
+  <!-- BasicStatefulBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/BasicStatefulHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+    <ejb-link>BasicStatefulBean</ejb-link>
+  </ejb-ref>
+
+  <!-- BasicStatefulPojoBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/BasicStatefulPojoHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+    <ejb-link>BasicStatefulPojoBean</ejb-link>
+  </ejb-ref>
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/BasicStatefulPojoHomeBusinessRemote</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+    <ejb-link>BasicStatefulPojoBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Basic BMT StatefulBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/BeanManagedBasicStatefulHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+    <ejb-link>Basic BMT StatefulBean</ejb-link>
+  </ejb-ref>
+
+  <!-- BMT StatefulBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/BeanManagedTransactionTests/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.BeanTxStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.BeanTxStatefulObject</remote>
+    <ejb-link>BMT StatefulBean</ejb-link>
+  </ejb-ref>
+
+  <!-- EncStatefulBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/EncBean</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.EncStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.EncStatefulObject</remote>
+    <ejb-link>EncStatefulBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Stateful RMI-IIOP Bean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateful/RMI-over-IIOP/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateful.RmiIiopStatefulHome</home>
+    <remote>org.apache.openejb.test.stateful.RmiIiopStatefulObject</remote>
+    <ejb-link>Stateful RMI-IIOP Bean</ejb-link>
+  </ejb-ref>
+
+  <!-- BasicStatelessBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/BasicStatelessHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+    <ejb-link>BasicStatelessBean</ejb-link>
+  </ejb-ref>
+
+  <!-- BasicStatelessPojoBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/BasicStatelessPojoHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+    <ejb-link>BasicStatelessPojoBean</ejb-link>
+  </ejb-ref>
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/BasicStatelessPojoHomeBusinessRemote</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+    <ejb-link>BasicStatelessPojoBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Basic BMT StatelessBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/BeanManagedBasicStatelessHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+    <ejb-link>Basic BMT StatelessBean</ejb-link>
+  </ejb-ref>
+
+  <!-- DatabaseBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tools/DatabaseHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.beans.DatabaseHome</home>
+    <remote>org.apache.openejb.test.beans.Database</remote>
+    <ejb-link>DatabaseBean</ejb-link>
+  </ejb-ref>
+
+  <!-- BMT StatelessBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/BeanManagedTransactionTests/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.BeanTxStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.BeanTxStatelessObject</remote>
+    <ejb-link>BMT StatelessBean</ejb-link>
+  </ejb-ref>
+
+  <!-- EncStatelessBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/EncBean</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.EncStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.EncStatelessObject</remote>
+    <ejb-link>EncStatelessBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Stateless RMI-IIOP Bean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/stateless/RMI-over-IIOP/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.stateless.RmiIiopStatelessHome</home>
+    <remote>org.apache.openejb.test.stateless.RmiIiopStatelessObject</remote>
+    <ejb-link>Stateless RMI-IIOP Bean</ejb-link>
+  </ejb-ref>
+
+  <!-- BasicBmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/bmp/BasicBmpHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+    <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+    <ejb-link>BasicBmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- AOBasicBmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/bmp/allowed_operations/EntityHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+    <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+    <ejb-link>AOBasicBmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- EncBmpBean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/bmp/EncBean</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.bmp.EncBmpHome</home>
+    <remote>org.apache.openejb.test.entity.bmp.EncBmpObject</remote>
+    <ejb-link>EncBmpBean</ejb-link>
+  </ejb-ref>
+
+  <!-- Bmp RMI-IIOP Bean -->
+
+  <ejb-ref>
+    <ejb-ref-name>client/tests/entity/bmp/RMI-over-IIOP/EJBHome</ejb-ref-name>
+    <ejb-ref-type>Entity</ejb-ref-type>
+    <home>org.apache.openejb.test.entity.bmp.RmiIiopBmpHome</home>
+    <remote>org.apache.openejb.test.entity.bmp.RmiIiopBmpObject</remote>
+    <ejb-link>Bmp RMI-IIOP Bean</ejb-link>
+  </ejb-ref>
+
+</application-client>

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @version $Revision$ $Date$
  */
-public interface EnterpriseBean {
+public interface EnterpriseBean extends JndiConsumer {
 //    public List<Text> getDescription();
 
 //    public List<Text> getDisplayName();
@@ -44,32 +44,6 @@ public interface EnterpriseBean {
     public List<AroundInvoke> getAroundInvoke();
 
     public void addAroundInvoke(String method);
-
-    public List<EnvEntry> getEnvEntry();
-
-    public List<EjbRef> getEjbRef();
-
-    public List<EjbLocalRef> getEjbLocalRef();
-
-    public List<ServiceRef> getServiceRef();
-
-    public List<ResourceRef> getResourceRef();
-
-    public List<ResourceEnvRef> getResourceEnvRef();
-
-    public List<MessageDestinationRef> getMessageDestinationRef();
-
-    public List<PersistenceContextRef> getPersistenceContextRef();
-
-    public List<PersistenceUnitRef> getPersistenceUnitRef();
-
-    public List<LifecycleCallback> getPostConstruct();
-
-    public List<LifecycleCallback> getPreDestroy();
-
-    public void addPostConstruct(String method);
-
-    public void addPreDestroy(String method);
 
     public SecurityIdentity getSecurityIdentity();
 

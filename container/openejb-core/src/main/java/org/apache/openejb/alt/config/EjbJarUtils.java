@@ -32,7 +32,7 @@ import org.exolab.castor.util.Configuration;
 import org.exolab.castor.util.LocalConfiguration;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.sys.Container;
 import org.apache.openejb.loader.SystemInstance;
@@ -254,7 +254,7 @@ public class EjbJarUtils {
 
     public static Bean[] getBeans(EjbJar ejbJar) {
         List<Bean> beans = new ArrayList<Bean>();
-        for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+        for (JndiConsumer enterpriseBean : ejbJar.getEnterpriseBeans()) {
             if (enterpriseBean instanceof org.apache.openejb.jee.EntityBean) {
                 beans.add(new EntityBean((org.apache.openejb.jee.EntityBean) enterpriseBean));
             } else if (enterpriseBean instanceof org.apache.openejb.jee.SessionBean) {
