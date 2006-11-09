@@ -19,6 +19,10 @@ package org.apache.openejb.assembler.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.io.File;
 import javax.naming.Context;
 import javax.transaction.TransactionManager;
 
@@ -175,6 +179,31 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         return null;
     }
 
+    protected static String resolveJarPath(String name, ClassLoader classLoader) throws SystemException {
+        if (name == null) {
+            return null;
+        }
+        name = name.replace('.','/');
+        name += ".class";
+        URL classURL = classLoader.getResource(name);
+        if (classURL==null){
+            return null;
+        }
+
+        String path = classURL.toExternalForm();
+        if (path.startsWith("jar:")){
+            path = path.replaceFirst("^jar:","");
+            path = path.replaceFirst("!.*","");
+        }
+        try {
+            URI uri = new URI(path);
+            File file = new File(uri);
+            return file.getAbsolutePath();
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
     public Object getObject() throws Exception {
         CoreDeploymentInfo deploymentInfo = createDeploymentInfo();
         return deploymentInfo;
@@ -201,7 +230,9 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
                 loadClass(getPkClass(), classLoader),
                 getComponentType()
         );
-        //deploymentInfo.setJarPath(getJarPath());
+        String jarPath = getJarPath();
+        if (jarPath == null) jarPath = resolveJarPath(beanClass, classLoader);
+        deploymentInfo.setJarPath(jarPath);
         if (assembly != null) {
             applySecurityRoleReference(deploymentInfo);
             // todo we should be able to apply tx attributes and security permissions here

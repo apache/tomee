@@ -64,8 +64,10 @@ public class JDOManagerBuilder {
     }
 
     public void addMapping(URL location){
+        String uri = location.toExternalForm();
+        logger.debug("Adding Castor JDO Mapping: "+uri);
         Mapping mapping = new Mapping();
-        String mappingURI = location.toExternalForm();
+        String mappingURI = uri;
         mapping.setHref(mappingURI);
         mappings.add(mapping);
     }
