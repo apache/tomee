@@ -231,6 +231,16 @@
     <dependency>
       <groupId>org.tranql</groupId>
       <artifactId>tranql</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-ejb_2.1_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>openejb</groupId>
@@ -254,7 +264,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-app</artifactId>
-      <version>${pom.version}-x</version>
+      <version>${pom.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
