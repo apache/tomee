@@ -34,6 +34,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * TODO: This class is essentially an over glorified sym-linker.  The names
+ * we were linking to are no longer guaranteed to be what we assume them to
+ * be.  We need to come up with a different internal naming structure for
+ * the global JNDI and finally create the default which will be the default
+ * symlinked version of all the components.
+ */
 public class JndiEncBuilder {
 
     private final ReferenceWrapper referenceWrapper;
@@ -43,8 +50,14 @@ public class JndiEncBuilder {
     private final EnvEntryInfo[] envEntries;
     private final ResourceReferenceInfo[] resourceRefs;
 
+    public JndiEncBuilder(JndiEncInfo jndiEnc) throws OpenEJBException {
+        this(jndiEnc, null, null);
+    }
+
     public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType) throws OpenEJBException {
-        if (ejbType.isEntity()) {
+        if (ejbType == null){
+            referenceWrapper = new DefaultReferenceWrapper();
+        } else if (ejbType.isEntity()) {
             referenceWrapper = new EntityRefereceWrapper();
         } else if (ejbType == BeanType.STATEFUL) {
             referenceWrapper = new StatefulRefereceWrapper();
@@ -80,8 +93,15 @@ public class JndiEncBuilder {
             Reference reference = null;
 
             if (!location.remote) {
-                String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId;
-                reference = new IntraVmJndiReference(jndiName);
+                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
+                if (referenceInfo.homeType == null){
+                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "BusinessRemote";
+                    reference = new IntraVmJndiReference(jndiName);
+                }else {
+                    // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
+                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId;
+                    reference = new IntraVmJndiReference(jndiName);
+                }
             } else {
                 String openEjbSubContextName = "java:openejb/remote_jndi_contexts/" + location.jndiContextId;
                 reference = new JndiReference(openEjbSubContextName, location.remoteRefName);
@@ -94,6 +114,7 @@ public class JndiEncBuilder {
 
             EjbReferenceLocationInfo location = referenceInfo.location;
             if (location != null && !location.remote) {
+                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                 String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "Local";
                 Reference reference = new IntraVmJndiReference(jndiName);
                 bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
@@ -212,6 +233,16 @@ public class JndiEncBuilder {
 
         public Object wrap(UserTransaction userTransaction) {
             return new org.apache.openejb.core.stateful.EncUserTransaction((CoreUserTransaction) userTransaction);
+        }
+    }
+
+    private static class DefaultReferenceWrapper extends ReferenceWrapper {
+        Object wrap(Reference reference) {
+            return reference;
+        }
+
+        Object wrap(UserTransaction reference) {
+            return reference;
         }
     }
 }

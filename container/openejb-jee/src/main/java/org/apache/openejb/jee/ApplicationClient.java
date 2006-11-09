@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 @XmlRootElement(name = "application-client")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,7 +48,7 @@ import java.util.ArrayList;
         "callbackHandler",
         "messageDestination"
 })
-public class ApplicationClient {
+public class ApplicationClient implements JndiConsumer {
 
     @XmlTransient
     protected TextMap description = new TextMap();
@@ -89,6 +90,9 @@ public class ApplicationClient {
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
+
+    @XmlTransient
+    protected String mainClass;
 
     public ApplicationClient() {
     }
@@ -147,6 +151,10 @@ public class ApplicationClient {
         return this.ejbRef;
     }
 
+    public List<EjbLocalRef> getEjbLocalRef() {
+        return Collections.EMPTY_LIST;
+    }
+
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
             serviceRef = new ArrayList<ServiceRef>();
@@ -175,6 +183,10 @@ public class ApplicationClient {
         return this.messageDestinationRef;
     }
 
+    public List<PersistenceContextRef> getPersistenceContextRef() {
+        return Collections.EMPTY_LIST;
+    }
+
     public List<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
             persistenceUnitRef = new ArrayList<PersistenceUnitRef>();
@@ -194,6 +206,16 @@ public class ApplicationClient {
             preDestroy = new ArrayList<LifecycleCallback>();
         }
         return this.preDestroy;
+    }
+
+    public void addPostConstruct(String method) {
+        assert mainClass != null: "Set the mainClass before calling this method";
+        getPostConstruct().add(new LifecycleCallback(mainClass, method));
+    }
+
+    public void addPreDestroy(String method) {
+        assert mainClass != null: "Set the mainClass before calling this method";
+        getPreDestroy().add(new LifecycleCallback(mainClass, method));
     }
 
     public String getCallbackHandler() {
@@ -237,6 +259,14 @@ public class ApplicationClient {
 
     public void setVersion(String value) {
         this.version = value;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
     }
 
 }

@@ -17,6 +17,7 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.sys.ConnectionManager;
@@ -51,6 +52,8 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -61,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.io.File;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -162,8 +166,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.containerSystem.statefulContainers = sfsbContainers;
         sys.containerSystem.statelessContainers = slsbContainers;
 
-        ArrayList ejbs = new ArrayList();
-        ArrayList ejbJars = new ArrayList();
+        ArrayList<EnterpriseBeanInfo> ejbs = new ArrayList();
+        ArrayList<EjbJarInfo> ejbJars = new ArrayList();
+
         for (DeploymentModule jar : jars) {
             if (!(jar instanceof EjbModule)) {
                 continue;
@@ -182,8 +187,39 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
             }
         }
-        sys.containerSystem.enterpriseBeans = (EnterpriseBeanInfo[]) ejbs.toArray(new EnterpriseBeanInfo[]{});
-        sys.containerSystem.ejbJars = (EjbJarInfo[]) ejbJars.toArray(new EjbJarInfo[]{});
+
+        sys.containerSystem.enterpriseBeans = ejbs.toArray(new EnterpriseBeanInfo[]{});
+        sys.containerSystem.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
+
+        List<ClientInfo> clientInfos = new ArrayList();
+        for (DeploymentModule module : jars) {
+            if (!(module instanceof ClientModule)) {
+                continue;
+            }
+            ClientModule clientModule = (ClientModule) module;
+
+            Map<String, EnterpriseBeanInfo> infos = new HashMap();
+            for (EjbJarInfo ejbJarInfo : ejbJars) {
+                for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                    infos.put(beanInfo.ejbName, beanInfo);
+                }
+            }
+
+            ApplicationClient applicationClient = clientModule.getApplicationClient();
+            ClientInfo clientInfo = new ClientInfo();
+            clientInfo.description = applicationClient.getDescription();
+            clientInfo.displayName = applicationClient.getDisplayName();
+            clientInfo.codebase = clientModule.getJarLocation();
+            clientInfo.mainClass = applicationClient.getMainClass();
+            clientInfo.moduleId = getClientModuleId(clientModule);
+
+            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(infos);
+            JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
+            clientInfo.jndiEnc = jndiEncInfo;
+            clientInfos.add(clientInfo);
+        }
+
+        sys.containerSystem.clients = clientInfos.toArray(new ClientInfo[]{});
 
         SecurityRoleInfo defaultRole = new SecurityRoleInfo();
         defaultRole.description = "The role applied to recurity references that are not linked.";
@@ -202,6 +238,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         SystemInstance.get().setComponent(OpenEjbConfiguration.class, sys);
         return sys;
+    }
+
+    private static String getClientModuleId(ClientModule clientModule) {
+        String jarLocation = clientModule.getJarLocation();
+        File file = new File(jarLocation);
+        String name = file.getName();
+        if (name.endsWith(".jar") || name.endsWith(".zip")){
+            name = name.replaceFirst("....$","");
+        }
+        return name;
     }
 
 

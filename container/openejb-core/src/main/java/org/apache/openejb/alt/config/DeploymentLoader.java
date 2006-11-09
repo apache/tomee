@@ -204,7 +204,6 @@ public class DeploymentLoader {
         }
 
         String[] jarsToLoad = (String[]) jarList.toArray(new String[]{});
-        // resolve jar locations //////////////////////////////////////  END  ///////
 
         /*[1]  Put all EjbJar & OpenejbJar objects in a vector ***************/
         for (int i = 0; i < jarsToLoad.length; i++) {
@@ -222,6 +221,10 @@ public class DeploymentLoader {
                 URL baseUrl = getFileUrl(jarFile);
 
                 URL appXml = getResource(baseUrl, classLoader, "META-INF/application.xml");
+
+                if (appXml == null){
+                    logger.debug("No \"META-INF/application.xml\" found.");
+                }
 
                 if (appXml != null) {
 
@@ -433,20 +436,20 @@ public class DeploymentLoader {
 
     private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
         ClassLoader classLoader;
-        if (jarFile.isDirectory()) {
+//        if (jarFile.isDirectory()) {
             try {
                 URL[] urls = new URL[]{jarFile.toURL()};
                 classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
                 //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
-
+                return classLoader;
             } catch (MalformedURLException e) {
                 throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
             }
-        } else {
-            TempCodebase tempCodebase = new TempCodebase(jarFile.getAbsolutePath());
-            classLoader = tempCodebase.getClassLoader();
-        }
-        return classLoader;
+//        } else {
+//            TempCodebase tempCodebase = new TempCodebase(jarFile.getAbsolutePath());
+//            classLoader = tempCodebase.getClassLoader();
+//        }
+//        return classLoader;
     }
 
     private URL getResource(URL baseUrl, ClassLoader classLoader, String name) {

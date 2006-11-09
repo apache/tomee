@@ -782,11 +782,11 @@ public class Logger {
 
         private void set(String category, Level level) {
             org.apache.log4j.Logger.getLogger(category).setLevel(level);
-            Enumeration allAppenders = org.apache.log4j.Logger.getLogger(category).getAllAppenders();
-            while (allAppenders.hasMoreElements()) {
-                Object object = allAppenders.nextElement();
-                System.out.println(category +" = " + object);
-            }
+//            Enumeration allAppenders = org.apache.log4j.Logger.getLogger(category).getAllAppenders();
+//            while (allAppenders.hasMoreElements()) {
+//                Object object = allAppenders.nextElement();
+//                System.out.println(category +" = " + object);
+//            }
         }
 
 

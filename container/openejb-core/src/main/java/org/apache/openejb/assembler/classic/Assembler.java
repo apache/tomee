@@ -32,6 +32,7 @@ import org.apache.xbean.recipe.StaticRecipe;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
+import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -235,6 +236,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystem.addDeployment(deployment);
                 jndiBuilder.bind(deployment);
             }
+        }
+
+        ClientInfo[] clients = containerSystemInfo.clients;
+        for (ClientInfo clientInfo : clients) {
+            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
+            Context context = jndiEncBuilder.build();
+            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/path", clientInfo.codebase);
+            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/mainClass", clientInfo.mainClass);
+            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/enc", context);
         }
 
         // roleMapping used later in buildMethodPermissions
