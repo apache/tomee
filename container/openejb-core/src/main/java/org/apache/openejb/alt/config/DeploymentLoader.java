@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.jar.Attributes;
 
 /**
  * @version $Revision$ $Date$
@@ -348,7 +350,12 @@ public class DeploymentLoader {
 
                                 ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClientXmlUrl);
 
-                                ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), null);
+                                URL manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
+                                InputStream is = manifestUrl.openStream();
+                                Manifest manifest = new Manifest(is);
+                                String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+
+                                ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass);
 
                                 appModule.getClientModules().add(clientModule);
                             } catch (Exception e) {
