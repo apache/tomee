@@ -199,9 +199,28 @@ class EnterpriseBeanBuilder {
     }
 
     private Class loadClass(String className, String messageCode) throws OpenEJBException {
+        Class clazz = load(className, messageCode);
+        try {
+            clazz.getDeclaredMethods();
+            clazz.getDeclaredFields();
+            clazz.getDeclaredConstructors();
+            clazz.getInterfaces();
+            return clazz;
+        } catch (NoClassDefFoundError e) {
+            if (clazz.getClassLoader() != cl){
+                String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), cl, e.getMessage());
+                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message),e);
+            } else {
+                String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
+                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message),e);
+            }
+        }
+    }
+
+    private Class load(String className, String messageCode) throws OpenEJBException {
         try {
             return cl.loadClass(className);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (ClassNotFoundException e) {
             String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
             throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message));
         }

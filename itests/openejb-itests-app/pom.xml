@@ -25,6 +25,11 @@
         </executions>
         <configuration>
           <modules>
+            <javaModule>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <bundleDir>META-INF/lib</bundleDir>
+            </javaModule>
             <ejbModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-beans</artifactId>

@@ -48,39 +48,18 @@ public class ContainersBuilder {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Properties props;
-    private final EjbJarInfo[] ejbJars;
     private final ContainerInfo[] containerInfos;
     private final String[] decorators;
 
     public ContainersBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
         this.props = props;
-        this.ejbJars = containerSystemInfo.ejbJars;
         this.containerInfos = containerSystemInfo.containers;
         String decorators = props.getProperty("openejb.container.decorators");
         this.decorators = (decorators == null) ? new String[]{} : decorators.split(":");
 
     }
 
-    public Object build() throws OpenEJBException {
-        URL[] jars = new URL[this.ejbJars.length];
-        for (int i = 0; i < this.ejbJars.length; i++) {
-            try {
-                jars[i] = new File(this.ejbJars[i].jarPath).toURL();
-            } catch (MalformedURLException e) {
-                throw new OpenEJBException(AssemblerTool.messages.format("cl0001", ejbJars[i].jarPath, e.getMessage()));
-            }
-        }
-
-        ClassLoader classLoader = new URLClassLoader(jars, org.apache.openejb.OpenEJB.class.getClassLoader());
-        EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
-
-        HashMap<String,DeploymentInfo> deployments = new HashMap();
-        for (int i = 0; i < this.ejbJars.length; i++) {
-            EjbJarInfo ejbJar = this.ejbJars[i];
-
-            deployments.putAll(ejbJarBuilder.build(ejbJar));
-        }
-
+    public Object buildContainers(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
         List containers = new ArrayList();
         for (int i = 0; i < containerInfos.length; i++) {
             ContainerInfo containerInfo = containerInfos[i];
@@ -95,16 +74,16 @@ public class ContainersBuilder {
             Container container = buildContainer(containerInfo, deploymentsList);
             container = wrapContainer(container);
 
-            org.apache.openejb.DeploymentInfo [] deploys = container.deployments();
+            DeploymentInfo [] deploys = container.deployments();
             for (int x = 0; x < deploys.length; x++) {
-                org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploys[x];
+                CoreDeploymentInfo di = (CoreDeploymentInfo) deploys[x];
                 di.setContainer(container);
             }
             containers.add(container);
         }
         return containers;
     }
-    
+
     private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
         String containerName = containerInfo.containerName;
         ContainerInfo service = containerInfo;

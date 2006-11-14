@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.List;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -232,7 +233,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
 
         try {
-            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, transactionManagerJndiName);
+            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, transactionManagerJndiName, new JoinedClassLoader(deploys));
 //            File mappingFile = new File("/Users/dblevins/work/openejb3/container/openejb-core/target/test-classes/conf/default.cmp_mapping.xml");
 
             Collection<URL> urls = mappings.values();
@@ -258,6 +259,24 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         buildResetMap();
     }
 
+    public static class JoinedClassLoader extends ClassLoader {
+        private final DeploymentInfo[] deploymentInfos;
+
+        public JoinedClassLoader(DeploymentInfo[] deploymentInfos) {
+            this.deploymentInfos = deploymentInfos;
+        }
+
+        protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            for (DeploymentInfo info : deploymentInfos) {
+                try {
+                    ClassLoader classLoader = info.getBeanClass().getClassLoader();
+                    return classLoader.loadClass(name);
+                } catch (ClassNotFoundException keepTrying) {
+                }
+            }
+            throw new ClassNotFoundException(name);
+        }
+    }
     private TransactionManager getTransactionManager() {
         return transactionManager;
     }

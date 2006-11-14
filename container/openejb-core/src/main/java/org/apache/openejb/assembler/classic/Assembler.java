@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -36,9 +37,12 @@ import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.List;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
+import java.io.File;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -224,9 +228,33 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
-        /*[4] Apply method permissions, role refs, and tx attributes ////////////////////////////////////*/
+        HashMap<String, DeploymentInfo> deployments2 = new HashMap();
+        for (AppInfo appInfo : containerSystemInfo.applications) {
+            List<URL> jars = new ArrayList();
+            for (EjbJarInfo info : appInfo.ejbJars) jars.add(toUrl(info.jarPath));
+            for (ClientInfo info : appInfo.clients) jars.add(toUrl(info.codebase));
+            for (String jarPath : appInfo.libs) jars.add(toUrl(jarPath));
+
+            ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), org.apache.openejb.OpenEJB.class.getClassLoader());
+
+            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
+
+            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                deployments2.putAll(ejbJarBuilder.build(ejbJar));
+            }
+
+            for (ClientInfo clientInfo : appInfo.clients) {
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
+                Context context = jndiEncBuilder.build();
+                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/path", clientInfo.codebase);
+                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/mainClass", clientInfo.mainClass);
+                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/enc", context);
+            }
+        }
+
+
         ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool)this).props);
-        List containers = (List) containersBuilder.build();
+        List containers = (List) containersBuilder.buildContainers(deployments2);
         for (int i1 = 0; i1 < containers.size(); i1++) {
             Container container1 = (Container) containers.get(i1);
             containerSystem.addContainer(container1.getContainerID(), container1);
@@ -236,15 +264,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystem.addDeployment(deployment);
                 jndiBuilder.bind(deployment);
             }
-        }
-
-        ClientInfo[] clients = containerSystemInfo.clients;
-        for (ClientInfo clientInfo : clients) {
-            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
-            Context context = jndiEncBuilder.build();
-            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/path", clientInfo.codebase);
-            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/mainClass", clientInfo.mainClass);
-            containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/enc", context);
         }
 
         // roleMapping used later in buildMethodPermissions
@@ -275,6 +294,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         return containerSystem;
+    }
+
+    private URL toUrl(String jarPath) throws OpenEJBException {
+        try {
+            return new File(jarPath).toURL();
+        } catch (MalformedURLException e) {
+            throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()));
+        }
     }
 
     private void createSecurityService(OpenEjbConfiguration configInfo) throws Exception {

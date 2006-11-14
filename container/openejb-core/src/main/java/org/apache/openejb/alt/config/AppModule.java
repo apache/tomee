@@ -16,41 +16,42 @@
  */
 package org.apache.openejb.alt.config;
 
-import org.apache.openejb.jee.ApplicationClient;
-
 import java.util.List;
 import java.util.ArrayList;
+import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ClientModule implements DeploymentModule {
-    private final ApplicationClient applicationClient;
+public class AppModule implements DeploymentModule {
+    private final List<URL> additionalLibraries = new ArrayList();
+    private final List<ClientModule> clientModules = new ArrayList();
+    private final List<EjbModule> ejbModules = new ArrayList();
     private final String jarLocation;
     private final ClassLoader classLoader;
-    private final String mainClass;
 
-    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
-        this.applicationClient = applicationClient;
+    public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
-        this.mainClass = mainClass;
-    }
-
-    public ApplicationClient getApplicationClient() {
-        return applicationClient;
     }
 
     public ClassLoader getClassLoader() {
         return classLoader;
     }
 
+    public List<ClientModule> getClientModules() {
+        return clientModules;
+    }
+
+    public List<EjbModule> getEjbModules() {
+        return ejbModules;
+    }
+
     public String getJarLocation() {
         return jarLocation;
     }
 
-    public String getMainClass() {
-        return mainClass;
+    public List<URL> getAdditionalLibraries() {
+        return additionalLibraries;
     }
-
 }

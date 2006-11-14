@@ -54,6 +54,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -65,6 +66,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 import java.io.File;
+import java.net.URL;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -166,60 +168,96 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.containerSystem.statefulContainers = sfsbContainers;
         sys.containerSystem.statelessContainers = slsbContainers;
 
-        ArrayList<EnterpriseBeanInfo> ejbs = new ArrayList();
-        ArrayList<EjbJarInfo> ejbJars = new ArrayList();
+        List<AppInfo> appInfos = new ArrayList();
+        {
+            ArrayList<EjbJarInfo> ejbJars = new ArrayList();
 
-        for (DeploymentModule jar : jars) {
-            if (!(jar instanceof EjbModule)) {
-                continue;
-            }
-            EjbModule ejbModule = (EjbModule) jar;
-            try {
-                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
-                if (ejbJarInfo == null) {
+            for (DeploymentModule jar : jars) {
+                if (!(jar instanceof EjbModule)) {
                     continue;
                 }
-                assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
-                ejbJars.add(ejbJarInfo);
-                ejbs.addAll(Arrays.asList(ejbJarInfo.enterpriseBeans));
-            } catch (Exception e) {
-                e.printStackTrace();
-                ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
-            }
-        }
-
-        sys.containerSystem.enterpriseBeans = ejbs.toArray(new EnterpriseBeanInfo[]{});
-        sys.containerSystem.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
-
-        List<ClientInfo> clientInfos = new ArrayList();
-        for (DeploymentModule module : jars) {
-            if (!(module instanceof ClientModule)) {
-                continue;
-            }
-            ClientModule clientModule = (ClientModule) module;
-
-            Map<String, EnterpriseBeanInfo> infos = new HashMap();
-            for (EjbJarInfo ejbJarInfo : ejbJars) {
-                for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                    infos.put(beanInfo.ejbName, beanInfo);
+                EjbModule ejbModule = (EjbModule) jar;
+                try {
+                    EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
+                    if (ejbJarInfo == null) {
+                        continue;
+                    }
+                    assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
+                    ejbJars.add(ejbJarInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
                 }
             }
 
-            ApplicationClient applicationClient = clientModule.getApplicationClient();
-            ClientInfo clientInfo = new ClientInfo();
-            clientInfo.description = applicationClient.getDescription();
-            clientInfo.displayName = applicationClient.getDisplayName();
-            clientInfo.codebase = clientModule.getJarLocation();
-            clientInfo.mainClass = applicationClient.getMainClass();
-            clientInfo.moduleId = getClientModuleId(clientModule);
-
-            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(infos);
-            JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
-            clientInfo.jndiEnc = jndiEncInfo;
-            clientInfos.add(clientInfo);
+            AppInfo appInfo = new AppInfo();
+            appInfo.clients = new ClientInfo[]{};
+            appInfo.libs = new String[]{};
+            appInfo.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
+            appInfos.add(appInfo);
         }
 
-        sys.containerSystem.clients = clientInfos.toArray(new ClientInfo[]{});
+        for (DeploymentModule module : jars) {
+            if (!(module instanceof AppModule)) {
+                continue;
+            }
+            AppModule appModule = (AppModule) module;
+
+            ArrayList<EjbJarInfo> ejbJars = new ArrayList();
+            for (EjbModule ejbModule : appModule.getEjbModules()) {
+                try {
+                    EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
+                    if (ejbJarInfo == null) {
+                        continue;
+                    }
+                    assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
+                    ejbJars.add(ejbJarInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
+                }
+            }
+
+            List<ClientInfo> clientInfos = new ArrayList();
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                Map<String, EnterpriseBeanInfo> infos = new HashMap();
+                for (EjbJarInfo ejbJarInfo : ejbJars) {
+                    for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                        infos.put(beanInfo.ejbName, beanInfo);
+                    }
+                }
+
+                ApplicationClient applicationClient = clientModule.getApplicationClient();
+                ClientInfo clientInfo = new ClientInfo();
+                clientInfo.description = applicationClient.getDescription();
+                clientInfo.displayName = applicationClient.getDisplayName();
+                clientInfo.codebase = clientModule.getJarLocation();
+                clientInfo.mainClass = applicationClient.getMainClass();
+                clientInfo.moduleId = getClientModuleId(clientModule);
+
+                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(infos);
+                JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
+                clientInfo.jndiEnc = jndiEncInfo;
+                clientInfos.add(clientInfo);
+            }
+
+            AppInfo appInfo = new AppInfo();
+            appInfo.clients = clientInfos.toArray(new ClientInfo[]{});
+            appInfo.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
+            appInfo.jarPath = appModule.getJarLocation();
+            List<URL> additionalLibraries = appModule.getAdditionalLibraries();
+            List<String> libs = new ArrayList();
+            for (URL url : additionalLibraries) {
+                File file = new File(url.getPath());
+                libs.add(file.getAbsolutePath());
+            }
+            appInfo.libs = libs.toArray(new String[]{});
+            appInfos.add(appInfo);
+        }
+
+        sys.containerSystem.applications = appInfos.toArray(new AppInfo[]{});
+
+        sys.containerSystem.clients = new ClientInfo[]{};
 
         SecurityRoleInfo defaultRole = new SecurityRoleInfo();
         defaultRole.description = "The role applied to recurity references that are not linked.";

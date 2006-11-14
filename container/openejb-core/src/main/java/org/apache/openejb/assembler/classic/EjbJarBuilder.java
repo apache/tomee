@@ -21,12 +21,15 @@ import java.util.HashMap;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Messages;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
 /**
  * @version $Revision$ $Date$
  */
 public class EjbJarBuilder {
+    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
+
     private final ClassLoader classLoader;
 
     public EjbJarBuilder(ClassLoader classLoader) {
@@ -36,12 +39,15 @@ public class EjbJarBuilder {
     public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap();
         EnterpriseBeanInfo[] ejbs = ejbJar.enterpriseBeans;
-        for (int j = 0; j < ejbs.length; j++) {
-            EnterpriseBeanInfo ejbInfo = ejbs[j];
-            EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
-            CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
-            deployment.setJarPath(ejbJar.jarPath);
-            deployments.put(ejbInfo.ejbDeploymentId, deployment);
+        for (EnterpriseBeanInfo ejbInfo: ejbs) {
+            try {
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
+                deployment.setJarPath(ejbJar.jarPath);
+                deployments.put(ejbInfo.ejbDeploymentId, deployment);
+            } catch (Throwable e) {
+                throw new OpenEJBException("Error building bean '"+ejbInfo.ejbName+"'.  Exception: "+e.getClass()+": "+e.getMessage(), e);                
+            }
         }
         return deployments;
     }

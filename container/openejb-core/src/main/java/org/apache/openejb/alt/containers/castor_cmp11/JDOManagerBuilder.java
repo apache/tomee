@@ -57,10 +57,12 @@ public class JDOManagerBuilder {
     private final String engine;
     private final String transactionManagerJndiName;
     private final List<Mapping> mappings = new ArrayList<Mapping>();
+    private ClassLoader classLoader;
 
-    public JDOManagerBuilder(String engine, String transactionManagerJndiName) {
+    public JDOManagerBuilder(String engine, String transactionManagerJndiName, ClassLoader classLoader) {
         this.engine = engine;
         this.transactionManagerJndiName = transactionManagerJndiName;
+        this.classLoader = classLoader;
     }
 
     public void addMapping(URL location){
@@ -125,7 +127,7 @@ public class JDOManagerBuilder {
         transactionDemarcation.setTransactionManager(transactionManager);
         jdoConf.setTransactionDemarcation(transactionDemarcation);
 
-        JDOManager.loadConfiguration(jdoConf);
+        JDOManager.loadConfiguration(jdoConf, null, classLoader);
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());
@@ -204,7 +206,7 @@ public class JDOManagerBuilder {
 
         jdoConf.setTransactionDemarcation(transactionDemarcation);
 
-        JDOManager.loadConfiguration(jdoConf);
+        JDOManager.loadConfiguration(jdoConf, null, classLoader);
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());

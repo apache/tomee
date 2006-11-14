@@ -133,7 +133,7 @@ public class EjbJarInfoBuilder {
             try {
                 File jarFile = new File(jar.getJarURI());
 
-                SystemInstance.get().getClassPath().addJarToPath(jarFile.toURL());
+//                SystemInstance.get().getClassPath().addJarToPath(jarFile.toURL());
             } catch (Exception e) {
                 e.printStackTrace();
             }

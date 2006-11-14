@@ -19,13 +19,19 @@ package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
+import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.sys.Deployments;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -41,9 +47,9 @@ import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -210,23 +216,29 @@ public class DeploymentLoader {
 
             String pathname = jarsToLoad[i];
 
-            logger.debug("Beginning load: "+pathname);
+            logger.debug("Beginning load: " + pathname);
 
             File jarFile = new File(pathname);
 
             try {
 
+
                 ClassLoader classLoader = getClassLoader(jarFile);
 
                 URL baseUrl = getFileUrl(jarFile);
 
-                URL appXml = getResource(baseUrl, classLoader, "META-INF/application.xml");
+                ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
 
-                if (appXml == null){
-                    logger.debug("No \"META-INF/application.xml\" found.");
+                Map<String, URL> descriptors = null;
+                try {
+                    descriptors = finder.getResourcesMap("META-INF");
+                } catch (IOException e) {
+                    throw new OpenEJBException("Unable to determine descriptors in jar: " + baseUrl.toExternalForm(), e);
                 }
 
-                if (appXml != null) {
+                if (descriptors.containsKey("application.xml")) {
+
+                    URL appXml = descriptors.get("application.xml");
 
                     jarFile = unpack(appXml, jarFile);
 
@@ -234,75 +246,116 @@ public class DeploymentLoader {
 
                     classLoader = new URLClassLoader(new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
 
+                    finder = new ResourceFinder("", classLoader, baseUrl);
+
+                    try {
+                        descriptors = finder.getResourcesMap("META-INF");
+                    } catch (IOException e) {
+                        throw new OpenEJBException("Unable to determine descriptors in jar: " + baseUrl.toExternalForm(), e);
+                    }
+
                     try {
 
-                        Application application = unmarshal(Application.class, "META-INF/application.xml", classLoader, baseUrl);
-                        
-                        String[] files = jarFile.list(new FilenameFilter() {
-                            public boolean accept(File dir, String name) {
-                                return name.endsWith(".jar") || name.endsWith(".zip");
-                            }
-                        });
+                        URL applicationXmlUrl = descriptors.get("application.xml");
 
-                        List<URL> appUrls = new ArrayList();
-                        for (String fileName : files) {
-                            File lib = new File(jarFile, fileName);
-                            try {
-                                appUrls.add(lib.toURL());
-                            } catch (MalformedURLException e) {
-                                logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
-                            }
+                        if (applicationXmlUrl == null) {
+                            throw new OpenEJBException("META-INF/application.xml" + " not found.");
                         }
 
-                        ClassLoader appClassLoader = new URLClassLoader(appUrls.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+                        Application application = unmarshal(Application.class, "META-INF/application.xml", applicationXmlUrl);
 
+
+                        List<URL> extraLibs = new ArrayList();
+
+                        try {
+                            Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
+                            extraLibs.addAll(libs.values());
+                        } catch (IOException e) {
+                            logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
+                        }
+
+                        try {
+                            Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
+                            extraLibs.addAll(libs.values());
+                        } catch (IOException e) {
+                            logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
+                        }
+
+                        Map<String,URL> ejbModules = new HashMap();
+                        Map<String,URL> clientModules = new HashMap();
                         for (Module module : application.getModule()) {
-                            if (module.getEjb() != null) {
-                                try {
-                                    URL ejbUrl = new File(jarFile, module.getEjb()).toURL();
-
-                                    EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", appClassLoader, ejbUrl);
-
-                                    OpenejbJar openejbJar = null;
-
-                                    URL openejbjarUrl = getResource(ejbUrl, appClassLoader, "META-INF/openejb-jar.xml");
-
-                                    if (openejbjarUrl != null) {
-
-                                        openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", appClassLoader, ejbUrl);
-
-                                    }
-
-                                    String jarPath = new File(ejbUrl.getFile()).getAbsolutePath();
-
-                                    EjbModule ejbModule = new EjbModule(appClassLoader, jarPath, ejbJar, openejbJar);
-
-                                    deployedJars.add(ejbModule);
-                                    
-                                } catch (OpenEJBException e) {
-                                    logger.error("Unable to load EJBs from EAR: " + jarFile.getAbsolutePath() + ", module: " + module.getEjb() + ". Exception: " + e.getMessage(), e);
-                                } catch (MalformedURLException e) {
-                                    logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
+                            try {
+                                if (module.getEjb() != null) {
+                                    URL url = finder.find(module.getEjb());
+                                    ejbModules.put(module.getEjb(), url);
+                                } else if (module.getJava() != null) {
+                                    URL url = finder.find(module.getJava());
+                                    clientModules.put(module.getConnector(), url);
                                 }
-                            } else if (module.getJava() != null) {
-                                try {
-                                    URL clientUrl = new File(jarFile, module.getJava()).toURL();
-
-                                    ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClassLoader, clientUrl);
-
-                                    String jarPath = new File(clientUrl.getFile()).getAbsolutePath();
-
-                                    ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, jarPath, null);
-
-                                    deployedJars.add(clientModule);
-
-                                } catch (OpenEJBException e) {
-                                    logger.error("Unable to load App Client from EAR: " + jarFile.getAbsolutePath() + ", module: " + module.getJava() + ". Exception: " + e.getMessage(), e);
-                                } catch (MalformedURLException e) {
-                                    logger.error("Bad resource in classpath.  Unable to search for entries. ", e);
-                                }
+                            } catch (IOException e) {
+                                throw new OpenEJBException("Invalid path to module " + e.getMessage(), e);
                             }
                         }
+
+                        List<URL> classPath = new ArrayList();
+                        classPath.addAll(ejbModules.values());
+                        classPath.addAll(clientModules.values());
+                        classPath.addAll(extraLibs);
+                        ClassLoader appClassLoader = new URLClassLoader(classPath.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+
+
+                        AppModule appModule = new AppModule(appClassLoader, jarFile.getAbsolutePath());
+                        appModule.getAdditionalLibraries().addAll(extraLibs);
+
+                        for (String moduleName : ejbModules.keySet()) {
+                            URL ejbUrl = ejbModules.get(moduleName);
+                            File ejbFile = new File(ejbUrl.getPath());
+                            try {
+                                ResourceFinder ejbFinder = new ResourceFinder(ejbUrl);
+
+                                Map<String, URL> ejbDescriptors = null;
+                                try {
+                                    ejbDescriptors = ejbFinder.getResourcesMap("META-INF/");
+                                } catch (IOException e) {
+                                    throw new OpenEJBException("Unable to determine descriptors in jar.", e);
+                                }
+
+                                if (!ejbDescriptors.containsKey("ejb-jar.xml")) {
+                                    throw new OpenEJBException("META-INF/ejb-jar.xml not found.");
+                                }
+
+                                EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", ejbDescriptors.get("ejb-jar.xml"));
+
+                                OpenejbJar openejbJar = null;
+
+                                if (ejbDescriptors.containsKey("openejb-jar.xml")) {
+                                    openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", ejbDescriptors.get("openejb-jar.xml"));
+                                }
+
+                                EjbModule ejbModule = new EjbModule(appClassLoader, ejbFile.getAbsolutePath(), ejbJar, openejbJar);
+                                appModule.getEjbModules().add(ejbModule);
+                            } catch (OpenEJBException e) {
+                                logger.error("Unable to load EJBs from EAR: " + jarFile.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                            }
+                        }
+                        for (String moduleName : clientModules.keySet()) {
+                            URL clientUrl = clientModules.get(moduleName);
+                            File clientFile = new File(clientUrl.getPath());
+                            try {
+                                ResourceFinder clientFinder = new ResourceFinder(clientUrl);
+
+                                URL appClientXmlUrl = clientFinder.find("META-INF/application-client.xml");
+
+                                ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClientXmlUrl);
+
+                                ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), null);
+
+                                appModule.getClientModules().add(clientModule);
+                            } catch (Exception e) {
+                                logger.error("Unable to load App Client from EAR: " + jarFile.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                            }
+                        }
+                        deployedJars.add(appModule);
                     } catch (OpenEJBException e) {
                         logger.error("Unable to load EAR: " + appXml.toExternalForm(), e);
                     }
@@ -335,7 +388,7 @@ public class DeploymentLoader {
         for (EnterpriseBean b : enterpriseBeans) {
             count++;
 
-            System.out.println("<!-- " + b.getEjbName() +" -->");
+            System.out.println("<!-- " + b.getEjbName() + " -->");
 
             if (!(b instanceof RemoteBean)) {
                 continue;
@@ -352,14 +405,14 @@ public class DeploymentLoader {
             EjbDeployment deployment = deployments.get(bean.getEjbName());
             String deploymentId = deployment.getDeploymentId();
 
-            if (bean.getHome() != null){
+            if (bean.getHome() != null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("  <ejb-ref>\n");
-                sb.append("    <ejb-ref-name>"+deploymentId +"</ejb-ref-name>\n");
-                sb.append("    <ejb-ref-type>"+beanType+"</ejb-ref-type>\n");
-                sb.append("    <home>"+bean.getHome() +"</home>\n");
-                sb.append("    <remote>"+bean.getRemote()+"</remote>\n");
-                sb.append("    <ejb-link>"+bean.getEjbName()+"</ejb-link>\n");
+                sb.append("    <ejb-ref-name>" + deploymentId + "</ejb-ref-name>\n");
+                sb.append("    <ejb-ref-type>" + beanType + "</ejb-ref-type>\n");
+                sb.append("    <home>" + bean.getHome() + "</home>\n");
+                sb.append("    <remote>" + bean.getRemote() + "</remote>\n");
+                sb.append("    <ejb-link>" + bean.getEjbName() + "</ejb-link>\n");
                 sb.append("  </ejb-ref>");
                 System.out.println(sb.toString());
             }
@@ -367,32 +420,22 @@ public class DeploymentLoader {
             if (!(bean instanceof org.apache.openejb.jee.SessionBean)) {
                 continue;
             }
-            org.apache.openejb.jee.SessionBean sbean =  (org.apache.openejb.jee.SessionBean) bean;
+            org.apache.openejb.jee.SessionBean sbean = (org.apache.openejb.jee.SessionBean) bean;
 
-            if (sbean.getBusinessRemote() != null){
+            if (sbean.getBusinessRemote() != null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("  <ejb-ref>\n");
-                sb.append("    <ejb-ref-name>"+deploymentId +"BusinessRemote</ejb-ref-name>\n");
-                sb.append("    <ejb-ref-type>"+beanType+"</ejb-ref-type>\n");
-                sb.append("    <remote>"+sbean.getBusinessRemote()+"</remote>\n");
-                sb.append("    <ejb-link>"+sbean.getEjbName()+"</ejb-link>\n");
+                sb.append("    <ejb-ref-name>" + deploymentId + "BusinessRemote</ejb-ref-name>\n");
+                sb.append("    <ejb-ref-type>" + beanType + "</ejb-ref-type>\n");
+                sb.append("    <remote>" + sbean.getBusinessRemote() + "</remote>\n");
+                sb.append("    <ejb-link>" + sbean.getEjbName() + "</ejb-link>\n");
                 sb.append("  </ejb-ref>");
                 System.out.println(sb.toString());
             }
         }
     }
 
-    private final Map<Class,JaxbUnmarshaller> unmarshallers = new HashMap();
-
-    private <T> T unmarshal(Class<T> type, String descriptor, ClassLoader classLoader, URL jarUrl) throws OpenEJBException {
-        URL descriptorUrl = getResource(jarUrl, classLoader, descriptor);
-
-        if (descriptorUrl == null) {
-            throw new OpenEJBException(descriptor + " not found.");
-        }
-
-        return unmarshal(type, descriptor, descriptorUrl);
-    }
+    private final Map<Class, JaxbUnmarshaller> unmarshallers = new HashMap();
 
     private <T>T unmarshal(Class<T> type, String descriptor, URL descriptorUrl) throws OpenEJBException {
         JaxbUnmarshaller unmarshaller = unmarshallers.get(type);
@@ -437,14 +480,14 @@ public class DeploymentLoader {
     private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
         ClassLoader classLoader;
 //        if (jarFile.isDirectory()) {
-            try {
-                URL[] urls = new URL[]{jarFile.toURL()};
-                classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
-                //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
-                return classLoader;
-            } catch (MalformedURLException e) {
-                throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
-            }
+        try {
+            URL[] urls = new URL[]{jarFile.toURL()};
+            classLoader = new URLClassLoader(urls, OpenEJB.class.getClassLoader());
+            //                        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+            return classLoader;
+        } catch (MalformedURLException e) {
+            throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
+        }
 //        } else {
 //            TempCodebase tempCodebase = new TempCodebase(jarFile.getAbsolutePath());
 //            classLoader = tempCodebase.getClassLoader();

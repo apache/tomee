@@ -19,8 +19,9 @@ package org.apache.openejb.assembler.classic;
 public class ContainerSystemInfo extends InfoObject {
 
     public ContainerInfo[] containers;
-    public EnterpriseBeanInfo[] enterpriseBeans;
-    public ClientInfo[] clients; 
+//    public EnterpriseBeanInfo[] enterpriseBeans;
+    public AppInfo[] applications; 
+    public ClientInfo[] clients;
     public EjbJarInfo[] ejbJars;
 
     public EntityContainerInfo[] entityContainers;
