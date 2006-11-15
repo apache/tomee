@@ -66,7 +66,15 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         try {
             if (req.getModuleId()!= null && clientJndiTree != null){
                 Context moduleContext = (Context) clientJndiTree.lookup(req.getModuleId());
-                object = moduleContext.lookup(name);
+                if (name.startsWith("comp/env/")){
+                    Context ctx = (Context) moduleContext.lookup("comp");
+                    ctx = (Context) ctx.lookup("env");
+                    name = name.replaceFirst("comp/env/","");
+                    object = ctx.lookup(name);
+                } else {
+                    object = moduleContext.lookup(name);
+                }
+
             } else {
                 object = ejbJndiTree.lookup(name);
             }
