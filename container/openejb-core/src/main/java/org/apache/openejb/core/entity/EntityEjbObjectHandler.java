@@ -26,38 +26,6 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
 
-    private final static class RegistryEntry {
-        final Object primaryKey;
-        final Object deploymentId;
-        final Object containerId;
-
-        RegistryEntry(Object primaryKey, Object deploymentId, Object containerId) {
-            if (primaryKey == null || deploymentId == null || containerId == null) {
-                throw new IllegalArgumentException();
-            }
-            this.primaryKey = primaryKey;
-            this.deploymentId = deploymentId;
-            this.containerId = containerId;
-        }
-
-        public boolean equals(Object other) {
-            if (other == this) {
-                return true;
-            }
-            if (other instanceof RegistryEntry) {
-                RegistryEntry otherEntry = (RegistryEntry) other;
-                return primaryKey.equals(otherEntry.primaryKey) &&
-                        deploymentId.equals(otherEntry.deploymentId) &&
-                        containerId.equals(otherEntry.containerId);
-            }
-            return false;
-        }
-
-        public int hashCode() {
-            return primaryKey.hashCode();
-        }
-    }
-
     /*
     * The registryId is a logical identifier that is used as a key when placing EntityEjbObjectHandler into
     * the BaseEjbProxyHanlder's liveHandleRegistry.  EntityEjbObjectHandlers that represent the same
@@ -81,7 +49,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     * is called.
     */
     public static Object getRegistryId(Object primKey, Object deployId, Container contnr) {
-        return new RegistryEntry(primKey, deployId, contnr.getContainerID());
+        return "" + primKey + deployId + contnr.getContainerID();
     }
 
     public Object getRegistryId() {
