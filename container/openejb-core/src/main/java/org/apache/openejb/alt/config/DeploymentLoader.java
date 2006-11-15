@@ -335,6 +335,9 @@ public class DeploymentLoader {
                                 }
 
                                 EjbModule ejbModule = new EjbModule(appClassLoader, ejbFile.getAbsolutePath(), ejbJar, openejbJar);
+
+                                ejbModule = deployer.deploy(ejbModule);
+
                                 appModule.getEjbModules().add(ejbModule);
                             } catch (OpenEJBException e) {
                                 logger.error("Unable to load EJBs from EAR: " + jarFile.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);

@@ -93,9 +93,19 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         BaseEjbProxyHandler handler = null;
         try {
             handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
-        } catch (ClassCastException e) {
-            res.setResponseCode(JNDI_NAMING_EXCEPTION);
-            res.setResult(new NamingException("Expected an ejb proxy, found unknown object: type="+object.getClass().getName() + ", toString="+object));
+        } catch (Exception e) {
+            // Not a proxy.  See if it's serializable and send it
+            if (object instanceof java.io.Serializable){
+                res.setResponseCode(JNDI_OK);
+                res.setResult(object);
+                res.writeExternal(out);
+                return;
+            } else {
+                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResult(new NamingException("Expected an ejb proxy, found unknown object: type="+object.getClass().getName() + ", toString="+object));
+                res.writeExternal(out);
+                return;
+            }
         }
 
         ProxyInfo proxyInfo = handler.getProxyInfo();
