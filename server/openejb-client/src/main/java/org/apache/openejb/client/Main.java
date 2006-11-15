@@ -47,7 +47,7 @@ public class Main {
 
         Class mainClass = classLoader.loadClass(mainClassName);
         Method mainMethod = mainClass.getMethod("main", args.getClass());
-        mainMethod.invoke(args);
+        mainMethod.invoke(null, args);
 
     }
 
