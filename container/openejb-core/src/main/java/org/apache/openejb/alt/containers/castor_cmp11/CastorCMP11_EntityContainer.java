@@ -139,8 +139,6 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
     private final Hashtable syncWrappers = new Hashtable();
 
-    private HashMap resetMap;
-
     private TransactionManager transactionManager;
     private SecurityService securityService;
     private JDOManager localJdoManager;
@@ -255,8 +253,6 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
             e.printStackTrace();
             throw new OpenEJBException("Unable to construct the Castor JDOManager objects: "+e.getClass().getName()+": "+e.getMessage(), e);
         }
-
-        buildResetMap();
     }
 
     public static class JoinedClassLoader extends ClassLoader {
@@ -410,7 +406,7 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
             }
         } else {
 
-            resetBeanFields(bean, deploymentInfo);
+            // TODO: Set all the cmp fields to the initial values
         }
 
         txReadyPoolMap.put(bean, methodReadyPool);
@@ -1059,23 +1055,6 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
         }
     }
 
-    protected void resetBeanFields(java.lang.Object bean, org.apache.openejb.core.CoreDeploymentInfo info) {
-        final String[] cmFields = info.getCmrFields();
-        final Class beanClass = bean.getClass();
-
-        try {
-            for (int i = 0; i < cmFields.length; i++) {
-                Field field = beanClass.getDeclaredField(cmFields[i]);
-                Object value = resetMap.get(field.getType());
-//                System.out.println("Setting field "+cmFields[i]+" to "+value);
-                field.set(bean, value);
-            }
-        } catch (Exception e) {
-
-            logger.error("Internal inconsistency accessing the fields of a CMP entity bean" + bean + ":" + e);
-        }
-    }
-
     public Object newInstance(String className, ClassLoader loader) {
 
         Object obj = null;
@@ -1201,18 +1180,6 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
      */
     public Class loaded(Object loaded, AccessMode mode) throws Exception {
         return loaded(loaded, mode.getId());
-    }
-
-    private void buildResetMap() {
-        resetMap = new HashMap();
-        resetMap.put(byte.class, new Byte((byte) 0));
-        resetMap.put(boolean.class, new Boolean(false));
-        resetMap.put(char.class, new Character((char) 0));
-        resetMap.put(short.class, new Short((short) 0));
-        resetMap.put(int.class, new Integer(0));
-        resetMap.put(long.class, new Long(0));
-        resetMap.put(float.class, new Float(0));
-        resetMap.put(double.class, new Double(0.0));
     }
 
     /**
