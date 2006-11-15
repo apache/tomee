@@ -38,6 +38,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     private transient ServerMetaData server;
     private transient ClientMetaData client;
     private transient Hashtable env;
+    private String moduleId;
 
     JNDIContext(Hashtable environment) throws NamingException {
         init(environment);
@@ -53,6 +54,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         this.tail = that.tail;
         this.server = that.server;
         this.client = that.client;
+        this.moduleId = that.moduleId;
         this.env = (Hashtable) that.env.clone();
     }
 
@@ -84,6 +86,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         Object serverURI = env.get(Context.PROVIDER_URL);
+        moduleId = (String) env.get("openejb.client.moduleId");
 
         if (serverURI == null) serverURI = "foo://localhost:4201";
         if (userID == null) userID = "anonymous";
@@ -158,11 +161,13 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         if (name == null) throw new InvalidNameException("The name cannot be null");
         else if (name.equals("")) return new JNDIContext(this);
+        else if (name.startsWith("java:")) name = name.replaceFirst("^java:","");
         else if (!name.startsWith("/")) name = tail + name;
 
         JNDIRequest req = new JNDIRequest();
         req.setRequestMethod(JNDIRequest.JNDI_LOOKUP);
         req.setRequestString(name);
+        req.setModuleId(moduleId);
 
         JNDIResponse res = null;
         try {

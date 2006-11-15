@@ -232,7 +232,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 clientInfo.description = applicationClient.getDescription();
                 clientInfo.displayName = applicationClient.getDisplayName();
                 clientInfo.codebase = clientModule.getJarLocation();
-                clientInfo.mainClass = applicationClient.getMainClass();
+                clientInfo.mainClass = clientModule.getMainClass();
                 clientInfo.moduleId = getClientModuleId(clientModule);
 
                 JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(infos);

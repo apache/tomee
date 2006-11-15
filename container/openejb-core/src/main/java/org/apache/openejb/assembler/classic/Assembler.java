@@ -245,10 +245,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             for (ClientInfo clientInfo : appInfo.clients) {
                 JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
-                Context context = jndiEncBuilder.build();
-                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/path", clientInfo.codebase);
-                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/mainClass", clientInfo.mainClass);
-                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/enc", context);
+                Context context = (Context) jndiEncBuilder.build().lookup("env");
+                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/env", context);
+                if (clientInfo.codebase != null){
+                    containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/path", clientInfo.codebase);
+                }
+                if (clientInfo.mainClass != null) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/mainClass", clientInfo.mainClass);
+                }
             }
         }
 
