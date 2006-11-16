@@ -49,32 +49,14 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
 
         try {
             req.readExternal(in);
-
-            /*
-                } catch (java.io.WriteAbortedException e){
-                    if ( e.detail instanceof java.io.NotSerializableException){
-
-                        throw new Exception("Client attempting to serialize unserializable object: "+ e.detail.getMessage());
-                    } else {
-                        throw e.detail;
-                    }
-                } catch (java.io.EOFException e) {
-                    throw new Exception("Reached the end of the stream before the full request could be read");
-                } catch (Throwable t){
-                    throw new Exception("Cannot read client request: "+ t.getClass().getName()+" "+ t.getMessage());
-                }
-            */
-
         } catch (Throwable t) {
-            replyWithFatalError
-                    (out, t, "Error caught during request processing");
+            replyWithFatalError(out, t, "Error caught during request processing");
             return;
         }
 
         CallContext call = null;
         DeploymentInfo di = null;
         RpcContainer c = null;
-        ;
 
         try {
             di = this.daemon.getDeployment(req);
@@ -91,6 +73,17 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
         } catch (Throwable t) {
             replyWithFatalError
                     (out, t, "Unkown error occured while retrieving deployment");
+            return;
+        }
+
+        //  Need to set this for deserialization of the body
+        ClassLoader classLoader = di.getBeanClass().getClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+
+        try {
+            req.getBody().readExternal(in);
+        } catch (Throwable t) {
+            replyWithFatalError(out, t, "Error caught during request processing");
             return;
         }
 
