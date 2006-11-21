@@ -44,6 +44,7 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessRemoteIntfcTests());
         suite.addTest(new StatelessPojoRemoteIntrfcTests());
         suite.addTest(new StatelessHomeHandleTests());
+        suite.addTest(new StatelessPojoHomeHandleTests());
         suite.addTest(new StatelessHandleTests());
         suite.addTest(new StatelessEjbMetaDataTests());
         suite.addTest(new StatelessPojoEjbMetaDataTests());
@@ -53,7 +54,7 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessJndiEncTests());
         suite.addTest(new StatelessRmiIiopTests());
         suite.addTest(new MiscEjbTests());
-        /* TO DO 
+        /* TO DO
         suite.addTest(new StatelessEjbContextTests());
         suite.addTest(new BMTStatelessEjbContextTests());
         suite.addTest(new BMTStatelessEncTests());
