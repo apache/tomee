@@ -51,7 +51,6 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,11 +62,11 @@ import java.util.Map;
 public class EjbJarInfoBuilder {
 
     public static final String DEFAULT_SECURITY_ROLE = "openejb.default.security.role";
-    public static List<String> deploymentIds = new ArrayList();
-    public static List<String> securityRoles = new ArrayList();
-    private List<MethodPermissionInfo> methodPermissionInfos = new ArrayList();
-    private List<MethodTransactionInfo> methodTransactionInfos = new ArrayList();
-    private List<SecurityRoleInfo> securityRoleInfos = new ArrayList();
+    public static List<String> deploymentIds = new ArrayList<String>();
+    public static List<String> securityRoles = new ArrayList<String>();
+    private List<MethodPermissionInfo> methodPermissionInfos = new ArrayList<MethodPermissionInfo>();
+    private List<MethodTransactionInfo> methodTransactionInfos = new ArrayList<MethodTransactionInfo>();
+    private List<SecurityRoleInfo> securityRoleInfos = new ArrayList<SecurityRoleInfo>();
 
     
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
@@ -82,8 +81,8 @@ public class EjbJarInfoBuilder {
         }
 
         Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
-        Map<String, EnterpriseBeanInfo> infos = new HashMap();
-        Map<String, EnterpriseBean> items = new HashMap();
+        Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
+        Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 
         EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.jarPath = jar.getJarURI();
@@ -130,13 +129,13 @@ public class EjbJarInfoBuilder {
         }
 
         if (!"tomcat-webapp".equals(SystemInstance.get().getProperty("openejb.loader"))) {
-            try {
-                File jarFile = new File(jar.getJarURI());
-
+//            try {
+//                File jarFile = new File(jar.getJarURI());
+//
 //                SystemInstance.get().getClassPath().addJarToPath(jarFile.toURL());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
         return ejbJar;
     }
@@ -150,7 +149,7 @@ public class EjbJarInfoBuilder {
             String ejbName = beanInfo.ejbName;
             JndiConsumer jndiConsumer = beanData.get(ejbName);
 
-            EjbDeployment ejbDeployment = (EjbDeployment) ejbds.get(ejbName);
+            EjbDeployment ejbDeployment = ejbds.get(ejbName);
 
             // Link all the resource refs
             List<ResourceRef> resourceRefs = jndiConsumer.getResourceRef();
@@ -170,7 +169,7 @@ public class EjbJarInfoBuilder {
     private void initMethodTransactions(EjbModule jar, Map ejbds) {
 
         List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
-        List<MethodTransactionInfo> infos = new ArrayList();
+        List<MethodTransactionInfo> infos = new ArrayList<MethodTransactionInfo>();
         for (ContainerTransaction cTx : containerTransactions) {
             MethodTransactionInfo info = new MethodTransactionInfo();
 
@@ -185,7 +184,7 @@ public class EjbJarInfoBuilder {
     private void initSecurityRoles(EjbModule jar) {
 
         List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
-        List<SecurityRoleInfo> infos = new ArrayList();
+        List<SecurityRoleInfo> infos = new ArrayList<SecurityRoleInfo>();
 
         for (SecurityRole sr : roles) {
             SecurityRoleInfo info = new SecurityRoleInfo();
@@ -206,7 +205,7 @@ public class EjbJarInfoBuilder {
     private void initMethodPermissions(EjbModule jar, Map ejbds) {
 
         List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
-        List<MethodPermissionInfo> infos = new ArrayList();
+        List<MethodPermissionInfo> infos = new ArrayList<MethodPermissionInfo>();
 
         for (MethodPermission mp : methodPermissions) {
             MethodPermissionInfo info = new MethodPermissionInfo();
@@ -229,7 +228,7 @@ public class EjbJarInfoBuilder {
         RemoteBean rb = (RemoteBean) item;
 
         List<SecurityRoleRef> refs = rb.getSecurityRoleRef();
-        List<SecurityRoleReferenceInfo> infos = new ArrayList();
+        List<SecurityRoleReferenceInfo> infos = new ArrayList<SecurityRoleReferenceInfo>();
         for (SecurityRoleRef ref : refs) {
             SecurityRoleReferenceInfo info = new SecurityRoleReferenceInfo();
 
