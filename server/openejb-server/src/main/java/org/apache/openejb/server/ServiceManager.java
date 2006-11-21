@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.server;
 
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ResourceFinder;
@@ -27,18 +27,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Properties;
-import java.util.Map;
-
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * @org.apache.xbean.XBean 
- *   element="serviceManager"
- * 
  * @version $Rev$ $Date$
+ * @org.apache.xbean.XBean element="serviceManager"
  */
 public class ServiceManager {
 
@@ -78,7 +75,6 @@ public class ServiceManager {
     // Each contains the class name of the daemon implamentation
     // The port to use
     // whether it's turned on
-
 
     // May be reusable elsewhere, move if another use occurs
     public static class ServiceFinder {
@@ -154,17 +150,19 @@ public class ServiceManager {
 
                 Class serviceClass = (Class) serviceProperties.get(ServerService.class);
 
-        try {
+                try {
                     service = (ServerService) serviceClass.newInstance();
                 } catch (Throwable t) {
                     String msg1 = messages.format("service.instantiation.err", serviceClass.getName(), t.getClass().getName(), t.getMessage());
                     throw new ServiceException(msg1, t);
                 }
 
-                // Wrap Service
-                service = new ServiceLogger(service);
-                service = new ServiceAccessController(service);
-                service = new ServiceDaemon(service);
+                if (!(service instanceof SelfManaging)) {
+                    // Wrap Service
+                    service = new ServiceLogger(service);
+                    service = new ServiceAccessController(service);
+                    service = new ServiceDaemon(service);
+                }
 
                 // Initialize it
                 service.init(serviceProperties);
@@ -183,21 +181,21 @@ public class ServiceManager {
         File conf = base.getDirectory("conf");
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
-            if (serviceConfig.exists()){
+            if (serviceConfig.exists()) {
                 FileInputStream in = new FileInputStream(serviceConfig);
-            try {
+                try {
                     serviceProperties.load(in);
-            } finally {
-                        in.close();
-                    }
+                } finally {
+                    in.close();
+                }
             } else {
                 FileOutputStream out = new FileOutputStream(serviceConfig);
                 try {
                     String rawPropsContent = (String) serviceProperties.get(Properties.class);
                     out.write(rawPropsContent.getBytes());
                 } finally {
-                        out.close();
-                    }
+                    out.close();
+                }
             }
         }
 
@@ -208,7 +206,7 @@ public class ServiceManager {
             Map.Entry entry1 = (Map.Entry) iterator1.next();
             String key = (String) entry1.getKey();
             String value = (String) entry1.getValue();
-            if (key.startsWith(prefix)){
+            if (key.startsWith(prefix)) {
                 key = key.replaceFirst(prefix, "");
                 serviceProperties.setProperty(key, value);
             }
