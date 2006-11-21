@@ -168,7 +168,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = (TransactionManagement) clazz.getAnnotation(TransactionManagement.class);
-                    TransactionManagementType transactionType = tx.value();
+                    TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
+                    if(tx != null){
+                    	transactionType = tx.value();
+                    }
                     switch(transactionType){
                         case BEAN: bean.setTransactionType(TransactionType.BEAN); break;
                         case CONTAINER: bean.setTransactionType(TransactionType.CONTAINER); break;
