@@ -20,6 +20,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class ServiceAccessController implements ServerService {
 
     ServerService next;

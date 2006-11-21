@@ -20,6 +20,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class ServiceDaemon implements ServerService, Runnable {
 
     ServerService next;

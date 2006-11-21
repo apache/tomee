@@ -22,6 +22,9 @@ import java.util.*;
 
 import org.apache.openejb.util.*;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class ServiceLogger implements ServerService {
 
     Messages messages = new Messages("org.apache.openejb.server.util.resources");
