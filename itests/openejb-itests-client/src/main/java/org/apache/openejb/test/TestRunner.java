@@ -110,7 +110,7 @@ public class TestRunner extends junit.textui.TestRunner {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.IvmTestServer");
         System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.InstantDbTestDatabase");
+                "org.apache.openejb.test.DerbyTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -123,7 +123,7 @@ public class TestRunner extends junit.textui.TestRunner {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.RemoteTestServer");
         System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.InstantDbTestDatabase");
+                "org.apache.openejb.test.DerbyTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -136,7 +136,7 @@ public class TestRunner extends junit.textui.TestRunner {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.RemoteHttpTestServer");
         System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.InstantDbTestDatabase");
+                "org.apache.openejb.test.DerbyTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -147,7 +147,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runTomcatRemoteHttpTests() {
         System.setProperty("openejb.test.server", TomcatRemoteTestServer.class.getName());
-        System.setProperty("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out

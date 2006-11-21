@@ -343,6 +343,16 @@
         <version>1.0.4</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.2.1.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbynet</artifactId>
+        <version>10.2.1.6</version>
+      </dependency>
+      <dependency>
         <groupId>org.tranql</groupId>
         <artifactId>tranql</artifactId>
         <version>1.4-SNAPSHOT</version>

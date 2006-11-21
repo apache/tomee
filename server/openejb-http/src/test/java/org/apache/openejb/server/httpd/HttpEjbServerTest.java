@@ -42,7 +42,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
     protected void setUp() throws Exception {
         System.setProperty("openejb.test.server", HttpEjbTestServer.class.getName());
-        System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
+        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         TestManager.init(null);
         TestManager.start();
     }

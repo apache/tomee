@@ -44,8 +44,8 @@
   <o:jdbcConnectionFactory id="defaultJdbcDatabase"
       defaultUserName="Admin"
       defaultPassword="pass"
-      url="jdbc:idb:conf/instantdb.properties"
-      driver="org.enhydra.instantdb.jdbc.idbDriver"/>
+      url="jdbc:derby:derbyDB;create=true"
+      driver="org.apache.derby.jdbc.EmbeddedDriver"/>
 
   <o:jndiBinding id="jndiBinding" context="#jndiContext">
     <property name="bindings">
@@ -77,21 +77,21 @@
 
     poolSize 100
 
-    engine instantdb
+    engine derby
 
     connectorName Default JDBC Database
 
     # Driver class name
 
-    jdbcDriver org.enhydra.instantdb.jdbc.idbDriver
+    jdbcDriver org.apache.derby.jdbc.EmbeddedDriver
 
     # Url for creating connections
 
-    jdbcUrl jdbc:idb:conf/instantdb.properties
+    jdbcUrl jdbc:derby:derbyDB;create=true
 
     # Default user name
 
-    userName Admin
+    userName admin
 
     # Default password
 
