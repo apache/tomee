@@ -155,6 +155,11 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-derbynet</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
     </dependency>

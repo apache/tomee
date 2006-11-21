@@ -37,5 +37,6 @@
     <module>openejb-xfire</module>
     <module>openejb-axis</module>
     <module>openejb-corba</module>
+    <module>openejb-derbynet</module>
   </modules>
 </project>

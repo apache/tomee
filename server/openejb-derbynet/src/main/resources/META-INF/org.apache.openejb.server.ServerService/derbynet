@@ -1,0 +1,5 @@
+    server      = org.apache.openejb.server.derbynet.DerbyNetworkService
+    bind        = 127.0.0.1
+    port        = 4205
+    disabled    = false
+    threads     = 200
