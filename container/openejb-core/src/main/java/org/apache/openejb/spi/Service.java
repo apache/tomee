@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.spi;
 
+import java.util.Properties;
+
+/**
+ * @version $Rev$ $Date$
+ */
 public interface Service {
 
-    public void init(java.util.Properties props) throws Exception;
+    public void init(Properties props) throws Exception;
 }

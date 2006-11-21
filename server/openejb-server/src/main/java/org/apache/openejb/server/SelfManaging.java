@@ -17,6 +17,12 @@
 package org.apache.openejb.server;
 
 /**
+ * Marker interface to announce that a service class (i.e. instance of
+ * {@see ServerService}) should not be wrapped by other services (that
+ * eventually create a chain of services around the main service to be wrapped)
+ * 
+ * @see ServiceManager#init()
+ * 
  * @version $Rev$ $Date$
  */
 public interface SelfManaging {}

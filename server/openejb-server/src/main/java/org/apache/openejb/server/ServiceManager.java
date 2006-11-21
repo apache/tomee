@@ -158,13 +158,11 @@ public class ServiceManager {
                 }
 
                 if (!(service instanceof SelfManaging)) {
-                    // Wrap Service
                     service = new ServiceLogger(service);
                     service = new ServiceAccessController(service);
                     service = new ServiceDaemon(service);
                 }
 
-                // Initialize it
                 service.init(serviceProperties);
                 enabledServers.add(service);
             }

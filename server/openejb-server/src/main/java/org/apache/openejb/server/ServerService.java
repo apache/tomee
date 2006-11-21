@@ -16,15 +16,17 @@
  */
 package org.apache.openejb.server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 import org.apache.openejb.spi.Service;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public interface ServerService extends Service {
-
-    public void init(Properties props) throws Exception;
 
     public void start() throws ServiceException;
 
