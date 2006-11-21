@@ -77,11 +77,11 @@ public class ReflectionInvocationContext implements InvocationContext {
 
             if (parameter == null) {
                 if (parameterType.isPrimitive()) {
-                    throw new IllegalArgumentException("Parameter " + i + " to be primitive type " + parameterType.getName() +
-                        ", but got a parameter is null");
+                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
+                        ", but got a parameter that is null");
                 }
             } else if (!parameterType.isInstance(parameter)) {
-                throw new IllegalArgumentException("Expect parameter " + i + " to be type " + parameterType.getName() +
+                throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
                     ", but got a parameter of type " + parameter.getClass().getName());
             }
         }
@@ -120,10 +120,10 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     /**
      * Business method interceptors can only throw exception allowed by the target business method.
-     * Lifecycle interceptors can only throw RuntimException.
-     * @param e the invocation target excption of a reflection method invoke
+     * Lifecycle interceptors can only throw RuntimeException.
+     * @param e the invocation target exception of a reflection method invoke
      * @return the cause of the exception
-     * @throws Error if the cause is not an Exception
+     * @throws AssertionError if the cause is not an Exception or Error.
      */
     private Exception unwrapInvocationTargetException(InvocationTargetException e) {
         Throwable cause = e.getCause();

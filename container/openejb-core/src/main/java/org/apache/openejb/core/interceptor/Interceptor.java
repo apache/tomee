@@ -35,7 +35,7 @@ public class Interceptor {
         try {
             this.method = instanceClass.getMethod(methodName, InvocationContext.class);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Intercepor method " + methodName + " not found on insterceptor class " + instanceClass.getName());
+            throw new IllegalArgumentException("Interceptor method " + methodName + " not found on intercepted class " + instanceClass.getName());
         }
     }
 
