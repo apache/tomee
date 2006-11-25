@@ -86,18 +86,22 @@ public class ContainerTxStatelessBean implements javax.ejb.SessionBean{
         try{
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/database");
             Connection con = ds.getConnection();
-            
-            /*[2] Update the table */
-            PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)");
-            stmt.setString(1, acct.getSsn());
-            stmt.setString(2, acct.getFirstName());
-            stmt.setString(3, acct.getLastName());
-            stmt.setInt(4, acct.getBalance());
-            stmt.executeUpdate();
 
-            /*[4] Clean up */
-            stmt.close();
-            con.close();
+            try {
+                /*[2] Update the table */
+                PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)");
+                try {
+                    stmt.setString(1, acct.getSsn());
+                    stmt.setString(2, acct.getFirstName());
+                    stmt.setString(3, acct.getLastName());
+                    stmt.setInt(4, acct.getBalance());
+                    stmt.executeUpdate();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch (Exception e){
             //throw new RemoteException("[Bean] "+e.getClass().getName()+" : "+e.getMessage());
         }
@@ -109,18 +113,23 @@ public class ContainerTxStatelessBean implements javax.ejb.SessionBean{
             DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?");
-            stmt.setString(1, ssn);
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) return null;
-            
-            acct.setSsn( rs.getString(1) );
-            acct.setFirstName( rs.getString(2) );
-            acct.setLastName( rs.getString(3) );
-            acct.setBalance( rs.getInt(4) );
+            try {
+                PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?");
+                try {
+                    stmt.setString(1, ssn);
+                    ResultSet rs = stmt.executeQuery();
+                    if (!rs.next()) return null;
 
-            stmt.close();
-            con.close();
+                    acct.setSsn( rs.getString(1) );
+                    acct.setFirstName( rs.getString(2) );
+                    acct.setLastName( rs.getString(3) );
+                    acct.setBalance( rs.getInt(4) );
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch (Exception e){
             //throw new RemoteException("[Bean] "+e.getClass().getName()+" : "+e.getMessage());
         }

@@ -109,10 +109,17 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-            stmt.setInt(1, primaryKey.intValue());
-            found = stmt.executeQuery().next();
-            con.close();
+            try {
+                PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
+                try {
+                    stmt.setInt(1, primaryKey.intValue());
+                    found = stmt.executeQuery().next();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch ( Exception e ) {
             throw new FinderException("FindByPrimaryKey failed");
         }
@@ -137,13 +144,18 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("SELECT id FROM entity WHERE last_name = ?");
-            stmt.setString(1, lastName);
-
-            ResultSet set = stmt.executeQuery();
-
-            while ( set.next() ) keys.add( new Integer(set.getInt("id")) );
-            con.close();
+            try {
+                PreparedStatement stmt = con.prepareStatement("SELECT id FROM entity WHERE last_name = ?");
+                try {
+                    stmt.setString(1, lastName);
+                    ResultSet set = stmt.executeQuery();
+                    while ( set.next() ) keys.add( new Integer(set.getInt("id")) );
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch ( Exception e ) {
             throw new FinderException("FindByPrimaryKey failed");
         }
@@ -172,23 +184,34 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
             Connection con = ds.getConnection();
 
-            // Support for Oracle because Oracle doesn't do auto increment
+            try {
+                // Support for Oracle because Oracle doesn't do auto increment
 //          PreparedStatement stmt = con.prepareStatement("insert into entity (id, first_name, last_name) values (?,?,?)");
 //          stmt.setInt(1, keys++);
 //          stmt.setString(2, firstName);
 //          stmt.setString(3, lastName);
 //          stmt.executeUpdate();
-            PreparedStatement stmt = con.prepareStatement("insert into entity (first_name, last_name) values (?,?)");
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastName);
-            stmt.executeUpdate();
+                PreparedStatement stmt = con.prepareStatement("insert into entity (first_name, last_name) values (?,?)");
+                try {
+                    stmt.setString(1, firstName);
+                    stmt.setString(2, lastName);
+                    stmt.executeUpdate();
+                } finally {
+                    stmt.close();
+                }
 
-            stmt = con.prepareStatement("select id from entity where first_name = ? AND last_name = ?");
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastName);
-            ResultSet set = stmt.executeQuery();
-            while ( set.next() ) primaryKey = set.getInt("id");
-            con.close();
+                stmt = con.prepareStatement("select id from entity where first_name = ? AND last_name = ?");
+                try {
+                    stmt.setString(1, firstName);
+                    stmt.setString(2, lastName);
+                    ResultSet set = stmt.executeQuery();
+                    while ( set.next() ) primaryKey = set.getInt("id");
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
 
             return new Integer(primaryKey);
 
@@ -292,15 +315,22 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-            Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
-            stmt.setInt(1, primaryKey.intValue());
-            ResultSet rs = stmt.executeQuery();
-            while ( rs.next() ) {
-                lastName = rs.getString("last_name");
-                firstName = rs.getString("first_name");
+            try {
+                PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
+                try {
+                    Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
+                    stmt.setInt(1, primaryKey.intValue());
+                    ResultSet rs = stmt.executeQuery();
+                    while ( rs.next() ) {
+                        lastName = rs.getString("last_name");
+                        firstName = rs.getString("first_name");
+                    }
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
             }
-            con.close();
 
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -335,12 +365,19 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where id = ?");
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastName);
-            stmt.setInt(3, primaryKey);
-            stmt.execute();
-            con.close();
+            try {
+                PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where id = ?");
+                try {
+                    stmt.setString(1, firstName);
+                    stmt.setString(2, lastName);
+                    stmt.setInt(3, primaryKey);
+                    stmt.execute();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -360,11 +397,18 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
-            Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
-            stmt.setInt(1, primaryKey.intValue());
-            stmt.executeUpdate();
-            con.close();
+            try {
+                PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
+                try {
+                    Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
+                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.executeUpdate();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
 
         } catch ( Exception e ) {
             e.printStackTrace();

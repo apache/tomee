@@ -88,30 +88,32 @@ public class BeanTxStatelessBean implements javax.ejb.SessionBean{
         try{
             DataSource ds = (DataSource)javax.rmi.PortableRemoteObject.narrow( jndiContext.lookup("java:comp/env/database"), DataSource.class);
             Connection con = ds.getConnection();
-            
-            UserTransaction ut = ejbContext.getUserTransaction();
-            /*[1] Begin the transaction */
-            ut.begin();
 
+            try {
+                UserTransaction ut = ejbContext.getUserTransaction();
+                /*[1] Begin the transaction */
+                ut.begin();
 
-            /*[2] Update the table */
-            PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)");
-            stmt.setString(1, acct.getSsn());
-            stmt.setString(2, acct.getFirstName());
-            stmt.setString(3, acct.getLastName());
-            stmt.setInt(4, acct.getBalance());
-            stmt.executeUpdate();
+                /*[2] Update the table */
+                PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)");
+                try {
+                    stmt.setString(1, acct.getSsn());
+                    stmt.setString(2, acct.getFirstName());
+                    stmt.setString(3, acct.getLastName());
+                    stmt.setInt(4, acct.getBalance());
+                    stmt.executeUpdate();
+                } finally {
+                    stmt.close();
+                }
 
-            /*[3] Commit or Rollback the transaction */
-            if (rollback.booleanValue()) ut.setRollbackOnly();
-            
-            /*[4] Commit or Rollback the transaction */
-            ut.commit();
-            
+                /*[3] Commit or Rollback the transaction */
+                if (rollback.booleanValue()) ut.setRollbackOnly();
 
-            /*[4] Clean up */
-            stmt.close();
-            con.close();
+                /*[4] Commit or Rollback the transaction */
+                ut.commit();
+            } finally {
+                con.close();
+            }
         } catch (RollbackException re){
             throw re;
         } catch (Exception e){
@@ -126,18 +128,23 @@ public class BeanTxStatelessBean implements javax.ejb.SessionBean{
             DataSource ds = (DataSource)javax.rmi.PortableRemoteObject.narrow( jndiContext.lookup("java:comp/env/database"), DataSource.class);
             Connection con = ds.getConnection();
 
-            PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?");
-            stmt.setString(1, ssn);
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) return null;
-            
-            acct.setSsn( rs.getString(1) );
-            acct.setFirstName( rs.getString(2) );
-            acct.setLastName( rs.getString(3) );
-            acct.setBalance( rs.getInt(4) );
+            try {
+                PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?");
+                try {
+                    stmt.setString(1, ssn);
+                    ResultSet rs = stmt.executeQuery();
+                    if (!rs.next()) return null;
 
-            stmt.close();
-            con.close();
+                    acct.setSsn( rs.getString(1) );
+                    acct.setFirstName( rs.getString(2) );
+                    acct.setLastName( rs.getString(3) );
+                    acct.setBalance( rs.getInt(4) );
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
         } catch (Exception e){
             e.printStackTrace();
             throw new RemoteException("[Bean] "+e.getClass().getName()+" : "+e.getMessage());

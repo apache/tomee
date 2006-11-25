@@ -16,78 +16,89 @@
  */
 package org.apache.openejb.test.beans;
 
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
 public class DatabaseBean implements javax.ejb.SessionBean {
-    
+
     public SessionContext context;
     public InitialContext jndiContext;
-    
-    public void ejbCreate( ) throws javax.ejb.CreateException{
-        try{        
+
+    public void ejbCreate() throws javax.ejb.CreateException {
+        try {
             jndiContext = new InitialContext();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
     }
-    
-    public void executeQuery(String statement) throws java.sql.SQLException{
-        try{        
 
-        DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/database");
-        Connection con = ds.getConnection();
+    public void executeQuery(String statement) throws java.sql.SQLException {
+        try {
 
-        PreparedStatement stmt = con.prepareStatement(statement);
-        ResultSet rs = stmt.executeQuery();
-        
-        con.close();
-        } catch (Exception e){
-            throw new EJBException("Cannot execute the statement: "+statement+ e.getMessage());
+            DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
+            Connection con = ds.getConnection();
+
+            try {
+                PreparedStatement stmt = con.prepareStatement(statement);
+                try {
+                    stmt.executeQuery();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                con.close();
+            }
+        } catch (Exception e) {
+            throw new EJBException("Cannot execute the statement: " + statement + e.getMessage());
         }
     }
-    
-    public boolean execute(String statement) throws java.sql.SQLException{
+
+    public boolean execute(String statement) throws java.sql.SQLException {
         boolean retval;
         Connection con = null;
-        try{        
+        try {
 
-        DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/database");
-        con = ds.getConnection();
+            DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
+            con = ds.getConnection();
 
-        Statement stmt = con.createStatement();
-        retval = stmt.execute(statement);
-        
-        } catch (javax.naming.NamingException e){
+            Statement stmt = con.createStatement();
+            try {
+                retval = stmt.execute(statement);
+            } finally {
+                stmt.close();
+            }
+
+        } catch (javax.naming.NamingException e) {
 //        } catch (Exception e){
 //            e.printStackTrace();
             //throw new RemoteException("Cannot execute the statement: "+statement, e);
-            throw new EJBException("Cannot lookup the Database bean."+e.getMessage());
+            throw new EJBException("Cannot lookup the Database bean." + e.getMessage());
         } finally {
-            if(con!=null) {
+            if (con != null) {
                 con.close();
             }
         }
         return retval;
     }
-    
-    public void ejbPassivate( ){
+
+    public void ejbPassivate() {
         // never called
     }
-    public void ejbActivate(){
+
+    public void ejbActivate() {
         // never called
     }
-    public void ejbRemove(){
+
+    public void ejbRemove() {
     }
-    
-    public void setSessionContext(javax.ejb.SessionContext cntx){
+
+    public void setSessionContext(javax.ejb.SessionContext cntx) {
         context = cntx;
     }
 } 
