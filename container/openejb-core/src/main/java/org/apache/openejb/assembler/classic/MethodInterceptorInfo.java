@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,19 +9,20 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.assembler.classic;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class EjbJarInfo extends InfoObject {
-    public String jarPath;
-    public EnterpriseBeanInfo[] enterpriseBeans;
-    public final List<InterceptorInfo> defaultInterceptors = new ArrayList<InterceptorInfo>();
+public class MethodInterceptorInfo {
+    public MethodInfo methodInfo;
+    public boolean excludeDefaultInterceptors;
+    public boolean excludeClassInterceptors;
+    public List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
 }

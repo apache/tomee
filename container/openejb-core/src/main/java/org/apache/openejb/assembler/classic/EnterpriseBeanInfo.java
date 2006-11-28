@@ -50,7 +50,10 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public JndiEncInfo jndiEnc;
     public SecurityRoleReferenceInfo [] securityRoleReferences;
 
-    public List<LifecycleCallbackInfo> postConstruct = new ArrayList();
-    public List<LifecycleCallbackInfo> preDestroy = new ArrayList();
+    public List<LifecycleCallbackInfo> postConstruct = new ArrayList<LifecycleCallbackInfo>();
+    public List<LifecycleCallbackInfo> preDestroy = new ArrayList<LifecycleCallbackInfo>();
 
+    public boolean excludeDefaultInterceptors;
+    public final List<InterceptorInfo> classInterceptors = new ArrayList<InterceptorInfo>();
+    public final List<MethodInterceptorInfo> methodInterceptors = new ArrayList<MethodInterceptorInfo>();
 }

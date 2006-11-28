@@ -38,15 +38,14 @@ public class EjbJarBuilder {
 
     public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap();
-        EnterpriseBeanInfo[] ejbs = ejbJar.enterpriseBeans;
-        for (EnterpriseBeanInfo ejbInfo: ejbs) {
+        for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
             try {
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
             } catch (Throwable e) {
-                throw new OpenEJBException("Error building bean '"+ejbInfo.ejbName+"'.  Exception: "+e.getClass()+": "+e.getMessage(), e);                
+                throw new OpenEJBException("Error building bean '"+ejbInfo.ejbName+"'.  Exception: "+e.getClass()+": "+e.getMessage(), e);
             }
         }
         return deployments;

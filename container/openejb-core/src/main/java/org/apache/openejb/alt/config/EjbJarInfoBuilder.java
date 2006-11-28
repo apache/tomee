@@ -22,8 +22,12 @@ import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
+import org.apache.openejb.assembler.classic.InterceptorInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.LifecycleCallbackInfo;
+import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.assembler.classic.MethodInfo;
+import org.apache.openejb.assembler.classic.MethodInterceptorInfo;
 import org.apache.openejb.assembler.classic.MethodPermissionInfo;
 import org.apache.openejb.assembler.classic.MethodTransactionInfo;
 import org.apache.openejb.assembler.classic.QueryInfo;
@@ -31,31 +35,32 @@ import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.assembler.classic.LifecycleCallbackInfo;
-import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
+import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.CmpField;
+import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.Icon;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SecurityRole;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.CmpVersion;
-import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +78,7 @@ public class EjbJarInfoBuilder {
     private List<MethodTransactionInfo> methodTransactionInfos = new ArrayList<MethodTransactionInfo>();
     private List<SecurityRoleInfo> securityRoleInfos = new ArrayList<SecurityRoleInfo>();
 
-    
+
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
 
         int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
@@ -128,6 +133,7 @@ public class EjbJarInfoBuilder {
         initJndiReferences(ejbds, infos, items);
 
         if (jar.getEjbJar().getAssemblyDescriptor() != null) {
+            initInterceptors(jar, ejbJar, infos);
             initSecurityRoles(jar);
             initMethodPermissions(jar, ejbds);
             initMethodTransactions(jar, ejbds);
@@ -147,6 +153,76 @@ public class EjbJarInfoBuilder {
 //            }
         }
         return ejbJar;
+    }
+
+    private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar, Map<String, EnterpriseBeanInfo> beanInfos) throws OpenEJBException {
+        if (jar.getEjbJar().getInterceptors() == null) {
+            // no interceptors to process
+            return;
+        }
+
+        Map<String, String> interceptorMethods = new HashMap<String, String>();
+        List<Interceptor> interceptors = jar.getEjbJar().getInterceptors().getInterceptor();
+        for (Interceptor interceptor : interceptors) {
+            AroundInvoke aroundInvoke = interceptor.getAroundInvoke().iterator().next();
+            String clazz = aroundInvoke.getClazz();
+            String methodName = aroundInvoke.getMethodName();
+            interceptorMethods.put(clazz, methodName);
+        }
+
+        List<InterceptorBinding> bindings = jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding();
+        for (InterceptorBinding binding : bindings) {
+            if (binding.getInterceptorOrder() != null) {
+                continue;
+            }
+
+            String ejbName = binding.getEjbName();
+            List<InterceptorInfo> interceptorInfos = getInterceptorInfos(binding.getInterceptorClass(), interceptorMethods);
+            if ("*".equals(ejbName)) {
+                ejbJar.defaultInterceptors.addAll(interceptorInfos);
+            } else {
+                EnterpriseBeanInfo beanInfo = beanInfos.get(ejbName);
+                if (beanInfo == null) {
+                    throw new OpenEJBException("Interceptor binding defined for a non existant ejb " + ejbName);
+                }
+
+                NamedMethod method = binding.getMethod();
+                if (method == null) {
+                    beanInfo.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
+                    beanInfo.classInterceptors.addAll(interceptorInfos);
+                } else {
+                    MethodInterceptorInfo methodInterceptorInfo = new MethodInterceptorInfo();
+                    methodInterceptorInfo.methodInfo = new MethodInfo();
+                    methodInterceptorInfo.methodInfo.methodName = method.getMethodName();
+                    List<String> methodParam = method.getMethodParams().getMethodParam();
+                    methodInterceptorInfo.methodInfo.methodParams = methodParam.toArray(new String[methodParam.size()]);
+
+                    methodInterceptorInfo.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
+                    methodInterceptorInfo.excludeClassInterceptors = binding.getExcludeClassInterceptors();
+                    methodInterceptorInfo.interceptors.addAll(interceptorInfos);
+
+                    beanInfo.methodInterceptors.add(methodInterceptorInfo);
+                }
+            }
+        }
+
+        // todo add interceptor order
+    }
+
+    private static List<InterceptorInfo> getInterceptorInfos(List<String> interceptorClasses, Map<String, String> interceptorMethods) throws OpenEJBException {
+        ArrayList<InterceptorInfo> interceptorInfos = new ArrayList<InterceptorInfo>(interceptorClasses.size());
+        for (String clazz : interceptorClasses) {
+            String methodName = interceptorMethods.get(clazz);
+            if (methodName == null) {
+                throw new OpenEJBException("Interceptor class is not have an interceptor method defined: " + interceptorClasses);
+            }
+
+            InterceptorInfo interceptorInfo = new InterceptorInfo();
+            interceptorInfo.clazz = clazz;
+            interceptorInfo.methodName = methodName;
+            interceptorInfos.add(interceptorInfo);
+        }
+        return interceptorInfos;
     }
 
     private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> beanInfos, Map<String, EnterpriseBean> beanData) throws OpenEJBException {
