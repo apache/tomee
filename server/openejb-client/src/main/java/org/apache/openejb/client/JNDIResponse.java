@@ -68,6 +68,11 @@ public class JNDIResponse implements Response {
                 m.readExternal(in);
                 result = m;
                 break;
+            case JNDI_DATA_SOURCE:
+                DataSourceMetaData ds = new DataSourceMetaData();
+                ds.readExternal(in);
+                result = ds;
+                break;
         }
     }
 
@@ -90,7 +95,10 @@ public class JNDIResponse implements Response {
                 EJBMetaDataImpl m = (EJBMetaDataImpl) result;
                 m.writeExternal(out);
                 break;
-
+            case JNDI_DATA_SOURCE:
+                DataSourceMetaData ds = (DataSourceMetaData) result;
+                ds.writeExternal(out);
+                break;
         }
     }
 }

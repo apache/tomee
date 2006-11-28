@@ -29,6 +29,10 @@ public class ValidateEjbModule implements DynamicDeployer {
         this.deployer = deployer;
     }
 
+    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+        return deployer.deploy(clientModule);
+    }
+
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
         ejbModule = deployer.deploy(ejbModule);
 

@@ -275,7 +275,11 @@ public class ServiceManager {
         System.out.println("[] received stop signal");
         stop = true;
         for (int i = 0; i < daemons.length; i++) {
-            daemons[i].stop();
+            try {
+                daemons[i].stop();
+            } catch (ServiceException e) {
+                logger.fatal("Service Shutdown Failed: "+daemons[i].getName()+".  Exception: "+e.getMessage(), e);
+            }
         }
         notifyAll();
     }

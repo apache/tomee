@@ -259,6 +259,8 @@ public class EjbJarUtils {
                 beans.add(new EntityBean((org.apache.openejb.jee.EntityBean) enterpriseBean));
             } else if (enterpriseBean instanceof org.apache.openejb.jee.SessionBean) {
                 beans.add(new SessionBean((org.apache.openejb.jee.SessionBean) enterpriseBean));
+            } else if (enterpriseBean instanceof org.apache.openejb.jee.MessageDrivenBean) {
+                beans.add(new SessionBean((org.apache.openejb.jee.SessionBean) enterpriseBean));
             }
         }
         return beans.toArray(new Bean[]{});

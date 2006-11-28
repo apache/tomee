@@ -17,8 +17,10 @@
 package org.apache.openejb.alt.config;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
@@ -34,6 +36,7 @@ public class AutoDeployer implements DynamicDeployer {
     private Connector[] resources;
     private ClassLoader classLoader;
     private String jarLocation;
+    private String moduleId;
 
     public AutoDeployer(Openejb config) {
         /* Load container list */
@@ -46,6 +49,15 @@ public class AutoDeployer implements DynamicDeployer {
     public void init() throws OpenEJBException {
     }
 
+    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+        ApplicationClient applicationClient = clientModule.getApplicationClient();
+        List<ResourceRef> resourceRefs = applicationClient.getResourceRef();
+        for (ResourceRef resourceRef : resourceRefs) {
+            autoAssingResourceRef(resourceRef);
+        }
+        return clientModule;
+    }
+
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
         if (ejbModule.getOpenejbJar() != null){
             return new EjbModule(ejbModule.getClassLoader(), ejbModule.getJarURI(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar());
@@ -53,6 +65,7 @@ public class AutoDeployer implements DynamicDeployer {
 
         this.jarLocation = ejbModule.getJarURI();
         this.classLoader = ejbModule.getClassLoader();
+        this.moduleId = ejbModule.getModuleId();
         OpenejbJar openejbJar = new OpenejbJar();
 
         Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
@@ -83,7 +96,7 @@ public class AutoDeployer implements DynamicDeployer {
             deployment.getResourceLink().add(autoAssingResourceRef(refs[i]));
         }
 
-        if (bean.getType().equals("CMP_ENTITY")) {
+        if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
             if (bean.getHome() != null) {
                 Class tempBean = loadClass(bean.getHome());
                 if (hasFinderMethods(tempBean)) {
@@ -114,8 +127,7 @@ public class AutoDeployer implements DynamicDeployer {
         Method[] methods = bean.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().startsWith("find")
-                    && !methods[i].getName().equals("findByPrimaryKey")) {
+            if (methods[i].getName().startsWith("find") && !methods[i].getName().equals("findByPrimaryKey")) {
                 return true;
             }
         }
@@ -123,7 +135,7 @@ public class AutoDeployer implements DynamicDeployer {
     }
 
     private String autoAssignDeploymentId(Bean bean) throws OpenEJBException {
-        return bean.getEjbName();
+        return moduleId + "/" + bean.getEjbName();
     }
 
     private String autoAssignContainerId(Bean bean) throws OpenEJBException {
@@ -140,9 +152,11 @@ public class AutoDeployer implements DynamicDeployer {
             throw new OpenEJBException("A Connector must be declared in the configuration file to satisfy the resource-ref " + ref.getResRefName());
         }
 
+        String id = resources[0].getId();
+        ref.setResLink(id);
         ResourceLink link = new ResourceLink();
         link.setResRefName(ref.getResRefName());
-        link.setResId(resources[0].getId());
+        link.setResId(id);
         return link;
     }
 

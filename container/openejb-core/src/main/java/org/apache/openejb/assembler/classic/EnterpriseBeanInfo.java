@@ -27,6 +27,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public static final int STATELESS = 2;
 
+    public static final int MESSAGE = 3;
+
     public int type;
 
     public String codebase;

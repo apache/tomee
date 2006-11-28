@@ -220,12 +220,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
             List<ClientInfo> clientInfos = new ArrayList();
             for (ClientModule clientModule : appModule.getClientModules()) {
-                Map<String, EnterpriseBeanInfo> infos = new HashMap();
-                for (EjbJarInfo ejbJarInfo : ejbJars) {
-                    for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                        infos.put(beanInfo.ejbName, beanInfo);
-                    }
-                }
 
                 ApplicationClient applicationClient = clientModule.getApplicationClient();
                 ClientInfo clientInfo = new ClientInfo();
@@ -235,7 +229,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 clientInfo.mainClass = clientModule.getMainClass();
                 clientInfo.moduleId = getClientModuleId(clientModule);
 
-                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(infos);
+                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(ejbJars);
                 JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
                 clientInfo.jndiEnc = jndiEncInfo;
                 clientInfos.add(clientInfo);
@@ -505,6 +499,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 e.add(ci);
             } else if (c.getCtype().equals("CMP_ENTITY")) {
                 c = (Container) initService(c, DEFAULT_CMP_CONTAINER);
+                ci = new EntityContainerInfo();
+                e.add(ci);
+            } else if (c.getCtype().equals("CMP2_ENTITY")) {
+                c = (Container) initService(c, DEFAULT_CMP2_CONTAINER);
                 ci = new EntityContainerInfo();
                 e.add(ci);
             } else {

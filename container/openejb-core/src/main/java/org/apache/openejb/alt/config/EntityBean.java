@@ -23,14 +23,35 @@ public class EntityBean implements Bean {
 
     org.apache.openejb.jee.EntityBean bean;
     String type;
+    private final int cmpVersion;
 
     EntityBean(org.apache.openejb.jee.EntityBean bean) {
         this.bean = bean;
         if (bean.getPersistenceType() == PersistenceType.CONTAINER) {
             type = CMP_ENTITY;
+            if (bean.getCmpVersion() != null) {
+                switch (bean.getCmpVersion()) {
+                    case CMP1:
+                        cmpVersion = 1;
+                        break;
+                    case CMP2:
+                        cmpVersion = 2;
+                        type = CMP2_ENTITY;
+                        break;
+                    default:
+                        cmpVersion = 0;
+                }
+            } else {
+                cmpVersion = 1;
+            }
         } else {
             type = BMP_ENTITY;
+            cmpVersion = 0;
         }
+    }
+
+    public int getCmpVersion() {
+        return cmpVersion;
     }
 
     public String getLocal() {

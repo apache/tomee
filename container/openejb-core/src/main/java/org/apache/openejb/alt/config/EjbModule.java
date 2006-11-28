@@ -20,6 +20,8 @@ package org.apache.openejb.alt.config;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 
+import java.io.File;
+
 /**
  * Class is to remain "dumb" and should not have deployment logic added to it.
  * Class is intentionally not an interface as that would encourage "smart" implementations
@@ -31,12 +33,19 @@ public class EjbModule implements DeploymentModule {
     private final EjbJar ejbJar;
     private final OpenejbJar openejbJar;
     private final String jarURI;
+    private final String moduleId;
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         this.classLoader = classLoader;
         this.ejbJar = ejbJar;
         this.jarURI = jarURI;
         this.openejbJar = openejbJar;
+        File file = new File(jarURI);
+        moduleId = file.getName().replaceFirst(".jar$","");
+    }
+
+    public String getModuleId() {
+        return moduleId;
     }
 
     public EjbJar getEjbJar() {

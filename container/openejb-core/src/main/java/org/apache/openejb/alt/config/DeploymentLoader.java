@@ -166,6 +166,10 @@ public class DeploymentLoader {
                 public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
                     return ejbModule;
                 }
+
+                public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+                    return clientModule;
+                }
             };
         }
 
@@ -360,6 +364,8 @@ public class DeploymentLoader {
 
                                 ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass);
 
+                                clientModule = deployer.deploy(clientModule);
+                                
                                 appModule.getClientModules().add(clientModule);
                             } catch (Exception e) {
                                 logger.error("Unable to load App Client from EAR: " + jarFile.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);

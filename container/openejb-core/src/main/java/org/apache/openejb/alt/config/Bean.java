@@ -22,8 +22,10 @@ public interface Bean {
 
     public static final String BMP_ENTITY = "BMP_ENTITY";
     public static final String CMP_ENTITY = "CMP_ENTITY";
+    public static final String CMP2_ENTITY = "CMP2_ENTITY";
     public static final String STATEFUL = "STATEFUL";
     public static final String STATELESS = "STATELESS";
+    public static final String MESSAGE = "STATELESS";
 
     public String getType();
 

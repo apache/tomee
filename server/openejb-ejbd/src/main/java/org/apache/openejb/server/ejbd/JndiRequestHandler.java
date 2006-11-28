@@ -25,6 +25,7 @@ import javax.naming.NamingException;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
@@ -37,6 +38,7 @@ import org.apache.openejb.client.JNDIRequest;
 import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.RequestMethods;
 import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.client.DataSourceMetaData;
 
 class JndiRequestHandler implements ResponseCodes, RequestMethods {
     private final EjbDaemon daemon;
@@ -85,6 +87,13 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                 return;
             } else if (object == null) {
                 throw new NullPointerException("lookup of '"+name+"' returned null");
+            } else if (object instanceof JdbcConnectionFactory){
+                JdbcConnectionFactory cf = (JdbcConnectionFactory) object;
+                DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getJdbcDriver(), cf.getJdbcUrl(), cf.getDefaultUserName(), cf.getDefaultPassword());
+                res.setResponseCode(JNDI_DATA_SOURCE);
+                res.setResult(dataSourceMetaData);
+                res.writeExternal(out);
+                return;
             }
         } catch (NameNotFoundException e) {
             res.setResponseCode(JNDI_NOT_FOUND);

@@ -31,7 +31,4 @@ public interface EncCmpHome extends javax.ejb.EJBHome {
     public EncCmpObject findByPrimaryKey(Integer primarykey)
     throws javax.ejb.FinderException, java.rmi.RemoteException;
     
-    public java.util.Collection findEmptyCollection()
-    throws javax.ejb.FinderException, java.rmi.RemoteException;
-    
 }

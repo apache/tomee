@@ -76,6 +76,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         processAnnotatedBeans = new ProcessAnnotatedBeans();
     }
 
+    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+        return deployer.deploy(clientModule);
+    }
+
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
         ejbModule = discoverBeansInClassLoader.deploy(ejbModule);
         ejbModule = deployer.deploy(ejbModule);
@@ -84,6 +88,10 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class DiscoverBeansInClassLoader implements DynamicDeployer {
+
+        public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+            return clientModule;
+        }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             ClassFinder finder;
@@ -151,6 +159,10 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
+        public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+            return clientModule;
+        }
+
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
 
             ClassLoader classLoader = ejbModule.getClassLoader();

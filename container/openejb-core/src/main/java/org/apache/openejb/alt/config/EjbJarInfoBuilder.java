@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.LifecycleCallbackInfo;
+import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -49,8 +50,12 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.CmpVersion;
+import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.loader.SystemInstance;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,8 +98,12 @@ public class EjbJarInfoBuilder {
             EnterpriseBeanInfo beanInfo;
             if (bean instanceof org.apache.openejb.jee.SessionBean) {
                 beanInfo = initSessionBean((SessionBean) bean, ejbds);
-            } else {
+            } else if (bean instanceof org.apache.openejb.jee.EntityBean) {
                 beanInfo = initEntityBean((EntityBean) bean, ejbds);
+            } else if (bean instanceof org.apache.openejb.jee.MessageDrivenBean) {
+                beanInfo = initMessageBean((MessageDrivenBean) bean, ejbds);
+            } else {
+                throw new OpenEJBException("Unknown bean type: "+bean.getClass().getName());
             }
             beanInfos.add(beanInfo);
 
@@ -142,7 +151,7 @@ public class EjbJarInfoBuilder {
 
     private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> beanInfos, Map<String, EnterpriseBean> beanData) throws OpenEJBException {
 
-        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(beanInfos);
+        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(beanInfos.values(), null);
 
         for (EnterpriseBeanInfo beanInfo : beanInfos.values()) {
 
@@ -311,6 +320,33 @@ public class EjbJarInfoBuilder {
         return bean;
     }
 
+    private EnterpriseBeanInfo initMessageBean(MessageDrivenBean mdb, Map m) throws OpenEJBException {
+        EnterpriseBeanInfo bean = new MessageDrivenBeanInfo();
+
+        copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
+        copyCallbacks(mdb.getPreDestroy(), bean.preDestroy);
+
+        EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
+        if (d == null) {
+            throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
+                    + mdb.getEjbName()
+                    + ". Please redeploy the jar");
+        }
+        bean.ejbDeploymentId = d.getDeploymentId();
+
+        Icon icon = mdb.getIcon();
+        bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
+        bean.smallIcon = (icon == null) ? null : icon.getSmallIcon();
+        bean.description = mdb.getDescription();
+        bean.displayName = mdb.getDisplayName();
+        bean.ejbClass = mdb.getEjbClass();
+        bean.ejbName = mdb.getEjbName();
+        TransactionType txType = mdb.getTransactionType();
+        bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+
+        return bean;
+    }
+
     private void copyCallbacks(List<LifecycleCallback> from, List<LifecycleCallbackInfo> to) {
         for (LifecycleCallback callback : from) {
             LifecycleCallbackInfo info = new LifecycleCallbackInfo();
@@ -348,6 +384,15 @@ public class EjbJarInfoBuilder {
         bean.primKeyField = e.getPrimkeyField();
         bean.persistenceType = e.getPersistenceType().toString();
         bean.reentrant = e.getReentrant() + "";
+
+        CmpVersion cmpVersion = e.getCmpVersion();
+        if (cmpVersion != null && cmpVersion == CmpVersion.CMP2){
+            bean.cmpVersion = 2;
+        } else if (cmpVersion != null && cmpVersion == CmpVersion.CMP1){
+            bean.cmpVersion = 1;
+        } else if (e.getPersistenceType() == PersistenceType.CONTAINER) {
+            bean.cmpVersion = 1;
+        }
 
         List<CmpField> cmpFields = e.getCmpField();
         bean.cmpFieldNames = new String[cmpFields.size()];

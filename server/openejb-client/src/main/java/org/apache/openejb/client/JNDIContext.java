@@ -31,6 +31,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.AuthenticationException;
 import javax.naming.spi.InitialContextFactory;
+import javax.sql.DataSource;
 
 public class JNDIContext implements Serializable, InitialContextFactory, Context, RequestMethods, ResponseCodes {
 
@@ -164,6 +165,12 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         else if (name.startsWith("java:")) name = name.replaceFirst("^java:","");
         else if (!name.startsWith("/")) name = tail + name;
 
+        String prop = name.replaceFirst("comp/env/","");
+        String value = System.getProperty(prop);
+        if (value != null){
+            return parseEntry(prop, value);
+        }
+
         JNDIRequest req = new JNDIRequest();
         req.setRequestMethod(JNDIRequest.JNDI_LOOKUP);
         req.setRequestString(name);
@@ -193,7 +200,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 if (!name.endsWith("/")) name += '/';
                 subCtx.tail = name;
                 return subCtx;
-
+            case JNDI_DATA_SOURCE:
+                return createDataSource((DataSourceMetaData)res.getResult());
             case JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " not found");
 
@@ -208,6 +216,27 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             default:
                 throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
         }
+    }
+
+    private Object parseEntry(String name, String value) throws NamingException {
+        try {
+            URI uri = new URI(value);
+            String scheme = uri.getScheme();
+            if (scheme.equals("datasource")){
+                uri = new URI(uri.getSchemeSpecificPart());
+                String driver = uri.getScheme();
+                String url = uri.getSchemeSpecificPart();
+                return new ClientDataSource(driver, url, null, null);
+            } else {
+                throw new UnsupportedOperationException("Unsupported Naming URI scheme '"+scheme+"'");
+            }
+        } catch (URISyntaxException e) {
+            throw (NamingException) new NamingException("Unparsable jndi entry '"+name+"="+value+"'.  Exception: "+e.getMessage()).initCause(e);
+        }
+    }
+
+    private DataSource createDataSource(DataSourceMetaData dataSourceMetaData) {
+        return new ClientDataSource(dataSourceMetaData);
     }
 
     public Object lookup(Name name) throws NamingException {

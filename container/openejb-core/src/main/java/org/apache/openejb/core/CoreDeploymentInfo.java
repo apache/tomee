@@ -717,10 +717,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return primKeyField;
     }
 
-    public void setPrimKeyField(String fieldName)
-            throws java.lang.NoSuchFieldException {
-        if (componentType == BeanType.CMP_ENTITY) {
-
+    public void setPrimKeyField(String fieldName) throws java.lang.NoSuchFieldException {
+        if (componentType == BeanType.CMP_ENTITY && !java.lang.reflect.Modifier.isAbstract(beanClass.getModifiers())) {
             primKeyField = beanClass.getField(fieldName);
         }
     }

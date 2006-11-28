@@ -192,7 +192,7 @@ public class ContainerDescriptor extends org.exolab.castor.xml.util.XMLClassDesc
         {
             StringValidator typeValidator = new StringValidator();
             typeValidator.setWhiteSpace("preserve");
-            typeValidator.setPattern("BMP_ENTITY|CMP_ENTITY|STATEFUL|STATELESS");
+            typeValidator.setPattern("BMP_ENTITY|CMP_ENTITY|CMP2_ENTITY|STATEFUL|STATELESS|MESSAGE");
             fieldValidator.setValidator(typeValidator);
         }
         desc.setValidator(fieldValidator);

@@ -43,6 +43,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,9 +70,34 @@ public class VmDeploymentManager implements DeploymentManager {
     private boolean connected = true;
     private final SortedMap<TargetModuleID, Properties> deployed = new TreeMap<TargetModuleID, Properties>();
     private final SortedSet<TargetModuleID> running = new TreeSet<TargetModuleID>();
+    private final File beansDir;
+    private final File appsDir;
+    private RemoteServer remoteServer;
+
+    public VmDeploymentManager() {
+        String openejbHome = System.getProperty("openejb.home", "target/openejb-3.0-incubating-SNAPSHOT");
+        File openejbHomeDir = new File(openejbHome);
+        assertIsDirectory(openejbHomeDir, "beans");
+        beansDir = new File(openejbHomeDir, "beans");
+        assertIsDirectory(beansDir, "beans");
+        appsDir = new File(openejbHomeDir, "apps");
+
+        remoteServer = new RemoteServer();
+    }
+
+    private static void assertIsDirectory(File beansDir, String variableName) {
+        if (!beansDir.exists()) {
+            throw new IllegalArgumentException(variableName + " dir does not exist: " + beansDir);
+        }
+        if (!beansDir.isDirectory()) {
+            throw new IllegalArgumentException(variableName + " dir is not a directory: " + beansDir);
+        }
+    }
 
     public void release() {
         connected = false;
+        remoteServer.destroy();
+        remoteServer = null;
     }
 
     public Target[] getTargets() {
@@ -188,9 +215,19 @@ public class VmDeploymentManager implements DeploymentManager {
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.<TargetModuleID>emptySet());
         }
 
-        String moduleId = properties.getProperty(MODULE_ID);
+        File source = new File(properties.getProperty(FILENAME));
+        String moduleId = source.getName().substring(source.getName().lastIndexOf('.'));
+        
         TargetModuleID moduleID = new TargetModuleIDImpl(DEFAULT_TARGET, moduleId);
         deployed.put(moduleID, properties);
+
+        File destination = new File(beansDir, source.getName());
+        try {
+            copyFile(source, destination);
+        } catch (IOException e) {
+            return new ProgressObjectImpl(CommandType.DISTRIBUTE, e);
+        }
+
         return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.singleton(moduleID));
     }
 
@@ -225,14 +262,15 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private void start(Map<TargetModuleID, Properties> moduleIdList) {
-        for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<TargetModuleID, Properties> entry = iterator.next();
-            TargetModuleID module = entry.getKey();
-            Properties properties =  entry.getValue();
-            String filename = properties.getProperty(FILENAME);
-            System.out.println("STARTED " + module.getModuleID());
-            System.out.println("        " + filename);
-        }
+        remoteServer.start();
+//        for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
+//            Map.Entry<TargetModuleID, Properties> entry = iterator.next();
+//            TargetModuleID module = entry.getKey();
+//            Properties properties =  entry.getValue();
+//            File source = new File(properties.getProperty(FILENAME));
+//            File destination = new File(beansDir, source.getName());
+//            copyFile(source, destination);
+//        }
     }
 
     public ProgressObject stop(TargetModuleID[] moduleIdList) {
@@ -259,6 +297,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private void stop(Map<TargetModuleID, Properties> moduleIdList) {
+        remoteServer.stop();
         for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<TargetModuleID, Properties> entry = iterator.next();
             TargetModuleID module = entry.getKey();
@@ -272,13 +311,36 @@ public class VmDeploymentManager implements DeploymentManager {
     public ProgressObject undeploy(TargetModuleID[] moduleIdList) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
-        Set<TargetModuleID> results = new TreeSet<TargetModuleID>();
+        Map<TargetModuleID, Properties> toUndeploy = new LinkedHashMap<TargetModuleID, Properties>();
         for (TargetModuleID moduleID : moduleIdList) {
-            if (deployed.remove(moduleID) != null) {
-                results.add(moduleID);
+            Properties properties = deployed.get(moduleID);
+            if (properties != null) {
+                toUndeploy.put(moduleID, properties);
             }
         }
-        return new ProgressObjectImpl(CommandType.STOP, results);
+
+
+        try {
+            undeploy(toUndeploy);
+            Set<TargetModuleID> results = new TreeSet<TargetModuleID>(toUndeploy.keySet());
+            running.removeAll(results);
+            return new ProgressObjectImpl(CommandType.UNDEPLOY, results);
+        } catch (Exception e) {
+            return new ProgressObjectImpl(CommandType.UNDEPLOY, e);
+        }
+    }
+
+    private void undeploy(Map<TargetModuleID, Properties> moduleIdList) {
+        for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<TargetModuleID, Properties> entry = iterator.next();
+            TargetModuleID module = entry.getKey();
+            Properties properties =  entry.getValue();
+            String fileName = new File(properties.getProperty(FILENAME)).getName();
+            File destination = new File(beansDir, fileName);
+            destination.delete();
+            File unpackedDir = new File(appsDir, fileName.substring(0, fileName.lastIndexOf('.')));
+            recursiveDelete(unpackedDir);
+        }
     }
 
     public boolean isRedeploySupported() {
@@ -482,6 +544,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public synchronized TargetModuleID[] getResultTargetModuleIDs() {
+            if (targetModuleIds == null) return new TargetModuleID[0];
             return targetModuleIds.toArray(new TargetModuleID[targetModuleIds.size()]);
         }
 
@@ -578,6 +641,33 @@ public class VmDeploymentManager implements DeploymentManager {
         }
     }
 
+    private static void copyFile(File source, File destination) throws IOException {
+        File destinationDir = destination.getParentFile();
+        if (!destinationDir.exists() && !destinationDir.mkdirs()) {
+            throw new java.io.IOException("Cannot create directory : " + destinationDir);
+        }
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(source);
+            out = new FileOutputStream(destination);
+            writeAll(in, out);
+        } finally {
+            close(in);
+            close(out);
+        }
+    }
+
+    private static void writeAll(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[4096];
+        int count;
+        while ((count = in.read(buffer)) > 0) {
+            out.write(buffer, 0, count);
+        }
+        out.flush();
+    }
+
     private static void close(Closeable thing) {
         if (thing != null) {
             try {
@@ -585,5 +675,26 @@ public class VmDeploymentManager implements DeploymentManager {
             } catch(Exception ignored) {
             }
         }
+    }
+
+    public static boolean recursiveDelete(File root) {
+        if (root == null) {
+            return true;
+        }
+
+        if (root.isDirectory()) {
+            File[] files = root.listFiles();
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    if (file.isDirectory()) {
+                        recursiveDelete(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+        }
+        return root.delete();
     }
 }

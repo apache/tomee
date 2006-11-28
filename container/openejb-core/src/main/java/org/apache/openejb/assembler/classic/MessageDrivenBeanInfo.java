@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,14 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.alt.config;
-
-import org.apache.openejb.OpenEJBException;
+package org.apache.openejb.assembler.classic;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
-public interface DynamicDeployer {
-    EjbModule deploy(EjbModule ejbModule) throws OpenEJBException;
-    ClientModule deploy(ClientModule clientModule) throws OpenEJBException;
+public class MessageDrivenBeanInfo extends EnterpriseBeanInfo {
+
+    public MessageDrivenBeanInfo() {
+        type = MESSAGE;
+    }
 }

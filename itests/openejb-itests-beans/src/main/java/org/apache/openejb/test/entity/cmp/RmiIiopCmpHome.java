@@ -29,7 +29,4 @@ public interface RmiIiopCmpHome extends javax.ejb.EJBHome {
     public RmiIiopCmpObject findByPrimaryKey(Integer primarykey)
     throws javax.ejb.FinderException, java.rmi.RemoteException;
     
-    public java.util.Collection findEmptyCollection()
-    throws javax.ejb.FinderException, java.rmi.RemoteException;
-    
 }

@@ -51,6 +51,22 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
         this.defaultUserName = defaultUserName;
     }
 
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public String getDefaultUserName() {
+        return defaultUserName;
+    }
+
+    public String getJdbcDriver() {
+        return jdbcDriver;
+    }
+
+    public String getJdbcUrl() {
+        return jdbcUrl;
+    }
+
     public void setReference(Reference jndiReference) {
         this.jndiReference = jndiReference;
     }

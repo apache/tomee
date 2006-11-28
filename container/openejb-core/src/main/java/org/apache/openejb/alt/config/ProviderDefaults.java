@@ -18,7 +18,9 @@ package org.apache.openejb.alt.config;
 
 interface ProviderDefaults {
 
+    public static final String DEFAULT_MDB_CONTAINER = "Default MDB Container";
     public static final String DEFAULT_CMP_CONTAINER = "Default CMP Container";
+    public static final String DEFAULT_CMP2_CONTAINER = "Default CMP2 Container";
     public static final String DEFAULT_BMP_CONTAINER = "Default BMP Container";
     public static final String DEFAULT_STATELESS_CONTAINER = "Default Stateless Container";
     public static final String DEFAULT_STATEFUL_CONTAINER = "Default Stateful Container";

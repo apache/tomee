@@ -23,6 +23,7 @@ public class EntityBeanInfo extends EnterpriseBeanInfo {
     public String persistenceType;
     public String reentrant;
     public String [] cmpFieldNames;
+    public int cmpVersion;
     public QueryInfo [] queries;
 
     public EntityBeanInfo() {

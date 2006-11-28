@@ -23,6 +23,9 @@ import org.apache.openejb.alt.config.sys.Connector;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.alt.config.ejb.Query;
+import org.apache.openejb.alt.config.ejb.QueryMethod;
+import org.apache.openejb.alt.config.ejb.MethodParams;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Messages;
@@ -32,6 +35,8 @@ import org.apache.openejb.jee.ResourceRef;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -46,6 +51,10 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     }
 
     public void init() throws OpenEJBException {
+    }
+
+    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+        return clientModule;
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -124,16 +133,25 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 }
             }
 
-            if (bean.getType().equals("CMP_ENTITY")) {
+            if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
+                List<Query> queries = ejbDeployment.getQuery();
                 if (bean.getHome() != null) {
-                    Class tempBean = loadClass(bean.getHome());
-                    if (hasFinderMethods(tempBean)) {
+                    Class interfce = loadClass(bean.getHome());
+                    List finderMethods = getFinderMethods(interfce);
+                    for (Query query : queries) {
+                        finderMethods.remove(new Key(query));
+                    }
+                    if (finderMethods.size() != 0){
                         throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                     }
                 }
                 if (bean.getLocalHome() != null) {
-                    Class tempBean = loadClass(bean.getLocalHome());
-                    if (hasFinderMethods(tempBean)) {
+                    Class interfce = loadClass(bean.getLocalHome());
+                    List finderMethods = getFinderMethods(interfce);
+                    for (Query query : queries) {
+                        finderMethods.remove(new Key(query));
+                    }
+                    if (finderMethods.size() != 0){
                         throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                     }
                 }
@@ -144,6 +162,37 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         return new EjbModule(classLoader, this.jarLocation, ejbModule.getEjbJar(), openejbJar);
     }
 
+    private static class Key {
+        private final Query query;
+
+        public Key(Query query) {
+            this.query = query;
+        }
+
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Method)) {
+                return false;
+            }
+            Method method = (Method) obj;
+            QueryMethod qmethod = query.getQueryMethod();
+            if (!method.getName().equals(qmethod.getMethodName())) {
+                return false;
+            }
+            MethodParams mp = qmethod.getMethodParams();
+            int length = method.getParameterTypes().length;
+            if ( (mp == null && length != 0) || mp == null || mp.getMethodParam().size() != length) {
+                return false;
+            }
+            List<String> params = mp.getMethodParam();
+            for (int i = 0; i < method.getParameterTypes().length; i++) {
+                Class<?> type = method.getParameterTypes()[i];
+                if (!type.getName().equals(params.get(i))){
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
     private Map<String, Connector> getConnectorsById() {
         Connector[] connectorList = config.getConnector();
         Map<String,Connector> connectorMap = new HashMap();
@@ -172,18 +221,16 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         }
     }
 
-    private boolean hasFinderMethods(Class bean)
-            throws OpenEJBException {
+    private List<Method> getFinderMethods(Class bean) {
 
         Method[] methods = bean.getMethods();
-
+        List<Method> finderMethods = new ArrayList();
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().startsWith("find")
-                    && !methods[i].getName().equals("findByPrimaryKey")) {
-                return true;
+            if (methods[i].getName().startsWith("find") && !methods[i].getName().equals("findByPrimaryKey")) {
+                finderMethods.add(methods[i]);
             }
         }
-        return false;
+        return finderMethods;
     }
 
     private String autoAssignDeploymentId(Bean bean){
