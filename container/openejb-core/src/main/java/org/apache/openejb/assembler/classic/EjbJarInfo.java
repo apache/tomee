@@ -21,6 +21,6 @@ import java.util.ArrayList;
 
 public class EjbJarInfo extends InfoObject {
     public String jarPath;
-    public EnterpriseBeanInfo[] enterpriseBeans;
+    public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
     public final List<InterceptorInfo> defaultInterceptors = new ArrayList<InterceptorInfo>();
 }

@@ -16,9 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class RoleMappingInfo extends InfoObject {
 
-    public String[] logicalRoleNames;
-    public String[] physicalRoleNames;
+    public final List<String> logicalRoleNames = new ArrayList<String>();
+    public final List<String> physicalRoleNames = new ArrayList<String>();
 
 }

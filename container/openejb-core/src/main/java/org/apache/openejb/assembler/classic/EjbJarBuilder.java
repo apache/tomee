@@ -37,7 +37,7 @@ public class EjbJarBuilder {
     }
 
     public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
-        HashMap<String, DeploymentInfo> deployments = new HashMap();
+        HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
         for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
             try {
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);

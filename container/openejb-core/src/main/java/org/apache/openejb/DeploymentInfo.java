@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 public interface DeploymentInfo {
 
@@ -38,7 +39,7 @@ public interface DeploymentInfo {
 
     public byte getTransactionAttribute(Method method);
 
-    public String [] getAuthorizedRoles(Method method);
+    public Collection<String> getAuthorizedRoles(Method method);
 
     public String [] getAuthorizedRoles(String action);
 

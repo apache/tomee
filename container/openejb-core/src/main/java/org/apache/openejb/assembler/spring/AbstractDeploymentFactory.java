@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -179,7 +180,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         return null;
     }
 
-    protected static String resolveJarPath(String name, ClassLoader classLoader) throws SystemException {
+    protected static String resolveJarPath(String name, ClassLoader classLoader) {
         if (name == null) {
             return null;
         }
@@ -244,7 +245,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
     }
 
     private void applySecurityRoleReference(CoreDeploymentInfo deployment) {
-        Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
+        Map<String, List<String>> roleMappings = new TreeMap<String, List<String>>();
         for (RoleMapping roleMapping : AssemblerUtil.asList(assembly.roleMappings)) {
             roleMappings.put(roleMapping.logical, roleMapping.physical);
         }
@@ -254,7 +255,7 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
             String roleName = roleRef.getValue();
 
 
-            String[] physicalRoles = roleMappings.get(roleLink);
+            List<String> physicalRoles = roleMappings.get(roleLink);
             deployment.addSecurityRoleReference(roleName, physicalRoles);
         }
     }

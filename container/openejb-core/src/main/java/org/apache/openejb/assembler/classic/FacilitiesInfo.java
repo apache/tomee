@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class FacilitiesInfo extends InfoObject {
 
     public IntraVmServerInfo intraVmServer;
-    public JndiContextInfo [] remoteJndiContexts;
-    public ConnectorInfo [] connectors;
-    public ConnectionManagerInfo [] connectionManagers;
+    public final List<JndiContextInfo> remoteJndiContexts = new ArrayList<JndiContextInfo>();
+    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
+    public final List<ConnectionManagerInfo> connectionManagers = new ArrayList<ConnectionManagerInfo>();
     public TransactionServiceInfo transactionService;
     public SecurityServiceInfo securityService;
 

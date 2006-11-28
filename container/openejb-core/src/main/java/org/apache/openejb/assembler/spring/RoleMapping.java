@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.assembler.spring;
 
+import java.util.List;
+
 /**
  * @org.apache.xbean.XBean element="roleMapping"
  */
 public class RoleMapping {
     public String logical;
-    public String[] physical;
+    public List<String> physical;
 
     public String getLogical() {
         return logical;
@@ -31,11 +33,11 @@ public class RoleMapping {
         this.logical = logical;
     }
 
-    public String[] getPhysical() {
+    public List<String> getPhysical() {
         return physical;
     }
 
-    public void setPhysical(String[] physical) {
+    public void setPhysical(List<String> physical) {
         this.physical = physical;
     }
 }

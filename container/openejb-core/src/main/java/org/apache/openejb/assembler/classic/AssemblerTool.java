@@ -28,9 +28,12 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class AssemblerTool {
 
@@ -42,7 +45,7 @@ public class AssemblerTool {
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
-    protected static final HashMap codebases = new HashMap();
+    protected static final Map<String, ClassLoader> codebases = new HashMap<String, ClassLoader>();
 
     protected Properties props;
 
@@ -135,46 +138,39 @@ public class AssemblerTool {
 
     public void applyProperties(Object target, Properties props) throws java.lang.reflect.InvocationTargetException, java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
         if (props != null /*&& props.size()>0*/) {
-            Method method = target.getClass().getMethod("init", new Class[]{Properties.class});
-            method.invoke(target, new Object[]{props});
+            Method method = target.getClass().getMethod("init", Properties.class);
+            method.invoke(target, props);
         }
     }
 
-    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, MethodTransactionInfo[] mtis) {
+    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
          */
-        for (int i = 0; i < mtis.length; i++) {
-            MethodTransactionInfo transInfo = mtis[i];
-            MethodInfo[] mis = transInfo.methods;
+        for (MethodTransactionInfo transInfo : mtis) {
+            for (MethodInfo methodInfo : transInfo.methods) {
 
-            for (int z = 0; z < mis.length; z++) {
-                MethodInfo methodInfo = mis[z];
-
-                if (mis[z].ejbDeploymentId == null || mis[z].ejbDeploymentId.equals(deploymentInfo.getDeploymentID())) {
+                if (methodInfo.ejbDeploymentId == null || methodInfo.ejbDeploymentId.equals(deploymentInfo.getDeploymentID())) {
                     if (!deploymentInfo.isBeanManagedTransaction()) {
 
-                        Vector methodVect = new Vector();
+                        List<Method> methods = new ArrayList<Method>();
 
                         if (methodInfo.methodIntf == null) {
-
-                            resolveMethods(methodVect, deploymentInfo.getRemoteInterface(), methodInfo);
-                            resolveMethods(methodVect, deploymentInfo.getHomeInterface(), methodInfo);
+                            resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
+                            resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Home")) {
-                            resolveMethods(methodVect, deploymentInfo.getHomeInterface(), methodInfo);
+                            resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {
-                            resolveMethods(methodVect, deploymentInfo.getRemoteInterface(), methodInfo);
+                            resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
                         } else {
 
                         }
 
-                        for (int x = 0; x < methodVect.size(); x++) {
-                            Method method = (Method) methodVect.elementAt(x);
-
+                        for (Method method : methods) {
                             if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
                                     method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
-                                    method.getName().equals("remove") == false) {
+                                    !method.getName().equals("remove")) {
                                 continue;
                             }
                             deploymentInfo.setMethodTransactionAttribute(method, transInfo.transAttribute);
@@ -187,32 +183,26 @@ public class AssemblerTool {
     }
 
     public void applySecurityRoleReference(CoreDeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
-        if (beanInfo.securityRoleReferences != null) {
-            for (int l = 0; l < beanInfo.securityRoleReferences.length; l++) {
-                SecurityRoleReferenceInfo roleRef = beanInfo.securityRoleReferences[l];
-                String[] physicalRoles = roleMapping.getPhysicalRoles(roleRef.roleLink);
-                deployment.addSecurityRoleReference(roleRef.roleName, physicalRoles);
-            }
+        for (SecurityRoleReferenceInfo roleRef : beanInfo.securityRoleReferences) {
+            List<String> physicalRoles = roleMapping.getPhysicalRoles(roleRef.roleLink);
+            deployment.addSecurityRoleReference(roleRef.roleName, physicalRoles);
         }
     }
 
-    public void applyMethodPermissions(CoreDeploymentInfo deployment, MethodPermissionInfo[] permissions) {
+    public void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
          At the very least, log a warning or two.
          */
-        for (int a = 0; a < permissions.length; a++) {
-            MethodPermissionInfo methodPermission = permissions[a];
-            for (int b = 0; b < methodPermission.methods.length; b++) {
-                MethodInfo methodInfo = methodPermission.methods[b];
+        for (MethodPermissionInfo methodPermission : permissions) {
+            for (MethodInfo methodInfo : methodPermission.methods) {
 
                 if (methodInfo.ejbDeploymentId == null || methodInfo.ejbDeploymentId.equals(deployment.getDeploymentID())) {
 
-                    java.lang.reflect.Method[] methods = resolveMethodInfo(methodInfo, deployment);
-
-                    for (int c = 0; c < methods.length; c++) {
-                        deployment.appendMethodPermissions(methods[c], methodPermission.roleNames);
+                    List<Method> methods = resolveMethodInfo(methodInfo, deployment);
+                    for (Method method : methods) {
+                        deployment.appendMethodPermissions(method, methodPermission.roleNames);
                     }
                 }
 
@@ -220,14 +210,14 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(CoreDeploymentInfo deployment, MethodPermissionInfo[] permissions, AssemblerTool.RoleMapping roleMapping) {
+    public void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions, AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
          At the very least, log a warning or two.
          */
-        for (int i = 0; i < permissions.length; i++) {
-            permissions[i] = applyRoleMappings(permissions[i], roleMapping);
+        for (MethodPermissionInfo permission : permissions) {
+            applyRoleMappings(permission, roleMapping);
         }
         applyMethodPermissions(deployment, permissions);
     }
@@ -243,40 +233,38 @@ public class AssemblerTool {
     * @see org.apache.openejb.assembler.classic.MethodPermissionInfo
     * @see org.apache.openejb.assembler.classic.AssemblerTool.RoleMapping
     */
-    public MethodPermissionInfo applyRoleMappings(MethodPermissionInfo methodPermission,
-                                                  AssemblerTool.RoleMapping roleMapping) {
+    public void applyRoleMappings(MethodPermissionInfo methodPermission,
+                                  AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
          At the very least, log a warning or two.
          */
 
-        HashSet physicalRoles = new HashSet();
-
-        for (int z = 0; z < methodPermission.roleNames.length; z++) {
-            String[] physicals = roleMapping.getPhysicalRoles(methodPermission.roleNames[z]);
+        // Map the logical roles to physical roles
+        Set<String> physicalRoles = new LinkedHashSet<String>();
+        for (String roleName : methodPermission.roleNames) {
+            List<String> physicals = roleMapping.getPhysicalRoles(roleName);
             if (physicals != null) {
-                for (int x = 0; x < physicals.length; x++) {
-                    physicalRoles.add(physicals[x]);
-                }
-            } else {// if no physical roles are mapped use logical role
-
-                physicalRoles.add(methodPermission.roleNames[z]);
+                physicalRoles.addAll(physicals);
+            } else {
+                // if no physical roles are mapped use logical role
+                physicalRoles.add(roleName);
             }
         }
-        methodPermission.roleNames = new String[physicalRoles.size()];
-        physicalRoles.toArray(methodPermission.roleNames);
-        return methodPermission;
+
+        // replace the existing role for this permission with the new roles
+        methodPermission.roleNames.clear();
+        methodPermission.roleNames.addAll(physicalRoles);
     }
 
     public static class RoleMapping {
-        private HashMap map = new HashMap();
+        private Map<String, List<String>> map = new HashMap<String, List<String>>();
 
-        public RoleMapping(RoleMappingInfo[] roleMappingInfos) {
-            for (int i = 0; i < roleMappingInfos.length; i++) {
-                RoleMappingInfo mapping = roleMappingInfos[i];
-                for (int z = 0; z < mapping.logicalRoleNames.length; z++) {
-                    map.put(mapping.logicalRoleNames[z], mapping.physicalRoleNames);
+        public RoleMapping(List<RoleMappingInfo> roleMappingInfos) {
+            for (RoleMappingInfo mapping : roleMappingInfos) {
+                for (String logincalRoleName : mapping.logicalRoleNames) {
+                    map.put(logincalRoleName, mapping.physicalRoleNames);
                 }
             }
         }
@@ -285,36 +273,36 @@ public class AssemblerTool {
             return (String[]) map.keySet().toArray();
         }
 
-        public String[] getPhysicalRoles(String logicalRole) {
-            String[] roles = (String[]) map.get(logicalRole);
-            return roles != null ? (String[]) roles.clone() : null;
+        public ArrayList<String> getPhysicalRoles(String logicalRole) {
+            List<String> roles = map.get(logicalRole);
+            return roles != null ? new ArrayList<String>(roles) : null;
         }
 
     }
 
-    protected java.lang.reflect.Method[] resolveMethodInfo(MethodInfo methodInfo, org.apache.openejb.core.CoreDeploymentInfo di) {
+    protected List<Method> resolveMethodInfo(MethodInfo methodInfo, org.apache.openejb.core.CoreDeploymentInfo di) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
          At the very least, log a warning or two.
          */
 
-        Vector methodVect = new Vector();
+        List<Method> methods = new ArrayList<Method>();
 
         Class remote = di.getRemoteInterface();
         Class home = di.getHomeInterface();
         if (methodInfo.methodIntf == null) {
-            resolveMethods(methodVect, remote, methodInfo);
-            resolveMethods(methodVect, home, methodInfo);
+            resolveMethods(methods, remote, methodInfo);
+            resolveMethods(methods, home, methodInfo);
         } else if (methodInfo.methodIntf.equals("Remote")) {
-            resolveMethods(methodVect, remote, methodInfo);
+            resolveMethods(methods, remote, methodInfo);
         } else {
-            resolveMethods(methodVect, home, methodInfo);
+            resolveMethods(methods, home, methodInfo);
         }
-        return (java.lang.reflect.Method[]) methodVect.toArray(new java.lang.reflect.Method[methodVect.size()]);
+        return methods;
     }
 
-    protected static void resolveMethods(Vector methods, Class intrface, MethodInfo mi)
+    protected static void resolveMethods(List<Method> methods, Class intrface, MethodInfo mi)
             throws SecurityException {
         /*TODO: Add better exception handling. There is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -327,16 +315,16 @@ public class AssemblerTool {
                 methods.add(mthds[i]);
         } else if (mi.methodParams != null) {// there are paramters specified
             try {
-                Class[] params = new Class[mi.methodParams.length];
+                List<Class> params = new ArrayList<Class>();
                 ClassLoader cl = intrface.getClassLoader();
-                for (int i = 0; i < params.length; i++) {
+                for (String methodParam : mi.methodParams) {
                     try {
-                        params[i] = getClassForParam(mi.methodParams[i], cl);
+                        params.add(getClassForParam(methodParam, cl));
                     } catch (ClassNotFoundException cnfe) {
 
                     }
                 }
-                Method m = intrface.getMethod(mi.methodName, params);
+                Method m = intrface.getMethod(mi.methodName, params.toArray(new Class[params.size()]));
                 methods.add(m);
             } catch (NoSuchMethodException nsme) {
                 /*

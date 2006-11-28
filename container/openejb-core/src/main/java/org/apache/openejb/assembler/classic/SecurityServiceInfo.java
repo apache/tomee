@@ -16,9 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class SecurityServiceInfo extends ServiceInfo {
 
-    public RoleMappingInfo[] roleMappings;
+    public final List<RoleMappingInfo> roleMappings = new ArrayList<RoleMappingInfo>();
 
     public SecurityServiceInfo() {
         serviceType = SECURITY_SERVICE;

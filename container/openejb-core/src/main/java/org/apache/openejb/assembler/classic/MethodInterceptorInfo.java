@@ -20,9 +20,9 @@ package org.apache.openejb.assembler.classic;
 import java.util.List;
 import java.util.ArrayList;
 
-public class MethodInterceptorInfo {
+public class MethodInterceptorInfo extends InfoObject {
     public MethodInfo methodInfo;
     public boolean excludeDefaultInterceptors;
     public boolean excludeClassInterceptors;
-    public List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
+    public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
 }

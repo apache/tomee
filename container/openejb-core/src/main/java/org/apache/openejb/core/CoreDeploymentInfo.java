@@ -21,6 +21,10 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -92,11 +96,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private HashMap postCreateMethodMap = new HashMap();
     private final BeanType componentType;
 
-    private HashMap methodPermissions = new HashMap();
+    private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
     private HashMap methodTransactionAttributes = new HashMap();
     private HashMap methodTransactionPolicies = new HashMap();
     private HashMap methodMap = new HashMap();
-    private HashMap securityRoleReferenceMap = new HashMap();
+    private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
     private String jarPath;
 
     public Class getInterface(InterfaceType interfaceType) {
@@ -231,11 +235,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         }
     }
-    public String [] getAuthorizedRoles(Method method) {
-        HashSet roleSet = (HashSet) methodPermissions.get(method);
-        if (roleSet == null) return null;
-        String [] roles = new String[roleSet.size()];
-        return (String []) roleSet.toArray(roles);
+    public Collection<String> getAuthorizedRoles(Method method) {
+        Collection<String> roleSet = methodPermissions.get(method);
+        if (roleSet == null) return Collections.emptySet();
+        return roleSet;
     }
 
     public String [] getAuthorizedRoles(String action) {
@@ -347,22 +350,22 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return (mthd == null) ? interfaceMethod : mthd;
     }
 
-    public void appendMethodPermissions(Method m, String [] roleNames) {
+    public void appendMethodPermissions(Method m, List<String> roleNames) {
         HashSet hs = (HashSet) methodPermissions.get(m);
         if (hs == null) {
             hs = new HashSet();// FIXME: Set appropriate load and intial capacity
             methodPermissions.put(m, hs);
         }
-        for (int i = 0; i < roleNames.length; i++) {
-            hs.add(roleNames[i]);
+        for (String roleName : roleNames) {
+            hs.add(roleName);
         }
     }
 
-    public String [] getPhysicalRole(String securityRoleReference) {
-        return (String[]) securityRoleReferenceMap.get(securityRoleReference);
+    public List<String> getPhysicalRole(String securityRoleReference) {
+        return securityRoleReferenceMap.get(securityRoleReference);
     }
 
-    public void addSecurityRoleReference(String securityRoleReference, String [] physicalRoles) {
+    public void addSecurityRoleReference(String securityRoleReference, List<String> physicalRoles) {
         securityRoleReferenceMap.put(securityRoleReference, physicalRoles);
     }
 

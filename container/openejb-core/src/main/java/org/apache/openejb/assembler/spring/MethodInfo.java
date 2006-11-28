@@ -29,10 +29,10 @@ public class MethodInfo {
     }
 
     public MethodInfo(org.apache.openejb.assembler.classic.MethodInfo info){
-        this.deploymentId = (String) info.ejbDeploymentId;
+        this.deploymentId = info.ejbDeploymentId;
         this.intf = info.methodIntf;
         this.name = info.methodName;
-        this.params = info.methodParams;
+        this.params = info.methodParams.toArray(new String[info.methodParams.size()]);
     }
 
     public String getDeploymentId() {

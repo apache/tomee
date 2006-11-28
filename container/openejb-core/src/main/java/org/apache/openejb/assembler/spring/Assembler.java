@@ -18,7 +18,6 @@ package org.apache.openejb.assembler.spring;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -260,7 +259,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
     }
 
     protected void applyMethodPermissions(CoreDeploymentInfo deploymentInfo, AssemblyInfo assemblyInfo) {
-        Map<String, String[]> roleMappings = new TreeMap<String, String[]>();
+        Map<String, List<String>> roleMappings = new TreeMap<String, List<String>>();
         for (org.apache.openejb.assembler.spring.RoleMapping roleMapping : AssemblerUtil.asList(assemblyInfo.roleMappings)) {
             roleMappings.put(roleMapping.logical, roleMapping.physical);
         }
@@ -277,17 +276,17 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
         }
     }
 
-    protected String[] mapRoleNames(String[] names, Map<String, String[]> roleMappings) {
-        List<String> physicalRoles = new ArrayList<String>(names.length);
+    protected List<String> mapRoleNames(List<String> names, Map<String, List<String>> roleMappings) {
+        List<String> physicalRoles = new ArrayList<String>(names.size());
         for (String logical : names) {
-            String[] physical = roleMappings.get(logical);
+            List<String> physical = roleMappings.get(logical);
             if (physical == null) {
                 physicalRoles.add(logical);
             } else {
-                physicalRoles.addAll(Arrays.asList(physical));
+                physicalRoles.addAll(physical);
             }
         }
-        return physicalRoles.toArray(new String[physicalRoles.size()]);
+        return physicalRoles;
     }
 
     protected List<Method> resolveMethods(CoreDeploymentInfo deploymentInfo, MethodInfo methodInfo) {

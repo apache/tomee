@@ -28,9 +28,9 @@ public class MethodTransactionInfo {
 
     public MethodTransactionInfo(org.apache.openejb.assembler.classic.MethodTransactionInfo info){
         this.transAttribute = info.transAttribute;
-        this.methods = new MethodInfo[info.methods.length];
+        this.methods = new MethodInfo[info.methods.size()];
         for (int i = 0; i < methods.length; i++) {
-            methods[i] = new MethodInfo(info.methods[i]);
+            methods[i] = new MethodInfo(info.methods.get(i));
         }
     }
     public String getTransAttribute() {

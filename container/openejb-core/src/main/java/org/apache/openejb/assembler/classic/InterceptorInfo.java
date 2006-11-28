@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public class InterceptorInfo {
+public class InterceptorInfo extends InfoObject{
     public String clazz;
     public String methodName;
 }

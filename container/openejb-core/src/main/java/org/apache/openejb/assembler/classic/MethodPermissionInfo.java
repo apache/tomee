@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class MethodPermissionInfo extends InfoObject {
 
     public String description;
-    public String[] roleNames;
-    public MethodInfo[] methods;
+    public final List<String> roleNames = new ArrayList<String>();
+    public final List<MethodInfo> methods = new ArrayList<MethodInfo>();
 
 }

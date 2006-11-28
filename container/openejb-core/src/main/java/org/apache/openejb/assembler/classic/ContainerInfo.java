@@ -17,6 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 
 public abstract class ContainerInfo extends InfoObject {
 
@@ -31,9 +33,9 @@ public abstract class ContainerInfo extends InfoObject {
     public String containerName;
     public String codebase;
     public String className;
-    public EnterpriseBeanInfo[] ejbeans;
+    public final List<EnterpriseBeanInfo> ejbeans = new ArrayList<EnterpriseBeanInfo>();
     public Properties properties;
-    public String[] constructorArgs;
+    public final List<String> constructorArgs = new ArrayList<String>();
 
     public int containerType;
 }

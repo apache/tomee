@@ -39,7 +39,7 @@ class EnterpriseBeanBuilder {
     private final EnterpriseBeanInfo bean;
     private final BeanType ejbType;
     private final ClassLoader cl;
-    private List<Exception> warnings = new ArrayList();
+    private List<Exception> warnings = new ArrayList<Exception>();
 
     public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean) {
         this.bean = bean;
@@ -140,10 +140,7 @@ class EnterpriseBeanBuilder {
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
             if (ejbType == BeanType.CMP_ENTITY) {
-                QueryInfo[] queries = (entity.queries == null) ? new QueryInfo[]{} : entity.queries;
-                for (int i = 0; i < queries.length; i++) {
-                    QueryInfo query = queries[i];
-
+                for (QueryInfo query : entity.queries) {
                     Vector finderMethods = new Vector();
 
                     if (home != null) {
@@ -156,7 +153,7 @@ class EnterpriseBeanBuilder {
                         deployment.addQuery((Method) finderMethods.elementAt(j), query.queryStatement);
                     }
                 }
-                deployment.setCmrFields(entity.cmpFieldNames);
+                deployment.setCmrFields(entity.cmpFieldNames.toArray(new String[]{}));
 
                 if (entity.primKeyField != null) {
                     try {

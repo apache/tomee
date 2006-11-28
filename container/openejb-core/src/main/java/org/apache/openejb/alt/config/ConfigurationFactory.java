@@ -17,33 +17,31 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.sys.ConnectionManager;
 import org.apache.openejb.alt.config.sys.Connector;
 import org.apache.openejb.alt.config.sys.Container;
+import org.apache.openejb.alt.config.sys.Deployments;
 import org.apache.openejb.alt.config.sys.JndiProvider;
 import org.apache.openejb.alt.config.sys.Openejb;
 import org.apache.openejb.alt.config.sys.ProxyFactory;
 import org.apache.openejb.alt.config.sys.SecurityService;
 import org.apache.openejb.alt.config.sys.ServiceProvider;
 import org.apache.openejb.alt.config.sys.TransactionService;
-import org.apache.openejb.alt.config.sys.Deployments;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerSystemInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.EntityBeanInfo;
 import org.apache.openejb.assembler.classic.EntityContainerInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.IntraVmServerInfo;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ManagedConnectionFactoryInfo;
-import org.apache.openejb.assembler.classic.MethodPermissionInfo;
-import org.apache.openejb.assembler.classic.MethodTransactionInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.RoleMappingInfo;
@@ -52,12 +50,13 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.JndiEncInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,8 +64,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.io.File;
-import java.net.URL;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -81,10 +78,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     public static OpenEjbConfiguration sys;
 
-    private ContainerInfo[] containers;
-    private EntityContainerInfo[] entityContainers;
-    private StatefulSessionContainerInfo[] sfsbContainers;
-    private StatelessSessionContainerInfo[] slsbContainers;
+    private final List<ContainerInfo> containers  = new ArrayList<ContainerInfo>();
+    private final List<EntityContainerInfo> entityContainers = new ArrayList<EntityContainerInfo>();
+    private final List<StatefulSessionContainerInfo> sfsbContainers = new ArrayList<StatefulSessionContainerInfo>();
+    private final List<StatelessSessionContainerInfo> slsbContainers = new ArrayList<StatelessSessionContainerInfo>();
 
     private HashMap containerTable = new HashMap();
 
@@ -163,15 +160,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         initContainerInfos(openejb);
 
-        sys.containerSystem.containers = containers;
-        sys.containerSystem.entityContainers = entityContainers;
-        sys.containerSystem.statefulContainers = sfsbContainers;
-        sys.containerSystem.statelessContainers = slsbContainers;
+        sys.containerSystem.containers.addAll(containers);
+        sys.containerSystem.entityContainers.addAll(entityContainers);
+        sys.containerSystem.statefulContainers.addAll(sfsbContainers);
+        sys.containerSystem.statelessContainers.addAll(slsbContainers);
 
-        List<AppInfo> appInfos = new ArrayList();
+        List<AppInfo> appInfos = new ArrayList<AppInfo>();
         {
-            ArrayList<EjbJarInfo> ejbJars = new ArrayList();
-
+            AppInfo appInfo = new AppInfo();
             for (DeploymentModule jar : jars) {
                 if (!(jar instanceof EjbModule)) {
                     continue;
@@ -183,17 +179,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                         continue;
                     }
                     assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
-                    ejbJars.add(ejbJarInfo);
+                    appInfo.ejbJars.add(ejbJarInfo);
                 } catch (Exception e) {
                     e.printStackTrace();
                     ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
                 }
             }
 
-            AppInfo appInfo = new AppInfo();
-            appInfo.clients = new ClientInfo[]{};
-            appInfo.libs = new String[]{};
-            appInfo.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
             appInfos.add(appInfo);
         }
 
@@ -203,7 +195,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             }
             AppModule appModule = (AppModule) module;
 
-            ArrayList<EjbJarInfo> ejbJars = new ArrayList();
+            AppInfo appInfo = new AppInfo();
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 try {
                     EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
@@ -211,14 +203,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                         continue;
                     }
                     assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
-                    ejbJars.add(ejbJarInfo);
+                    appInfo.ejbJars.add(ejbJarInfo);
                 } catch (Exception e) {
                     e.printStackTrace();
                     ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
                 }
             }
 
-            List<ClientInfo> clientInfos = new ArrayList();
             for (ClientModule clientModule : appModule.getClientModules()) {
 
                 ApplicationClient applicationClient = clientModule.getApplicationClient();
@@ -229,42 +220,31 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 clientInfo.mainClass = clientModule.getMainClass();
                 clientInfo.moduleId = getClientModuleId(clientModule);
 
-                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(ejbJars);
+                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
                 JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
                 clientInfo.jndiEnc = jndiEncInfo;
-                clientInfos.add(clientInfo);
+                appInfo.clients.add(clientInfo);
             }
 
-            AppInfo appInfo = new AppInfo();
-            appInfo.clients = clientInfos.toArray(new ClientInfo[]{});
-            appInfo.ejbJars = ejbJars.toArray(new EjbJarInfo[]{});
             appInfo.jarPath = appModule.getJarLocation();
             List<URL> additionalLibraries = appModule.getAdditionalLibraries();
-            List<String> libs = new ArrayList();
             for (URL url : additionalLibraries) {
                 File file = new File(url.getPath());
-                libs.add(file.getAbsolutePath());
+                appInfo.libs.add(file.getAbsolutePath());
             }
-            appInfo.libs = libs.toArray(new String[]{});
             appInfos.add(appInfo);
         }
 
-        sys.containerSystem.applications = appInfos.toArray(new AppInfo[]{});
-
-        sys.containerSystem.clients = new ClientInfo[]{};
+        sys.containerSystem.applications.addAll(appInfos);
 
         SecurityRoleInfo defaultRole = new SecurityRoleInfo();
         defaultRole.description = "The role applied to recurity references that are not linked.";
         defaultRole.roleName = EjbJarInfoBuilder.DEFAULT_SECURITY_ROLE;
         ejbJarInfoBuilder.getSecurityRoleInfos().add(defaultRole);
 
-        sys.containerSystem.securityRoles = new SecurityRoleInfo[ejbJarInfoBuilder.getSecurityRoleInfos().size()];
-        sys.containerSystem.methodPermissions = new MethodPermissionInfo[ejbJarInfoBuilder.getMethodPermissionInfos().size()];
-        sys.containerSystem.methodTransactions = new MethodTransactionInfo[ejbJarInfoBuilder.getMethodTransactionInfos().size()];
-
-        sys.containerSystem.securityRoles = ejbJarInfoBuilder.getSecurityRoleInfos().toArray(new SecurityRoleInfo[]{});
-        sys.containerSystem.methodPermissions = ejbJarInfoBuilder.getMethodPermissionInfos().toArray(new MethodPermissionInfo[]{});
-        sys.containerSystem.methodTransactions = ejbJarInfoBuilder.getMethodTransactionInfos().toArray(new MethodTransactionInfo[]{});
+        sys.containerSystem.securityRoles.addAll(ejbJarInfoBuilder.getSecurityRoleInfos());
+        sys.containerSystem.methodPermissions.addAll(ejbJarInfoBuilder.getMethodPermissionInfos());
+        sys.containerSystem.methodTransactions.addAll(ejbJarInfoBuilder.getMethodTransactionInfos());
 
         initSecutityService(openejb, sys.facilities);
 
@@ -289,17 +269,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         if (provider == null || provider.length < 1) return;
 
-        JndiContextInfo[] ctxInfo = new JndiContextInfo[provider.length];
-        facilities.remoteJndiContexts = ctxInfo;
-
         for (int i = 0; i < provider.length; i++) {
             provider[i] = (JndiProvider) initService(provider[i], null);
             ServiceProvider service = ServiceUtils.getServiceProvider(provider[i]);
             checkType(service, provider[i], "JndiProvider");
 
-            ctxInfo[i] = new JndiContextInfo();
+            JndiContextInfo jndiContextInfo = new JndiContextInfo();
 
-            ctxInfo[i].jndiContextId = provider[i].getId();
+            jndiContextInfo.jndiContextId = provider[i].getId();
 
             if (jndiProviderIds.contains(provider[i].getId())) {
                 handleException("conf.0103", configLocation, provider[i].getId());
@@ -307,11 +284,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
             jndiProviderIds.add(provider[i].getId());
 
-            ctxInfo[i].properties = ServiceUtils.assemblePropertiesFor("JndiProvider",
+            jndiContextInfo.properties = ServiceUtils.assemblePropertiesFor("JndiProvider",
                     provider[i].getId(),
                     provider[i].getContent(),
                     configLocation,
                     service);
+
+            facilities.remoteJndiContexts.add(jndiContextInfo);
         }
     }
 
@@ -335,14 +314,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 ss.getContent(),
                 configLocation,
                 ssp);
-        SecurityRoleInfo[] roles = sys.containerSystem.securityRoles;
-        RoleMappingInfo[] r = new RoleMappingInfo[roles.length];
-        ssi.roleMappings = r;
 
-        for (int i = 0; i < r.length; i++) {
-            r[i] = new RoleMappingInfo();
-            r[i].logicalRoleNames = new String[]{roles[i].roleName};
-            r[i].physicalRoleNames = new String[]{roles[i].roleName};
+        for (SecurityRoleInfo role : sys.containerSystem.securityRoles) {
+            RoleMappingInfo roleMappingInfo = new RoleMappingInfo();
+            roleMappingInfo.logicalRoleNames.add(role.roleName);
+            roleMappingInfo.physicalRoleNames.add(role.roleName);
+            ssi.roleMappings.add(roleMappingInfo);
         }
 
         facilities.securityService = ssi;
@@ -380,9 +357,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         if (conn == null || conn.length < 1) return;
 
-        ConnectorInfo[] info = new ConnectorInfo[conn.length];
-        facilities.connectors = info;
-
         for (int i = 0; i < conn.length; i++) {
 
             conn[i] = (Connector) initService(conn[i], DEFAULT_JDBC_DATABASE, Connector.class);
@@ -391,10 +365,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
             ManagedConnectionFactoryInfo factory = new ManagedConnectionFactoryInfo();
 
-            info[i] = new ConnectorInfo();
-            info[i].connectorId = conn[i].getId();
-            info[i].connectionManagerId = DEFAULT_LOCAL_TX_CON_MANAGER;
-            info[i].managedConnectionFactory = factory;
+            ConnectorInfo connectorInfo = new ConnectorInfo();
+            connectorInfo.connectorId = conn[i].getId();
+            connectorInfo.connectionManagerId = DEFAULT_LOCAL_TX_CON_MANAGER;
+            connectorInfo.managedConnectionFactory = factory;
 
             factory.id = conn[i].getId();
             factory.className = service.getClassName();
@@ -410,6 +384,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             }
 
             connectorIds.add(conn[i].getId());
+            facilities.connectors.add(connectorInfo);
         }
     }
 
@@ -436,7 +411,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 configLocation,
                 service);
 
-        facilities.connectionManagers = new ConnectionManagerInfo[]{manager};
+        facilities.connectionManagers.add(manager);
     }
 
     private void initProxyFactory(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
@@ -474,37 +449,34 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     }
 
     private void initContainerInfos(Openejb conf) throws OpenEJBException {
-        Vector e = new Vector();
-        Vector sf = new Vector();
-        Vector sl = new Vector();
+//        Vector e = new Vector();
+//        Vector sf = new Vector();
+//        Vector sl = new Vector();
 
         Container[] containers = conf.getContainer();
 
-        for (int i = 0; i < containers.length; i++) {
-
-            Container c = containers[i];
-            ContainerInfo ci = null;
-
+        for (Container c : containers) {
+            ContainerInfo ci;
             if (c.getCtype().equals("STATELESS")) {
                 c = (Container) initService(c, DEFAULT_STATELESS_CONTAINER);
                 ci = new StatelessSessionContainerInfo();
-                sl.add(ci);
+                slsbContainers.add((StatelessSessionContainerInfo) ci);
             } else if (c.getCtype().equals("STATEFUL")) {
                 c = (Container) initService(c, DEFAULT_STATEFUL_CONTAINER);
                 ci = new StatefulSessionContainerInfo();
-                sf.add(ci);
+                sfsbContainers.add((StatefulSessionContainerInfo) ci);
             } else if (c.getCtype().equals("BMP_ENTITY")) {
                 c = (Container) initService(c, DEFAULT_BMP_CONTAINER);
                 ci = new EntityContainerInfo();
-                e.add(ci);
+                entityContainers.add((EntityContainerInfo) ci);
             } else if (c.getCtype().equals("CMP_ENTITY")) {
                 c = (Container) initService(c, DEFAULT_CMP_CONTAINER);
                 ci = new EntityContainerInfo();
-                e.add(ci);
+                entityContainers.add((EntityContainerInfo) ci);
             } else if (c.getCtype().equals("CMP2_ENTITY")) {
                 c = (Container) initService(c, DEFAULT_CMP2_CONTAINER);
                 ci = new EntityContainerInfo();
-                e.add(ci);
+                entityContainers.add((EntityContainerInfo) ci);
             } else {
                 throw new OpenEJBException("Unrecognized contianer type " + c.getCtype());
             }
@@ -512,7 +484,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             ServiceProvider service = ServiceUtils.getServiceProvider(c);
             checkType(service, c, "Container");
 
-            ci.ejbeans = new EnterpriseBeanInfo[0];
             ci.containerName = c.getId();
             ci.className = service.getClassName();
             ci.codebase = c.getJar();
@@ -521,7 +492,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                     c.getContent(),
                     configLocation,
                     service);
-            ci.constructorArgs = parseConstructorArgs(service);
+            ci.constructorArgs.addAll(parseConstructorArgs(service));
             if (containerIds.contains(c.getId())) {
                 handleException("conf.0101", configLocation, c.getId());
             }
@@ -530,40 +501,29 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         }
 
-        entityContainers = new EntityContainerInfo[e.size()];
-        e.copyInto(entityContainers);
+        this.containers.addAll(sfsbContainers);
+        this.containers.addAll(slsbContainers);
+        this.containers.addAll(entityContainers);
 
-        sfsbContainers = new StatefulSessionContainerInfo[sf.size()];
-        sf.copyInto(sfsbContainers);
-
-        slsbContainers = new StatelessSessionContainerInfo[sl.size()];
-        sl.copyInto(slsbContainers);
-
-        e.addAll(sf);
-        e.addAll(sl);
-        this.containers = new ContainerInfo[e.size()];
-        e.copyInto(this.containers);
-
-        for (int i = 0; i < this.containers.length; i++) {
-            containerTable.put(this.containers[i].containerName, this.containers[i]);
+        for (ContainerInfo containerInfo : this.containers) {
+            containerTable.put(containerInfo.containerName, containerInfo);
         }
 
     }
 
-    private String[] parseConstructorArgs(ServiceProvider service) {
+    private List<String> parseConstructorArgs(ServiceProvider service) {
         String constructor = service.getConstructor();
         if (constructor == null) {
             return null;
         }
-        return constructor.split("[ ,]+");
+        return Arrays.asList(constructor.split("[ ,]+"));
     }
 
-    private void assignBeansToContainers(EnterpriseBeanInfo[] beans, Map ejbds)
+    private void assignBeansToContainers(List<EnterpriseBeanInfo> beans, Map ejbds)
             throws OpenEJBException {
 
-        for (int i = 0; i < beans.length; i++) {
-
-            EjbDeployment d = (EjbDeployment) ejbds.get(beans[i].ejbName);
+        for (EnterpriseBeanInfo bean : beans) {
+            EjbDeployment d = (EjbDeployment) ejbds.get(bean.ejbName);
 
             ContainerInfo cInfo = (ContainerInfo) containerTable.get(d.getContainerId());
             if (cInfo == null) {
@@ -573,20 +533,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 logger.fatal(msg);
                 throw new OpenEJBException(msg);
             }
-
-            EnterpriseBeanInfo[] oldList = cInfo.ejbeans;
-            EnterpriseBeanInfo[] newList = new EnterpriseBeanInfo[oldList.length + 1];
-            System.arraycopy(oldList, 0, newList, 1, oldList.length);
-            newList[0] = beans[i];
-            cInfo.ejbeans = newList;
+            cInfo.ejbeans.add(bean);
         }
-
-        for (int i = 0; i < entityContainers.length; i++) {
-            EnterpriseBeanInfo[] b = entityContainers[i].ejbeans;
-            EntityBeanInfo[] eb = new EntityBeanInfo[b.length];
-            System.arraycopy(b, 0, eb, 0, b.length);
-        }
-
     }
 
     public Service initService(Service service, String defaultName) throws OpenEJBException {

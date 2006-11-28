@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @version $Rev$ $Date$
  */
 public class AppInfo extends InfoObject {
     public String jarPath;
-    public ClientInfo[] clients;
-    public EjbJarInfo[] ejbJars;
-    public String[] libs;
+    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
+    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
+    public final List<String> libs = new ArrayList<String>();
 }

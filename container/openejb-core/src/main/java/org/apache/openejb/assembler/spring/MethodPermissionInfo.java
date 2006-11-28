@@ -16,40 +16,42 @@
  */
 package org.apache.openejb.assembler.spring;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @org.apache.xbean.XBean element="permission"
  */
 public class MethodPermissionInfo {
-    public String[] roleNames;
-    public MethodInfo[] methods;
+    public List<String> roleNames = new ArrayList<String>();
+    public List<MethodInfo> methods = new ArrayList<MethodInfo>();
 
     public MethodPermissionInfo() {
     }
 
     public MethodPermissionInfo(org.apache.openejb.assembler.classic.MethodPermissionInfo info){
-        this.roleNames = info.roleNames;
-        this.methods = new MethodInfo[info.methods.length];
-        for (int i = 0; i < methods.length; i++) {
-            methods[i] = new MethodInfo(info.methods[i]);
+        this.roleNames.addAll(info.roleNames);
+        for (org.apache.openejb.assembler.classic.MethodInfo methodInfo : info.methods) {
+            methods.add(new MethodInfo(methodInfo));
         }
     }
 
-    public String[] getRoleNames() {
+    public List<String> getRoleNames() {
         return roleNames;
     }
 
-    public void setRoleNames(String[] roleNames) {
+    public void setRoleNames(List<String> roleNames) {
         this.roleNames = roleNames;
     }
 
     /**
      * @org.apache.xbean.FlatCollection childElement="method"
      */
-    public MethodInfo[] getMethods() {
+    public List<MethodInfo> getMethods() {
         return methods;
     }
 
-    public void setMethods(MethodInfo[] methods) {
+    public void setMethods(List<MethodInfo> methods) {
         this.methods = methods;
     }
 }

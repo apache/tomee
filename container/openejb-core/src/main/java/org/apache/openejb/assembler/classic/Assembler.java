@@ -202,35 +202,29 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         /*[6] Assemble Connector(s) //////////////////////////////////////////*/
         HashMap connectionManagerMap = new HashMap();
         // connectors are optional in the openejb_config.dtd
-        if (configInfo.facilities.connectionManagers != null) {
-            for (int i = 0; i < configInfo.facilities.connectionManagers.length; i++) {
-                ConnectionManagerInfo cmInfo = configInfo.facilities.connectionManagers[i];
-                ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
-                connectionManagerMap.put(cmInfo.connectionManagerId, connectionManager);
-            }
+        for (ConnectionManagerInfo cmInfo : configInfo.facilities.connectionManagers) {
+            ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
+            connectionManagerMap.put(cmInfo.connectionManagerId, connectionManager);
         }
+
         // connectors are optional in the openejb_config.dtd
-        if (configInfo.facilities.connectors != null) {
-            for (int i = 0; i < configInfo.facilities.connectors.length; i++) {
-                ConnectorInfo conInfo = configInfo.facilities.connectors[i];
+        for (ConnectorInfo conInfo : configInfo.facilities.connectors) {
+            ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
+            if (connectionManager == null)
+                throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
 
-                ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
-                if (connectionManager == null)
-                    throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
+            ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
 
-                ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
+            ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
 
-                ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
-
-                containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
-            }
+            containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
         }
 
         JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
-        HashMap<String, DeploymentInfo> deployments2 = new HashMap();
+        HashMap<String, DeploymentInfo> deployments2 = new HashMap<String, DeploymentInfo>();
         for (AppInfo appInfo : containerSystemInfo.applications) {
-            List<URL> jars = new ArrayList();
+            List<URL> jars = new ArrayList<URL>();
             for (EjbJarInfo info : appInfo.ejbJars) jars.add(toUrl(info.jarPath));
             for (ClientInfo info : appInfo.clients) jars.add(toUrl(info.codebase));
             for (String jarPath : appInfo.libs) jars.add(toUrl(jarPath));
@@ -278,23 +272,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
         }
 
-        List<ContainerInfo> list = new ArrayList();
-        if (containerSystemInfo.entityContainers != null) list.addAll(Arrays.asList(containerSystemInfo.entityContainers));
-        if (containerSystemInfo.statefulContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statefulContainers));
-        if (containerSystemInfo.statelessContainers != null) list.addAll(Arrays.asList(containerSystemInfo.statelessContainers));
-
-        for (ContainerInfo container : list) {
+        for (ContainerInfo container : containerSystemInfo.containers) {
             for (EnterpriseBeanInfo beanInfo : container.ejbeans) {
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId);
                 applySecurityRoleReference(deployment, beanInfo, roleMapping);
             }
         }
         /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-        if (configInfo.facilities.remoteJndiContexts != null) {
-            for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
-                javax.naming.InitialContext cntx = assembleRemoteJndiContext(contextInfo);
-                containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.jndiContextId, cntx);
-            }
+        for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
+            javax.naming.InitialContext cntx = assembleRemoteJndiContext(contextInfo);
+            containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.jndiContextId, cntx);
         }
 
         return containerSystem;

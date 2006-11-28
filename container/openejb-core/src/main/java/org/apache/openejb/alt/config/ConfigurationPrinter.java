@@ -20,6 +20,16 @@ package org.apache.openejb.alt.config;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.MethodInfo;
+import org.apache.openejb.assembler.classic.MethodTransactionInfo;
+import org.apache.openejb.assembler.classic.MethodPermissionInfo;
+import org.apache.openejb.assembler.classic.EnvEntryInfo;
+import org.apache.openejb.assembler.classic.EjbReferenceInfo;
+import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.SecurityRoleInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+
+import java.util.ListIterator;
 
 /**
  * @version $Revision$ $Date$
@@ -31,19 +41,18 @@ public class ConfigurationPrinter {
     public static void printConf(OpenEjbConfiguration conf) {
         out(0, "CONFIGURATION");
 
-        out(1, conf.containerSystem.containers.length);
-        for (int i = 0; i < conf.containerSystem.containers.length; i++) {
-            out(1, "className    ", conf.containerSystem.containers[i].className);
-            out(1, "codebase     ", conf.containerSystem.containers[i].codebase);
-            out(1, "containerName", conf.containerSystem.containers[i].containerName);
-            out(1, "containerType", conf.containerSystem.containers[i].containerType);
-            out(1, "description  ", conf.containerSystem.containers[i].description);
-            out(1, "displayName  ", conf.containerSystem.containers[i].displayName);
+        out(1, conf.containerSystem.containers.size());
+        for (ContainerInfo container : conf.containerSystem.containers) {
+            out(1, "className    ", container.className);
+            out(1, "codebase     ", container.codebase);
+            out(1, "containerName", container.containerName);
+            out(1, "containerType", container.containerType);
+            out(1, "description  ", container.description);
+            out(1, "displayName  ", container.displayName);
             out(1, "properties   ");
-            conf.containerSystem.containers[i].properties.list(System.out);
-            out(1, "ejbeans      ", conf.containerSystem.containers[i].ejbeans.length);
-            for (int j = 0; j < conf.containerSystem.containers[i].ejbeans.length; j++) {
-                EnterpriseBeanInfo bean = conf.containerSystem.containers[i].ejbeans[j];
+            container.properties.list(System.out);
+            out(1, "ejbeans      ", container.ejbeans.size());
+            for (EnterpriseBeanInfo bean : container.ejbeans) {
                 out(2, "codebase       ", bean.codebase);
                 out(2, "description    ", bean.description);
                 out(2, "displayName    ", bean.displayName);
@@ -56,36 +65,41 @@ public class ConfigurationPrinter {
                 out(2, "smallIcon      ", bean.smallIcon);
                 out(2, "transactionType", bean.transactionType);
                 out(2, "type           ", bean.type);
-                out(2, "jndiEnc        ", bean.jndiEnc);
-                out(2, "envEntries     ", bean.jndiEnc.envEntries.length);
-                for (int n = 0; n < bean.jndiEnc.envEntries.length; n++) {
-                    out(3, "--[" + n + "]----------------------");
-                    out(3, "name  ", bean.jndiEnc.envEntries[n].name);
-                    out(3, "type  ", bean.jndiEnc.envEntries[n].type);
-                    out(3, "value ", bean.jndiEnc.envEntries[n].value);
+
+                JndiEncInfo jndiEnc = bean.jndiEnc;
+                out(2, "jndiEnc        ", jndiEnc);
+                out(2, "envEntries     ", jndiEnc.envEntries.size());
+                for (ListIterator<EnvEntryInfo> iterator = jndiEnc.envEntries.listIterator(); iterator.hasNext();) {
+                    EnvEntryInfo envEntry = iterator.next();
+                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                    out(3, "name  ", envEntry.name);
+                    out(3, "type  ", envEntry.type);
+                    out(3, "value ", envEntry.value);
                 }
-                out(2, "ejbReferences  ", bean.jndiEnc.ejbReferences.length);
-                for (int n = 0; n < bean.jndiEnc.ejbReferences.length; n++) {
-                    out(3, "--[" + n + "]----------------------");
-                    out(3, "homeType        ", bean.jndiEnc.ejbReferences[n].homeType);
-                    out(3, "referenceName   ", bean.jndiEnc.ejbReferences[n].referenceName);
-                    out(3, "location        ", bean.jndiEnc.ejbReferences[n].location);
-                    out(3, "ejbDeploymentId ", bean.jndiEnc.ejbReferences[n].location.ejbDeploymentId);
-                    out(3, "jndiContextId   ", bean.jndiEnc.ejbReferences[n].location.jndiContextId);
-                    out(3, "remote          ", bean.jndiEnc.ejbReferences[n].location.remote);
-                    out(3, "remoteRefName   ", bean.jndiEnc.ejbReferences[n].location.remoteRefName);
+                out(2, "ejbReferences  ", jndiEnc.ejbReferences.size());
+                for (ListIterator<EjbReferenceInfo> iterator = jndiEnc.ejbReferences.listIterator(); iterator.hasNext();) {
+                    EjbReferenceInfo ejbReference = iterator.next();
+                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                    out(3, "homeType        ", ejbReference.homeType);
+                    out(3, "referenceName   ", ejbReference.referenceName);
+                    out(3, "location        ", ejbReference.location);
+                    out(3, "ejbDeploymentId ", ejbReference.location.ejbDeploymentId);
+                    out(3, "jndiContextId   ", ejbReference.location.jndiContextId);
+                    out(3, "remote          ", ejbReference.location.remote);
+                    out(3, "remoteRefName   ", ejbReference.location.remoteRefName);
                 }
-                out(2, "resourceRefs   ", bean.jndiEnc.resourceRefs.length);
-                for (int n = 0; n < bean.jndiEnc.resourceRefs.length; n++) {
-                    out(3, "--[" + n + "]----------------------");
-                    out(3, "referenceAuth   ", bean.jndiEnc.resourceRefs[n].referenceAuth);
-                    out(3, "referenceName   ", bean.jndiEnc.resourceRefs[n].referenceName);
-                    out(3, "referenceType   ", bean.jndiEnc.resourceRefs[n].referenceType);
-                    if (bean.jndiEnc.resourceRefs[n].location != null) {
-                        out(3, "location        ", bean.jndiEnc.resourceRefs[n].location);
-                        out(3, "jndiContextId   ", bean.jndiEnc.resourceRefs[n].location.jndiContextId);
-                        out(3, "remote          ", bean.jndiEnc.resourceRefs[n].location.remote);
-                        out(3, "remoteRefName   ", bean.jndiEnc.resourceRefs[n].location.remoteRefName);
+                out(2, "resourceRefs   ", jndiEnc.resourceRefs.size());
+                for (ListIterator<ResourceReferenceInfo> iterator = jndiEnc.resourceRefs.listIterator(); iterator.hasNext();) {
+                    ResourceReferenceInfo resourceRef = iterator.next();
+                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                    out(3, "referenceAuth   ", resourceRef.referenceAuth);
+                    out(3, "referenceName   ", resourceRef.referenceName);
+                    out(3, "referenceType   ", resourceRef.referenceType);
+                    if (resourceRef.location != null) {
+                        out(3, "location        ", resourceRef.location);
+                        out(3, "jndiContextId   ", resourceRef.location.jndiContextId);
+                        out(3, "remote          ", resourceRef.location.remote);
+                        out(3, "remoteRefName   ", resourceRef.location.remoteRefName);
                     }
                 }
             }
@@ -93,70 +107,67 @@ public class ConfigurationPrinter {
 
         if (conf.containerSystem.securityRoles != null) {
             out(0, "--Security Roles------------");
-            for (int i = 0; i < conf.containerSystem.securityRoles.length; i++) {
-                out(1, "--[" + i + "]----------------------");
-                out(1, "            ", conf.containerSystem.securityRoles[i]);
-                out(1, "description ", conf.containerSystem.securityRoles[i].description);
-                out(1, "roleName    ", conf.containerSystem.securityRoles[i].roleName);
+            for (ListIterator<SecurityRoleInfo> iterator = conf.containerSystem.securityRoles.listIterator(); iterator.hasNext();) {
+                SecurityRoleInfo securityRole =  iterator.next();
+                out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                out(1, "            ", securityRole);
+                out(1, "description ", securityRole.description);
+                out(1, "roleName    ", securityRole.roleName);
             }
         }
 
         if (conf.containerSystem.methodPermissions != null) {
             out(0, "--Method Permissions--------");
-            for (int i = 0; i < conf.containerSystem.methodPermissions.length; i++) {
-                out(1, "--[" + i + "]----------------------");
-                out(1, "            ", conf.containerSystem.methodPermissions[i]);
-                out(1, "description ", conf.containerSystem.methodPermissions[i].description);
-                out(1, "roleNames   ", conf.containerSystem.methodPermissions[i].roleNames);
-                if (conf.containerSystem.methodPermissions[i].roleNames != null) {
-                    String[] roleNames = conf.containerSystem.methodPermissions[i].roleNames;
-                    for (int r = 0; r < roleNames.length; r++) {
-                        out(1, "roleName[" + r + "]   ", roleNames[r]);
+            for (ListIterator<MethodPermissionInfo> iterator = conf.containerSystem.methodPermissions.listIterator(); iterator.hasNext();) {
+                MethodPermissionInfo methodPermission =  iterator.next();
+
+                out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                out(1, "            ", methodPermission);
+                out(1, "description ", methodPermission.description);
+                out(1, "roleNames   ", methodPermission.roleNames);
+                if (methodPermission.roleNames != null) {
+                    for (ListIterator<String> roleNameIterator = methodPermission.roleNames.listIterator(); roleNameIterator.hasNext();) {
+                        String roleName = roleNameIterator.next();
+                        out(1, "roleName[" + roleNameIterator.previousIndex() + "]   ", roleName);
                     }
                 }
-                out(1, "methods     ", conf.containerSystem.methodPermissions[i].methods);
-                if (conf.containerSystem.methodPermissions[i].methods != null) {
-                    MethodInfo[] mthds = conf.containerSystem.methodPermissions[i].methods;
-                    for (int j = 0; j < mthds.length; j++) {
-                        out(2, "description    ", mthds[j].description);
-                        out(2, "ejbDeploymentId", mthds[j].ejbDeploymentId);
-                        out(2, "methodIntf     ", mthds[j].methodIntf);
-                        out(2, "methodName     ", mthds[j].methodName);
-                        out(2, "methodParams   ", mthds[j].methodParams);
-                        if (mthds[j].methodParams != null) {
-                            for (int n = 0; n < mthds[j].methodParams.length; n++) {
-                                out(3, "param[" + n + "]", mthds[j].methodParams[n]);
-                            }
+                out(1, "methods     ", methodPermission.methods);
+                if (methodPermission.methods != null) {
+                    for (MethodInfo methodInfo : methodPermission.methods) {
+                        out(2, "description    ", methodInfo.description);
+                        out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
+                        out(2, "methodIntf     ", methodInfo.methodIntf);
+                        out(2, "methodName     ", methodInfo.methodName);
+                        out(2, "methodParams   ", methodInfo.methodParams);
+                        for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                            String methodParam = paramIterator.next();
+                            out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
                         }
-
                     }
                 }
             }
         }
 
-        if (conf.containerSystem.methodTransactions != null) {
+        if (!conf.containerSystem.methodTransactions.isEmpty()) {
             out(0, "--Method Transactions-------");
-            for (int i = 0; i < conf.containerSystem.methodTransactions.length; i++) {
 
-                out(1, "--[" + i + "]----------------------");
-                out(1, "               ", conf.containerSystem.methodTransactions[i]);
-                out(1, "description    ", conf.containerSystem.methodTransactions[i].description);
-                out(1, "transAttribute ", conf.containerSystem.methodTransactions[i].transAttribute);
-                out(1, "methods        ", conf.containerSystem.methodTransactions[i].methods);
-                if (conf.containerSystem.methodTransactions[i].methods != null) {
-                    MethodInfo[] mthds = conf.containerSystem.methodTransactions[i].methods;
-                    for (int j = 0; j < mthds.length; j++) {
-                        out(2, "description    ", mthds[j].description);
-                        out(2, "ejbDeploymentId", mthds[j].ejbDeploymentId);
-                        out(2, "methodIntf     ", mthds[j].methodIntf);
-                        out(2, "methodName     ", mthds[j].methodName);
-                        out(2, "methodParams   ", mthds[j].methodParams);
-                        if (mthds[j].methodParams != null) {
-                            for (int n = 0; n < mthds[j].methodParams.length; n++) {
-                                out(3, "param[" + n + "]", mthds[j].methodParams[n]);
-                            }
-                        }
+            for (ListIterator<MethodTransactionInfo> iterator = conf.containerSystem.methodTransactions.listIterator(); iterator.hasNext();) {
+                MethodTransactionInfo methodTransaction = iterator.next();
 
+                out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                out(1, "               ", methodTransaction);
+                out(1, "description    ", methodTransaction.description);
+                out(1, "transAttribute ", methodTransaction.transAttribute);
+                out(1, "methods        ", methodTransaction.methods);
+                for (MethodInfo methodInfo : methodTransaction.methods) {
+                    out(2, "description    ", methodInfo.description);
+                    out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
+                    out(2, "methodIntf     ", methodInfo.methodIntf);
+                    out(2, "methodName     ", methodInfo.methodName);
+                    out(2, "methodParams   ", methodInfo.methodParams);
+                    for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                        String methodParam = paramIterator.next();
+                        out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
                     }
                 }
             }

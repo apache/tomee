@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.spi;
 
+import java.util.Collection;
+
 public interface SecurityService extends Service {
 
-    public boolean isCallerAuthorized(Object securityIdentity, String [] roleNames);
+    public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames);
 
     public Object translateTo(Object securityIdentity, Class type);
 

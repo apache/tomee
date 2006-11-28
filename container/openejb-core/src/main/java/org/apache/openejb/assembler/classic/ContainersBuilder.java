@@ -16,39 +16,32 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.transaction.TransactionManager;
-
-import org.apache.xbean.recipe.ConstructionException;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ivm.naming.Reference;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.recipe.ConstructionException;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
+
+import javax.transaction.TransactionManager;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class ContainersBuilder {
 
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Properties props;
-    private final ContainerInfo[] containerInfos;
+    private final List<ContainerInfo> containerInfos;
     private final String[] decorators;
 
     public ContainersBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
@@ -60,13 +53,12 @@ public class ContainersBuilder {
     }
 
     public Object buildContainers(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
-        List containers = new ArrayList();
-        for (int i = 0; i < containerInfos.length; i++) {
-            ContainerInfo containerInfo = containerInfos[i];
+        List<Container> containers = new ArrayList<Container>();
+        for (ContainerInfo containerInfo : containerInfos) {
 
-            HashMap deploymentsList = new HashMap();
-            for (int z = 0; z < containerInfo.ejbeans.length; z++) {
-                String ejbDeploymentId = containerInfo.ejbeans[z].ejbDeploymentId;
+            Map<String, CoreDeploymentInfo> deploymentsList = new HashMap<String, CoreDeploymentInfo>();
+            for (EnterpriseBeanInfo bean : containerInfo.ejbeans) {
+                String ejbDeploymentId = bean.ejbDeploymentId;
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(ejbDeploymentId);
                 deploymentsList.put(ejbDeploymentId, deployment);
             }
@@ -84,7 +76,7 @@ public class ContainersBuilder {
         return containers;
     }
 
-    private Container buildContainer(ContainerInfo containerInfo, HashMap deploymentsList) throws OpenEJBException {
+    private Container buildContainer(ContainerInfo containerInfo, Map<String, CoreDeploymentInfo> deploymentsList) throws OpenEJBException {
         String containerName = containerInfo.containerName;
         ContainerInfo service = containerInfo;
 
@@ -95,7 +87,7 @@ public class ContainersBuilder {
                 File base = SystemInstance.get().getBase().getDirectory();
                 systemProperties.setProperty("user.dir", base.getAbsolutePath());
 
-                ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs, null);
+                ObjectRecipe containerRecipe = new ObjectRecipe(service.className, service.constructorArgs.toArray(new String[0]), null);
                 containerRecipe.setAllProperties(service.properties);
                 containerRecipe.setProperty("id", new StaticRecipe(containerName));
                 containerRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));

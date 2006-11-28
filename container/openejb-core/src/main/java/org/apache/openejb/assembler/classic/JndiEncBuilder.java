@@ -69,14 +69,33 @@ public class JndiEncBuilder {
 
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
-        ejbReferences = (jndiEnc != null && jndiEnc.ejbReferences != null) ? jndiEnc.ejbReferences : new EjbReferenceInfo[]{};
-        ejbLocalReferences = (jndiEnc != null && jndiEnc.ejbLocalReferences != null) ? jndiEnc.ejbLocalReferences : new EjbLocalReferenceInfo[]{};
-        envEntries = (jndiEnc != null && jndiEnc.envEntries != null) ? jndiEnc.envEntries : new EnvEntryInfo[]{};
-        resourceRefs = (jndiEnc != null && jndiEnc.resourceRefs != null) ? jndiEnc.resourceRefs : new ResourceReferenceInfo[]{};
+        if ((jndiEnc != null && jndiEnc.ejbReferences != null)) {
+            ejbReferences = jndiEnc.ejbReferences.toArray(new EjbReferenceInfo[0]);
+        } else {
+            ejbReferences = new EjbReferenceInfo[]{};
+        }
+
+        if ((jndiEnc != null && jndiEnc.ejbLocalReferences != null)) {
+            ejbLocalReferences = jndiEnc.ejbLocalReferences.toArray(new EjbLocalReferenceInfo[0]);
+        } else {
+            ejbLocalReferences = new EjbLocalReferenceInfo[]{};
+        }
+
+        if ((jndiEnc != null && jndiEnc.envEntries != null)) {
+            envEntries = jndiEnc.envEntries.toArray(new EnvEntryInfo[0]);
+        } else {
+            envEntries = new EnvEntryInfo[]{};
+        }
+
+        if ((jndiEnc != null && jndiEnc.resourceRefs != null)) {
+            resourceRefs = jndiEnc.resourceRefs.toArray(new ResourceReferenceInfo[0]);
+        } else {
+            resourceRefs = new ResourceReferenceInfo[]{};
+        }
     }
 
     public Context build() throws OpenEJBException {
-        HashMap bindings = new HashMap();
+        Map<String, Object> bindings = new HashMap<String, Object>();
 
         if (beanManagedTransactions) {
             Object obj = Assembler.getContext().get(TransactionManager.class.getName());

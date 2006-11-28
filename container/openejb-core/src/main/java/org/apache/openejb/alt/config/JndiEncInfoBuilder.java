@@ -48,8 +48,8 @@ public class JndiEncInfoBuilder {
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
-    private final Map<String, EnterpriseBeanInfo> byEjbName = new HashMap();
-    private final Map<String, EnterpriseBeanInfo> byInterfaces = new HashMap();
+    private final Map<String, EnterpriseBeanInfo> byEjbName = new HashMap<String, EnterpriseBeanInfo>();
+    private final Map<String, EnterpriseBeanInfo> byInterfaces = new HashMap<String, EnterpriseBeanInfo>();
 
     public JndiEncInfoBuilder(Collection<EnterpriseBeanInfo> ejbBeanInfos, String withoutThisConstructorsClash) {
         for (EnterpriseBeanInfo bean : ejbBeanInfos) {
@@ -90,20 +90,20 @@ public class JndiEncInfoBuilder {
         JndiEncInfo jndi = new JndiEncInfo();
 
         /* Build Environment entries *****************/
-        jndi.envEntries = buildEnvEntryInfos(jndiConsumer);
+        jndi.envEntries.addAll(buildEnvEntryInfos(jndiConsumer));
 
         /* Build Resource References *****************/
-        jndi.resourceRefs = buildResourceRefInfos(jndiConsumer);
+        jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
 
-        jndi.ejbReferences = buildEjbRefInfos(jndiConsumer, ejbName);
+        jndi.ejbReferences.addAll(buildEjbRefInfos(jndiConsumer, ejbName));
 
-        jndi.ejbLocalReferences = buildEjbLocalRefInfos(jndiConsumer, ejbName);
+        jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName));
 
         return jndi;
     }
 
-    private EjbLocalReferenceInfo[] buildEjbLocalRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {
-        List<EjbLocalReferenceInfo> infos = new ArrayList();
+    private List<EjbLocalReferenceInfo> buildEjbLocalRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {
+        List<EjbLocalReferenceInfo> infos = new ArrayList<EjbLocalReferenceInfo>();
         for (EjbLocalRef ejb : item.getEjbLocalRef()) {
             EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
 
@@ -116,7 +116,7 @@ public class JndiEncInfoBuilder {
 
             if (ejb.getEjbLink() != null) {
                 String ejbLink = ejb.getEjbLink();
-                otherBean = (EnterpriseBeanInfo) byEjbName.get(ejbLink);
+                otherBean = byEjbName.get(ejbLink);
             } else {
                 otherBean = byInterfaces.get("l="+ejb.getLocal()+":"+ejb.getLocalHome());
             }
@@ -135,11 +135,11 @@ public class JndiEncInfoBuilder {
             info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
             infos.add(info);
         }
-        return infos.toArray(new EjbLocalReferenceInfo[]{});
+        return infos;
     }
 
-    private EjbReferenceInfo[] buildEjbRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {
-        List<EjbReferenceInfo> infos = new ArrayList();
+    private List<EjbReferenceInfo> buildEjbRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {
+        List<EjbReferenceInfo> infos = new ArrayList<EjbReferenceInfo>();
         for (EjbRef ejb : item.getEjbRef()) {
             EjbReferenceInfo info = new EjbReferenceInfo();
 
@@ -152,7 +152,7 @@ public class JndiEncInfoBuilder {
 
             if (ejb.getEjbLink() != null) {
                 String ejbLink = ejb.getEjbLink();
-                otherBean = (EnterpriseBeanInfo) byEjbName.get(ejbLink);
+                otherBean = byEjbName.get(ejbLink);
             } else {
                 otherBean = byInterfaces.get("r="+ejb.getRemote()+":"+ejb.getHome());
             }
@@ -171,11 +171,11 @@ public class JndiEncInfoBuilder {
             info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
             infos.add(info);
         }
-        return infos.toArray(new EjbReferenceInfo[]{});
+        return infos;
     }
 
-    private ResourceReferenceInfo[] buildResourceRefInfos(JndiConsumer item) {
-        List<ResourceReferenceInfo> infos = new ArrayList();
+    private List<ResourceReferenceInfo> buildResourceRefInfos(JndiConsumer item) {
+        List<ResourceReferenceInfo> infos = new ArrayList<ResourceReferenceInfo>();
         for (ResourceRef res : item.getResourceRef()) {
             ResourceReferenceInfo info = new ResourceReferenceInfo();
 
@@ -185,11 +185,11 @@ public class JndiEncInfoBuilder {
             info.resourceID = res.getResLink();
             infos.add(info);
         }
-        return infos.toArray(new ResourceReferenceInfo[]{});
+        return infos;
     }
 
-    private EnvEntryInfo[] buildEnvEntryInfos(JndiConsumer item) {
-        List<EnvEntryInfo> infos = new ArrayList();
+    private List<EnvEntryInfo> buildEnvEntryInfos(JndiConsumer item) {
+        List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
         for (EnvEntry env : item.getEnvEntry()) {
             EnvEntryInfo info = new EnvEntryInfo();
 
@@ -199,6 +199,6 @@ public class JndiEncInfoBuilder {
 
             infos.add(info);
         }
-        return infos.toArray(new EnvEntryInfo[]{});
+        return infos;
     }
 }

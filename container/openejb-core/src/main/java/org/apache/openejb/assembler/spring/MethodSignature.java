@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,6 +84,15 @@ public final class MethodSignature implements Serializable, Comparable {
     public MethodSignature(String methodName, String[] parameterTypes) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes != null ? parameterTypes : NOARGS;
+    }
+
+    public MethodSignature(String methodName, List<String> parameterTypes) {
+        this.methodName = methodName;
+        if (parameterTypes == null) {
+            this.parameterTypes = NOARGS;
+        } else {
+            this.parameterTypes = parameterTypes.toArray(new String[parameterTypes.size()]);
+        }
     }
 
     public MethodSignature(String methodName, Class[] params) {

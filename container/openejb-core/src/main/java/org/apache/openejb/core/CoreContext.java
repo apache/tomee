@@ -30,6 +30,8 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
+import java.util.List;
+
 public abstract class CoreContext implements java.io.Serializable {
 
     public final static byte SECURITY_METHOD = (byte) 1;
@@ -72,7 +74,7 @@ public abstract class CoreContext implements java.io.Serializable {
         checkBeanState(SECURITY_METHOD);
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();
-        String physicalRoles [] = di.getPhysicalRole(roleName);
+        List<String> physicalRoles = di.getPhysicalRole(roleName);
         Object caller = threadContext.getSecurityIdentity();
         return securityService.isCallerAuthorized(caller, physicalRoles);
     }
@@ -223,7 +225,7 @@ public abstract class CoreContext implements java.io.Serializable {
         throw new UnsupportedOperationException("lookup");
     }
 
-    
+
     /*----------------------------------------------------*/
     /* UNSUPPORTED DEPRICATED METHODS                     */
     /*----------------------------------------------------*/

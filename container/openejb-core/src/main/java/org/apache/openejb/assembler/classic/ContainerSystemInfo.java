@@ -16,18 +16,21 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ContainerSystemInfo extends InfoObject {
 
-    public ContainerInfo[] containers;
-//    public EnterpriseBeanInfo[] enterpriseBeans;
-    public AppInfo[] applications; 
-    public ClientInfo[] clients;
-    public EjbJarInfo[] ejbJars;
+    public final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
 
-    public EntityContainerInfo[] entityContainers;
-    public StatelessSessionContainerInfo[] statelessContainers;
-    public StatefulSessionContainerInfo[] statefulContainers;
-    public SecurityRoleInfo[] securityRoles;
-    public MethodPermissionInfo[] methodPermissions;
-    public MethodTransactionInfo[] methodTransactions;
+    public final List<AppInfo> applications = new ArrayList<AppInfo>();
+    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
+    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
+
+    public final List<EntityContainerInfo> entityContainers = new ArrayList<EntityContainerInfo>();
+    public final List<StatelessSessionContainerInfo> statelessContainers = new ArrayList<StatelessSessionContainerInfo>();
+    public final List<StatefulSessionContainerInfo> statefulContainers = new ArrayList<StatefulSessionContainerInfo>();
+    public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
+    public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
+    public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
 }

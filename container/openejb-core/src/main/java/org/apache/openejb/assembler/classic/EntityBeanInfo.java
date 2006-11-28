@@ -16,15 +16,18 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class EntityBeanInfo extends EnterpriseBeanInfo {
 
     public String primKeyClass;
     public String primKeyField;
     public String persistenceType;
     public String reentrant;
-    public String [] cmpFieldNames;
+    public final List<String> cmpFieldNames = new ArrayList<String>();
     public int cmpVersion;
-    public QueryInfo [] queries;
+    public final List<QueryInfo> queries = new ArrayList<QueryInfo>();
 
     public EntityBeanInfo() {
         type = ENTITY;

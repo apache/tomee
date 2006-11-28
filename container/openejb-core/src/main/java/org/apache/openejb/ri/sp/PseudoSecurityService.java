@@ -17,17 +17,16 @@
 package org.apache.openejb.ri.sp;
 
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.FastThreadLocal;
+
+import java.util.Collection;
 
 /**
  * @org.apache.xbean.XBean element="pseudoSecurityService"
  */
 public class PseudoSecurityService implements SecurityService {
-
-    private FastThreadLocal threadStorage = new FastThreadLocal();
+    private final ThreadLocal<Object> threadStorage = new ThreadLocal<Object>();
 
     public void init(java.util.Properties props) {
-        props = props;
     }
 
     public Object getSecurityIdentity() {
@@ -38,8 +37,7 @@ public class PseudoSecurityService implements SecurityService {
         threadStorage.set(securityIdentity);
     }
 
-    public boolean isCallerAuthorized(Object securityIdentity, String [] roleNames) {
-
+    public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames) {
         return true;
     }
 

@@ -18,7 +18,6 @@ package org.apache.openejb.assembler.spring;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +42,7 @@ import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.QueryInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.RoleMappingInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.spring.xmlwriter.PrettyPrintXmlWriter;
 import org.apache.openejb.assembler.spring.xmlwriter.XmlWriter;
 
@@ -118,8 +118,7 @@ public class OpenEjbConfigToSpring {
             writer.addAttribute("index", "0");
 
             writer.startElement("map");
-            for (int j = 0; j < container.ejbeans.length; j++) {
-                EnterpriseBeanInfo bean = container.ejbeans[j];
+            for (EnterpriseBeanInfo bean : container.ejbeans) {
 
                 writer.startElement("entry");
                 writer.addAttribute("key", bean.ejbDeploymentId);
@@ -169,13 +168,13 @@ public class OpenEjbConfigToSpring {
             if ("container".equalsIgnoreCase(entity.persistenceType)) {
                 addOptionalAttribute("primKeyField", entity.primKeyField);
 
-                if (entity.cmpFieldNames != null && entity.cmpFieldNames.length > 0) {
+                if (entity.cmpFieldNames != null && !entity.cmpFieldNames.isEmpty()) {
                     writer.startElement("o:cmpFields");
                     writer.writeText(createCsv(entity.cmpFieldNames));
                     writer.endElement();
                 }
 
-                if (entity.queries != null && entity.queries.length > 0) {
+                if (entity.queries != null && !entity.queries.isEmpty()) {
                     writer.startElement("o:queries");
                     for (QueryInfo query : entity.queries) {
                         writer.startElement("o:query");
@@ -199,69 +198,60 @@ public class OpenEjbConfigToSpring {
         writer.startElement("o:enc");
 
         // env entries
-        List<EnvEntryInfo> envEntries = AssemblerUtil.asList(bean.jndiEnc.envEntries);
-        if (!envEntries.isEmpty()) {
-            for (EnvEntryInfo entry : envEntries) {
-                writer.startElement("o:envEntry");
+        JndiEncInfo jndiEnc = bean.jndiEnc;
+        for (EnvEntryInfo entry : jndiEnc.envEntries) {
+            writer.startElement("o:envEntry");
 
-                writer.addAttribute("name", entry.name);
-                writer.addAttribute("type", entry.type);
-                writer.addAttribute("value", entry.value);
+            writer.addAttribute("name", entry.name);
+            writer.addAttribute("type", entry.type);
+            writer.addAttribute("value", entry.value);
 
-                writer.endElement();
-            }
+            writer.endElement();
         }
 
         // ejb refs
-        List<EjbReferenceInfo> ejbRefs = AssemblerUtil.asList(bean.jndiEnc.ejbReferences);
-        List<EjbLocalReferenceInfo> ejbLocalRefs = AssemblerUtil.asList(bean.jndiEnc.ejbLocalReferences);
-        if (!ejbRefs.isEmpty() || !ejbLocalRefs.isEmpty()) {
-            // remote ejb refs
-            for (EjbReferenceInfo ejbRef : ejbRefs) {
-                writer.startElement("o:ejbRef");
+        // remote ejb refs
+        for (EjbReferenceInfo ejbRef : bean.jndiEnc.ejbReferences) {
+            writer.startElement("o:ejbRef");
 
-                writer.addAttribute("name", ejbRef.referenceName);
-                writer.addAttribute("local", "false");
+            writer.addAttribute("name", ejbRef.referenceName);
+            writer.addAttribute("local", "false");
 
-                if (!ejbRef.location.remote) {
-                    writer.addAttribute("ejbId", ejbRef.location.ejbDeploymentId);
-                } else {
-                    writer.addAttribute("remoteName", ejbRef.location.jndiContextId);
-                    writer.addAttribute("remoteContextId", ejbRef.location.jndiContextId);
-                }
-
-                writer.endElement();
-            }
-
-            // local ejb refs
-            for (EjbLocalReferenceInfo ejbRef : ejbLocalRefs) {
-                writer.startElement("o:ejbRef");
-
-                writer.addAttribute("name", ejbRef.referenceName);
-                writer.addAttribute("local", "true");
+            if (!ejbRef.location.remote) {
                 writer.addAttribute("ejbId", ejbRef.location.ejbDeploymentId);
-
-                writer.endElement();
+            } else {
+                writer.addAttribute("remoteName", ejbRef.location.jndiContextId);
+                writer.addAttribute("remoteContextId", ejbRef.location.jndiContextId);
             }
+
+            writer.endElement();
+        }
+
+        // local ejb refs
+        for (EjbLocalReferenceInfo ejbRef : bean.jndiEnc.ejbLocalReferences) {
+            writer.startElement("o:ejbRef");
+
+            writer.addAttribute("name", ejbRef.referenceName);
+            writer.addAttribute("local", "true");
+            writer.addAttribute("ejbId", ejbRef.location.ejbDeploymentId);
+
+            writer.endElement();
         }
 
         // resource refs
-        List<ResourceReferenceInfo> resourceRefs = AssemblerUtil.asList(bean.jndiEnc.resourceRefs);
-        if (!resourceRefs.isEmpty()) {
-            for (ResourceReferenceInfo resourceRef : resourceRefs) {
-                writer.startElement("o:resourceRef");
+        for (ResourceReferenceInfo resourceRef : bean.jndiEnc.resourceRefs) {
+            writer.startElement("o:resourceRef");
 
-                writer.addAttribute("name", resourceRef.referenceName);
+            writer.addAttribute("name", resourceRef.referenceName);
 
-                if (resourceRef.location == null || !resourceRef.location.remote) {
-                    writer.addAttribute("resourceId", resourceRef.resourceID);
-                } else {
-                    writer.addAttribute("remoteName", resourceRef.location.jndiContextId);
-                    writer.addAttribute("remoteContextId", resourceRef.location.jndiContextId);
-                }
-
-                writer.endElement();
+            if (resourceRef.location == null || !resourceRef.location.remote) {
+                writer.addAttribute("resourceId", resourceRef.resourceID);
+            } else {
+                writer.addAttribute("remoteName", resourceRef.location.jndiContextId);
+                writer.addAttribute("remoteContextId", resourceRef.location.jndiContextId);
             }
+
+            writer.endElement();
         }
 
         writer.endElement();
@@ -272,34 +262,34 @@ public class OpenEjbConfigToSpring {
         writer.startElement("o:assembly");
         writer.addAttribute("id", ASSEMBLY_ID);
 
-        Map<String, String[]> map = new TreeMap<String, String[]>();
+        Map<String, List<String>> map = new TreeMap<String, List<String>>();
         for (RoleMappingInfo mapping : configInfo.facilities.securityService.roleMappings) {
             for (String logicalRoleName : mapping.logicalRoleNames) {
                 if (map.containsKey(logicalRoleName)) {
                     throw new IllegalStateException("Logical role " + logicalRoleName + " is mapped to " +
-                            Arrays.toString(map.get(logicalRoleName)) + " and " + mapping.physicalRoleNames);
+                            map.get(logicalRoleName) + " and " + mapping.physicalRoleNames);
                 }
                 map.put(logicalRoleName, mapping.physicalRoleNames);
             }
         }
 
-        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             String logicalRoleName = entry.getKey();
-            String[] physicalRoleNames = entry.getValue();
+            List<String> physicalRoleNames = entry.getValue();
             writer.startElement("o:roleMapping");
             writer.addAttribute("logical", logicalRoleName);
             writer.addAttribute("physical", createCsv(physicalRoleNames));
             writer.endElement();
         }
 
-        for (MethodPermissionInfo permissionInfo : AssemblerUtil.asList(configInfo.containerSystem.methodPermissions)) {
+        for (MethodPermissionInfo permissionInfo : configInfo.containerSystem.methodPermissions) {
             writer.startElement("o:permission");
             writer.addAttribute("roleNames", createCsv(permissionInfo.roleNames));
             writeMethodInfos(permissionInfo.methods);
             writer.endElement();
         }
 
-        for (MethodTransactionInfo transactionInfo : AssemblerUtil.asList(configInfo.containerSystem.methodTransactions)) {
+        for (MethodTransactionInfo transactionInfo : configInfo.containerSystem.methodTransactions) {
             writer.startElement("o:transaction");
             writer.addAttribute("transAttribute", transactionInfo.transAttribute);
             writeMethodInfos(transactionInfo.methods);
@@ -309,8 +299,8 @@ public class OpenEjbConfigToSpring {
         writer.endElement();
     }
 
-    private void writeMethodInfos(MethodInfo[] methods) {
-        for (MethodInfo methodInfo : AssemblerUtil.asList(methods)) {
+    private void writeMethodInfos(List<MethodInfo> methods) {
+        for (MethodInfo methodInfo : methods) {
             writer.startElement("o:method");
             writer.addAttribute("deploymentId", methodInfo.ejbDeploymentId.toString());
             addOptionalAttribute("intf", methodInfo.methodIntf);
@@ -340,5 +330,13 @@ public class OpenEjbConfigToSpring {
             buf.append(fieldName);
         }
         return buf.toString();
+    }
+
+    private static String createCsv(List<String> strings) {
+        if (strings == null) {
+            return null;
+        }
+
+        return createCsv(strings.toArray(new String[strings.size()]));
     }
 }

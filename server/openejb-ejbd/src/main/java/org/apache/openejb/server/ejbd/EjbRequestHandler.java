@@ -347,9 +347,8 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
         SecurityService sec = SystemInstance.get().getComponent(SecurityService.class);
         CallContext caller = CallContext.getCallContext();
         DeploymentInfo di = caller.getDeploymentInfo();
-        String[] authRoles = di.getAuthorizedRoles(req.getMethodInstance());
 
-        if (sec.isCallerAuthorized(req.getClientIdentity(), authRoles)) {
+        if (sec.isCallerAuthorized(req.getClientIdentity(), di.getAuthorizedRoles(req.getMethodInstance()))) {
             res.setResponse(EJB_OK, null);
         } else {
             this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
