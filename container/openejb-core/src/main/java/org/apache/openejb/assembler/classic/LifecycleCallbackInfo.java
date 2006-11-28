@@ -20,7 +20,7 @@ package org.apache.openejb.assembler.classic;
 /**
  * @version $Revision$ $Date$
  */
-public class LifecycleCallbackInfo {
+public class LifecycleCallbackInfo extends InfoObject {
     public String className;
     public String method;
 }
