@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,6 +63,12 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
+
+            assertTrue("Non-public fields are not allowed: " + simpleName + "." + field.getName(), Modifier.isPublic(field.getModifiers()));
+
+            annotations = clazz.getDeclaredAnnotations();
+            assertEquals("annotations are not allowed: " + simpleName + "." + field.getName(), 0, annotations.length);
+
             Class type = field.getType();
             if (type.isArray()) {
                 type = type.getComponentType();
@@ -69,27 +76,27 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
             if (List.class.isAssignableFrom(type)) {
                 type = getGenericType(field);
-                assertNotNull("Lists must have a generic type: "+simpleName+"."+field.getName(), type);
+                assertNotNull("Lists must have a generic type: " + simpleName + "." + field.getName(), type);
             }
 
             if (type.isPrimitive()) {
                 continue;
             }
 
-            if (String.class.isAssignableFrom(type)){
+            if (String.class.isAssignableFrom(type)) {
                 continue;
             }
 
-            if (Properties.class.isAssignableFrom(type)){
+            if (Properties.class.isAssignableFrom(type)) {
                 continue;
             }
 
-            if (InfoObject.class.isAssignableFrom(type)){
+            if (InfoObject.class.isAssignableFrom(type)) {
                 validate(type);
                 continue;
             }
 
-            fail("Field is not of an allowed type: "+simpleName+"."+field.getName());
+            fail("Field is not of an allowed type: " + simpleName + "." + field.getName());
         }
     }
 
@@ -104,6 +111,6 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
             return (Class) genericType;
         } else {
             return null;
-       }
+        }
     }
 }
