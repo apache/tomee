@@ -44,7 +44,7 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
         if (clazz == null) return;
         if (seen.contains(clazz)) return;
 
-//        validate(clazz.getSuperclass());
+        validate(clazz.getSuperclass());
 
         seen.add(clazz);
 

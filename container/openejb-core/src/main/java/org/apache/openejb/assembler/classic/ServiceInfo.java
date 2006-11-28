@@ -26,7 +26,6 @@ public class ServiceInfo extends InfoObject implements ServiceTypeConstants {
     public String displayName;
     public String factoryClassName;
     public String codebase;
-    public Class factoryClass;
     public Properties properties;
 
 }
