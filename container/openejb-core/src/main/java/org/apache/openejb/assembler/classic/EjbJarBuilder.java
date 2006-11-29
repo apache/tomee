@@ -40,7 +40,7 @@ public class EjbJarBuilder {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
         for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.defaultInterceptors);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);

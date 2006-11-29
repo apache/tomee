@@ -32,7 +32,9 @@ public class MethodInfo {
         this.deploymentId = info.ejbDeploymentId;
         this.intf = info.methodIntf;
         this.name = info.methodName;
-        this.params = info.methodParams.toArray(new String[info.methodParams.size()]);
+        if (info.methodParams != null) {
+            this.params = info.methodParams.toArray(new String[info.methodParams.size()]);
+        }
     }
 
     public String getDeploymentId() {

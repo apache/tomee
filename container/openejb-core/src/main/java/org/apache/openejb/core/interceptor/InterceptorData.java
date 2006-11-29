@@ -25,6 +25,8 @@ public class InterceptorData {
     private final String interceptorMethod;
 
     public InterceptorData(String interceptorClass, String interceptorMethod) {
+        if (interceptorClass == null) throw new NullPointerException("interceptorClass is null");
+        if (interceptorMethod == null) throw new NullPointerException("interceptorMethod is null");
         this.interceptorClass = interceptorClass;
         this.interceptorMethod = interceptorMethod;
     }
@@ -35,5 +37,26 @@ public class InterceptorData {
 
     public String getInterceptorMethod() {
         return interceptorMethod;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        InterceptorData that = (InterceptorData) o;
+        return interceptorClass.equals(that.interceptorClass) &&
+                interceptorMethod.equals(that.interceptorMethod);
+
+    }
+
+    public int hashCode() {
+        int result;
+        result = interceptorClass.hashCode();
+        result = 29 * result + interceptorMethod.hashCode();
+        return result;
+    }
+
+    public String toString() {
+        return interceptorClass + "." + interceptorMethod;
     }
 }

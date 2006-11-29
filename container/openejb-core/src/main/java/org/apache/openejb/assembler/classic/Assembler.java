@@ -35,7 +35,6 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
 import javax.naming.Context;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.List;

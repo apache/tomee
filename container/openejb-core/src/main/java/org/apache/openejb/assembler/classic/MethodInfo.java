@@ -17,7 +17,6 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class MethodInfo extends InfoObject {
 
@@ -25,5 +24,5 @@ public class MethodInfo extends InfoObject {
     public String ejbDeploymentId;
     public String methodIntf;
     public String methodName;
-    public final List<String> methodParams = new ArrayList<String>();
+    public List<String> methodParams;
 }

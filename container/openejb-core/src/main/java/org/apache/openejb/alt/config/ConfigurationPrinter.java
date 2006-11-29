@@ -138,10 +138,12 @@ public class ConfigurationPrinter {
                         out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
                         out(2, "methodIntf     ", methodInfo.methodIntf);
                         out(2, "methodName     ", methodInfo.methodName);
-                        out(2, "methodParams   ", methodInfo.methodParams);
-                        for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
-                            String methodParam = paramIterator.next();
-                            out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                        if (methodInfo.methodParams != null) {
+                            out(2, "methodParams   ", methodInfo.methodParams);
+                            for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                                String methodParam = paramIterator.next();
+                                out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                            }
                         }
                     }
                 }
@@ -164,10 +166,12 @@ public class ConfigurationPrinter {
                     out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
                     out(2, "methodIntf     ", methodInfo.methodIntf);
                     out(2, "methodName     ", methodInfo.methodName);
-                    out(2, "methodParams   ", methodInfo.methodParams);
-                    for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
-                        String methodParam = paramIterator.next();
-                        out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                    if (methodInfo.methodParams != null) {
+                        out(2, "methodParams   ", methodInfo.methodParams);
+                        for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                            String methodParam = paramIterator.next();
+                            out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                        }
                     }
                 }
             }

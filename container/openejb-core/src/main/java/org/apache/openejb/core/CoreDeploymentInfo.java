@@ -18,13 +18,13 @@ package org.apache.openejb.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -58,6 +58,7 @@ import org.apache.openejb.core.transaction.TxRequired;
 import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.transaction.TransactionContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 /**
@@ -93,13 +94,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private Method createMethod = null;
 
-    private HashMap postCreateMethodMap = new HashMap();
+    private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     private final BeanType componentType;
 
     private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
-    private HashMap methodTransactionAttributes = new HashMap();
-    private HashMap methodTransactionPolicies = new HashMap();
-    private HashMap methodMap = new HashMap();
+    private final Map<Method, Byte> methodTransactionAttributes = new HashMap<Method, Byte>();
+    private final Map<Method, TransactionPolicy> methodTransactionPolicies = new HashMap<Method, TransactionPolicy>();
+    private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
+    private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
     private String jarPath;
 
@@ -186,17 +188,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public byte getTransactionAttribute(Method method) {
-
-        Byte byteWrapper = (Byte) methodTransactionAttributes.get(method);
+        Byte byteWrapper = methodTransactionAttributes.get(method);
         if (byteWrapper == null)
             return TX_NOT_SUPPORTED;// non remote or home interface method
         else
-            return byteWrapper.byteValue();
+            return byteWrapper;
     }
 
     public TransactionPolicy getTransactionPolicy(Method method) {
-
-        TransactionPolicy policy = (TransactionPolicy) methodTransactionPolicies.get(method);
+        TransactionPolicy policy = methodTransactionPolicies.get(method);
         if (policy == null && !isBeanManagedTransaction) {
             org.apache.log4j.Logger.getLogger("OpenEJB").info("The following method doesn't have a transaction policy assigned: " + method);
         }
@@ -346,14 +346,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public Method getMatchingBeanMethod(Method interfaceMethod) {
-        Method mthd = (Method) methodMap.get(interfaceMethod);
-        return (mthd == null) ? interfaceMethod : mthd;
+        Method method = methodMap.get(interfaceMethod);
+        return (method == null) ? interfaceMethod : method;
     }
 
     public void appendMethodPermissions(Method m, List<String> roleNames) {
-        HashSet hs = (HashSet) methodPermissions.get(m);
+        Collection<String> hs = methodPermissions.get(m);
         if (hs == null) {
-            hs = new HashSet();// FIXME: Set appropriate load and intial capacity
+            hs = new HashSet<String>();// FIXME: Set appropriate load and intial capacity
             methodPermissions.put(m, hs);
         }
         for (String roleName : roleNames) {
@@ -435,6 +435,22 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
         methodTransactionAttributes.put(method, byteValue);
         methodTransactionPolicies.put(method, policy);
+    }
+
+    public List<InterceptorData> getMethodInterceptors(Method method) {
+        return methodInterceptors.get(method);
+    }
+
+    public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
+        methodInterceptors.put(method, interceptors);
+    }
+
+    public Set<InterceptorData> getAllInterceptors() {
+        Set<InterceptorData> interceptors = new HashSet<InterceptorData>();
+        for (List<InterceptorData> interceptorDatas : methodInterceptors.values()) {
+            interceptors.addAll(interceptorDatas);
+        }
+        return interceptors;
     }
 
     private javax.ejb.EJBHome createEJBHomeRef() {
@@ -545,11 +561,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private void createMethodMap() throws org.apache.openejb.SystemException {
         if (remoteInterface != null) {
-            mapObjectInterface(remoteInterface, false);
+            mapObjectInterface(remoteInterface);
             mapHomeInterface(homeInterface);
         }
         if (localInterface != null) {
-            mapObjectInterface(localInterface, true);
+            mapObjectInterface(localInterface);
             mapHomeInterface(localHomeInterface);
         }
 
@@ -557,20 +573,20 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         try {
 
             if (componentType == BeanType.STATEFUL || componentType == BeanType.STATELESS) {
-                Method beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove", new Class []{});
-                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{javax.ejb.Handle.class});
+                Method beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
+                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
                 methodMap.put(clientMethod, beanMethod);
-                clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{java.lang.Object.class});
+                clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
                 methodMap.put(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove", null);
+                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
                 methodMap.put(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
-                Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove", new Class []{});
-                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{javax.ejb.Handle.class});
+                Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
+                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
                 methodMap.put(clientMethod, beanMethod);
-                clientMethod = EJBHome.class.getDeclaredMethod("remove", new Class []{java.lang.Object.class});
+                clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
                 methodMap.put(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove", null);
+                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
                 methodMap.put(clientMethod, beanMethod);
             }
         } catch (java.lang.NoSuchMethodException nsme) {
@@ -625,7 +641,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    private void mapObjectInterface(Class intrface, boolean isLocal) {
+    private void mapObjectInterface(Class intrface) {
         if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class){
             return;
         }
@@ -707,14 +723,18 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public Method getMatchingPostCreateMethod(Method createMethod) {
-        return (Method) this.postCreateMethodMap.get(createMethod);
+        return this.postCreateMethodMap.get(createMethod);
     }
+
+    //
+    // CMP specific data
+    //
 
     private KeyGenerator keyGenerator;
     private Field primKeyField;
     private String[] cmrFields;
 
-    private HashMap queryMethodMap = new HashMap();
+    private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
 
     public Field getPrimaryKeyField() {
         return primKeyField;
@@ -747,7 +767,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public String getQuery(Method queryMethod) {
-        return (String) queryMethodMap.get(queryMethod);
+        return queryMethodMap.get(queryMethod);
     }
 
     public void setJarPath(String jarPath) {

@@ -192,7 +192,7 @@ public class EjbJarInfoBuilder {
                     methodInterceptorInfo.methodInfo = new MethodInfo();
                     methodInterceptorInfo.methodInfo.methodName = method.getMethodName();
                     List<String> methodParam = method.getMethodParams().getMethodParam();
-                    methodInterceptorInfo.methodInfo.methodParams.addAll(methodParam);
+                    methodInterceptorInfo.methodInfo.methodParams = methodParam;
 
                     methodInterceptorInfo.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
                     methodInterceptorInfo.excludeClassInterceptors = binding.getExcludeClassInterceptors();
@@ -341,7 +341,7 @@ public class EjbJarInfoBuilder {
 
             MethodParams mp = method.getMethodParams();
             if (mp != null) {
-                methodInfo.methodParams.addAll(mp.getMethodParam());
+                methodInfo.methodParams = mp.getMethodParam();
             }
             mi.add(methodInfo);
         }
@@ -478,7 +478,7 @@ public class EjbJarInfoBuilder {
                 MethodInfo method = new MethodInfo();
                 org.apache.openejb.alt.config.ejb.QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
-                method.methodParams.addAll(qm.getMethodParams().getMethodParam());
+                method.methodParams = qm.getMethodParams().getMethodParam();
                 query.method = method;
                 bean.queries.add(query);
             }
