@@ -71,6 +71,10 @@ public interface DeploymentInfo {
 
     Class getInterface(InterfaceType interfaceType);
 
+    Class getMdbInterface();
+
+    ClassLoader getClassLoader();
+
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();
     }

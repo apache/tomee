@@ -31,6 +31,7 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
+import javax.ejb.MessageDrivenBean;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
@@ -74,6 +75,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Class pkClass;
     private Class businessLocal;
     private Class businessRemote;
+    private Class mdbInterface;
 
     private Method postConstruct;
     private Method preDestroy;
@@ -169,6 +171,22 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 throw new SystemException(e);
             }
         }
+    }
+
+    public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface) throws SystemException {
+        this.context = context;
+        this.beanClass = beanClass;
+        this.mdbInterface = mdbInterface;
+        this.componentType = BeanType.MESSAGE_DRIVEN;
+
+        if (MessageDrivenBean.class.isAssignableFrom(beanClass)){
+            try {
+                this.preDestroy = MessageDrivenBean.class.getMethod("ejbRemove");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        createMethodMap();
     }
 
     public Object getContainerData() {
@@ -285,6 +303,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return businessRemote;
     }
 
+    public Class getMdbInterface() {
+        return mdbInterface;
+    }
+
     public Class getPrimaryKeyClass() {
         return pkClass;
     }
@@ -335,6 +357,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public javax.naming.Context getJndiEnc() {
         return context.getJndiContext();
+    }
+
+    public ClassLoader getClassLoader() {
+        return context.getClassLoader();
     }
 
     public boolean isReentrant() {
@@ -593,6 +619,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             throw new org.apache.openejb.SystemException(nsme);
         }
 
+        if (mdbInterface != null) {
+            mapObjectInterface(mdbInterface);
+        }
     }
 
     private void mapHomeInterface(Class intrface) {
