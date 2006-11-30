@@ -59,6 +59,9 @@ import java.util.jar.Attributes;
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader {
+	
+	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
+	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", DeploymentLoader.class.getPackage().getName());
 
@@ -531,42 +534,72 @@ public class DeploymentLoader {
         }
     }
 
+    /*
+     * The algorithm of OpenEJB deployments class-path inclusion and exclusion is implemented as follows:
+     * 	1- If the string value of the resource URL matches the include class-path pattern
+     *     Then load this resource
+     *  2- If the string value of the resource URL matches the exclude class-path pattern
+     *     Then ignore this resource
+     *  3- If the include and exclude class-path patterns are not defined
+     *     Then load this resource
+     *     
+     * The previous steps are based on the following points:
+     *  1- Include class-path pattern has the highst priority
+     *     This helps in case both patterns are defined using the same values.
+     *     This appears in step 1 and 2 of the above algorithm.
+     *	2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
+     *	   This appears in step 3 of the above algorithm.
+     */
     private void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader, String descriptor, String type) {
+    	
+    	boolean doLoad = false;
+    	Deployments deployment = null;
+    	String include = null;
+    	String exclude = null;
+    	String path = null;
+    	
+    	include = SystemInstance.get().getProperty(OPENEJB_DEPLOYMENTS_CLASSPATH_INCLUDE, "");
+    	exclude = SystemInstance.get().getProperty(OPENEJB_DEPLOYMENTS_CLASSPATH_EXCLUDE, "");
         try {
-            String exclude = SystemInstance.get().getProperty("openejb.deployments.classpath.exclude", "");
             Enumeration resources = classLoader.getResources(descriptor);
             while (resources.hasMoreElements()) {
                 URL ejbJar1 = (URL) resources.nextElement();
                 String urlString = ejbJar1.toExternalForm();
-                if (urlString.matches(exclude)) {
+                if(urlString.matches(include)) {
+                	doLoad = true;
+                } else if (urlString.matches(exclude)) {
                     ConfigurationFactory.logger.info("Excluding: " + urlString);
                     continue;
+                } else if(include.equals("") && exclude.equals("")) {
+                	doLoad = true;
+            	}
+                if(doLoad) {
+	                // path = null;
+	                deployment = new Deployments();
+	                if (ejbJar1.getProtocol().equals("jar")) {
+	                    ejbJar1 = new URL(ejbJar1.getFile().replaceFirst("!.*$", ""));
+	                    File file = new File(ejbJar1.getFile());
+	                    path = file.getAbsolutePath();
+	                    deployment.setJar(path);
+	                } else if (ejbJar1.getProtocol().equals("file")) {
+	                    File file = new File(ejbJar1.getFile());
+	                    File metainf = file.getParentFile();
+	                    File ejbPackage = metainf.getParentFile();
+	                    path = ejbPackage.getAbsolutePath();
+	                    deployment.setDir(path);
+	                } else {
+	                    ConfigurationFactory.logger.warning("Not loading " + type + ".  Unknown protocol " + ejbJar1.getProtocol());
+	                    continue;
+	                }	
+	                ConfigurationFactory.logger.info("Found " + type + " in classpath: " + path);
+	                loadFrom(deployment, base, jarList);
                 }
-                String path = null;
-                Deployments deployment = new Deployments();
-                if (ejbJar1.getProtocol().equals("jar")) {
-                    ejbJar1 = new URL(ejbJar1.getFile().replaceFirst("!.*$", ""));
-                    File file = new File(ejbJar1.getFile());
-                    path = file.getAbsolutePath();
-                    deployment.setJar(path);
-                } else if (ejbJar1.getProtocol().equals("file")) {
-                    File file = new File(ejbJar1.getFile());
-                    File metainf = file.getParentFile();
-                    File ejbPackage = metainf.getParentFile();
-                    path = ejbPackage.getAbsolutePath();
-                    deployment.setDir(path);
-                } else {
-                    ConfigurationFactory.logger.warning("Not loading " + type + ".  Unknown protocol " + ejbJar1.getProtocol());
-                    continue;
-                }
-
-                ConfigurationFactory.logger.info("Found " + type + " in classpath: " + path);
-                loadFrom(deployment, base, jarList);
             }
         } catch (IOException e1) {
             e1.printStackTrace();
             ConfigurationFactory.logger.warning("Unable to search classpath for " + type + ": Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
+        
     }
 
     public static class JarExtractor {
