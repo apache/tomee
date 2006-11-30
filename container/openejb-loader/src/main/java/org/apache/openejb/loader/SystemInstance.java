@@ -67,6 +67,10 @@ public class SystemInstance {
 
         this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
         this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
+        System.setProperty("derby.system.home", base.getDirectory().getCanonicalPath());
+        // set the magic system property that causes derby to use explicity
+        // file sync instead of relying on vm support for file open rws
+        System.setProperty("derby.storage.fileSyncTransactionLog", "true");
     }
 
     public long getStartTime() {

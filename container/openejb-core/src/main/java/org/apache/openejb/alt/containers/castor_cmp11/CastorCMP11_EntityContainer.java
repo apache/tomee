@@ -21,6 +21,7 @@ import org.exolab.castor.jdo.JDOManager;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.exolab.castor.mapping.AccessMode;
+import org.exolab.castor.mapping.MappingException;
 import org.exolab.castor.persist.spi.CallbackInterceptor;
 import org.exolab.castor.persist.spi.Complex;
 import org.exolab.castor.persist.spi.InstanceFactory;
@@ -241,14 +242,18 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
                 jdoManagerBuilder.addMapping(url);
             }
 
-            globalJdoManager = jdoManagerBuilder.buildGlobalJDOManager("java:openejb/connector/"+resourceName);
-            globalJdoManager.setDatabasePooling(true);
-            globalJdoManager.setCallbackInterceptor(this);
-            globalJdoManager.setInstanceFactory(this);
+            try {
+                globalJdoManager = jdoManagerBuilder.buildGlobalJDOManager("java:openejb/connector/"+resourceName);
+                globalJdoManager.setDatabasePooling(true);
+                globalJdoManager.setCallbackInterceptor(this);
+                globalJdoManager.setInstanceFactory(this);
 
-            localJdoManager = jdoManagerBuilder.buildLocalJDOManager(driverClassName, driverUrl, username, password);
-            localJdoManager.setCallbackInterceptor(this);
-            localJdoManager.setInstanceFactory(this);
+                localJdoManager = jdoManagerBuilder.buildLocalJDOManager(driverClassName, driverUrl, username, password);
+                localJdoManager.setCallbackInterceptor(this);
+                localJdoManager.setInstanceFactory(this);
+            } catch (MappingException e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new OpenEJBException("Unable to construct the Castor JDOManager objects: "+e.getClass().getName()+": "+e.getMessage(), e);

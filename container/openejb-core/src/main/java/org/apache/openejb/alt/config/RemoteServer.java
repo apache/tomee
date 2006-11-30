@@ -43,6 +43,18 @@ public class RemoteServer {
         props.put("java.naming.security.credentials", "testpassword");
     }
 
+    public static void main(String[] args) {
+        assert args.length > 0 : "no arguments supplied: valid arguments are 'start' or 'stop'";
+        if (args[0].equalsIgnoreCase("start")){
+            new RemoteServer().start();
+        } else if (args[0].equalsIgnoreCase("stop")) {
+            RemoteServer remoteServer = new RemoteServer();
+            remoteServer.serverHasAlreadyBeenStarted = false;
+            remoteServer.stop();
+        } else {
+            throw new RuntimeException("valid arguments are 'start' or 'stop'");
+        }
+    }
     public Properties getProperties() {
         return properties;
     }
@@ -110,7 +122,7 @@ public class RemoteServer {
                 serverErr.setDaemon(true);
                 serverErr.start();
             } catch (Exception e) {
-                throw (RuntimeException)new RuntimeException("Cannot start the server.").initCause(e);
+                throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
             connect(10);
         } else {

@@ -353,6 +353,11 @@
         <version>10.2.1.6</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbyclient</artifactId>
+        <version>10.2.1.6</version>
+      </dependency>
+      <dependency>
         <groupId>org.tranql</groupId>
         <artifactId>tranql</artifactId>
         <version>1.4-SNAPSHOT</version>

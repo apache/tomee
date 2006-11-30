@@ -239,7 +239,7 @@ public class ServiceManager {
                     printRow(d.getName(), d.getIP(), d.getPort() + "");
                 }
             } catch (Exception e) {
-                logger.error(d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + e.getMessage());
+                logger.fatal("Service Start Failed: "+d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + e.getMessage());
                 if (display) {
                     printRow(d.getName(), "----", "FAILED");
                 }

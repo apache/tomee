@@ -17,13 +17,19 @@
 package org.apache.openejb.server.derbynet;
 
 import org.apache.derby.drda.NetworkServerControl;
+import org.apache.log4j.Category;
+import org.apache.log4j.Priority;
+import org.apache.log4j.Logger;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.Log4jPrintWriter;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Properties;
@@ -59,7 +65,8 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         this.threads = Integer.parseInt(threads);
         this.port = Integer.parseInt(port);
         this.disabled = Boolean.parseBoolean(disabled);
-        host = InetAddress.getByName(bind);
+        host = InetAddress.getByName("0.0.0.0");
+        System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
     }
 
     public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
@@ -72,10 +79,11 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         if (disabled) return;
         try {
             serverControl = new NetworkServerControl(host, port);
-            serverControl.setMaxThreads(threads);
-            serverControl.start(null);
+            //serverControl.setMaxThreads(threads);
+
+            serverControl.start(new Log4jPrintWriter("Derby", Priority.INFO));
         } catch (Exception e) {
-            new ServiceException(e);
+            throw new ServiceException(e);
         }
     }
 
@@ -91,4 +99,5 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
             serverControl = null;
         }
     }
+
 }
