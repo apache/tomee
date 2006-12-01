@@ -57,7 +57,15 @@ public class EjbJarUtils {
     public EjbJarUtils(String jarLocation) throws OpenEJBException {
         /*[1.1]  Get the jar ***************/
         this.jarLocation = jarLocation;
-        this.ejbJar = readEjbJar(jarLocation);
+        EjbJar ejbJar;
+        try {
+            ejbJar = readEjbJar(jarLocation);
+        } catch (OpenEJBException e) {
+            logger.warning("No ejb-jar.xml found assuming annotated beans present: module: " + jarLocation);
+            ejbJar = new EjbJar();
+        }
+
+        this.ejbJar = ejbJar;
         try {
             this.openejbJar = readOpenEjbJar(jarLocation);
         } catch (OpenEJBException e) {
