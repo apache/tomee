@@ -16,10 +16,15 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * @version $Rev$ $Date$
  */
 public class MessageDrivenBeanInfo extends EnterpriseBeanInfo {
+    public String mdbInterface;
+    public final Map<String, String> activationProperties = new HashMap<String, String>();
 
     public MessageDrivenBeanInfo() {
         type = MESSAGE;

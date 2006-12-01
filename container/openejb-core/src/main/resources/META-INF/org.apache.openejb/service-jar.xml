@@ -196,6 +196,32 @@
   </ServiceProvider>
 
   <!--
+  # ==========================================================
+  # Default Message Driven Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default MDB Container"
+          provider-type="Container"
+          constructor="id, transactionManager, securityService, deployments, ServerUrl, ThreadPoolSize, InstanceLimit"
+          class-name="org.apache.openejb.core.mdb.ActiveMQContainer">
+
+    # Specifies the url used to create the ActiveMQ resource adapter.
+
+    ServerUrl tcp://localhost:51616
+
+    # Specifies the size of the thread pool available to AciveMQ.
+
+    ThreadPoolSize 10
+
+    # Specifies the maximum number of bean instances that are
+    # allowed to exist for each MDB deployment.
+
+    InstanceLimit 10
+
+  </ServiceProvider>
+
+  <!--
   # ================================================
   # Default Proxy Factory implementation for JDK 1.2
   # ================================================
@@ -233,7 +259,7 @@
   <ServiceProvider
           id="Default Transaction Manager"
           provider-type="Transaction"
-          class-name="org.apache.openejb.ri.sp.PseudoTransactionService"/>
+          class-name="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
 
   <!--
   # ================================================

@@ -16,9 +16,7 @@
  */
 package org.apache.openejb.entity.cmp.pkgenerator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.geronimo.transaction.context.TransactionContextManager;
+import org.apache.geronimo.connector.outbound.ConnectionFactorySource;
 import org.tranql.cache.CacheRow;
 import org.tranql.cache.DuplicateIdentityException;
 import org.tranql.cache.InTxCache;
@@ -34,26 +32,24 @@ import javax.transaction.TransactionManager;
  * @version $Revision$ $Date$
  */
 public class SequenceTablePrimaryKeyGeneratorWrapper implements PrimaryKeyGenerator {
-    private static final Log log = LogFactory.getLog(SequenceTablePrimaryKeyGeneratorWrapper.class);
-
-    private final TransactionContextManager transactionContextManager;
+    private final TransactionManager transactionManager;
+    private final ConnectionFactorySource connectionFactoryWrapper;
     private final String tableName;
     private final String sequenceName;
     private final int batchSize;
     private SequenceTablePrimaryKeyGenerator delegate;
-    private final DataSource dataSource;
 
-    public SequenceTablePrimaryKeyGeneratorWrapper(TransactionContextManager transactionContextManager, String tableName, String sequenceName, int batchSize, DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.transactionContextManager = transactionContextManager;
+    public SequenceTablePrimaryKeyGeneratorWrapper(TransactionManager transactionManager, ConnectionFactorySource connectionFactoryWrapper, String tableName, String sequenceName, int batchSize) {
+        this.transactionManager = transactionManager;
+        this.connectionFactoryWrapper = connectionFactoryWrapper;
         this.tableName = tableName;
         this.sequenceName = sequenceName;
         this.batchSize = batchSize;
     }
 
     public void doStart() throws Exception {
-        TransactionManager tm = transactionContextManager.getTransactionManager();
-        delegate = new SequenceTablePrimaryKeyGenerator(tm, dataSource, tableName, sequenceName, batchSize);
+        DataSource dataSource = (DataSource) connectionFactoryWrapper.$getResource();
+        delegate = new SequenceTablePrimaryKeyGenerator(transactionManager, dataSource, tableName, sequenceName, batchSize);
         delegate.initSequenceTable();
     }
 
@@ -72,5 +68,4 @@ public class SequenceTablePrimaryKeyGeneratorWrapper implements PrimaryKeyGenera
     public CacheRow updateCache(InTxCache cache, GlobalIdentity id, CacheRow cacheRow) throws DuplicateIdentityException {
         return delegate.updateCache(cache, id, cacheRow);
     }
-
 }

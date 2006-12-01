@@ -27,7 +27,7 @@ import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
-import org.apache.geronimo.transaction.TrackedConnectionAssociator;
+import org.apache.geronimo.connector.outbound.connectiontracking.TrackedConnectionAssociator;
 import org.apache.openejb.CallbackMethod;
 import org.apache.openejb.ConnectionTrackingInterceptor;
 import org.apache.openejb.EJBInstanceContext;
@@ -38,6 +38,7 @@ import org.apache.openejb.EjbInvocationImpl;
 import org.apache.openejb.ExtendedEjbDeployment;
 import org.apache.openejb.StatelessEjbContainer;
 import org.apache.openejb.SystemExceptionInterceptor;
+import org.apache.openejb.NoConnectionEnlistingInterceptor;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.dispatch.DispatchInterceptor;
 import org.apache.openejb.naming.ComponentContextInterceptor;
@@ -118,6 +119,12 @@ public class DefaultStatelessEjbContainer implements StatelessEjbContainer {
         // transaction interceptor
         invocationChain = new TransactionContextInterceptor(invocationChain, transactionManager);
         invocationChain = new TransactionPolicyInterceptor(invocationChain, transactionManager);
+
+        //make sure tm notifications don't enlist any connections from the caller's connection context in a new tx
+        //or targets connections in callers tx.
+        if (trackedConnectionAssociator != null) {
+            invocationChain = new NoConnectionEnlistingInterceptor(invocationChain, trackedConnectionAssociator);
+        }
 
         // logs system exceptions
         invocationChain = new SystemExceptionInterceptor(invocationChain);

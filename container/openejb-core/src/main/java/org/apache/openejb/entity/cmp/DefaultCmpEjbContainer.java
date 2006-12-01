@@ -27,7 +27,7 @@ import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
 import org.apache.geronimo.timer.PersistentTimer;
-import org.apache.geronimo.transaction.TrackedConnectionAssociator;
+import org.apache.geronimo.connector.outbound.connectiontracking.TrackedConnectionAssociator;
 import org.apache.openejb.CallbackMethod;
 import org.apache.openejb.CmpEjbContainer;
 import org.apache.openejb.CmpEjbDeployment;
@@ -39,6 +39,7 @@ import org.apache.openejb.EjbInvocation;
 import org.apache.openejb.EjbInvocationImpl;
 import org.apache.openejb.ExtendedEjbDeployment;
 import org.apache.openejb.SystemExceptionInterceptor;
+import org.apache.openejb.NoConnectionEnlistingInterceptor;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.dispatch.DispatchInterceptor;
 import org.apache.openejb.entity.EntityCallbackInterceptor;
@@ -103,6 +104,12 @@ public class DefaultCmpEjbContainer implements CmpEjbContainer {
         invocationChain = new InTxCacheInterceptor(invocationChain);
         invocationChain = new TransactionContextInterceptor(invocationChain, transactionManager);
         invocationChain = new TransactionPolicyInterceptor(invocationChain, transactionManager);
+        //make sure tm notifications don't enlist any connections from the caller's connection context in a new tx
+        //or targets connections in callers tx.
+        if (trackedConnectionAssociator != null) {
+            invocationChain = new NoConnectionEnlistingInterceptor(invocationChain, trackedConnectionAssociator);
+        }
+        
         invocationChain = new SystemExceptionInterceptor(invocationChain);
         this.invocationChain = invocationChain;
 
@@ -115,6 +122,11 @@ public class DefaultCmpEjbContainer implements CmpEjbContainer {
             callbackChain = new EJBIdentityInterceptor(callbackChain);
         }
         callbackChain = new ComponentContextInterceptor(callbackChain);
+
+        // Resource Adapter connection reassociation interceptor
+        if (trackedConnectionAssociator != null) {
+            callbackChain = new ConnectionTrackingInterceptor(callbackChain, trackedConnectionAssociator);
+        }
         this.callbackChain = callbackChain;
     }
 

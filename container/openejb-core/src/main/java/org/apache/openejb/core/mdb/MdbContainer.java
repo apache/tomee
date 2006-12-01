@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Arrays;
 
 public class MdbContainer implements Container {
-    private static final Logger logger = Logger.getLogger("OpenEJB");
+    protected static final Logger logger = Logger.getLogger("OpenEJB");
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;
@@ -50,16 +50,18 @@ public class MdbContainer implements Container {
     private final SecurityService securityService;
     private final ResourceAdapter resourceAdapter;
     private final Class activationSpecClass;
+    private final int instanceLimit;
 
     private final Map<Object, DeploymentInfo> deployments = new HashMap<Object, DeploymentInfo>();
     private final Map<Object, EndpointFactory> endpointFactories = new HashMap<Object, EndpointFactory>();
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class activationSpecClass) {
+    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
         this.activationSpecClass = activationSpecClass;
+        this.instanceLimit = instanceLimit;
     }
 
     public synchronized DeploymentInfo [] deployments() {
@@ -83,7 +85,7 @@ public class MdbContainer implements Container {
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, 0);
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
         EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory);
 
         // update the data structures

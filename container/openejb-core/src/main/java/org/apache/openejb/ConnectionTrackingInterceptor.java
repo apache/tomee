@@ -17,21 +17,14 @@
 
 package org.apache.openejb;
 
+import org.apache.geronimo.connector.outbound.connectiontracking.ConnectorInstanceContext;
+import org.apache.geronimo.connector.outbound.connectiontracking.ConnectorInstanceContextImpl;
+import org.apache.geronimo.connector.outbound.connectiontracking.TrackedConnectionAssociator;
 import org.apache.geronimo.interceptor.Interceptor;
 import org.apache.geronimo.interceptor.Invocation;
 import org.apache.geronimo.interceptor.InvocationResult;
-import org.apache.geronimo.transaction.TrackedConnectionAssociator;
-import org.apache.geronimo.transaction.DefaultInstanceContext;
-import org.apache.geronimo.transaction.InstanceContext;
 
-/**
- *
- *
- * @version $Revision$ $Date$
- *
- * */
 public class ConnectionTrackingInterceptor implements Interceptor {
-
     private final Interceptor next;
     private final TrackedConnectionAssociator trackedConnectionAssociator;
 
@@ -44,19 +37,15 @@ public class ConnectionTrackingInterceptor implements Interceptor {
         EjbInvocation ejbInvocation = (EjbInvocation) invocation;
         EJBInstanceContext ejbInstanceContext = ejbInvocation.getEJBInstanceContext();
 
-        InstanceContext connectorCtx = (InstanceContext) ejbInstanceContext.getConnectorInstanceData();
+        ConnectorInstanceContext connectorCtx = (ConnectorInstanceContext) ejbInstanceContext.getConnectorInstanceData();
         if (connectorCtx == null) {
             ExtendedEjbDeployment ejbDeployment = ejbInvocation.getEjbDeployment();
-            connectorCtx = new DefaultInstanceContext(ejbDeployment.getUnshareableResources(),
+            connectorCtx = new ConnectorInstanceContextImpl(ejbDeployment.getUnshareableResources(),
                     ejbDeployment.getApplicationManagedSecurityResources());
             ejbInstanceContext.setConnectorInstanceData(connectorCtx);
         }
-
-        InstanceContext leavingInstanceContext = trackedConnectionAssociator.enter(connectorCtx);
-        try {
-            return next.invoke(invocation);
-        } finally {
-            trackedConnectionAssociator.exit(leavingInstanceContext);
-        }
+        //this returns the empty context installed in NoConnectionEnlistingInterceptor.  We want our context in effect during possible tx completion.
+        trackedConnectionAssociator.enter(connectorCtx);
+        return next.invoke(invocation);
     }
 }

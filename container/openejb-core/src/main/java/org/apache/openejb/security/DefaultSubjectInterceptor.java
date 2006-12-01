@@ -36,24 +36,21 @@ public final class DefaultSubjectInterceptor implements Interceptor {
     }
 
     public InvocationResult invoke(Invocation invocation) throws Throwable {
-        boolean clearCurrentCaller = false;
 
         if (ContextManager.getCurrentCaller() == null) {
             EjbInvocation ejbInvocation = ((EjbInvocation) invocation);
             EjbDeployment deployment = ejbInvocation.getEjbDeployment();
             Subject defaultSubject = deployment.getDefaultSubject();
 
-            ContextManager.setCurrentCaller(defaultSubject);
-            ContextManager.setNextCaller(defaultSubject);
-            clearCurrentCaller = true;
-        }
-        try {
-            return interceptor.invoke(invocation);
-        } finally {
-            if (clearCurrentCaller) {
-                ContextManager.setCurrentCaller(null);
-                ContextManager.setNextCaller(null);
+            if (defaultSubject != null) {
+                ContextManager.setCallers(defaultSubject, defaultSubject);
+            }
+            try {
+                return interceptor.invoke(invocation);
+            } finally {
+                ContextManager.clearCallers();
             }
         }
+        return interceptor.invoke(invocation);
     }
 }

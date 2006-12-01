@@ -123,6 +123,13 @@
       <artifactId>openejb-jee</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <!-- ActiveMQ -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-ra</artifactId>
+      <version>4.1-incubator-SNAPSHOT</version>
+    </dependency>
+    <!-- End ActiveMQ -->
     <dependency>
       <groupId>castor</groupId>
       <artifactId>castor</artifactId>
@@ -191,36 +198,36 @@
       <version>2.2.3</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-interceptor</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-security</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-transaction</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-kernel</artifactId>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-timer</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-naming</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>geronimo</groupId>
+      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-webservices</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>

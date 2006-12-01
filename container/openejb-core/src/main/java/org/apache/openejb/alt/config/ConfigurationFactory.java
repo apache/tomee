@@ -63,7 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -72,9 +71,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     private String configLocation = "";
 
-    private List<String> containerIds = new ArrayList();
-    private List<String> connectorIds = new ArrayList();
-    private List<String> jndiProviderIds = new ArrayList();
+    private List<String> containerIds = new ArrayList<String>();
+    private List<String> connectorIds = new ArrayList<String>();
+    private List<String> jndiProviderIds = new ArrayList<String>();
 
     public static OpenEjbConfiguration sys;
 
@@ -83,7 +82,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     private final List<StatefulSessionContainerInfo> sfsbContainers = new ArrayList<StatefulSessionContainerInfo>();
     private final List<StatelessSessionContainerInfo> slsbContainers = new ArrayList<StatelessSessionContainerInfo>();
 
-    private HashMap containerTable = new HashMap();
+    private Map<String,ContainerInfo> containerTable = new HashMap<String,ContainerInfo>();
 
     private Properties props;
     public EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
@@ -131,7 +130,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
 
 
-        List<Deployments> deployments = new ArrayList(Arrays.asList(openejb.getDeployments()));
+        List<Deployments> deployments = new ArrayList<Deployments>(Arrays.asList(openejb.getDeployments()));
 
         //// getOption /////////////////////////////////  BEGIN  ////////////////////
         String flag = props.getProperty("openejb.deployments.classpath", "false").toLowerCase();
@@ -477,6 +476,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 c = (Container) initService(c, DEFAULT_CMP2_CONTAINER);
                 ci = new EntityContainerInfo();
                 entityContainers.add((EntityContainerInfo) ci);
+            } else if (c.getCtype().equals("MESSAGE")) {
+                c = (Container) initService(c, DEFAULT_MDB_CONTAINER);
+                ci = new EntityContainerInfo();
+                entityContainers.add((EntityContainerInfo) ci);
             } else {
                 throw new OpenEJBException("Unrecognized contianer type " + c.getCtype());
             }
@@ -525,7 +528,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         for (EnterpriseBeanInfo bean : beans) {
             EjbDeployment d = (EjbDeployment) ejbds.get(bean.ejbName);
 
-            ContainerInfo cInfo = (ContainerInfo) containerTable.get(d.getContainerId());
+            ContainerInfo cInfo = containerTable.get(d.getContainerId());
             if (cInfo == null) {
 
                 String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());

@@ -50,6 +50,8 @@ class EnterpriseBeanBuilder {
             ejbType = BeanType.STATEFUL;
         } else if (bean.type == EnterpriseBeanInfo.STATELESS) {
             ejbType = BeanType.STATELESS;
+        } else if (bean.type == EnterpriseBeanInfo.MESSAGE) {
+            ejbType = BeanType.MESSAGE_DRIVEN;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {
             String persistenceType = ((EntityBeanInfo) bean).persistenceType;
             ejbType = (persistenceType.equalsIgnoreCase("Container")) ? BeanType.CMP_ENTITY : BeanType.BMP_ENTITY;
@@ -121,7 +123,14 @@ class EnterpriseBeanBuilder {
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
-        CoreDeploymentInfo deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType);
+        CoreDeploymentInfo deployment;
+        if (BeanType.MESSAGE_DRIVEN != ejbType) {
+            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType);
+        } else {
+            MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
+            Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
+            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+        }
 
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));

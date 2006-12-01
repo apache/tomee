@@ -59,6 +59,8 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.ArrayList;
@@ -391,7 +393,7 @@ public class EjbJarInfoBuilder {
     }
 
     private EnterpriseBeanInfo initMessageBean(MessageDrivenBean mdb, Map m) throws OpenEJBException {
-        EnterpriseBeanInfo bean = new MessageDrivenBeanInfo();
+        MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
         copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
         copyCallbacks(mdb.getPreDestroy(), bean.preDestroy);
@@ -413,6 +415,19 @@ public class EjbJarInfoBuilder {
         bean.ejbName = mdb.getEjbName();
         TransactionType txType = mdb.getTransactionType();
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+
+        bean.mdbInterface = mdb.getMessagingType();
+        if (mdb.getMessageDestinationType() != null) {
+            bean.activationProperties.put("destinationType", mdb.getMessageDestinationType());
+        }
+        ActivationConfig activationConfig = mdb.getActivationConfig();
+        if (activationConfig != null) {
+            for (ActivationConfigProperty property : activationConfig.getActivationConfigProperty()) {
+                String name = property.getActivationConfigPropertyName();
+                String value = property.getActivationConfigPropertyValue();
+                bean.activationProperties.put(name, value);
+            }
+        }
 
         return bean;
     }

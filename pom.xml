@@ -302,7 +302,7 @@
         <version>1.0.1</version>
       </dependency>
       <dependency>
-        <groupId>geronimo</groupId>
+        <groupId>org.apache.geronimo.modules</groupId>
         <artifactId>geronimo-kernel</artifactId>
         <version>1.2-SNAPSHOT</version>
       </dependency>

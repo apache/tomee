@@ -42,6 +42,7 @@ import org.apache.openejb.ExtendedEjbDeployment;
 public final class EjbSecurityInterceptor implements Interceptor {
     private final Interceptor next;
 
+
     public EjbSecurityInterceptor(Interceptor next) {
         this.next = next;
     }
@@ -59,7 +60,6 @@ public final class EjbSecurityInterceptor implements Interceptor {
         Subject oldCaller = context.getCallerSubject();
         Subject subject = ContextManager.getCurrentCaller();
         String oldPolicyContextID = PolicyContext.getContextID();
-
         try {
             PolicyContext.setContextID(deployment.getPolicyContextId());
             AccessControlContext accessContext = ContextManager.getCurrentContext();
@@ -70,7 +70,6 @@ public final class EjbSecurityInterceptor implements Interceptor {
             }
 
             context.setCallerSubject(subject);
-            ContextManager.setCurrentCaller(ContextManager.getNextCaller());
 
             return next.invoke(invocation);
         } catch (AccessControlException e) {
@@ -81,7 +80,6 @@ public final class EjbSecurityInterceptor implements Interceptor {
             }
         } finally {
             PolicyContext.setContextID(oldPolicyContextID);
-            ContextManager.setCurrentCaller(subject);
             context.setCallerSubject(oldCaller);
         }
     }
