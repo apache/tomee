@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Map;
 
 public interface DeploymentInfo {
 
@@ -73,7 +74,19 @@ public interface DeploymentInfo {
 
     Class getMdbInterface();
 
+    Map<String, String> getActivationProperties();
+
     ClassLoader getClassLoader();
+
+    Method getPostActivate();
+
+    Method getPostConstruct();
+
+    Method getPreDestroy();
+
+    Method getPrePassivate();
+
+    void setContainer(Container container);
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();

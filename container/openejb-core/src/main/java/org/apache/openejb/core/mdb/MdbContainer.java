@@ -20,17 +20,26 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Container;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.log4j.Logger;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.ResourceException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 public class MdbContainer implements Container {
     private static final Logger logger = Logger.getLogger("OpenEJB");
@@ -38,20 +47,27 @@ public class MdbContainer implements Container {
 
     private final Object containerID;
     private final TransactionManager transactionManager;
+    private final SecurityService securityService;
+    private final ResourceAdapter resourceAdapter;
+    private final Class activationSpecClass;
 
-    private final Map<Object, DeploymentInfo> deploymentRegistry = new HashMap<Object, DeploymentInfo>();
+    private final Map<Object, DeploymentInfo> deployments = new HashMap<Object, DeploymentInfo>();
+    private final Map<Object, EndpointFactory> endpointFactories = new HashMap<Object, EndpointFactory>();
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager) {
+    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class activationSpecClass) {
         this.containerID = containerID;
         this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.resourceAdapter = resourceAdapter;
+        this.activationSpecClass = activationSpecClass;
     }
 
     public synchronized DeploymentInfo [] deployments() {
-        return deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
+        return deployments.values().toArray(new DeploymentInfo[deployments.size()]);
     }
 
     public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return deploymentRegistry.get(deploymentID);
+        return deployments.get(deploymentID);
     }
 
     public int getContainerType() {
@@ -62,49 +78,152 @@ public class MdbContainer implements Container {
         return containerID;
     }
 
-    public synchronized void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
-        deploymentRegistry.put(deploymentID, info);
-        CoreDeploymentInfo di = (CoreDeploymentInfo) info;
-        di.setContainer(this);
+    public void deploy(Object deploymentId, DeploymentInfo deploymentInfo) throws OpenEJBException {
+        // create the activation spec
+        ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
+
+        // create the message endpoint
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, 0);
+        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory);
+
+        // update the data structures
+        // this must be done before activating the endpoint since the ra may immedately begin delivering messages
+        synchronized (this) {
+            deploymentInfo.setContainer(this);
+            deployments.put(deploymentId, deploymentInfo);
+            endpointFactories.put(deploymentId, endpointFactory);
+        }
+
+        // activate the endpoint
+        try {
+            resourceAdapter.endpointActivation(endpointFactory, activationSpec);
+        } catch (ResourceException e) {
+            // activation failed... clean up
+            synchronized (this) {
+                deploymentInfo.setContainer(null);
+                deployments.remove(deploymentId);
+                endpointFactories.remove(deploymentId);
+            }
+
+            throw new OpenEJBException(e);
+        }
+
     }
 
-    public synchronized void undeploy(Object deploymentID) throws OpenEJBException {
-        CoreDeploymentInfo di = (CoreDeploymentInfo) deploymentRegistry.remove(deploymentID);
-        di.setContainer(null);
+    private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
+        try {
+            // initialize the object recipe
+            ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
+            Map<String, String> activationProperties = deploymentInfo.getActivationProperties();
+            for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
+                objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
+            }
+
+            // create the activationSpec
+            ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(deploymentInfo.getClassLoader());
+
+            // validate the activation spec
+            activationSpec.validate();
+
+            // set the resource adapter into the activation spec
+            activationSpec.setResourceAdapter(resourceAdapter);
+
+            return activationSpec;
+        } catch (Exception e) {
+            throw new OpenEJBException("Unable to create activation spec");
+        }
     }
 
-    public void beforeDelivery(Object deployId, Object instance, Method method) throws Throwable {
+    public void undeploy(Object deploymentId) throws OpenEJBException {
+        try {
+            EndpointFactory endpointFactory;
+            synchronized (this) {
+                endpointFactory = endpointFactories.get(deploymentId);
+            }
+            if (endpointFactory != null) {
+                resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
+            }
+        } finally {
+            synchronized (this) {
+                endpointFactories.remove(deploymentId);
+                DeploymentInfo deploymentInfo = deployments.remove(deploymentId);
+                if (deploymentInfo != null) {
+                    deploymentInfo.setContainer(null);
+                }
+            }
+        }
+    }
+
+    public void beforeDelivery(Object deployId, Object instance, Method method, XAResource xaResource) throws SystemException {
         // get the target deployment (MDB)
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deployId);
+        if (deployInfo == null) throw new SystemException("Unknown deployment " + deployId);
 
-        // obtain the context objects
+        // intialize call context
         ThreadContext callContext = ThreadContext.getThreadContext();
+        callContext.setDeploymentInfo(deployInfo);
         MdbCallContext mdbCallContext = new MdbCallContext();
+        callContext.setUnspecified(mdbCallContext);
+        mdbCallContext.deliveryMethod = method;
 
         // create the tx data
         mdbCallContext.txPolicy = deployInfo.getTransactionPolicy(method);
         mdbCallContext.txContext = new TransactionContext(callContext, transactionManager);
 
-        // call the tx before method
-        mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
+        // install the application classloader
+        installAppClassLoader(mdbCallContext, deployInfo.getClassLoader());
 
-        // save the tx data into the thread context
-        callContext.setDeploymentInfo(deployInfo);
-        callContext.setUnspecified(mdbCallContext);
+        // call the tx before method
+        try {
+            mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
+            enlistResource(xaResource);
+        } catch (ApplicationException e) {
+            restoreAdapterClassLoader(mdbCallContext);
+
+            throw new SystemException("Should never get an Application exception", e);
+        } catch (SystemException e) {
+            restoreAdapterClassLoader(mdbCallContext);
+            throw e;
+        }
     }
 
-    public Object invoke(Object instance, Method method, Object... args) throws Throwable {
+    private void enlistResource(XAResource xaResource) throws SystemException {
+        if (xaResource == null) return;
+
+        try {
+            Transaction transaction = transactionManager.getTransaction();
+            if (transaction != null) {
+                transaction.enlistResource(xaResource);
+            }
+        } catch (Exception e) {
+            throw new SystemException("Unable to enlist xa resource in the transaction", e);
+        }
+    }
+
+    public Object invoke(Object instance, Method method, Object... args) throws SystemException, ApplicationException {
         if (args == null) {
             args = NO_ARGS;
         }
 
-        Object returnValue = null;
-        Throwable exception = null;
-        try {
-            // get the context data
-            ThreadContext callContext = ThreadContext.getThreadContext();
-            CoreDeploymentInfo deployInfo = callContext.getDeploymentInfo();
+        // get the context data
+        ThreadContext callContext = ThreadContext.getThreadContext();
+        CoreDeploymentInfo deployInfo = callContext.getDeploymentInfo();
+        MdbCallContext mdbCallContext = (MdbCallContext) callContext.getUnspecified();
 
+        if (mdbCallContext == null) {
+            throw new IllegalStateException("beforeDelivery was not called");
+        }
+
+        // verify the delivery method passed to beforeDeliver is the same method that was invoked
+        if (!mdbCallContext.deliveryMethod.getName().equals(method.getName()) ||
+                !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
+            throw new IllegalStateException("Delivery method specified in beforeDelivery is not the delivery method called");
+        }
+
+        // remember the return value or exception so it can be logged
+        Object returnValue = null;
+        OpenEJBException openEjbException = null;
+        try {
             if (logger.isInfoEnabled()) {
                 logger.info("invoking method " + method.getName() + " on " + deployInfo.getDeploymentID());
             }
@@ -112,44 +231,29 @@ public class MdbContainer implements Container {
             // determine the target method on the bean instance class
             Method targetMethod = deployInfo.getMatchingBeanMethod(method);
 
-            // ivoke the target method
-            returnValue = _invoke(instance, targetMethod, args, (MdbCallContext) callContext.getUnspecified());
+            // invoke the target method
+            returnValue = _invoke(instance, targetMethod, args, mdbCallContext);
             return returnValue;
-        } catch (org.apache.openejb.ApplicationException ae) {
-            // Application exceptions must be reported dirctly to the client. They
-            // do not impact the viability of the proxy.
-            exception = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
-            throw exception;
-        } catch (org.apache.openejb.SystemException se) {
-            // A system exception would be highly unusual and would indicate a sever
-            // problem with the container system.
-            exception = (se.getRootCause() != null) ? se.getRootCause() : se;
-            logger.error("The container received an unexpected exception: ", exception);
-            throw new RemoteException("Container has suffered a SystemException", exception);
-        } catch (org.apache.openejb.OpenEJBException oe) {
-            // This is a normal container exception thrown while processing the request
-            exception = (oe.getRootCause() != null) ? oe.getRootCause() : oe;
-            logger.warn("The container received an unexpected exception: ", exception);
-            throw new RemoteException("Unknown Container Exception", oe.getRootCause());
+        } catch (ApplicationException e) {
+            openEjbException = e;
+            throw e;
+        } catch (SystemException e) {
+            openEjbException = e;
+            throw e;
         } finally {
             // Log the invocation results
             if (logger.isDebugEnabled()) {
-                if (exception == null) {
+                if (openEjbException == null) {
                     logger.debug("finished invoking method " + method.getName() + ". Return value:" + returnValue);
                 } else {
-                    logger.debug("finished invoking method " + method.getName() + " with exception " + exception);
-                }
-            } else if (logger.isInfoEnabled()) {
-                if (exception == null) {
-                    logger.debug("finished invoking method " + method.getName());
-                } else {
+                    Throwable exception = (openEjbException.getRootCause() != null) ? openEjbException.getRootCause() : openEjbException;
                     logger.debug("finished invoking method " + method.getName() + " with exception " + exception);
                 }
             }
         }
     }
 
-    private Object _invoke(Object instance, Method runMethod, Object [] args, MdbCallContext mdbCallContext) throws OpenEJBException {
+    private Object _invoke(Object instance, Method runMethod, Object [] args, MdbCallContext mdbCallContext) throws SystemException, ApplicationException {
         try {
             Object returnValue = runMethod.invoke(instance, args);
             return returnValue;
@@ -176,14 +280,20 @@ public class MdbContainer implements Container {
     }
 
 
-    public void afterDelivery(Object instance) throws Throwable {
+    public void afterDelivery(Object instance) throws SystemException {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
         MdbCallContext mdbCallContext = (MdbCallContext) callContext.getUnspecified();
         ThreadContext.setThreadContext(null);
 
         // invoke the tx after method
-        mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
+        try {
+            mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
+        } catch (ApplicationException e) {
+            throw new SystemException("Should never get an Application exception", e);
+        } finally {
+            restoreAdapterClassLoader(mdbCallContext);
+        }
     }
 
     public void release(Object instance) {
@@ -198,12 +308,30 @@ public class MdbContainer implements Container {
                 mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
             } catch (Exception e) {
                 logger.error("error while releasing message endpoint", e);
+            } finally {
+                restoreAdapterClassLoader(mdbCallContext);
             }
         }
     }
 
     private static class MdbCallContext {
+        private Method deliveryMethod;
+        private ClassLoader adapterClassLoader;
         private TransactionPolicy txPolicy;
         private TransactionContext txContext;
+    }
+
+    private void installAppClassLoader(MdbCallContext mdbCallContext, ClassLoader applicationClassLoader) {
+        Thread currentThread = Thread.currentThread();
+
+        mdbCallContext.adapterClassLoader = currentThread.getContextClassLoader();
+        if (mdbCallContext.adapterClassLoader != applicationClassLoader) {
+            currentThread.setContextClassLoader(applicationClassLoader);
+        }
+    }
+
+    private void restoreAdapterClassLoader(MdbCallContext mdbCallContext) {
+        Thread.currentThread().setContextClassLoader(mdbCallContext.adapterClassLoader);
+        mdbCallContext.adapterClassLoader = null;
     }
 }

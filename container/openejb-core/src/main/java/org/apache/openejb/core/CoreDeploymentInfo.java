@@ -106,6 +106,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
     private String jarPath;
+    private final Map<String, String> activationProperties = new HashMap<String, String>();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -173,10 +174,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface) throws SystemException {
+    public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
         this.context = context;
         this.beanClass = beanClass;
         this.mdbInterface = mdbInterface;
+        this.activationProperties.putAll(activationProperties);
         this.componentType = BeanType.MESSAGE_DRIVEN;
 
         if (MessageDrivenBean.class.isAssignableFrom(beanClass)){
@@ -197,8 +199,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.containerData = containerData;
     }
 
-    public void setContainer(Container cont) {
-        container = cont;
+    public void setContainer(Container container) {
+        this.container = container;
     }
 
     public BeanType getComponentType() {
@@ -305,6 +307,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Class getMdbInterface() {
         return mdbInterface;
+    }
+
+    public Map<String, String> getActivationProperties() {
+        return activationProperties;
+    }
+
+    public void setActivationProperties(Map<String, String> activationProperties) {
+        this.activationProperties.clear();
+        this.activationProperties.putAll(activationProperties);
     }
 
     public Class getPrimaryKeyClass() {

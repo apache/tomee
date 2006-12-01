@@ -18,66 +18,64 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.ApplicationException;
 
-import javax.ejb.EJBException;
-import javax.resource.ResourceException;
+import javax.resource.spi.UnavailableException;
+import javax.resource.spi.ApplicationServerInternalException;
+import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.transaction.xa.XAResource;
+import javax.ejb.EJBException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-/**
- * Container for the local interface of a Message Driven Bean.
- * This container owns implementations of EJBLocalHome and EJBLocalObject
- * that can be used by a client in the same classloader as the server.
- * <p/>
- * The implementation of the interfaces is generated using cglib FastClass
- * proxies to avoid the overhead of native Java reflection.
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * The J2EE connector and EJB specifications are not clear on what happens when beforeDelivery or
- * afterDelivery throw an exception, so here is what we have decided:
- * <p/>
- * Exception from beforeDelivery:
- * if container started TX, roll it back
- * reset class loader to adapter classloader
- * reset state to STATE_NONE
- * <p/>
- * Exception from delivery method:
- * if container started TX, roll it back
- * reset class loader to adapter classloader
- * if state was STATE_BEFORE_CALLED, set state to STATE_ERROR so after can still be called
- * <p/>
- * Exception from afterDelivery:
- * if container started TX, roll it back
- * reset class loader to adapter classloader
- * reset state to STATE_NONE
- * <p/>
- * One subtle side effect of this is if the adapter ignores an exception from beforeDelivery and
- * continues with delivery and afterDelivery, the delivery will be treated as a single standalone
- * delivery and the afterDelivery will throw an IllegalStateException.
- *
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
- */
-public class EndpointHandler implements InvocationHandler {
+public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     private static enum State {
-        NONE, BEFORE_CALLED, METHOD_CALLED
+        /**
+         * The handler has been initialized and is ready for invoation
+         */
+        NONE,
+
+        /**
+         * The beforeDelivery method has been called, and the next method called must be a message delivery method
+         * or release.
+         */
+        BEFORE_CALLED,
+
+        /**
+         * The message delivery method has been called successfully, and the next method called must be afterDelivery
+         * or release.
+         */
+        METHOD_CALLED,
+
+        /**
+         * The message delivery threw a system exception, and the next method called must be afterDelivery
+         * or release.  This state notified the afterDelivery method that the instace must be replaced with a new
+         * instance.
+         */
+        SYSTEM_EXCEPTION,
+
+        /**
+         * This message endpoint handler has been released and can no longer be used.
+         */
+        RELEASED
     }
 
     private final MdbContainer container;
     private final DeploymentInfo deployment;
-    private final Object instance;
+    private final MdbInstanceFactory instanceFactory;
+    private final XAResource xaResource;
 
-    private boolean released = false;
     private State state = State.NONE;
-    private ClassLoader adapterClassLoader;
+    private Object instance;
 
-    public EndpointHandler(MdbContainer container, DeploymentInfo deployment, Object instance, XAResource xaResource) {
+    public EndpointHandler(MdbContainer container, DeploymentInfo deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
-        this.instance = instance;
+        this.instanceFactory = instanceFactory;
+        this.xaResource = xaResource;
+        instance = instanceFactory.createInstance();
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -112,29 +110,24 @@ public class EndpointHandler implements InvocationHandler {
 
     }
 
-    public void beforeDelivery(Method method) throws NoSuchMethodException, ResourceException {
+    public void beforeDelivery(Method method) throws ApplicationServerInternalException {
         // verify current state
-        if (released) throw new IllegalStateException("Proxy has been released");
         switch (state) {
+            case RELEASED:
+                throw new IllegalStateException("Message endpoint factory has been released");
             case BEFORE_CALLED:
                 throw new IllegalStateException("beforeDelivery can not be called again until message is delivered and afterDelivery is called");
             case METHOD_CALLED:
+            case SYSTEM_EXCEPTION:
                 throw new IllegalStateException("The last message delivery must be completed with an afterDeliver before beforeDeliver can be called again");
         }
 
-        // call afterDelivery on the container
-        installAppClassLoader();
+        // call beforeDelivery on the container
         try {
-            container.beforeDelivery(deployment.getDeploymentID(), instance, method);
-        } catch (NoSuchMethodException e) {
-            restoreAdapterClassLoader();
-            throw e;
-        } catch (ResourceException e) {
-            restoreAdapterClassLoader();
-            throw e;
-        } catch (Throwable throwable) {
-            restoreAdapterClassLoader();
-            throw new ResourceException(throwable);
+            container.beforeDelivery(deployment.getDeploymentID(), instance, method, xaResource);
+        } catch (SystemException se) {
+            Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            throw new ApplicationServerInternalException(throwable);
         }
 
         // before completed successfully we are now ready to invoke bean
@@ -143,60 +136,65 @@ public class EndpointHandler implements InvocationHandler {
 
     public Object deliverMessage(Method method, Object[] args) throws Throwable {
         // verify current state
-        if (released) throw new IllegalStateException("Proxy has been released");
         switch (state) {
+            case RELEASED:
+                throw new IllegalStateException("Message endpoint factory has been released");
             case BEFORE_CALLED:
                 state = State.METHOD_CALLED;
             case METHOD_CALLED:
+            case SYSTEM_EXCEPTION:
                 throw new IllegalStateException("The last message delivery must be completed with an afterDeliver before another message can be delivered");
         }
 
 
         // if beforeDelivery was not called, call it now
-        if (state == State.NONE) {
+        boolean callBeforeAfter = (state == State.NONE);
+        if (callBeforeAfter) {
             try {
-                container.beforeDelivery(deployment.getDeploymentID(), instance, method);
-            } catch (Throwable throwable) {
-                if (throwable instanceof EJBException) {
-                    throw (EJBException) throwable;
-                }
-                throw (EJBException) new EJBException().initCause(throwable);
+                beforeDelivery(method);
+            } catch (ApplicationServerInternalException e) {
+                throw (EJBException) new EJBException().initCause(e.getCause());
             }
         }
 
-        boolean exceptionThrown = false;
+        Throwable throwable = null;
+        Object value = null;
         try {
-            Object value = container.invoke(instance, method, args);
-            return value;
-        } catch (Throwable throwable) {
-            exceptionThrown = true;
-            throw throwable;
+            // deliver the message
+            value = container.invoke(instance, method, args);
+        } catch (SystemException se) {
+            throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            state = State.SYSTEM_EXCEPTION;
+        } catch (ApplicationException ae) {
+            throwable = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
         } finally {
             // if the adapter is not using before/after, we must call afterDelivery to clean up
-            if (state == State.NONE) {
+            if (callBeforeAfter) {
                 try {
-                    container.afterDelivery(instance);
-                } catch (Throwable throwable) {
-                    // if bean threw an exception, do not override that exception
-                    if (!exceptionThrown) {
-                        EJBException ejbException;
-                        if (throwable instanceof EJBException) {
-                            ejbException = (EJBException) throwable;
-                        } else {
-                            ejbException = new EJBException();
-                            ejbException.initCause(throwable);
-                        }
-                        throw ejbException;
-                    }
+                    afterDelivery();
+                } catch (ApplicationServerInternalException e) {
+                    throwable = throwable == null ? e.getCause() : throwable;
+                } catch (UnavailableException e) {
+                    throwable = throwable == null ? e : throwable;
                 }
             }
         }
+
+        if (throwable != null) {
+            if (isValidException(method, throwable)) {
+                throw throwable;
+            } else {
+                throw new EJBException().initCause(throwable);
+            }
+        }
+        return value;
     }
 
-    public void afterDelivery() throws ResourceException {
+    public void afterDelivery() throws ApplicationServerInternalException, UnavailableException {
         // verify current state
-        if (released) throw new IllegalStateException("Proxy has been released");
         switch (state) {
+            case RELEASED:
+                throw new IllegalStateException("Message endpoint factory has been released");
             case BEFORE_CALLED:
                 throw new IllegalStateException("Exactally one message must be delivered between beforeDelivery and afterDelivery");
             case NONE:
@@ -205,44 +203,60 @@ public class EndpointHandler implements InvocationHandler {
 
 
         // call afterDelivery on the container
+        boolean exceptionThrown = false;
         try {
             container.afterDelivery(instance);
-        } catch (ResourceException e) {
-            throw e;
-        } catch (Throwable throwable) {
-            throw new ResourceException(throwable);
+        } catch (SystemException se) {
+            exceptionThrown = true;
+
+            Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            throw new ApplicationServerInternalException(throwable);
         } finally {
+            if (state == State.SYSTEM_EXCEPTION) {
+                recreateInstance(exceptionThrown);
+            }
             // we are now in the default NONE state
             state = State.NONE;
-            restoreAdapterClassLoader();
+        }
+    }
+
+    private void recreateInstance(boolean exceptionAlreadyThrown) throws UnavailableException {
+        try {
+            instance = instanceFactory.recreateInstance(instance);
+        } catch (UnavailableException e) {
+            // an error occured wile attempting to create the replacement instance
+            // this endpoint is now failed
+            state = State.RELEASED;
+
+            // if bean threw an exception, do not override that exception
+            if (!exceptionAlreadyThrown) {
+                throw e;
+            }
         }
     }
 
     public void release() {
-        if (released) return;
-        released = true;
+        if (state == State.RELEASED) return;
+        state = State.RELEASED;
 
         // notify the container
         try {
             container.release(instance);
         } finally {
-            restoreAdapterClassLoader();
+            instanceFactory.freeInstance(instance);
+            instance = null;
         }
     }
 
-    private void installAppClassLoader() {
-        Thread currentThread = Thread.currentThread();
+    private boolean isValidException(Method method, Throwable throwable) {
+        if (throwable instanceof RuntimeException || throwable instanceof Error) return true;
 
-        adapterClassLoader = currentThread.getContextClassLoader();
-        if (adapterClassLoader != deployment.getClassLoader()) {
-            currentThread.setContextClassLoader(deployment.getClassLoader());
+        Class<?>[] exceptionTypes = method.getExceptionTypes();
+        for (Class<?> exceptionType : exceptionTypes) {
+            if (exceptionType.isInstance(throwable)) {
+                return true;
+            }
         }
-    }
-
-    private void restoreAdapterClassLoader() {
-        if (adapterClassLoader != deployment.getClassLoader()) {
-            Thread.currentThread().setContextClassLoader(adapterClassLoader);
-        }
-        adapterClassLoader = null;
+        return false;
     }
 }

@@ -20,6 +20,7 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.DeploymentInfo;
 
 import javax.resource.spi.UnavailableException;
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
@@ -27,20 +28,28 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class EndpointFactory implements MessageEndpointFactory {
-    private final MdbContainer mdbContainer;
+    private final ActivationSpec activationSpec;
+    private final MdbContainer container;
     private final DeploymentInfo deploymentInfo;
+    private final MdbInstanceFactory instanceFactory;
     private final ClassLoader classLoader;
     private final Class[] interfaces;
 
-    public EndpointFactory(MdbContainer mdbContainer, DeploymentInfo mdbDeploymentInfo) {
-        this.mdbContainer = mdbContainer;
-        this.deploymentInfo = mdbDeploymentInfo;
-        this.classLoader = mdbDeploymentInfo.getClassLoader();
-        interfaces = new Class[]{mdbDeploymentInfo.getMdbInterface(), MessageEndpoint.class};
+    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, DeploymentInfo deploymentInfo, MdbInstanceFactory instanceFactory) {
+        this.activationSpec = activationSpec;
+        this.container = container;
+        this.deploymentInfo = deploymentInfo;
+        this.instanceFactory = instanceFactory;
+        classLoader = deploymentInfo.getClassLoader();
+        interfaces = new Class[]{deploymentInfo.getMdbInterface(), MessageEndpoint.class};
+    }
+
+    public ActivationSpec getActivationSpec() {
+        return activationSpec;
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
-        EndpointHandler endpointHandler = new EndpointHandler(mdbContainer, deploymentInfo, null, xaResource);
+        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, xaResource);
         MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         return messageEndpoint;
     }
