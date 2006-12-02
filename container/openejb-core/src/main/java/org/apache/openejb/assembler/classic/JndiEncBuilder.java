@@ -192,6 +192,12 @@ public class JndiEncBuilder {
         }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
+        try {
+            enc.createSubcontext("comp/env");
+            enc.lookup("env");
+        } catch (NamingException e) {
+            throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
+        }
 
         for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();

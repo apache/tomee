@@ -25,6 +25,7 @@ import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
@@ -99,7 +100,14 @@ public class JndiEncInfoBuilder {
 
         jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName));
 
+        jndi.persistenceUnitRefs.addAll(buildPersistenceUnitRefInfos(jndiConsumer));
         return jndi;
+    }
+
+    private List<PersistenceUnitInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
+        ArrayList<PersistenceUnitInfo> infos = new ArrayList<PersistenceUnitInfo>();
+        // TODO: Marshall the data over
+        return infos;
     }
 
     private List<EjbLocalReferenceInfo> buildEjbLocalRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {
