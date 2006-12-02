@@ -94,27 +94,27 @@
       <version>${pom.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-kernel</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-transaction</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-webservices</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-naming</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-timer</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>geronimo</groupId>
+          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-security</artifactId>
         </exclusion>
       </exclusions>
@@ -178,7 +178,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

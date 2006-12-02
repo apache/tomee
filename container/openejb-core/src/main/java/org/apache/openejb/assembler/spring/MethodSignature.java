@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.assembler.spring;
 
+import org.apache.openejb.util.ClassLoading;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,7 +27,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.geronimo.kernel.ClassLoading;
 
 /**
  *

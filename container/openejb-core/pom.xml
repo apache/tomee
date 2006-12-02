@@ -127,7 +127,6 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
-      <version>4.1-incubator-SNAPSHOT</version>
     </dependency>
     <!-- End ActiveMQ -->
     <dependency>
@@ -138,20 +137,25 @@
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xerces</artifactId>
-      <version>2.4.0</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
-      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
-      <version>2.0.8</version>
     </dependency>
     <!-- end castor deps -->
 
+    <dependency>
+      <groupId>org.apache.geronimo.modules</groupId>
+      <artifactId>geronimo-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.modules</groupId>
+      <artifactId>geronimo-transaction</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-ejb_3.0_spec</artifactId>
@@ -163,17 +167,14 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jaxrpc_1.1_spec</artifactId>
-      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
-      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -190,27 +191,22 @@
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-      <version>2.2.3</version>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm-commons</artifactId>
-      <version>2.2.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-interceptor</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-security</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-transaction</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
@@ -219,46 +215,22 @@
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-timer</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-naming</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-webservices</artifactId>
-      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
-      <version>2.1_3</version>
     </dependency>
     <dependency>
       <groupId>org.tranql</groupId>
       <artifactId>tranql</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-ejb_2.1_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>openejb</groupId>
-      <artifactId>xstream</artifactId>
-      <version>PATCH-300-309</version>
-    </dependency>
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3</artifactId>
-      <version>1.1.3.4.O</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -296,7 +268,6 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
-      <version>${xbeanVersion}</version>
     </dependency>
     <!-- 
      FIXME: Why should it be specified here? Shouldn't xbean download what's necessary?
