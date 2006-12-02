@@ -372,10 +372,6 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.modules</groupId>
-            <artifactId>geronimo-kernel</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.modules</groupId>
             <artifactId>geronimo-security</artifactId>
           </exclusion>
           <exclusion>
@@ -406,10 +402,6 @@
         <artifactId>geronimo-kernel</artifactId>
         <version>1.2-SNAPSHOT</version>
         <exclusions>
-          <exclusion>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -514,10 +506,6 @@
           <exclusion>
             <groupId>org.apache.geronimo.modules</groupId>
             <artifactId>geronimo-j2ee</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.modules</groupId>
-            <artifactId>geronimo-kernel</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -692,6 +680,12 @@
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
         <version>${xbeanVersion}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>mx4j</groupId>
+            <artifactId>mx4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
