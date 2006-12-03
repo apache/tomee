@@ -34,7 +34,6 @@ import org.exolab.castor.jdo.QueryResults;
 import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.exolab.castor.mapping.AccessMode;
 import org.exolab.castor.persist.spi.CallbackInterceptor;
-import org.exolab.castor.persist.spi.Complex;
 import org.exolab.castor.persist.spi.InstanceFactory;
 
 import javax.ejb.CreateException;
@@ -49,8 +48,6 @@ import javax.persistence.EntityTransaction;
 import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -114,7 +111,6 @@ public class CastorCmpEngine implements CmpEngine {
             bindTransactionManagerReference(di, transactionManagerJndiName, txReference);
 
             configureKeyGenerator(di);
-            addFindByPrimaryKeyQueries(di);
         }
 
 
@@ -180,12 +176,12 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-    public Object loadBean(ThreadContext callContext) {
+    public Object loadBean(ThreadContext callContext, Object primaryKey) {
         try {
             Database db = getDatabase(callContext);
 
-            Object primaryKey = getPrimaryKey(callContext);
-            Object bean = db.load(callContext.getDeploymentInfo().getBeanClass(), primaryKey);
+            Object castorPrimaryKey = getCastorPrimaryKey(callContext, primaryKey);
+            Object bean = db.load(callContext.getDeploymentInfo().getBeanClass(), castorPrimaryKey);
             return bean;
         } catch (org.exolab.castor.jdo.PersistenceException e) {
             throw new EJBException("Unable to load ejb (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\")", e);
@@ -198,7 +194,7 @@ public class CastorCmpEngine implements CmpEngine {
 
             if (!db.isActive()) db.begin();
 
-            Object primaryKey = getPrimaryKey(callContext);
+            Object primaryKey = getCastorPrimaryKey(callContext, callContext.getPrimaryKey());
             Object bean = db.load(callContext.getDeploymentInfo().getBeanClass(), primaryKey);
             db.remove(bean);
         } catch (org.exolab.castor.jdo.PersistenceException e) {
@@ -206,7 +202,7 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-    public List<Object> queryBeans(ThreadContext callContext, String queryString, Method callMethod, Object[] args) throws FinderException {
+    public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
         try {
             Database db = getDatabase(callContext);
 
@@ -224,21 +220,6 @@ public class CastorCmpEngine implements CmpEngine {
                 queryArgs = NO_ARGS;
             } else {
                 queryArgs = args.clone();
-            }
-            if (callMethod.getName().equals("findByPrimaryKey")) {
-
-                KeyGenerator kg = callContext.getDeploymentInfo().getKeyGenerator();
-
-                if (kg.isKeyComplex()) {
-                    /*
-                    * This code moves the fields of the primary key into a JDO Complex object
-                    * which can then be used in the database.bind operation
-                    */
-                    Complex c = kg.getJdoComplex(queryArgs[0]);
-                    queryArgs = new Object[c.size()];
-                    for (int i = 0; i < queryArgs.length; i++)
-                        queryArgs[i] = c.get(i);
-                }
             }
 
             for (int i = 0; i < queryArgs.length; i++) {
@@ -303,13 +284,13 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-    private Object getPrimaryKey(ThreadContext callContext) {
-        Object primaryKey = callContext.getPrimaryKey();
+    private Object getCastorPrimaryKey(ThreadContext callContext, Object primaryKey) {
         KeyGenerator kg = callContext.getDeploymentInfo().getKeyGenerator();
         if (kg.isKeyComplex()) {
-            primaryKey = kg.getJdoComplex(callContext.getPrimaryKey());
+            return kg.getJdoComplex(primaryKey);
+        } else {
+            return primaryKey;
         }
-        return primaryKey;
     }
 
     private Database getDatabase(ThreadContext callContext) throws PersistenceException {
@@ -385,35 +366,6 @@ public class CastorCmpEngine implements CmpEngine {
         } catch (Exception e) {
             logger.error("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
             throw new SystemException("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
-        }
-    }
-
-    private void addFindByPrimaryKeyQueries(CoreDeploymentInfo di) throws SystemException {
-        try {
-            StringBuffer findByPrimarKeyQuery = new StringBuffer("SELECT e FROM " + di.getBeanClass().getName() + " e WHERE ");
-
-            Field primaryKeyField = di.getPrimaryKeyField();
-            if (primaryKeyField != null) {
-                findByPrimarKeyQuery.append("e.").append(primaryKeyField.getName()).append(" = $1");
-            } else {
-                Field[] pkFields = di.getPrimaryKeyClass().getFields();
-                for (int i = 1; i <= pkFields.length; i++) {
-                    findByPrimarKeyQuery.append("e.").append(pkFields[i - 1].getName()).append(" = $").append(i);
-                    if ((i + 1) <= pkFields.length) findByPrimarKeyQuery.append(" AND ");
-                }
-
-            }
-
-            if (di.getHomeInterface() != null) {
-                Method findByPrimaryKeyMethod = di.getHomeInterface().getMethod("findByPrimaryKey", di.getPrimaryKeyClass());
-                di.addQuery(findByPrimaryKeyMethod, findByPrimarKeyQuery.toString());
-            }
-            if (di.getLocalHomeInterface() != null) {
-                Method findByPrimaryKeyMethod = di.getLocalHomeInterface().getMethod("findByPrimaryKey", di.getPrimaryKeyClass());
-                di.addQuery(findByPrimaryKeyMethod, findByPrimarKeyQuery.toString());
-            }
-        } catch (Exception e) {
-            throw new SystemException("Could not generate a query statement for the findByPrimaryKey method of the deployment = " + di.getDeploymentID(), e);
         }
     }
 

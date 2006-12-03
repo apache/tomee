@@ -158,6 +158,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
                     if (methodName.equals("create")) {
                         return createEJBObject(callMethod, args, callContext);
+                    } else if (methodName.equals("findByPrimaryKey")) {
+                        return findByPrimaryKey(callMethod, args, callContext);
                     } else if (methodName.startsWith("find")) {
                         return findEJBObject(callMethod, args, callContext);
                     } else {
@@ -357,7 +359,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         EntityBean bean = null;
         Object returnValue = null;
         try {
-            bean = (EntityBean) cmpEngine.loadBean(callContext);
+            bean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
 
             returnValue = runMethod.invoke(bean, args);
 
@@ -476,6 +478,35 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
     }
 
+    private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+
+        // Get the transaction policy assigned to this method
+        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
+
+        txPolicy.beforeInvoke(null, txContext);
+        try {
+            EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
+
+            // rebuild the primary key
+            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+            Object primaryKey = kg.getPrimaryKey(bean);
+
+            // Determine the proxy type
+            Class<?> callingClass = callMethod.getDeclaringClass();
+            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+
+            // create a new ProxyInfo based on the deployment info and primary key
+            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        } catch (Throwable e) {// handle reflection exception
+            txPolicy.handleSystemException(e, null, txContext);
+        } finally {
+            txPolicy.afterInvoke(null, txContext);
+        }
+        throw new AssertionError("Should not get here");
+    }
+
     private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
@@ -488,7 +519,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         txPolicy.beforeInvoke(null, txContext);
         try {
-            List<Object> results = cmpEngine.queryBeans(callContext, queryString, callMethod, args);
+            List<Object> results = cmpEngine.queryBeans(callContext, queryString, args);
 
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
 

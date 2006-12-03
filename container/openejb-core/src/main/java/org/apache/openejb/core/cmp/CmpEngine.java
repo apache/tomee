@@ -31,9 +31,9 @@ public interface CmpEngine {
 
     Object createBean(EntityBean entity, ThreadContext callContext) throws CreateException;
 
-    Object loadBean(ThreadContext callContext);
+    Object loadBean(ThreadContext callContext, Object primaryKey);
 
     void removeBean(ThreadContext callContext);
 
-    List<Object> queryBeans(ThreadContext callContext, String queryString, Method callMethod, Object[] args) throws FinderException;
+    List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException;
 }
