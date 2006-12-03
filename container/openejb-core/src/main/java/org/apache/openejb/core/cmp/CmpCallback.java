@@ -15,10 +15,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.alt.containers.castor_cmp11;
+package org.apache.openejb.core.cmp;
 
-import org.exolab.castor.jdo.JDOManager;
+import javax.ejb.EntityBean;
+import javax.ejb.RemoveException;
 
-public interface LocalCastorContainer {
-    JDOManager getLocalTxJDO();
+public interface CmpCallback {
+    void setEntityContext(EntityBean entity);
+
+    void unsetEntityContext(EntityBean entity);
+
+    void ejbActivate(EntityBean entity);
+
+    void ejbPassivate(EntityBean entity);
+
+    void ejbLoad(EntityBean entity);
+
+    void ejbStore(EntityBean entity);
+
+    void ejbRemove(EntityBean entity) throws RemoveException;
 }

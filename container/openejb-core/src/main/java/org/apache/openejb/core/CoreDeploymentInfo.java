@@ -40,7 +40,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEntityTxPolicy;
+import org.apache.openejb.core.cmp.CmpTxPolicy;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
@@ -232,7 +232,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 policy = new StatefulContainerManagedTxPolicy(policy);
             } else if (componentType == BeanType.CMP_ENTITY) {
                 policy = new TxNotSupported((TransactionContainer) container);
-                policy = new CastorCmpEntityTxPolicy(policy);
+                policy = new CmpTxPolicy(policy);
             } else {
                 policy = new TxNotSupported((TransactionContainer) container);
             }
@@ -468,7 +468,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
 
         } else if (componentType == BeanType.CMP_ENTITY) {
-            policy = new CastorCmpEntityTxPolicy(policy);
+            policy = new CmpTxPolicy(policy);
         }
         methodTransactionAttributes.put(method, byteValue);
         methodTransactionPolicies.put(method, policy);

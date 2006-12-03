@@ -50,8 +50,10 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
-                   constructor="id, transactionManager, securityService, deployments, Engine, ConnectorName"
-                   class-name="org.apache.openejb.alt.containers.castor_cmp11.CastorCMP11_EntityContainer">
+                   constructor="id, transactionManager, securityService, deployments, CmpEngineFactory, Engine, ConnectorName"
+                   class-name="org.apache.openejb.core.cmp.CmpContainer">
+
+    CmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
 
     #Engine  derby
     Engine  instantdb

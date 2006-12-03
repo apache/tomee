@@ -72,8 +72,10 @@
     </o:urls>
   </o:urlClassLoader>
 
-  <o:castorCmp11Container id="Default CMP Container" depends-on="jndiBinding">
+  <o:cmpContainer id="Default CMP Container" depends-on="jndiBinding">
     id=Default CMP Container
+
+    cmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
 
     #engine derby
     engine instantdb
@@ -85,7 +87,7 @@
     <o:registry>
       <o:addDeployments from="#deployments1" to="Default CMP Container"/>
     </o:registry>
-  </o:castorCmp11Container>
+  </o:cmpContainer>
 
   <!--
   # ==========================================================
