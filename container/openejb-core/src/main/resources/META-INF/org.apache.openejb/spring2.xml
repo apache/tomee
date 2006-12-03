@@ -75,11 +75,6 @@
   <o:castorCmp11Container id="Default CMP Container" depends-on="jndiBinding">
     id=Default CMP Container
 
-    # The default size of the method ready bean pools.
-    # Every bean class gets its own pool of this size.
-
-    poolSize 100
-
     #engine derby
     engine instantdb
 
