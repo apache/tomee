@@ -32,17 +32,17 @@ public class CmpTestSuite extends org.apache.openejb.test.TestSuite{
        
     public CmpTestSuite(){
         super();
-//        this.addTest(new CmpJndiTests());
-//        this.addTest(new CmpHomeIntfcTests());
-//        this.addTest(new CmpEjbHomeTests());
-//        this.addTest(new CmpEjbObjectTests());
-//        this.addTest(new CmpRemoteIntfcTests());
-//        this.addTest(new CmpHomeHandleTests());
-//        this.addTest(new CmpHandleTests());
-//        this.addTest(new CmpEjbMetaDataTests());
+        this.addTest(new CmpJndiTests());
+        this.addTest(new CmpHomeIntfcTests());
+        this.addTest(new CmpEjbHomeTests());
+        this.addTest(new CmpEjbObjectTests());
+        this.addTest(new CmpRemoteIntfcTests());
+        this.addTest(new CmpHomeHandleTests());
+        this.addTest(new CmpHandleTests());
+        this.addTest(new CmpEjbMetaDataTests());
         //TODO:0:this.addTest(new CmpAllowedOperationsTests());
-//        this.addTest(new CmpJndiEncTests());
-//        this.addTest(new CmpRmiIiopTests());
+        this.addTest(new CmpJndiEncTests());
+        this.addTest(new CmpRmiIiopTests());
         
     }
 

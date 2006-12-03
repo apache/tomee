@@ -44,7 +44,8 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         }
 //        org.apache.log4j.BasicConfigurator.configure();
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
-        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        //System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
         TestManager.init(null);
         TestManager.start();

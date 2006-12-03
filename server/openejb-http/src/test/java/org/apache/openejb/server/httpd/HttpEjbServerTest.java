@@ -19,6 +19,7 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
+import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 import org.apache.openejb.OpenEJB;
@@ -42,7 +43,8 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
     protected void setUp() throws Exception {
         System.setProperty("openejb.test.server", HttpEjbTestServer.class.getName());
-        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+//        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
         TestManager.init(null);
         TestManager.start();
     }
@@ -58,7 +60,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatefulTestSuite.suite());
         suite.addTest(BmpTestSuite.suite());
         // TODO: The CmpTestSuite deadlocks intellij for some reason.
-//        suite.addTest(CmpTestSuite.suite());
+        suite.addTest(CmpTestSuite.suite());
         return suite;
     }
 

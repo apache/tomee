@@ -53,6 +53,7 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient{
             ejbObject = ejbHome.findByPrimaryKey((Integer)ejbPrimaryKey);
             assertNotNull("The EJBObject is null", ejbObject);
         } catch (Exception e){
+            e.printStackTrace();
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

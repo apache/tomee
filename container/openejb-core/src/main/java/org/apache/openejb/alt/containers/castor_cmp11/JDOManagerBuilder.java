@@ -127,7 +127,7 @@ public class JDOManagerBuilder {
         transactionDemarcation.setTransactionManager(transactionManager);
         jdoConf.setTransactionDemarcation(transactionDemarcation);
 
-        JDOManager.loadConfiguration(jdoConf, null, classLoader);
+        JDOManager.loadConfiguration(jdoConf, null, classLoader, null);
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());
@@ -206,7 +206,7 @@ public class JDOManagerBuilder {
 
         jdoConf.setTransactionDemarcation(transactionDemarcation);
 
-        JDOManager.loadConfiguration(jdoConf, null, classLoader);
+        JDOManager.loadConfiguration(jdoConf, null, classLoader, null);
 
         // Construct a new JDOManager for the database
         return JDOManager.createInstance(database.getName());

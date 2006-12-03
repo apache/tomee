@@ -50,7 +50,7 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
-                   constructor="id, transactionManager, securityService, deployments, PoolSize, Engine, ConnectorName, JdbcDriver, JdbcUrl, UserName, Password"
+                   constructor="id, transactionManager, securityService, deployments, PoolSize, Engine, ConnectorName"
                    class-name="org.apache.openejb.alt.containers.castor_cmp11.CastorCMP11_EntityContainer">
 
     # The default size of the method ready bean pools.
@@ -58,26 +58,10 @@
 
     PoolSize 100
 
-    Engine  derby
+    #Engine  derby
+    Engine  instantdb
 
     ConnectorName  Default JDBC Database
-
-    # Driver class name
-
-    JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
-
-    # Url for creating connections
-
-    JdbcUrl jdbc:derby:derbyDB;create=true
-
-    # Default user name
-
-    UserName admin
-
-    # Default password
-
-    Password pass
-
   </ServiceProvider>
 
   <!--
@@ -273,15 +257,18 @@
 
     # Driver class name
 
-    JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    #JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    JdbcDriver org.enhydra.instantdb.jdbc.idbDriver
 
     # Url for creating connections
 
-    JdbcUrl jdbc:derby:derbyDB;create=true
+    #JdbcUrl jdbc:derby:derbyDB;create=true
+    JdbcUrl jdbc:idb:conf/instantdb.properties
 
     # Default user name
 
-    UserName admin
+    #UserName admin
+    UserName Admin
 
     # Default password
 

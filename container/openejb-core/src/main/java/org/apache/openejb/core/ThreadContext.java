@@ -16,12 +16,11 @@
  */
 package org.apache.openejb.core;
 
-import org.apache.openejb.util.FastThreadLocal;
 import org.apache.openejb.ClassLoaderUtil;
 
 public class ThreadContext implements Cloneable {
 
-    protected static final FastThreadLocal threadStorage = new FastThreadLocal();
+    protected static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     protected static Class implClass = ThreadContext.class;
 
     protected boolean valid = false;
@@ -61,7 +60,7 @@ public class ThreadContext implements Cloneable {
     }
 
     public static boolean isValid() {
-        ThreadContext tc = (ThreadContext) threadStorage.get();
+        ThreadContext tc = threadStorage.get();
         if (tc != null)
             return tc.valid;
         else
@@ -78,14 +77,14 @@ public class ThreadContext implements Cloneable {
     }
 
     public static void invalidate() {
-        ThreadContext tc = (ThreadContext) threadStorage.get();
+        ThreadContext tc = threadStorage.get();
         if (tc != null)
             tc.makeInvalid();
     }
 
     public static void setThreadContext(ThreadContext tc) {
         if (tc == null) {
-            tc = (ThreadContext) threadStorage.get();
+            tc = threadStorage.get();
             if (tc != null) tc.makeInvalid();
         } else {
             threadStorage.set(tc);
@@ -93,7 +92,7 @@ public class ThreadContext implements Cloneable {
     }
 
     public static ThreadContext getThreadContext() {
-        ThreadContext tc = (ThreadContext) threadStorage.get();
+        ThreadContext tc = threadStorage.get();
         if (tc == null) {
             tc = ThreadContext.newThreadContext();
             threadStorage.set(tc);

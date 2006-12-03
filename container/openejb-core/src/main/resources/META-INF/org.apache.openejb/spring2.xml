@@ -38,11 +38,17 @@
   <o:sharedLocalConnectionManager id="defaultConnectionManager"
       transactionManager="#transactionManager"/>
 
+  <!--<o:jdbcConnectionFactory id="defaultJdbcDatabase"-->
+      <!--defaultUserName="admin"-->
+      <!--defaultPassword="pass"-->
+      <!--url="jdbc:derby:derbyDB;create=true"-->
+      <!--driver="org.apache.derby.jdbc.EmbeddedDriver"/>-->
+
   <o:jdbcConnectionFactory id="defaultJdbcDatabase"
       defaultUserName="Admin"
       defaultPassword="pass"
-      url="jdbc:derby:derbyDB;create=true"
-      driver="org.apache.derby.jdbc.EmbeddedDriver"/>
+      url="jdbc:idb:conf/instantdb.properties"
+      driver="org.enhydra.instantdb.jdbc.idbDriver"/>
 
   <o:jndiBinding id="jndiBinding" context="#jndiContext">
     <property name="bindings">
@@ -74,25 +80,10 @@
 
     poolSize 100
 
-    engine derby
+    #engine derby
+    engine instantdb
 
     connectorName Default JDBC Database
-
-    # Driver class name
-
-    jdbcDriver org.apache.derby.jdbc.EmbeddedDriver
-
-    # Url for creating connections
-
-    jdbcUrl jdbc:derby:derbyDB;create=true
-
-    # Default user name
-
-    userName admin
-
-    # Default password
-
-    password pass
 
     transactionManager #transactionManager
     securityService #securityService

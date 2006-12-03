@@ -29,26 +29,25 @@ import org.apache.openejb.core.RpcContainerWrapper;
 public class CastorCmpEntityTxPolicy extends org.apache.openejb.core.transaction.TransactionPolicy {
 
     protected TransactionPolicy policy;
-    protected CastorCMP11_EntityContainer cmpContainer;
 
-    protected JDOManager jdo_ForLocalTransaction = null;
+    protected final JDOManager jdo_ForLocalTransaction;
 
     public CastorCmpEntityTxPolicy(TransactionPolicy policy) {
         this.policy = policy;
         this.container = policy.getContainer();
         this.policyType = policy.policyType;
 
-        this.cmpContainer = getCastorContainer(container);
+        LocalCastorContainer cmpContainer = getCastorContainer(container);
 
         this.jdo_ForLocalTransaction = cmpContainer.getLocalTxJDO();
     }
 
-    private CastorCMP11_EntityContainer getCastorContainer(TransactionContainer container) {
+    private LocalCastorContainer getCastorContainer(TransactionContainer container) {
         if (container instanceof RpcContainerWrapper) {
             RpcContainerWrapper wrapper = (RpcContainerWrapper) container;
             return getCastorContainer((TransactionContainer) wrapper.getContainer());
         } else {
-            return (CastorCMP11_EntityContainer) container;
+            return (LocalCastorContainer) container;
         }
     }
 

@@ -21,7 +21,6 @@ import org.exolab.castor.jdo.JDOManager;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.exolab.castor.mapping.AccessMode;
-import org.exolab.castor.mapping.MappingException;
 import org.exolab.castor.persist.spi.CallbackInterceptor;
 import org.exolab.castor.persist.spi.Complex;
 import org.exolab.castor.persist.spi.InstanceFactory;
@@ -30,6 +29,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.core.Operations;
 import org.apache.openejb.core.ThreadContext;
@@ -52,6 +52,7 @@ import javax.ejb.EntityBean;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -65,14 +66,13 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Enumeration;
-import java.util.List;
 import java.net.URL;
 import java.net.MalformedURLException;
 
 /**
  * @org.apache.xbean.XBean element="castorCmp11Container"
  */
-public class CastorCMP11_EntityContainer implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory {
+public class CastorCMP11_EntityContainer implements RpcContainer, TransactionContainer, CallbackInterceptor, InstanceFactory, LocalCastorContainer {
 
     /*
      * Bean instances that are currently in use are placed in the txReadyPoolMap indexed
@@ -145,8 +145,9 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
     private JDOManager localJdoManager;
     private JDOManager globalJdoManager;
 
-    public CastorCMP11_EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolSize, String engine, String connectorName, String jdbcDriver, String jdbcUrl, String userName, String password) throws OpenEJBException {
-        init(id, transactionManager, securityService, registry, poolSize, engine, connectorName, jdbcDriver, jdbcUrl, userName, password);
+    public CastorCMP11_EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolSize, String engine, String connectorName) throws OpenEJBException {
+        init(id, transactionManager, securityService, registry, poolSize, engine, connectorName);
+//        throw new UnsupportedOperationException("DISABLED");
 //        init(id, transactionManager, securityService, registry, poolsize, "instantdb", "Default JDBC Database", "org.enhydra.instantdb.jdbc.idbDriver", "jdbc:idb:conf/default.idb_database.conf", "Admin", "pass");
     }
 
@@ -159,10 +160,10 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
 
         int poolsize = safeProps.getPropertyAsInt(EnvProps.IM_POOL_SIZE, 100);
 
-        init(id, transactionManager, securityService, registry, poolsize, "instantdb", "java:openejb/connector/Default JDBC Database", "org.enhydra.instantdb.jdbc.idbDriver", "jdbc:idb:conf/default.idb_database.conf", "Admin", "pass");
+        init(id, transactionManager, securityService, registry, poolsize, "instantdb", "java:openejb/connector/Default JDBC Database");
     }
 
-    private void init(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolsize, String engine, String resourceName, String driverClassName, String driverUrl, String username, String password) throws OpenEJBException {
+    private void init(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int poolsize, String engine, String resourceName) throws OpenEJBException {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.containerID = id;
@@ -242,18 +243,24 @@ public class CastorCMP11_EntityContainer implements RpcContainer, TransactionCon
                 jdoManagerBuilder.addMapping(url);
             }
 
-            try {
-                globalJdoManager = jdoManagerBuilder.buildGlobalJDOManager("java:openejb/connector/"+resourceName);
-                globalJdoManager.setDatabasePooling(true);
-                globalJdoManager.setCallbackInterceptor(this);
-                globalJdoManager.setInstanceFactory(this);
-
-                localJdoManager = jdoManagerBuilder.buildLocalJDOManager(driverClassName, driverUrl, username, password);
-                localJdoManager.setCallbackInterceptor(this);
-                localJdoManager.setInstanceFactory(this);
-            } catch (MappingException e) {
-                e.printStackTrace();
+            String jdbcName = "java:openejb/connector/" + resourceName;
+            JdbcConnectionFactory connectionFactory = (JdbcConnectionFactory) new InitialContext().lookup(jdbcName);
+            if (connectionFactory == null) {
+                throw new OpenEJBException(jdbcName + " does not exist");
             }
+
+            globalJdoManager = jdoManagerBuilder.buildGlobalJDOManager(jdbcName);
+            globalJdoManager.setDatabasePooling(true);
+            globalJdoManager.setCallbackInterceptor(this);
+            globalJdoManager.setInstanceFactory(this);
+
+            localJdoManager = jdoManagerBuilder.buildLocalJDOManager(
+                    connectionFactory.getJdbcDriver(),
+                    connectionFactory.getJdbcUrl(),
+                    connectionFactory.getDefaultUserName(),
+                    connectionFactory.getDefaultPassword());
+            localJdoManager.setCallbackInterceptor(this);
+            localJdoManager.setInstanceFactory(this);
         } catch (Exception e) {
             e.printStackTrace();
             throw new OpenEJBException("Unable to construct the Castor JDOManager objects: "+e.getClass().getName()+": "+e.getMessage(), e);

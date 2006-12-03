@@ -109,8 +109,8 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void runLocalTests() {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.IvmTestServer");
-        System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.DerbyTestDatabase");
+//        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+        System.setProperty("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -122,8 +122,8 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void runRemoteTests() {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.RemoteTestServer");
-        System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.DerbyTestDatabase");
+//        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+        System.setProperty("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -135,8 +135,8 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void runRemoteHttpTests() {
         System.setProperty("openejb.test.server",
                 "org.apache.openejb.test.RemoteHttpTestServer");
-        System.setProperty("openejb.test.database",
-                "org.apache.openejb.test.DerbyTestDatabase");
+//        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+        System.setProperty("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -147,7 +147,8 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runTomcatRemoteHttpTests() {
         System.setProperty("openejb.test.server", TomcatRemoteTestServer.class.getName());
-        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+//        System.setProperty("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+        System.setProperty("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out

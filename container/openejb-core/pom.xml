@@ -114,6 +114,10 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${pom.version}</version>
@@ -130,7 +134,7 @@
     </dependency>
     <!-- End ActiveMQ -->
     <dependency>
-      <groupId>castor</groupId>
+      <groupId>org.codehaus.castor</groupId>
       <artifactId>castor</artifactId>
     </dependency>
     <!-- these are for castor, should be added to its pom.xml -->
@@ -175,10 +179,6 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -239,6 +239,11 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>idb</groupId>
+      <artifactId>idb</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
