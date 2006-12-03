@@ -23,6 +23,7 @@ import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.RpcContainerWrapper;
+import org.apache.openejb.core.CoreDeploymentInfo;
 
 import javax.persistence.EntityTransaction;
 
@@ -30,16 +31,14 @@ public class CmpTxPolicy extends org.apache.openejb.core.transaction.Transaction
 
     protected TransactionPolicy policy;
 
-    protected final CmpEngine cmpEngine;
+    protected final CmpContainer cmpContainer;
 
     public CmpTxPolicy(TransactionPolicy policy) {
         this.policy = policy;
         this.container = policy.getContainer();
         this.policyType = policy.policyType;
 
-        CmpContainer cmpContainer = getCmpContainer(container);
-
-        cmpEngine = cmpContainer.getCmpEngine();
+        cmpContainer = getCmpContainer(container);
     }
 
     private CmpContainer getCmpContainer(TransactionContainer container) {
@@ -59,6 +58,8 @@ public class CmpTxPolicy extends org.apache.openejb.core.transaction.Transaction
 
         try {
             if (context.currentTx == null) {
+                CoreDeploymentInfo deploymentInfo = context.callContext.getDeploymentInfo();
+                CmpEngine cmpEngine = cmpContainer.getCmpEngine(deploymentInfo.getDeploymentID());
                 EntityTransaction entityTransaction = cmpEngine.getTransaction();
                 entityTransaction.begin();
                 context.callContext.setUnspecified(entityTransaction);

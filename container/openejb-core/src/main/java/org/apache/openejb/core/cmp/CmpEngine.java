@@ -18,6 +18,8 @@
 package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.SystemException;
 
 import javax.persistence.EntityTransaction;
 import javax.ejb.EntityBean;
@@ -36,4 +38,6 @@ public interface CmpEngine {
     void removeBean(ThreadContext callContext);
 
     List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException;
+
+    void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException;
 }

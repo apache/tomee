@@ -20,17 +20,25 @@ package org.apache.openejb.alt.containers.castor_cmp11;
 import org.apache.openejb.core.cmp.CmpEngine;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngineFactory;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 
 import javax.transaction.TransactionManager;
 
 public class CastorCmpEngineFactory implements CmpEngineFactory {
+    private String jarPath;
     private TransactionManager transactionManager;
-    private DeploymentInfo[] deploys;
     private String engine;
     private String connectorName;
     private CmpCallback cmpCallback;
+    private ClassLoader classLoader;
+
+    public String getJarPath() {
+        return jarPath;
+    }
+
+    public void setJarPath(String jarPath) {
+        this.jarPath = jarPath;
+    }
 
     public TransactionManager getTransactionManager() {
         return transactionManager;
@@ -38,14 +46,6 @@ public class CastorCmpEngineFactory implements CmpEngineFactory {
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-    }
-
-    public DeploymentInfo[] getDeploys() {
-        return deploys;
-    }
-
-    public void setDeploymentInfos(DeploymentInfo[] deploys) {
-        this.deploys = deploys;
     }
 
     public String getEngine() {
@@ -72,7 +72,15 @@ public class CastorCmpEngineFactory implements CmpEngineFactory {
         this.cmpCallback = cmpCallback;
     }
 
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     public CmpEngine create() throws OpenEJBException {
-        return new CastorCmpEngine(cmpCallback, transactionManager, deploys, engine, connectorName);
+        return new CastorCmpEngine(jarPath, cmpCallback, transactionManager,  engine, connectorName, classLoader);
     }
 }

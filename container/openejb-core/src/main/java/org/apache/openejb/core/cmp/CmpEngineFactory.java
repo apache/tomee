@@ -17,19 +17,18 @@
  */
 package org.apache.openejb.core.cmp;
 
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 
 import javax.transaction.TransactionManager;
 
 public interface CmpEngineFactory {
+    String getJarPath();
+
+    void setJarPath(String jarPath);
+
     TransactionManager getTransactionManager();
 
     void setTransactionManager(TransactionManager transactionManager);
-
-    DeploymentInfo[] getDeploys();
-
-    void setDeploymentInfos(DeploymentInfo[] deploys);
 
     String getEngine();
 
@@ -42,6 +41,10 @@ public interface CmpEngineFactory {
     CmpCallback getCmpCallback();
 
     void setCmpCallback(CmpCallback cmpCallback);
+
+    ClassLoader getClassLoader();
+
+    void setClassLoader(ClassLoader classLoader);
 
     CmpEngine create() throws OpenEJBException;
 }

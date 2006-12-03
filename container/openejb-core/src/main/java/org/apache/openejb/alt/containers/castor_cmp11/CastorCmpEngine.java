@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.alt.containers.castor_cmp11;
 
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -62,60 +61,51 @@ import java.util.Map;
 public class CastorCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
     private static final Object[] NO_ARGS = new Object[0];
+    private static final String TRANSACTION_MANAGER_JNDI_NAME = "java:openejb/TransactionManager";
 
     private final JDOManager localJdoManager;
     private final JDOManager globalJdoManager;
     private final CmpCallback cmpCallback;
+    private final JndiTxReference txReference;
 
-    public CastorCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, DeploymentInfo[] deploys, String engine, String connectorName) throws OpenEJBException {
+    public CastorCmpEngine(String jarPath, CmpCallback cmpCallback, TransactionManager transactionManager, String engine, String connectorName, ClassLoader classLoader) throws OpenEJBException {
         this.cmpCallback = cmpCallback;
-        String transactionManagerJndiName = "java:openejb/TransactionManager";
+
+        txReference = new JndiTxReference(transactionManager);
 
         Map<String, URL> mappings = new HashMap<String, URL>();
-        JndiTxReference txReference = new JndiTxReference(transactionManager);
-        for (DeploymentInfo deploymentInfo : deploys) {
-            CoreDeploymentInfo di = (CoreDeploymentInfo) deploymentInfo;
-
-            if (di.getJarPath() == null) {
-                // DMB: This may pull in more than we like
-                try {
-                    ClassLoader classLoader = di.getBeanClass().getClassLoader();
-                    Enumeration<URL> resources = classLoader.getResources("META-INF/cmp.mapping.xml");
-                    while (resources.hasMoreElements()) {
-                        URL url = resources.nextElement();
-                        mappings.put(url.toExternalForm(), url);
-                    }
-                } catch (IOException e) {
-                    throw new OpenEJBException("Error locating mapping file via classloader for deployment " + di.getDeploymentID(), e);
-                }
-            } else {
-                URL url = null;
-                try {
-                    String jarPath = di.getJarPath();
-                    File file = new File(jarPath);
-
-                    if (file.isDirectory()) {
-                        file = new File(file, "META-INF");
-                        file = new File(file, "cmp.mapping.xml");
-                        url = file.toURL();
-                    } else {
-                        url = file.toURL();
-                        url = new URL("jar:" + url.toExternalForm() + "!/META-INF/cmp.mapping.xml");
-                    }
+        if (jarPath == null) {
+            // DMB: This may pull in more than we like
+            try {
+                Enumeration<URL> resources = classLoader.getResources("META-INF/cmp.mapping.xml");
+                while (resources.hasMoreElements()) {
+                    URL url = resources.nextElement();
                     mappings.put(url.toExternalForm(), url);
-                } catch (MalformedURLException e) {
-                    throw new OpenEJBException("Error locating mapping file " + url + " for deployment " + di.getDeploymentID(), e);
                 }
+            } catch (IOException e) {
+                throw new OpenEJBException("Error locating mapping file via classloader", e);
             }
+        } else {
+            URL url = null;
+            try {
+                File file = new File(jarPath);
 
-            bindTransactionManagerReference(di, transactionManagerJndiName, txReference);
-
-            configureKeyGenerator(di);
+                if (file.isDirectory()) {
+                    file = new File(file, "META-INF");
+                    file = new File(file, "cmp.mapping.xml");
+                    url = file.toURL();
+                } else {
+                    url = file.toURL();
+                    url = new URL("jar:" + url.toExternalForm() + "!/META-INF/cmp.mapping.xml");
+                }
+                mappings.put(url.toExternalForm(), url);
+            } catch (MalformedURLException e) {
+                throw new OpenEJBException("Error locating mapping file " + url, e);
+            }
         }
 
-
         try {
-            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, transactionManagerJndiName, new JoinedClassLoader(deploys));
+            JDOManagerBuilder jdoManagerBuilder = new JDOManagerBuilder(engine, TRANSACTION_MANAGER_JNDI_NAME, classLoader);
 
             Collection<URL> urls = mappings.values();
             for (Iterator<URL> iterator = urls.iterator(); iterator.hasNext();) {
@@ -142,6 +132,11 @@ public class CastorCmpEngine implements CmpEngine {
             e.printStackTrace();
             throw new OpenEJBException("Unable to construct the Castor JDOManager objects: " + e.getClass().getName() + ": " + e.getMessage(), e);
         }
+    }
+
+    public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
+        bindTransactionManagerReference(deploymentInfo);
+        configureKeyGenerator(deploymentInfo);
     }
 
     public EntityTransaction getTransaction() {
@@ -321,26 +316,6 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-
-    private static class JoinedClassLoader extends ClassLoader {
-        private final DeploymentInfo[] deploymentInfos;
-
-        public JoinedClassLoader(DeploymentInfo[] deploymentInfos) {
-            this.deploymentInfos = deploymentInfos;
-        }
-
-        protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-            for (DeploymentInfo info : deploymentInfos) {
-                try {
-                    ClassLoader classLoader = info.getBeanClass().getClassLoader();
-                    return classLoader.loadClass(name);
-                } catch (ClassNotFoundException keepTrying) {
-                }
-            }
-            throw new ClassNotFoundException(name);
-        }
-    }
-
     /**
      * Castor JDO obtains a reference to the TransactionManager throught the InitialContext.
      * The new InitialContext will use the deployment's JNDI Context, which is normal inside
@@ -350,12 +325,12 @@ public class CastorCmpEngine implements CmpEngine {
      * space based every time the container starts. It nearly impossible for the bean to anticipate
      * and use the binding directly.  It may be possible, however, to locate it using a Context listing method.
      */
-    private void bindTransactionManagerReference(CoreDeploymentInfo di, String transactionManagerJndiName, JndiTxReference txReference) throws SystemException {
+    private void bindTransactionManagerReference(CoreDeploymentInfo deploymentInfo) throws SystemException {
         try {
-            di.getJndiEnc().bind(transactionManagerJndiName, txReference);
+            deploymentInfo.getJndiEnc().bind(TRANSACTION_MANAGER_JNDI_NAME, txReference);
         } catch (Exception e) {
-            logger.error("Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e);
-            throw new SystemException("Unable to bind TransactionManager to deployment id = " + di.getDeploymentID() + " using JNDI name = \"" + transactionManagerJndiName + "\"", e);
+            logger.error("Unable to bind TransactionManager to deployment id = " + deploymentInfo.getDeploymentID() + " using JNDI name = \"" + TRANSACTION_MANAGER_JNDI_NAME + "\"", e);
+            throw new SystemException("Unable to bind TransactionManager to deployment id = " + deploymentInfo.getDeploymentID() + " using JNDI name = \"" + TRANSACTION_MANAGER_JNDI_NAME + "\"", e);
         }
     }
 
