@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -273,8 +274,11 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
     public void lookupResource() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                Object obj = ctx.lookup("java:comp/env/datasource");
+                Assert.assertNotNull("The DataSource is null", obj);
+                Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
