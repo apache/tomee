@@ -21,8 +21,9 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 /**
- * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
+ * 
+ * @version $Rev$ $Date$
  */
 public class TestManager {
     
@@ -62,13 +63,17 @@ public class TestManager {
     
     public static void start() throws Exception{
         try{
-            server.start();
+            if (server != null) {
+                server.start();
+            }
         } catch (Exception e){
             if (warn) System.out.println("Cannot start the test server: "+e.getClass().getName()+" "+e.getMessage());
             throw e;
         }
         try{
-            database.start();
+            if (database != null) {
+                database.start();
+            }
         } catch (Exception e){
             if (warn) System.out.println("Cannot start the test database: "+e.getClass().getName()+" "+e.getMessage());
             throw e;
@@ -77,13 +82,17 @@ public class TestManager {
 
     public static void stop() throws Exception{
         try{
-            server.stop();
+            if (server != null) {
+                server.stop();
+            }
         } catch (Exception e){
-            if (warn) System.out.println("Cannot stop the test server: "+e.getClass().getName()+" "+e.getMessage());
+            if (warn) System.out.println("Cannot stop the test server 2: "+e.getClass().getName()+" "+e.getMessage());
             throw e;
         }
         try{
-            database.stop();
+            if (database != null) {
+                database.stop();
+            }
         } catch (Exception e){
             if (warn) System.out.println("Cannot stop the test database: "+e.getClass().getName()+" "+e.getMessage());
             throw e;
@@ -112,7 +121,7 @@ public class TestManager {
             String className = props.getProperty("openejb.test.server");
             if (className == null) throw new IllegalArgumentException("Must specify a test server by setting its class name using the system property \"openejb.test.server\"");
             ClassLoader cl = getContextClassLoader();
-            Class testServerClass = Class.forName( className, true, cl );
+            Class<?> testServerClass = Class.forName( className, true, cl );
             server = (TestServer)testServerClass.newInstance();
             server.init( props );
         } catch (Exception e){
@@ -127,7 +136,7 @@ public class TestManager {
             String className = props.getProperty("openejb.test.database");
             if (className == null) throw new IllegalArgumentException("Must specify a test database by setting its class name  using the system property \"openejb.test.database\"");
             ClassLoader cl = getContextClassLoader();
-            Class testDatabaseClass = Class.forName( className , true, cl);
+            Class<?> testDatabaseClass = Class.forName( className , true, cl);
             database = (TestDatabase)testDatabaseClass.newInstance();
             database.init( props );
         } catch (Exception e){

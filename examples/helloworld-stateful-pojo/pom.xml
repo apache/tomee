@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev$ $Date$ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -23,7 +26,7 @@
   <artifactId>simple-app</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: HelloWorld Stateful Pojo</name>
+  <name>OpenEJB :: Examples :: HelloWorld Stateful POJO</name>
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -32,6 +35,13 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- argLine>-agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine -->
         </configuration>
       </plugin>
     </plugins>

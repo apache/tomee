@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +17,6 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.Application;
 import org.apache.openejb.util.JarUtils;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
@@ -43,13 +41,16 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class JaxbUnmarshaller {
 
     private final File xmlFile;
 
     private javax.xml.bind.Unmarshaller unmarshaller;
 
-    public JaxbUnmarshaller(Class type, String xmlFileName) throws OpenEJBException {
+    public JaxbUnmarshaller(Class<?> type, String xmlFileName) throws OpenEJBException {
         this.xmlFile = new File(xmlFileName);
         try {
             JAXBContext ctx = JAXBContext.newInstance(type);
@@ -59,12 +60,12 @@ public class JaxbUnmarshaller {
         }
     }
 
-    public static Object unmarshal(Class clazz, String xmlFile, String jarLocation) throws OpenEJBException {
+    public static Object unmarshal(Class<?> clazz, String xmlFile, String jarLocation) throws OpenEJBException {
         return new JaxbUnmarshaller(clazz, xmlFile).unmarshal(jarLocation);
     }
 
 
-    public static Object unmarshal(Class clazz, String xmlFile) throws OpenEJBException {
+    public static Object unmarshal(Class<?> clazz, String xmlFile) throws OpenEJBException {
         try {
             if (xmlFile.startsWith("jar:")) {
                 URL url = new URL(xmlFile);
@@ -132,18 +133,18 @@ public class JaxbUnmarshaller {
     }
 
     public Object unmarshalFromDirectory(File directory) throws OpenEJBException {
-        String file = xmlFile.getName();
+        String file = xmlFile.getPath();
 
         Reader reader = null;
         InputStream stream = null;
 
         try {
-            File fullPath = new File(directory, xmlFile.getPath());
+            File fullPath = new File(directory, file);
             stream = new FileInputStream(fullPath);
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, directory.getPath());
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", xmlFile.getPath(), directory.getPath()), e);
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, directory.getPath()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
@@ -155,25 +156,23 @@ public class JaxbUnmarshaller {
     }
 
     public Object unmarshal(URL url) throws OpenEJBException {
-        String file = xmlFile.getName();
+        String fileName = xmlFile.getName();
 
         Reader reader = null;
         InputStream stream = null;
 
         try {
-            URL fullURL;
-            if (!url.toExternalForm().endsWith(xmlFile.getPath())) {
-                fullURL = new URL(url, xmlFile.getPath());
-            } else {
-                fullURL = url;
+            URL fullURL = url;
+            if (!url.toExternalForm().endsWith(fileName)) {
+                fullURL = new URL(url, fileName);
             }
             stream = fullURL.openConnection().getInputStream();
             reader = new InputStreamReader(stream);
-            return unmarshalObject(reader, file, fullURL.getPath());
+            return unmarshalObject(reader, fileName, fullURL.getPath());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, url.getPath()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", fileName, url.getPath()));
         } catch (IOException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, url.getPath(), e.getLocalizedMessage()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", fileName, url.getPath(), e.getLocalizedMessage()));
         } finally {
             try {
                 if (stream != null) stream.close();
@@ -203,7 +202,7 @@ public class JaxbUnmarshaller {
 
             Object object = unmarshaller.unmarshal(source);
             if (object instanceof JAXBElement) {
-                JAXBElement element = (JAXBElement) object;
+                JAXBElement<?> element = (JAXBElement) object;
                 object = element.getValue();
             }
             return object;

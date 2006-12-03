@@ -44,7 +44,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <!--argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</argLine-->
+          <!-- argLine>-agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine -->
           <systemProperties>
             <property>
               <name>openejb.home</name>

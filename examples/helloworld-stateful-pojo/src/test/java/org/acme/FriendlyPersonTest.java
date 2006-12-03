@@ -24,8 +24,9 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
+ * 
+ * @version $Rev$ $Date$
  */
 public class FriendlyPersonTest extends TestCase {
     private InitialContext initialContext;

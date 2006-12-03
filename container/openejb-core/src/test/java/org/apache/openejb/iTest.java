@@ -47,6 +47,12 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         //System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
+        
+        // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
+        // Derby creates derby.log file in derby.system.home
+        // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
+        System.setProperty("derby.system.home", "target");
+
         TestManager.init(null);
         TestManager.start();
     }

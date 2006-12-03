@@ -60,7 +60,7 @@ import java.util.jar.Attributes;
  */
 public class DeploymentLoader {
 
-    private static final Map<Class, JaxbUnmarshaller> unmarshallers = new HashMap();
+    private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap();
 
 	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
 	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
@@ -304,10 +304,6 @@ public class DeploymentLoader {
         }
 
         try {
-
-
-
-
             List<URL> extraLibs = new ArrayList();
 
             try {
