@@ -39,6 +39,10 @@ public final class OpenEJB {
         return SystemInstance.get().getComponent(ApplicationServer.class);
     }
 
+    public static TransactionManager getTransactionManager(){
+        return SystemInstance.get().getComponent(TransactionManager.class);
+    }
+    
     public static class Instance {
         private static Messages messages = new Messages("org.apache.openejb.util.resources");
 
