@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.openejb.client;
+package org.openejb;
 
 import org.apache.openejb.spi.ApplicationServer;
 
