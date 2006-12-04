@@ -99,10 +99,6 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-transaction</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-webservices</artifactId>
         </exclusion>
         <exclusion>
