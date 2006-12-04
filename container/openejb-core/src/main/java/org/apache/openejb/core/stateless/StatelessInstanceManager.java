@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateless;
 import org.apache.log4j.Category;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
+import org.apache.xbean.recipe.Option;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -85,7 +86,9 @@ public class StatelessInstanceManager {
 
             Class beanClass = callContext.getDeploymentInfo().getBeanClass();
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
-
+            objectRecipe.allow(Option.FIELD_INJECTION);
+            objectRecipe.allow(Option.PRIVATE_PROPERTIES);
+            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             byte originalOperation = callContext.getCurrentOperation();
             try {
 

@@ -29,6 +29,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
+import org.apache.xbean.recipe.Option;
 
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
@@ -102,6 +103,10 @@ public class StatefulInstanceManager {
 
         try {
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
+            objectRecipe.allow(Option.FIELD_INJECTION);
+            objectRecipe.allow(Option.PRIVATE_PROPERTIES);
+            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            
             objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
             bean = objectRecipe.create();
         } catch (Throwable callbackException) {
