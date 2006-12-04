@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
+public class InjectableInfo extends InfoObject {
+    public final List<InjectionInfo> targets = new ArrayList<InjectionInfo>();
 }

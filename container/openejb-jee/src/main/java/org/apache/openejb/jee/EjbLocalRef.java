@@ -62,7 +62,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class EjbLocalRef {
+public class EjbLocalRef implements Injectable {
 
     @XmlElement(required = true)
     protected List<Text> description;

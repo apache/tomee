@@ -40,5 +40,6 @@ public interface ResponseCodes {
     public static final int EJB_OK_FOUND_ENUMERATION = 20;
     public static final int JNDI_BUSINESS_OBJECT = 21;
     public static final int JNDI_DATA_SOURCE = 22;
+    public static final int JNDI_INJECTIONS = 23;
 }
 

@@ -71,7 +71,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class PersistenceContextRef {
+public class PersistenceContextRef implements Injectable {
 
     @XmlElement(required = true)
     protected List<Text> description;

@@ -14,12 +14,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.client;
+
+import java.io.Externalizable;
+import java.io.ObjectInput;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
+public class InjectionMetaData implements Externalizable {
+
+    private final List<Injection> injections = new ArrayList<Injection>();
+
+
+    public List<Injection> getInjections() {
+        return injections;
+    }
+
+    public void addInjection(String target, String name, String jndiName){
+        injections.add(new Injection(target, name, jndiName));
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+    }
+
 }

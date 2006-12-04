@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NameNotFoundException;
@@ -25,6 +26,7 @@ import javax.naming.NamingException;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.Injection;
 import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -39,6 +41,7 @@ import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.RequestMethods;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.DataSourceMetaData;
+import org.apache.openejb.client.InjectionMetaData;
 
 class JndiRequestHandler implements ResponseCodes, RequestMethods {
     private final EjbDaemon daemon;
@@ -73,6 +76,16 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                     ctx = (Context) ctx.lookup("env");
                     name = name.replaceFirst("comp/env/","");
                     object = ctx.lookup(name);
+                } else if (name.equals("comp/injections")){
+                    List<Injection> injections = (List<Injection>) moduleContext.lookup(name);
+                    InjectionMetaData metaData = new InjectionMetaData();
+                    for (Injection injection : injections) {
+                        metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
+                    }
+                    res.setResponseCode(JNDI_DATA_SOURCE);
+                    res.setResult(metaData);
+                    res.writeExternal(out);
+                    return;
                 } else {
                     object = moduleContext.lookup(name);
                 }

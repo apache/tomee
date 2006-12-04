@@ -195,6 +195,9 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             case JNDI_OK:
                 return res.getResult();
 
+            case JNDI_INJECTIONS:
+                return res.getResult();
+
             case JNDI_CONTEXT:
                 JNDIContext subCtx = new JNDIContext(this);
                 if (!name.endsWith("/")) name += '/';

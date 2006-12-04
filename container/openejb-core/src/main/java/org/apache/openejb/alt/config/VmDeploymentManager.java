@@ -331,6 +331,10 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private void undeploy(Map<TargetModuleID, Properties> moduleIdList) {
+        if (System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE")) {
+            return;
+        }
+        
         for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<TargetModuleID, Properties> entry = iterator.next();
             TargetModuleID module = entry.getKey();

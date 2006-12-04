@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public class EjbLocalReferenceInfo extends InfoObject {
+public class EjbLocalReferenceInfo extends InjectableInfo {
 
     public String referenceName;
     public String homeType;

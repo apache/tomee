@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.jee;
+
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
+public interface Injectable {
+    public List<InjectionTarget> getInjectionTarget();
 }

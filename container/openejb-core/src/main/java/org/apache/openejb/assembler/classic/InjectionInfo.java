@@ -19,7 +19,7 @@ package org.apache.openejb.assembler.classic;
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
+public class InjectionInfo extends InfoObject {
+    public String propertyName;
+    public String className;
 }

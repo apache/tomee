@@ -26,11 +26,14 @@ import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.Injectable;
+import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -141,6 +144,8 @@ public class JndiEncInfoBuilder {
                 throw new OpenEJBException(msg);
             }
             info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
+
+            info.targets.addAll(buildInjectionInfos(ejb));
             infos.add(info);
         }
         return infos;
@@ -177,6 +182,8 @@ public class JndiEncInfoBuilder {
                 throw new OpenEJBException(msg);
             }
             info.location.ejbDeploymentId = otherBean.ejbDeploymentId;
+
+            info.targets.addAll(buildInjectionInfos(ejb));
             infos.add(info);
         }
         return infos;
@@ -191,6 +198,7 @@ public class JndiEncInfoBuilder {
             info.referenceName = res.getResRefName();
             info.referenceType = res.getResType();
             info.resourceID = res.getResLink();
+            info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
         }
         return infos;
@@ -204,9 +212,21 @@ public class JndiEncInfoBuilder {
             info.name = env.getEnvEntryName();
             info.type = env.getEnvEntryType();
             info.value = env.getEnvEntryValue();
-
+            info.targets.addAll(buildInjectionInfos(env));
             infos.add(info);
         }
         return infos;
     }
+
+    private Collection<? extends InjectionInfo> buildInjectionInfos(Injectable injectable) {
+        ArrayList<InjectionInfo> infos = new ArrayList<InjectionInfo>();
+        for (InjectionTarget target : injectable.getInjectionTarget()) {
+            InjectionInfo info = new InjectionInfo();
+            info.className = target.getInjectionTargetClass();
+            info.propertyName = target.getInjectionTargetName();
+            infos.add(info);
+        }
+        return infos;
+    }
+
 }

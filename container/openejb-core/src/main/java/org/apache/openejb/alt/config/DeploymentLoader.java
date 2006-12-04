@@ -338,10 +338,10 @@ public class DeploymentLoader {
                 for (Module module : application.getModule()) {
                     try {
                         if (module.getEjb() != null) {
-                            URL url = finder.find(module.getEjb());
+                            URL url = finder.find(module.getEjb().trim());
                             ejbModules.put(module.getEjb(), url);
                         } else if (module.getJava() != null) {
-                            URL url = finder.find(module.getJava());
+                            URL url = finder.find(module.getJava().trim());
                             clientModules.put(module.getConnector(), url);
                         }
                     } catch (IOException e) {

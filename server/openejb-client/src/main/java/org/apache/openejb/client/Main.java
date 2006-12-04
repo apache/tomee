@@ -17,12 +17,16 @@
 package org.apache.openejb.client;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @version $Rev$ $Date$
@@ -46,6 +50,21 @@ public class Main {
         String mainClassName = (String) initialContext.lookup("java:comp/mainClass");
 
         Class mainClass = classLoader.loadClass(mainClassName);
+
+        InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:comp/injections");
+        for (Injection injection : injectionMetaData.getInjections()) {
+            try {
+                Object value = initialContext.lookup("java:comp/env/" + injection.getJndiName());
+                Class target = classLoader.loadClass(injection.getTargetClass());
+                Field field = target.getDeclaredField(injection.getName());
+                setAccessible(field);
+                field.set(null, value);
+            } catch (Throwable e) {
+                System.err.println("Injection FAILED: class="+injection.getTargetClass()+", name="+injection.getName()+", jndi-ref="+injection.getJndiName());
+                e.printStackTrace();
+            }
+        }
+
         Method mainMethod = mainClass.getMethod("main", args.getClass());
         mainMethod.invoke(null, new Object[]{args});
 
@@ -65,6 +84,16 @@ public class Main {
         }
         return (String[]) argsList.toArray(new String[argsList.size()]);
     }
+
+
+    private static void setAccessible(final Field field) {
+         AccessController.doPrivileged(new PrivilegedAction() {
+             public Object run() {
+                 field.setAccessible(true);
+                 return null;
+             }
+         });
+     }
 
 
 }

@@ -32,6 +32,10 @@ import org.apache.openejb.jee.MethodTransaction;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -50,8 +54,11 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.MessageDriven;
+import javax.ejb.EJB;
+import javax.ejb.EJBHome;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -160,6 +167,17 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+            ClassLoader classLoader = clientModule.getClassLoader();
+            Class clazz = null;
+            try {
+                clazz = classLoader.loadClass(clientModule.getMainClass());
+            } catch (ClassNotFoundException e) {
+                throw new OpenEJBException("Unable to load Client main-class: "+clientModule.getMainClass(), e);
+            }
+            ApplicationClient client = clientModule.getApplicationClient();
+
+            buildAnnotatedRefs(clazz, client);
+
             return clientModule;
         }
 
@@ -182,7 +200,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     TransactionManagement tx = (TransactionManagement) clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
                     if(tx != null){
-                    	transactionType = tx.value();
+                        transactionType = tx.value();
                     }
                     switch(transactionType){
                         case BEAN: bean.setTransactionType(TransactionType.BEAN); break;
@@ -354,9 +372,78 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                buildAnnotatedRefs(clazz, bean);
 
             }
             return ejbModule;
+        }
+
+        private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) {
+            ClassFinder finder = new ClassFinder(clazz);
+
+            for (Field field : finder.findAnnotatedFields(EJB.class)) {
+                EJB ejb = field.getAnnotation(EJB.class);
+
+                Member member = new FieldMember(field);
+
+                EjbRef ejbRef = buildEjbRef(member, ejb);
+
+                consumer.getEjbRef().add(ejbRef);
+            }
+
+            for (Method method : finder.findAnnotatedMethods(EJB.class)) {
+                EJB ejb = method.getAnnotation(EJB.class);
+
+                Member member = new MethodMember(method);
+
+                EjbRef ejbRef = buildEjbRef(member, ejb);
+
+                consumer.getEjbRef().add(ejbRef);
+            }
+        }
+
+        private EjbRef buildEjbRef(Member member, EJB ejb) {
+            EjbRef ejbRef = new EjbRef();
+
+            // Set the member name where this will be injected
+            InjectionTarget target = new InjectionTarget();
+            target.setInjectionTargetClass(member.getDeclaringClass().getName());
+            target.setInjectionTargetName(member.getName());
+            ejbRef.getInjectionTarget().add(target);
+
+            Class interfce = ejb.beanInterface();
+            if (interfce == null){
+                interfce = member.getType();
+            }
+
+            // Get the home and remote interfaces
+            if (EJBHome.class.isAssignableFrom(interfce)){
+                ejbRef.setHome(interfce.getName());
+                Method[] methods = interfce.getMethods();
+                for (Method method : methods) {
+                    if (method.getName().startsWith("create")){
+                        ejbRef.setRemote(method.getReturnType().getName());
+                        break;
+                    }
+                }
+            } else {
+                // Must be a business interface ref
+                ejbRef.setRemote(interfce.getName());
+            }
+
+            // Get the ejb-ref-name
+            String refName = ejb.name();
+            if (refName == null){
+                refName = member.getDeclaringClass().getName() +"/"+ member.getName();
+            }
+            ejbRef.setEjbRefName(refName);
+
+            // Set the ejb-link, if any
+            ejbRef.setEjbLink(ejb.beanName());
+
+            // Set the mappedName, if any
+            ejbRef.setMappedName(ejb.mappedName());
+            return ejbRef;
         }
 
         private List<Class> copy(List<Class> classes) {
@@ -385,6 +472,68 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return list.get(0);
             }
             return null;
+        }
+    }
+
+    public static interface Member {
+        Class getDeclaringClass();
+        String getName();
+        Class getType();
+    }
+
+    public static class MethodMember implements Member {
+        private final Method setter;
+
+        public MethodMember(Method method) {
+            this.setter = method;
+        }
+
+        public Class getType() {
+            return setter.getParameterTypes()[0];
+        }
+
+        public Class getDeclaringClass() {
+            return setter.getDeclaringClass();
+        }
+
+        public String getName() {
+            StringBuilder name = new StringBuilder(setter.getName());
+
+            // remove 'set'
+            name.delete(0, 2);
+
+            // lowercase first char
+            name.setCharAt(0, Character.toLowerCase(name.charAt(0)));
+
+            return name.toString();
+        }
+
+        public String toString() {
+            return setter.toString();
+        }
+    }
+
+    public static class FieldMember implements Member {
+        private final Field field;
+
+        public FieldMember(Field field) {
+            this.field = field;
+        }
+
+        public Class getType() {
+            return field.getType();
+        }
+
+        public String toString() {
+            return field.toString();
+        }
+
+        public Class getDeclaringClass() {
+            return field.getDeclaringClass();
+        }
+
+        public String getName() {
+            return field.getName();
         }
     }
 

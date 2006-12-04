@@ -14,12 +14,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.client;
 
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
+public class Injection {
+    private final String targetClass;
+    private final String name;
+    private final String jndiName;
+
+    public Injection(String targetClass, String name, String jndiName) {
+        this.jndiName = jndiName;
+        this.name = name;
+        this.targetClass = targetClass;
+    }
+
+    public String getJndiName() {
+        return jndiName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTargetClass() {
+        return targetClass;
+    }
 }

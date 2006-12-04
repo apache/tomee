@@ -70,7 +70,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class ResourceRef {
+public class ResourceRef implements Injectable {
 
     @XmlElement(required = true)
     protected List<Text> description;

@@ -56,7 +56,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class ServiceRef {
+public class ServiceRef implements Injectable {
 
     @XmlElement(required = true)
     protected List<Text> description;

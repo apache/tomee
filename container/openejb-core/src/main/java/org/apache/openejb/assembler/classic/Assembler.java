@@ -20,6 +20,7 @@ import org.apache.openejb.EnvProps;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.Injection;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -27,6 +28,7 @@ import org.apache.openejb.core.TransactionManagerWrapper;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 
@@ -44,6 +46,8 @@ import java.net.URLClassLoader;
 import java.io.File;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
+
+    public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
 
     private org.apache.openejb.core.ContainerSystem containerSystem;
     private TransactionManager transactionManager;
@@ -246,6 +250,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (clientInfo.mainClass != null) {
                     containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/mainClass", clientInfo.mainClass);
                 }
+                ArrayList<Injection> injections = new ArrayList<Injection>();
+                JndiEncInfo jndiEnc = clientInfo.jndiEnc;
+                for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
+                    for (InjectionInfo target : info.targets) {
+                        try {
+                            Class targetClass = classLoader.loadClass(target.className);
+                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                            injections.add(injection);
+                        } catch (ClassNotFoundException e) {
+                            logger.error("Injection Target invalid: class="+target.className+", name="+target.propertyName+".  Exception: "+e.getMessage(), e);
+                        }
+                    }
+                }
+                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/injections", injections);
             }
         }
 
