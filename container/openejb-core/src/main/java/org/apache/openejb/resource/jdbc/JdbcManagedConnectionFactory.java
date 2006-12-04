@@ -96,6 +96,8 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
         } else if (driver.equals("org.apache.derby.jdbc.EmbeddedDriver")) {
             factory = new DerbySystemHomeHack(factory);
             factory = new ManagedConnectionFactoryPathHack(factory);
+        } else if (driver.equals("org.hsqldb.jdbcDriver")) {
+            factory = new ManagedConnectionFactoryPathHack(factory);
         }
 
         JdbcConnectionRequestInfo info = new JdbcConnectionRequestInfo(defaultUserName, defaultPassword, driver, url);
