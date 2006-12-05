@@ -237,6 +237,17 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>apache-incubating-repository</id>
+      <name>Apache Incubating Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <!--<repository>-->
       <!--<id>apache-m1-snapshot</id>-->
       <!--<name>Apache Repository</name>-->
@@ -695,6 +706,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
         <version>1.0.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.openjpa</groupId>
+          <artifactId>openjpa-persistence-jdbc</artifactId>
+          <version>0.9.6-incubating</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>

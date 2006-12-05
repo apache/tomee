@@ -78,7 +78,8 @@
   <o:cmpContainer id="Default CMP Container" depends-on="jndiBinding">
     id=Default CMP Container
 
-    cmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
+    #cmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
+    cmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
 
     #engine derby
     engine instantdb
@@ -265,8 +266,7 @@
               transactionManager="#transactionManager" assembly="#assembly" reentrant="false"
               pkClass="java.lang.Integer" primKeyField="primaryKey">
             <o:queries>
-              <o:query method="findByLastName(java.lang.String)">SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean
-                o WHERE o.lastName = $1</o:query>
+              <o:query method="findByLastName(java.lang.String)">SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1</o:query>
             </o:queries>
             <o:jndiContext>
               <o:enc>
@@ -620,16 +620,16 @@
     <o:transaction transAttribute="Supports">
       <o:method deploymentId="client/tests/stateless/BasicStatelessHome"/>
     </o:transaction>
-    <o:transaction transAttribute="Supports">
+    <o:transaction transAttribute="Required">
       <o:method deploymentId="client/tests/entity/cmp/BasicCmpHome"/>
     </o:transaction>
-    <o:transaction transAttribute="Supports">
+    <o:transaction transAttribute="Required">
       <o:method deploymentId="client/tests/entity/cmp/allowed_operations/EntityHome"/>
     </o:transaction>
-    <o:transaction transAttribute="Supports">
+    <o:transaction transAttribute="Required">
       <o:method deploymentId="client/tests/entity/cmp/EncBean"/>
     </o:transaction>
-    <o:transaction transAttribute="Never">
+    <o:transaction transAttribute="Required">
       <o:method deploymentId="client/tests/entity/cmp/RMI-over-IIOP/EJBHome"/>
     </o:transaction>
     <o:transaction transAttribute="Supports">

@@ -16,7 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   <!--<persistence-unit name="TestUnit">-->
     <!--<description>-->
       <!--This is just a description-->
@@ -38,8 +38,8 @@
   <persistence-unit transaction-type="RESOURCE_LOCAL" name="openjpa-test-unit">
 
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-    <class>org.apache.openejb.persistence.AllFieldTypes</class>
     <non-jta-data-source>jdbc/MyDataSource</non-jta-data-source>
+    <class>org.apache.openejb.persistence.AllFieldTypes</class>
 
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings"

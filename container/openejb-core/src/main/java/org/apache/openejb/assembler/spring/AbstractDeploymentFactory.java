@@ -195,7 +195,21 @@ public abstract class AbstractDeploymentFactory implements FactoryBean {
         if (path.startsWith("jar:")){
             path = path.replaceFirst("^jar:","");
             path = path.replaceFirst("!.*","");
+        } else {
+            try {
+                URI uri = new URI(path);
+                File file = new File(uri).getParentFile();
+                for (byte b : name.getBytes()) {
+                    if (b == '/') {
+                        file = file.getParentFile();
+                    }
+                }
+                return file.getAbsolutePath();
+            } catch (URISyntaxException e) {
+                return null;
+            }
         }
+
         try {
             URI uri = new URI(path);
             File file = new File(uri);

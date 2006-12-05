@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+  <persistence-unit transaction-type="JTA" name="CMP">
+    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+    <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
+    <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
+  </persistence-unit>
+</persistence>

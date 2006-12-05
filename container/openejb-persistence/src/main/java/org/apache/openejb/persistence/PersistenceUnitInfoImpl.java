@@ -55,19 +55,19 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     
     private ClassLoader tempClassLoader = null;
 
-    void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
+    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
         this.excludeUnlistedClasses = excludeUnlistedClasses;
     }
 
-    void setProperties(Properties vendorProperties) {
+    public void setProperties(Properties vendorProperties) {
         this.vendorProperties = vendorProperties;
     }
 
-    void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
-    void setJarFileUrls(List<String> jarFiles) throws MalformedURLException {
+    public void setJarFileUrls(List<String> jarFiles) throws MalformedURLException {
         if (jarFileUrls == null) {
             jarFileUrls = new ArrayList<URL>();
         }
@@ -77,26 +77,26 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         }
     }
 
-    void setJtaDataSource(DataSource jtaDataSource) {
+    public void setJtaDataSource(DataSource jtaDataSource) {
         this.jtaDataSource = jtaDataSource;
     }
 
-    void setManagedClassNames(List<String> managedClassNames) {
+    public void setManagedClassNames(List<String> managedClassNames) {
         this.managedClassNames = managedClassNames;
     }
 
-    void addManagedClassName(String className) {
+    public void addManagedClassName(String className) {
         if (managedClassNames == null) {
             managedClassNames = new ArrayList<String>();
         }
         managedClassNames.add(className);
     }
 
-    void setMappingFileNames(List<String> mappingFileNames) {
+    public void setMappingFileNames(List<String> mappingFileNames) {
         this.mappingFileNames = mappingFileNames;
     }
 
-    void addMappingFileName(String mappingFileName) {
+    public void addMappingFileName(String mappingFileName) {
         if (mappingFileNames == null) {
             mappingFileNames = new ArrayList<String>();
         }

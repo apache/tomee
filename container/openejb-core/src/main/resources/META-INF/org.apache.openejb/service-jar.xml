@@ -53,7 +53,8 @@
                    constructor="id, transactionManager, securityService, deployments, CmpEngineFactory, Engine, ConnectorName"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
-    CmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
+    #CmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
+    CmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
 
     #Engine  derby
     Engine  instantdb

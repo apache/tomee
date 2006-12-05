@@ -23,14 +23,12 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.JDOManager;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
-import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.exolab.castor.mapping.AccessMode;
 import org.exolab.castor.persist.spi.CallbackInterceptor;
 import org.exolab.castor.persist.spi.InstanceFactory;
@@ -43,7 +41,7 @@ import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.naming.InitialContext;
-import javax.persistence.EntityTransaction;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
@@ -57,16 +55,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class CastorCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
     private static final Object[] NO_ARGS = new Object[0];
     private static final String TRANSACTION_MANAGER_JNDI_NAME = "java:openejb/TransactionManager";
 
-    private final JDOManager localJdoManager;
     private final JDOManager globalJdoManager;
     private final CmpCallback cmpCallback;
     private final JndiTxReference txReference;
+
+    private final Map<String,String> abstractSchemaMap = new HashMap<String,String>();
 
     public CastorCmpEngine(String jarPath, CmpCallback cmpCallback, TransactionManager transactionManager, String engine, String connectorName, ClassLoader classLoader) throws OpenEJBException {
         this.cmpCallback = cmpCallback;
@@ -115,7 +115,7 @@ public class CastorCmpEngine implements CmpEngine {
             }
 
             String jdbcName = "java:openejb/connector/" + connectorName;
-            JdbcConnectionFactory connectionFactory = (JdbcConnectionFactory) new InitialContext().lookup(jdbcName);
+            DataSource connectionFactory = (DataSource) new InitialContext().lookup(jdbcName);
             if (connectionFactory == null) {
                 throw new OpenEJBException(jdbcName + " does not exist");
             }
@@ -124,10 +124,6 @@ public class CastorCmpEngine implements CmpEngine {
             globalJdoManager.setDatabasePooling(true);
             globalJdoManager.setCallbackInterceptor(new CastorCallbackInterceptor());
             globalJdoManager.setInstanceFactory(new CastorInstanceFactory());
-
-            localJdoManager = jdoManagerBuilder.buildLocalJDOManager(connectionFactory.getJdbcDriver(), connectionFactory.getJdbcUrl(), connectionFactory.getDefaultUserName(), connectionFactory.getDefaultPassword());
-            localJdoManager.setCallbackInterceptor(new CastorCallbackInterceptor());
-            localJdoManager.setInstanceFactory(new CastorInstanceFactory());
         } catch (Exception e) {
             e.printStackTrace();
             throw new OpenEJBException("Unable to construct the Castor JDOManager objects: " + e.getClass().getName() + ": " + e.getMessage(), e);
@@ -137,23 +133,14 @@ public class CastorCmpEngine implements CmpEngine {
     public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
         bindTransactionManagerReference(deploymentInfo);
         configureKeyGenerator(deploymentInfo);
-    }
-
-    public EntityTransaction getTransaction() {
-        try {
-            Database database = localJdoManager.getDatabase();
-            return new CastorEntityTransaction(database);
-        } catch (PersistenceException e) {
-            throw new javax.persistence.PersistenceException(e);
-        }
+        String beanClassName = deploymentInfo.getBeanClass().getName();
+        String abstractSchemaName = beanClassName.substring(beanClassName.lastIndexOf('.') + 1);
+        abstractSchemaMap.put(abstractSchemaName, beanClassName);
     }
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
         try {
-            Database db = getDatabase(callContext);
-
-            // Create a Castor Transaction if there isn't one in progress
-            if (!db.isActive()) db.begin();
+            Database db = getDatabase();
 
             // Use Castor JDO to insert the entity bean into the database
             db.create(bean);
@@ -173,7 +160,7 @@ public class CastorCmpEngine implements CmpEngine {
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         try {
-            Database db = getDatabase(callContext);
+            Database db = getDatabase();
 
             Object castorPrimaryKey = getCastorPrimaryKey(callContext, primaryKey);
             Object bean = db.load(callContext.getDeploymentInfo().getBeanClass(), castorPrimaryKey);
@@ -185,9 +172,7 @@ public class CastorCmpEngine implements CmpEngine {
 
     public void removeBean(ThreadContext callContext) {
         try {
-            Database db = getDatabase(callContext);
-
-            if (!db.isActive()) db.begin();
+            Database db = getDatabase();
 
             Object primaryKey = getCastorPrimaryKey(callContext, callContext.getPrimaryKey());
             Object bean = db.load(callContext.getDeploymentInfo().getBeanClass(), primaryKey);
@@ -198,11 +183,10 @@ public class CastorCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
+        // EJB-QL and OQL are close enough we try to support both for basic queries
+        queryString = preprocessQuery(queryString);
         try {
-            Database db = getDatabase(callContext);
-
-            // Create a Castor Transaction if there isn't one in progress
-            if (!db.isActive()) db.begin();
+            Database db = getDatabase();
 
             /*
               Obtain a OQLQuery object based on the String query
@@ -279,6 +263,58 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
+    private String preprocessQuery(String queryString) {
+        // OQL uses FQN for abstract schema name so replace abstract
+        // schema name with FQN
+        String lowerCase = queryString.toLowerCase();
+        int fromStart = lowerCase.indexOf("from") + 4;
+        int fromEnd = lowerCase.indexOf("where", fromStart);
+        if (fromEnd < 0) {
+            fromEnd = lowerCase.indexOf("group", fromStart);
+        }
+        if (fromEnd < 0) {
+            fromEnd = lowerCase.indexOf("order", fromStart);
+        }
+        if (fromEnd < 0) {
+            fromEnd = lowerCase.indexOf("limit", fromStart);
+        }
+        String selectClause = queryString.substring(0, fromStart);
+        String fromClause = queryString.substring(fromStart, fromEnd);
+        String remaining = queryString.substring(fromEnd);
+
+        StringBuilder newFromClause = new StringBuilder(fromClause.length() * 2);
+        for (StringTokenizer iteratorDefTokenizer = new StringTokenizer(fromClause, ","); iteratorDefTokenizer.hasMoreTokens();) {
+            String iteratorDef = iteratorDefTokenizer.nextToken();
+            boolean isFirst = true;
+            for (StringTokenizer tokenizer = new StringTokenizer(iteratorDef); tokenizer.hasMoreTokens();) {
+                String identifier = tokenizer.nextToken();
+                if (isFirst) {
+                    String newIdentifier = abstractSchemaMap.get(identifier);
+                    if (newIdentifier != null) {
+                        identifier = newIdentifier;
+                    }
+                    isFirst = false;
+                }
+                newFromClause.append(identifier);
+                if (tokenizer.hasMoreTokens()) {
+                    newFromClause.append(" ");
+                }
+            }
+            if (iteratorDefTokenizer.hasMoreTokens()) {
+                newFromClause.append(",");
+            }
+        }
+
+        String newQueryString = selectClause + " " + newFromClause + " " + remaining;
+
+        // OQL uses $N for parameters and EJBQL uses ?N, so lets replace any
+        // occurance of ? with $ which works since ? is an illegal character
+        // in an OQL query
+        newQueryString = newQueryString.replace('?', '$');
+
+        return newQueryString;
+    }
+
     private Object getCastorPrimaryKey(ThreadContext callContext, Object primaryKey) {
         KeyGenerator kg = callContext.getDeploymentInfo().getKeyGenerator();
         if (kg.isKeyComplex()) {
@@ -288,32 +324,8 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-    private Database getDatabase(ThreadContext callContext) throws PersistenceException {
-        CastorEntityTransaction castorEntityTransaction = (CastorEntityTransaction) callContext.getUnspecified();
-        if (castorEntityTransaction != null) {
-            return castorEntityTransaction.database;
-        } else {
-            /*
-             BIG PROBLEM: Transacitons should use the same Database object.
-             If Thomas won't put this into JDO then I'll have to put into the
-             container.
-
-             1. Check thread to see if current transacion is mapped to any
-                existing Database object.
-
-             2. If it is, return that Database object.
-
-             3. If not obtain new Database object
-
-             4. Register the Tranaction and Database object in a hashmap keyed
-                by tx.
-
-             5. When transaction completes, remove tx-to-database mapping from
-                hashmap.
-
-             */
-            return globalJdoManager.getDatabase();
-        }
+    private Database getDatabase() throws PersistenceException {
+        return globalJdoManager.getDatabase();
     }
 
     /**
@@ -393,64 +405,6 @@ public class CastorCmpEngine implements CmpEngine {
         }
 
         public void updated(Object bean) {
-        }
-    }
-
-    public static class CastorEntityTransaction implements EntityTransaction {
-        private final Database database;
-        private boolean rollbackOnly;
-
-        public CastorEntityTransaction(Database database) {
-            this.database = database;
-        }
-
-        public Database getDatabase() {
-            return database;
-        }
-
-        public void begin() {
-            if (database.isActive()) throw new IllegalStateException("Transaction already in progress");
-
-            try {
-                database.begin();
-            } catch (PersistenceException e) {
-                throw new javax.persistence.PersistenceException(e);
-            }
-        }
-
-        public void commit() {
-            try {
-                if (rollbackOnly) {
-                    database.rollback();
-                    throw new javax.persistence.RollbackException();
-                } else {
-                    database.commit();
-                }
-            } catch (TransactionNotInProgressException e) {
-                throw new IllegalStateException("Transaction not in progress");
-            } catch (PersistenceException e) {
-                throw new javax.persistence.PersistenceException(e);
-            }
-        }
-
-        public void rollback() {
-            try {
-                database.rollback();
-            } catch (TransactionNotInProgressException e) {
-                throw new IllegalStateException("Transaction not in progress");
-            }
-        }
-
-        public boolean isActive() {
-            return database.isActive();
-        }
-
-        public void setRollbackOnly() {
-            rollbackOnly = true;
-        }
-
-        public boolean getRollbackOnly() {
-            return rollbackOnly;
         }
     }
 }

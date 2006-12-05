@@ -131,6 +131,11 @@
       <artifactId>openejb-jee</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-persistence</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
     <!-- ActiveMQ -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -155,6 +160,11 @@
       <artifactId>oro</artifactId>
     </dependency>
     <!-- end castor deps -->
+
+    <dependency>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-persistence-jdbc</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
@@ -271,6 +281,20 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- used by dbcp -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Spring dependencies -->

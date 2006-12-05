@@ -29,7 +29,6 @@ import java.util.List;
 import java.lang.reflect.Method;
 
 public interface CmpEngine {
-    EntityTransaction getTransaction();
 
     Object createBean(EntityBean entity, ThreadContext callContext) throws CreateException;
 

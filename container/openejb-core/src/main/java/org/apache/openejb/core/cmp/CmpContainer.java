@@ -30,6 +30,9 @@ import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionContext;
+import org.apache.openejb.core.transaction.TxRequired;
+import org.apache.openejb.core.transaction.TxManditory;
+import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.Operations;
@@ -423,6 +426,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         Object primaryKey = null;
 
         TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        if (!(txPolicy instanceof TxRequired) && !(txPolicy instanceof TxRequiresNew) && !(txPolicy instanceof TxManditory)) {
+            throw new IllegalArgumentException("Only required, requires new, and manditory transaction policies are supported for CMP beans: " + txPolicy.getClass().getName());
+        }
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
         txPolicy.beforeInvoke(bean, txContext);

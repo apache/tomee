@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+  <entity class="org.apache.openejb.test.entity.cmp.BasicCmpBean" access="FIELD">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="primaryKey">
+        <column name="id"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+      <transient name="allowedOperationsTable"/>
+    </attributes>
+  </entity>
+
+  <!--  Mapping for AllowedOperationsCmpBean  -->
+  <entity class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="primaryKey">
+        <column name="id"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+      <transient name="allowedOperationsTable"/>
+    </attributes>
+  </entity>
+
+  <entity class="org.apache.openejb.test.entity.cmp.EncCmpBean">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="primaryKey">
+        <column name="id"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
+
+  <entity class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+    <attributes>
+      <id name="primaryKey">
+        <column name="id"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
+</entity-mappings>

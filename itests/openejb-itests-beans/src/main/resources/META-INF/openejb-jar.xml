@@ -27,7 +27,7 @@
             </method-params>
         </query-method>
         <object-ql>
-            SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean o WHERE o.lastName = $1
+            SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1
         </object-ql>
     </query>
     <query>
@@ -36,7 +36,7 @@
             <method-params/>
         </query-method>
         <object-ql>
-            SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean o WHERE 'true' = 'false'
+            SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'
         </object-ql>
     </query>
     </ejb-deployment>
@@ -50,7 +50,7 @@
             </method-params>
         </query-method>
         <object-ql>
-            SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean o WHERE o.lastName = $1
+            SELECT o FROM AllowedOperationsCmpBean o WHERE o.lastName = ?1
         </object-ql>
     </query>
     <query>
@@ -59,7 +59,7 @@
             <method-params/>
         </query-method>
         <object-ql>
-            SELECT o FROM org.apache.openejb.test.entity.cmp.BasicCmpBean o WHERE 'true' = 'false'
+            SELECT o FROM AllowedOperationsCmpBean o WHERE 'true' = 'false'
         </object-ql>
     </query>
 	</ejb-deployment>
