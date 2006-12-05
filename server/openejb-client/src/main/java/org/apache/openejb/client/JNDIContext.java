@@ -180,8 +180,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         try {
             res = request(req);
         } catch (Exception e) {
-
-            throw new javax.naming.NamingException("Cannot lookup " + name + ": Received error: " + e.getMessage());
+            throw (NamingException) new NamingException("Cannot lookup " + name + ": Received error: " + e.getMessage()).initCause(e);
         }
 
         switch (res.getResponseCode()) {

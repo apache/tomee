@@ -82,7 +82,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                     for (Injection injection : injections) {
                         metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
                     }
-                    res.setResponseCode(JNDI_DATA_SOURCE);
+                    res.setResponseCode(JNDI_INJECTIONS);
                     res.setResult(metaData);
                     res.writeExternal(out);
                     return;

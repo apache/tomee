@@ -84,7 +84,10 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-        return deployer.deploy(clientModule);
+        clientModule = discoverBeansInClassLoader.deploy(clientModule);
+        clientModule = deployer.deploy(clientModule);
+        clientModule = processAnnotatedBeans.deploy(clientModule);
+        return clientModule;
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -412,7 +415,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ejbRef.getInjectionTarget().add(target);
 
             Class interfce = ejb.beanInterface();
-            if (interfce == null){
+            if (interfce.equals(Object.class)){
                 interfce = member.getType();
             }
 
@@ -433,16 +436,24 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Get the ejb-ref-name
             String refName = ejb.name();
-            if (refName == null){
+            if (refName.equals("")){
                 refName = member.getDeclaringClass().getName() +"/"+ member.getName();
             }
             ejbRef.setEjbRefName(refName);
 
             // Set the ejb-link, if any
-            ejbRef.setEjbLink(ejb.beanName());
+            String ejbName = ejb.beanName();
+            if (ejbName.equals("")){
+                ejbName = null;
+            }
+            ejbRef.setEjbLink(ejbName);
 
             // Set the mappedName, if any
-            ejbRef.setMappedName(ejb.mappedName());
+            String mappedName = ejb.mappedName();
+            if (mappedName.equals("")){
+                mappedName = null;
+            }
+            ejbRef.setMappedName(mappedName);
             return ejbRef;
         }
 
