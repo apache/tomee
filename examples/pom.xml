@@ -32,5 +32,7 @@
 
   <modules>
     <module>helloworld-stateful-pojo</module>
-  </modules>
+    <module>calculator-stateless-pojo</module>
+    <module>counter-stateful-pojo</module>    
+  </modules>  
 </project>
