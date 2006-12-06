@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Arrays;
 
 public class Messages {
     static private Hashtable _rbBundles = new Hashtable();
@@ -105,7 +106,7 @@ public class Messages {
                 try {
                     msg = _messages.getString(message);
                 } catch (MissingResourceException except) {
-                    return message;
+                    return message + (args != null ? " " + Arrays.toString(args) : "");
                 }
                 mf = new MessageFormat(msg);
                 _formats.put(message, mf);
