@@ -133,7 +133,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         List<Deployments> deployments = new ArrayList<Deployments>(Arrays.asList(openejb.getDeployments()));
 
         //// getOption /////////////////////////////////  BEGIN  ////////////////////
-        String flag = props.getProperty("openejb.deployments.classpath", "false").toLowerCase();
+        String flag = props.getProperty("openejb.deployments.classpath", "true").toLowerCase();
         boolean searchClassPath = flag.equals("true");
         //// getOption /////////////////////////////////  END  ////////////////////
 

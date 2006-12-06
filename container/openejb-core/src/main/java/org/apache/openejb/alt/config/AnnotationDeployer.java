@@ -130,8 +130,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            EjbJar ejbJar = ejbModule.getEjbJar();
+            /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
+            EjbJar ejbJar = ejbModule.getEjbJar();
             List<Class> classes = finder.findAnnotatedClasses(Stateless.class);
             for (Class beanClass : classes) {
                 Stateless stateless = (Stateless) beanClass.getAnnotation(Stateless.class);
@@ -143,8 +144,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             classes = finder.findAnnotatedClasses(Stateful.class);
             for (Class beanClass : classes) {
-                Stateful stateless = (Stateful) beanClass.getAnnotation(Stateful.class);
-                String ejbName = stateless.name().length() == 0 ? beanClass.getName() : stateless.name();
+                Stateful stateful = (Stateful) beanClass.getAnnotation(Stateful.class);
+                String ejbName = stateful.name().length() == 0 ? beanClass.getSimpleName() : stateful.name();
                 if (ejbJar.getEnterpriseBean(ejbName) == null) {
                     ejbJar.addEnterpriseBean(new StatefulBean(ejbName, beanClass.getName()));
                 }
@@ -153,7 +154,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             classes = finder.findAnnotatedClasses(MessageDriven.class);
             for (Class beanClass : classes) {
                 MessageDriven mdb = (MessageDriven) beanClass.getAnnotation(MessageDriven.class);
-                String ejbName = mdb.name().length() == 0 ? beanClass.getName() : mdb.name();
+                String ejbName = mdb.name().length() == 0 ? beanClass.getSimpleName() : mdb.name();
                 if (ejbJar.getEnterpriseBean(ejbName) == null) {
                     MessageDrivenBean messageBean = new MessageDrivenBean(ejbName);
                     Class interfce = mdb.messageListenerInterface();
@@ -347,30 +348,71 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
+                        // Anything declared in the xml is also not eligable
+                        List<String> declared = new ArrayList<String>();
+                        declared.add(sessionBean.getBusinessLocal());
+                        declared.add(sessionBean.getBusinessRemote());
+                        declared.add(sessionBean.getHome());
+                        declared.add(sessionBean.getRemote());
+                        declared.add(sessionBean.getLocalHome());
+                        declared.add(sessionBean.getLocal());
+                        declared.add(sessionBean.getServiceEndpoint());
+
+                        for (Class interfce : copy(interfaces)) {
+                            if (declared.contains(interfce.getName())) {
+                                // Interface type was declared in xml
+                                interfaces.remove(interfce);
+                            }
+                        }
+
+                        List<Class> remotes = new ArrayList<Class>();
                         Remote remote = (Remote) clazz.getAnnotation(Remote.class);
                         if (remote != null) {
                             for (Class interfce : remote.value()) {
-                                sessionBean.setBusinessRemote(interfce.getName()); // TODO: This should be turned back into an array
+                                remotes.add(interfce);
+                                interfaces.remove(interfce);
                             }
-                        } else {
-//                            for (Class interfce : copy(interfaces)) {
-//                                if (interfce.isAnnotationPresent(Remote.class)) {
-//                                    sessionBean.setBusinessRemote(interfce.getName()); // TODO: This should be turned back into an array
-//                                    interfaces.remove(interfce);
-//                                }
-//                            }
                         }
 
-
+                        List<Class> locals = new ArrayList<Class>();
                         Local local = (Local) clazz.getAnnotation(Local.class);
                         if (local != null) {
                             for (Class interfce : local.value()) {
-                                sessionBean.setBusinessLocal(interfce.getName()); // TODO: This should be turned back into an array
+                                locals.add(interfce);
+                                interfaces.remove(interfce);
                             }
-                        } else {
-//                            for (Class interfce : copy(interfaces)) {
-//                                sessionBean.setBusinessLocal(interfce.getName()); // TODO: This should be turned back into an array
-//                            }
+                        }
+
+                        List<Class> endpoints = new ArrayList<Class>();
+                        ServiceEndpoint endpoint = (ServiceEndpoint) clazz.getAnnotation(ServiceEndpoint.class);
+                        if (endpoint != null) {
+                            for (Class interfce : endpoint.value()) {
+                                endpoints.add(interfce);
+                                interfaces.remove(interfce);
+                            }
+                        }
+
+                        for (Class interfce : copy(interfaces)) {
+                            if (interfce.isAnnotationPresent(Remote.class)) {
+                                remotes.add(interfce);
+                                interfaces.remove(interfce);
+                            } else if (interfce.isAnnotationPresent(ServiceEndpoint.class)) {
+                                endpoints.add(interfce);
+                                interfaces.remove(interfce);
+                            } else {
+                                locals.add(interfce);
+                                interfaces.remove(interfce);
+                            }
+                        }
+
+                        for (Class interfce : remotes) {
+                            // TODO: This should be turned back into an array
+                            sessionBean.setBusinessRemote(interfce.getName());
+                        }
+
+                        for (Class interfce : locals) {
+                            // TODO: This should be turned back into an array
+                            sessionBean.setBusinessLocal(interfce.getName());
                         }
                     }
                 }

@@ -30,6 +30,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.UrlSet;
 
 import javax.ejb.Stateless;
 import javax.ejb.Stateful;
@@ -37,7 +38,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -50,6 +50,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -62,13 +63,14 @@ public class DeploymentLoader {
 
     private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap();
 
-	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
-	private static final String OPENEJB_DEPLOYMENTS_CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
+	private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
+	private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", DeploymentLoader.class.getPackage().getName());
+    public static Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
 
     public DeploymentLoader() {
-
+        // For some reason intellij won't log to the one we configured statically
+        logger = EjbJarUtils.logger;
     }
 
     private void loadFrom(Deployments dep, FileUtils path, List jarList) {
@@ -168,6 +170,7 @@ public class DeploymentLoader {
     }
 
     public List<DeploymentModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
+
         if (deployer == null) {
             deployer = new DynamicDeployer() {
                 public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -194,7 +197,6 @@ public class DeploymentLoader {
 
         FileUtils base = SystemInstance.get().getBase();
 
-
         List<String> jarList = new ArrayList(deployments.size());
         try {
             for (Deployments deployment : deployments) {
@@ -212,8 +214,7 @@ public class DeploymentLoader {
                             logger.debug("Searching: " + url.toExternalForm());
                         }
                     }
-                    loadFromClasspath(base, jarList, classLoader, "META-INF/ejb-jar.xml", "ejbs");
-                    loadFromClasspath(base, jarList, deployment.getClasspath(), "META-INF/application.xml", "ear");
+                    loadFromClasspath(base, jarList, deployment.getClasspath());
                 } else {
                     loadFrom(deployment, base, jarList);
                 }
@@ -234,7 +235,6 @@ public class DeploymentLoader {
             File jarFile = new File(pathname);
 
             try {
-
 
                 ClassLoader classLoader = getClassLoader(jarFile);
 
@@ -477,11 +477,13 @@ public class DeploymentLoader {
         }
 
         URL manifestUrl = descriptors.get("MANIFEST.MF");
-        InputStream is = manifestUrl.openStream();
-        Manifest manifest = new Manifest(is);
-        String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
-        if (mainClass != null){
-            return ClientModule.class;
+        if (manifestUrl != null){
+            InputStream is = manifestUrl.openStream();
+            Manifest manifest = new Manifest(is);
+            String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+            if (mainClass != null){
+                return ClientModule.class;
+            }
         }
 
         ClassFinder classFinder = new ClassFinder(new URLClassLoader(new URL[]{baseUrl},classLoader), baseUrl);
@@ -560,54 +562,95 @@ public class DeploymentLoader {
      *	2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      *	   This appears in step 3 of the above algorithm.
      */
-    private void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader, String descriptor, String type) {
+    private void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
     	
-    	boolean doLoad = false;
     	Deployments deployment = null;
     	String include = null;
     	String exclude = null;
     	String path = null;
-    	
-    	include = SystemInstance.get().getProperty(OPENEJB_DEPLOYMENTS_CLASSPATH_INCLUDE, "");
-    	exclude = SystemInstance.get().getProperty(OPENEJB_DEPLOYMENTS_CLASSPATH_EXCLUDE, "");
+
+    	include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
+    	exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
         try {
-            Enumeration resources = classLoader.getResources(descriptor);
-            while (resources.hasMoreElements()) {
-                URL ejbJar = (URL) resources.nextElement();
-                String urlString = ejbJar.toExternalForm();
-                if(urlString.matches(include)) {
-                	doLoad = true;
-                } else if (urlString.matches(exclude)) {
-                    ConfigurationFactory.logger.info("Excluding: " + urlString);
-                    continue;
-                } else if(include.equals("") && exclude.equals("")) {
-                	doLoad = true;
-            	}
-                if(doLoad) {
-	                // path = null;
-	                deployment = new Deployments();
-	                if (ejbJar.getProtocol().equals("jar")) {
-	                    ejbJar = new URL(ejbJar.getFile().replaceFirst("!.*$", ""));
-	                    File file = new File(ejbJar.getFile());
-	                    path = file.getAbsolutePath();
-	                    deployment.setJar(path);
-	                } else if (ejbJar.getProtocol().equals("file")) {
-	                    File file = new File(ejbJar.getFile());
-	                    File metainf = file.getParentFile();
-	                    File ejbPackage = metainf.getParentFile();
-	                    path = ejbPackage.getAbsolutePath();
-	                    deployment.setDir(path);
-	                } else {
-	                    ConfigurationFactory.logger.warning("Not loading " + type + ".  Unknown protocol " + ejbJar.getProtocol());
-	                    continue;
-	                }	
-	                ConfigurationFactory.logger.info("Found " + type + " in classpath: " + path);
-	                loadFrom(deployment, base, jarList);
+            UrlSet urlSet = new UrlSet(classLoader);
+            UrlSet includes = urlSet.matching(include);
+            urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
+            urlSet = urlSet.excludeJavaExtDirs();
+            urlSet = urlSet.excludeJavaEndorsedDirs();
+            urlSet = urlSet.excludeJavaHome();
+            urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path",""));
+            urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
+            urlSet = urlSet.exclude(exclude);
+            urlSet = urlSet.include(includes);
+
+            List<URL> urls = urlSet.getUrls();
+            int size = urls.size();
+            if (size == 0 && include.length() > 0){
+                logger.warning("No classpath URLs matched.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+                return;
+            } else if (size == 0) {
+                return;
+            } else if (size < 10) {
+                logger.debug("Inspecting classpath for applications: "+urls.size()+" urls.");
+            } else if (size < 50) {
+                logger.info("Inspecting classpath for applications: "+urls.size()+" urls. Consider adjusting your exclude/include.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+            } else {
+                logger.warning("Inspecting classpath for applications: "+urls.size()+" urls.");
+                logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+            }
+
+            long begin = System.currentTimeMillis();
+            for (URL url : urls) {
+                try {
+                    Class moduleType = discoverModuleType(url, classLoader);
+                    if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)){
+                        deployment = new Deployments();
+                        if (url.getProtocol().equals("jar")) {
+                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
+                            File file = new File(url.getFile());
+                            path = file.getAbsolutePath();
+                            deployment.setJar(path);
+                        } else if (url.getProtocol().equals("file")) {
+                            File file = new File(url.getFile());
+                            path = file.getAbsolutePath();
+                            deployment.setDir(path);
+                        } else {
+                            logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
+                            continue;
+                        }
+                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
+                        loadFrom(deployment, base, jarList);
+                    }
+                } catch (IOException e) {
+                    logger.warning("Unable to determine the module type of "+ url.toExternalForm()+": Exception: "+ e.getMessage(), e);
+                } catch (UnsupportedOperationException ignore) {
+                }
+            }
+            long end = System.currentTimeMillis();
+            long time = end - begin;
+
+            if (time < 1000) {
+                logger.debug("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
+            } else if (time < 4000 || urls.size() < 3) {
+                logger.info("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
+            } else if (time < 10000){
+                logger.warning("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
+                logger.warning("Consider adjusting your "+CLASSPATH_EXCLUDE +" and "+CLASSPATH_INCLUDE +" settings.  Current settings: exclude='"+exclude+"', include='"+include+"'");
+            } else {
+                logger.fatal("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.  TOO LONG!");
+                logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+                List<String> list = new ArrayList<String>();
+                for (URL url : urls) {
+                    list.add(url.toExternalForm());
+                }
+                Collections.sort(list);
+                for (String url : list) {
+                    logger.info("Matched: "+url);
                 }
             }
         } catch (IOException e1) {
             e1.printStackTrace();
-            ConfigurationFactory.logger.warning("Unable to search classpath for " + type + ": Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
+            logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
         
     }

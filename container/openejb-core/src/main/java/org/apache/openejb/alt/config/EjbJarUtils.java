@@ -55,11 +55,13 @@ public class EjbJarUtils {
     }
 
     public EjbJarUtils(String jarLocation) throws OpenEJBException {
+        boolean hasEjbJarXml = false;
         /*[1.1]  Get the jar ***************/
         this.jarLocation = jarLocation;
         EjbJar ejbJar;
         try {
             ejbJar = readEjbJar(jarLocation);
+            hasEjbJarXml = true;
         } catch (OpenEJBException e) {
             logger.warning("No ejb-jar.xml found assuming annotated beans present: module: " + jarLocation);
             ejbJar = new EjbJar();
@@ -70,7 +72,11 @@ public class EjbJarUtils {
             this.openejbJar = readOpenEjbJar(jarLocation);
         } catch (OpenEJBException e) {
             if (e.getCause() instanceof FileNotFoundException){
-                logger.warning(e.getMessage());
+                if (hasEjbJarXml){
+                    logger.warning(e.getMessage());
+                } else {
+                    logger.debug(e.getMessage());
+                }
             } else {
                 logger.warning("Reading openejb-jar.xml.", e);
             }

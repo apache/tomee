@@ -36,7 +36,7 @@ public class FriendlyPersonTest extends TestCase {
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
-        properties.setProperty("openejb.deployments.classpath", "true");
+        System.setProperty("openejb.deployments.classpath.include", ".*helloworld-stateful-pojo.*");
 
         initialContext = new InitialContext(properties);
     }
