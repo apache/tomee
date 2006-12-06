@@ -36,10 +36,20 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * Never
  */
 public enum TransAttribute {
-    @XmlEnumValue("NotSupported") NOT_SUPPORTED,
-    @XmlEnumValue("Supports") SUPPORTS,
-    @XmlEnumValue("Required") REQUIRED,
-    @XmlEnumValue("RequiresNew") REQUIRES_NEW,
-    @XmlEnumValue("Mandatory") MANDATORY,
-    @XmlEnumValue("Never") NEVER;
+    @XmlEnumValue("NotSupported") NOT_SUPPORTED("NotSupported"),
+    @XmlEnumValue("Supports") SUPPORTS("Supports"),
+    @XmlEnumValue("Required") REQUIRED("Required"),
+    @XmlEnumValue("RequiresNew") REQUIRES_NEW("RequiresNew"),
+    @XmlEnumValue("Mandatory") MANDATORY("Mandatory"),
+    @XmlEnumValue("Never") NEVER("Never");
+
+    private final String name;
+
+    TransAttribute(String name) {
+       this.name = name;
+   }
+
+    public String toString() {
+        return name;
+    }
 }
