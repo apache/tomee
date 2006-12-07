@@ -201,19 +201,6 @@ public class DeploymentLoader {
         try {
             for (Deployments deployment : deployments) {
                 if (deployment.getClasspath() != null) {
-                    ClassLoader classLoader = deployment.getClasspath();
-                    if (logger.isDebugEnabled()) {
-                        Enumeration<URL> resources = null;
-                        try {
-                            resources = classLoader.getResources("META-INF");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        while (resources.hasMoreElements()) {
-                            URL url = resources.nextElement();
-                            logger.debug("Searching: " + url.toExternalForm());
-                        }
-                    }
                     loadFromClasspath(base, jarList, deployment.getClasspath());
                 } else {
                     loadFrom(deployment, base, jarList);
@@ -430,7 +417,7 @@ public class DeploymentLoader {
                         URL appClientXmlUrl = clientFinder.find("META-INF/application-client.xml");
                         applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClientXmlUrl);
                     } catch (IOException e) {
-                        logger.warning("No application-client.xm found assuming annotations present: " + appDir.getAbsolutePath() + ", module: " + moduleName);
+                        logger.warning("No application-client.xml found assuming annotations present: " + appDir.getAbsolutePath() + ", module: " + moduleName);
                         applicationClient = new ApplicationClient();
                     }
 
