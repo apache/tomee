@@ -182,6 +182,9 @@ public final class OpenEJB {
                             case Container.STATELESS:
                                 entry += "STATELESS   ";
                                 break;
+                            case Container.MESSAGE_DRIVEN:
+                                entry += "MESSAGE     ";
+                                break;
                         }
                         entry += c[i].getContainerID();
                         logger.i18n.debug("startup.debugEntry", entry);
