@@ -19,6 +19,7 @@ package org.apache.openejb;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+import java.util.List;
 
 public interface DeploymentInfo {
 
@@ -85,6 +86,8 @@ public interface DeploymentInfo {
     Method getPreDestroy();
 
     Method getPrePassivate();
+
+    List<Injection> getInjections();
 
     void setContainer(Container container);
 

@@ -20,6 +20,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operations;
 import org.apache.openejb.core.ThreadContext;
@@ -37,6 +38,8 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionRolledbackException;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.rmi.RemoteException;
 import java.rmi.NoSuchObjectException;
 import java.util.Hashtable;
@@ -106,7 +109,20 @@ public class StatefulInstanceManager {
             objectRecipe.allow(Option.FIELD_INJECTION);
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-            
+
+            ThreadContext callContext = ThreadContext.getThreadContext();
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Context ctx = deploymentInfo.getJndiEnc();
+            for (Injection injection : deploymentInfo.getInjections()) {
+                try {
+                    String jndiName = injection.getJndiName();
+                    Object object = ctx.lookup("java:comp/env/" + jndiName);
+                    objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
+                } catch (NamingException e) {
+                    logger.warning("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                }
+            }
+
             objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
 
             bean = objectRecipe.create(beanClass.getClassLoader());

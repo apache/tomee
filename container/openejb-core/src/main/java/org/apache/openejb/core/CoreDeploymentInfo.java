@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.ArrayList;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -106,6 +107,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
     private String jarPath;
     private final Map<String, String> activationProperties = new HashMap<String, String>();
+    private final List<Injection> injections = new ArrayList<Injection>();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -188,6 +190,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
         createMethodMap();
+    }
+
+    public List<Injection> getInjections() {
+        return injections;
     }
 
     public Object getContainerData() {

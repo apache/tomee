@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -95,6 +96,24 @@ public class MessageDestinationRef implements Injectable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    @XmlTransient
+    public String getName() {
+        return getMessageDestinationRefName();
+    }
+
+    @XmlTransient
+    public String getType() {
+        return getMessageDestinationType();
+    }
+
+    public void setName(String name) {
+        setMessageDestinationRefName(name);
+    }
+
+    public void setType(String type) {
+        setMessageDestinationType(type);
+    }
 
     public List<Text> getDescription() {
         if (description == null) {

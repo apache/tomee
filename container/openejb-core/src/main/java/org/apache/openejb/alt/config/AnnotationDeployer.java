@@ -37,11 +37,15 @@ import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.annotation.Resources;
 import javax.ejb.Local;
 import javax.ejb.LocalHome;
 import javax.ejb.PostActivate;
@@ -140,8 +144,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class beanClass : classes) {
                 Stateless stateless = (Stateless) beanClass.getAnnotation(Stateless.class);
                 String ejbName = stateless.name().length() == 0 ? beanClass.getSimpleName() : stateless.name();
-                if (ejbJar.getEnterpriseBean(ejbName) == null) {
+                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
+                if (enterpriseBean == null) {
                     ejbJar.addEnterpriseBean(new StatelessBean(ejbName, beanClass.getName()));
+                } else if (enterpriseBean.getEjbClass() == null){
+                    enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
 
@@ -149,8 +156,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class beanClass : classes) {
                 Stateful stateful = (Stateful) beanClass.getAnnotation(Stateful.class);
                 String ejbName = stateful.name().length() == 0 ? beanClass.getSimpleName() : stateful.name();
-                if (ejbJar.getEnterpriseBean(ejbName) == null) {
+                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
+                if (enterpriseBean == null) {
                     ejbJar.addEnterpriseBean(new StatefulBean(ejbName, beanClass.getName()));
+                } else if (enterpriseBean.getEjbClass() == null){
+                    enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
 
@@ -158,13 +168,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class beanClass : classes) {
                 MessageDriven mdb = (MessageDriven) beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = mdb.name().length() == 0 ? beanClass.getSimpleName() : mdb.name();
-                if (ejbJar.getEnterpriseBean(ejbName) == null) {
+                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
+                if (enterpriseBean == null) {
                     MessageDrivenBean messageBean = new MessageDrivenBean(ejbName);
                     Class interfce = mdb.messageListenerInterface();
                     if (interfce != null){
                         messageBean.setMessagingType(interfce.getName());
                     }
                     ejbJar.addEnterpriseBean(messageBean);
+                } else if (enterpriseBean.getEjbClass() == null){
+                    enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
 
@@ -427,15 +440,17 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) {
-            List<EJB> list = new ArrayList<EJB>();
+            List<EJB> ejbList = new ArrayList<EJB>();
             EJBs ejbs = (EJBs) clazz.getAnnotation(EJBs.class);
             if(ejbs != null){
-                list.addAll(Arrays.asList(ejbs.value()));
+                ejbList.addAll(Arrays.asList(ejbs.value()));
             }
-            list.add((EJB) clazz.getAnnotation(EJB.class));
+            EJB e = (EJB) clazz.getAnnotation(EJB.class);
+            if (e != null){
+                ejbList.add(e);
+            }
 
-            for (EJB ejb : list) {
-                if (ejb == null) continue;
+            for (EJB ejb : ejbList) {
 
                 buildEjbRef(consumer, ejb, null);
             }
@@ -457,6 +472,78 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 buildEjbRef(consumer, ejb, member);
             }
+
+
+            List<Resource> resourceList = new ArrayList<Resource>();
+            Resources resources = (Resources) clazz.getAnnotation(Resources.class);
+            if(resources != null){
+                resourceList.addAll(Arrays.asList(resources.value()));
+            }
+            Resource r = (Resource) clazz.getAnnotation(Resource.class);
+            if (r != null){
+                resourceList.add(r);
+            }
+
+            for (Resource resource : resourceList) {
+
+                buildResource(consumer, resource, null);
+            }
+
+            for (Field field : finder.findAnnotatedFields(Resource.class)) {
+                Resource resource = field.getAnnotation(Resource.class);
+
+                Member member = new FieldMember(field);
+
+                buildResource(consumer, resource, member);
+            }
+
+            for (Method method : finder.findAnnotatedMethods(Resource.class)) {
+                Resource resource = method.getAnnotation(Resource.class);
+
+                Member member = new MethodMember(method);
+
+                buildResource(consumer, resource, member);
+            }
+
+
+        }
+
+        private void buildResource(JndiConsumer consumer, Resource resource, Member member) {
+            // Get the ref-name
+            String refName = resource.name();
+            if (refName.equals("")){
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+
+            JndiReference reference = null;
+
+            List<EnvEntry> envEntries = consumer.getEnvEntry();
+            for (EnvEntry envEntry : envEntries) {
+                if (envEntry.getName().equals(refName)){
+                    reference = envEntry;
+                    break;
+                }
+            }
+
+            if (reference == null){
+                return;
+            }
+
+//            reference.setName(refName);
+
+            if (member != null){
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                reference.getInjectionTarget().add(target);
+            }
+
+            // Override the mapped name if not set
+            if (reference.getMappedName() == null && !resource.mappedName().equals("")){
+                reference.setMappedName(resource.mappedName());
+            }
+
         }
 
         private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
@@ -598,7 +685,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             StringBuilder name = new StringBuilder(setter.getName());
 
             // remove 'set'
-            name.delete(0, 2);
+            name.delete(0, 3);
 
             // lowercase first char
             name.setCharAt(0, Character.toLowerCase(name.charAt(0)));

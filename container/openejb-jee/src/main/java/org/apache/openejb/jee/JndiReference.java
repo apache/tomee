@@ -16,12 +16,16 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.List;
-
 /**
  * @version $Rev$ $Date$
  */
-public interface Injectable {
-    public List<InjectionTarget> getInjectionTarget();
+public interface JndiReference extends Injectable {
+    String getName();
+    void setName(String name);
 
+    String getType();
+    void setType(String type);
+
+    String getMappedName();
+    void setMappedName(String mappedName);
 }

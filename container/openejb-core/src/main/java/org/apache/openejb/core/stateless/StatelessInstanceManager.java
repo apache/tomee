@@ -22,6 +22,7 @@ import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operations;
 import org.apache.openejb.core.ThreadContext;
@@ -32,6 +33,8 @@ import org.apache.openejb.util.Stack;
 
 import javax.ejb.SessionContext;
 import javax.transaction.TransactionManager;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -84,20 +87,32 @@ public class StatelessInstanceManager {
 
         if (bean == null) {
 
-            Class beanClass = callContext.getDeploymentInfo().getBeanClass();
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Class beanClass = deploymentInfo.getBeanClass();
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
             objectRecipe.allow(Option.FIELD_INJECTION);
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+
             byte originalOperation = callContext.getCurrentOperation();
+
             try {
+                Context ctx = deploymentInfo.getJndiEnc();
+                for (Injection injection : deploymentInfo.getInjections()) {
+                    try {
+                        String jndiName = injection.getJndiName();
+                        Object object = ctx.lookup("java:comp/env/" + jndiName);
+                        objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
+                    } catch (NamingException e) {
+                        logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                    }
+                }
 
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
                 bean = objectRecipe.create(beanClass.getClassLoader());
                 callContext.setCurrentOperation(Operations.OP_CREATE);
 
-                CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null){
                     postConstruct.invoke(bean);

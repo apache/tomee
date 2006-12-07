@@ -145,12 +145,12 @@ public class EjbJar {
         for (EnterpriseBean e : v) enterpriseBeans.put(e.getEjbName(), e);
     }
 
-    public JndiConsumer addEnterpriseBean(EnterpriseBean bean){
+    public EnterpriseBean addEnterpriseBean(EnterpriseBean bean){
         enterpriseBeans.put(bean.getEjbName(), bean);
         return bean;
     }
 
-    public JndiConsumer getEnterpriseBean(String ejbName){
+    public EnterpriseBean getEnterpriseBean(String ejbName){
         return enterpriseBeans.get(ejbName);
     }
 

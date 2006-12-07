@@ -70,7 +70,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class ResourceRef implements Injectable {
+public class ResourceRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -93,6 +93,25 @@ public class ResourceRef implements Injectable {
 
     @XmlTransient
     protected String resLink;
+
+    @XmlTransient
+    public String getName() {
+        return getResRefName();
+    }
+
+    @XmlTransient
+    public String getType() {
+        return getResType();
+    }
+
+    public void setName(String name) {
+        setResRefName(name);
+    }
+
+    public void setType(String type) {
+        setResType(type);
+    }
+
 
     public List<Text> getDescription() {
         if (description == null) {

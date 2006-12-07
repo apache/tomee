@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class ResourceEnvRef implements Injectable {
+public class ResourceEnvRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -82,6 +83,24 @@ public class ResourceEnvRef implements Injectable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    @XmlTransient
+    public String getName() {
+        return getResourceEnvRefName();
+    }
+
+    @XmlTransient
+    public String getType() {
+        return getResourceEnvRefType();
+    }
+
+    public void setName(String name) {
+        setResourceEnvRefName(name);
+    }
+
+    public void setType(String type) {
+        setResourceEnvRefType(type);
+    }
 
     public List<Text> getDescription() {
         if (description == null) {
