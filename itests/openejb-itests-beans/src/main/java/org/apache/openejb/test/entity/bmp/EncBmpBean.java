@@ -322,6 +322,26 @@ public class EncBmpBean implements javax.ejb.EntityBean{
         }
     }
 
+
+    public void lookupCharacterEntry() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            Character expected = new Character('D');
+            Character actual   = (Character)ctx.lookup("java:comp/env/entity/bmp/references/Character");
+
+            Assert.assertNotNull("The Character looked up is null", actual );
+            Assert.assertEquals(expected, actual );
+
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
     public void lookupResource() throws TestFailureException{
         try{
             try{

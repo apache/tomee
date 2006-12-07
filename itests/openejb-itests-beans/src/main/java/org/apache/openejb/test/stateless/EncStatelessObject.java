@@ -41,5 +41,6 @@ public interface EncStatelessObject extends javax.ejb.EJBObject{
     public void lookupShortEntry()   throws TestFailureException, RemoteException;
     public void lookupBooleanEntry() throws TestFailureException, RemoteException;
     public void lookupByteEntry()    throws TestFailureException, RemoteException;
+    public void lookupCharacterEntry()    throws TestFailureException, RemoteException;
 
 }

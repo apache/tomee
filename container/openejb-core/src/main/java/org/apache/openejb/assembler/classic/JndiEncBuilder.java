@@ -168,6 +168,9 @@ public class JndiEncBuilder {
                     obj = new Boolean(entry.value);
                 } else if (type == Byte.class) {
                     obj = new Byte(entry.value);
+                } else if (type == Character.class) {
+                    StringBuilder sb = new StringBuilder(entry.value + " ");
+                    obj = new Character(sb.charAt(0));
                 } else {
                     throw new IllegalArgumentException("Invalid env-ref-type " + type);
                 }

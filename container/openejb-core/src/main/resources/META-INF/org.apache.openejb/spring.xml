@@ -230,6 +230,7 @@
                 <o:envEntry jndiName="entity/cmp/references/Integer" type="java.lang.Integer" value="1"/>
                 <o:envEntry jndiName="entity/cmp/references/Short" type="java.lang.Short" value="1"/>
                 <o:envEntry jndiName="entity/cmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:envEntry jndiName="entity/cmp/references/Character" type="java.lang.Character" value="D"/>
                 <o:ejbRef jndiName="entity/cmp/beanReferences/cmp_entity" local="false"
                     ejbId="client/tests/entity/cmp/BasicCmpHome"/>
                 <o:ejbRef jndiName="entity/cmp/beanReferences/stateful" local="false"
@@ -313,6 +314,7 @@
                 <o:envEntry jndiName="entity/bmp/references/Integer" type="java.lang.Integer" value="1"/>
                 <o:envEntry jndiName="entity/bmp/references/Short" type="java.lang.Short" value="1"/>
                 <o:envEntry jndiName="entity/bmp/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:envEntry jndiName="entity/bmp/references/Character" type="java.lang.Character" value="D"/>
                 <o:ejbRef jndiName="entity/bmp/beanReferences/bmp_entity" local="false"
                     ejbId="client/tests/entity/bmp/BasicBmpHome"/>
                 <o:ejbRef jndiName="entity/bmp/beanReferences/stateful" local="false"
@@ -397,6 +399,7 @@
                 <o:envEntry jndiName="stateful/references/Integer" type="java.lang.Integer" value="1"/>
                 <o:envEntry jndiName="stateful/references/Short" type="java.lang.Short" value="1"/>
                 <o:envEntry jndiName="stateful/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:envEntry jndiName="stateful/references/Character" type="java.lang.Character" value="D"/>
                 <o:ejbRef jndiName="stateful/beanReferences/bmp_entity" local="false"
                     ejbId="client/tests/entity/bmp/BasicBmpHome"/>
                 <o:ejbRef jndiName="stateful/beanReferences/stateful" local="false"
@@ -501,6 +504,7 @@
                 <o:envEntry jndiName="stateless/references/Integer" type="java.lang.Integer" value="1"/>
                 <o:envEntry jndiName="stateless/references/Short" type="java.lang.Short" value="1"/>
                 <o:envEntry jndiName="stateless/references/Byte" type="java.lang.Byte" value="1"/>
+                <o:envEntry jndiName="stateless/references/Character" type="java.lang.Character" value="D"/>
                 <o:ejbRef jndiName="stateless/beanReferences/Enterprise_bean_access" local="false"
                     ejbId="client/tests/stateful/BasicStatefulHome"/>
                 <o:ejbRef jndiName="stateless/beanReferences/bmp_entity" local="false"

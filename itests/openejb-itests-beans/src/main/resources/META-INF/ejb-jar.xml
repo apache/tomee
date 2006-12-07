@@ -151,7 +151,12 @@
                 <env-entry-type>java.lang.Byte</env-entry-type>
                 <env-entry-value>1</env-entry-value>
             </env-entry>
-            <ejb-ref> 
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Character</env-entry-name>
+                <env-entry-type>java.lang.Character</env-entry-type>
+                <env-entry-value>D</env-entry-value>
+            </env-entry>
+            <ejb-ref>
                 <ejb-ref-name>entity/cmp/beanReferences/cmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
                 <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
@@ -377,7 +382,12 @@
                 <env-entry-type>java.lang.Byte</env-entry-type>
                 <env-entry-value>1</env-entry-value>
             </env-entry>
-            <ejb-ref> 
+            <env-entry>
+                <env-entry-name>stateful/references/Character</env-entry-name>
+                <env-entry-type>java.lang.Character</env-entry-type>
+                <env-entry-value>D</env-entry-value>
+            </env-entry>
+            <ejb-ref>
                 <ejb-ref-name>stateful/beanReferences/bmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
                 <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
@@ -713,7 +723,12 @@
                 <env-entry-type>java.lang.Byte</env-entry-type>
                 <env-entry-value>1</env-entry-value>
             </env-entry>
-            <ejb-ref> 
+            <env-entry>
+                <env-entry-name>stateless/references/Character</env-entry-name>
+                <env-entry-type>java.lang.Character</env-entry-type>
+                <env-entry-value>D</env-entry-value>
+            </env-entry>
+            <ejb-ref>
                 <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name> 
                 <ejb-ref-type>Session</ejb-ref-type>
                 <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
@@ -927,7 +942,12 @@
                 <env-entry-type>java.lang.Byte</env-entry-type>
                 <env-entry-value>1</env-entry-value>
             </env-entry>
-            <ejb-ref> 
+            <env-entry>
+                <env-entry-name>entity/bmp/references/Character</env-entry-name>
+                <env-entry-type>java.lang.Character</env-entry-type>
+                <env-entry-value>D</env-entry-value>
+            </env-entry>
+            <ejb-ref>
                 <ejb-ref-name>entity/bmp/beanReferences/bmp_entity</ejb-ref-name> 
                 <ejb-ref-type>Entity</ejb-ref-type>
                 <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
