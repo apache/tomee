@@ -94,7 +94,7 @@ public class StatelessInstanceManager {
 
                 callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
-                bean = objectRecipe.create();
+                bean = objectRecipe.create(beanClass.getClassLoader());
                 callContext.setCurrentOperation(Operations.OP_CREATE);
 
                 CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();

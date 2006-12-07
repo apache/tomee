@@ -108,7 +108,8 @@ public class StatefulInstanceManager {
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             
             objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
-            bean = objectRecipe.create();
+
+            bean = objectRecipe.create(beanClass.getClassLoader());
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
