@@ -40,9 +40,22 @@ public class InjectionMetaData implements Externalizable {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            String jndiName = (String) in.readObject();
+            String name = (String) in.readObject();
+            String target = (String) in.readObject();
+            addInjection(target, name, jndiName);
+        }
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(injections.size());
+        for (Injection injection : injections) {
+            out.writeObject(injection.getJndiName());
+            out.writeObject(injection.getName());
+            out.writeObject(injection.getTargetClass());
+        }
     }
 
 }

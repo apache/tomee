@@ -99,6 +99,8 @@ public class JndiEncInfoBuilder {
         /* Build Resource References *****************/
         jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
 
+        buildAmbiguousEjbRefInfos(jndi, jndiConsumer, ejbName);
+
         jndi.ejbReferences.addAll(buildEjbRefInfos(jndiConsumer, ejbName));
 
         jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName));
@@ -111,6 +113,40 @@ public class JndiEncInfoBuilder {
         ArrayList<PersistenceUnitInfo> infos = new ArrayList<PersistenceUnitInfo>();
         // TODO: Marshall the data over
         return infos;
+    }
+
+    private void buildAmbiguousEjbRefInfos(JndiEncInfo jndi, JndiConsumer jndiConsumer, String referringComponent) throws OpenEJBException {
+        ArrayList<EjbRef> ejbRefs = new ArrayList<EjbRef>(jndiConsumer.getEjbRef());
+        for (EjbRef ejb : ejbRefs) {
+            if (ejb.getType() != EjbRef.Type.UNKNOWN) continue;
+
+            String interfce = ejb.getRemote();
+
+            EnterpriseBeanInfo otherBean = null;
+
+            if (ejb.getEjbLink() != null) {
+                String ejbLink = ejb.getEjbLink();
+                otherBean = byEjbName.get(ejbLink);
+            }
+
+            if (otherBean != null){
+                if (interfce.equals(otherBean.businessRemote)){
+                    ejb.setType(EjbRef.Type.REMOTE);
+                }  else {
+                    ejb.setType(EjbRef.Type.LOCAL);
+                    jndiConsumer.getEjbRef().remove(ejb);
+                    jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
+                }
+            } else {
+                if (byInterfaces.get("r="+ejb.getRemote()+":"+ejb.getHome()) != null){
+                    ejb.setType(EjbRef.Type.REMOTE);
+                } else {
+                    ejb.setType(EjbRef.Type.LOCAL);
+                    jndiConsumer.getEjbRef().remove(ejb);
+                    jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
+                }
+            }
+        }
     }
 
     private List<EjbLocalReferenceInfo> buildEjbLocalRefInfos(JndiConsumer item, String referringComponent) throws OpenEJBException {

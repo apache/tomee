@@ -116,7 +116,7 @@ public class JndiEncBuilder {
                 if (referenceInfo.homeType == null){
                     String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "BusinessRemote";
                     reference = new IntraVmJndiReference(jndiName);
-                }else {
+                } else {
                     // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                     String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId;
                     reference = new IntraVmJndiReference(jndiName);
@@ -130,12 +130,19 @@ public class JndiEncBuilder {
 
         for (int i = 0; i < ejbLocalReferences.length; i++) {
             EjbLocalReferenceInfo referenceInfo = ejbLocalReferences[i];
-
             EjbReferenceLocationInfo location = referenceInfo.location;
+
+            Reference reference = null;
+
             if (location != null && !location.remote) {
-                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "Local";
-                Reference reference = new IntraVmJndiReference(jndiName);
+                if (referenceInfo.homeType == null){
+                    // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
+                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "BusinessLocal";
+                    reference = new IntraVmJndiReference(jndiName);
+                } else {
+                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "Local";
+                    reference = new IntraVmJndiReference(jndiName);
+                }
                 bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
             }
         }

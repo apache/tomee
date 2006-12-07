@@ -36,6 +36,7 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -56,6 +57,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.MessageDriven;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
+import javax.ejb.EJBs;
+import javax.ejb.EJBLocalHome;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
@@ -424,6 +427,19 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) {
+            List<EJB> list = new ArrayList<EJB>();
+            EJBs ejbs = (EJBs) clazz.getAnnotation(EJBs.class);
+            if(ejbs != null){
+                list.addAll(Arrays.asList(ejbs.value()));
+            }
+            list.add((EJB) clazz.getAnnotation(EJB.class));
+
+            for (EJB ejb : list) {
+                if (ejb == null) continue;
+
+                buildEjbRef(consumer, ejb, null);
+            }
+
             ClassFinder finder = new ClassFinder(clazz);
 
             for (Field field : finder.findAnnotatedFields(EJB.class)) {
@@ -431,9 +447,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 Member member = new FieldMember(field);
 
-                EjbRef ejbRef = buildEjbRef(member, ejb);
-
-                consumer.getEjbRef().add(ejbRef);
+                buildEjbRef(consumer, ejb, member);
             }
 
             for (Method method : finder.findAnnotatedMethods(EJB.class)) {
@@ -441,45 +455,67 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 Member member = new MethodMember(method);
 
-                EjbRef ejbRef = buildEjbRef(member, ejb);
-
-                consumer.getEjbRef().add(ejbRef);
+                buildEjbRef(consumer, ejb, member);
             }
         }
 
-        private EjbRef buildEjbRef(Member member, EJB ejb) {
+        private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
             EjbRef ejbRef = new EjbRef();
 
-            // Set the member name where this will be injected
-            InjectionTarget target = new InjectionTarget();
-            target.setInjectionTargetClass(member.getDeclaringClass().getName());
-            target.setInjectionTargetName(member.getName());
-            ejbRef.getInjectionTarget().add(target);
+            // This is how we deal with the fact that we don't know
+            // whether to use an EjbLocalRef or EjbRef (remote).
+            // We flag it uknown and let the linking code take care of
+            // figuring out what to do with it.
+            ejbRef.setType(EjbRef.Type.UNKNOWN);
+
+            if (member != null){
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                ejbRef.getInjectionTarget().add(target);
+            }
 
             Class interfce = ejb.beanInterface();
             if (interfce.equals(Object.class)){
-                interfce = member.getType();
+                interfce = (member == null)? null: member.getType();
             }
 
-            // Get the home and remote interfaces
-            if (EJBHome.class.isAssignableFrom(interfce)){
-                ejbRef.setHome(interfce.getName());
-                Method[] methods = interfce.getMethods();
-                for (Method method : methods) {
-                    if (method.getName().startsWith("create")){
-                        ejbRef.setRemote(method.getReturnType().getName());
-                        break;
+            if (interfce != null && !interfce.equals(Object.class)){
+                if (EJBHome.class.isAssignableFrom(interfce)){
+                    ejbRef.setHome(interfce.getName());
+                    Method[] methods = interfce.getMethods();
+                    for (Method method : methods) {
+                        if (method.getName().startsWith("create")){
+                            ejbRef.setRemote(method.getReturnType().getName());
+                            break;
+                        }
+                    }
+                    ejbRef.setType(EjbRef.Type.REMOTE);
+                } else if (EJBLocalHome.class.isAssignableFrom(interfce)){
+                    ejbRef.setHome(interfce.getName());
+                    Method[] methods = interfce.getMethods();
+                    for (Method method : methods) {
+                        if (method.getName().startsWith("create")){
+                            ejbRef.setRemote(method.getReturnType().getName());
+                            break;
+                        }
+                    }
+                    ejbRef.setType(EjbRef.Type.LOCAL);
+                } else {
+                    ejbRef.setRemote(interfce.getName());
+                    if (interfce.getAnnotation(Local.class) != null) {
+                        ejbRef.setType(EjbRef.Type.LOCAL);
+                    } else if (interfce.getAnnotation(Remote.class) != null) {
+                        ejbRef.setType(EjbRef.Type.REMOTE);
                     }
                 }
-            } else {
-                // Must be a business interface ref
-                ejbRef.setRemote(interfce.getName());
             }
 
             // Get the ejb-ref-name
             String refName = ejb.name();
             if (refName.equals("")){
-                refName = member.getDeclaringClass().getName() +"/"+ member.getName();
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
             ejbRef.setEjbRefName(refName);
 
@@ -496,7 +532,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
-            return ejbRef;
+
+            switch(ejbRef.getType()){
+                case UNKNOWN:
+                case REMOTE:
+                    consumer.getEjbRef().add(ejbRef);
+                    break;
+                case LOCAL:
+                    consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
+                    break;
+            }
         }
 
         private List<Class> copy(List<Class> classes) {

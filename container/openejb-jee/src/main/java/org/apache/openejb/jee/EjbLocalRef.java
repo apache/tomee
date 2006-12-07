@@ -84,6 +84,22 @@ public class EjbLocalRef implements Injectable {
     @XmlID
     protected String id;
 
+    public EjbLocalRef() {
+    }
+
+    public EjbLocalRef(EjbRef ref) {
+        this.ejbRefName = ref.getEjbRefName();
+        this.ejbRefType = ref.getEjbRefType();
+        this.ejbLink = ref.getEjbLink();
+        this.mappedName = ref.getMappedName();
+        this.description = ref.getDescription();
+        this.injectionTarget = ref.getInjectionTarget();
+        this.local = ref.getRemote();
+        this.localHome = ref.getHome();
+    }
+
+
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
