@@ -112,6 +112,12 @@ public class JndiBuilder {
         }
     }
 
+    public static class InterfaceSimpleNameStrategy implements JndiNameStrategy {
+        public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
+            return interfce.getSimpleName();
+        }
+    }
+
     public void bind(DeploymentInfo deploymentInfo) {
 
         CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentInfo;
