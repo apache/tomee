@@ -114,6 +114,27 @@ Both point to this mapping file:
   
   </class>
 
+  <class name="org.apache.openejb.test.entity.cmp.ContextLookupCmpBean"
+         identity="primaryKey">
+    <description>Simple Entity Bean</description>
+
+    <map-to table="entity" />
+
+    <field name="primaryKey" type="integer" direct="true" >
+      <sql name="id" type="integer"/>
+    </field>
+
+    <field name="firstName" type="string" direct="true" >
+      <sql name="first_name" type="char" dirty="check" />
+    </field>
+
+    <field name="lastName" type="string" direct="true" >
+      <sql name="last_name" type="char" dirty="check" />
+    </field>
+
+
+  </class>
+
 
   <class name="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean"
          identity="primaryKey">

@@ -57,6 +57,24 @@
     </attributes>
   </entity>
 
+  <entity class="org.apache.openejb.test.entity.cmp.ContextLookupCmpBean">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="primaryKey">
+        <column name="id"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
 
   <entity class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
     <description>Simple Entity Bean</description>

@@ -67,6 +67,10 @@
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
     </ejb-deployment>
+	<ejb-deployment ejb-name="ContextLookupCmpBean" deployment-id="client/tests/entity/cmp/ContextLookupCmpBean" container-id="Default CMP Container">
+		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+    </ejb-deployment>
 	<ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome" container-id="Default Stateful Container"/>
 	<ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome" container-id="Default Stateful Container"/>
@@ -75,6 +79,9 @@
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 	</ejb-deployment>
 	<ejb-deployment ejb-name="EncStatefulBean" deployment-id="client/tests/stateful/EncBean" container-id="Default Stateful Container">
+		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+	</ejb-deployment>
+	<ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean" container-id="Default Stateful Container">
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 	</ejb-deployment>
 	<ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome" container-id="Default Stateful Container"/>
@@ -96,6 +103,9 @@
 	<ejb-deployment ejb-name="EncStatelessBean" deployment-id="client/tests/stateless/EncBean" container-id="Default Stateless Container">
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 	</ejb-deployment>
+	<ejb-deployment ejb-name="ContextLookupStatelessBean" deployment-id="client/tests/stateless/ContextLookupStatelessBean" container-id="Default Stateless Container">
+		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+	</ejb-deployment>
 	<ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome" container-id="Default Stateless Container"/>
 	<ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome" container-id="Default BMP Container">
 		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
@@ -105,6 +115,10 @@
 		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
 	</ejb-deployment>
 	<ejb-deployment ejb-name="EncBmpBean" deployment-id="client/tests/entity/bmp/EncBean" container-id="Default BMP Container">
+		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+	</ejb-deployment>
+	<ejb-deployment ejb-name="ContextLookupBmpBean" deployment-id="client/tests/entity/bmp/ContextLookupBmpBean" container-id="Default BMP Container">
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
 	</ejb-deployment>
