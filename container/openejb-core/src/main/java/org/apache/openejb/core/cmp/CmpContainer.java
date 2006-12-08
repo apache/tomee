@@ -51,6 +51,7 @@ import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.rmi.NoSuchObjectException;
 import java.util.List;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -396,6 +397,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo.getDeploymentID());
             bean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
+            if (bean == null) {
+                throw new NoSuchObjectException(deploymentInfo.getDeploymentID() + " : " + callContext.getPrimaryKey());
+            }
 
             returnValue = runMethod.invoke(bean, args);
 
@@ -529,6 +533,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo.getDeploymentID());
             EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
+            if (bean == null) {
+                throw new ObjectNotFoundException(deploymentInfo.getDeploymentID() + " : " + args[0]);
+            }
 
             // rebuild the primary key
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
