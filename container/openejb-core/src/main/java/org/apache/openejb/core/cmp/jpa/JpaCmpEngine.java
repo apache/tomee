@@ -19,7 +19,6 @@ package org.apache.openejb.core.cmp.jpa;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.alt.containers.castor_cmp11.JndiTxReference;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGeneratorFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -43,6 +42,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.FlushModeType;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.transaction.Transaction;
@@ -57,11 +57,9 @@ import java.util.WeakHashMap;
 public class JpaCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
     private static final Object[] NO_ARGS = new Object[0];
-    private static final String JAVA_TRANSACTION_MANAGER = "java:TransactionManager";
 
     private final CmpCallback cmpCallback;
     private final TransactionManager transactionManager;
-    private final JndiTxReference txReference;
     private final EntityManager entityManager;
 
     private final Map<Transaction, Object> transactionData = new WeakHashMap<Transaction, Object>();
@@ -69,8 +67,6 @@ public class JpaCmpEngine implements CmpEngine {
     public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) throws OpenEJBException {
         this.cmpCallback = cmpCallback;
         this.transactionManager = transactionManager;
-
-        txReference = new JndiTxReference(transactionManager);
 
         try {
             JdbcConnectionFactory dataSource;
@@ -112,14 +108,12 @@ public class JpaCmpEngine implements CmpEngine {
             Class clazz = classLoader.loadClass(persistenceProviderClassName);
             PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
             EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
-            new InitialContext().bind(JAVA_TRANSACTION_MANAGER, transactionManager);
             entityManager = emf.createEntityManager();
 
             if (entityManager instanceof OpenJPAEntityManager) {
                 OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
                 openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
             }
-
         } catch (Exception e) {
             throw new OpenEJBException(e);
         }
@@ -129,7 +123,6 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
-        bindTransactionManagerReference(deploymentInfo);
         configureKeyGenerator(deploymentInfo);
     }
 
@@ -148,7 +141,11 @@ public class JpaCmpEngine implements CmpEngine {
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
         EntityManager entityManager = getEntityManager();
+
+        // TODO verify that extract primary key requires a flush followed by a merge
         entityManager.persist(bean);
+        entityManager.flush();
+        bean = entityManager.merge(bean);
 
         // extract the primary key from the bean
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
@@ -161,7 +158,7 @@ public class JpaCmpEngine implements CmpEngine {
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         Class<?> beanClass = callContext.getDeploymentInfo().getBeanClass();
         EntityManager entityManager = getEntityManager();
-        Object bean = entityManager.find(beanClass, primaryKey);
+        Object bean = entityManager.getReference(beanClass, primaryKey);
         return bean;
     }
 
@@ -207,16 +204,6 @@ public class JpaCmpEngine implements CmpEngine {
             }
         }
         return results;
-    }
-
-    private void bindTransactionManagerReference(CoreDeploymentInfo deploymentInfo) throws SystemException {
-        // todo remove when openjpa tx starts working again
-        try {
-            deploymentInfo.getJndiEnc().bind(JAVA_TRANSACTION_MANAGER, txReference);
-        } catch (Exception e) {
-            logger.error("Unable to bind TransactionManager to deployment id = " + deploymentInfo.getDeploymentID() + " using JNDI name = \"" + JAVA_TRANSACTION_MANAGER + "\"", e);
-            throw new SystemException("Unable to bind TransactionManager to deployment id = " + deploymentInfo.getDeploymentID() + " using JNDI name = \"" + JAVA_TRANSACTION_MANAGER + "\"", e);
-        }
     }
 
     private void configureKeyGenerator(CoreDeploymentInfo di) throws SystemException {
@@ -301,6 +288,7 @@ public class JpaCmpEngine implements CmpEngine {
             // but it is completely legal.  Since the ejbActivate method is not allowed to access
             // persistent state of the bean (EJB 3.0fr 8.5.2) there should be no concern that the
             // call back method clears the bean state before ejbLoad is called.
+            cmpCallback.setEntityContext((EntityBean) bean);
             cmpCallback.ejbActivate((EntityBean) bean);
             cmpCallback.ejbLoad((EntityBean) bean);
         }
