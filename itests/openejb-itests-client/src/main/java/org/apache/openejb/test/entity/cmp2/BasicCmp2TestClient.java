@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmp2;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.openejb.test.entity.cmp.BasicCmpHome;
+import org.apache.openejb.test.entity.cmp.BasicCmpObject;
 
 /**
- * @version $Revision$ $Date$
+ * 
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
+public abstract class BasicCmp2TestClient extends Cmp2TestClient {
+
+    protected BasicCmpHome ejbHome;
+    protected BasicCmpObject ejbObject;
+
+    public BasicCmp2TestClient(String name) {
+        super(name);
     }
 }
+

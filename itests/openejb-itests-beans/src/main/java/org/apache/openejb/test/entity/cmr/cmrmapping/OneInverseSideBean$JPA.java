@@ -15,21 +15,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Set;
 
-/**
- * @version $Revision$ $Date$
- */
-public class SpringAssembler2Test extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring2.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return iTest.suite();
-        return new TestSuite();
+public class OneInverseSideBean$JPA extends OneInverseSideBean {
+    public Integer id;
+    private OneOwningSideLocal oneOwningSide;
+    private Set manyOwningSide;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public OneOwningSideLocal getOneOwningSide() {
+        return oneOwningSide;
+    }
+
+    public void setOneOwningSide(OneOwningSideLocal oneOwningSide) {
+        this.oneOwningSide = oneOwningSide;
+    }
+
+    public Set getManyOwningSide() {
+        return manyOwningSide;
+    }
+
+    public void setManyOwningSide(Set manyOwningSide) {
+        this.manyOwningSide = manyOwningSide;
     }
 }

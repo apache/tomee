@@ -20,7 +20,12 @@
 
 <!-- $Rev$ $Date$ -->
 
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                  http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+              version="3.0" metadata-complete="true">
+
     <description>
     This ejb-jar file contains assembled enterprise beans that are
     part of employee self-service application.
@@ -54,9 +59,34 @@
             <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
             <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
             <primkey-field>primaryKey</primkey-field>
+            <resource-ref>
+                <description>This is a reference to a JDBC database.</description>
+                <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+        </entity>
+
+        <!--
+        ########################################################
+        ID:  client/tests/entity/cmp2/BasicCmpHome
+        ########################################################
+        -->
+
+        <entity>
+            <ejb-name>BasicCmp2Bean</ejb-name>
+            <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2Bean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>False</reentrant>
+            <primkey-field>id</primkey-field>
             <resource-ref>
                 <description>This is a reference to a JDBC database.</description>
                 <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
@@ -80,9 +110,39 @@
             <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
             <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
             <primkey-field>primaryKey</primkey-field>
+            <resource-ref>
+                <description>
+                This is a reference to a JDBC database.
+                </description>
+                <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+        </entity>
+
+        <!--
+        ########################################################
+        ID:  client/tests/entity/cmp2/allowed_operations/EntityHome
+        ########################################################
+        -->
+
+        <entity>
+            <description>
+             blah, blah, blah
+            </description>
+            <ejb-name>AOBasicCmp2Bean</ejb-name>
+            <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>False</reentrant>
+            <primkey-field>id</primkey-field>
             <resource-ref>
                 <description>
                 This is a reference to a JDBC database.
@@ -108,6 +168,7 @@
             <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
             <ejb-class>org.apache.openejb.test.entity.cmp.EncCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
             <primkey-field>primaryKey</primkey-field>
@@ -189,6 +250,97 @@
             </resource-ref>
         </entity>
 
+        <!--
+        ########################################################
+        ID:  client/tests/entity/cmp2/EncBean
+        ########################################################
+        -->
+
+        <entity>
+            <description>
+             blah, blah, blah
+            </description>
+            <ejb-name>EncCmp2Bean</ejb-name>
+            <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.EncCmp2Bean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <cmp-version>2.x</cmp-version>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>False</reentrant>
+            <primkey-field>id</primkey-field>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
+                <env-entry-type>java.lang.Boolean</env-entry-type>
+                <env-entry-value>true</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/String</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Double</env-entry-name>
+                <env-entry-type>java.lang.Double</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Long</env-entry-name>
+                <env-entry-type>java.lang.Long</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Float</env-entry-name>
+                <env-entry-type>java.lang.Float</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Integer</env-entry-name>
+                <env-entry-type>java.lang.Integer</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Short</env-entry-name>
+                <env-entry-type>java.lang.Short</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>entity/cmp/references/Byte</env-entry-name>
+                <env-entry-type>java.lang.Byte</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <ejb-ref>
+                <ejb-ref-name>entity/cmp/beanReferences/cmp_entity</ejb-ref-name>
+                <ejb-ref-type>Entity</ejb-ref-type>
+                <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+                <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+                <ejb-link>BasicCmpBean</ejb-link>
+            </ejb-ref>
+            <ejb-ref>
+                <ejb-ref-name>entity/cmp/beanReferences/stateful</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+                <ejb-link>BasicStatefulBean</ejb-link>
+            </ejb-ref>
+            <ejb-ref>
+                <ejb-ref-name>entity/cmp/beanReferences/stateless</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+                <ejb-link>BasicStatelessBean</ejb-link>
+            </ejb-ref>
+            <resource-ref>
+                <res-ref-name>datasource</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+            <resource-ref>
+                <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+        </entity>
 
         <!--
         ########################################################
@@ -301,6 +453,7 @@
             <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
             <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
+            <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>False</reentrant>
             <primkey-field>primaryKey</primkey-field>
@@ -315,6 +468,103 @@
                 <role-name>TheMan</role-name>
                 <role-link>Executive</role-link>
             </security-role-ref>
+        </entity>
+
+        <!--
+        ########################################################
+        ID:  client/tests/entity/cmp2/RMI-over-IIOP/EJBHome
+        ########################################################
+        -->
+
+        <entity>
+            <description>
+             blah, blah, blah
+            </description>
+            <ejb-name>Cmp2 RMI-IIOP Bean</ejb-name>
+            <home>org.apache.openejb.test.entity.cmp.RmiIiopCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <cmp-version>2.x</cmp-version>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>False</reentrant>
+            <primkey-field>id</primkey-field>
+            <ejb-ref>
+                <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
+                <ejb-ref-type>Entity</ejb-ref-type>
+                <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
+                <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
+                <ejb-link>EncCmpBean</ejb-link>
+            </ejb-ref>
+            <security-role-ref>
+                <role-name>TheMan</role-name>
+                <role-link>Executive</role-link>
+            </security-role-ref>
+        </entity>
+
+        <entity>
+            <ejb-name>OneOwningSideBean</ejb-name>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <!--<prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>-->
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>Order</abstract-schema-name>
+            <cmp-field>
+                <field-name>id</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field1</field-name>
+            </cmp-field>
+            <primkey-field>id</primkey-field>
+        </entity>
+
+        <entity>
+            <ejb-name>OneInverseSideBean</ejb-name>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>Order</abstract-schema-name>
+            <cmp-field>
+                <field-name>id</field-name>
+            </cmp-field>
+            <primkey-field>id</primkey-field>
+        </entity>
+
+        <entity>
+            <ejb-name>ManyOwningSideBean</ejb-name>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean$JPA</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <!--<prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>-->
+           <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>Order</abstract-schema-name>
+            <cmp-field>
+                <field-name>id</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field1</field-name>
+            </cmp-field>
+            <primkey-field>id</primkey-field>
+            <query>
+                <query-method>
+                    <method-name>ejbSelectSomething</method-name>
+                    <method-params>
+                        <method-param>java.lang.Integer</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</ejb-ql>
+            </query>
         </entity>
 
         <!--
@@ -1405,6 +1655,49 @@
         </entity>
     </enterprise-beans>
 
+    <relationships>
+        <ejb-relation>
+            <ejb-relationship-role>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneOwningSideBean</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>oneInverseSide</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+            <ejb-relationship-role>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneInverseSideBean</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>oneOwningSide</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+        </ejb-relation>
+        <ejb-relation>
+            <ejb-relationship-role>
+                <multiplicity>Many</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>ManyOwningSideBean</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>oneInverseSide</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+            <ejb-relationship-role>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneInverseSideBean</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>manyOwningSide</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+        </ejb-relation>
+    </relationships>
+
     <assembly-descriptor>
         <security-role>
             <description>The description</description>
@@ -1483,6 +1776,27 @@
         <container-transaction>
             <method>
                 <ejb-name>Cmp RMI-IIOP Bean</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>OneOwningSideBean</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>OneInverseSideBean</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>ManyOwningSideBean</ejb-name>
                 <method-name>*</method-name>
             </method>
             <trans-attribute>Required</trans-attribute>

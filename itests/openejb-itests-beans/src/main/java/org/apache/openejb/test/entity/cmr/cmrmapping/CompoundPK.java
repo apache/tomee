@@ -14,21 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.io.Serializable;
+
 
 /**
- * @version $Revision$ $Date$
+ *
+ * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
+public class CompoundPK implements Serializable {
+    private static final long serialVersionUID = 3210397138847726239L;
+    public Integer id;
+    public Integer field1;
+
+    public CompoundPK() {}
+    
+    public CompoundPK(Integer id, Integer field1) {
+        this.id = id;
+        this.field1 = field1;
+    }
+    
+    public boolean equals(Object other) {
+      if (!(other instanceof CompoundPK) ) {
+          return false;
+      }
+      CompoundPK otherPK = (CompoundPK) other;
+      return field1.equals(otherPK.field1) && id.equals(otherPK.id);
+    }
+    
+    public int hashCode() {
+      return field1.hashCode() ^ id.hashCode();
     }
 }

@@ -20,17 +20,16 @@ package org.apache.openejb.core.cmp.jpa;
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.openejb.core.ContainerSystem;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.resource.SharedLocalConnectionManager;
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
-import org.apache.openejb.test.entity.cmp.BasicCmpBean;
+import org.apache.openejb.test.entity.cmp2.Employee;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -50,22 +49,22 @@ public class JpaTest extends TestCase {
     private EntityTransaction transaction;
     private TransactionManager transactionManager;
     private EntityManager entityManager;
-    private DataSource dataSource;
+    private DataSource jtaDs;
+    private DataSource nonJtaDs;
 
     public void setUp() throws Exception {
         super.setUp();
 
-        // initialize naming
-        System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, "org.apache.openejb.core.ivm.naming");
-        ContainerSystem containerSystem = new ContainerSystem();
-        assertNotNull(containerSystem);
-
         // setup tx mgr
         transactionManager = new GeronimoTransactionManager();
-        new InitialContext().bind("java:TransactionManager", transactionManager);
 
-        dataSource = createDataSource(transactionManager);
-        initializeDatabase(dataSource);
+        // Put tx mgr into SystemInstance so OpenJPA can find it
+        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
+
+        // init databases
+        jtaDs = createJtaDataSource(transactionManager);
+        nonJtaDs = createNonJtaDataSource();
+        initializeDatabase(jtaDs);
     }
 
     public void testJta() throws Exception {
@@ -79,16 +78,15 @@ public class JpaTest extends TestCase {
     }
 
     public void jpaLifecycle() throws Exception {
-
         createEntityManager();
         assertTrue(entityManager.isOpen());
 
         beginTx();
 
-        BasicCmpBean david = entityManager.find(BasicCmpBean.class, 55);
+        Employee david = entityManager.find(Employee.class, 1000);
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.primaryKey, 55);
+        assertEquals(david.id, 1000);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
         commitTx();
@@ -96,20 +94,20 @@ public class JpaTest extends TestCase {
         entityManager.clear();
         beginTx();
 
-        david = entityManager.find(BasicCmpBean.class, 55);
+        david = entityManager.find(Employee.class, 1000);
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.primaryKey, 55);
+        assertEquals(david.id, 1000);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
 
         commitTx();
         beginTx();
 
-        david = (BasicCmpBean) entityManager.createQuery("select o from BasicCmpBean o where o.firstName='David'").getSingleResult();
+        david = (Employee) entityManager.createQuery("select e from Employee e where e.firstName='David'").getSingleResult();
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.primaryKey, 55);
+        assertEquals(david.id, 1000);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
 
@@ -118,38 +116,45 @@ public class JpaTest extends TestCase {
 
         entityManager.remove(david);
         assertFalse(entityManager.contains(david));
-        david = entityManager.find(BasicCmpBean.class, 55);
+        david = entityManager.find(Employee.class, 1000);
         assertNull(david);
 
         commitTx();
         beginTx();
 
-        BasicCmpBean dain = new BasicCmpBean();
-        dain.primaryKey = 42;
+        Employee dain = new Employee();
         dain.firstName = "Dain";
         dain.lastName = "Sundstrom";
         assertFalse(entityManager.contains(dain));
 
         entityManager.persist(dain);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        dain = entityManager.merge(dain);
+        int dainId = dain.id;
+
         assertTrue(entityManager.contains(dain));
 
         commitTx();
+
+
         beginTx();
 
-        dain = entityManager.find(BasicCmpBean.class, 42);
+        dain = entityManager.find(Employee.class, dainId);
         assertTrue(entityManager.contains(dain));
 
-        assertEquals(dain.primaryKey, 42);
+        assertEquals(dain.id, dainId);
         assertEquals(dain.firstName, "Dain");
         assertEquals(dain.lastName, "Sundstrom");
 
         commitTx();
         beginTx();
 
-        dain = (BasicCmpBean) entityManager.createQuery("select o from BasicCmpBean o").getSingleResult();
+        dain = (Employee) entityManager.createQuery("select e from Employee e").getSingleResult();
         assertTrue(entityManager.contains(dain));
 
-        assertEquals(dain.primaryKey, 42);
+        assertEquals(dain.id, dainId);
         assertEquals(dain.firstName, "Dain");
         assertEquals(dain.lastName, "Sundstrom");
         commitTx();
@@ -166,12 +171,14 @@ public class JpaTest extends TestCase {
         unitInfo.setPersistenceProviderClassName(PersistenceProviderImpl.class.getName());
         unitInfo.setClassLoader(getClass().getClassLoader());
         unitInfo.setExcludeUnlistedClasses(false);
-        unitInfo.setJtaDataSource(dataSource);
+        unitInfo.setJtaDataSource(jtaDs);
+        unitInfo.setNonJtaDataSource(nonJtaDs);
 
         unitInfo.setMappingFileNames(Collections.singletonList("META-INF/jpa.mapping.xml"));
 
         // Handle Properties
         Properties properties = new Properties();
+        properties.setProperty("openjpa.jdbc.DBDictionary", "org.apache.openjpa.jdbc.sql.DerbyDictionary");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);
@@ -215,38 +222,44 @@ public class JpaTest extends TestCase {
 
     private void initializeDatabase(DataSource dataSource) throws SQLException {
         try {
-            execute(dataSource, "DROP TABLE entity");
+            execute(dataSource, "DROP TABLE OPENJPA_SEQUENCE_TABLE");
         } catch (Exception ignored) {
         }
-        execute(dataSource, "CREATE TABLE entity ( id INT PRIMARY KEY, first_name CHAR(20), last_name CHAR(20))");
-        execute(dataSource, "INSERT INTO entity (id, first_name, last_name) VALUES (55, 'David', 'Blevins')");
+        execute(dataSource, "CREATE TABLE OPENJPA_SEQUENCE_TABLE ( ID VARCHAR(20) PRIMARY KEY, SEQUENCE_VALUE INT)");
+        execute(dataSource, "INSERT INTO OPENJPA_SEQUENCE_TABLE (ID, SEQUENCE_VALUE) VALUES ('employee', 2000)");
+        try {
+            execute(dataSource, "DROP TABLE employee");
+        } catch (Exception ignored) {
+        }
+        execute(dataSource, "CREATE TABLE employee ( id INT PRIMARY KEY, first_name VARCHAR(20), last_name VARCHAR(20))");
+        execute(dataSource, "INSERT INTO employee (id, first_name, last_name) VALUES (1000, 'David', 'Blevins')");
     }
 
-    private DataSource createDataSource(TransactionManager transactionManager) throws Exception {
-        if (transactionType == PersistenceUnitTransactionType.JTA) {
-            JdbcManagedConnectionFactory mcf = new JdbcManagedConnectionFactory();
-            mcf.setDefaultUserName("Admin");
-            mcf.setDefaultPassword("pass");
-            mcf.setUrl("jdbc:idb:conf/instantdb.properties");
-            mcf.setDriver("org.enhydra.instantdb.jdbc.idbDriver");
-            mcf.start();
+    private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
+        JdbcManagedConnectionFactory mcf = new JdbcManagedConnectionFactory();
+        mcf.setDriver("org.apache.derby.jdbc.EmbeddedDriver");
+        mcf.setUrl("jdbc:derby:derbyDB;create=true");
+        mcf.setDefaultUserName("admin");
+        mcf.setDefaultPassword("pass");
+        mcf.start();
 
-            SharedLocalConnectionManager connectionManager = new SharedLocalConnectionManager();
-            connectionManager.setTransactionManager(transactionManager);
+        SharedLocalConnectionManager connectionManager = new SharedLocalConnectionManager();
+        connectionManager.setTransactionManager(transactionManager);
 
-            DataSource connectionFactory = (DataSource) mcf.createConnectionFactory(connectionManager);
-            return connectionFactory;
-        } else {
-            BasicDataSource ds = new BasicDataSource();
-            ds.setDriverClassName("org.enhydra.instantdb.jdbc.idbDriver");
-            ds.setUrl("jdbc:idb:src/test/resources/conf/instantdb.properties");
-            ds.setUsername("Admin");
-            ds.setPassword("pass");
-            ds.setMaxActive(100);
-            ds.setMaxWait(10000);
-            ds.setTestOnBorrow(true);
-            return ds;
-        }
+        DataSource connectionFactory = (DataSource) mcf.createConnectionFactory(connectionManager);
+        return connectionFactory;
+    }
+
+    private DataSource createNonJtaDataSource() throws Exception {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+        ds.setUrl("jdbc:derby:derbyDB;create=true");
+        ds.setUsername("admin");
+        ds.setPassword("pass");
+        ds.setMaxActive(100);
+        ds.setMaxWait(10000);
+        ds.setTestOnBorrow(true);
+        return ds;
     }
 
 

@@ -14,21 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.ejb.EntityBean;
+import javax.ejb.EntityContext;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
+public abstract class AbstractEntityBean implements EntityBean {
+    private EntityContext ctx;
+
+    public void ejbLoad() {
+    }
+
+    public void setEntityContext(EntityContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public void unsetEntityContext() {
+        this.ctx = null;
+    }
+
+    public void ejbStore() {
+    }
+
+    public void ejbRemove() {
+    }
+
+    public void ejbActivate() {
+    }
+
+    public void ejbPassivate() {
     }
 }

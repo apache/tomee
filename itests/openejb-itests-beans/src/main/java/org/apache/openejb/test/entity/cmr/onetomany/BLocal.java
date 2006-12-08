@@ -14,21 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.onetomany;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.ejb.EJBLocalObject;
 
 /**
- * @version $Revision$ $Date$
+ *
+ * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
-    }
+public interface BLocal extends EJBLocalObject {
+
+    // CMP
+    public Integer getField1();
+    public void setField1(Integer field1);
+
+    public String getField2();
+    public void setField2(String field2);
+
+    public Integer getField3();
+    public void setField3(Integer field3);
+
+    public String getField4();
+    public void setField4(String field4);
+
+    // CMR
+    public ALocal getA();
+    public void setA(ALocal a);
 }

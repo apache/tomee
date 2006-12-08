@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.ejbql;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.rmi.RemoteException;
+
+import javax.ejb.EJBObject;
 
 /**
- * @version $Revision$ $Date$
+ *
+ * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
-    }
+public interface ARemote extends EJBObject {
+
+    // CMP
+    public Integer getField1() throws RemoteException;
+    public void setField1(Integer field1) throws RemoteException;
+
+    public String getField2() throws RemoteException;
+    public void setField2(String field2) throws RemoteException;
+    
 }

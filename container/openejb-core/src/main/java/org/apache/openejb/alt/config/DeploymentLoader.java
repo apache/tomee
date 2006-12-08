@@ -249,6 +249,7 @@ public class DeploymentLoader {
                 }
 
             } catch (OpenEJBException e) {
+                e.printStackTrace();
                 ConfigUtils.logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             }
         }

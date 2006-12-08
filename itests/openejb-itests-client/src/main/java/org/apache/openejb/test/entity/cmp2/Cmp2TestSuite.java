@@ -1,0 +1,80 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.openejb.test.entity.cmp2;
+
+import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
+import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.entity.cmr.CmrTestSuite;
+
+/**
+ * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
+ */
+public class Cmp2TestSuite extends org.apache.openejb.test.TestSuite {
+
+    public Cmp2TestSuite() {
+        super();
+        this.addTest(new Cmp2JndiTests());
+        this.addTest(new Cmp2HomeIntfcTests());
+        this.addTest(new Cmp2EjbHomeTests());
+        this.addTest(new Cmp2EjbObjectTests());
+        this.addTest(new Cmp2RemoteIntfcTests());
+        this.addTest(new Cmp2HomeHandleTests());
+        this.addTest(new Cmp2HandleTests());
+        this.addTest(new Cmp2EjbMetaDataTests());
+        //TODO:0:this.addTest(new Cmp2AllowedOperationsTests());
+        this.addTest(new Cmp2JndiEncTests());
+        this.addTest(new Cmp2RmiIiopTests());
+//        this.addTest(new PrefetchTests());
+//        this.addTest(new PetstoreTests());
+//        this.addTest(new StorageTests());
+//        this.addTest(new CmrTestSuite());
+    }
+
+    public static junit.framework.Test suite() {
+        return new Cmp2TestSuite();
+    }
+
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
+    protected void setUp() throws Exception {
+        Properties props = TestManager.getServer().getContextEnvironment();
+        props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
+        props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
+        new InitialContext(props);
+
+        /*[2] Create database table */
+        TestManager.getDatabase().createEntityTable();
+//        TestManager.getDatabase().createEntityExplicitePKTable();
+//        TestManager.getDatabase().createCMP2Model();
+    }
+
+    /**
+     * Tears down the fixture, for example, close a network connection.
+     * This method is called after a test is executed.
+     */
+    protected void tearDown() throws Exception {
+        /*[1] Drop database table */
+        TestManager.getDatabase().dropEntityTable();
+//        TestManager.getDatabase().dropEntityExplicitePKTable();
+//        TestManager.getDatabase().dropCMP2Model();
+    }
+}

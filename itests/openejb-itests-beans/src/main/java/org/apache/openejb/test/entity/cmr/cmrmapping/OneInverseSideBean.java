@@ -14,21 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.Set;
+
+import javax.ejb.CreateException;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
+public abstract class OneInverseSideBean extends AbstractEntityBean {
+
+    // CMP
+    public abstract Integer getId();
+    public abstract void setId(Integer primaryKey);
+
+    // CMR
+    public abstract OneOwningSideLocal getOneOwningSide();
+    public abstract void setOneOwningSide(OneOwningSideLocal oneOwningSideLocal);
+
+    public abstract Set getManyOwningSide();
+    public abstract void setManyOwningSide(Set set);
+
+    public Integer ejbCreate(Integer id) throws CreateException {
+        setId(id);
+        return null;
+    }
+
+    public void ejbPostCreate(Integer id) {
     }
 }

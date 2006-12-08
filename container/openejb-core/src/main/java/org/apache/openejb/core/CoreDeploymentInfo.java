@@ -41,6 +41,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.Injection;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;

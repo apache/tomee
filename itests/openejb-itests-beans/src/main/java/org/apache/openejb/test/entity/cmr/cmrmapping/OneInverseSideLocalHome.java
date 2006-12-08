@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.ejb.CreateException;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.FinderException;
+
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 477809 $ $Date: 2006-11-21 10:41:16 -0800 (Tue, 21 Nov 2006) $
  */
-public class SpringAssemblerTest extends TestCase {
-    public static Test suite() {
-        System.setProperty("openejb.assembler", org.apache.openejb.assembler.spring.Assembler.class.getName());
-        System.setProperty("openejb.spring.conf", "META-INF/org.apache.openejb/spring.xml");
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
-//        return org.apache.openejb.iTest.suite();
-        return new TestSuite();
-    }
+public interface OneInverseSideLocalHome extends EJBLocalHome {
+    public OneInverseSideLocal create(Integer id) throws CreateException;
+    
+    public OneInverseSideLocal findByPrimaryKey(Integer id) throws FinderException;
 }

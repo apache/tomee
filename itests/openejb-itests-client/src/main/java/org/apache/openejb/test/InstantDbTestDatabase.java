@@ -41,69 +41,75 @@ public class InstantDbTestDatabase implements TestDatabase{
     private static String _createEntity = "CREATE TABLE entity ( id INT PRIMARY KEY AUTO INCREMENT, first_name CHAR(20), last_name CHAR(20) )";    
     private static String _dropEntity   = "DROP TABLE entity";
 
+    private static final String CREATE_ONE_OWNING = "CREATE TABLE oneowning (col_id INTEGER, col_field1 INTEGER)";
+
+    private static final String DROP_ONE_OWNING = "DROP TABLE oneowning";
+
+    private static final String CREATE_ONE_INVERSE = "CREATE TABLE oneinverse (col_id INTEGER)";
+
+    private static final String DROP_ONE_INVERSE = "DROP TABLE oneinverse";
+
+    private static final String CREATE_MANY_OWNING = "CREATE TABLE manyowning (col_id INTEGER, col_field1 INTEGER)";
+
+    private static final String DROP_MANY_OWNING = "DROP TABLE manyowning";
+
     static{
         System.setProperty("noBanner", "true");
     }
     
 
     public void createEntityTable() throws java.sql.SQLException {
-        try{
-            try{
-                database.execute(_dropEntity);
-            } catch (Exception e){
-                // not concerned
-            }
-            database.execute(_createEntity);
-        } catch (RemoteException re){
-            if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
-            } else {
-                throw new java.sql.SQLException("Cannot create entity table: "+re.getMessage(), _createEntity);
-            }
-        }
+        createTable(_createEntity, _dropEntity);
+        createTable(CREATE_ONE_OWNING, DROP_ONE_OWNING);
+        createTable(CREATE_ONE_INVERSE, DROP_ONE_INVERSE);
+        createTable(CREATE_MANY_OWNING, DROP_MANY_OWNING);
     }
+
     public void dropEntityTable() throws java.sql.SQLException {
-        try {
-            database.execute(_dropEntity);
-        } catch (RemoteException re){
-            if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
-            } else {
-                throw new java.sql.SQLException("Unable to drop entity table: "+re.getMessage(), _dropEntity);
-            }
-        }
+        dropTable(_dropEntity);
+        dropTable(DROP_ONE_OWNING);
+        dropTable(DROP_ONE_INVERSE);
+        dropTable(DROP_MANY_OWNING);
     }
-    
-    
+
     public void createAccountTable() throws java.sql.SQLException {
+        createTable(_createAccount, _dropAccount);
+    }
+
+    public void dropAccountTable() throws java.sql.SQLException {
+        dropTable(_dropAccount);
+    }
+
+    private void createTable(String create, String drop) throws java.sql.SQLException {
         try{
             try{
-                database.execute(_dropAccount);
+                database.execute(drop);
             } catch (Exception e){
                 // not concerned
             }
-            database.execute(_createAccount);
+            database.execute(create);
         } catch (RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot create account table: "+re.getMessage(), _createAccount);
+                throw new java.sql.SQLException("Cannot create table: "+re.getMessage(), create);
             }
         }
     }
-    
-    public void dropAccountTable() throws java.sql.SQLException {
+
+    private void dropTable(String drop) throws java.sql.SQLException {
         try {
-            database.execute(_dropAccount);
+            database.execute(drop);
         } catch (RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot drop account table: "+re.getMessage(), _dropAccount);
+                throw new java.sql.SQLException("Unable to drop table: "+re.getMessage(), drop);
             }
         }
     }
-    
+
+
     public void start() throws IllegalStateException {
         try {
             Properties properties = TestManager.getServer().getContextEnvironment();

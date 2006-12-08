@@ -23,6 +23,7 @@ import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
+import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateful.StatefulLocalTestSuite;
 import org.apache.openejb.test.stateless.StatelessLocalTestSuite;
@@ -47,7 +48,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         //System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
-        
+
         // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
         // Derby creates derby.log file in derby.system.home
         // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
@@ -68,6 +69,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatefulLocalTestSuite.suite());
         suite.addTest(BmpLocalTestSuite.suite());
         suite.addTest(CmpLocalTestSuite.suite());
+        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }
 }

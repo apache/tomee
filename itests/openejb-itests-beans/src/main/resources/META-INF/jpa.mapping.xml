@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+
+  <!--<table-generator name="id_gen"-->
+      <!--pk-column-name="name"-->
+      <!--value-column-name="value"-->
+      <!--pk-column-value="entity">-->
+  <!--</table-generator>-->
+
+  <entity class="org.apache.openejb.test.entity.cmp2.Employee">
+    <description>Simple Entity Bean</description>
+
+    <table name="employee"/>
+
+    <attributes>
+      <id name="id">
+        <column name="id"/>
+        <generated-value strategy="AUTO"/>
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
   <entity class="org.apache.openejb.test.entity.cmp.BasicCmpBean" access="FIELD">
     <description>Simple Entity Bean</description>
 
@@ -8,6 +54,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -19,7 +66,25 @@
     </attributes>
   </entity>
 
-  <!--  Mapping for AllowedOperationsCmpBean  -->
+  <entity name="BasicCmp2Bean" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean$JPA" access="PROPERTY">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="id">
+        <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
   <entity class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
     <description>Simple Entity Bean</description>
 
@@ -28,6 +93,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -36,6 +102,25 @@
         <column name="last_name"/>
       </basic>
       <transient name="allowedOperationsTable"/>
+    </attributes>
+  </entity>
+
+  <entity name="AllowedOperationsCmp2Bean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean$JPA" access="PROPERTY">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="id">
+        <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
     </attributes>
   </entity>
 
@@ -47,6 +132,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -59,7 +145,6 @@
 
   <entity class="org.apache.openejb.test.entity.cmp.ContextLookupCmpBean">
     <description>Simple Entity Bean</description>
-
     <table name="entity"/>
 
     <attributes>
@@ -75,6 +160,24 @@
     </attributes>
   </entity>
 
+  <entity name="EncCmp2Bean" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean$JPA" access="PROPERTY">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+
+    <attributes>
+      <id name="id">
+        <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
 
   <entity class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
     <description>Simple Entity Bean</description>
@@ -83,12 +186,64 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
       </id>
       <basic name="firstName">
         <column name="first_name"/>
       </basic>
       <basic name="lastName">
         <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
+  <entity name="RmiIiopCmp2Bean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean$JPA" access="PROPERTY">
+    <description>Simple Entity Bean</description>
+
+    <table name="entity"/>
+    <attributes>
+      <id name="id">
+        <column name="id"/>
+        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+      </id>
+      <basic name="firstName">
+        <column name="first_name"/>
+      </basic>
+      <basic name="lastName">
+        <column name="last_name"/>
+      </basic>
+    </attributes>
+  </entity>
+
+  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean$JPA" access="PROPERTY">
+    <table name="OneOwning"/>
+    <attributes>
+      <id name="id">
+        <column name="col_id"/>
+      </id>
+      <basic name="field1">
+        <column name="col_field1"/>
+      </basic>
+    </attributes>
+  </entity>
+
+  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean$JPA" access="PROPERTY">
+    <table name="OneInverse"/>
+    <attributes>
+      <id name="id">
+        <column name="col_id"/>
+      </id>
+    </attributes>
+  </entity>
+
+  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean$JPA" access="PROPERTY">
+    <table name="ManyOwning"/>
+    <attributes>
+      <id name="id">
+        <column name="col_id"/>
+      </id>
+      <basic name="field1">
+        <column name="col_field1"/>
       </basic>
     </attributes>
   </entity>
