@@ -157,8 +157,13 @@ public class AssemblerTool {
                         List<Method> methods = new ArrayList<Method>();
 
                         if (methodInfo.methodIntf == null) {
-                            resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
-                            resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
+                            if (deploymentInfo.getRemoteInterface() != null) {
+                                resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
+                            }
+                            if (deploymentInfo.getHomeInterface() != null) {
+                                resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
+                            } else {
+                            }
                         } else if (methodInfo.methodIntf.equals("Home")) {
                             resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {
