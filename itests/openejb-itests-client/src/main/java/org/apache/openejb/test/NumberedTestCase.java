@@ -92,6 +92,7 @@ public class NumberedTestCase extends Assert implements Test{
         try{
             setUp();
         } catch (Exception e){
+            e.printStackTrace();
             Test test = new TestSetup();
         
             result.addError(test, e);
@@ -103,6 +104,7 @@ public class NumberedTestCase extends Assert implements Test{
         try{
             tearDown();
         } catch (Exception e){
+            e.printStackTrace();
             Test test = new TestTearDown();
         
             result.addError(test, e);
