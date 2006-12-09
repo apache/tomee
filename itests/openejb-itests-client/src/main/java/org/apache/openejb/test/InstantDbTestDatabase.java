@@ -41,6 +41,11 @@ public class InstantDbTestDatabase implements TestDatabase{
     private static String _createEntity = "CREATE TABLE entity ( id INT PRIMARY KEY AUTO INCREMENT, first_name CHAR(20), last_name CHAR(20) )";    
     private static String _dropEntity   = "DROP TABLE entity";
 
+    private static final String CREATE_ONE_TO_ONE_A = "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(50))";
+    private static final String DROP_ONE_TO_ONE_A = "DROP TABLE OneToOneA";
+    private static final String CREATE_ONE_TO_ONE_B = "CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER)";
+    private static final String DROP_ONE_TO_ONE_B = "DROP TABLE OneToOneB";
+
     private static final String CREATE_ONE_OWNING = "CREATE TABLE oneowning (col_id INTEGER, col_field1 INTEGER)";
 
     private static final String DROP_ONE_OWNING = "DROP TABLE oneowning";
@@ -60,6 +65,8 @@ public class InstantDbTestDatabase implements TestDatabase{
 
     public void createEntityTable() throws java.sql.SQLException {
         createTable(_createEntity, _dropEntity);
+        createTable(CREATE_ONE_TO_ONE_A, DROP_ONE_TO_ONE_A);
+        createTable(CREATE_ONE_TO_ONE_B, DROP_ONE_TO_ONE_B);
         createTable(CREATE_ONE_OWNING, DROP_ONE_OWNING);
         createTable(CREATE_ONE_INVERSE, DROP_ONE_INVERSE);
         createTable(CREATE_MANY_OWNING, DROP_MANY_OWNING);
@@ -67,6 +74,8 @@ public class InstantDbTestDatabase implements TestDatabase{
 
     public void dropEntityTable() throws java.sql.SQLException {
         dropTable(_dropEntity);
+        dropTable(DROP_ONE_TO_ONE_A);
+        dropTable(DROP_ONE_TO_ONE_B);
         dropTable(DROP_ONE_OWNING);
         dropTable(DROP_ONE_INVERSE);
         dropTable(DROP_MANY_OWNING);

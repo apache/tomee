@@ -33,7 +33,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         super(container, pk, depID, interfaceType);
     }
 
-    protected Object createProxy(ProxyInfo proxyInfo) {
+    public Object createProxy(ProxyInfo proxyInfo) {
         Object proxy = super.createProxy(proxyInfo);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 

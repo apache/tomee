@@ -45,34 +45,63 @@ public class OneToOneTests extends AbstractCMRTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        ahome = (ALocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/ALocalHome");
-        bhome = (BLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/BLocalHome");
+        ahome = (ALocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/AHomeLocal");
+        bhome = (BLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/BHomeLocal");
+
+        Connection connection = ds.getConnection();
+        try {
+            buildDBSchema(connection);
+        } finally {
+            connection.close();
+        }
     }
 
     public void test00_AGetBExistingAB() throws Exception {
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        BLocal b = a.getB();
-        assertNotNull(b);
-        assertEquals(new Integer(11), b.getField1());
-        assertEquals("value11", b.getField2());
-        completeTransaction();
+        try {
+            ALocal a = ahome.findByPrimaryKey(new Integer(1));
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
+            assertEquals(new Integer(11), b.getField1());
+            assertEquals("value11", b.getField2());
+            a.setB(b);
+            b = a.getB();
+            assertEquals(new Integer(11), b.getField1());
+            assertEquals("value11", b.getField2());
+        } finally {
+            completeTransaction();
+        }
+    }
+
+    public void test99_AGetBExistingAB() throws Exception {
+        beginTransaction();
+        try {
+            ALocal a = ahome.findByPrimaryKey(new Integer(1));
+            BLocal b = a.getB();
+            assertNotNull(b);
+            assertEquals(new Integer(11), b.getField1());
+            assertEquals("value11", b.getField2());
+        } finally {
+            completeTransaction();
+        }
     }
 
     public void test01_BGetAExistingAB() throws Exception {
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
-        ALocal a = b.getA();
-        assertNotNull(a);
-        assertEquals(new Integer(1), a.getField1());
-        assertEquals("value1", a.getField2());
-        completeTransaction();
+        try {
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
+            ALocal a = b.getA();
+            assertNotNull(a);
+            assertEquals(new Integer(1), a.getField1());
+            assertEquals("value1", a.getField2());
+        } finally {
+            completeTransaction();
+        }
     }
 
     private void assertStateDropExisting() throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToOneB WHERE fka1 = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -86,9 +115,12 @@ public class OneToOneTests extends AbstractCMRTest {
      */
     public void Xtest02_ASetBDropExisting() throws Exception {
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        a.setB(null);
-        completeTransaction();
+        try {
+            ALocal a = ahome.findByPrimaryKey(new Integer(1));
+            a.setB(null);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateDropExisting();
     }
@@ -99,15 +131,17 @@ public class OneToOneTests extends AbstractCMRTest {
      */
     public void Xtest03_BSetADropExisting() throws Exception {
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
-        b.setA(null);
-        completeTransaction();
+        try {
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
+            b.setA(null);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateDropExisting();
     }
 
     private void prepareNewAB() throws Exception {
-        beginTransaction();
         a = ahome.create(new Integer(2));
         a.setField2("value2");
         b = bhome.create(new Integer(22));
@@ -117,12 +151,12 @@ public class OneToOneTests extends AbstractCMRTest {
     private void assertStateNewAB() throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT a2 FROM A WHERE a1 = 2");
+        ResultSet rs = s.executeQuery("SELECT a2 FROM OneToOneA WHERE a1 = 2");
         assertTrue(rs.next());
         assertEquals("value2", rs.getString(1));
         rs.close();
 
-        rs = s.executeQuery("SELECT b1, b2 FROM B WHERE fka1 = 2");
+        rs = s.executeQuery("SELECT b1, b2 FROM OneToOneB WHERE fka1 = 2");
         assertTrue(rs.next());
         assertEquals(22, rs.getInt(1));
         assertEquals("value22", rs.getString(2));
@@ -132,23 +166,30 @@ public class OneToOneTests extends AbstractCMRTest {
     }
 
     public void test04_ASetBNewAB() throws Exception {
-        prepareNewAB();
-        a.setB(b);
-        completeTransaction();
+        beginTransaction();
+        try {
+            prepareNewAB();
+            a.setB(b);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateNewAB();
     }
 
     public void test05_BSetANewAB() throws Exception {
-        prepareNewAB();
-        b.setA(a);
-        completeTransaction();
+        beginTransaction();
+        try {
+            prepareNewAB();
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateNewAB();
     }
 
     private void prepareExistingBNewA() throws Exception {
-        beginTransaction();
         a = ahome.create(new Integer(2));
         a.setField2("value2");
         b = bhome.findByPrimaryKey(new Integer(11));
@@ -157,12 +198,12 @@ public class OneToOneTests extends AbstractCMRTest {
     private void assertStateExistingBNewA() throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT a2 FROM A WHERE a1 = 2");
+        ResultSet rs = s.executeQuery("SELECT a2 FROM OneToOneA WHERE a1 = 2");
         assertTrue(rs.next());
         assertEquals("value2", rs.getString(1));
         rs.close();
 
-        rs = s.executeQuery("SELECT b1, b2 FROM B WHERE fka1 = 2");
+        rs = s.executeQuery("SELECT b1, b2 FROM OneToOneB WHERE fka1 = 2");
         assertTrue(rs.next());
         assertEquals(11, rs.getInt(1));
         assertEquals("value11", rs.getString(2));
@@ -172,23 +213,30 @@ public class OneToOneTests extends AbstractCMRTest {
     }
 
     public void test06_ASetBExistingBNewA() throws Exception {
-        prepareExistingBNewA();
-        a.setB(b);
-        completeTransaction();
+        beginTransaction();
+        try {
+            prepareExistingBNewA();
+            a.setB(b);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateExistingBNewA();
     }
 
     public void test07_BSetAExistingBNewA() throws Exception {
-        prepareExistingBNewA();
-        b.setA(a);
-        completeTransaction();
+        beginTransaction();
+        try {
+            prepareExistingBNewA();
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateExistingBNewA();
     }
 
     private void prepareExistingANewB() throws Exception {
-        beginTransaction();
         a = ahome.findByPrimaryKey(new Integer(1));
         b = bhome.create(new Integer(22));
         b.setField2("value22");
@@ -197,12 +245,12 @@ public class OneToOneTests extends AbstractCMRTest {
     private void assertStateExistingANewB() throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToOneB WHERE fka1 = 1");
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         rs.close();
 
-        rs = s.executeQuery("SELECT b1, b2 FROM B WHERE fka1 = 1");
+        rs = s.executeQuery("SELECT b1, b2 FROM OneToOneB WHERE fka1 = 1");
         assertTrue(rs.next());
         assertEquals(22, rs.getInt(1));
         assertEquals("value22", rs.getString(2));
@@ -216,19 +264,23 @@ public class OneToOneTests extends AbstractCMRTest {
      * DB DataSource successfully.
      */
     public void Xtest08_ASetBExistingANewB() throws Exception {
-        // The following PrepareStatement does not set to null fka
-//      PreparedStatement ps = null;
-//      ps = c.prepareStatement("UPDATE B SET value = CASE WHEN ? THEN ? ELSE value END, fka = CASE WHEN ? THEN ? ELSE fka END WHERE b1 = ?");
-//      ps.setBoolean(1, false);
-//      ps.setString(2, "");
-//      ps.setBoolean(3, true);
-//      ps.setNull(4);
-//      ps.setInt(5, 1);
-//      ps.execute();
+        beginTransaction();
+        try {
+            // The following PrepareStatement does not set to null fka
+//          PreparedStatement ps = null;
+//          ps = c.prepareStatement("UPDATE B SET value = CASE WHEN ? THEN ? ELSE value END, fka = CASE WHEN ? THEN ? ELSE fka END WHERE b1 = ?");
+//          ps.setBoolean(1, false);
+//          ps.setString(2, "");
+//          ps.setBoolean(3, true);
+//          ps.setNull(4);
+//          ps.setInt(5, 1);
+//          ps.execute();
 
-        prepareExistingANewB();
-        a.setB(b);
-        completeTransaction();
+            prepareExistingANewB();
+            a.setB(b);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateExistingANewB();
     }
@@ -238,9 +290,13 @@ public class OneToOneTests extends AbstractCMRTest {
      * DB DataSource successfully.
      */
     public void Xtest09_BSetAExistingANewB() throws Exception {
-        prepareExistingANewB();
-        b.setA(a);
-        completeTransaction();
+        beginTransaction();
+        try {
+            prepareExistingANewB();
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
 
         assertStateExistingANewB();
     }
@@ -251,17 +307,20 @@ public class OneToOneTests extends AbstractCMRTest {
      */
     public void Xtest10_RemoveRelationships() throws Exception {
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        a.remove();
-        completeTransaction();
+        try {
+            ALocal a = ahome.findByPrimaryKey(new Integer(1));
+            a.remove();
+        } finally {
+            completeTransaction();
+        }
 
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToOneB");
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         rs.close();
-        rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
+        rs = s.executeQuery("SELECT COUNT(*) FROM OneToOneB WHERE fka1 = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -271,13 +330,16 @@ public class OneToOneTests extends AbstractCMRTest {
 
     public void test11_CascadeDelete() throws Exception {
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
-        b.remove();
-        completeTransaction();
+        try {
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
+            b.remove();
+        } finally {
+            completeTransaction();
+        }
 
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM A WHERE A1 = 1");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToOneA WHERE A1 = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -287,45 +349,50 @@ public class OneToOneTests extends AbstractCMRTest {
 
     public void test12_CMPMappedToForeignKeyColumn() throws Exception {
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
+        try {
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
 
-        Integer field3 = b.getField3();
-        assertEquals(b.getA().getPrimaryKey(), field3);
-        completeTransaction();
+            Integer field3 = b.getField3();
+            assertEquals(b.getA().getPrimaryKey(), field3);
+        } finally {
+            completeTransaction();
+        }
     }
 
-    public void test13_eSetCMPMappedToForeignKeyColumn() throws Exception {
+    public void test13_SetCMPMappedToForeignKeyColumn() throws Exception {
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
+        try {
+            BLocal b = bhome.findByPrimaryKey(new Integer(11));
 
-        b.setField3(new Integer(2));
+            b.setField3(new Integer(2));
 
-        ALocal a = b.getA();
-        assertEquals(new Integer(2), a.getField1());
-        assertEquals("value2", a.getField2());
-
-        completeTransaction();
+            ALocal a = b.getA();
+            assertEquals(new Integer(2), a.getField1());
+            assertEquals("value2", a.getField2());
+        } finally {
+            completeTransaction();
+        }
     }
 
     protected void buildDBSchema(Connection c) throws Exception {
         Statement s = c.createStatement();
-        try {
-            s.execute("DROP TABLE A");
-        } catch (SQLException e) {
-            // ignore
-        }
-        try {
-            s.execute("DROP TABLE B");
-        } catch (SQLException e) {
-            // ignore
-        }
+//        try {
+//            s.execute("DROP TABLE A");
+//        } catch (SQLException e) {
+//            // ignore
+//        }
+//        try {
+//            s.execute("DROP TABLE B");
+//        } catch (SQLException e) {
+//            // ignore
+//        }
+//
+//        s.execute("CREATE TABLE A(A1 INTEGER, A2 VARCHAR(50))");
+//        s.execute("CREATE TABLE B(B1 INTEGER, B2 VARCHAR(50), FKA1 INTEGER)");
 
-        s.execute("CREATE TABLE A(A1 INTEGER, A2 VARCHAR(50))");
-        s.execute("CREATE TABLE B(B1 INTEGER, B2 VARCHAR(50), FKA1 INTEGER)");
-
-        s.execute("INSERT INTO A(A1, A2) VALUES(1, 'value1')");
-        s.execute("INSERT INTO A(A1, A2) VALUES(2, 'value2')");
-        s.execute("INSERT INTO B(B1, B2, FKA1) VALUES(11, 'value11', 1)");
+        s.execute("INSERT INTO OneToOneA(A1, A2) VALUES(1, 'value1')");
+        s.execute("INSERT INTO OneToOneA(A1, A2) VALUES(2, 'value2')");
+        s.execute("INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
         s.close();
         c.close();
     }

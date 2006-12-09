@@ -31,6 +31,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
@@ -42,7 +43,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.persistence.FlushModeType;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.transaction.Transaction;
@@ -60,9 +60,10 @@ public class JpaCmpEngine implements CmpEngine {
 
     private final CmpCallback cmpCallback;
     private final TransactionManager transactionManager;
-    private final EntityManager entityManager;
+//    private final EntityManager entityManager;
 
-    private final Map<Transaction, Object> transactionData = new WeakHashMap<Transaction, Object>();
+    private final Map<Transaction, EntityManager> transactionData = new WeakHashMap<Transaction, EntityManager>();
+    private EntityManagerFactory entityManagerFactory;
 
     public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) throws OpenEJBException {
         this.cmpCallback = cmpCallback;
@@ -107,18 +108,9 @@ public class JpaCmpEngine implements CmpEngine {
             String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
             Class clazz = classLoader.loadClass(persistenceProviderClassName);
             PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
-            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
-            entityManager = emf.createEntityManager();
-
-            if (entityManager instanceof OpenJPAEntityManager) {
-                OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
-                openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
-            }
+            entityManagerFactory = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
         } catch (Exception e) {
             throw new OpenEJBException(e);
-        }
-        if (!entityManager.isOpen()) {
-            throw new OpenEJBException("failed");
         }
     }
 
@@ -129,14 +121,22 @@ public class JpaCmpEngine implements CmpEngine {
     private EntityManager getEntityManager() {
         try {
             Transaction transaction = transactionManager.getTransaction();
-            if (!transactionData.containsKey(transaction)) {
-                entityManager.joinTransaction();
-                transactionData.put(transaction, new Object());
+            EntityManager entityManager = transactionData.get(transaction);
+            if (entityManager == null) {
+                // todo close entityManager when tx completes
+                ((OpenJPAEntityManagerFactory)entityManagerFactory).getStoreCache().evictAll();
+                entityManager = entityManagerFactory.createEntityManager();
+                if (entityManager instanceof OpenJPAEntityManager) {
+                    OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
+                    openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
+                }
+//                entityManager.joinTransaction();
+                transactionData.put(transaction, entityManager);
             }
+            return entityManager;
         } catch (javax.transaction.SystemException e) {
             throw new RuntimeException(e);
         }
-        return entityManager;
     }
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
@@ -158,7 +158,7 @@ public class JpaCmpEngine implements CmpEngine {
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         Class<?> beanClass = callContext.getDeploymentInfo().getBeanClass();
         EntityManager entityManager = getEntityManager();
-        Object bean = entityManager.getReference(beanClass, primaryKey);
+        Object bean = entityManager.find(beanClass, primaryKey);
         return bean;
     }
 

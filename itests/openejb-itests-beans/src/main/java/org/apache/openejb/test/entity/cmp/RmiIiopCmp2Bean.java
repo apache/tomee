@@ -30,7 +30,7 @@ import javax.naming.InitialContext;
 import org.apache.openejb.test.object.ObjectGraph;
 
 public abstract class RmiIiopCmp2Bean implements EntityBean {
-    public static int key = 20;
+    public static int key = 1000;
 
     public EntityContext ejbContext;
 

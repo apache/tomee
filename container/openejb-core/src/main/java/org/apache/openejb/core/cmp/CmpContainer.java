@@ -50,6 +50,7 @@ import javax.ejb.ObjectNotFoundException;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.rmi.NoSuchObjectException;
 import java.util.List;
@@ -69,7 +70,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     protected final String cmpEngineFactory;
     protected final String connectorName;
     protected final String engine;
-    protected    final CmpCallback cmpCallback;
+    protected final CmpCallback cmpCallback;
 
     protected final Map<Object, DeploymentInfo> deploymentsById = new HashMap<Object, DeploymentInfo>();
     protected final Map<Class, DeploymentInfo> deploymentsByClass = new HashMap<Class, DeploymentInfo>();
@@ -125,6 +126,14 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        // try to set deploymentInfo static field on bean implementation class
+        try {
+            Field field = deploymentInfo.getBeanClass().getField("deploymentInfo");
+            field.set(null, deploymentInfo);
+        } catch (Exception e) {
+            // ignore
+        }
+
         Object deploymentId = deploymentInfo.getDeploymentID();
 
         deploymentsById.put(deploymentId, deploymentInfo);
@@ -143,6 +152,22 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
         cmpEngine.deploy(deploymentInfo);
         cmpEnginesByDeployment.put(deploymentId, cmpEngine);
+    }
+
+    public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
+        CmpEngine cmpEngine = getCmpEngine(deployInfo.getDeploymentID());
+
+        ThreadContext callContext = new ThreadContext();
+        callContext.setDeploymentInfo(deployInfo);
+
+        ThreadContext oldCallContext = ThreadContext.getThreadContext();
+        ThreadContext.setThreadContext(callContext);
+        try {
+            Object bean = cmpEngine.loadBean(callContext, primaryKey);
+            return bean;
+        } finally {
+            ThreadContext.setThreadContext(oldCallContext);
+        }
     }
 
     public CmpEngine getCmpEngine(Object deploymentId) {

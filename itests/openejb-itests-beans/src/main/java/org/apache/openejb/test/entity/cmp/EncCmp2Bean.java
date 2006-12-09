@@ -32,7 +32,7 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
 
 public abstract class EncCmp2Bean implements EntityBean {
 
-    public static int key = 20;
+    public static int key = 1000;
 
     public EntityContext ejbContext;
 

@@ -31,7 +31,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  *
  */
 public abstract class AllowedOperationsCmp2Bean implements EntityBean {
-    public static int key = 20;
+    public static int key = 1000;
     public EntityContext ejbContext;
     public static final Hashtable allowedOperationsTable = new Hashtable();
 

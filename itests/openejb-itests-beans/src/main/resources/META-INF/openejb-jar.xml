@@ -123,9 +123,14 @@
     </ejb-deployment>
 	<ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="Cmp2 RMI-IIOP Bean" deployment-id="client/tests/entity/cmp2/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
+
+  <!-- CMR Test Beans -->
+	<ejb-deployment ejb-name="OneToOneA" deployment-id="client/tests/entity/cmr/oneToOne/AHome" container-id="Default CMP Container"/>
+	<ejb-deployment ejb-name="OneToOneB" deployment-id="client/tests/entity/cmr/oneToOne/BHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome" container-id="Default CMP Container"/>
+
 	<ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome" container-id="Default Stateful Container"/>
 	<ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome" container-id="Default Stateful Container"/>
 	<ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome" container-id="Default Stateful Container"/>

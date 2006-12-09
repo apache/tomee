@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  */
 public class ContextLookupCmpBean implements javax.ejb.EntityBean {
 
-    public static int key = 20;
+    public static int key = 1000;
 
     public int primaryKey;
     public String firstName;

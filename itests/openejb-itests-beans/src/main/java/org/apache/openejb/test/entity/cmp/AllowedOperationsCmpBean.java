@@ -34,7 +34,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  */
 public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
     
-    public static int key = 20;
+    public static int key = 1000;
     
     public int primaryKey;
     public String firstName;

@@ -68,8 +68,8 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatelessLocalTestSuite.suite());
         suite.addTest(StatefulLocalTestSuite.suite());
         suite.addTest(BmpLocalTestSuite.suite());
-        suite.addTest(CmpLocalTestSuite.suite());
-        suite.addTest(Cmp2TestSuite.suite());
+//        suite.addTest(CmpLocalTestSuite.suite());
+//        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }
 }

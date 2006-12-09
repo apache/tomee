@@ -243,9 +243,50 @@
         <column name="col_id"/>
       </id>
       <basic name="field1">
-        <column name="col_field1"/>
+        <column name="col_field1"/>                                                                                 
       </basic>
     </attributes>
   </entity>
 
+  <!--
+  ########################################################
+  ########################################################
+  ######  CMR  One To One ################################
+  ########################################################
+  ########################################################
+  -->
+
+  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.ABean$JPA">
+    <table name="OneToOneA"/>
+    <attributes>
+      <id name="field1">
+        <column name="A1"/>
+      </id>
+      <basic name="field2">
+        <column name="A2"/>
+      </basic>
+      <one-to-one name="b"  mapped-by="a"/>
+    </attributes>
+  </entity>
+
+  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.BBean$JPA">
+    <table name="OneToOneB"/>
+    <attributes>
+      <id name="field1">
+        <column name="B1"/>
+      </id>
+      <basic name="field2">
+        <column name="B2"/>
+      </basic>
+      <basic name="field3">
+        <column name="B3"/>
+      </basic>
+      <basic name="field4">
+        <column name="B4"/>
+      </basic>
+      <one-to-one name="a">
+        <join-column name="FKA1"/>
+      </one-to-one>
+    </attributes>
+  </entity>
 </entity-mappings>
