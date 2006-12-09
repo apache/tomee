@@ -39,7 +39,7 @@ public class ClientTestSuite extends junit.framework.TestCase {
         suite.addTest( StatelessTestSuite.suite() );
         suite.addTest( StatefulTestSuite.suite() );
         suite.addTest( BmpTestSuite.suite() );
-        suite.addTest( CmpTestSuite.suite() );
+//        suite.addTest( CmpTestSuite.suite() );
         return suite;
     }
 }

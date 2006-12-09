@@ -36,9 +36,6 @@ import java.util.StringTokenizer;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class ContextLookupCmpBean implements javax.ejb.EntityBean {
-
-    public static int key = 1000;
-
     public int primaryKey;
     public String firstName;
     public String lastName;
@@ -56,17 +53,14 @@ public class ContextLookupCmpBean implements javax.ejb.EntityBean {
      * @throws javax.ejb.CreateException
      * @see EncCmpHome#create
      */
-    public Integer ejbCreate(String name)
-            throws javax.ejb.CreateException {
+    public Integer ejbCreate(String name) throws javax.ejb.CreateException {
         StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
         lastName = st.nextToken();
-        this.primaryKey = ContextLookupCmpBean.key++;
         return null;
     }
 
-    public void ejbPostCreate(String name)
-            throws javax.ejb.CreateException {
+    public void ejbPostCreate(String name) throws javax.ejb.CreateException {
     }
 
     //

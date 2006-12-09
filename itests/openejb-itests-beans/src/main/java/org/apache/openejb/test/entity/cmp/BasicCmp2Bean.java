@@ -16,22 +16,17 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import java.sql.Date;
-import java.util.GregorianCalendar;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import org.apache.openejb.test.ApplicationException;
+import org.apache.openejb.test.object.OperationsPolicy;
 
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
-
-import org.apache.openejb.test.ApplicationException;
-import org.apache.openejb.test.object.OperationsPolicy;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 public abstract class BasicCmp2Bean implements EntityBean {
-    public static int key = 1000;
-
     public EntityContext ejbContext;
     public Hashtable allowedOperationsTable = new Hashtable();
 
@@ -69,7 +64,6 @@ public abstract class BasicCmp2Bean implements EntityBean {
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
-        setId(new Integer(key++));
         return null;
     }
 

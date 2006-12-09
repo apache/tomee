@@ -40,9 +40,6 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class EncCmpBean implements javax.ejb.EntityBean{
-    
-    public static int key = 1000;
-    
     public int primaryKey;
     public String firstName;
     public String lastName;
@@ -65,7 +62,6 @@ public class EncCmpBean implements javax.ejb.EntityBean{
         StringTokenizer st = new StringTokenizer(name, " ");    
         firstName = st.nextToken();
         lastName = st.nextToken();
-        this.primaryKey = key++;
         return null;
     }
     

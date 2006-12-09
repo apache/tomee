@@ -83,10 +83,11 @@ public class JpaTest extends TestCase {
 
         beginTx();
 
-        Employee david = entityManager.find(Employee.class, 1000);
+        int davidPk = 1;
+        Employee david = entityManager.find(Employee.class, davidPk);
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.id, 1000);
+        assertEquals(david.id, davidPk);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
         commitTx();
@@ -94,10 +95,10 @@ public class JpaTest extends TestCase {
         entityManager.clear();
         beginTx();
 
-        david = entityManager.find(Employee.class, 1000);
+        david = entityManager.find(Employee.class, davidPk);
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.id, 1000);
+        assertEquals(david.id, davidPk);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
 
@@ -107,7 +108,7 @@ public class JpaTest extends TestCase {
         david = (Employee) entityManager.createQuery("select e from Employee e where e.firstName='David'").getSingleResult();
         assertTrue(entityManager.contains(david));
 
-        assertEquals(david.id, 1000);
+        assertEquals(david.id, davidPk);
         assertEquals(david.firstName, "David");
         assertEquals(david.lastName, "Blevins");
 
@@ -116,7 +117,7 @@ public class JpaTest extends TestCase {
 
         entityManager.remove(david);
         assertFalse(entityManager.contains(david));
-        david = entityManager.find(Employee.class, 1000);
+        david = entityManager.find(Employee.class, davidPk);
         assertNull(david);
 
         commitTx();
@@ -221,18 +222,18 @@ public class JpaTest extends TestCase {
     }
 
     private void initializeDatabase(DataSource dataSource) throws SQLException {
-        try {
-            execute(dataSource, "DROP TABLE OPENJPA_SEQUENCE_TABLE");
-        } catch (Exception ignored) {
-        }
-        execute(dataSource, "CREATE TABLE OPENJPA_SEQUENCE_TABLE ( ID VARCHAR(20) PRIMARY KEY, SEQUENCE_VALUE INT)");
-        execute(dataSource, "INSERT INTO OPENJPA_SEQUENCE_TABLE (ID, SEQUENCE_VALUE) VALUES ('employee', 2000)");
+//        try {
+//            execute(dataSource, "DROP TABLE OPENJPA_SEQUENCE_TABLE");
+//        } catch (Exception ignored) {
+//        }
+//        execute(dataSource, "CREATE TABLE OPENJPA_SEQUENCE_TABLE ( ID VARCHAR(20) PRIMARY KEY, SEQUENCE_VALUE INT)");
+//        execute(dataSource, "INSERT INTO OPENJPA_SEQUENCE_TABLE (ID, SEQUENCE_VALUE) VALUES ('employee', 2000)");
         try {
             execute(dataSource, "DROP TABLE employee");
         } catch (Exception ignored) {
         }
-        execute(dataSource, "CREATE TABLE employee ( id INT PRIMARY KEY, first_name VARCHAR(20), last_name VARCHAR(20))");
-        execute(dataSource, "INSERT INTO employee (id, first_name, last_name) VALUES (1000, 'David', 'Blevins')");
+        execute(dataSource, "CREATE TABLE employee ( id integer GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), first_name VARCHAR(20), last_name VARCHAR(20))");
+        execute(dataSource, "INSERT INTO employee (first_name, last_name) VALUES ('David', 'Blevins')");
     }
 
     private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {

@@ -31,7 +31,6 @@ import org.apache.openejb.test.object.OperationsPolicy;
  *
  */
 public abstract class AllowedOperationsCmp2Bean implements EntityBean {
-    public static int key = 1000;
     public EntityContext ejbContext;
     public static final Hashtable allowedOperationsTable = new Hashtable();
 
@@ -66,32 +65,14 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
      * Maps to BasicCmpHome.create
      */
     public Integer ejbCreate(String name) throws CreateException {
-        ejbCreate(new Integer(key++),name);
-        return null;
-    }
-
-    /**
-     * Maps to BasicCmpHome.create
-     */
-    public Integer ejbCreate(Integer keyInt, String name) throws CreateException {
         testAllowedOperations("ejbCreate");
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
-        if (keyInt == null) {
-            setId(new Integer(key++));
-        }
-        else {
-            setId(keyInt);
-        }
         return null;
     }
 
     public void ejbPostCreate(String name) {
-        ejbPostCreate(null, name );
-    }
-
-    public void ejbPostCreate(Integer anInt, String name) {
         testAllowedOperations("ejbPostCreate");
     }
 

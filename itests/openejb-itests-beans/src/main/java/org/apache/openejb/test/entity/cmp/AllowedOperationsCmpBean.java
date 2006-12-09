@@ -33,9 +33,6 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
-    
-    public static int key = 1000;
-    
     public int primaryKey;
     public String firstName;
     public String lastName;
@@ -76,7 +73,6 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
         StringTokenizer st = new StringTokenizer(name, " ");    
         firstName = st.nextToken();
         lastName = st.nextToken();
-        this.primaryKey = key++;
         return new Integer(primaryKey);
     }
     

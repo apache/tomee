@@ -35,7 +35,7 @@
     <attributes>
       <id name="id">
         <column name="id"/>
-        <generated-value strategy="AUTO"/>
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -54,7 +54,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -74,7 +74,7 @@
     <attributes>
       <id name="id">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -93,7 +93,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -113,7 +113,7 @@
     <attributes>
       <id name="id">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -132,7 +132,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -150,6 +150,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -168,7 +169,7 @@
     <attributes>
       <id name="id">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -186,7 +187,7 @@
     <attributes>
       <id name="primaryKey">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>
@@ -204,7 +205,7 @@
     <attributes>
       <id name="id">
         <column name="id"/>
-        <!--<generated-value strategy="TABLE" generator="id_gen"/>-->
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="firstName">
         <column name="first_name"/>

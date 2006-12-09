@@ -30,8 +30,6 @@ import javax.naming.InitialContext;
 import org.apache.openejb.test.object.ObjectGraph;
 
 public abstract class RmiIiopCmp2Bean implements EntityBean {
-    public static int key = 1000;
-
     public EntityContext ejbContext;
 
     public abstract Integer getId();
@@ -57,7 +55,6 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
-        setId(new Integer(key++));
         return null;
     }
 
