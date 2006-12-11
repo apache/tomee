@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,30 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.persistence;
+package org.apache.openejb.core.ivm.naming;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.util.Properties;
+import javax.persistence.EntityManagerFactory;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
-public class GlobalJndiDataSourceResolver implements DataSourceResolver {
-    private InitialContext initialContext;
-    private final Properties jndiProperties;
+public class PersistenceUnitReference implements Reference{
 
-    public GlobalJndiDataSourceResolver(Properties jndiProperties) {
-        this.jndiProperties = jndiProperties;
-    }
+	private static EntityManagerFactory emf;
+	
+	public PersistenceUnitReference(EntityManagerFactory emf) {
+		this.emf = emf;		
+	}
 
-    public DataSource getDataSource(String name) throws Exception {
-    	try {
-            initialContext = new InitialContext(jndiProperties);
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);
-        }
-        return (DataSource) initialContext.lookup(name);
-    }
+	public Object getObject() throws NamingException {
+	    return emf;		
+	}
+
 }

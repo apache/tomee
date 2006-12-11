@@ -17,25 +17,33 @@
  */
 package org.apache.openejb.assembler.spring;
 
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.alt.config.DeploymentLoader;
+import org.apache.openejb.alt.config.DeploymentModule;
+import org.apache.openejb.alt.config.EjbJarInfoBuilder;
+import org.apache.openejb.alt.config.EjbModule;
+import org.apache.openejb.alt.config.ejb.EjbDeployment;
+import org.apache.openejb.assembler.classic.EjbJarBuilder;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
+import org.apache.openejb.persistence.PersistenceDeployer;
+import org.apache.openejb.persistence.PersistenceDeployerException;
+import org.apache.xbean.finder.ResourceFinder;
+import org.springframework.beans.factory.FactoryBean;
+
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.transaction.TransactionManager;
-
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.alt.config.EjbModule;
-import org.apache.openejb.alt.config.DeploymentLoader;
-import org.apache.openejb.alt.config.EjbJarInfoBuilder;
-import org.apache.openejb.alt.config.DeploymentModule;
-import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.assembler.classic.EjbJarBuilder;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.springframework.beans.factory.FactoryBean;
-import sun.tools.jar.resources.jar;
 
 /**
  * @org.apache.xbean.XBean element="deployments"
@@ -109,6 +117,28 @@ public class DeploymentsFactory implements FactoryBean {
         EjbJarBuilder builder = new EjbJarBuilder(classLoader);
 
         deployments = new HashMap();
+        HashMap<String, Map> allFactories = new HashMap();
+        for (DeploymentModule module : deployedJars) {
+            if (!(module instanceof EjbModule)) {
+                continue;
+            }
+            EjbModule jar = (EjbModule) module;
+        	PersistenceDeployer pm = null;        
+            Map<String, EntityManagerFactory> factories = null;
+            try {
+            	pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null));
+            	URL url = new File(jar.getJarURI()).toURL();
+            	ClassLoader tmpClassLoader = new URLClassLoader(new URL[]{url}, classLoader);
+            	ResourceFinder resourceFinder = new ResourceFinder("",tmpClassLoader,url);        	
+            	factories = pm.deploy(resourceFinder.findAll("META-INF/persistence.xml"),classLoader);
+    		} catch (PersistenceDeployerException e1) {
+    			throw new OpenEJBException(e1);			
+    		} catch (IOException e) {
+    			throw new OpenEJBException(e);
+    		}
+    		allFactories.put(jar.getJarURI(),factories);                
+        }            
+
         for (DeploymentModule module : deployedJars) {
             if (!(module instanceof EjbModule)) {
                 continue;
@@ -125,7 +155,7 @@ public class DeploymentsFactory implements FactoryBean {
             transferMethodTransactionInfos(infoBuilder);
             transferMethodPermissionInfos(infoBuilder);
 
-            HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo);
+            HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,allFactories);
 
             for (EjbDeployment data : jar.getOpenejbJar().getEjbDeployment()) {
                 ((CoreDeploymentInfo)ejbs.get(data.getDeploymentId())).setContainer(new ContainerPointer(data.getContainerId()));

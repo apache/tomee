@@ -17,12 +17,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.HashMap;
-
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.util.Messages;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
@@ -36,11 +37,13 @@ public class EjbJarBuilder {
         this.classLoader = classLoader;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
+    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar,HashMap<String, Map> allFactories) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
+        
+        
         for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
-            try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.defaultInterceptors);
+            try {            	
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.defaultInterceptors,allFactories);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -182,5 +183,19 @@ public class PersistenceDeployer {
 
         return factoryList;
     }
+    
+    public Map<String, EntityManagerFactory> deploy(List<URL> urls,ClassLoader cl) throws PersistenceDeployerException {
+
+        Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
+        // Read the persistence.xml files      
+        
+        Iterator<URL> iter = urls.iterator();
+        while (iter.hasNext()) {
+            URL url = iter.next();            
+            factoryList.putAll(loadPersistence(cl, url));               
+        }        
+        return factoryList;
+    }
+
 
 }

@@ -16,23 +16,29 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.OpenEJBException;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.openejb.BeanType;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
+import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.transaction.UserTransaction;
-import javax.transaction.TransactionManager;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -49,12 +55,17 @@ public class JndiEncBuilder {
     private final EjbLocalReferenceInfo[] ejbLocalReferences;
     private final EnvEntryInfo[] envEntries;
     private final ResourceReferenceInfo[] resourceRefs;
+    private final PersistenceUnitInfo[] persistenceUnitRefs;
+    private final Map<String, EntityManagerFactory> entityManagerFactories;
+    private final Map<String, Map> allFactories;
+    private final String jarPath;
+    
 
     public JndiEncBuilder(JndiEncInfo jndiEnc) throws OpenEJBException {
-        this(jndiEnc, null, null);
+        this(jndiEnc, null, null, null,null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map> allFactories,String path) throws OpenEJBException {
         if (ejbType == null){
             referenceWrapper = new DefaultReferenceWrapper();
         } else if (ejbType.isEntity()) {
@@ -91,6 +102,26 @@ public class JndiEncBuilder {
             resourceRefs = jndiEnc.resourceRefs.toArray(new ResourceReferenceInfo[0]);
         } else {
             resourceRefs = new ResourceReferenceInfo[]{};
+        }
+
+        if ((jndiEnc != null && jndiEnc.persistenceUnitRefs != null)) {
+        	persistenceUnitRefs = jndiEnc.persistenceUnitRefs.toArray(new PersistenceUnitInfo[0]);
+        } else {
+        	persistenceUnitRefs = new PersistenceUnitInfo[]{};
+        }      
+        
+        if(allFactories != null){
+        	this.allFactories = allFactories;
+        } else {
+        	this.allFactories = new HashMap();
+        }    
+        
+        this.jarPath = path;    
+        
+        if(this.allFactories.get(jarPath) != null){
+        	entityManagerFactories = this.allFactories.get(jarPath);
+        } else {
+        	entityManagerFactories = new HashMap();
         }
     }
 
@@ -200,6 +231,26 @@ public class JndiEncBuilder {
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
+        
+        for (int i = 0; i < persistenceUnitRefs.length; i++){
+        	PersistenceUnitInfo puRefInfo = persistenceUnitRefs[i];
+            Reference reference = null;
+            EntityManagerFactory factory = null;
+            if (puRefInfo.persistenceUnitName != null) {    
+            	if(puRefInfo.persistenceUnitName.indexOf("#") == -1){
+            		factory = entityManagerFactories.get(puRefInfo.persistenceUnitName);
+            	}else{
+            		factory = findEntityManagerFactory(allFactories,jarPath,puRefInfo.persistenceUnitName);
+            	}
+            }else if(entityManagerFactories.size() == 1){
+            	factory = entityManagerFactories.values().toArray(new EntityManagerFactory[1])[0];
+            }else{
+            	throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
+            }
+            
+            reference = new PersistenceUnitReference(factory);
+            bindings.put(normalize(puRefInfo.referenceName), wrapReference(reference));
+        }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
         try {
@@ -282,5 +333,43 @@ public class JndiEncBuilder {
         Object wrap(UserTransaction reference) {
             return reference;
         }
+    }
+    
+    /**
+     * This method will currently support paths like ../../xyz/ejbmodule.jar#PuName, ././xyz/ejbmodule.jar#PuName
+     * and ejbmodule.jar#PuName. For all other types of path it will throw an exception stating an invalid
+     * path.The paths are calculated relative to the referencing component jar. See 16.10.2 in ejb core spec.
+     * 
+     * @param allFactories
+     * @param path
+     * @param relativePath
+     * @return
+     * @throws OpenEJBException
+     */
+    private EntityManagerFactory findEntityManagerFactory(Map<String, Map> allFactories, String path, String puName) throws OpenEJBException{
+    	int index = puName.indexOf("#");
+    	String relativePath = puName.substring(0,index);
+    	String unitName = puName.substring(index+1,puName.length());
+    	if(new File(path).isFile()){
+    		path=path.substring(0,path.lastIndexOf(File.separator));
+    	}    	
+    	while(relativePath.startsWith("../")){
+    		relativePath = relativePath.substring(3,relativePath.length());
+    		path = path.substring(0,path.lastIndexOf(File.separator));
+    	}
+    	
+    	while(relativePath.startsWith("./")){
+    		relativePath = relativePath.substring(2,relativePath.length());    		
+    	}
+    	path = path + File.separator + relativePath;    	
+		path = new File(path).getPath();		
+    	Map factories = allFactories.get(path);
+    	if (factories != null){
+    		EntityManagerFactory factory = (EntityManagerFactory)factories.get(unitName);
+    		if(factory != null){
+    			return factory;     		 
+    		}
+    	}
+    	throw new OpenEJBException("The persistence unit referred by the persistence-unit-name tag "+puName+" could not be found");   	
     }
 }

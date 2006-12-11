@@ -31,6 +31,7 @@ import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
@@ -111,8 +112,13 @@ public class JndiEncInfoBuilder {
 
     private List<PersistenceUnitInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
         ArrayList<PersistenceUnitInfo> infos = new ArrayList<PersistenceUnitInfo>();
-        // TODO: Marshall the data over
-        return infos;
+        for (PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
+        	PersistenceUnitInfo info = new PersistenceUnitInfo();
+            info.referenceName = puRef.getPersistenceUnitRefName();
+            info.persistenceUnitName = puRef.getPersistenceUnitName();            
+            infos.add(info);
+        }
+        return infos;       
     }
 
     private void buildAmbiguousEjbRefInfos(JndiEncInfo jndi, JndiConsumer jndiConsumer, String referringComponent) throws OpenEJBException {

@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
-import org.apache.openejb.core.DeploymentContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.util.Messages;
@@ -32,8 +32,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -41,9 +42,10 @@ class EnterpriseBeanBuilder {
     private final List<InterceptorInfo> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
+    private final Map<String, Map> factories;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, List<InterceptorInfo> defaultInterceptors) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, List<InterceptorInfo> defaultInterceptors, Map<String, Map> factories) {
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
 
@@ -60,6 +62,7 @@ class EnterpriseBeanBuilder {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }
         this.cl = cl;
+        this.factories = factories;
     }
 
     static class Loader {
@@ -120,7 +123,7 @@ class EnterpriseBeanBuilder {
 
         final String transactionType = bean.transactionType;
 
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType);
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, new File(bean.codebase).getPath());
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);

@@ -191,7 +191,7 @@ public class StatefulContainerTest extends TestCase {
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());
         EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
-        HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo);
+        HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
         return ejbs;
     }
 

@@ -15,30 +15,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.persistence;
+package org.apache.openejb.test.entity;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.util.Properties;
+import javax.persistence.Entity;
 
-/**
- * @version $Revision$ $Date$
- */
-public class GlobalJndiDataSourceResolver implements DataSourceResolver {
-    private InitialContext initialContext;
-    private final Properties jndiProperties;
+@Entity
+public class Customer {
 
-    public GlobalJndiDataSourceResolver(Properties jndiProperties) {
-        this.jndiProperties = jndiProperties;
-    }
-
-    public DataSource getDataSource(String name) throws Exception {
-    	try {
-            initialContext = new InitialContext(jndiProperties);
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);
-        }
-        return (DataSource) initialContext.lookup(name);
-    }
+	private String customerName;
+	private int customerAge;
+	private int id;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getCustomerAge() {
+		return customerAge;
+	}
+	public void setCustomerAge(int customerAge) {
+		this.customerAge = customerAge;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 }
