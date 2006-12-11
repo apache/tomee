@@ -73,7 +73,7 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
-        ejbObject = ejbHome.create();
+        ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         //setUp_ejbActivate_Passivate();        
         
@@ -95,7 +95,7 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
          */
         EJBObject[] ejbObjects = new EJBObject[10];
         for (int i=0; i < ejbObjects.length; i++){
-            ejbObjects[i] = ejbHome.create();
+            ejbObjects[i] = ejbHome.createObject();
         }
         ejbObject.businessMethod("activate me please");
     }

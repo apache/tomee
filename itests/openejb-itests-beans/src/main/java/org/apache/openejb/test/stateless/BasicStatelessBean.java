@@ -131,7 +131,7 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
      * 
      * @exception javax.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException{
+    public void ejbCreateObject() throws javax.ejb.CreateException{
         testAllowedOperations("ejbCreate");
         this.name = "nameless automaton";
     }

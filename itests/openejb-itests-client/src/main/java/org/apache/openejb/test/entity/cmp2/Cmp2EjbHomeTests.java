@@ -33,7 +33,7 @@ public class Cmp2EjbHomeTests extends BasicCmp2TestClient {
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
         ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
-        ejbObject = ejbHome.create("Second Bean");
+        ejbObject = ejbHome.createObject("Second Bean");
         ejbPrimaryKey = ejbObject.getPrimaryKey();
     }
 

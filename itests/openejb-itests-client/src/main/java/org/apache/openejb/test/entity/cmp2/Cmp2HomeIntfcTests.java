@@ -39,7 +39,7 @@ public class Cmp2HomeIntfcTests extends BasicCmp2TestClient {
     // Test home interface methods
     //
     public void Xtest01_create() throws Exception {
-        ejbObject = ejbHome.create("First Bean");
+        ejbObject = ejbHome.createObject("First Bean");
         assertNotNull("The EJBObject is null", ejbObject);
     }
 
@@ -51,13 +51,13 @@ public class Cmp2HomeIntfcTests extends BasicCmp2TestClient {
 
     public void Xtest03_findByLastName() throws Exception {
         Integer[] keys = new Integer[3];
-        ejbObject = ejbHome.create("David Blevins");
+        ejbObject = ejbHome.createObject("David Blevins");
         keys[0] = (Integer) ejbObject.getPrimaryKey();
 
-        ejbObject = ejbHome.create("Dennis Blevins");
+        ejbObject = ejbHome.createObject("Dennis Blevins");
         keys[1] = (Integer) ejbObject.getPrimaryKey();
 
-        ejbObject = ejbHome.create("Claude Blevins");
+        ejbObject = ejbHome.createObject("Claude Blevins");
         keys[2] = (Integer) ejbObject.getPrimaryKey();
 
         java.util.Collection objects = ejbHome.findByLastName("Blevins");
@@ -68,6 +68,16 @@ public class Cmp2HomeIntfcTests extends BasicCmp2TestClient {
             ejbObject = (BasicCmpObject) javax.rmi.PortableRemoteObject.narrow(objs[i], BasicCmpObject.class);
             // This could be problematic, it assumes the order of the collection.
             assertEquals("The primary keys are not equal.", keys[i], ejbObject.getPrimaryKey());
+        }
+    }
+
+    public void Xtest04_homeMethod() {
+        try {
+            int expected = 8;
+            int actual = ejbHome.sum(5, 3);
+            assertEquals("home method returned wrong result", expected, actual);
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

@@ -43,7 +43,7 @@ public class StatelessPojoHomeIntfcTests extends BasicStatelessTestClient {
     //
     public void test01_create(){
         try{
-            ejbObject = ejbHome.create();
+            ejbObject = ejbHome.createObject();
             assertNotNull( "The EJBObject is null", ejbObject );
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());

@@ -71,7 +71,7 @@ public class BMTStatelessAllowedOperationsTests extends BasicStatelessTestClient
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateless/BeanManagedBasicStatelessHome");
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
-        ejbObject = ejbHome.create();
+        ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         ejbObject.businessMethod("let's go!");
         /* These tests will only work if the specified

@@ -34,7 +34,7 @@ public class StatefulHandleTests extends BasicStatefulTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
         ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
-        ejbObject = ejbHome.create("Fourth Bean");
+        ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
     }
 

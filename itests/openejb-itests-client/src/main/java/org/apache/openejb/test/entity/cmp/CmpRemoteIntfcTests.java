@@ -33,7 +33,7 @@ public class CmpRemoteIntfcTests extends BasicCmpTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
         ejbHome = (BasicCmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicCmpHome.class);
-        ejbObject = ejbHome.create("Forth Bean");
+        ejbObject = ejbHome.createObject("Forth Bean");
     }
     
     //=================================

@@ -102,7 +102,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
             Class declaringClass = callMethod.getDeclaringClass();
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
-                if (callMethod.getName().equals("create")) {
+                if (callMethod.getName().startsWith("create")) {
                     return createEJBObject(deployInfo, callMethod);
                 } else
                     return null;// EJBHome.remove( ) and other EJBHome methods are not process by the container

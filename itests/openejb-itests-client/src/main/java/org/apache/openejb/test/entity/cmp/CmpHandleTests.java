@@ -34,7 +34,7 @@ public class CmpHandleTests extends BasicCmpTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
         ejbHome = (BasicCmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicCmpHome.class);
-        ejbObject = ejbHome.create("Fifth Bean");
+        ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
     }
 

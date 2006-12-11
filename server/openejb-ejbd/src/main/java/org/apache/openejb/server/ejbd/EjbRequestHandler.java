@@ -109,6 +109,11 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
                     doEjbHome_CREATE(req, res);
                     break;
 
+                // Home interface methods
+                case EJB_HOME_METHOD:
+                    doEjbHome_METHOD(req, res);
+                    break;
+
                 case EJB_HOME_FIND:
                     doEjbHome_FIND(req, res);
                     break;
@@ -206,6 +211,36 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
         res.setResponse(EJB_OK, result);
     }
 
+    protected void doEjbHome_METHOD(EJBRequest req, EJBResponse res) throws Exception {
+
+        CallContext call = CallContext.getCallContext();
+        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+
+        Object result = c.invoke(req.getDeploymentId(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey(),
+                req.getClientIdentity());
+
+        if (result instanceof ProxyInfo) {
+            ProxyInfo info = (ProxyInfo) result;
+
+            if (EJBObject.class.isAssignableFrom(info.getInterface())) {
+                result = this.daemon.clientObjectFactory._getEJBObject(call, info);
+            } else if (EJBHome.class.isAssignableFrom(info.getInterface())) {
+                result = this.daemon.clientObjectFactory._getEJBHome(call, info);
+            } else {
+
+                result = new RemoteException("The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
+                this.daemon.logger.error(req + "The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
+                res.setResponse(EJB_SYS_EXCEPTION, result);
+                return;
+            }
+        }
+
+        res.setResponse(EJB_OK, result);
+    }
+
     protected void doEjbHome_CREATE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
@@ -222,8 +257,8 @@ class EjbRequestHandler implements ResponseCodes, RequestMethods {
             res.setResponse(EJB_OK, info.getPrimaryKey());
         } else {
 
-            result = new RemoteException("The bean is not EJB compliant.  The should be created or and exception should be thrown.");
-            this.daemon.logger.error(req + "The bean is not EJB compliant.  The should be created or and exception should be thrown.");
+            result = new RemoteException("The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
+            this.daemon.logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
             res.setResponse(EJB_SYS_EXCEPTION, result);
         }
     }

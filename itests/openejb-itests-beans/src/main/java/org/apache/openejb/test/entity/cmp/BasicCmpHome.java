@@ -25,7 +25,7 @@ package org.apache.openejb.test.entity.cmp;
 public interface BasicCmpHome extends javax.ejb.EJBHome {
 
 
-    public BasicCmpObject create(String name)
+    public BasicCmpObject createObject(String name)
     throws javax.ejb.CreateException, java.rmi.RemoteException;
     
     public BasicCmpObject findByPrimaryKey(Integer primarykey)

@@ -55,7 +55,7 @@ public class BeanTxStatefulBean implements javax.ejb.SessionBean{
      * 
      * @param name
      * @exception javax.ejb.CreateException
-     * @see BasicStatefulHome#create
+     * @see BasicStatefulHome#createObject
      */
     public void ejbCreate(String name)
     throws javax.ejb.CreateException{

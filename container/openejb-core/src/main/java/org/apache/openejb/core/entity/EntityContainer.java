@@ -108,7 +108,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
 
-                    if (methodName.equals("create")) {
+                    if (methodName.startsWith("create")) {
 
                         return createEJBObject(callMethod, args, callContext);
                     } else if (methodName.startsWith("find")) {

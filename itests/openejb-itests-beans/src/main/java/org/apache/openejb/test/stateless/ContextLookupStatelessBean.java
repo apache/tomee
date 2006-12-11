@@ -55,7 +55,7 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
                 BasicBmpHome home = (BasicBmpHome) ejbContext.lookup("stateless/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicBmpObject object = home.create("Enc Bean");
+                BasicBmpObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -71,7 +71,7 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
                 BasicStatefulHome home = (BasicStatefulHome) ejbContext.lookup("stateless/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatefulObject object = home.create("Enc Bean");
+                BasicStatefulObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -87,7 +87,7 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
                 BasicStatelessHome home = (BasicStatelessHome) ejbContext.lookup("stateless/beanReferences/stateless");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatelessObject object = home.create();
+                BasicStatelessObject object = home.createObject();
                 Assert.assertNotNull("The EJBObject is null", object);
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());

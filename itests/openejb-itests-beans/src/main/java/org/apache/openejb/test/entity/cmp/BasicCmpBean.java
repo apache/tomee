@@ -66,9 +66,9 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see BasicCmpHome#create
+     * @see BasicCmpHome#createObject
      */
-    public Integer ejbCreate(String name)
+    public Integer ejbCreateObject(String name)
     throws javax.ejb.CreateException{
         StringTokenizer st = new StringTokenizer(name, " ");    
         firstName = st.nextToken();
@@ -76,7 +76,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
         return null;
     }
     
-    public void ejbPostCreate(String name)
+    public void ejbPostCreateObject(String name)
     throws javax.ejb.CreateException{
     }
     

@@ -649,15 +649,18 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
             try {
                 Method beanMethod = null;
-                if (method.getName().equals("create")) {
-                    beanMethod = beanClass.getMethod("ejbCreate", method.getParameterTypes());
+                if (method.getName().startsWith("create")) {
+                    StringBuilder ejbCreateName = new StringBuilder(method.getName());
+                    ejbCreateName.replace(0,1, "ejbC");
+                    beanMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                     createMethod = beanMethod;
                     /*
                     Entity beans have a ejbCreate and ejbPostCreate methods with matching 
                     parameters. This code maps that relationship.
                     */
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
-                        Method postCreateMethod = beanClass.getMethod("ejbPostCreate", method.getParameterTypes());
+                        ejbCreateName.insert(3, "Post");
+                        Method postCreateMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                         postCreateMethodMap.put(createMethod, postCreateMethod);
                     }
                     /*

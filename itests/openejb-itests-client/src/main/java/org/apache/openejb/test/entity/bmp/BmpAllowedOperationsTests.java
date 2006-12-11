@@ -145,7 +145,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
         ejbHome = (BasicBmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicBmpHome.class);
-        ejbObject = ejbHome.create("Fourth Bean");
+        ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified
          * method has already been called by the container.
@@ -187,7 +187,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
       ejbHome.findByPrimaryKey((Integer)ejbObject.getPrimaryKey());
       ejbHome.remove((Integer)ejbObject.getPrimaryKey());
       
-      ejbObject = ejbHome.create("Fourth Bean");
+      ejbObject = ejbHome.createObject("Fourth Bean");
       ejbHome.findEmptyCollection(); 
     } 
 

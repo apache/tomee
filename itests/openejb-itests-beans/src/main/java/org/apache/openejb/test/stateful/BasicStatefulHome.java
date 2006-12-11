@@ -24,6 +24,6 @@ package org.apache.openejb.test.stateful;
  */
 public interface BasicStatefulHome extends javax.ejb.EJBHome {
 
-    public BasicStatefulObject create(String name)
+    public BasicStatefulObject createObject(String name)
     throws javax.ejb.CreateException, java.rmi.RemoteException;
 }

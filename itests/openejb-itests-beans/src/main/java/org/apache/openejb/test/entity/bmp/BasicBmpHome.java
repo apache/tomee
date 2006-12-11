@@ -26,7 +26,7 @@ import java.util.Enumeration;
  */
 public interface BasicBmpHome extends javax.ejb.EJBHome {
 
-    public BasicBmpObject create(String name)
+    public BasicBmpObject createObject(String name)
     throws javax.ejb.CreateException, java.rmi.RemoteException;
     
     public BasicBmpObject findByPrimaryKey(Integer primarykey)

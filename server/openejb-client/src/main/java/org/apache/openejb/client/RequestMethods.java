@@ -41,6 +41,7 @@ public interface RequestMethods {
     public static final int EJB_OBJECT_REMOVE = 18;
 
     public static final int EJB_OBJECT_BUSINESS_METHOD = 23;
+    public static final int EJB_HOME_METHOD = 24;
 
     public static final int JNDI_LOOKUP = 27;
     public static final int JNDI_LIST = 28;

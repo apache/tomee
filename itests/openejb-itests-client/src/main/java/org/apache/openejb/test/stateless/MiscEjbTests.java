@@ -37,7 +37,7 @@ public class MiscEjbTests extends BasicStatelessTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
-        ejbObject = ejbHome.create();
+        ejbObject = ejbHome.createObject();
     }
 
     protected void tearDown() throws Exception {

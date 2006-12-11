@@ -40,7 +40,7 @@ public class StatefulHomeIntfcTests extends BasicStatefulTestClient{
     //
     public void test01_create(){
         try{
-            ejbObject = ejbHome.create("First Bean");
+            ejbObject = ejbHome.createObject("First Bean");
             assertNotNull("The EJBObject is null", ejbObject);
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());

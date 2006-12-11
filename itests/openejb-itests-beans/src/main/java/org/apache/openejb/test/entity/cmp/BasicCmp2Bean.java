@@ -60,14 +60,14 @@ public abstract class BasicCmp2Bean implements EntityBean {
     /**
      * Maps to BasicCmpHome.create(String name)
      */
-    public Integer ejbCreate(String name) throws CreateException {
+    public Integer ejbCreateObject(String name) throws CreateException {
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
         return null;
     }
 
-    public void ejbPostCreate(String name) {
+    public void ejbPostCreateObject(String name) {
     }
     
     /**

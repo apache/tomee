@@ -103,14 +103,14 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
      * @return Integer
      * @exception javax.ejb.CreateException
      */
-    public Integer ejbCreate(String name)
+    public Integer ejbCreateObject(String name)
     throws javax.ejb.CreateException{
         testAllowedOperations("ejbCreate");
                 
         return new Integer(-1);
     }
     
-    public void ejbPostCreate(String name)
+    public void ejbPostCreateObject(String name)
     throws javax.ejb.CreateException{
     }
 

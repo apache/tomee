@@ -89,7 +89,7 @@ public class EncCmpBean implements javax.ejb.EntityBean{
             BasicCmpHome home = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/cmp_entity"), BasicCmpHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicCmpObject object = home.create("Enc Bean");
+            BasicCmpObject object = home.createObject("Enc Bean");
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -108,7 +108,7 @@ public class EncCmpBean implements javax.ejb.EntityBean{
             BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful"), BasicStatefulHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicStatefulObject object = home.create("Enc Bean");
+            BasicStatefulObject object = home.createObject("Enc Bean");
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -127,7 +127,7 @@ public class EncCmpBean implements javax.ejb.EntityBean{
             BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless"), BasicStatelessHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicStatelessObject object = home.create();
+            BasicStatelessObject object = home.createObject();
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());

@@ -75,7 +75,7 @@ public class BMTStatefulAllowedOperationsTests extends BasicStatefulTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateful/BeanManagedBasicStatefulHome");
         ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
-        ejbObject = ejbHome.create("Fifth Bean");
+        ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified
          * method has already been called by the container.

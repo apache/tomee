@@ -64,7 +64,7 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
     /**
      * Maps to BasicCmpHome.create
      */
-    public Integer ejbCreate(String name) throws CreateException {
+    public Integer ejbCreateObject(String name) throws CreateException {
         testAllowedOperations("ejbCreate");
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
@@ -72,7 +72,7 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
         return null;
     }
 
-    public void ejbPostCreate(String name) {
+    public void ejbPostCreateObject(String name) {
         testAllowedOperations("ejbPostCreate");
     }
 

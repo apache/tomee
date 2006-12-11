@@ -40,7 +40,7 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient{
     //
     public void test01_create(){
         try{
-            ejbObject = ejbHome.create("First Bean");
+            ejbObject = ejbHome.createObject("First Bean");
             assertNotNull("The EJBObject is null", ejbObject);
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -61,13 +61,13 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient{
     public void test03_findByLastName(){
         Integer[] keys = new Integer[3];
         try{
-            ejbObject = ejbHome.create("David Blevins");
+            ejbObject = ejbHome.createObject("David Blevins");
             keys[0] = (Integer)ejbObject.getPrimaryKey();
             
-            ejbObject = ejbHome.create("Dennis Blevins");
+            ejbObject = ejbHome.createObject("Dennis Blevins");
             keys[1] = (Integer)ejbObject.getPrimaryKey();
             
-            ejbObject = ejbHome.create("Claude Blevins");
+            ejbObject = ejbHome.createObject("Claude Blevins");
             keys[2] = (Integer)ejbObject.getPrimaryKey();
         } catch (Exception e){
             fail("Received exception while preparing the test: "+e.getClass()+ " : "+e.getMessage());
@@ -85,6 +85,16 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient{
             }
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test04_homeMethod() {
+        try {
+            int expected = 8;
+            int actual = ejbHome.sum(5, 3);
+            assertEquals("home method returned wrong result", expected, actual);
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

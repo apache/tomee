@@ -65,9 +65,9 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see BasicCmpHome#create
+     * @see BasicCmpHome#createObject
      */
-    public Integer ejbCreate(String name)
+    public Integer ejbCreateObject(String name)
     throws javax.ejb.CreateException{
         testAllowedOperations("ejbCreate");
         StringTokenizer st = new StringTokenizer(name, " ");    
@@ -76,7 +76,7 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
         return new Integer(primaryKey);
     }
     
-    public void ejbPostCreate(String name)
+    public void ejbPostCreateObject(String name)
     throws javax.ejb.CreateException{
     }
 

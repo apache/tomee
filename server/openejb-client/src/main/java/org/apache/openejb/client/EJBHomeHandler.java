@@ -111,7 +111,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             /*-------------------------------------------------------*/
 
             /*-- CREATE ------------- <HomeInterface>.create(<x>) ---*/
-            if (methodName.equals("create")) {
+            if (methodName.startsWith("create")) {
                 return create(method, args, proxy);
 
                 /*-- FIND X --------------- <HomeInterface>.find<x>() ---*/
@@ -138,9 +138,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
                 /*-- UNKOWN ---------------------------------------------*/
             } else {
-
-                throw new UnsupportedOperationException("Unkown method: " + method);
-
+                return homeMethod(method, args, proxy);
             }
 
         } catch (SystemException se) {
@@ -151,6 +149,32 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             throw new RemoteException("Container has suffered a SystemException", se.getCause());
         }
 
+    }
+
+    public Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
+        EJBRequest req = new EJBRequest(EJB_HOME_METHOD);
+
+        req.setClientIdentity(client.getClientIdentity());
+        req.setDeploymentCode(ejb.deploymentCode);
+        req.setDeploymentId(ejb.deploymentID);
+        req.setMethodInstance(method);
+        req.setMethodParameters(args);
+
+        EJBResponse res = request(req);
+
+        switch (res.getResponseCode()) {
+            case EJB_ERROR:
+                throw new SystemError((ThrowableArtifact) res.getResult());
+            case EJB_SYS_EXCEPTION:
+                throw new SystemException((ThrowableArtifact) res.getResult());
+            case EJB_APP_EXCEPTION:
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case EJB_OK:
+
+                return res.getResult();
+            default:
+                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
+        }
     }
 
     /*-------------------------------------------------*/

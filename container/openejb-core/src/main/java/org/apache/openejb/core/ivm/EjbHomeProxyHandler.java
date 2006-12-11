@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBException;
@@ -26,6 +27,7 @@ import javax.ejb.EJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.core.ThreadContext;
@@ -34,18 +36,37 @@ import org.apache.openejb.util.proxy.ProxyManager;
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     protected final static org.apache.log4j.Category logger = org.apache.log4j.Category.getInstance("OpenEJB");
 
-    static final java.util.HashMap dispatchTable;
+    private final HashMap<String,MethodType> dispatchTable;
 
-    static {
-        dispatchTable = new java.util.HashMap();
-        dispatchTable.put("create", new Integer(1));
-        dispatchTable.put("getEJBMetaData", new Integer(2));
-        dispatchTable.put("getHomeHandle", new Integer(3));
-        dispatchTable.put("remove", new Integer(4));
+    private static enum MethodType {
+        CREATE,
+        FIND,
+        HOME_HANDLE,
+        META_DATA,
+        REMOVE
     }
 
     public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
         super(container, pk, depID, interfaceType);
+        dispatchTable = new HashMap();
+        dispatchTable.put("create", MethodType.CREATE);
+        dispatchTable.put("getEJBMetaData", MethodType.META_DATA);
+        dispatchTable.put("getHomeHandle", MethodType.HOME_HANDLE);
+        dispatchTable.put("remove", MethodType.REMOVE);
+
+        if (interfaceType == InterfaceType.EJB_HOME) {
+            DeploymentInfo deploymentInfo = container.getDeploymentInfo(depID);
+            Class homeInterface = deploymentInfo.getHomeInterface();
+            Method[] methods = homeInterface.getMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("create")){
+                    dispatchTable.put(method.getName(), MethodType.CREATE);
+                } else if (method.getName().startsWith("find")){
+                    dispatchTable.put(method.getName(), MethodType.FIND);
+                }
+            }
+        }
+
     }
 
     public void invalidateReference() {
@@ -89,31 +110,29 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
         try {
             java.lang.Object retValue;
-            Integer operation = (Integer) dispatchTable.get(methodName);
+            MethodType operation = dispatchTable.get(methodName);
 
             if (operation == null) {
-                if (methodName.startsWith("find")) {
-                    retValue = findX(method, args, proxy);
-                } else {
-
-                    throw new UnsupportedOperationException("Unkown method: " + method);
-                }
+                retValue = homeMethod(method, args, proxy);
             } else {
-                switch (operation.intValue()) {
+                switch (operation) {
                     /*-- CREATE ------------- <HomeInterface>.create(<x>) ---*/
-                    case 1:
+                    case CREATE:
                         retValue = create(method, args, proxy);
                         break;
+                    case FIND:
+                        retValue = findX(method, args, proxy);
+                        break;
                         /*-- GET EJB METADATA ------ EJBHome.getEJBMetaData() ---*/
-                    case 2:
+                    case META_DATA:
                         retValue = getEJBMetaData(method, args, proxy);
                         break;
                         /*-- GET HOME HANDLE -------- EJBHome.getHomeHandle() ---*/
-                    case 3:
+                    case HOME_HANDLE:
                         retValue = getHomeHandle(method, args, proxy);
                         break;
                         /*-- REMOVE ------------------------ EJBHome.remove() ---*/
-                    case 4: {
+                    case REMOVE: {
                         Class type = method.getParameterTypes()[0];
 
                         /*-- HANDLE ------- EJBHome.remove(Handle handle) ---*/
@@ -126,7 +145,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                         break;
                     }
                     default:
-                        throw new RuntimeException("Inconsistent internal state: value " + operation.intValue() + " for operation " + methodName);
+                        throw new RuntimeException("Inconsistent internal state: value " + operation + " for operation " + methodName);
                 }
             }
 
@@ -188,6 +207,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     /*-------------------------------------------------*/
     /*  Home interface methods                         */
     /*-------------------------------------------------*/
+
+    protected Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
+        checkAuthorization(method);
+        return container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+    }
 
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
         ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());

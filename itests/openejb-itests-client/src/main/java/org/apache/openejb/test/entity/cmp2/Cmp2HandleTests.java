@@ -39,7 +39,7 @@ public class Cmp2HandleTests extends BasicCmp2TestClient {
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
         ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
-        ejbObject = ejbHome.create("Fifth Bean");
+        ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
     }
 

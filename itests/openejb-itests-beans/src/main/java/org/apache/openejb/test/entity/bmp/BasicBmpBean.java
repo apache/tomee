@@ -169,9 +169,9 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * @param name
      * @return 
      * @exception javax.ejb.CreateException
-     * @see BasicBmpHome#create
+     * @see BasicBmpHome#createObject
      */
-    public Integer ejbCreate(String name)
+    public Integer ejbCreateObject(String name)
     throws javax.ejb.CreateException{
         try {
             StringTokenizer st = new StringTokenizer(name, " ");    
@@ -221,7 +221,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
         }
     }
 
-    public void ejbPostCreate(String name)
+    public void ejbPostCreateObject(String name)
     throws javax.ejb.CreateException{
     }
 

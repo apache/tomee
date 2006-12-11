@@ -34,7 +34,7 @@ public class BmpEjbHomeTests extends BasicBmpTestClient{
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
         ejbHome = (BasicBmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicBmpHome.class);
-        ejbObject = ejbHome.create("Second Bean");
+        ejbObject = ejbHome.createObject("Second Bean");
         ejbPrimaryKey = ejbObject.getPrimaryKey();
     }
 

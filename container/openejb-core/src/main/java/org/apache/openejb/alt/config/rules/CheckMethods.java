@@ -163,7 +163,7 @@ public class CheckMethods implements ValidationRule {
         boolean hasCreateMethod = false;
 
         for (int i = 0; i < homeMethods.length && !hasCreateMethod; i++) {
-            hasCreateMethod = homeMethods[i].getName().equals("create");
+            hasCreateMethod = homeMethods[i].getName().startsWith("create");
         }
 
         if (!hasCreateMethod) {
@@ -186,11 +186,13 @@ public class CheckMethods implements ValidationRule {
         Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
-            if (!homeMethods[i].getName().equals("create")) continue;
+            if (!homeMethods[i].getName().startsWith("create")) continue;
             Method create = homeMethods[i];
-            Method ejbCreate = null;
+
+            StringBuilder ejbCreateName = new StringBuilder(create.getName());
+            ejbCreateName.replace(0,1, "ejbC");
             try {
-                ejbCreate = bean.getMethod("ejbCreate", create.getParameterTypes());
+                bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 result = false;
 
@@ -200,7 +202,7 @@ public class CheckMethods implements ValidationRule {
                     EntityBean entity = (EntityBean) b;
 
                     ValidationFailure failure = new ValidationFailure("entity.no.ejb.create");
-                    failure.setDetails(b.getEjbClass(), entity.getPrimaryKey(), paramString);
+                    failure.setDetails(b.getEjbClass(), entity.getPrimaryKey(), ejbCreateName.toString(), paramString);
                     failure.setBean(b);
 
                     set.addFailure(failure);
@@ -208,7 +210,7 @@ public class CheckMethods implements ValidationRule {
                 } else {
 
                     ValidationFailure failure = new ValidationFailure("session.no.ejb.create");
-                    failure.setDetails(b.getEjbClass(), paramString);
+                    failure.setDetails(b.getEjbClass(), ejbCreateName.toString(), paramString);
                     failure.setBean(b);
 
                     set.addFailure(failure);
@@ -229,18 +231,19 @@ public class CheckMethods implements ValidationRule {
         Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
-            if (!homeMethods[i].getName().equals("create")) continue;
+            if (!homeMethods[i].getName().startsWith("create")) continue;
             Method create = homeMethods[i];
-            Method ejbCreate = null;
+            StringBuilder ejbPostCreateName = new StringBuilder(create.getName());
+            ejbPostCreateName.replace(0,1, "ejbPostC");
             try {
-                ejbCreate = bean.getMethod("ejbPostCreate", create.getParameterTypes());
+                bean.getMethod(ejbPostCreateName.toString(), create.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 result = false;
 
                 String paramString = getParameters(create);
 
                 ValidationFailure failure = new ValidationFailure("no.ejb.post.create");
-                failure.setDetails(b.getEjbClass(), paramString);
+                failure.setDetails(b.getEjbClass(), ejbPostCreateName.toString(), paramString);
                 failure.setBean(b);
 
                 set.addFailure(failure);
@@ -258,18 +261,19 @@ public class CheckMethods implements ValidationRule {
         Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
-            if (!beanMethods[i].getName().equals("ejbCreate")) continue;
+            if (!beanMethods[i].getName().startsWith("ejbCreate")) continue;
             Method ejbCreate = beanMethods[i];
-            Method create = null;
+            StringBuilder create = new StringBuilder(ejbCreate.getName());
+            create.replace(0,4, "c");
             try {
-                create = home.getMethod("create", ejbCreate.getParameterTypes());
+                home.getMethod(create.toString(), ejbCreate.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 result = false;
 
                 String paramString = getParameters(ejbCreate);
 
                 ValidationWarning warning = new ValidationWarning("unused.ejb.create");
-                warning.setDetails(b.getEjbClass(), paramString, home.getName());
+                warning.setDetails(b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
                 warning.setBean(b);
 
                 set.addWarning(warning);

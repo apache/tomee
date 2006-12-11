@@ -216,14 +216,14 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
-                    if (methodName.equals("create")) {
+                    if (methodName.startsWith("create")) {
                         return createEJBObject(callMethod, args, callContext);
                     } else if (methodName.equals("findByPrimaryKey")) {
                         return findByPrimaryKey(callMethod, args, callContext);
                     } else if (methodName.startsWith("find")) {
                         return findEJBObject(callMethod, args, callContext);
                     } else {
-                        throw new InvalidateReferenceException(new RemoteException("Invalid method " + methodName + " only find<METHOD>( ) and create( ) method are allowed in EJB 1.1 container-managed persistence"));
+                        return homeMethod(callMethod, args, callContext);
                     }
                 } else if (methodName.equals("remove")) {
                     removeEJBObject(callMethod, callContext);
@@ -427,6 +427,56 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             }
 
             returnValue = runMethod.invoke(bean, args);
+
+        } catch (InvocationTargetException ite) {
+
+            if (ite.getTargetException() instanceof RuntimeException) {
+                /* System Exception ****************************/
+                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
+
+            } else {
+                /* Application Exception ***********************/
+                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+            }
+        } catch (Throwable e) {
+            /* System Exception ****************************/
+            txPolicy.handleSystemException(e, bean, txContext);
+        } finally {
+            txPolicy.afterInvoke(bean, txContext);
+        }
+
+        return returnValue;
+    }
+
+    private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
+
+        txPolicy.beforeInvoke(null, txContext);
+
+        EntityBean bean = null;
+        Object returnValue = null;
+        try {
+            /*
+              Obtain a bean instance from the method ready pool
+            */
+            bean = createNewInstance(callContext);
+
+            // set the entity context
+            setEntityContext(bean);
+
+            try {
+                callContext.setCurrentOperation(Operations.OP_HOME);
+
+                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+
+                returnValue = runMethod.invoke(bean, args);
+            } finally {
+                unsetEntityContext(bean);
+            }
+
+            bean = null; // poof
 
         } catch (InvocationTargetException ite) {
 
