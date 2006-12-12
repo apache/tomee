@@ -21,7 +21,7 @@ import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBException;
 
-public interface SingleValuedCmr<I extends EntityBean, P extends EJBLocalObject> {
-    public P getEjbProxy(I entity) throws EJBException;
-    public I updateEntityBean(P proxy) throws EJBException;
+public interface SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject> {
+    public Proxy get(Bean entity) throws EJBException;
+    public Bean set(Bean oldValue, Proxy newValue) throws EJBException;
 }

@@ -31,7 +31,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
@@ -124,7 +123,6 @@ public class JpaCmpEngine implements CmpEngine {
             EntityManager entityManager = transactionData.get(transaction);
             if (entityManager == null) {
                 // todo close entityManager when tx completes
-                ((OpenJPAEntityManagerFactory)entityManagerFactory).getStoreCache().evictAll();
                 entityManager = entityManagerFactory.createEntityManager();
                 if (entityManager instanceof OpenJPAEntityManager) {
                     OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;

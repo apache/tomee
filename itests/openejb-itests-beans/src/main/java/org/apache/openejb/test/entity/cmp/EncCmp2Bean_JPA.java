@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-public class RmiIiopCmp2Bean$JPA extends RmiIiopCmp2Bean {
+public class EncCmp2Bean_JPA extends EncCmp2Bean {
     public Integer id;
     private String firstName;
     private String lastName;

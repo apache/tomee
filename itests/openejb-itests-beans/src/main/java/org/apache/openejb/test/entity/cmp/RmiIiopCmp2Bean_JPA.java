@@ -15,39 +15,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.onetoone;
+package org.apache.openejb.test.entity.cmp;
 
-import org.apache.openejb.test.entity.SingleValuedCmr;
-import org.apache.openejb.test.entity.CmrFactory;
+public class RmiIiopCmp2Bean_JPA extends RmiIiopCmp2Bean {
+    public Integer id;
+    private String firstName;
+    private String lastName;
 
-public class ABean$JPA extends ABean {
-    public static Object deploymentInfo;
-    public Integer field1;
-    public String field2;
-    public BBean$JPA b;
-    private SingleValuedCmr<BBean$JPA, BLocal> bCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, BBean$JPA.class, "a");
-
-    public Integer getField1() {
-        return field1;
+    public Integer getId() {
+        return id;
     }
 
-    public void setField1(Integer field1) {
-        this.field1 = field1;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getField2() {
-        return field2;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setField2(String field2) {
-        this.field2 = field2;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public BLocal getB() {
-        return bCmr.getEjbProxy(b);
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setB(BLocal b) {
-        this.b = bCmr.updateEntityBean(b);
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -50,7 +51,13 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        Object retValue = container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+        Object retValue = null;
+        try {
+            retValue = container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+        } catch (OpenEJBException e) {
+            e.printStackTrace();
+            throw e;
+        }
 
         if (retValue instanceof java.util.Collection) {
             Object [] proxyInfos = ((java.util.Collection) retValue).toArray();

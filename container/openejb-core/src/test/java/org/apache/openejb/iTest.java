@@ -45,8 +45,8 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         }
 //        org.apache.log4j.BasicConfigurator.configure();
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
-        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
-//        System.setProperty("openejb.test.database", org.apache.openejb.test.InstantDbTestDatabase.class.getName());
+//        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath", "true");
 
         // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
@@ -65,11 +65,11 @@ public class iTest extends org.apache.openejb.test.TestSuite {
 
     public static Test suite() {
         TestSuite suite = new iTest();
-        suite.addTest(StatelessLocalTestSuite.suite());
-        suite.addTest(StatefulLocalTestSuite.suite());
-        suite.addTest(BmpLocalTestSuite.suite());
-        suite.addTest(CmpLocalTestSuite.suite());
-//        suite.addTest(Cmp2TestSuite.suite());
+//        suite.addTest(StatelessLocalTestSuite.suite());
+//        suite.addTest(StatefulLocalTestSuite.suite());
+//        suite.addTest(BmpLocalTestSuite.suite());
+//        suite.addTest(CmpLocalTestSuite.suite());
+        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }
 }

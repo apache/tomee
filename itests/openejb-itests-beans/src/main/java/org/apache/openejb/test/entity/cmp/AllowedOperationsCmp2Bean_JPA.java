@@ -15,14 +15,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.cmrmapping;
+package org.apache.openejb.test.entity.cmp;
 
-import javax.ejb.FinderException;
-
-public class ManyOwningSideBean$JPA extends ManyOwningSideBean {
+public class AllowedOperationsCmp2Bean_JPA extends AllowedOperationsCmp2Bean {
     public Integer id;
-    private Integer field1;
-    private OneInverseSideLocal oneInverseSide;
+    private String firstName;
+    private String lastName;
 
     public Integer getId() {
         return id;
@@ -32,23 +30,19 @@ public class ManyOwningSideBean$JPA extends ManyOwningSideBean {
         this.id = id;
     }
 
-    public Integer getField1() {
-        return field1;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setField1(Integer field1) {
-        this.field1 = field1;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public OneInverseSideLocal getOneInverseSide() {
-        return oneInverseSide;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setOneInverseSide(OneInverseSideLocal oneInverseSide) {
-        this.oneInverseSide = oneInverseSide;
-    }
-
-    public OneInverseSideLocal ejbSelectSomething(Integer id) throws FinderException {
-        return null;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

@@ -15,12 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmp;
+package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-public class EncCmp2Bean$JPA extends EncCmp2Bean {
+import java.util.Set;
+
+public class OneInverseSideBean_JPA extends OneInverseSideBean {
     public Integer id;
-    private String firstName;
-    private String lastName;
+    private OneOwningSideLocal oneOwningSide;
+    private Set manyOwningSide;
 
     public Integer getId() {
         return id;
@@ -30,19 +32,19 @@ public class EncCmp2Bean$JPA extends EncCmp2Bean {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public OneOwningSideLocal getOneOwningSide() {
+        return oneOwningSide;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setOneOwningSide(OneOwningSideLocal oneOwningSide) {
+        this.oneOwningSide = oneOwningSide;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Set getManyOwningSide() {
+        return manyOwningSide;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setManyOwningSide(Set manyOwningSide) {
+        this.manyOwningSide = manyOwningSide;
     }
 }

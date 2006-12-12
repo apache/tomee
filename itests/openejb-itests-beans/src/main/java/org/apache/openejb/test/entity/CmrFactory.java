@@ -30,7 +30,7 @@ public interface CmrFactory {
                 return cmrFactory;
             } catch (Exception e) {
                 return new CmrFactory() {
-                    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, Class<I> relatedType, String property) {
+                    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<I> relatedType, String property) {
                         return null;
                     }
                 };
@@ -38,5 +38,5 @@ public interface CmrFactory {
         }
     }.call();
 
-    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, Class<I> relatedType, String property);
+    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<I> relatedType, String property);
 }

@@ -41,7 +41,7 @@ public class Cmp2TestSuite extends org.apache.openejb.test.TestSuite {
         //TODO:0:this.addTest(new Cmp2AllowedOperationsTests());
         this.addTest(new Cmp2JndiEncTests());
         this.addTest(new Cmp2RmiIiopTests());
-//        this.addTest(new CmrTestSuite());
+        this.addTest(new CmrTestSuite());
     }
 
     public static junit.framework.Test suite() {

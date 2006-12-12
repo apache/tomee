@@ -15,34 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.cmrmapping;
+package org.apache.openejb.test.entity;
 
-public class OneOwningSideBean$JPA extends OneOwningSideBean {
-    public Integer id;
-    private Integer field1;
-    private OneInverseSideLocal oneInverseSide;
+import javax.ejb.EntityBean;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBException;
+import java.util.Map;
+import java.util.Set;
 
-    public Integer getId() {
-        return id;
-    }
+public interface MultiValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject, PK> {
+    Set<Proxy> get(Map<PK, Bean> others);
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getField1() {
-        return field1;
-    }
-
-    public void setField1(Integer field1) {
-        this.field1 = field1;
-    }
-
-    public OneInverseSideLocal getOneInverseSide() {
-        return oneInverseSide;
-    }
-
-    public void setOneInverseSide(OneInverseSideLocal oneInverseSide) {
-        this.oneInverseSide = oneInverseSide;
-    }
+    Map<PK, Bean> set(Set<Proxy> others);
 }

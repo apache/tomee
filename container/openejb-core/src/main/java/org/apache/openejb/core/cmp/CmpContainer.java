@@ -368,6 +368,12 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
+            // clear relationships
+            // todo replace with interface call when CmpEntityBean interface is added
+            try {
+                entityBean.getClass().getMethod("OpenEJB_deleted").invoke(entityBean);
+            } catch (Exception ignored) {
+            }
             ThreadContext.setThreadContext(oldCallContext);
         }
     }

@@ -36,28 +36,28 @@ public class CmrTestSuite extends org.apache.openejb.test.TestSuite {
 //        this.addTest(new CmrMappingTests());
     }
 
-    public static junit.framework.Test suite() {
-        return new Cmp2TestSuite();
-    }
+//    public static junit.framework.Test suite() {
+//        return new CmrTestSuite();
+//    }
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
-    protected void setUp() throws Exception {
-        Properties props = TestManager.getServer().getContextEnvironment();
-        props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
-        props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
-        new InitialContext(props);
+//    /**
+//     * Sets up the fixture, for example, open a network connection.
+//     * This method is called before a test is executed.
+//     */
+//    protected void setUp() throws Exception {
+//        Properties props = TestManager.getServer().getContextEnvironment();
+//        props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
+//        props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
+//        new InitialContext(props);
+//
+//        TestManager.getDatabase().createEntityTable();
+//    }
 
-        TestManager.getDatabase().createEntityTable();
-    }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     */
-    protected void tearDown() throws Exception {
-        TestManager.getDatabase().dropEntityTable();
-    }
+//    /**
+//     * Tears down the fixture, for example, close a network connection.
+//     * This method is called after a test is executed.
+//     */
+//    protected void tearDown() throws Exception {
+//        TestManager.getDatabase().dropEntityTable();
+//    }
 }

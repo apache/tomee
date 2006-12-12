@@ -66,7 +66,7 @@
     </attributes>
   </entity>
 
-  <entity name="BasicCmp2Bean" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean$JPA" access="PROPERTY">
+  <entity name="BasicCmp2Bean" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA" access="PROPERTY">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -105,7 +105,7 @@
     </attributes>
   </entity>
 
-  <entity name="AllowedOperationsCmp2Bean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean$JPA" access="PROPERTY">
+  <entity name="AllowedOperationsCmp2Bean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA" access="PROPERTY">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -161,7 +161,7 @@
     </attributes>
   </entity>
 
-  <entity name="EncCmp2Bean" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean$JPA" access="PROPERTY">
+  <entity name="EncCmp2Bean" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA" access="PROPERTY">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -198,7 +198,7 @@
     </attributes>
   </entity>
 
-  <entity name="RmiIiopCmp2Bean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean$JPA" access="PROPERTY">
+  <entity name="RmiIiopCmp2Bean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA" access="PROPERTY">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -216,7 +216,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean$JPA" access="PROPERTY">
+  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean_JPA" access="PROPERTY">
     <table name="OneOwning"/>
     <attributes>
       <id name="id">
@@ -228,7 +228,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean$JPA" access="PROPERTY">
+  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean_JPA" access="PROPERTY">
     <table name="OneInverse"/>
     <attributes>
       <id name="id">
@@ -237,7 +237,7 @@
     </attributes>
   </entity>
 
-  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean$JPA" access="PROPERTY">
+  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean_JPA" access="PROPERTY">
     <table name="ManyOwning"/>
     <attributes>
       <id name="id">
@@ -257,7 +257,7 @@
   ########################################################
   -->
 
-  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.ABean$JPA">
+  <entity name="OneToOneA" class="org.apache.openejb.test.entity.cmr.onetoone.ABean_JPA">
     <table name="OneToOneA"/>
     <attributes>
       <id name="field1">
@@ -266,11 +266,11 @@
       <basic name="field2">
         <column name="A2"/>
       </basic>
-      <one-to-one name="b"  mapped-by="a"/>
+      <one-to-one name="b" mapped-by="a"/>
     </attributes>
   </entity>
 
-  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.BBean$JPA">
+  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.BBean_JPA">
     <table name="OneToOneB"/>
     <attributes>
       <id name="field1">
@@ -287,6 +287,9 @@
       </basic>
       <one-to-one name="a">
         <join-column name="FKA1"/>
+        <cascade>
+          <cascade-all/> 
+        </cascade>
       </one-to-one>
     </attributes>
   </entity>

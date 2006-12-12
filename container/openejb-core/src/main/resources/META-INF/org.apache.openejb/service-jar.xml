@@ -255,22 +255,23 @@
 
     # Driver class name
 
-    JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
-    #JdbcDriver org.enhydra.instantdb.jdbc.idbDriver
+    #JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    JdbcDriver org.hsqldb.jdbcDriver
 
     # Url for creating connections
 
-    JdbcUrl jdbc:derby:derbyDB;create=true
-    #JdbcUrl jdbc:idb:conf/instantdb.properties
+    #JdbcUrl jdbc:derby:derbyDB;create=true
+    JdbcUrl jdbc:hsqldb:mem:JpaTest
 
     # Default user name
 
-    UserName admin
-    #UserName Admin
+    #UserName admin
+    UserName sa
 
     # Default password
 
-    Password pass
+    #Password pass
+    Password
   </ServiceProvider>
 
   <!--

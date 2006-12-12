@@ -61,7 +61,7 @@
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <resource-ref>
                 <description>This is a reference to a JDBC database.</description>
@@ -81,11 +81,11 @@
             <ejb-name>BasicCmp2Bean</ejb-name>
             <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
             <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
-            <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2Bean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>id</primkey-field>
             <resource-ref>
                 <description>This is a reference to a JDBC database.</description>
@@ -112,7 +112,7 @@
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <resource-ref>
                 <description>
@@ -137,11 +137,11 @@
             <ejb-name>AOBasicCmp2Bean</ejb-name>
             <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
             <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
-            <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>id</primkey-field>
             <resource-ref>
                 <description>
@@ -170,7 +170,7 @@
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
@@ -263,11 +263,11 @@
             <ejb-name>EncCmp2Bean</ejb-name>
             <home>org.apache.openejb.test.entity.cmp.EncCmpHome</home>
             <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
-            <ejb-class>org.apache.openejb.test.entity.cmp.EncCmp2Bean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <cmp-version>2.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>id</primkey-field>
             <env-entry>
                 <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
@@ -358,7 +358,7 @@
             <ejb-class>org.apache.openejb.test.entity.cmp.ContextLookupCmpBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
@@ -455,7 +455,7 @@
             <persistence-type>Container</persistence-type>
             <cmp-version>1.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <ejb-ref>
                 <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
@@ -483,11 +483,11 @@
             <ejb-name>Cmp2 RMI-IIOP Bean</ejb-name>
             <home>org.apache.openejb.test.entity.cmp.RmiIiopCmpHome</home>
             <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
-            <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <cmp-version>2.x</cmp-version>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>id</primkey-field>
             <ejb-ref>
                 <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
@@ -514,7 +514,7 @@
             <ejb-name>OneToOneA</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.onetoone.ALocalHome</local-home>
             <local>org.apache.openejb.test.entity.cmr.onetoone.ALocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.ABean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.ABean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -542,7 +542,7 @@
             <ejb-name>OneToOneB</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.onetoone.BLocalHome</local-home>
             <local>org.apache.openejb.test.entity.cmr.onetoone.BLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.BBean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.BBean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -577,7 +577,7 @@
             <ejb-name>OneOwningSideBean</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
             <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <!--<prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>-->
             <prim-key-class>java.lang.Integer</prim-key-class>
@@ -597,7 +597,7 @@
             <ejb-name>OneInverseSideBean</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome</local-home>
             <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -613,7 +613,7 @@
             <ejb-name>ManyOwningSideBean</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocalHome</local-home>
             <local>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean$JPA</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean_JPA</ejb-class>
             <persistence-type>Container</persistence-type>
             <!--<prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>-->
            <prim-key-class>java.lang.Integer</prim-key-class>
@@ -1449,7 +1449,7 @@
             <ejb-class>org.apache.openejb.test.entity.bmp.BasicBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <resource-ref>
                 <description>
@@ -1477,7 +1477,7 @@
             <ejb-class>org.apache.openejb.test.entity.bmp.AllowedOperationsBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
@@ -1525,7 +1525,7 @@
             <ejb-class>org.apache.openejb.test.entity.bmp.EncBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/bmp/references/Boolean</env-entry-name>
@@ -1621,7 +1621,7 @@
             <ejb-class>org.apache.openejb.test.entity.bmp.ContextLookupBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/bmp/references/Boolean</env-entry-name>
@@ -1717,7 +1717,7 @@
             <ejb-class>org.apache.openejb.test.entity.bmp.RmiIiopBmpBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>False</reentrant>
+            <reentrant>false</reentrant>
             <primkey-field>primaryKey</primkey-field>
             <ejb-ref>
                 <ejb-ref-name>bmp/rmi-iiop/home</ejb-ref-name>

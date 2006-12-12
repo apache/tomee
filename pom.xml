@@ -355,6 +355,11 @@
         <version>1.0.4</version>
       </dependency>
       <dependency>
+        <groupId>hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>1.8.0.7</version>
+      </dependency>
+      <dependency>
         <groupId>idb</groupId>
         <artifactId>idb</artifactId>
         <version>3.26</version>
@@ -529,10 +534,10 @@
             <groupId>regexp</groupId>
             <artifactId>regexp</artifactId>
           </exclusion>
-          <exclusion>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-          </exclusion>
+          <!--<exclusion>-->
+            <!--<groupId>hsqldb</groupId>-->
+            <!--<artifactId>hsqldb</artifactId>-->
+          <!--</exclusion>-->
         </exclusions>
       </dependency>
       <dependency>

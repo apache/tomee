@@ -24,7 +24,7 @@ import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalObject;
 
 public class CmrFactoryImpl implements CmrFactory {
-    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, Class<I> relatedType, String property) {
-        return new SingleValuedCmrImpl<I, P>(source, relatedType, property);
+    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<I> relatedType, String relatedProperty) {
+        return new SingleValuedCmrImpl<I, P>(source, sourceProperty, relatedType, relatedProperty);
     }
 }
