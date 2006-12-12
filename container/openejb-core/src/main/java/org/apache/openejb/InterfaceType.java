@@ -29,5 +29,49 @@ public enum InterfaceType {
     BUSINESS_REMOTE,
     BUSINESS_REMOTE_HOME,
     SERVICE_ENDPOINT,
-    UNKNOWN
+    UNKNOWN;
+
+    public boolean isHome() {
+        switch(this){
+            case EJB_HOME: return true;
+            case EJB_LOCAL_HOME: return true;
+        }
+        return false;
+    }
+
+    public boolean isComponent() {
+        switch(this){
+            case EJB_OBJECT: return true;
+            case EJB_LOCAL: return true;
+        }
+        return false;
+    }
+
+    public boolean isBusiness() {
+        switch(this){
+            case BUSINESS_LOCAL: return true;
+            case BUSINESS_REMOTE: return true;
+        }
+        return false;
+    }
+
+    public boolean isRemote() {
+        switch(this){
+            case EJB_HOME: return true;
+            case EJB_OBJECT: return true;
+            case BUSINESS_REMOTE: return true;
+            case BUSINESS_REMOTE_HOME: return true;
+        }
+        return false;
+    }
+
+    public boolean isLocal() {
+        switch(this){
+            case EJB_LOCAL_HOME: return true;
+            case EJB_LOCAL: return true;
+            case BUSINESS_LOCAL: return true;
+            case BUSINESS_LOCAL_HOME: return true;
+        }
+        return false;
+    }
 }

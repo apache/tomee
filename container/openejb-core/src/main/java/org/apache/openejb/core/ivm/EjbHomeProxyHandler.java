@@ -54,9 +54,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getHomeHandle", MethodType.HOME_HANDLE);
         dispatchTable.put("remove", MethodType.REMOVE);
 
-        if (interfaceType == InterfaceType.EJB_HOME) {
+        if (interfaceType.isHome()) {
             DeploymentInfo deploymentInfo = container.getDeploymentInfo(depID);
-            Class homeInterface = deploymentInfo.getHomeInterface();
+            Class homeInterface = deploymentInfo.getInterface(interfaceType);
             Method[] methods = homeInterface.getMethods();
             for (Method method : methods) {
                 if (method.getName().startsWith("create")){
@@ -74,7 +74,6 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     protected Object createProxy(ProxyInfo proxyInfo) {
-
         Object newProxy = null;
         try {
 
@@ -215,6 +214,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
         ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+        assert proxyInfo != null: "Container returned a null ProxyInfo: ContainerID="+container.getContainerID();
         return createProxy(proxyInfo);
     }
 
