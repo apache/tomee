@@ -16,28 +16,26 @@
  */
 package org.apache.openejb.test.entity.cmr;
 
+import org.apache.openejb.test.entity.cmr.onetomany.ALocal;
+import org.apache.openejb.test.entity.cmr.onetomany.ALocalHome;
+import org.apache.openejb.test.entity.cmr.onetomany.BLocal;
+import org.apache.openejb.test.entity.cmr.onetomany.BLocalHome;
+
+import javax.ejb.FinderException;
+import javax.ejb.CreateException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.openejb.test.entity.cmr.onetomany.ALocalHome;
-import org.apache.openejb.test.entity.cmr.onetomany.ALocal;
-import org.apache.openejb.test.entity.cmr.onetomany.BLocalHome;
-import org.apache.openejb.test.entity.cmr.onetomany.BLocal;
-
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
 public class OneToManyTests extends AbstractCMRTest {
     private ALocalHome ahome;
-    private ALocal a;
     private BLocalHome bhome;
-    private BLocal b;
 
     public OneToManyTests() {
         super("OneToMany.");
@@ -46,223 +44,183 @@ public class OneToManyTests extends AbstractCMRTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        ahome = (ALocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/ALocalHome");
-        bhome = (BLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/BLocalHome");
+        ahome = (ALocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/AHomeLocal");
+        bhome = (BLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/BHomeLocal");
     }
 
-    public void testAGetBExistingAB() throws Exception {
+    public void test00_AGetBExistingAB() throws Exception {
+        resetDB();
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        Set bSet = a.getB();
-        assertEquals(2, bSet.size());
-        for (Iterator iter = bSet.iterator(); iter.hasNext();) {
-            BLocal b = (BLocal) iter.next();
-            if ( b.getField1().equals(new Integer(11)) ) {
-                assertEquals("value11", b.getField2());
-            } else if ( b.getField1().equals(new Integer(22)) ) {
-                assertEquals("value22", b.getField2());
-            } else {
-                fail();
+        try {
+            ALocal a = findA(1);
+            Set bSet = a.getB();
+            assertEquals(2, bSet.size());
+            for (Object value : bSet) {
+                BLocal b = (BLocal) value;
+                if (b.getField1().equals(new Integer(11))) {
+                    assertEquals("value11", b.getField2());
+                } else if (b.getField1().equals(new Integer(22))) {
+                    assertEquals("value22", b.getField2());
+                } else {
+                    fail();
+                }
             }
+        } finally {
+            completeTransaction();
         }
-        completeTransaction();
     }
 
-    public void testBGetAExistingAB() throws Exception {
+    public void test01_BGetAExistingAB() throws Exception {
+        resetDB();
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
-        ALocal a = b.getA();
-        assertNotNull(a);
-        assertEquals(new Integer(1), a.getField1());
-        assertEquals("value1", a.getField2());
+        try {
+            BLocal b = findB(11);
+            ALocal a = b.getA();
+            assertNotNull(a);
+            assertEquals(new Integer(1), a.getField1());
+            assertEquals("value1", a.getField2());
 
-        b = bhome.findByPrimaryKey(new Integer(22));
-        a = b.getA();
-        assertNotNull(a);
-        assertEquals(new Integer(1), a.getField1());
-        assertEquals("value1", a.getField2());
-        completeTransaction();
+            b = findB(22);
+            a = b.getA();
+            assertNotNull(a);
+            assertEquals(new Integer(1), a.getField1());
+            assertEquals("value1", a.getField2());
+        } finally {
+            completeTransaction();
+        }
     }
 
-    private void assertStateDropExisting() throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
-        assertTrue(rs.next());
-        assertEquals(0, rs.getInt(1));
-        rs.close();
-        s.close();
-        c.close();
-    }
-
-    /**
-     * TODO Disabled due to an Axion bug. It has been tested with another
-     * DB DataSource successfully.
-     */
-    public void XtestASetBDropExisting() throws Exception {
+    public void testASetBDropExisting() throws Exception {
+        resetDB();
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        a.setB(new HashSet<BLocal>());
-        completeTransaction();
-
-        assertStateDropExisting();
+        try {
+            ALocal a = findA(1);
+            a.setB(new HashSet<BLocal>());
+        } finally {
+            completeTransaction();
+        }
+        assertUnlinked(1);
     }
 
-    /**
-     * TODO Disabled due to an Axion bug. It has been tested with another
-     * DB DataSource successfully.
-     */
-    public void XtestBSetADropExisting() throws Exception {
+    public void testBSetADropExisting() throws Exception {
+        resetDB();
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
-        b.setA(null);
-        b = bhome.findByPrimaryKey(new Integer(22));
-        b.setA(null);
-        completeTransaction();
+        try {
+            BLocal b = findB(11);
+            b.setA(null);
+            b = findB(22);
+            b.setA(null);
+        } finally {
+            completeTransaction();
+        }
 
-        assertStateDropExisting();
+        assertUnlinked(1);
     }
 
-    private void prepareNewAB() throws Exception {
-        beginTransaction();
-        a = ahome.create(new Integer(2));
-        a.setField2("value2");
-        b = bhome.create(new Integer(22));
-        b.setField2("value22");
-    }
-
-    private void assertStateNewAB() throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT a2 FROM A WHERE a1 = 2");
-        assertTrue(rs.next());
-        assertEquals("value2", rs.getString(1));
-        rs.close();
-
-        rs = s.executeQuery("SELECT b1, b2 FROM B WHERE fka1 = 2");
-        assertTrue(rs.next());
-        assertEquals(22, rs.getInt(1));
-        assertEquals("value22", rs.getString(2));
-        rs.close();
-        s.close();
-        c.close();
-    }
 
     public void testASetBNewAB() throws Exception {
-        prepareNewAB();
-        Set<BLocal> bSet = new HashSet<BLocal>();
-        bSet.add(b);
-        a.setB(bSet);
-        completeTransaction();
+        resetDB();
+        beginTransaction();
+        try {
+            ALocal a = findA(2);
+            BLocal b = findB(22);
+            Set<BLocal> bSet = new HashSet<BLocal>();
+            bSet.add(b);
+            a.setB(bSet);
+        } finally {
+            completeTransaction();
+        }
 
-        assertStateNewAB();
+        assertLinked(2, 22);
     }
 
     public void testBSetANewAB() throws Exception {
-        prepareNewAB();
-        b.setA(a);
-        completeTransaction();
-
-        assertStateNewAB();
-    }
-
-    private void prepareExistingBNewA() throws Exception {
+        resetDB();
         beginTransaction();
-        a = ahome.create(new Integer(2));
-        a.setField2("value2");
-        b = bhome.findByPrimaryKey(new Integer(11));
-    }
-
-    private void assertStateExistingBNewA() throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT a2 FROM A WHERE a1 = 2");
-        assertTrue(rs.next());
-        assertEquals("value2", rs.getString(1));
-        rs.close();
-
-        rs = s.executeQuery("SELECT b1, b2 FROM B WHERE fka1 = 2");
-        assertTrue(rs.next());
-        assertEquals(11, rs.getInt(1));
-        assertEquals("value11", rs.getString(2));
-        rs.close();
-        s.close();
-        c.close();
+        try {
+            ALocal a = findA(2);
+            BLocal b = findB(22);
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
+        assertLinked(2, 22);
     }
 
     public void testASetBExistingBNewA() throws Exception {
-        prepareExistingBNewA();
-        Set<BLocal> bSet = a.getB();
-        bSet.add(b);
-        completeTransaction();
+        resetDB();
+        beginTransaction();
+        try {
+            ALocal a = findA(2);
+            BLocal b = findB(11);
+            Set<BLocal> bSet = a.getB();
+            bSet.add(b);
+        } finally {
+            completeTransaction();
+        }
 
-        assertStateExistingBNewA();
+        assertLinked(2, 11);
     }
 
     public void testBSetAExistingBNewA() throws Exception {
-        prepareExistingBNewA();
-        b.setA(a);
-        completeTransaction();
-
-        assertStateExistingBNewA();
-    }
-
-    private void prepareExistingANewB() throws Exception {
+        resetDB();
         beginTransaction();
-        a = ahome.findByPrimaryKey(new Integer(1));
-        b = bhome.create(new Integer(33));
-        b.setField2("value33");
-    }
+        try {
+            ALocal a = findA(2);
+            BLocal b = findB(11);
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
 
-    private void assertStateExistingANewB() throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
-        assertTrue(rs.next());
-        assertEquals(3, rs.getInt(1));
-
-        rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1 AND b1 = 33 AND b2 = 'value33'");
-        assertTrue(rs.next());
-        assertEquals(1, rs.getInt(1));
-        rs.close();
-        s.close();
-        c.close();
+        assertLinked(2, 11);
     }
 
     public void testASetBExistingANewB() throws Exception {
-        prepareExistingANewB();
-        Set<BLocal> bSet = a.getB();
-        bSet.add(b);
-        completeTransaction();
-
-        assertStateExistingANewB();
+        resetDB();
+        beginTransaction();
+        try {
+            ALocal a = findA(1);
+            BLocal b = createB(33);
+            Set<BLocal> bSet = a.getB();
+            bSet.add(b);
+        } finally {
+            completeTransaction();
+        }
+        assertLinked(1, 11, 22, 33);
     }
 
     public void testBSetAExistingANewB() throws Exception {
-        prepareExistingANewB();
-        b.setA(a);
-        completeTransaction();
+        resetDB();
+        beginTransaction();
+        try {
+            ALocal a = findA(1);
+            BLocal b = createB(33);
+            b.setA(a);
+        } finally {
+            completeTransaction();
+        }
 
-        assertStateExistingANewB();
+        assertLinked(1, 11, 22, 33);
     }
 
-    /**
-     * TODO Disabled due to an Axion bug. It has been tested with another
-     * DB DataSource successfully.
-     */
-    public void XtestRemoveRelationships() throws Exception {
+    public void testRemoveRelationships() throws Exception {
+        resetDB();
         beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        a.remove();
-        completeTransaction();
+        try {
+            ALocal a = findA(1);
+            a.remove();
+        } finally {
+            completeTransaction();
+        }
 
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB");
         assertTrue(rs.next());
         assertEquals(2, rs.getInt(1));
         rs.close();
-        rs = s.executeQuery("SELECT COUNT(*) FROM B WHERE fka1 = 1");
+        rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB WHERE fka1 = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -270,37 +228,52 @@ public class OneToManyTests extends AbstractCMRTest {
         c.close();
     }
 
-    public void testCMPMappedToForeignKeyColumn() throws Exception {
+    // uncomment when cmp to cmr is supported
+    public void TODO_testCMPMappedToForeignKeyColumn() throws Exception {
+        resetDB();
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
+        try {
+            BLocal b = findB(11);
 
-        Integer field3 = b.getField3();
-        assertEquals(b.getA().getPrimaryKey(), field3);
-        completeTransaction();
+            Integer field3 = b.getField3();
+            assertEquals(b.getA().getPrimaryKey(), field3);
+        } finally {
+            completeTransaction();
+        }
     }
 
-    public void testSetCMPMappedToForeignKeyColumn() throws Exception {
+    // uncomment when cmp to cmr is supported
+    public void TODO_testSetCMPMappedToForeignKeyColumn() throws Exception {
+        resetDB();
         beginTransaction();
-        BLocal b = bhome.findByPrimaryKey(new Integer(11));
+        try {
+            BLocal b = findB(11);
 
-        b.setField3(new Integer(2));
+            b.setField3(new Integer(2));
 
-        ALocal a = b.getA();
-        assertEquals(new Integer(2), a.getField1());
-        assertEquals("value2", a.getField2());
-
-        completeTransaction();
+            ALocal a = b.getA();
+            assertEquals(new Integer(2), a.getField1());
+            assertEquals("value2", a.getField2());
+        } finally {
+            completeTransaction();
+        }
     }
 
-    public void testCascadeDelete() throws Exception {
-        beginTransaction();
-        ALocal a = ahome.findByPrimaryKey(new Integer(1));
-        a.remove();
-        completeTransaction();
+    // todo cascade delete isn't working
+    public void TODO_testCascadeDelete() throws Exception {
+        resetDB();
 
+        beginTransaction();
+        try {
+            ALocal a = findA(1);
+            a.remove();
+        } finally {
+            completeTransaction();
+        }
+        System.out.println();
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM B");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -308,27 +281,83 @@ public class OneToManyTests extends AbstractCMRTest {
         c.close();
     }
 
-    protected void buildDBSchema(Connection c) throws Exception {
+//    private ALocal createA(int aPk) throws CreateException {
+//        ALocal a = ahome.create(new Integer(aPk));
+//        a.setField2("value" + aPk);
+//        return a;
+//    }
+
+    private ALocal findA(int aPk) throws FinderException {
+        return ahome.findByPrimaryKey(new Integer(aPk));
+    }
+
+    private BLocal createB(int bPk) throws CreateException {
+        BLocal b = bhome.create(new Integer(bPk));
+        b.setField2("value" + bPk);
+        return b;
+    }
+    private BLocal findB(int bPk) throws FinderException {
+        return bhome.findByPrimaryKey(new Integer(bPk));
+    }
+
+    private void assertLinked(int aPk, int... bPks) throws Exception {
+        Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        try {
-            s.execute("DROP TABLE A");
-        } catch (SQLException e) {
-            // ignore
-        }
-        try {
-            s.execute("DROP TABLE B");
-        } catch (SQLException e) {
-            // ignore
-        }
+        ResultSet rs = s.executeQuery("SELECT a2 FROM OneToManyA WHERE a1 = " + aPk);
+        assertTrue(rs.next());
+        assertEquals("value" + aPk, rs.getString("a2"));
+        close(rs);
 
-        s.execute("CREATE TABLE A(A1 INTEGER, A2 VARCHAR(50))");
-        s.execute("CREATE TABLE B(B1 INTEGER, B2 VARCHAR(50), FKA1 INTEGER)");
+        // assert that there we are looking for the same number of linked beans
+        rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB WHERE fka1 = 1");
+        assertTrue(rs.next());
+        assertEquals(bPks.length, rs.getInt(1));
+        rs.close();
 
-        s.execute("INSERT INTO A(A1, A2) VALUES(1, 'value1')");
-        s.execute("INSERT INTO A(A1, A2) VALUES(2, 'value2')");
-        s.execute("INSERT INTO B(B1, B2, FKA1) VALUES(11, 'value11', 1)");
-        s.execute("INSERT INTO B(B1, B2, FKA1) VALUES(22, 'value22', 1)");
-        s.close();
-        c.close();
+        // assert each of the listed b pks is linked to a
+        for (int bPk : bPks) {
+            rs = s.executeQuery("SELECT b2, fka1 FROM OneToManyB WHERE b1 = " + bPk);
+            assertTrue(rs.next());
+            assertEquals("value" + bPk, rs.getString("b2"));
+            assertEquals(aPk, rs.getInt("fka1"));
+            close(rs);
+        }
+        close(s);
+        close(c);
+    }
+
+    private void assertUnlinked(int aPk) throws Exception {
+        Connection c = ds.getConnection();
+        Statement s = c.createStatement();
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB WHERE fka1 = " + aPk);
+        assertTrue(rs.next());
+        assertEquals(0, rs.getInt(1));
+        close(rs);
+        close(s);
+        close(c);
+    }
+
+    private void resetDB() throws Exception {
+        Connection connection = ds.getConnection();
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+
+            statement.execute("DELETE FROM OneToManyA");
+            statement.execute("DELETE FROM OneToManyB");
+
+            statement.execute("INSERT INTO OneToManyA(A1, A2) VALUES(1, 'value1')");
+            statement.execute("INSERT INTO OneToManyA(A1, A2) VALUES(2, 'value2')");
+            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
+            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1) VALUES(22, 'value22', 1)");
+        } finally {
+            close(statement);
+            close(connection);
+        }
+    }
+
+    private void dump() throws SQLException {
+        dumpTable(ds, "OneToManyA");
+        dumpTable(ds, "OneToManyb");
     }
 }

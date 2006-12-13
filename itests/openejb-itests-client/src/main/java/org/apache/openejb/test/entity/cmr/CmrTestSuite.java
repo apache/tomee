@@ -28,7 +28,7 @@ public class CmrTestSuite extends org.apache.openejb.test.TestSuite {
     public CmrTestSuite() {
         super();
         this.addTest(new OneToOneTests());
-//        this.addTest(new OneToManyTests());
+        this.addTest(new OneToManyTests());
 //        this.addTest(new ManyToManyTests());
 //        this.addTest(new OneToOneCompoundPKTests());
 //        this.addTest(new OneToManyCompoundPKTests());

@@ -39,9 +39,7 @@ import javax.sql.DataSource;
  */
 public class OneToOneTests extends AbstractCMRTest {
     private ALocalHome ahome;
-    private ALocal a;
     private BLocalHome bhome;
-    private BLocal b;
 
     public OneToOneTests() {
         super("OneToOne.");
@@ -112,8 +110,8 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            a = findA(2);
-            b = createB(22);
+            ALocal a = findA(2);
+            BLocal b = createB(22);
             a.setB(b);
         } finally {
             completeTransaction();
@@ -126,8 +124,8 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            a = findA(2);
-            b = createB(22);
+            ALocal a = findA(2);
+            BLocal b = createB(22);
             b.setA(a);
         } finally {
             completeTransaction();
@@ -140,8 +138,8 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            a = findA(2);
-            b = findB(11);
+            ALocal a = findA(2);
+            BLocal b = findB(11);
             a.setB(b);
         } finally {
             completeTransaction();
@@ -154,8 +152,8 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            a = createA(2);
-            b = findB(11);
+            ALocal a = createA(2);
+            BLocal b = findB(11);
             b.setA(a);
         } finally {
             completeTransaction();
@@ -167,8 +165,8 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            a = findA(1);
-            b = createB(22);
+            ALocal a = findA(1);
+            BLocal b = createB(22);
             b.setA(a);
         } finally {
             completeTransaction();
@@ -302,81 +300,24 @@ public class OneToOneTests extends AbstractCMRTest {
 
     private void resetDB() throws Exception {
         Connection connection = ds.getConnection();
-        try {
-            buildDBSchema(connection);
-        } finally {
-            close(connection);
-        }
-    }
-
-    protected void buildDBSchema(Connection c) throws Exception {
-        Statement s = c.createStatement();
-
-        s.execute("DELETE FROM OneToOneA");
-        s.execute("DELETE FROM OneToOneB");
-
-        s.execute("INSERT INTO OneToOneA(A1, A2) VALUES(1, 'value1')");
-        s.execute("INSERT INTO OneToOneA(A1, A2) VALUES(2, 'value2')");
-        s.execute("INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
-        close(s);
-        close(c);
-    }
-
-    protected void dump() throws Exception {
-        dumpTable(ds, "OneToOneA");
-        dumpTable(ds, "OneToOneB");
-    }
-
-    private static void dumpTable(DataSource ds, String table) throws SQLException {
-        Connection connection = null;
         Statement statement = null;
-        ResultSet resultSet = null;
         try {
-            connection = ds.getConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM " + table);
-            ResultSetMetaData setMetaData = resultSet.getMetaData();
-            int columnCount = setMetaData.getColumnCount();
-            while(resultSet.next()) {
-                StringBuilder row = new StringBuilder();
-                for (int i = 1; i <= columnCount; i++) {
-                    if (i > 1) {
-                        row.append(", ");
-                    }
-                    String name = setMetaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
-                    row.append(name).append("=").append(value);
-                }
-                System.out.println(row);
-            }
+
+            statement.execute("DELETE FROM OneToOneA");
+            statement.execute("DELETE FROM OneToOneB");
+
+            statement.execute("INSERT INTO OneToOneA(A1, A2) VALUES(1, 'value1')");
+            statement.execute("INSERT INTO OneToOneA(A1, A2) VALUES(2, 'value2')");
+            statement.execute("INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
         } finally {
-            close(resultSet);
             close(statement);
             close(connection);
         }
     }
 
-    private static void close(ResultSet resultSet) {
-        if (resultSet == null) return;
-        try {
-            resultSet.close();
-        } catch (SQLException e) {
-        }
-    }
-
-    private static void close(Statement statement) {
-        if (statement == null) return;
-        try {
-            statement.close();
-        } catch (SQLException e) {
-        }
-    }
-
-    private static void close(Connection connection) {
-        if (connection == null) return;
-        try {
-            connection.close();
-        } catch (SQLException e) {
-        }
+    protected void dump() throws Exception {
+        dumpTable(ds, "OneToOneA");
+        dumpTable(ds, "OneToOneB");
     }
 }

@@ -24,10 +24,9 @@ import org.apache.openejb.test.entity.SingleValuedCmr;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalObject> implements SingleValuedCmr<Bean, Proxy> {
+    private final CoreDeploymentInfo sourceInfo;
     private final EntityBean source;
     private final Class<? extends EntityBean> sourceType;
     private final String sourceProperty;
@@ -48,13 +47,8 @@ public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocal
         this.relatedProperty = relatedProperty;
         this.sourceType = source.getClass();
 
-        try {
-            Field deploymentInfoField = relatedType.getField("deploymentInfo");
-            relatedInfo = (CoreDeploymentInfo) deploymentInfoField.get(null);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("EntityBean class " + relatedType.getName() +
-                    " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?");
-        }
+        this.sourceInfo = CmpUtil.getDeploymentInfo(source.getClass());
+        this.relatedInfo = CmpUtil.getDeploymentInfo(relatedType);
 
         sourceWrapperFactory = new CmpWrapperFactory(sourceType);
         relatedWrapperFactory = new CmpWrapperFactory(relatedType);
@@ -68,24 +62,34 @@ public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocal
     }
 
     public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
-        Bean newBean = (Bean) CmpUtil.getEntityBean(relatedInfo, newValue);
+        Object sourcePk = getSourcePk();
+        Bean newBean = (Bean) CmpUtil.getEntityBean(newValue);
 
         // clear back reference in the old related bean
         if (oldBean != null) {
-            getCmpWrapper(oldBean).setCmr(relatedProperty, null);
+            getCmpWrapper(oldBean).removeCmr(relatedProperty, sourcePk, source);
         }
 
         if (newValue != null) {
             // set the back reference in the new related bean
-            Object oldSource = getCmpWrapper(newBean).setCmr(relatedProperty, source);
+            Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, sourcePk, source);
 
             // if the new related beas was related to another bean, we need
             // to clear the back reference in that old bean
-            if (oldSource != null) {
-                getCmpWrapper(oldSource).setCmr(sourceProperty, null);
+            if (oldBackRef != null) {
+                getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newValue.getPrimaryKey(), newBean);
             }
         }
         return newBean;
+    }
+
+    private Object getSourcePk() {
+        Object sourcePk = CmpUtil.getPrimaryKey(sourceInfo, source);
+        if (sourcePk == null) {
+            throw new IllegalStateException("CMR " + sourceProperty + " can not be modified on entity of type " +
+                    sourceInfo.getBeanClass().getName() + " because primary key has not been established yet.");
+        }
+        return sourcePk;
     }
 
     private CmpWrapper getCmpWrapper(Object object) {
@@ -98,62 +102,4 @@ public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocal
         throw new IllegalArgumentException("Unknown cmp bean type " + object.getClass().getName());
     }
 
-    public static class CmpWrapperFactory {
-        private final Method getValueMethod;
-        private final Method setValueMethod;
-
-        public CmpWrapperFactory(Class relatedType) {
-            try {
-                setValueMethod = relatedType.getMethod("OpenEJB_setCmr", String.class, Object.class);
-            } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("EntityBean class " + relatedType.getName() +
-                        " does not contain the generated method OpenEJB_setCmr(String name, Object bean) method");
-            }
-            try {
-                getValueMethod = relatedType.getMethod("OpenEJB_getCmr", String.class);
-            } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("EntityBean class " + relatedType.getName() +
-                        " does not contain the generated method OpenEJB_getCmr(String name) method");
-            }
-        }
-
-        public CmpWrapper createCmpEntityBean(Object bean) {
-            return new CmpWrapper(bean, getValueMethod, setValueMethod);
-        }
-    }
-
-
-    public static class CmpWrapper {
-        private final Object bean;
-        private final Class type;
-        private final Method getValueMethod;
-        private final Method setValueMethod;
-
-        public CmpWrapper(Object bean, Method getValueMethod, Method setValueMethod) {
-            this.bean = bean;
-            this.getValueMethod = getValueMethod;
-            this.setValueMethod = setValueMethod;
-            type = getValueMethod.getDeclaringClass();
-        }
-
-        public Object getCmr(String property) {
-            if (property == null) throw new NullPointerException("property is null");
-            try {
-                Object value = getValueMethod.invoke(bean, property);
-                return value;
-            } catch (Exception e) {
-                throw new EJBException("Error getting property " + property + " value from entity bean of type " + type.getName());
-            }
-        }
-
-        public Object setCmr(String property, Object value) {
-            if (property == null) throw new NullPointerException("property is null");
-            try {
-                Object oldValue = setValueMethod.invoke(bean, property, value);
-                return oldValue;
-            } catch (Exception e) {
-                throw new EJBException("Error setting property " + property + " on entity bean of type " + type.getName());
-            }
-        }
-    }
 }

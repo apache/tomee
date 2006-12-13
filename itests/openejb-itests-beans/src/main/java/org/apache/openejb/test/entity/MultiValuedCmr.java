@@ -17,14 +17,13 @@
  */
 package org.apache.openejb.test.entity;
 
-import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBException;
+import javax.ejb.EntityBean;
 import java.util.Map;
 import java.util.Set;
 
 public interface MultiValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject, PK> {
     Set<Proxy> get(Map<PK, Bean> others);
 
-    Map<PK, Bean> set(Set<Proxy> others);
+    void set(Map<PK, Bean> oldValue, Set<Proxy> newValue);
 }

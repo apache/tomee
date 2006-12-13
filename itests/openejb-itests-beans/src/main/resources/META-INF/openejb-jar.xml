@@ -127,6 +127,8 @@
   <!-- CMR Test Beans -->
 	<ejb-deployment ejb-name="OneToOneA" deployment-id="client/tests/entity/cmr/oneToOne/AHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="OneToOneB" deployment-id="client/tests/entity/cmr/oneToOne/BHome" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToManyA" deployment-id="client/tests/entity/cmr/oneToMany/AHome" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToManyB" deployment-id="client/tests/entity/cmr/oneToMany/BHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome" container-id="Default CMP Container"/>
 	<ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome" container-id="Default CMP Container"/>

@@ -27,6 +27,11 @@ import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.Context;
 import java.util.Properties;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 import org.apache.openejb.test.TestManager;
 
@@ -71,6 +76,59 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
         InitialContext jndiContext = new InitialContext( );
         transactionManager = (TransactionManager) jndiContext.lookup("java:openejb/TransactionManager");
         ds = (DataSource) jndiContext.lookup("java:openejb/connector/Default JDBC Database");
+    }
+
+    protected static void dumpTable(DataSource ds, String table) throws SQLException {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = ds.getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM " + table);
+            ResultSetMetaData setMetaData = resultSet.getMetaData();
+            int columnCount = setMetaData.getColumnCount();
+            while(resultSet.next()) {
+                StringBuilder row = new StringBuilder();
+                for (int i = 1; i <= columnCount; i++) {
+                    if (i > 1) {
+                        row.append(", ");
+                    }
+                    String name = setMetaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    row.append(name).append("=").append(value);
+                }
+                System.out.println(row);
+            }
+        } finally {
+            close(resultSet);
+            close(statement);
+            close(connection);
+        }
+    }
+
+    protected static void close(ResultSet resultSet) {
+        if (resultSet == null) return;
+        try {
+            resultSet.close();
+        } catch (SQLException e) {
+        }
+    }
+
+    protected static void close(Statement statement) {
+        if (statement == null) return;
+        try {
+            statement.close();
+        } catch (SQLException e) {
+        }
+    }
+
+    protected static void close(Connection connection) {
+        if (connection == null) return;
+        try {
+            connection.close();
+        } catch (SQLException e) {
+        }
     }
 }
 

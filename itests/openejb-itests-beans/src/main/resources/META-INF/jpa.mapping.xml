@@ -293,4 +293,51 @@
       </one-to-one>
     </attributes>
   </entity>
+
+  <!--
+  ########################################################
+  ########################################################
+  ######  CMR  One To Many ###############################
+  ########################################################
+  ########################################################
+  -->
+
+  <entity name="OneToManyA" class="org.apache.openejb.test.entity.cmr.onetomany.ABean_JPA">
+    <table name="OneToManyA"/>
+    <attributes>
+      <id name="field1">
+        <column name="A1"/>
+      </id>
+      <basic name="field2">
+        <column name="A2"/>
+      </basic>
+      <one-to-many name="b" mapped-by="a">
+        <map-key name="field1"/>
+      </one-to-many>
+    </attributes>
+  </entity>
+
+  <entity name="OneToManyB" class="org.apache.openejb.test.entity.cmr.onetomany.BBean_JPA">
+    <table name="OneToManyB"/>
+    <attributes>
+      <id name="field1">
+        <column name="B1"/>
+      </id>
+      <basic name="field2">
+        <column name="B2"/>
+      </basic>
+      <basic name="field3">
+        <column name="B3"/>
+      </basic>
+      <basic name="field4">
+        <column name="B4"/>
+      </basic>
+      <many-to-one name="a">
+        <join-column name="FKA1"/>
+        <cascade>
+          <cascade-all/>
+        </cascade>
+      </many-to-one>
+    </attributes>
+  </entity>
 </entity-mappings>

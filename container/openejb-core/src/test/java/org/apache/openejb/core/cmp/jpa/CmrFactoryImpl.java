@@ -18,13 +18,18 @@
 package org.apache.openejb.core.cmp.jpa;
 
 import org.apache.openejb.test.entity.CmrFactory;
+import org.apache.openejb.test.entity.MultiValuedCmr;
 import org.apache.openejb.test.entity.SingleValuedCmr;
 
-import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalObject;
+import javax.ejb.EntityBean;
 
 public class CmrFactoryImpl implements CmrFactory {
-    public <I extends EntityBean, P extends EJBLocalObject> SingleValuedCmr<I, P> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<I> relatedType, String relatedProperty) {
-        return new SingleValuedCmrImpl<I, P>(source, sourceProperty, relatedType, relatedProperty);
+    public <Bean extends EntityBean, Proxy extends EJBLocalObject> SingleValuedCmr<Bean, Proxy> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
+        return new SingleValuedCmrImpl<Bean, Proxy>(source, sourceProperty, relatedType, relatedProperty);
+    }
+
+    public <Bean extends EntityBean, Proxy extends EJBLocalObject, PK> MultiValuedCmr<Bean, Proxy, PK> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property) {
+        return new MultiValuedCmrImpl<Bean, Proxy, PK>(source, sourceProperty, relatedType, property);
     }
 }

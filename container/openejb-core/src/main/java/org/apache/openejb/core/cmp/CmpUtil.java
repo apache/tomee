@@ -27,9 +27,19 @@ import org.apache.openejb.ProxyInfo;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalHome;
+import java.lang.reflect.Field;
 
 public class CmpUtil {
-    public static EntityBean getEntityBean(CoreDeploymentInfo deploymentInfo, EJBLocalObject proxy) {
+    public static Object getPrimaryKey(CoreDeploymentInfo deploymentInfo, EntityBean entity){
+        if (entity == null) return null;
+
+        // build the primary key
+        KeyGenerator kg = deploymentInfo.getKeyGenerator();
+        Object primaryKey = kg.getPrimaryKey(entity);
+        return primaryKey;
+    }
+
+    public static EntityBean getEntityBean(EJBLocalObject proxy) {
         if (proxy == null) return null;
 
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
@@ -45,8 +55,7 @@ public class CmpUtil {
         if (entity == null) return null;
 
         // build the primary key
-        KeyGenerator kg = deploymentInfo.getKeyGenerator();
-        Object primaryKey = kg.getPrimaryKey(entity);
+        Object primaryKey = getPrimaryKey(deploymentInfo, entity);
 
         // get the local interface
         Class localInterface = deploymentInfo.getLocalInterface();
@@ -67,5 +76,17 @@ public class CmpUtil {
         // create the proxy
         EJBLocalObject proxy = (EJBLocalObject) handler.createProxy(proxyInfo);
         return proxy;
+    }
+
+    public static CoreDeploymentInfo getDeploymentInfo(Class type) {
+        CoreDeploymentInfo deploymentInfo;
+        try {
+            Field deploymentInfoField = type.getField("deploymentInfo");
+            deploymentInfo = (CoreDeploymentInfo) deploymentInfoField.get(null);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("EntityBean class " + type.getName() +
+                    " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?");
+        }
+        return deploymentInfo;
     }
 }

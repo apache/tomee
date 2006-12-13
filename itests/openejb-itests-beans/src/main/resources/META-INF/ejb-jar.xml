@@ -573,6 +573,69 @@
             </query>
         </entity>
 
+      <entity>
+          <ejb-name>OneToManyA</ejb-name>
+          <local-home>org.apache.openejb.test.entity.cmr.onetomany.ALocalHome</local-home>
+          <local>org.apache.openejb.test.entity.cmr.onetomany.ALocal</local>
+          <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.ABean_JPA</ejb-class>
+          <persistence-type>Container</persistence-type>
+          <prim-key-class>java.lang.Integer</prim-key-class>
+          <reentrant>false</reentrant>
+          <cmp-version>2.x</cmp-version>
+          <abstract-schema-name>OneToOneA</abstract-schema-name>
+          <cmp-field>
+              <field-name>field1</field-name>
+          </cmp-field>
+          <cmp-field>
+              <field-name>field2</field-name>
+          </cmp-field>
+          <primkey-field>field1</primkey-field>
+          <query>
+              <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+              <query-method>
+                  <method-name>findByPrimaryKey</method-name>
+                  <method-params>
+                      <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+                  </method-params>
+              </query-method>
+              <ejb-ql>SELECT OBJECT(A) FROM OneToManyA A</ejb-ql>
+          </query>
+      </entity>
+      <entity>
+          <ejb-name>OneToManyB</ejb-name>
+          <local-home>org.apache.openejb.test.entity.cmr.onetomany.BLocalHome</local-home>
+          <local>org.apache.openejb.test.entity.cmr.onetomany.BLocal</local>
+          <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.BBean_JPA</ejb-class>
+          <persistence-type>Container</persistence-type>
+          <prim-key-class>java.lang.Integer</prim-key-class>
+          <reentrant>false</reentrant>
+          <cmp-version>2.x</cmp-version>
+          <abstract-schema-name>OneToOneB</abstract-schema-name>
+          <cmp-field>
+              <field-name>field1</field-name>
+          </cmp-field>
+          <cmp-field>
+              <field-name>field2</field-name>
+          </cmp-field>
+          <cmp-field>
+              <field-name>field3</field-name>
+          </cmp-field>
+          <cmp-field>
+              <field-name>field4</field-name>
+          </cmp-field>
+          <primkey-field>field1</primkey-field>
+          <query>
+              <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+              <query-method>
+                  <method-name>findByPrimaryKey</method-name>
+                  <method-params>
+                      <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+                  </method-params>
+              </query-method>
+              <ejb-ql>SELECT OBJECT(B) FROM OneToManyB B</ejb-ql>
+          </query>
+      </entity>
+
         <entity>
             <ejb-name>OneOwningSideBean</ejb-name>
             <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
@@ -1735,9 +1798,7 @@
 
     <relationships>
         <ejb-relation>
-            <ejb-relation-name>relation</ejb-relation-name>
             <ejb-relationship-role>
-                <ejb-relationship-role-name>OneToOneASide</ejb-relationship-role-name>
                 <multiplicity>One</multiplicity>
                 <cascade-delete/>
                 <relationship-role-source>
@@ -1748,10 +1809,29 @@
                 </cmr-field>
             </ejb-relationship-role>
             <ejb-relationship-role>
-                <ejb-relationship-role-name>OneToOneBSide</ejb-relationship-role-name>
                 <multiplicity>One</multiplicity>
                 <relationship-role-source>
                     <ejb-name>OneToOneB</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>a</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+        </ejb-relation>
+        <ejb-relation>
+            <ejb-relationship-role>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneToManyA</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>b</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+            <ejb-relationship-role>
+                <multiplicity>Many</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneToManyB</ejb-name>
                 </relationship-role-source>
                 <cmr-field>
                     <cmr-field-name>a</cmr-field-name>
@@ -1894,6 +1974,20 @@
         <container-transaction>
             <method>
                 <ejb-name>OneToOneB</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>OneToManyA</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>OneToManyB</ejb-name>
                 <method-name>*</method-name>
             </method>
             <trans-attribute>Required</trans-attribute>

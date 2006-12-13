@@ -28,8 +28,6 @@ public class BBean_JPA extends BBean {
     private String field4;
     private ABean_JPA a;
     private SingleValuedCmr<ABean_JPA, ALocal> aCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, "a", ABean_JPA.class, "b");
-//    private Map<Integer,ABean_JPA> others;
-//    private MultiValuedCmr<ABean_JPA, ALocal, Integer> othersCmr = null;
 
     public Integer getField1() {
         return field1;
@@ -75,24 +73,7 @@ public class BBean_JPA extends BBean {
         this.a = aCmr.set(this.a, a);
     }
 
-//    public Set<ALocal> getOthers() {
-//        if (others == null) others = new HashMap<Integer,ABean_JPA>();
-//        return othersCmr.get(others);
-//    }
-//
-//    public void setOthers(Set<ALocal> others) {
-//        this.others = othersCmr.set(others);
-//    }
-
-    public Object OpenEJB_getCmr(String name) {
-        if ("a".equals(name)) {
-            return a;
-        } else {
-            throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
-        }
-    }
-
-    public Object OpenEJB_setCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(String name, Object pk, Object bean) {
         Object oldValue;
         if ("a".equals(name)) {
             oldValue = a;
@@ -101,5 +82,13 @@ public class BBean_JPA extends BBean {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }
         return oldValue;
+    }
+
+    public void OpenEJB_removeCmr(String name, Object pk, Object bean) {
+        if ("a".equals(name)) {
+            a = null;
+        } else {
+            throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
+        }
     }
 }
