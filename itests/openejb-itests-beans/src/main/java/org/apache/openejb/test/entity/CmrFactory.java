@@ -34,7 +34,7 @@ public interface CmrFactory {
                         return null;
                     }
 
-                    public <Bean extends EntityBean, Proxy extends EJBLocalObject, PK> MultiValuedCmr<Bean, Proxy, PK> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property) {
+                    public <Bean extends EntityBean, Proxy extends EJBLocalObject> MultiValuedCmr<Bean, Proxy> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property) {
                         return null;
                     }
                 };
@@ -44,5 +44,5 @@ public interface CmrFactory {
 
     <Bean extends EntityBean, Proxy extends EJBLocalObject> SingleValuedCmr<Bean, Proxy> createSingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property);
 
-    <Bean extends EntityBean, Proxy extends EJBLocalObject, PK> MultiValuedCmr<Bean, Proxy, PK> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property);
+    <Bean extends EntityBean, Proxy extends EJBLocalObject> MultiValuedCmr<Bean, Proxy> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property);
 }

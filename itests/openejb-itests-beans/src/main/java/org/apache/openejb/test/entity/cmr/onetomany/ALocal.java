@@ -36,4 +36,6 @@ public interface ALocal extends EJBLocalObject {
     public Set<BLocal> getB();
     public void setB(Set<BLocal> bSet);
 
+    public Set<BLocal> getBNonCascade();
+    public void setBNonCascade(Set<BLocal> bNonCascade);
 }

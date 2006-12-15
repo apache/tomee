@@ -214,8 +214,8 @@ public class JpaTest extends TestCase {
         beginTx();
         b = entityManager.find(BBean_JPA.class, 22);
         a = entityManager.find(ABean_JPA.class, 2);
-        a.OpenEJB_addCmr("b", 22, b);
-        b.OpenEJB_addCmr("a", 2, a);
+        a.OpenEJB_addCmr("b", b);
+        b.OpenEJB_addCmr("a", a);
         commitTx();
 
 //        dump();

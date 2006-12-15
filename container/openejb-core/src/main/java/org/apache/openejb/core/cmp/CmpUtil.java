@@ -43,6 +43,9 @@ public class CmpUtil {
         if (proxy == null) return null;
 
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        if (handler.container == null) {
+            return null;
+        }
         if (!(handler.container instanceof CmpContainer)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }

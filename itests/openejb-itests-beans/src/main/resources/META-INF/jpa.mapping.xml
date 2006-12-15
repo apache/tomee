@@ -312,8 +312,11 @@
         <column name="A2"/>
       </basic>
       <one-to-many name="b" mapped-by="a">
-        <map-key name="field1"/>
+        <cascade>
+          <cascade-all/>
+        </cascade>
       </one-to-many>
+      <one-to-many name="bNonCascade" mapped-by="aNonCascade"/>
     </attributes>
   </entity>
 
@@ -334,9 +337,9 @@
       </basic>
       <many-to-one name="a">
         <join-column name="FKA1"/>
-        <cascade>
-          <cascade-all/>
-        </cascade>
+      </many-to-one>
+      <many-to-one name="aNonCascade">
+        <join-column name="FKA_NonCascade"/>
       </many-to-one>
     </attributes>
   </entity>

@@ -26,7 +26,6 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
 
 public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalObject> implements SingleValuedCmr<Bean, Proxy> {
-    private final CoreDeploymentInfo sourceInfo;
     private final EntityBean source;
     private final Class<? extends EntityBean> sourceType;
     private final String sourceProperty;
@@ -47,7 +46,6 @@ public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocal
         this.relatedProperty = relatedProperty;
         this.sourceType = source.getClass();
 
-        this.sourceInfo = CmpUtil.getDeploymentInfo(source.getClass());
         this.relatedInfo = CmpUtil.getDeploymentInfo(relatedType);
 
         sourceWrapperFactory = new CmpWrapperFactory(sourceType);
@@ -62,34 +60,24 @@ public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocal
     }
 
     public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
-        Object sourcePk = getSourcePk();
         Bean newBean = (Bean) CmpUtil.getEntityBean(newValue);
 
         // clear back reference in the old related bean
         if (oldBean != null) {
-            getCmpWrapper(oldBean).removeCmr(relatedProperty, sourcePk, source);
+            getCmpWrapper(oldBean).removeCmr(relatedProperty, source);
         }
 
         if (newValue != null) {
             // set the back reference in the new related bean
-            Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, sourcePk, source);
+            Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
             // to clear the back reference in that old bean
             if (oldBackRef != null) {
-                getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newValue.getPrimaryKey(), newBean);
+                getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newBean);
             }
         }
         return newBean;
-    }
-
-    private Object getSourcePk() {
-        Object sourcePk = CmpUtil.getPrimaryKey(sourceInfo, source);
-        if (sourcePk == null) {
-            throw new IllegalStateException("CMR " + sourceProperty + " can not be modified on entity of type " +
-                    sourceInfo.getBeanClass().getName() + " because primary key has not been established yet.");
-        }
-        return sourcePk;
     }
 
     private CmpWrapper getCmpWrapper(Object object) {

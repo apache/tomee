@@ -46,7 +46,7 @@ public class HsqldbTestDatabase implements TestDatabase{
     // OneToMany
     private static final String CREATE_ONE_TO_MANY_A = "CREATE TABLE OneToManyA(A1 INTEGER, A2 VARCHAR(50))";
     private static final String DROP_ONE_TO_MANY_A = "DROP TABLE OneToManyA";
-    private static final String CREATE_ONE_TO_MANY_B = "CREATE TABLE OneToManyB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER)";
+    private static final String CREATE_ONE_TO_MANY_B = "CREATE TABLE OneToManyB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER, FKA_NonCascade INTEGER)";
     private static final String DROP_ONE_TO_MANY_B = "DROP TABLE OneToManyB";
 
     // CmrMapping

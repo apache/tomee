@@ -15,16 +15,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity;
+package org.apache.openejb.core.cmp.jpa;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import java.util.Set;
+import java.util.Collection;
 
-public interface MultiValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject> {
-    Set<Proxy> get(Set<Bean> others);
+public class CollectionRef<E> {
+    private Collection<E> collection;
 
-    void set(Set<Bean> oldValue, Set<Proxy> newValue);
+    public Collection<E> get() {
+        return collection;
+    }
 
-    void deleted(Set<Bean> relatedBeans);
+    public void set(Collection<E> collection) {
+        this.collection = collection;
+    }
 }

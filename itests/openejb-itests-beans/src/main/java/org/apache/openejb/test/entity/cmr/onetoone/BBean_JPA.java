@@ -22,6 +22,7 @@ import org.apache.openejb.test.entity.SingleValuedCmr;
 
 public class BBean_JPA extends BBean {
     public static Object deploymentInfo;
+    public transient boolean deleted;
     public Integer field1;
     private String field2;
     private Integer field3;
@@ -65,15 +66,20 @@ public class BBean_JPA extends BBean {
         return aCmr.get(a);
     }
 
-    public void OpenEJB_deleted() {
-        a = aCmr.set(a, null);
-    }
-
     public void setA(ALocal a) {
         this.a = aCmr.set(this.a, a);
     }
 
-    public Object OpenEJB_addCmr(String name, Object pk, Object bean) {
+    public void OpenEJB_deleted() {
+        if (deleted) return;
+        deleted = true;
+
+        aCmr.set(a, null);
+    }
+
+    public Object OpenEJB_addCmr(String name, Object bean) {
+        if (deleted) return null;
+
         Object oldValue;
         if ("a".equals(name)) {
             oldValue = a;
@@ -84,7 +90,9 @@ public class BBean_JPA extends BBean {
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(String name, Object pk, Object bean) {
+    public void OpenEJB_removeCmr(String name, Object bean) {
+        if (deleted) return;
+
         if ("a".equals(name)) {
             a = null;
         } else {

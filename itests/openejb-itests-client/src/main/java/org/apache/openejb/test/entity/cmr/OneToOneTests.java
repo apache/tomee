@@ -17,21 +17,16 @@
 package org.apache.openejb.test.entity.cmr;
 
 
+import org.apache.openejb.test.entity.cmr.onetoone.ALocal;
+import org.apache.openejb.test.entity.cmr.onetoone.ALocalHome;
+import org.apache.openejb.test.entity.cmr.onetoone.BLocal;
+import org.apache.openejb.test.entity.cmr.onetoone.BLocalHome;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
-
-import org.apache.openejb.test.entity.cmr.onetoone.ALocalHome;
-import org.apache.openejb.test.entity.cmr.onetoone.ALocal;
-import org.apache.openejb.test.entity.cmr.onetoone.BLocalHome;
-import org.apache.openejb.test.entity.cmr.onetoone.BLocal;
-
-import javax.ejb.FinderException;
-import javax.ejb.CreateException;
-import javax.sql.DataSource;
 
 /**
  *

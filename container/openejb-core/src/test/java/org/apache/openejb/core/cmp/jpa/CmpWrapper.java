@@ -33,23 +33,23 @@ public class CmpWrapper {
         type = addCmrMethod.getDeclaringClass();
     }
 
-    public Object addCmr(String property, Object pk, Object bean) {
+    public Object addCmr(String property, Object bean) {
         if (property == null) throw new NullPointerException("property is null");
         try {
-            Object oldValue = addCmrMethod.invoke(this.bean, property, pk, bean);
+            Object oldValue = addCmrMethod.invoke(this.bean, property, bean);
             return oldValue;
         } catch (Exception e) {
-            throw new EJBException("Error setting property " + property + " on entity bean of type " + type.getName());
+            throw new EJBException("Error setting property " + property + " on entity bean of type " + type.getName(), e);
         }
     }
 
-    public Object removeCmr(String property, Object pk, Object bean) {
+    public Object removeCmr(String property, Object bean) {
         if (property == null) throw new NullPointerException("property is null");
         try {
-            Object oldValue = removeCmrMethod.invoke(this.bean, property, pk, bean);
+            Object oldValue = removeCmrMethod.invoke(this.bean, property, bean);
             return oldValue;
         } catch (Exception e) {
-            throw new EJBException("Error setting property " + property + " on entity bean of type " + type.getName());
+            throw new EJBException("Error setting property " + property + " on entity bean of type " + type.getName(), e);
         }
     }
 }

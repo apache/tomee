@@ -1827,6 +1827,7 @@
                 <cmr-field>
                     <cmr-field-name>b</cmr-field-name>
                 </cmr-field>
+                <cascade-delete/>
             </ejb-relationship-role>
             <ejb-relationship-role>
                 <multiplicity>Many</multiplicity>
@@ -1835,6 +1836,26 @@
                 </relationship-role-source>
                 <cmr-field>
                     <cmr-field-name>a</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+        </ejb-relation>
+        <ejb-relation>
+            <ejb-relationship-role>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneToManyA</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>bNonCascade</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+            <ejb-relationship-role>
+                <multiplicity>Many</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>OneToManyB</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>aNonCascade</cmr-field-name>
                 </cmr-field>
             </ejb-relationship-role>
         </ejb-relation>

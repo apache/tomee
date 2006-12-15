@@ -22,7 +22,6 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Container;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Enumerator;
@@ -357,6 +356,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private void ejbRemove(EntityBean entityBean) throws RemoveException {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
+        if (isDeleted(entityBean)) return;
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operations.OP_REMOVE);
@@ -375,6 +375,24 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             } catch (Exception ignored) {
             }
             ThreadContext.setThreadContext(oldCallContext);
+        }
+    }
+
+    private boolean isDeleted(EntityBean entityBean) {
+        try {
+            return entityBean.getClass().getField("deleted").getBoolean(entityBean);
+        } catch (NoSuchFieldException e) {
+            return false;
+        } catch (Exception e) {
+            throw new EJBException(e);
+        }
+    }
+
+    private void setDeleted(EntityBean entityBean, boolean deleted) {
+        try {
+            entityBean.getClass().getField("deleted").setBoolean(entityBean, deleted);
+        } catch (Exception e) {
+            throw new EJBException(e);
         }
     }
 
@@ -706,6 +724,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         txPolicy.beforeInvoke(null, txContext);
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo.getDeploymentID());
+            EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
+            ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);

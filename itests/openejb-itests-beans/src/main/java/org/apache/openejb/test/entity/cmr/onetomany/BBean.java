@@ -47,6 +47,9 @@ public abstract class BBean implements EntityBean {
     // CMR
     public abstract ALocal getA();
     public abstract void setA(ALocal a);
+
+    public abstract ALocal getANonCascade();
+    public abstract void setANonCascade(ALocal aNonCascade);
     
     public Integer ejbCreate(Integer field1)  throws CreateException {
         setField1(field1);

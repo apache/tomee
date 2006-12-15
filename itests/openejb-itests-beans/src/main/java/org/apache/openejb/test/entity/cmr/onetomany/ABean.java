@@ -44,6 +44,9 @@ public abstract class ABean implements EntityBean {
     public abstract Set<BLocal> getB();
     public abstract void setB(Set<BLocal> bSet);
 
+    public abstract Set<BLocal> getBNonCascade();
+    public abstract void setBNonCascade(Set<BLocal> bNonCascade);
+
     public Integer ejbCreate(Integer field1)  throws CreateException {
         setField1(field1);
         return null;

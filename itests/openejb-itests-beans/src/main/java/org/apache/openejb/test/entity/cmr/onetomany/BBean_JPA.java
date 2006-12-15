@@ -22,12 +22,15 @@ import org.apache.openejb.test.entity.CmrFactory;
 
 public class BBean_JPA extends BBean {
     public static Object deploymentInfo;
+    public transient boolean deleted;
     public Integer field1;
     private String field2;
     private Integer field3;
     private String field4;
     private ABean_JPA a;
     private SingleValuedCmr<ABean_JPA, ALocal> aCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, "a", ABean_JPA.class, "b");
+    private ABean_JPA aNonCascade;
+    private SingleValuedCmr<ABean_JPA, ALocal> aNonCascadeCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, "aNonCascade", ABean_JPA.class, "bNonCascade");
 
     public Integer getField1() {
         return field1;
@@ -65,28 +68,49 @@ public class BBean_JPA extends BBean {
         return aCmr.get(a);
     }
 
-    public void OpenEJB_deleted() {
-        a = aCmr.set(a, null);
-    }
-
     public void setA(ALocal a) {
         this.a = aCmr.set(this.a, a);
     }
 
-    public Object OpenEJB_addCmr(String name, Object pk, Object bean) {
+    public ALocal getANonCascade() {
+        return aNonCascadeCmr.get(aNonCascade);
+    }
+
+    public void setANonCascade(ALocal aNonCascade) {
+        this.aNonCascade = aNonCascadeCmr.set(this.aNonCascade, aNonCascade);
+    }
+
+    public void OpenEJB_deleted() {
+        if (deleted) return;
+        deleted = true;
+
+        aCmr.set(a, null);
+        aNonCascadeCmr.set(aNonCascade, null);
+    }
+
+    public Object OpenEJB_addCmr(String name, Object bean) {
+        if (deleted) return null;
+
         Object oldValue;
         if ("a".equals(name)) {
             oldValue = a;
             a = (ABean_JPA) bean;
+        } else if ("aNonCascade".equals(name)) {
+            oldValue = aNonCascade;
+            aNonCascade = (ABean_JPA) bean;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(String name, Object pk, Object bean) {
+    public void OpenEJB_removeCmr(String name, Object bean) {
+        if (deleted) return;
+
         if ("a".equals(name)) {
             a = null;
+        } else if ("aNonCascade".equals(name)) {
+            aNonCascade = null;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }

@@ -65,10 +65,10 @@ public class iTest extends org.apache.openejb.test.TestSuite {
 
     public static Test suite() {
         TestSuite suite = new iTest();
-//        suite.addTest(StatelessLocalTestSuite.suite());
-//        suite.addTest(StatefulLocalTestSuite.suite());
-//        suite.addTest(BmpLocalTestSuite.suite());
-//        suite.addTest(CmpLocalTestSuite.suite());
+        suite.addTest(StatelessLocalTestSuite.suite());
+        suite.addTest(StatefulLocalTestSuite.suite());
+        suite.addTest(BmpLocalTestSuite.suite());
+        suite.addTest(CmpLocalTestSuite.suite());
         suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }

@@ -29,7 +29,7 @@ public class CmrFactoryImpl implements CmrFactory {
         return new SingleValuedCmrImpl<Bean, Proxy>(source, sourceProperty, relatedType, relatedProperty);
     }
 
-    public <Bean extends EntityBean, Proxy extends EJBLocalObject, PK> MultiValuedCmr<Bean, Proxy, PK> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property) {
-        return new MultiValuedCmrImpl<Bean, Proxy, PK>(source, sourceProperty, relatedType, property);
+    public <Bean extends EntityBean, Proxy extends EJBLocalObject> MultiValuedCmr<Bean, Proxy> createMultiValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String property) {
+        return new MultiValuedCmrImpl<Bean, Proxy>(source, sourceProperty, relatedType, property);
     }
 }

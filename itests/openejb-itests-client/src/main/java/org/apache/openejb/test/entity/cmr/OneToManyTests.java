@@ -90,7 +90,7 @@ public class OneToManyTests extends AbstractCMRTest {
         }
     }
 
-    public void testASetBDropExisting() throws Exception {
+    public void test02_ASetBDropExisting() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -102,7 +102,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertUnlinked(1);
     }
 
-    public void testBSetADropExisting() throws Exception {
+    public void test03_BSetADropExisting() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -118,7 +118,7 @@ public class OneToManyTests extends AbstractCMRTest {
     }
 
 
-    public void testASetBNewAB() throws Exception {
+    public void test04_ASetBNewAB() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -134,7 +134,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(2, 22);
     }
 
-    public void testBSetANewAB() throws Exception {
+    public void test05_BSetANewAB() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -147,7 +147,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(2, 22);
     }
 
-    public void testASetBExistingBNewA() throws Exception {
+    public void test06_ASetBExistingBNewA() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -162,7 +162,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(2, 11);
     }
 
-    public void testBSetAExistingBNewA() throws Exception {
+    public void test07_BSetAExistingBNewA() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -176,7 +176,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(2, 11);
     }
 
-    public void testASetBExistingANewB() throws Exception {
+    public void test08_ASetBExistingANewB() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -190,7 +190,7 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(1, 11, 22, 33);
     }
 
-    public void testBSetAExistingANewB() throws Exception {
+    public void test09_BSetAExistingANewB() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -204,28 +204,21 @@ public class OneToManyTests extends AbstractCMRTest {
         assertLinked(1, 11, 22, 33);
     }
 
-    public void testRemoveRelationships() throws Exception {
+    public void test10_RemoveRelationships() throws Exception {
         resetDB();
         beginTransaction();
         try {
-            ALocal a = findA(1);
-            a.remove();
+            BLocal b = findB(11);
+            ALocal a = b.getA();
+            Set<BLocal> bs = a.getB();
+            assertTrue(bs.contains(b));
+            b.remove();
+            assertFalse(bs.contains(b));
         } finally {
             completeTransaction();
         }
-
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB");
-        assertTrue(rs.next());
-        assertEquals(2, rs.getInt(1));
-        rs.close();
-        rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB WHERE fka1 = 1");
-        assertTrue(rs.next());
-        assertEquals(0, rs.getInt(1));
-        rs.close();
-        s.close();
-        c.close();
+        assertLinked(1, 22);
+        assertUnlinked(2);
     }
 
     // uncomment when cmp to cmr is supported
@@ -259,18 +252,47 @@ public class OneToManyTests extends AbstractCMRTest {
         }
     }
 
-    // todo cascade delete isn't working
-    public void TODO_testCascadeDelete() throws Exception {
+    public void test11_Delete() throws Exception {
         resetDB();
 
         beginTransaction();
         try {
             ALocal a = findA(1);
+            a.setB(new HashSet<BLocal>());
+            Set<BLocal> bs = a.getBNonCascade();
+            Set<BLocal> bsCopy = new HashSet<BLocal>(bs);
+            assertFalse(bs.isEmpty());
             a.remove();
+            assertTrue(bs.isEmpty());
+            for (BLocal bLocal : bsCopy) {
+                assertNull(bLocal.getANonCascade());
+            }
         } finally {
             completeTransaction();
         }
-        System.out.println();
+        Connection c = ds.getConnection();
+        Statement s = c.createStatement();
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB");
+        assertTrue(rs.next());
+        assertEquals(2, rs.getInt(1));
+        rs.close();
+        s.close();
+        c.close();
+    }
+
+    public void test12_CascadeDelete() throws Exception {
+        resetDB();
+
+        beginTransaction();
+        try {
+            ALocal a = findA(1);
+            Set<BLocal> bs = a.getB();
+            assertFalse(bs.isEmpty());
+            a.remove();
+            assertTrue(bs.isEmpty());
+        } finally {
+            completeTransaction();
+        }
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM OneToManyB");
@@ -280,12 +302,6 @@ public class OneToManyTests extends AbstractCMRTest {
         s.close();
         c.close();
     }
-
-//    private ALocal createA(int aPk) throws CreateException {
-//        ALocal a = ahome.create(new Integer(aPk));
-//        a.setField2("value" + aPk);
-//        return a;
-//    }
 
     private ALocal findA(int aPk) throws FinderException {
         return ahome.findByPrimaryKey(new Integer(aPk));
@@ -348,8 +364,8 @@ public class OneToManyTests extends AbstractCMRTest {
 
             statement.execute("INSERT INTO OneToManyA(A1, A2) VALUES(1, 'value1')");
             statement.execute("INSERT INTO OneToManyA(A1, A2) VALUES(2, 'value2')");
-            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
-            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1) VALUES(22, 'value22', 1)");
+            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1, FKA_NonCascade) VALUES(11, 'value11', 1, 1)");
+            statement.execute("INSERT INTO OneToManyB(B1, B2, FKA1, FKA_NonCascade) VALUES(22, 'value22', 1, 1)");
         } finally {
             close(statement);
             close(connection);

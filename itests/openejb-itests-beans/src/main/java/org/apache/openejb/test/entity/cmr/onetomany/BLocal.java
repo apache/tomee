@@ -40,4 +40,7 @@ public interface BLocal extends EJBLocalObject {
     // CMR
     public ALocal getA();
     public void setA(ALocal a);
+
+    public ALocal getANonCascade();
+    public void setANonCascade(ALocal aNonCascade);    
 }

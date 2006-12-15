@@ -25,16 +25,16 @@ public class CmpWrapperFactory {
 
     public CmpWrapperFactory(Class relatedType) {
         try {
-            addCmrMethod = relatedType.getMethod("OpenEJB_addCmr", String.class, Object.class, Object.class);
+            addCmrMethod = relatedType.getMethod("OpenEJB_addCmr", String.class, Object.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("EntityBean class " + relatedType.getName() +
-                    " does not contain the generated method OpenEJB_addCmr(String name, Object pk, Object bean) method");
+                    " does not contain the generated method OpenEJB_addCmr(String name, Object bean) method");
         }
         try {
-            removeCmrMethod = relatedType.getMethod("OpenEJB_removeCmr", String.class, Object.class, Object.class);
+            removeCmrMethod = relatedType.getMethod("OpenEJB_removeCmr", String.class, Object.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("EntityBean class " + relatedType.getName() +
-                    " does not contain the generated method OpenEJB_removeCmr(String name, Object pk, Object bean) method");
+                    " does not contain the generated method OpenEJB_removeCmr(String name, Object bean) method");
         }
     }
 

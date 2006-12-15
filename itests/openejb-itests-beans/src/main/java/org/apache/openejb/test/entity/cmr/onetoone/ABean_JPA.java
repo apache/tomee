@@ -22,6 +22,7 @@ import org.apache.openejb.test.entity.CmrFactory;
 
 public class ABean_JPA extends ABean {
     public static Object deploymentInfo;
+    public transient boolean deleted;
     public Integer field1;
     private String field2;
     private BBean_JPA b;
@@ -52,10 +53,15 @@ public class ABean_JPA extends ABean {
     }
 
     public void OpenEJB_deleted() {
-        b = bCmr.set(b, null);
+        if (deleted) return;
+        deleted = true;
+
+        bCmr.set(b, null);
     }
 
-    public Object OpenEJB_addCmr(String name, Object pk, Object bean) {
+    public Object OpenEJB_addCmr(String name, Object bean) {
+        if (deleted) return null;
+
         Object oldValue;
         if ("b".equals(name)) {
             oldValue = b;
@@ -66,7 +72,9 @@ public class ABean_JPA extends ABean {
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(String name, Object pk, Object bean) {
+    public void OpenEJB_removeCmr(String name, Object bean) {
+        if (deleted) return;
+
         if ("b".equals(name)) {
             b = null;
         } else {

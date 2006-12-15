@@ -23,11 +23,9 @@ import org.apache.openejb.test.entity.MultiValuedCmr;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
-import java.util.Map;
 import java.util.Set;
 
-public class MultiValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalObject, PK> implements MultiValuedCmr<Bean, Proxy, PK> {
-    private final CoreDeploymentInfo sourceInfo;
+public class MultiValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalObject> implements MultiValuedCmr<Bean, Proxy> {
     private final EntityBean source;
     private final Class<? extends EntityBean> sourceType;
     private final String sourceProperty;
@@ -36,6 +34,7 @@ public class MultiValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalO
     private final CoreDeploymentInfo relatedInfo;
     private final CmpWrapperFactory sourceWrapperFactory;
     private final CmpWrapperFactory relatedWrapperFactory;
+    private final CollectionRef<Bean> collectionRef = new CollectionRef<Bean>();
 
     public MultiValuedCmrImpl(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
@@ -48,57 +47,56 @@ public class MultiValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalO
         this.relatedProperty = relatedProperty;
         this.sourceType = source.getClass();
 
-        this.sourceInfo = CmpUtil.getDeploymentInfo(source.getClass());
         this.relatedInfo = CmpUtil.getDeploymentInfo(relatedType);
 
         sourceWrapperFactory = new CmpWrapperFactory(sourceType);
         relatedWrapperFactory = new CmpWrapperFactory(relatedType);
     }
 
-    public Set<Proxy> get(Map<PK, Bean> others) {
+    public Set<Proxy> get(Set<Bean> others) {
         if (others == null) throw new NullPointerException("others is null");
-        Set<Proxy> cmrSet = new CmrSet<Bean, Proxy, PK>(sourceInfo, source, sourceProperty, sourceWrapperFactory, relatedInfo, relatedType, relatedProperty, relatedWrapperFactory, others);
+        collectionRef.set(others);
+        Set<Proxy> cmrSet = new CmrSet<Bean, Proxy>(source, sourceProperty, sourceWrapperFactory, relatedInfo, relatedType, relatedProperty, relatedWrapperFactory, collectionRef);
         return cmrSet;
     }
 
-    public void set(Map<PK, Bean> relatedBeans, Set<Proxy> newProxies) {
-        Object sourcePk = getSourcePk();
-
+    public void set(Set<Bean> relatedBeans, Set<Proxy> newProxies) {
         // clear back reference in the old related beans
-        for (Bean oldBean : relatedBeans.values()) {
+        for (Bean oldBean : relatedBeans) {
             if (oldBean != null) {
-                getCmpWrapper(oldBean).removeCmr(relatedProperty, sourcePk, source);
+                getCmpWrapper(oldBean).removeCmr(relatedProperty, source);
             }
         }
         relatedBeans.clear();
 
         for (Proxy newProxy : newProxies) {
             Bean newBean = (Bean) CmpUtil.getEntityBean(newProxy);
-            PK newPk = (PK) newProxy.getPrimaryKey();
 
             if (newProxy != null) {
                 // set the back reference in the new related bean
-                Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, sourcePk, source);
+                Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, source);
 
                 // add the bean to our value map
-                relatedBeans.put(newPk, newBean);
+                relatedBeans.add(newBean);
 
                 // if the new related beas was related to another bean, we need
                 // to clear the back reference in that old bean
                 if (oldBackRef != null) {
-                    getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newPk, newBean);
+                    getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newBean);
                 }
             }
         }
     }
 
-    private Object getSourcePk() {
-        Object sourcePk = CmpUtil.getPrimaryKey(sourceInfo, source);
-        if (sourcePk == null) {
-            throw new IllegalStateException("CMR " + sourceProperty + " can not be modified on entity of type " +
-                    sourceInfo.getBeanClass().getName() + " because primary key has not been established yet.");
+    public void deleted(Set<Bean> relatedBeans) {
+        collectionRef.set(null);
+
+        // clear back reference in the old related beans
+        for (Bean oldBean : relatedBeans) {
+            if (oldBean != null) {
+                getCmpWrapper(oldBean).removeCmr(relatedProperty, source);
+            }
         }
-        return sourcePk;
     }
 
     private CmpWrapper getCmpWrapper(Object object) {
@@ -110,4 +108,5 @@ public class MultiValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalO
         }
         throw new IllegalArgumentException("Unknown cmp bean type " + object.getClass().getName());
     }
+
 }
