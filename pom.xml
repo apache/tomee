@@ -123,6 +123,7 @@
       <plugin>
         <groupId>org.apache.geronimo.genesis.plugins</groupId>
         <artifactId>tools-maven-plugin</artifactId>
+        <version>1.1</version>
 
         <!-- Tools includes custom packagings, install as extension to pick them up -->
         <extensions>true</extensions>

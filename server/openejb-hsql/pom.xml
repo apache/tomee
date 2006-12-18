@@ -15,43 +15,31 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
+
+<!-- $Rev: 477601 $ $Date: 2006-11-21 02:16:17 -0800 (Tue, 21 Nov 2006) $ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.0-incubating-SNAPSHOT</version>
-    </parent>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>server</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Server</name>
-  <modules>
-    <module>openejb-ejbd</module>
-    <module>openejb-admin</module>
-    <module>openejb-server</module>
-    <module>openejb-client</module>
-    <module>openejb-http</module>
-    <module>openejb-telnet</module>
-    <module>openejb-xfire</module>
-    <module>openejb-axis</module>
-    <module>openejb-corba</module>
-    <module>openejb-derbynet</module>
-    <module>openejb-hsql</module>
-  </modules>
+  <artifactId>openejb-hsql</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: Server :: Hsql</name>
   <dependencies>
-    <!--
-       This dependency is here to ensure that absolutely nothing
-       under the container module section can be dependent on any
-       server modules.
-    -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>container</artifactId>
+      <artifactId>openejb-server</artifactId>
       <version>${pom.version}</version>
-      <type>pom</type>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
     </dependency>
   </dependencies>
 </project>
