@@ -82,19 +82,19 @@ public class TestManager {
 
     public static void stop() throws Exception{
         try{
-            if (server != null) {
-                server.stop();
-            }
-        } catch (Exception e){
-            if (warn) System.out.println("Cannot stop the test server 2: "+e.getClass().getName()+" "+e.getMessage());
-            throw e;
-        }
-        try{
             if (database != null) {
                 database.stop();
             }
         } catch (Exception e){
             if (warn) System.out.println("Cannot stop the test database: "+e.getClass().getName()+" "+e.getMessage());
+            throw e;
+        }
+        try{
+            if (server != null) {
+                server.stop();
+            }
+        } catch (Exception e){
+            if (warn) System.out.println("Cannot stop the test server 2: "+e.getClass().getName()+" "+e.getMessage());
             throw e;
         }
     }
