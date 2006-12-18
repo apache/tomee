@@ -258,7 +258,7 @@ public class IvmContext implements Context, java.io.Serializable {
             throws NamingException {
         Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
-            return new MyListEnumeration(((IvmContext) obj).mynode);
+            return new MyBindingEnumeration(((IvmContext) obj).mynode);
         else {
             return null;
         }
