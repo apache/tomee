@@ -26,6 +26,8 @@ import org.hsqldb.Server;
 import org.hsqldb.ServerConfiguration;
 import org.hsqldb.ServerConstants;
 import org.hsqldb.jdbcDriver;
+import org.hsqldb.DatabaseManager;
+import org.hsqldb.Database;
 import org.hsqldb.persist.HsqlProperties;
 
 import javax.naming.Binding;
@@ -82,6 +84,7 @@ public class HsqlService implements ServerService, SelfManaging {
                 properties.setProperty(property, value);
             }
         }
+        properties.setProperty(ServerConstants.SC_KEY_NO_SYSTEM_EXIT, "true");
 
         boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
         if (!disabled) {
@@ -164,6 +167,7 @@ public class HsqlService implements ServerService, SelfManaging {
             server.stop();
         } finally {
             server = null;
+            DatabaseManager.closeDatabases(Database.CLOSEMODE_COMPACT);
         }
     }
 }

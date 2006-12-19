@@ -88,6 +88,10 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
     public void start() throws ResourceAdapterInternalException {
         loadDriver(driver);
 
+        if (driver.equals("org.hsqldb.jdbcDriver")) {
+            url = HsqldbPathHack.toAbsolutePath(url);
+        }
+
         factory = new BasicManagedConnectionFactory(this, driver, url, defaultUserName, defaultPassword);
 
         if (driver.equals("org.enhydra.instantdb.jdbc.idbDriver")) {
@@ -95,8 +99,6 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
             factory = new ManagedConnectionFactoryPathHack(factory);
         } else if (driver.equals("org.apache.derby.jdbc.EmbeddedDriver")) {
             factory = new DerbySystemHomeHack(factory);
-            factory = new ManagedConnectionFactoryPathHack(factory);
-        } else if (driver.equals("org.hsqldb.jdbcDriver")) {
             factory = new ManagedConnectionFactoryPathHack(factory);
         }
 

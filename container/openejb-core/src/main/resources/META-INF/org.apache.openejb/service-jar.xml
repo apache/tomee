@@ -261,7 +261,7 @@
     # Url for creating connections
 
     #JdbcUrl jdbc:derby:derbyDB;create=true
-    JdbcUrl jdbc:hsqldb:mem:JpaTest
+    JdbcUrl jdbc:hsqldb:file:hsqldb
 
     # Default user name
 

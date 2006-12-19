@@ -24,7 +24,7 @@ import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
-public class HsqldbTestDatabase implements TestDatabase{
+public class HsqldbTestDatabase implements TestDatabase {
 
     protected Database database;
     protected InitialContext initialContext;
@@ -57,7 +57,7 @@ public class HsqldbTestDatabase implements TestDatabase{
     private static final String CREATE_MANY_OWNING = "CREATE TABLE manyowning (col_id INTEGER, col_field1 INTEGER)";
     private static final String DROP_MANY_OWNING = "DROP TABLE manyowning";
 
-    static{
+    static {
         System.setProperty("noBanner", "true");
     }
 
@@ -85,18 +85,18 @@ public class HsqldbTestDatabase implements TestDatabase{
     }
 
     private void createTable(String create, String drop) throws java.sql.SQLException {
-        try{
-            try{
+        try {
+            try {
                 database.execute(drop);
-            } catch (Exception e){
+            } catch (Exception e) {
                 // not concerned
             }
             database.execute(create);
-        } catch (RemoteException re){
+        } catch (RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot create table: "+re.getMessage(), create);
+                throw new java.sql.SQLException("Cannot create table: " + re.getMessage(), create);
             }
         }
     }
@@ -104,28 +104,28 @@ public class HsqldbTestDatabase implements TestDatabase{
     private void dropTable(String drop) throws java.sql.SQLException {
         try {
             database.execute(drop);
-        } catch (RemoteException re){
+        } catch (RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Unable to drop table: "+re.getMessage(), drop);
+                throw new java.sql.SQLException("Unable to drop table: " + re.getMessage(), drop);
             }
         }
     }
 
     public void createAccountTable() throws java.sql.SQLException {
-        try{
-            try{
+        try {
+            try {
                 database.execute(_dropAccount);
-            } catch (Exception e){
+            } catch (Exception e) {
                 // not concerned
             }
             database.execute(_createAccount);
-        } catch (RemoteException re){
+        } catch (RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot create account table: "+re.getMessage(), _createAccount);
+                throw new java.sql.SQLException("Cannot create account table: " + re.getMessage(), _createAccount);
             }
         }
     }
@@ -133,11 +133,11 @@ public class HsqldbTestDatabase implements TestDatabase{
     public void dropAccountTable() throws java.sql.SQLException {
         try {
             database.execute(_dropAccount);
-        } catch (RemoteException re){
+        } catch (RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot drop account table: "+re.getMessage(), _dropAccount);
+                throw new java.sql.SQLException("Cannot drop account table: " + re.getMessage(), _dropAccount);
             }
         }
     }
@@ -146,28 +146,33 @@ public class HsqldbTestDatabase implements TestDatabase{
         try {
             Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
-        } catch (Exception e){
-            throw (IllegalStateException) new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage()).initCause(e);
+        } catch (Exception e) {
+            throw (IllegalStateException) new IllegalStateException("Cannot create initial context: " + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
-    Object obj =null;
-    DatabaseHome databaseHome =null;
+        Object obj = null;
+        DatabaseHome databaseHome = null;
         try {
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
-            databaseHome = (DatabaseHome)javax.rmi.PortableRemoteObject.narrow( obj, DatabaseHome.class);
-        } catch (Exception e){
-            throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': "+e.getClass().getName()+" "+e.getMessage());
+            databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': " + e.getClass().getName() + " " + e.getMessage());
         }
         try {
             database = databaseHome.create();
-        } catch (Exception e){
-            throw new IllegalStateException("Cannot start database: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot start database: " + e.getClass().getName() + " " + e.getMessage());
         }
     }
 
 
     public void stop() throws IllegalStateException {
+        try {
+            database.execute("SHUTDOWN");
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void init(Properties props) throws IllegalStateException {
