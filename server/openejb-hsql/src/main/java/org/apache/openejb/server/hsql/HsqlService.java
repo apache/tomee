@@ -101,7 +101,7 @@ public class HsqlService implements ServerService, SelfManaging {
                             if (dbIndex > 9) {
                                 throw new ServiceException("Hsql Server can only host 10 database connections");
                             }
-                            String dbname = binding.getName();
+                            String dbname = path.substring(path.lastIndexOf('/') + 1);
                             properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbIndex, dbname);
                             properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbIndex, path);
                             dbIndex++;
