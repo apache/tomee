@@ -1794,6 +1794,38 @@
                 <role-link>Executive</role-link>
             </security-role-ref>
         </entity>
+        
+         <!--
+        ########################################################
+        ########################################################
+        #########  MESSAGE   D R I V E N    B E A N S  #########
+        ########################################################
+        ########################################################
+        -->
+
+        <!--
+        ########################################################
+        ID:  client/tests/messagedriven/mdb/BasicMdbHome
+        ########################################################
+        -->
+
+        <message-driven>
+            <description>
+            Blah blah blah . . . 
+            </description>
+            <ejb-name>BasicMdbBean</ejb-name>
+            <ejb-class>org.apache.openejb.test.mdb.BasicMdbBean</ejb-class>
+            <messaging-type>javax.jms.MessageListener</messaging-type>
+            <transaction-type>Container</transaction-type>            
+            <message-destination-type>javax.jms.Queue</message-destination-type>
+            <message-destination-link>SendReceiveQueue</message-destination-link>
+            <activation-config>
+           		<activation-property>
+                	<activation-config-property-name>destination</activation-config-property-name>
+                    <activation-config-property-value>SendReceiveQueue</activation-config-property-value>
+                </activation-property>
+            </activation-config>
+        </message-driven>
     </enterprise-beans>
 
     <relationships>

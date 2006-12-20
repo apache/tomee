@@ -16,21 +16,17 @@
  */
 package org.apache.openejb.alt.config;
 
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.ResourceRef;
 
 public class MessageBean implements Bean {
 
-    org.apache.openejb.jee.SessionBean bean;
+    org.apache.openejb.jee.MessageDrivenBean bean;
     String type;
 
-    MessageBean(org.apache.openejb.jee.SessionBean bean) {
-        this.bean = bean;
-        if (bean.getSessionType() == SessionType.STATEFUL) {
-            type = STATEFUL;
-        } else {
-            type = STATELESS;
-        }
+    MessageBean(MessageDrivenBean bean2) {
+        this.bean = bean2;
     }
 
     public String getType() {
@@ -50,19 +46,19 @@ public class MessageBean implements Bean {
     }
 
     public String getHome() {
-        return bean.getHome();
+        return null;
     }
 
     public String getRemote() {
-        return bean.getRemote();
+        return null;
     }
 
     public String getLocal() {
-        return bean.getLocal();
+        return null;
     }
 
     public String getLocalHome() {
-        return bean.getLocalHome();
+        return null;
     }
 
     public ResourceRef[] getResourceRef() {

@@ -141,6 +141,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
                 throw new IllegalStateException("Message endpoint factory has been released");
             case BEFORE_CALLED:
                 state = State.METHOD_CALLED;
+                break;
             case METHOD_CALLED:
             case SYSTEM_EXCEPTION:
                 throw new IllegalStateException("The last message delivery must be completed with an afterDeliver before another message can be delivered");

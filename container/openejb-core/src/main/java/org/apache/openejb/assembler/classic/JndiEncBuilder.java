@@ -74,6 +74,8 @@ public class JndiEncBuilder {
             referenceWrapper = new StatefulRefereceWrapper();
         } else if (ejbType == BeanType.STATELESS) {
             referenceWrapper = new StatelessRefereceWrapper();
+        } else if (ejbType == BeanType.MESSAGE_DRIVEN) {
+            referenceWrapper = new MessageDrivenRefereceWrapper();
         } else {
             throw new org.apache.openejb.OpenEJBException("Unknown component type");
         }
@@ -324,6 +326,17 @@ public class JndiEncBuilder {
             return new org.apache.openejb.core.stateful.EncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
+
+    static class MessageDrivenRefereceWrapper extends ReferenceWrapper {
+        public Object wrap(Reference reference) {
+            return new org.apache.openejb.core.mdb.EncReference(reference);
+        }
+
+        public Object wrap(UserTransaction userTransaction) {
+            return new org.apache.openejb.core.mdb.EncUserTransaction((CoreUserTransaction) userTransaction);
+        }
+    }
+    
 
     private static class DefaultReferenceWrapper extends ReferenceWrapper {
         Object wrap(Reference reference) {
