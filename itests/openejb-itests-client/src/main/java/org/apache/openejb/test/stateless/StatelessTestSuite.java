@@ -40,7 +40,8 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessRemoteBusinessIntfcTests());
         suite.addTest(new StatelessEjbHomeTests() );
         suite.addTest(new StatelessPojoEjbHomeTests() );
-        suite.addTest(new StatelessEjbObjectTests());    
+        suite.addTest(new StatelessEjbObjectTests());
+        suite.addTest(new StatelessPojoEjbObjectTests());
         suite.addTest(new StatelessRemoteIntfcTests());
         suite.addTest(new StatelessPojoRemoteIntrfcTests());
         suite.addTest(new StatelessHomeHandleTests());
