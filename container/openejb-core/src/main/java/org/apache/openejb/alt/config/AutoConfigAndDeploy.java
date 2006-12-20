@@ -252,6 +252,8 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 return ProviderDefaults.DEFAULT_STATEFUL_CONTAINER;
             } else if (type.equals(Bean.STATELESS)){
                 return ProviderDefaults.DEFAULT_STATELESS_CONTAINER;
+            } else if (type.equals(Bean.MESSAGE)){
+                return ProviderDefaults.DEFAULT_MDB_CONTAINER;
             }
 
             throw new IllegalStateException("Unknown bean type "+type);

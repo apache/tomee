@@ -88,8 +88,13 @@ public class EjbJarInfoBuilder {
         int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
 
         if (beansInEjbJar != beansDeployed) {
+            Map<String, EjbDeployment> deployed = jar.getOpenejbJar().getDeploymentsByEjbName();
+            for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
+                if (!deployed.containsKey(bean.getEjbName())){
+                    ConfigUtils.logger.i18n.warning("conf.0018", bean.getEjbName(), jar.getJarURI());
+                }
+            }
             ConfigUtils.logger.i18n.warning("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
-
             return null;
         }
 

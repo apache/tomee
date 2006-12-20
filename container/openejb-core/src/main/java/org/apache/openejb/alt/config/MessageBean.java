@@ -17,7 +17,6 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.ResourceRef;
 
 public class MessageBean implements Bean {
@@ -25,8 +24,9 @@ public class MessageBean implements Bean {
     org.apache.openejb.jee.MessageDrivenBean bean;
     String type;
 
-    MessageBean(MessageDrivenBean bean2) {
-        this.bean = bean2;
+    MessageBean(MessageDrivenBean bean) {
+        this.bean = bean;
+        this.type = MESSAGE;
     }
 
     public String getType() {

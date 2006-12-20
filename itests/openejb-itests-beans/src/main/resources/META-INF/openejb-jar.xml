@@ -184,4 +184,5 @@
 		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
 	</ejb-deployment>
 	<ejb-deployment ejb-name="Bmp RMI-IIOP Bean" deployment-id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome" container-id="Default BMP Container"/>
+	<ejb-deployment ejb-name="BasicMdbBean" deployment-id="client/tests/messagedriven/mdb/BasicMdb" container-id="Default MDB Container"/>
 </openejb-jar>
