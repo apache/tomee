@@ -248,6 +248,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </entity>
 
         <!--
@@ -340,6 +348,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </entity>
 
         <!--
@@ -436,6 +452,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </entity>
 
         <!--
@@ -805,6 +829,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </session>
 
         <!--
@@ -898,6 +930,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </session>
 
         <!--
@@ -1453,6 +1493,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </session>
 
         <!--
@@ -1666,6 +1714,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </entity>
 
         <!--
@@ -1762,6 +1818,14 @@
                 <res-type>javax.sql.DataSource</res-type>
                 <res-auth>Container</res-auth>
             </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+            
         </entity>
 
         <!--

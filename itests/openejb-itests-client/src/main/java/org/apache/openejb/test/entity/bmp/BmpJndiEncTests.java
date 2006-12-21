@@ -180,4 +180,15 @@ public class BmpJndiEncTests extends BmpTestClient{
         }
     }
     
+    public void test14_lookupPersistenceUnit() {
+        try{
+            ejbObject.lookupPersistenceUnit();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+    
+    
 }

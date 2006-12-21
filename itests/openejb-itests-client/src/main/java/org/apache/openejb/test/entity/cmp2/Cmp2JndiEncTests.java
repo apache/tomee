@@ -169,4 +169,15 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
         }
     }
 
+    public void test13_lookupPersistenceUnit() {
+        try{
+            ejbObject.lookupPersistenceUnit();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+    
+
 }

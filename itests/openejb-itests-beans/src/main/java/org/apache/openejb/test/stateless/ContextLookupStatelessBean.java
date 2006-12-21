@@ -26,6 +26,8 @@ import org.apache.openejb.test.stateful.BasicStatefulObject;
 
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
 
@@ -264,6 +266,22 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
         }
     }
 
+    public void lookupPersistenceUnit() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);                
+                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
+                Assert.assertNotNull("The EntityManagerFactory is null", emf );
+
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+    
     //
     // Remote interface methods
     //=============================

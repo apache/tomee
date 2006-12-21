@@ -22,6 +22,7 @@ import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
 import javax.naming.InitialContext;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import junit.framework.Assert;
@@ -355,6 +356,23 @@ public class EncBmpBean implements javax.ejb.EntityBean{
             throw new TestFailureException(afe);
         }
     }
+    
+    public void lookupPersistenceUnit() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);                
+                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
+                Assert.assertNotNull("The EntityManagerFactory is null", emf );
+
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+    
     //    
     // Remote interface methods
     //=============================
