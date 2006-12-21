@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
+import java.net.URI;
 import java.util.Properties;
 
 public class SocketConnectionFactory implements ConnectionFactory {
@@ -28,9 +29,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public void init(Properties props) {
     }
 
-    public Connection getConnection(ServerMetaData server) throws java.io.IOException {
+    public Connection getConnection(URI uri) throws java.io.IOException {
         SocketConnection conn = new SocketConnection();
-        conn.open(server);
+        conn.open(uri);
         return conn;
     }
 
@@ -40,21 +41,21 @@ public class SocketConnectionFactory implements ConnectionFactory {
         OutputStream socketOut = null;
         InputStream socketIn = null;
 
-        protected void open(ServerMetaData server) throws IOException {
+        protected void open(URI uri) throws IOException {
             /*-----------------------*/
             /* Open socket to server */
             /*-----------------------*/
             try {
-                socket = new Socket(server.getHost(), server.getPort());
+                socket = new Socket(uri.getHost(), uri.getPort());
                 socket.setTcpNoDelay(true);
             } catch (IOException e) {
-                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " Exception: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " Exception: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (SecurityException e) {
-                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (Throwable e) {
-                throw new IOException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
             }
 
         }

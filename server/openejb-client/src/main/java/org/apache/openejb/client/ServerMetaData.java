@@ -21,43 +21,28 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class ServerMetaData implements Externalizable {
 
-    private transient URI location;
+    private transient URI[] locations;
 
     public ServerMetaData() {
     }
 
-    public ServerMetaData(URI location)  {
-        this.location = location;
+    public ServerMetaData(URI ... locations)  {
+        this.locations = locations;
     }
 
-    public int getPort() {
-        return location.getPort();
-    }
-
-    public String getHost() {
-        return location.getHost();
-    }
-
-
-    public URI getLocation() {
-        return location;
+    public URI[] getLocations() {
+        return locations;
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        String uri = (String) in.readObject();
-        try {
-            location = new URI(uri);
-        } catch (URISyntaxException e) {
-            throw (IOException)new IOException("cannot create uri from '"+uri+"'").initCause(e);
-        }
+        locations = (URI[]) in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(location.toString());
+        out.writeObject(locations);
     }
 
 }

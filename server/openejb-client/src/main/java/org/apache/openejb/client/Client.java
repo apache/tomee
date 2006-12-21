@@ -22,12 +22,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.rmi.RemoteException;
 
 public class Client {
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
-        if (server == null) throw new IllegalArgumentException("Server instance cannot be null");
+        if (server == null)
+            throw new IllegalArgumentException("Server instance cannot be null");
 
         OutputStream out = null;
         ObjectOutput objectOut = null;
@@ -38,16 +40,22 @@ public class Client {
             /*----------------------------*/
             /* Get a connection to server */
             /*----------------------------*/
-            try {
-                conn = ConnectionManager.getConnection(server);
-            } catch (IOException e) {
-                throw new RemoteException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " Exception: ", e);
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot access server: " + server.getHost() + ":" + server.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
+            URI[] uris = server.getLocations();
+            for (int i = 0; i < uris.length; i++) {
+                URI uri = uris[i];
+                try {
+                    conn = ConnectionManager.getConnection(uri);
+                } catch (IOException e) {
+                    throw new RemoteException("Cannot access server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ",
+                            e);
+                } catch (Throwable e) {
+                    throw new RemoteException("Cannot access server: " + uri.getHost() + ":" + uri.getPort()
+                            + " due to an unkown exception in the OpenEJB client: ", e);
+                }
             }
 
             /*----------------------------------*/
-            /* Get output streams               */
+            /* Get output streams */
             /*----------------------------------*/
             try {
 
@@ -61,7 +69,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Write request type               */
+            /* Write request type */
             /*----------------------------------*/
             try {
 
@@ -75,7 +83,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Get output streams               */
+            /* Get output streams */
             /*----------------------------------*/
             try {
 
@@ -89,7 +97,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Write request                    */
+            /* Write request */
             /*----------------------------------*/
             try {
 
@@ -108,7 +116,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Get input streams               */
+            /* Get input streams */
             /*----------------------------------*/
             try {
 
@@ -121,13 +129,15 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Read response                    */
+            /* Read response */
             /*----------------------------------*/
             try {
 
                 res.readExternal(objectIn);
             } catch (ClassNotFoundException e) {
-                throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
+                throw new RemoteException(
+                        "Cannot read the response from the server.  The class for an object being returned is not located in this system:",
+                        e);
 
             } catch (IOException e) {
                 throw new RemoteException("Cannot read the response from the server.", e);
@@ -149,6 +159,4 @@ public class Client {
         }
         return res;
     }
-
 }
-

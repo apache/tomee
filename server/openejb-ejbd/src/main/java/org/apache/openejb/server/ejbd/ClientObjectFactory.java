@@ -36,7 +36,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     public ClientObjectFactory(EjbDaemon daemon) {
 
         try {
-            this.sMetaData = new ServerMetaData(new URI("foo://"+"127.0.0.1" +":"+4201));
+            this.sMetaData = new ServerMetaData(new URI[]{new URI("foo://"+"127.0.0.1" +":"+4201)});
         } catch (Exception e) {
 
             e.printStackTrace();

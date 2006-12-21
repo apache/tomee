@@ -34,12 +34,11 @@ public class ConnectionManager {
         }
     }
 
-    public static Connection getConnection(ServerMetaData server) throws IOException {
-        URI location = server.getLocation();
-        if (location.getScheme().equals("http")){
-            return new HttpConnectionFactory().getConnection(server);
+    public static Connection getConnection(URI uri) throws IOException {
+        if (uri.getScheme().equals("http")){
+            return new HttpConnectionFactory().getConnection(uri);
         } else {
-            return factory.getConnection(server);
+            return factory.getConnection(uri);
         }
     }
 

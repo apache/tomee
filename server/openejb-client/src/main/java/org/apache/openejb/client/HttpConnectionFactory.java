@@ -17,12 +17,13 @@
  */
 package org.apache.openejb.client;
 
-import java.util.Properties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -32,19 +33,19 @@ public class HttpConnectionFactory implements ConnectionFactory {
     public void init(Properties props) {
     }
 
-    public Connection getConnection(ServerMetaData server) throws IOException {
-        return new HttpConnection(server);
+    public Connection getConnection(URI uri) throws IOException {
+        return new HttpConnection(uri);
     }
 
     public static class HttpConnection implements Connection {
 
         private HttpURLConnection httpURLConnection;
 
-        public HttpConnection(ServerMetaData server) throws IOException {
+        public HttpConnection(URI uri) throws IOException {
             String host = "localhost";
 //            String host = server.getLocation().getHost();
             // TODO: Use the URI for making the URL
-            URL url = server.getLocation().toURL();
+            URL url = uri.toURL();
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setDoOutput(true);
             httpURLConnection.connect();
