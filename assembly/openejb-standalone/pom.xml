@@ -151,6 +151,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-activemq</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${pom.version}</version>
     </dependency>

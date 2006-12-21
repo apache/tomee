@@ -411,10 +411,6 @@
             <artifactId>mx4j-impl</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
@@ -423,20 +419,12 @@
             <artifactId>activeio-core</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-jaas</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -453,10 +441,6 @@
           <exclusion>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -824,6 +808,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
         <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jms_1.1_spec</artifactId>
+        <version>1.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>

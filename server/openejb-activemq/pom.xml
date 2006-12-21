@@ -19,40 +19,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.0-incubating-SNAPSHOT</version>
     </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>server</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Server</name>
-  <modules>
-    <module>openejb-ejbd</module>
-    <module>openejb-admin</module>
-    <module>openejb-server</module>
-    <module>openejb-client</module>
-    <module>openejb-http</module>
-    <module>openejb-telnet</module>
-    <module>openejb-xfire</module>
-    <module>openejb-axis</module>
-    <module>openejb-activemq</module>
-    <module>openejb-corba</module>
-    <module>openejb-derbynet</module>
-    <module>openejb-hsql</module>
-  </modules>
+  <artifactId>openejb-activemq</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: Server :: ActiveMQ</name>
   <dependencies>
-    <!--
-       This dependency is here to ensure that absolutely nothing
-       under the container module section can be dependent on any
-       server modules.
-    -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>container</artifactId>
+      <artifactId>openejb-server</artifactId>
       <version>${pom.version}</version>
-      <type>pom</type>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
