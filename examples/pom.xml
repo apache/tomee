@@ -34,5 +34,6 @@
     <module>helloworld-stateful-pojo</module>
     <module>calculator-stateless-pojo</module>
     <module>counter-stateful-pojo</module>    
+    <module>ejb-injection</module>       
   </modules>  
 </project>
