@@ -52,7 +52,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_2.4_spec</artifactId>
+      <artifactId>geronimo-servlet_2.5_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
