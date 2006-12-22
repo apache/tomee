@@ -17,10 +17,11 @@
 package org.apache.openejb.client;
 
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.RemoteException;
 import java.util.Hashtable;
-
+import javax.naming.AuthenticationException;
 import javax.naming.ConfigurationException;
 import javax.naming.Context;
 import javax.naming.InvalidNameException;
@@ -29,9 +30,10 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.AuthenticationException;
+import javax.naming.OperationNotSupportedException;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
+
 
 public class JNDIContext implements Serializable, InitialContextFactory, Context, RequestMethods, ResponseCodes {
 
@@ -74,7 +76,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     }
 
-    protected AuthenticationResponse requestAuthorization(AuthenticationRequest req) throws java.rmi.RemoteException {
+    protected AuthenticationResponse requestAuthorization(AuthenticationRequest req) throws RemoteException {
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
@@ -100,29 +102,29 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         } catch (Exception e) {
             if (uriString.indexOf("://") == -1) {
                 try {
-                    location = new URI("foo://"+uriString);
+                    location = new URI("foo://" + uriString);
                 } catch (URISyntaxException giveUp) {
                     // Was worth a try, let's give up and throw the original exception.
-                    throw (ConfigurationException)new ConfigurationException("Context property value error for "+Context.PROVIDER_URL + " :"+e.getMessage()).initCause(e);
+                    throw (ConfigurationException) new ConfigurationException("Context property value error for " + Context.PROVIDER_URL + " :" + e.getMessage()).initCause(e);
                 }
             }
         }
         this.server = new ServerMetaData(location);
-        //TODO:1: Either aggressively initiate authentication or wait for the 
+        //TODO:1: Either aggressively initiate authentication or wait for the
         //        server to send us an authentication challange.
         authenticate(userID, psswrd);
 
         return this;
     }
 
-    public void authenticate(String userID, String psswrd) throws javax.naming.AuthenticationException {
+    public void authenticate(String userID, String psswrd) throws AuthenticationException {
 
         AuthenticationRequest req = new AuthenticationRequest(userID, psswrd);
         AuthenticationResponse res = null;
 
         try {
             res = requestAuthorization(req);
-        } catch (java.rmi.RemoteException e) {
+        } catch (RemoteException e) {
             throw new AuthenticationException(e.getLocalizedMessage());
         }
 
@@ -135,7 +137,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 server = res.getServer();
                 break;
             case AUTH_DENIED:
-                throw new javax.naming.AuthenticationException("This principle is not authorized.");
+                throw new AuthenticationException("This principle is not authorized.");
         }
     }
 
@@ -162,12 +164,12 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         if (name == null) throw new InvalidNameException("The name cannot be null");
         else if (name.equals("")) return new JNDIContext(this);
-        else if (name.startsWith("java:")) name = name.replaceFirst("^java:","");
+        else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
         else if (!name.startsWith("/")) name = tail + name;
 
-        String prop = name.replaceFirst("comp/env/","");
+        String prop = name.replaceFirst("comp/env/", "");
         String value = System.getProperty(prop);
-        if (value != null){
+        if (value != null) {
             return parseEntry(prop, value);
         }
 
@@ -185,7 +187,6 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         switch (res.getResponseCode()) {
             case JNDI_EJBHOME:
-
                 return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
 
             case JNDI_BUSINESS_OBJECT:
@@ -202,8 +203,10 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 if (!name.endsWith("/")) name += '/';
                 subCtx.tail = name;
                 return subCtx;
+
             case JNDI_DATA_SOURCE:
-                return createDataSource((DataSourceMetaData)res.getResult());
+                return createDataSource((DataSourceMetaData) res.getResult());
+
             case JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " not found");
 
@@ -215,6 +218,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
             case JNDI_ERROR:
                 throw (Error) res.getResult();
+
             default:
                 throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
         }
@@ -224,16 +228,16 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         try {
             URI uri = new URI(value);
             String scheme = uri.getScheme();
-            if (scheme.equals("datasource")){
+            if (scheme.equals("datasource")) {
                 uri = new URI(uri.getSchemeSpecificPart());
                 String driver = uri.getScheme();
                 String url = uri.getSchemeSpecificPart();
                 return new ClientDataSource(driver, url, null, null);
             } else {
-                throw new UnsupportedOperationException("Unsupported Naming URI scheme '"+scheme+"'");
+                throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }
         } catch (URISyntaxException e) {
-            throw (NamingException) new NamingException("Unparsable jndi entry '"+name+"="+value+"'.  Exception: "+e.getMessage()).initCause(e);
+            throw (NamingException) new NamingException("Unparsable jndi entry '" + name + "=" + value + "'.  Exception: " + e.getMessage()).initCause(e);
         }
     }
 
@@ -246,7 +250,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public NamingEnumeration list(String name) throws NamingException {
-        throw new javax.naming.NamingException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
     public NamingEnumeration list(Name name) throws NamingException {
@@ -254,7 +258,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public NamingEnumeration listBindings(String name) throws NamingException {
-        throw new javax.naming.NamingException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
     public NamingEnumeration listBindings(Name name) throws NamingException {
@@ -270,7 +274,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public NameParser getNameParser(String name) throws NamingException {
-        throw new javax.naming.NamingException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
     public NameParser getNameParser(Name name) throws NamingException {
@@ -278,11 +282,11 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public String composeName(String name, String prefix) throws NamingException {
-        throw new javax.naming.NamingException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
     public Name composeName(Name name, Name prefix) throws NamingException {
-        throw new javax.naming.NamingException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
     public Object addToEnvironment(String key, Object value) throws NamingException {
@@ -305,7 +309,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public void bind(String name, Object obj) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        throw new OperationNotSupportedException();
     }
 
     public void bind(Name name, Object obj) throws NamingException {
@@ -313,8 +317,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public void rebind(String name, Object obj) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
-
+        throw new OperationNotSupportedException();
     }
 
     public void rebind(Name name, Object obj) throws NamingException {
@@ -322,35 +325,31 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public void unbind(String name) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
-
+        throw new OperationNotSupportedException();
     }
 
     public void unbind(Name name) throws NamingException {
         unbind(name.toString());
     }
 
-    public void rename(String oldname, String newname)
-            throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+    public void rename(String oldname, String newname) throws NamingException {
+        throw new OperationNotSupportedException();
     }
 
-    public void rename(Name oldname, Name newname)
-            throws NamingException {
+    public void rename(Name oldname, Name newname) throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
 
     public void destroySubcontext(String name) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        throw new OperationNotSupportedException();
     }
 
     public void destroySubcontext(Name name) throws NamingException {
         destroySubcontext(name.toString());
     }
 
-    public Context createSubcontext(String name)
-            throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+    public Context createSubcontext(String name) throws NamingException {
+        throw new OperationNotSupportedException();
     }
 
     public Context createSubcontext(Name name) throws NamingException {
