@@ -36,6 +36,13 @@
         <groupId>org.apache.xbean</groupId>
         <artifactId>maven-xbean-plugin</artifactId>
         <version>${xbeanVersion}</version>
+        <dependencies>
+          <dependency>
+            <groupId>qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>${removePropertyFromPomQdoxVersion}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <goals>

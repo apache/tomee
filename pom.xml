@@ -98,6 +98,7 @@
        - Used in openejb-core pom.xml
       -->
     <xbeanVersion>2.8-SNAPSHOT</xbeanVersion>
+    
     <!--
        - Remove the property once it's been figured out how to instruct maven-assembly-plugin
        - to copy SNAPSHOTs as SNAPSHOTs not 20061004.144417-3.
@@ -108,6 +109,12 @@
        - Used in maven-jar-plugin in openejb-core pom.xml and below to declare xbean-finder dependency
       -->
     <removePropertyFromCorePomXbeanVersion>2.8-SNAPSHOT</removePropertyFromCorePomXbeanVersion>
+    
+    <!--
+       - Remove the property once a version, subsequent to 1.6.1, is found that can parse 
+       - org.apache.openejb.alt.config.DeploymentLoader.  The enum seems to trip it up.
+      -->
+    <removePropertyFromPomQdoxVersion>1.6</removePropertyFromPomQdoxVersion>
   </properties>
 
   <build>
@@ -1114,6 +1121,11 @@
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>2.0.8</version>
+      </dependency>
+      <dependency>
+        <groupId>qdox</groupId>
+        <artifactId>qdox</artifactId>
+        <version>1.6</version>
       </dependency>
       <dependency>
         <groupId>xerces</groupId>

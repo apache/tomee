@@ -86,8 +86,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${pom.version}.jar
-                xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
+              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-${removePropertyFromCorePomXbeanVersion}.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.alt.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
@@ -97,6 +96,13 @@
         <groupId>org.apache.xbean</groupId>
         <artifactId>maven-xbean-plugin</artifactId>
         <version>${xbeanVersion}</version>
+        <dependencies>
+          <dependency>
+            <groupId>qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>${removePropertyFromPomQdoxVersion}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <goals>
@@ -106,8 +112,7 @@
         </executions>
         <configuration>
           <namespace>http://openejb.apache.org/schemas/core</namespace>
-          <excludedClasses>
-            org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
+          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
         </configuration>
       </plugin>
     </plugins>
