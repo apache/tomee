@@ -38,7 +38,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
     class SocketConnection implements Connection {
 
         Socket socket = null;
+
         OutputStream socketOut = null;
+
         InputStream socketIn = null;
 
         protected void open(URI uri) throws IOException {
@@ -62,9 +64,12 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         public void close() throws IOException {
             try {
-                if (socketOut != null) socketOut.close();
-                if (socketIn != null) socketIn.close();
-                if (socket != null) socket.close();
+                if (socketOut != null)
+                    socketOut.close();
+                if (socketIn != null)
+                    socketIn.close();
+                if (socket != null)
+                    socket.close();
             } catch (Throwable t) {
                 throw new IOException("Error closing connection with server: " + t.getMessage());
             }
@@ -72,7 +77,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         public InputStream getInputStream() throws IOException {
             /*----------------------------------*/
-            /* Open input streams               */
+            /* Open input streams */
             /*----------------------------------*/
             try {
                 socketIn = socket.getInputStream();
@@ -90,7 +95,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         public OutputStream getOuputStream() throws IOException {
             /*----------------------------------*/
-            /* Openning output streams          */
+            /* Openning output streams */
             /*----------------------------------*/
             try {
                 socketOut = socket.getOutputStream();
@@ -105,4 +110,3 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     }
 }
-

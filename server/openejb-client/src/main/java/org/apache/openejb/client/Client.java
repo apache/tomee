@@ -24,8 +24,12 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client {
+
+    private static Logger logger = Logger.getLogger(Client.class.getName());
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
         if (server == null)
@@ -46,12 +50,20 @@ public class Client {
                 try {
                     conn = ConnectionManager.getConnection(uri);
                 } catch (IOException e) {
-                    throw new RemoteException("Cannot access server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ",
-                            e);
+                    logger.log(Level.WARNING, "Cannot access server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ", e);
                 } catch (Throwable e) {
-                    throw new RemoteException("Cannot access server: " + uri.getHost() + ":" + uri.getPort()
-                            + " due to an unkown exception in the OpenEJB client: ", e);
+                    throw new RemoteException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
                 }
+            }
+            
+            //If no servers responded, thow an error
+            if (conn == null) {
+                StringBuffer buffer = new StringBuffer();
+                for (int i = 0; i < uris.length; i++) {
+                    URI uri = uris[i];
+                    buffer.append((i != 0 ? ", " : "") + "Server #" + i + ": " + uri);
+                }
+                throw new RemoteException("Cannot access servers: " + buffer.toString());
             }
 
             /*----------------------------------*/
@@ -135,9 +147,7 @@ public class Client {
 
                 res.readExternal(objectIn);
             } catch (ClassNotFoundException e) {
-                throw new RemoteException(
-                        "Cannot read the response from the server.  The class for an object being returned is not located in this system:",
-                        e);
+                throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
                 throw new RemoteException("Cannot read the response from the server.", e);

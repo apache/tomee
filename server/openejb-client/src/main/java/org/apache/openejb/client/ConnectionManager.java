@@ -23,7 +23,9 @@ import java.net.URI;
 public class ConnectionManager {
 
     private static ConnectionFactory factory;
+
     private static Class defaultFactoryClass = SocketConnectionFactory.class;
+
     private static String factoryName;
 
     static {
@@ -35,7 +37,7 @@ public class ConnectionManager {
     }
 
     public static Connection getConnection(URI uri) throws IOException {
-        if (uri.getScheme().equals("http")){
+        if (uri.getScheme().equals("http")) {
             return new HttpConnectionFactory().getConnection(uri);
         } else {
             return factory.getConnection(uri);
@@ -84,13 +86,11 @@ public class ConnectionManager {
     }
 
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                }
-        );
+        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
 
 }
