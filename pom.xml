@@ -201,17 +201,6 @@
   </profiles>
 
   <repositories>
-    <!--
-        <repository>
-          <id>codehaus</id>
-          <name>Codehaus Repository</name>
-          <url>http://dist.codehaus.org</url>
-          <layout>legacy</layout>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-    -->
     <repository>
       <id>codehaus-snapshot</id>
       <name>CodeHaus SNAPSHOT repository</name>
@@ -221,17 +210,6 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>apache-m2-ibiblio-rsync-repository</id>
-      <name>Apache M2 iBiblio rsync Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>
@@ -256,17 +234,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <!--<repository>-->
-    <!--<id>apache-m1-snapshot</id>-->
-    <!--<name>Apache Repository</name>-->
-    <!--<url>http://people.apache.org/repository</url>-->
-    <!--<layout>legacy</layout>-->
-    <!--</repository>-->
-    <!--<repository>-->
-    <!--<id>DainDevRepo</id>-->
-    <!--<name>Dain's Development Repository</name>-->
-    <!--<url>http://people.apache.org/~dain/repository/m2-dev</url>-->
-    <!--</repository>-->
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -278,17 +245,6 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>apache-m2-ibiblio-rsync-repository</id>
-      <name>Apache M2 iBiblio rsync Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
@@ -617,10 +573,6 @@
             <groupId>org.apache.geronimo.modules</groupId>
             <artifactId>geronimo-system</artifactId>
           </exclusion>
-          <!--<exclusion>-->
-          <!--<groupId>org.apache.geronimo.specs</groupId>-->
-          <!--<artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>-->
-          <!--</exclusion>-->
           <exclusion>
             <groupId>activeio</groupId>
             <artifactId>activeio</artifactId>
@@ -633,10 +585,6 @@
             <groupId>regexp</groupId>
             <artifactId>regexp</artifactId>
           </exclusion>
-          <!--<exclusion>-->
-          <!--<groupId>hsqldb</groupId>-->
-          <!--<artifactId>hsqldb</artifactId>-->
-          <!--</exclusion>-->
         </exclusions>
       </dependency>
       <dependency>
@@ -1101,7 +1049,7 @@
       <dependency>
         <groupId>org.tranql</groupId>
         <artifactId>tranql</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1</version>
         <exclusions>
           <exclusion>
             <groupId>axion</groupId>
