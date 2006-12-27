@@ -34,7 +34,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.assembler.classic.JndiBuilder;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ContainerSystem;
+import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEJBErrorHandler;
@@ -47,7 +47,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
     public static final String CONTAINER_DECORATORS = "openejb.container.decorators";
 
     private ProxyFactory proxyFactory;
-    private ContainerSystem containerSystem;
+    private CoreContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
@@ -71,11 +71,11 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
         ProxyManager.setDefaultFactory("ivm_server");
     }
 
-    public ContainerSystem getContainerSystem() {
+    public CoreContainerSystem getContainerSystem() {
         return containerSystem;
     }
 
-    private void setContainerSystem(ContainerSystem containerSystem) {
+    private void setContainerSystem(CoreContainerSystem containerSystem) {
         this.containerSystem = containerSystem;
     }
 
@@ -134,7 +134,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
      * @throws Exception if there was a problem constructing the ContainerSystem.
      * @param springConfigLocation the location of the spring configuration file
      */
-    public ContainerSystem buildContainerSystem(String springConfigLocation) throws Exception {
+    public CoreContainerSystem buildContainerSystem(String springConfigLocation) throws Exception {
         //
         // Load the spring configuration file
         //
@@ -155,7 +155,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
         //
         // Container system
         //
-        ContainerSystem containerSystem = AssemblerUtil.getBean(factory, org.apache.openejb.core.ContainerSystem.class);
+        CoreContainerSystem containerSystem = AssemblerUtil.getBean(factory, org.apache.openejb.core.CoreContainerSystem.class);
         setContainerSystem(containerSystem);
 
         //

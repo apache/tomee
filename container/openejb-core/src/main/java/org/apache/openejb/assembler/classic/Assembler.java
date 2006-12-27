@@ -56,7 +56,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
 
-    private org.apache.openejb.core.ContainerSystem containerSystem;
+    private org.apache.openejb.core.CoreContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private org.apache.openejb.spi.SecurityService securityService;
 
@@ -165,7 +165,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * This method leverage the other assemble and apply methods which
      * can be used independently.
      * <p/>
-     * Assembles and returns the {@link org.apache.openejb.core.ContainerSystem} using the
+     * Assembles and returns the {@link org.apache.openejb.core.CoreContainerSystem} using the
      * information from the {@link OpenEjbConfiguration} object passed in.
      * <pre>
      * This method performs the following actions(in order):
@@ -185,7 +185,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * @throws Exception
      * @see OpenEjbConfiguration
      */
-    public org.apache.openejb.core.ContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
+    public org.apache.openejb.core.CoreContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
         /*[1] Assemble ProxyFactory //////////////////////////////////////////
 
@@ -203,7 +203,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
 
-        containerSystem = new org.apache.openejb.core.ContainerSystem();
+        containerSystem = new org.apache.openejb.core.CoreContainerSystem();
 
         createTransactionManager(configInfo);
 

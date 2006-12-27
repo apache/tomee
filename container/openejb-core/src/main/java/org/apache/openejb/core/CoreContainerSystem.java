@@ -28,13 +28,13 @@ import org.apache.openejb.core.ivm.naming.Reference;
 /**
  * @org.apache.xbean.XBean element="containerSystem"
  */
-public class ContainerSystem implements org.apache.openejb.spi.ContainerSystem {
+public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
 
     HashMap deployments = new HashMap();
     HashMap containers = new HashMap();
     IvmContext jndiRootContext = null;
 
-    public ContainerSystem() {
+    public CoreContainerSystem() {
 
         try {
 
