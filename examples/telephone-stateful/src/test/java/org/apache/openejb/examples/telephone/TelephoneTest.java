@@ -30,7 +30,7 @@ public class TelephoneTest extends TestCase {
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        properties.setProperty("openejb.deployments.classpath.include", ".*remotable.*");
+        properties.setProperty("openejb.deployments.classpath.include", ".*telephone.*");
         properties.setProperty("openejb.embedded.remotable", "true");
 
         // We really don't need to keep this, though it's fine and even encouraged to do so
@@ -41,7 +41,7 @@ public class TelephoneTest extends TestCase {
     }
 
     /**
-     * Lookup the Calculator bean via its remote home interface
+     * Lookup the Telephone bean via its remote interface but using the LocalInitialContextFactory
      *
      * @throws Exception
      */
@@ -75,7 +75,7 @@ public class TelephoneTest extends TestCase {
     }
 
     /**
-     * Lookup the Calculator bean via its local home interface
+     * Lookup the Telephone bean via its remote interface using the RemoteInitialContextFactory 
      *
      * @throws Exception
      */
