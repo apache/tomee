@@ -25,6 +25,7 @@ import org.apache.openejb.util.JarUtils;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.core.ServerFederation;
 
 import javax.transaction.TransactionManager;
 import java.net.URL;
@@ -71,11 +72,13 @@ public final class OpenEJB {
             }
             SystemInstance system = SystemInstance.get();
 
+            SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB");
+
             if (appServer == null) {
-                logger.i18n.warning("startup.noApplicationServerSpecified");
-            } else {
-                system.setComponent(ApplicationServer.class, appServer);
+                ApplicationServer defaultServer = (ApplicationServer) toolkit.newInstance("org.apache.openejb.core.ServerFederation");
+                appServer = defaultServer;
             }
+            system.setComponent(ApplicationServer.class, appServer);
 
             /*
             * Output startup message
@@ -107,7 +110,6 @@ public final class OpenEJB {
             }
 
 
-            SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB");
 
             /* Uses the EnvProps.ASSEMBLER property to obtain the Assembler impl.
                Default is org.apache.openejb.assembler.classic.Assembler */

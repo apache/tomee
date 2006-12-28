@@ -20,7 +20,7 @@ package org.apache.openejb.tomcat;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.ServerFederation;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
 

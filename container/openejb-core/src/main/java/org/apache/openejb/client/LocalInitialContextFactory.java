@@ -25,11 +25,14 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
 
     static Context intraVmContext;
     private static OpenEJBInstance openejb;
+    private static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
         if (intraVmContext == null) {
@@ -51,6 +54,47 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         openejb = new OpenEJBInstance();
         if (openejb.isInitialized()) return;
         openejb.init(properties);
+        if (properties.getProperty(OPENEJB_EMBEDDED_REMOTABLE, "false").equalsIgnoreCase("true")){
+            bootServerServices();
+        }
+    }
+
+    private void bootServerServices() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            Class serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.ServiceManager");
+            Method init = serviceManagerClass.getMethod("init");
+            Method start = serviceManagerClass.getMethod("start", boolean.class);
+
+            Object serviceManager = serviceManagerClass.newInstance();
+            try {
+                init.invoke(serviceManager);
+            } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                String msg = "Option Enabled '"+OPENEJB_EMBEDDED_REMOTABLE+"'.  Error, unable to initialize ServiceManager.  Cause: "+cause.getClass().getName()+": "+cause.getMessage();
+                throw new IllegalStateException(msg, cause);
+            }
+            try {
+                start.invoke(serviceManager, false);
+            } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                String msg = "Option Enabled '"+OPENEJB_EMBEDDED_REMOTABLE+"'.  Error, unable to start ServiceManager.  Cause: "+cause.getClass().getName()+": "+cause.getMessage();
+                throw new IllegalStateException(msg, cause);
+            }
+        } catch (ClassNotFoundException e) {
+            String msg = "Enabling option '"+OPENEJB_EMBEDDED_REMOTABLE+"' requires class 'org.apache.openejb.server.ServiceManager' to be available.  Make sure you have the openejb-server-*.jar in your classpath and at least one protocol implementation such as openejb-ejbd-*.jar.";
+            throw new IllegalStateException(msg, e);
+        } catch (NoSuchMethodException e) {
+            String msg = "Option Enabled '"+OPENEJB_EMBEDDED_REMOTABLE+"'.  Error, 'init' and 'start' methods not found on as expected on class 'org.apache.openejb.server.ServiceManager'.  This should never happen.";
+            throw new IllegalStateException(msg, e);
+        } catch (InstantiationException e) {
+            String msg = "Option Enabled '"+OPENEJB_EMBEDDED_REMOTABLE+"'.  Error, unable to instantiate ServiceManager class 'org.apache.openejb.server.ServiceManager'.";
+            throw new IllegalStateException(msg, e);
+        } catch (IllegalAccessException e) {
+            String msg = "Option Enabled '"+OPENEJB_EMBEDDED_REMOTABLE+"'.  Error, 'init' and 'start' methods cannot be accessed on class 'org.apache.openejb.server.ServiceManager'.  The VM SecurityManager settings must be adjusted.";
+            throw new IllegalStateException(msg, e);
+        }
     }
 
     private Context getIntraVmContext(Hashtable env) throws javax.naming.NamingException {

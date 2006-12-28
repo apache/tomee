@@ -22,8 +22,6 @@ import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ivm.naming.IvmContext;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
-import org.apache.openejb.core.ivm.naming.Reference;
 
 /**
  * @org.apache.xbean.XBean element="containerSystem"

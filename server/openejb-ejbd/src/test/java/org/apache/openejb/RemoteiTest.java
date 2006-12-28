@@ -21,13 +21,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
-import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
-import org.apache.openejb.server.Server;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ServerFederation;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.server.ejbd.EjbServer;
 
 import java.util.Properties;

@@ -21,6 +21,7 @@ import java.net.URI;
 import java.io.IOException;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.PropertiesService;

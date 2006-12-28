@@ -48,7 +48,7 @@ public class ServiceManager {
 
     private boolean stop = false;
 
-    private ServiceManager() {
+    public ServiceManager() {
     }
 
     public static ServiceManager getManager() {
@@ -224,6 +224,10 @@ public class ServiceManager {
     }
 
     public synchronized void start() throws ServiceException {
+        start(true);
+    }
+
+    public synchronized void start(boolean block) throws ServiceException {
         boolean display = System.getProperty("openejb.nobanner") == null;
 
         if (display) {
@@ -249,15 +253,17 @@ public class ServiceManager {
             System.out.println("-------");
             System.out.println("Ready!");
         }
+        if (!block) return;
+        
         /*
-         * This will cause the user thread (the thread that keeps the
-         *  vm alive) to go into a state of constant waiting.
-         *  Each time the thread is woken up, it checks to see if
-         *  it should continue waiting.
-         *
-         *  To stop the thread (and the VM), just call the stop method
-         *  which will set 'stop' to true and notify the user thread.
-         */
+        * This will cause the user thread (the thread that keeps the
+        *  vm alive) to go into a state of constant waiting.
+        *  Each time the thread is woken up, it checks to see if
+        *  it should continue waiting.
+        *
+        *  To stop the thread (and the VM), just call the stop method
+        *  which will set 'stop' to true and notify the user thread.
+        */
         try {
             while (!stop) {
 
@@ -268,7 +274,6 @@ public class ServiceManager {
         }
         System.out.println("[] exiting vm");
         logger.info("Stopping Remote Server");
-
     }
 
     public synchronized void stop() throws ServiceException {

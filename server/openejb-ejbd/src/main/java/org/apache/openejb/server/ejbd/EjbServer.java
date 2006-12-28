@@ -23,7 +23,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ServerFederation;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.ProxyInfo;
 
 import javax.ejb.EJBMetaData;
