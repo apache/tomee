@@ -384,6 +384,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         List<Class> remotes = new ArrayList<Class>();
                         Remote remote = (Remote) clazz.getAnnotation(Remote.class);
                         if (remote != null) {
+                            if (remote.value().length == 0){
+                                if (interfaces.size() != 1) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
+                                if (clazz.getAnnotation(Local.class) != null) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes you must not also annotate it with @Local.");
+                                if (interfaces.get(0).getAnnotation(Local.class) != null) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the business interface itself must not be annotated as @Local.");
+
+                                remotes.add(interfaces.get(0));
+                                interfaces.remove(0);
+                            }
                             for (Class interfce : remote.value()) {
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
@@ -393,6 +401,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         List<Class> locals = new ArrayList<Class>();
                         Local local = (Local) clazz.getAnnotation(Local.class);
                         if (local != null) {
+                            if (local.value().length == 0){
+                                if (interfaces.size() != 1) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
+                                if (clazz.getAnnotation(Remote.class) != null) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes you must not also annotate it with @Remote.");
+                                if (interfaces.get(0).getAnnotation(Remote.class) != null) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the business interface itself must not be annotated as @Remote.");
+
+                                locals.add(interfaces.get(0));
+                                interfaces.remove(0);
+                            }
                             for (Class interfce : local.value()) {
                                 locals.add(interfce);
                                 interfaces.remove(interfce);
