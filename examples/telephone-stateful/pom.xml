@@ -67,19 +67,13 @@
     This guarantees that non of your runtime code is dependent
     on any OpenEJB classes.
 
-    For those of you who want to know the minimum steps required
-    to add OpenEJB for testing to an existing maven 2 build, you
-    simply add this dependency below and in your test code create
-    your InitialContext like such:
+    You need this dep or no clients will be able to connect
+    over the ejbd protocol to the embedded ejb container.
 
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-
-        // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
-        properties.setProperty("openejb.deployments.classpath", "true");
-
-        initialContext = new InitialContext(properties);
-
+    Notice the other examples use 'openejb-core' and this one
+    uses 'openejb-ejbd'.  If you wanted to make more protocols
+    available, you simply have to add deps to them and they'll
+    get picked up in the classpath automatically.    
     -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
