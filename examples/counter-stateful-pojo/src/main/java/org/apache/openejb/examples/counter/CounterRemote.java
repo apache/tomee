@@ -25,9 +25,9 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface CounterRemote {
-	
-	public int increment();
-	
-	public int reset();
+
+    public int increment();
+
+    public int reset();
 
 }

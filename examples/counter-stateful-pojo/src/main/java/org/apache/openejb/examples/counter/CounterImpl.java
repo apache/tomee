@@ -24,19 +24,18 @@ import javax.ejb.Stateful;
  * using the annotation @Stateful
  * This EJB has 2 business interfaces: CounterRemote, a remote business
  * interface, and CounterLocal, a local business interface
- * 
  */
 @Stateful
 public class CounterImpl implements CounterLocal, CounterRemote {
-	
-	private int count = 0;
 
-	public int increment() {
-		return ++count;
-	}
+    private int count = 0;
 
-	public int reset() {
-		return (count = 0);
-	}
+    public int increment() {
+        return ++count;
+    }
+
+    public int reset() {
+        return (count = 0);
+    }
 
 }
