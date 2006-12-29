@@ -63,7 +63,8 @@ public class TelephoneTest extends TestCase {
         assertEquals("Interesting.", telephone.listen());
 
 
-        telephone.speak("Yep, I'm using the bean's remote interface but since the ejb container is embedded in the same vm I'm just using the LocalInitialContextFactory.");
+        telephone.speak("Yep, I'm using the bean's remote interface but since the ejb container is embedded " +
+                "in the same vm I'm just using the LocalInitialContextFactory.");
 
         assertEquals("Really?", telephone.listen());
 
