@@ -63,6 +63,7 @@
     </dependency>
 
     <!--
+    START SNIPPET: desc
     Nice thing about maven2 is it has test-only dependencies.
     This guarantees that non of your runtime code is dependent
     on any OpenEJB classes.
@@ -73,13 +74,16 @@
     Notice the other examples use 'openejb-core' and this one
     uses 'openejb-ejbd'.  If you wanted to make more protocols
     available, you simply have to add deps to them and they'll
-    get picked up in the classpath automatically.    
+    get picked up in the classpath automatically.
+    END SNIPPET: desc
     -->
+    <!-- START SNIPPET: openejbdep -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>3.0-incubating-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <!-- END SNIPPET: openejbdep -->
   </dependencies>
 </project>
