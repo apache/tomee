@@ -33,5 +33,6 @@ The source for this example can be checked out from svn:
 To run the example simply type:
 
  $ cd telephone-stateful
+
  $ mvn clean install
 
