@@ -14,15 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+//START SNIPPET: code
 package org.apache.openejb.examples.telephone;
 
-
-/**
- * @version $Rev$ $Date$
- */
 public interface Telephone {
 
     void speak(String words);
 
     String listen();
 }
+//END SNIPPET: code

@@ -14,6 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+//START SNIPPET: code
 package org.apache.openejb.examples.telephone;
 
 import javax.ejb.Remote;
@@ -21,9 +22,6 @@ import javax.ejb.Stateful;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @version $Rev$ $Date$
- */
 @Remote
 @Stateful
 public class TelephoneBean implements Telephone {
@@ -55,3 +53,4 @@ public class TelephoneBean implements Telephone {
         return answers[Math.abs(lastThingSaid.hashCode()) % answers.length];
     }
 }
+//END SNIPPET: code

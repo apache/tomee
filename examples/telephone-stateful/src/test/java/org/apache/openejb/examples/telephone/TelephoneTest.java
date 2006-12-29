@@ -27,35 +27,36 @@ import java.util.Properties;
  */
 public class TelephoneTest extends TestCase {
 
+    //START SNIPPET: setup
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.deployments.classpath.include", ".*telephone.*");
         properties.setProperty("openejb.embedded.remotable", "true");
+        // Uncomment these properties to change the defaults
+        //properties.setProperty("openejb.ejbd.port", "4201");
+        //properties.setProperty("openejb.ejbd.bind", "localhost");
+        //properties.setProperty("openejb.ejbd.threads", "200");
+        //properties.setProperty("openejb.ejbd.disabled", "false");
+        //properties.setProperty("openejb.ejbd.only_from", "127.0.0.1,192.168.1.1");
 
-        // We really don't need to keep this, though it's fine and even encouraged to do so
-        // however we will toss it aside and create another one later to demonstrate the
-        // embedded nature and the ways to access the embedded container system
-        // locally in this vm and remotely over a network.
         new InitialContext(properties);
     }
+    //END SNIPPET: setup
 
     /**
      * Lookup the Telephone bean via its remote interface but using the LocalInitialContextFactory
      *
      * @throws Exception
      */
+    //START SNIPPET: localcontext
     public void testTalkOverLocalNetwork() throws Exception {
 
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         InitialContext localContext = new InitialContext(properties);
 
-        Object object = localContext.lookup("TelephoneBeanBusinessRemote");
-
-        assertNotNull(object);
-        assertTrue(object instanceof Telephone);
-        Telephone telephone = (Telephone) object;
+        Telephone telephone = (Telephone) localContext.lookup("TelephoneBeanBusinessRemote");
 
         telephone.speak("Did you know I am talking directly through the embedded container?");
 
@@ -70,26 +71,22 @@ public class TelephoneTest extends TestCase {
         telephone.speak("Right, you really only have to use the RemoteInitialContextFactory if you're in a different vm.");
 
         assertEquals("Oh, of course.", telephone.listen());
-
-
     }
+    //END SNIPPET: localcontext
 
     /**
-     * Lookup the Telephone bean via its remote interface using the RemoteInitialContextFactory 
+     * Lookup the Telephone bean via its remote interface using the RemoteInitialContextFactory
      *
      * @throws Exception
      */
+    //START SNIPPET: remotecontext
     public void testTalkOverRemoteNetwork() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:4201");
         InitialContext remoteContext = new InitialContext(properties);
 
-        Object object = remoteContext.lookup("TelephoneBeanBusinessRemote");
-
-        assertNotNull(object);
-        assertTrue(object instanceof Telephone);
-        Telephone telephone = (Telephone) object;
+        Telephone telephone = (Telephone) remoteContext.lookup("TelephoneBeanBusinessRemote");
 
         telephone.speak("Is this a local call?");
 
@@ -110,5 +107,6 @@ public class TelephoneTest extends TestCase {
 
         assertEquals("Definitely.", telephone.listen());
     }
+    //END SNIPPET: remotecontext
 
 }
