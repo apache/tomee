@@ -18,8 +18,11 @@
 package org.apache.openejb.javaagent;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.ReflectPermission;
+import java.security.Permission;
 
 public class Agent {
+    private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
     private static String agentArgs;
     private static Instrumentation instrumentation;
 
@@ -32,7 +35,14 @@ public class Agent {
         return agentArgs;
     }
 
+    /**
+     * Gets the instrumentation instance.
+     * You must have java.lang.ReflectPermission(suppressAccessChecks) to call this method
+     * @return the instrumentation instance
+     */
     public static Instrumentation getInstrumentation() {
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) sm.checkPermission(ACCESS_PERMISSION);
         return instrumentation;
     }
 }

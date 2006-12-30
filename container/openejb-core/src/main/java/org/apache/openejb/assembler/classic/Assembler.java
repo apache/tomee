@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -241,7 +242,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
             public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
-                Agent.getInstrumentation().addTransformer(classFileTransformer);
+                Instrumentation instrumentation = Agent.getInstrumentation();
+                if (instrumentation != null) {
+                    instrumentation.addTransformer(classFileTransformer);
+                }
             }
 
             public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
