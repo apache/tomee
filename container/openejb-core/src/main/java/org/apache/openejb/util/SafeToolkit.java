@@ -22,20 +22,20 @@ import java.util.HashMap;
 import java.util.Properties;
 
 public class SafeToolkit {
-
-    private String systemLocation;
     public static final Messages messages = new Messages("org.apache.openejb.util.resources");
     public static final HashMap codebases = new HashMap();
-
-    protected SafeToolkit(String systemLocation) {
-        this.systemLocation = systemLocation;
-    }
 
     public static SafeToolkit getToolkit(String systemLocation) {
         return new SafeToolkit(systemLocation);
     }
 
-    public Class forName(String className) throws OpenEJBException {
+    private String systemLocation;
+
+    private SafeToolkit(String systemLocation) {
+        this.systemLocation = systemLocation;
+    }
+
+    private Class forName(String className) throws OpenEJBException {
         Class clazz = null;
         try {
             clazz = Class.forName(className);
@@ -45,37 +45,8 @@ public class SafeToolkit {
         return clazz;
     }
 
-    public Class forName(String className, String codebase) throws OpenEJBException {
-
-        ClassLoader cl = getContextClassLoader();
-
-        if (codebase != null) {
-            try {
-                java.net.URL[] urlCodebase = new java.net.URL[1];
-                urlCodebase[0] = new java.net.URL(codebase);
-                cl = new java.net.URLClassLoader(urlCodebase, cl);
-            } catch (java.net.MalformedURLException mue) {
-                OpenEJBErrorHandler.classCodebaseNotFound(systemLocation, className, codebase, mue);
-            } catch (SecurityException se) {
-                OpenEJBErrorHandler.classCodebaseNotFound(systemLocation, className, codebase, se);
-            }
-        }
-
-        Class clazz = null;
-        try {
-            clazz = Class.forName(className, true, cl);
-        } catch (ClassNotFoundException cnfe) {
-            OpenEJBErrorHandler.classNotFound(systemLocation, className);
-        }
-        return clazz;
-    }
-
     public Object newInstance(String className) throws OpenEJBException {
         return newInstance(forName(className));
-    }
-
-    public Object newInstance(String className, String codebase) throws OpenEJBException {
-        return newInstance(forName(className, codebase));
     }
 
     public Object newInstance(Class clazz) throws OpenEJBException {
@@ -110,7 +81,7 @@ public class SafeToolkit {
         return loadClass(className, codebase, true);
     }
 
-    public static Class loadClass(String className, String codebase, boolean cache) throws OpenEJBException {
+    private static Class loadClass(String className, String codebase, boolean cache) throws OpenEJBException {
 
         ClassLoader cl = (cache) ? getCodebaseClassLoader(codebase) : getClassLoader(codebase);
         Class clazz = null;
@@ -122,7 +93,7 @@ public class SafeToolkit {
         return clazz;
     }
 
-    public static ClassLoader getCodebaseClassLoader(String codebase) throws OpenEJBException {
+    private static ClassLoader getCodebaseClassLoader(String codebase) throws OpenEJBException {
         if (codebase == null) codebase = "CLASSPATH";
 
         ClassLoader cl = (ClassLoader) codebases.get(codebase);
@@ -148,7 +119,7 @@ public class SafeToolkit {
         return cl;
     }
 
-    public static ClassLoader getClassLoader(String codebase) throws OpenEJBException {
+    private static ClassLoader getClassLoader(String codebase) throws OpenEJBException {
         ClassLoader cl = null;
         try {
             java.net.URL[] urlCodebase = new java.net.URL[1];
@@ -173,13 +144,4 @@ public class SafeToolkit {
         }
         return codebase.toString();
     }
-
-    public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
-
 }

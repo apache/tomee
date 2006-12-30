@@ -16,17 +16,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+  <persistence-unit transaction-type="JTA" name="cmp">
+    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+    <jta-data-source>java:openejb/connector/Default JDBC Database</jta-data-source>
+    <non-jta-data-source>java:openejb/connector/Default JDBC Database</non-jta-data-source>
+    <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
+    <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+  </persistence-unit>
   <persistence-unit name="openjpa-test-unit">
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-    <class>org.apache.openejb.test.entity.Customer</class>
     <jta-data-source>java:openejb/connector/Default JDBC Database</jta-data-source>
-    <properties>
-     <!--  <property name="openjpa.jdbc.SynchronizeMappings"
-                value="buildSchema(ForeignKeys=true)"/> --> 
-     <property name="openjpa.ConnectionFactoryMode"
-                value="managed"/>
-     <property name="openjpa.ManagedRuntime" value="org.apache.openjpa.ee.OpenEJBManagedRuntime"/>
-    </properties>
+    <non-jta-data-source>java:openejb/connector/Default JDBC Database</non-jta-data-source>
+    <class>org.apache.openejb.test.entity.Customer</class>
   </persistence-unit>
 </persistence>

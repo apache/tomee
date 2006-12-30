@@ -26,7 +26,6 @@ import org.apache.openejb.alt.config.EjbModule;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.assembler.classic.EjbJarBuilder;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
 import org.apache.openejb.persistence.PersistenceDeployer;
 import org.apache.openejb.persistence.PersistenceDeployerException;
@@ -38,7 +37,6 @@ import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -104,7 +102,7 @@ public class DeploymentsFactory implements FactoryBean {
         if (deployments != null){
             return deployments;
         }
-        HashMap context = new HashMap();
+        Map<String, Object> context = new HashMap<String, Object>();
         context.put(TransactionManager.class.getName(), transactionManager);
         org.apache.openejb.assembler.classic.Assembler.setContext(context);
 
@@ -116,28 +114,26 @@ public class DeploymentsFactory implements FactoryBean {
         ClassLoader classLoader = (value instanceof ClassLoader) ? (ClassLoader) value : Thread.currentThread().getContextClassLoader();
         EjbJarBuilder builder = new EjbJarBuilder(classLoader);
 
-        deployments = new HashMap();
-        HashMap<String, Map> allFactories = new HashMap();
+        deployments = new HashMap<String, DeploymentInfo>();
+        Map<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
         for (DeploymentModule module : deployedJars) {
             if (!(module instanceof EjbModule)) {
                 continue;
             }
-            EjbModule jar = (EjbModule) module;
-        	PersistenceDeployer pm = null;        
-            Map<String, EntityManagerFactory> factories = null;
             try {
-            	pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null));
-            	URL url = new File(jar.getJarURI()).toURL();
-            	ClassLoader tmpClassLoader = new URLClassLoader(new URL[]{url}, classLoader);
-            	ResourceFinder resourceFinder = new ResourceFinder("",tmpClassLoader,url);        	
-            	factories = pm.deploy(resourceFinder.findAll("META-INF/persistence.xml"),classLoader);
-    		} catch (PersistenceDeployerException e1) {
-    			throw new OpenEJBException(e1);			
-    		} catch (IOException e) {
-    			throw new OpenEJBException(e);
-    		}
-    		allFactories.put(jar.getJarURI(),factories);                
-        }            
+                EjbModule jar = (EjbModule) module;
+                URL url = new File(jar.getJarURI()).toURL();
+                ResourceFinder resourceFinder = new ResourceFinder("", classLoader, url);
+
+                PersistenceDeployer persistenceDeployer = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), null);
+                Map<String, EntityManagerFactory> factories = persistenceDeployer.deploy(resourceFinder.findAll("META-INF/persistence.xml"), classLoader);
+                allFactories.put(jar.getJarURI(), factories);
+            } catch (PersistenceDeployerException e1) {
+                throw new OpenEJBException(e1);
+            } catch (IOException e) {
+                throw new OpenEJBException(e);
+            }
+        }
 
         for (DeploymentModule module : deployedJars) {
             if (!(module instanceof EjbModule)) {
@@ -158,7 +154,7 @@ public class DeploymentsFactory implements FactoryBean {
             HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,allFactories);
 
             for (EjbDeployment data : jar.getOpenejbJar().getEjbDeployment()) {
-                ((CoreDeploymentInfo)ejbs.get(data.getDeploymentId())).setContainer(new ContainerPointer(data.getContainerId()));
+                (ejbs.get(data.getDeploymentId())).setContainer(new ContainerPointer(data.getContainerId()));
             }
 
             deployments.putAll(ejbs);
@@ -168,7 +164,7 @@ public class DeploymentsFactory implements FactoryBean {
     }
 
     private void transferMethodTransactionInfos(EjbJarInfoBuilder infoBuilder) {
-        List<MethodTransactionInfo> infos = new ArrayList();
+        List<MethodTransactionInfo> infos = new ArrayList<MethodTransactionInfo>();
         if (assembly.getMethodTransactions() != null){
             infos.addAll(Arrays.asList(assembly.getMethodTransactions()));
         }
@@ -179,7 +175,7 @@ public class DeploymentsFactory implements FactoryBean {
     }
 
     private void transferMethodPermissionInfos(EjbJarInfoBuilder infoBuilder) {
-        List<MethodPermissionInfo> infos = new ArrayList();
+        List<MethodPermissionInfo> infos = new ArrayList<MethodPermissionInfo>();
         if (assembly.getMethodPermissions() != null){
             infos.addAll(Arrays.asList(assembly.getMethodPermissions()));
         }

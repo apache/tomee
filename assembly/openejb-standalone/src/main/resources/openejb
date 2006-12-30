@@ -77,28 +77,29 @@ echo OPENEJB_HOME = $OPENEJB_HOME
 OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
 
 OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${pom.version}.jar"
+OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${pom.version}.jar"
 
 #============================================================
 _command_help()
 {
     case $2 in
         "validate")
-            java -jar $OPENEJB_CORE_JAR validate --help
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR validate --help
         ;;
         "deploy")
-            java -jar $OPENEJB_CORE_JAR deploy --help
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR deploy --help
         ;;
         "start")
-            java -jar $OPENEJB_CORE_JAR start --help
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR start --help
         ;;
         "stop")
-            java -jar $OPENEJB_CORE_JAR stop --help
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR stop --help
         ;;
         "test")
-            java -jar $OPENEJB_CORE_JAR test --help
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR test --help
         ;;
         *)
-            java -jar $OPENEJB_CORE_JAR
+            java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR
         ;;
     esac
 }
@@ -106,33 +107,33 @@ _command_help()
 _command_deploy()
 {
    shift
-   java -jar $OPENEJB_CORE_JAR deploy $@
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR deploy $@
 }
 #============================================================
 _command_validate()
 {
    shift
-   java -jar $OPENEJB_CORE_JAR validate $@
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR validate $@
 }
 #============================================================
 _command_start()
 {
-   java -jar $OPENEJB_CORE_JAR start $@
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR start $@
 }
 #============================================================
 _command_stop()
 {
-   java -jar $OPENEJB_CORE_JAR stop $@
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR stop $@
 }
 #============================================================
 _test_intravm()
 {
-   java -jar $OPENEJB_CORE_JAR test local
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR test local
 }
 #============================================================
 _test_server()
 {
-   java -jar $OPENEJB_CORE_JAR test remote
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR test remote
 }
 #============================================================
 _command_test()
@@ -155,7 +156,7 @@ esac
 #============================================================
 _test_help()
 {
-   java -jar $OPENEJB_CORE_JAR test --help
+   java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR test --help
 }
 #============================================================
 _test_noargs()

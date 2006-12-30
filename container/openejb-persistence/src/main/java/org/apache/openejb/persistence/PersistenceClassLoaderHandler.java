@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,24 +15,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.ivm.naming;
+package org.apache.openejb.persistence;
 
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
+import java.lang.instrument.ClassFileTransformer;
 
-/**
- * @version $Rev$ $Date$
- */
-public class PersistenceUnitReference implements Reference{
-
-	private EntityManagerFactory emf;
-	
-	public PersistenceUnitReference(EntityManagerFactory emf) {
-		this.emf = emf;		
-	}
-
-	public Object getObject() throws NamingException {
-	    return emf;		
-	}
-
+public interface PersistenceClassLoaderHandler {
+    void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer);
+    ClassLoader getNewTempClassLoader(ClassLoader classLoader);
 }

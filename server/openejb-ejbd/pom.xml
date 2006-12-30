@@ -30,9 +30,40 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+
+        <!-- TODO switch to maven version of plugin when it is released -->
+        <!--groupId>org.apache.maven.plugins</groupId-->
+        <!--artifactId>maven-dependency-plugin</artifactId-->
+
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>openejb-javaagent</artifactId>
+                  <version>${pom.version}</version>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <!-- DEBUG: Uncomment this line and comment out the next -->
+          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${pom.version}.jar=foo=bar</argLine>-->
+          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${pom.version}.jar=foo=bar</argLine>
           <systemProperties>
             <property>
               <name>openejb.home</name>

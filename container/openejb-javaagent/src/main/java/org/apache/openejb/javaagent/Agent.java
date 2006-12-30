@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,24 +15,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.ivm.naming;
+package org.apache.openejb.javaagent;
 
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
+import java.lang.instrument.Instrumentation;
 
-/**
- * @version $Rev$ $Date$
- */
-public class PersistenceUnitReference implements Reference{
+public class Agent {
+    private static String agentArgs;
+    private static Instrumentation instrumentation;
 
-	private EntityManagerFactory emf;
-	
-	public PersistenceUnitReference(EntityManagerFactory emf) {
-		this.emf = emf;		
-	}
+    public static void premain(String agentArgs, Instrumentation instrumentation) {
+        Agent.agentArgs = agentArgs;
+        Agent.instrumentation = instrumentation;
+    }
 
-	public Object getObject() throws NamingException {
-	    return emf;		
-	}
+    public static String getAgentArgs() {
+        return agentArgs;
+    }
 
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
 }

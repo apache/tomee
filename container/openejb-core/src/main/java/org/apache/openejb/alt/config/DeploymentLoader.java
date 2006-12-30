@@ -19,6 +19,7 @@ package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.sys.Deployments;
 import org.apache.openejb.jee.Application;
@@ -43,7 +44,6 @@ import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -280,7 +280,7 @@ public class DeploymentLoader {
 
         URL appUrl = getFileUrl(appDir);
 
-        ClassLoader tmpClassLoader = new URLClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
+        ClassLoader tmpClassLoader = new TemporaryClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
@@ -364,7 +364,7 @@ public class DeploymentLoader {
             classPath.addAll(ejbModules.values());
             classPath.addAll(clientModules.values());
             classPath.addAll(extraLibs);
-            ClassLoader appClassLoader = new URLClassLoader(classPath.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+            ClassLoader appClassLoader = new TemporaryClassLoader(classPath.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
 
 
             AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
@@ -474,7 +474,7 @@ public class DeploymentLoader {
             }
         }
 
-        ClassFinder classFinder = new ClassFinder(new URLClassLoader(new URL[]{baseUrl},classLoader), baseUrl);
+        ClassFinder classFinder = new ClassFinder(new TemporaryClassLoader(new URL[]{baseUrl},classLoader), baseUrl);
         List<Class> beans = classFinder.findAnnotatedClasses(Stateless.class);
         beans.addAll(classFinder.findAnnotatedClasses(Stateful.class));
         beans.addAll(classFinder.findAnnotatedClasses(javax.ejb.MessageDriven.class));
@@ -528,7 +528,7 @@ public class DeploymentLoader {
     private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
         try {
             URL[] urls = new URL[]{jarFile.toURL()};
-            return new URLClassLoader(urls, OpenEJB.class.getClassLoader());
+            return new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
         } catch (MalformedURLException e) {
             throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
         }

@@ -17,7 +17,21 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import org.apache.openejb.OpenEJBException;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import javax.ejb.CreateException;
+import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.SystemException;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.alt.containers.castor_cmp11.KeyGeneratorFactory;
@@ -25,33 +39,10 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
-
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
-import javax.ejb.EJBObject;
-import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.WeakHashMap;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
@@ -59,86 +50,42 @@ public class JpaCmpEngine implements CmpEngine {
 
     private final CmpCallback cmpCallback;
     private final TransactionManager transactionManager;
-//    private final EntityManager entityManager;
 
     private final Map<Transaction, EntityManager> transactionData = new WeakHashMap<Transaction, EntityManager>();
-    private EntityManagerFactory entityManagerFactory;
 
-    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) throws OpenEJBException {
+    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) {
         this.cmpCallback = cmpCallback;
         this.transactionManager = transactionManager;
-
-        try {
-            JdbcConnectionFactory dataSource;
-            String jdbcName = "java:openejb/connector/" + connectorName;
-            dataSource = (JdbcConnectionFactory) new InitialContext().lookup(jdbcName);
-            if (dataSource == null) {
-                throw new OpenEJBException(jdbcName + " does not exist");
-            }
-
-            PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl();
-            unitInfo.setPersistenceUnitName("CMP");
-            unitInfo.setPersistenceProviderClassName("org.apache.openjpa.persistence.PersistenceProviderImpl");
-            unitInfo.setClassLoader(classLoader);
-            unitInfo.setExcludeUnlistedClasses(false);
-//            unitInfo.setJarFileUrls(pu.getJarFile());
-
-            unitInfo.setJtaDataSource(dataSource);
-
-//        unitInfo.setManagedClassNames(pu.getClazz());
-            unitInfo.setMappingFileNames(Collections.singletonList("META-INF/jpa.mapping.xml"));
-
-            // Handle Properties
-            Properties properties = new Properties();
-            unitInfo.setProperties(properties);
-
-            unitInfo.setTransactionType(PersistenceUnitTransactionType.JTA);
-
-            // Non JTA Datasource
-//            DataSource nonJtaDataSource = dataSourceResolver.getDataSource(dataSource);
-//            unitInfo.setNonJtaDataSource(nonJtaDataSource);
-
-//            String rootUrlPath = url.toExternalForm().replaceFirst("!?META-INF/persistence.xml$","");
-//            unitInfo.setPersistenceUnitRootUrl(new URL(rootUrlPath));
-
-            // TODO - What do we do here?
-            // unitInfo.setNewTempClassLoader(???);
-
-            String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
-            Class clazz = classLoader.loadClass(persistenceProviderClassName);
-            PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
-            entityManagerFactory = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
-        } catch (Exception e) {
-            throw new OpenEJBException(e);
-        }
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
         configureKeyGenerator(deploymentInfo);
     }
 
-    private EntityManager getEntityManager() {
+    private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
         try {
             Transaction transaction = transactionManager.getTransaction();
             EntityManager entityManager = transactionData.get(transaction);
             if (entityManager == null) {
+                EntityManagerFactory entityManagerFactory = (EntityManagerFactory) deploymentInfo.getJndiEnc().lookup("env/openejb/cmp");
+
                 // todo close entityManager when tx completes
                 entityManager = entityManagerFactory.createEntityManager();
                 if (entityManager instanceof OpenJPAEntityManager) {
                     OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
                     openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
                 }
-//                entityManager.joinTransaction();
                 transactionData.put(transaction, entityManager);
             }
             return entityManager;
-        } catch (javax.transaction.SystemException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
-        EntityManager entityManager = getEntityManager();
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        EntityManager entityManager = getEntityManager(deploymentInfo);
 
         // TODO verify that extract primary key requires a flush followed by a merge
         entityManager.persist(bean);
@@ -146,7 +93,6 @@ public class JpaCmpEngine implements CmpEngine {
         bean = entityManager.merge(bean);
 
         // extract the primary key from the bean
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         KeyGenerator kg = deploymentInfo.getKeyGenerator();
         Object primaryKey = kg.getPrimaryKey(bean);
 
@@ -154,23 +100,26 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
-        Class<?> beanClass = callContext.getDeploymentInfo().getBeanClass();
-        EntityManager entityManager = getEntityManager();
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Class<?> beanClass = deploymentInfo.getBeanClass();
+        EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, primaryKey);
         return bean;
     }
 
     public void removeBean(ThreadContext callContext) {
-        Class<?> beanClass = callContext.getDeploymentInfo().getBeanClass();
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Class<?> beanClass = deploymentInfo.getBeanClass();
 
-        EntityManager entityManager = getEntityManager();
+        EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
         entityManager.remove(bean);
     }
 
     public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
         logger.error("Executing query " + queryString);
-        EntityManager entityManager = getEntityManager();
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        EntityManager entityManager = getEntityManager(deploymentInfo);
         Query query = entityManager.createQuery(queryString);
         // process args
         if (args == null) {

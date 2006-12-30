@@ -16,19 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -39,6 +26,16 @@ import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -57,7 +54,7 @@ public class JndiEncBuilder {
     private final ResourceReferenceInfo[] resourceRefs;
     private final PersistenceUnitInfo[] persistenceUnitRefs;
     private final Map<String, EntityManagerFactory> entityManagerFactories;
-    private final Map<String, Map> allFactories;
+    private final Map<String, Map<String, EntityManagerFactory>> allFactories;
     private final String jarPath;
     
 
@@ -65,7 +62,7 @@ public class JndiEncBuilder {
         this(jndiEnc, null, null, null,null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map> allFactories,String path) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories,String path) throws OpenEJBException {
         if (ejbType == null){
             referenceWrapper = new DefaultReferenceWrapper();
         } else if (ejbType.isEntity()) {
@@ -115,7 +112,7 @@ public class JndiEncBuilder {
         if(allFactories != null){
         	this.allFactories = allFactories;
         } else {
-        	this.allFactories = new HashMap();
+        	this.allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
         }    
         
         this.jarPath = path;    
@@ -123,7 +120,7 @@ public class JndiEncBuilder {
         if(this.allFactories.get(jarPath) != null){
         	entityManagerFactories = this.allFactories.get(jarPath);
         } else {
-        	entityManagerFactories = new HashMap();
+        	entityManagerFactories = new HashMap<String, EntityManagerFactory>();
         }
     }
 
@@ -352,14 +349,8 @@ public class JndiEncBuilder {
      * This method will currently support paths like ../../xyz/ejbmodule.jar#PuName, ././xyz/ejbmodule.jar#PuName
      * and ejbmodule.jar#PuName. For all other types of path it will throw an exception stating an invalid
      * path.The paths are calculated relative to the referencing component jar. See 16.10.2 in ejb core spec.
-     * 
-     * @param allFactories
-     * @param path
-     * @param relativePath
-     * @return
-     * @throws OpenEJBException
      */
-    private EntityManagerFactory findEntityManagerFactory(Map<String, Map> allFactories, String path, String puName) throws OpenEJBException{
+    private EntityManagerFactory findEntityManagerFactory(Map<String, Map<String, EntityManagerFactory>> allFactories, String path, String puName) throws OpenEJBException{
     	int index = puName.indexOf("#");
     	String relativePath = puName.substring(0,index);
     	String unitName = puName.substring(index+1,puName.length());

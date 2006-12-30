@@ -17,173 +17,245 @@
 package org.apache.openejb.persistence;
 
 import java.io.File;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
 public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
-    private String persistenceUnitName = null;
+    /**
+     * External handler which handles adding a runtime ClassTransformer to the classloader.
+     */
+    private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
 
-    private String persistenceProviderClassName = null;
+    /**
+     * Name of this persistence unit.  The JPA specification has restrictions on the
+     * uniqueness of this name.
+     */
+    private String persistenceUnitName;
 
+    /**
+     * Name of the persistence provider implementation class.
+     */
+    private String persistenceProviderClassName;
+
+    /**
+     * Does this persistence unti participate in JTA transactions or does it manage
+     * resource local tranactions using the JDBC APIs.
+     */
     private PersistenceUnitTransactionType transactionType = PersistenceUnitTransactionType.JTA;
 
-    private DataSource jtaDataSource = null;
+    /**
+     * Data source used by jta persistence units for accessing transactional data.
+     */
+    private DataSource jtaDataSource;
 
-    private DataSource nonJtaDataSource = null;
+    /**
+     * Data source used by non-jta persistence units and by jta persistence units for
+     * non-transactional operations such as accessing a primary key table or sequence.
+     */
+    private DataSource nonJtaDataSource;
 
-    private List<String> mappingFileNames = null;
+    /**
+     * Names if the entity-mapping.xml files relative to to the persistenceUnitRootUrl.
+     */
+    private final List<String> mappingFileNames = new ArrayList<String>();
 
-    private List<URL> jarFileUrls = null;
+    /**
+     * The jar file locations that make up this persistence unit.
+     */
+    private final List<URL> jarFileUrls = new ArrayList<URL>();
 
-    private URL persistenceUnitRootUrl = null;
+    /**
+     * Location of the root of the persistent unit.  The directory in which
+     * META-INF/persistence.xml is located.
+     */
+    private URL persistenceUnitRootUrl;
 
-    private List<String> managedClassNames = null;
+    /**
+     * List of the managed entity classes.
+     */
+    private final List<String> managedClassNames = new ArrayList<String>();
 
-    private boolean excludeUnlistedClasses = false;
+    /**
+     * Should class not listed in the persistence unit be managed by the EntityManager?
+     */
+    private boolean excludeUnlistedClasses;
 
-    private Properties vendorProperties = null;
+    /**
+     * JPA provider properties for this persistence unit.
+     */
+    private Properties properties;
 
-    private ClassLoader classLoader = null;
-    
-    private ClassLoader tempClassLoader = null;
+    /**
+     * Class loader used by JPA to load Entity classes.
+     */
+    private ClassLoader classLoader;
 
-    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
-        this.excludeUnlistedClasses = excludeUnlistedClasses;
+    public PersistenceUnitInfoImpl() {
+        this.persistenceClassLoaderHandler = null;
     }
 
-    public void setProperties(Properties vendorProperties) {
-        this.vendorProperties = vendorProperties;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    public void setJarFileUrls(List<String> jarFiles) throws MalformedURLException {
-        if (jarFileUrls == null) {
-            jarFileUrls = new ArrayList<URL>();
-        }
-
-        for (String jarFile : jarFiles) {
-            jarFileUrls.add((new File(jarFile)).toURL());
-        }
-    }
-
-    public void setJtaDataSource(DataSource jtaDataSource) {
-        this.jtaDataSource = jtaDataSource;
-    }
-
-    public void setManagedClassNames(List<String> managedClassNames) {
-        this.managedClassNames = managedClassNames;
-    }
-
-    public void addManagedClassName(String className) {
-        if (managedClassNames == null) {
-            managedClassNames = new ArrayList<String>();
-        }
-        managedClassNames.add(className);
-    }
-
-    public void setMappingFileNames(List<String> mappingFileNames) {
-        this.mappingFileNames = mappingFileNames;
-    }
-
-    public void addMappingFileName(String mappingFileName) {
-        if (mappingFileNames == null) {
-            mappingFileNames = new ArrayList<String>();
-        }
-        mappingFileNames.add(mappingFileName);
-    }
-
-    public void setNonJtaDataSource(DataSource nonJtaDataSource) {
-        this.nonJtaDataSource = nonJtaDataSource;
-    }
-
-    public void setPersistenceProviderClassName(
-            String persistenceProviderClassName) {
-        this.persistenceProviderClassName = persistenceProviderClassName;
-    }
-
-    public void setPersistenceUnitName(String persistenceUnitName) {
-        this.persistenceUnitName = persistenceUnitName;
-    }
-
-    public void setPersistenceUnitRootUrl(URL persistenceUnitRootUrl) {
-        this.persistenceUnitRootUrl = persistenceUnitRootUrl;
-    }
-
-    public void setTransactionType(
-            PersistenceUnitTransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-    
-    void setNewTempClassLoader(ClassLoader tempClassLoader) {
-        this.tempClassLoader = tempClassLoader;
+    public PersistenceUnitInfoImpl(PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
+        this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
     public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
+    public void setPersistenceUnitName(String persistenceUnitName) {
+        this.persistenceUnitName = persistenceUnitName;
+    }
+
     public String getPersistenceProviderClassName() {
         return persistenceProviderClassName;
+    }
+
+    public void setPersistenceProviderClassName(String persistenceProviderClassName) {
+        this.persistenceProviderClassName = persistenceProviderClassName;
     }
 
     public PersistenceUnitTransactionType getTransactionType() {
         return transactionType;
     }
 
+    public void setTransactionType(PersistenceUnitTransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
     public DataSource getJtaDataSource() {
         return jtaDataSource;
+    }
+
+    public void setJtaDataSource(DataSource jtaDataSource) {
+        this.jtaDataSource = jtaDataSource;
     }
 
     public DataSource getNonJtaDataSource() {
         return nonJtaDataSource;
     }
 
+    public void setNonJtaDataSource(DataSource nonJtaDataSource) {
+        this.nonJtaDataSource = nonJtaDataSource;
+    }
+
     public List<String> getMappingFileNames() {
         return mappingFileNames;
+    }
+
+    public void setMappingFileNames(List<String> mappingFileNames) {
+        if (mappingFileNames == null) {
+            throw new NullPointerException("mappingFileNames is null");
+        }
+        this.mappingFileNames.clear();
+        this.mappingFileNames.addAll(mappingFileNames);
+    }
+
+    public void addMappingFileName(String mappingFileName) {
+        if (mappingFileName == null) {
+            throw new NullPointerException("mappingFileName is null");
+        }
+        mappingFileNames.add(mappingFileName);
     }
 
     public List<URL> getJarFileUrls() {
         return jarFileUrls;
     }
 
+    public void setJarFileUrls(List<String> jarFiles) throws MalformedURLException {
+        if (jarFiles == null) {
+            throw new NullPointerException("jarFiles is null");
+        }
+        for (String jarFile : jarFiles) {
+            jarFileUrls.add((new File(jarFile)).toURL());
+        }
+    }
+
     public URL getPersistenceUnitRootUrl() {
         return persistenceUnitRootUrl;
+    }
+
+    public void setPersistenceUnitRootUrl(URL persistenceUnitRootUrl) {
+        this.persistenceUnitRootUrl = persistenceUnitRootUrl;
     }
 
     public List<String> getManagedClassNames() {
         return managedClassNames;
     }
 
+    public void setManagedClassNames(List<String> managedClassNames) {
+        if (managedClassNames == null) {
+            throw new NullPointerException("managedClassNames is null");
+        }
+        this.managedClassNames.clear();
+        this.managedClassNames.addAll(managedClassNames);
+    }
+
+    public void addManagedClassName(String className) {
+        managedClassNames.add(className);
+    }
+
     public boolean excludeUnlistedClasses() {
         return excludeUnlistedClasses;
     }
 
+    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
+        this.excludeUnlistedClasses = excludeUnlistedClasses;
+    }
+
     public Properties getProperties() {
-        return vendorProperties;
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 
     public ClassLoader getClassLoader() {
         return classLoader;
     }
 
-    public void addTransformer(ClassTransformer arg0) {
-        // TODO - Need something to do here
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public void addTransformer(ClassTransformer classTransformer) {
+        if (persistenceClassLoaderHandler != null) {
+            PersistenceClassFileTransformer classFileTransformer = new PersistenceClassFileTransformer(classTransformer);
+            persistenceClassLoaderHandler.addTransformer(classLoader, classFileTransformer);
+        }
     }
 
     public ClassLoader getNewTempClassLoader() {
-        // TODO - This probably isn't correct and may need changing
-        return tempClassLoader;
+        if (persistenceClassLoaderHandler != null) {
+            return persistenceClassLoaderHandler.getNewTempClassLoader(classLoader);
+        } else {
+            return null;
+        }
     }
-    
+
+    public static class PersistenceClassFileTransformer implements ClassFileTransformer {
+        private final ClassTransformer classTransformer;
+
+        public PersistenceClassFileTransformer(ClassTransformer classTransformer) {
+            this.classTransformer = classTransformer;
+        }
+
+        public byte[] transform(ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            byte[] bytes = classTransformer.transform(classLoader, className.replace('/', '.'), classBeingRedefined, protectionDomain, classfileBuffer);
+            if ("org/apache/openejb/test/entity/cmp/BasicCmpBean".equals(className)) {
+                System.out.println("Transformed BasicCmpBean");
+            }
+            return bytes;
+        }
+    }
 }

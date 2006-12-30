@@ -21,10 +21,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
-import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
-import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateful.StatefulLocalTestSuite;
 import org.apache.openejb.test.stateless.StatelessLocalTestSuite;
 

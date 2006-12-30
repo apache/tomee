@@ -21,6 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.TransactionManagerWrapper;
@@ -28,6 +29,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
 import org.apache.openejb.persistence.PersistenceDeployer;
 import org.apache.openejb.persistence.PersistenceDeployerException;
+import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEJBErrorHandler;
@@ -51,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.lang.instrument.ClassFileTransformer;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -92,7 +96,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         /* Get Configuration ////////////////////////////*/
         String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
-        if (className == null) className = props.getProperty("openejb.configurator", "org.apache.openejb.alt.config.ConfigurationFactory");
+        if (className == null) {
+            className = props.getProperty("openejb.configurator", "org.apache.openejb.alt.config.ConfigurationFactory");
+        }
 
         OpenEjbConfigurationFactory configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
         configFactory.init(props);
@@ -114,23 +120,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
-    private static ThreadLocal context = new ThreadLocal();
+    private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
 
-    public static void setContext(HashMap map) {
+    public static void setContext(Map<String, Object> map) {
         context.set(map);
     }
 
-    public static HashMap getContext() {
-        HashMap map = (HashMap) context.get();
+    public static Map<String, Object> getContext() {
+        Map<String, Object> map = context.get();
         if (map == null){
-            map = new HashMap();
+            map = new HashMap<String, Object>();
             context.set(map);
         }
         return map;
     }
 
     public void build() throws OpenEJBException {
-        setContext(new HashMap());
+        setContext(new HashMap<String, Object>());
         try {
             containerSystem = buildContainerSystem(config);
         } catch (OpenEJBException ae) {
@@ -210,7 +216,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         createSecurityService(configInfo);
 
         /*[6] Assemble Connector(s) //////////////////////////////////////////*/
-        HashMap connectionManagerMap = new HashMap();
+        Map<String, ConnectionManager> connectionManagerMap = new HashMap<String, ConnectionManager>();
         // connectors are optional in the openejb_config.dtd
         for (ConnectionManagerInfo cmInfo : configInfo.facilities.connectionManagers) {
             ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
@@ -219,9 +225,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // connectors are optional in the openejb_config.dtd
         for (ConnectorInfo conInfo : configInfo.facilities.connectors) {
-            ConnectionManager connectionManager = (ConnectionManager) connectionManagerMap.get(conInfo.connectionManagerId);
-            if (connectionManager == null)
+            ConnectionManager connectionManager = connectionManagerMap.get(conInfo.connectionManagerId);
+            if (connectionManager == null) {
                 throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
+            }
 
             ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
 
@@ -232,37 +239,58 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
+        PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
+            public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+                Agent.getInstrumentation().addTransformer(classFileTransformer);
+            }
+
+            public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+                return new TemporaryClassLoader(classLoader);
+            }
+        };
+
+
         HashMap<String, DeploymentInfo> deployments2 = new HashMap<String, DeploymentInfo>();
         for (AppInfo appInfo : containerSystemInfo.applications) {
             List<URL> jars = new ArrayList<URL>();
-            for (EjbJarInfo info : appInfo.ejbJars) jars.add(toUrl(info.jarPath));
-            for (ClientInfo info : appInfo.clients) jars.add(toUrl(info.codebase));
-            for (String jarPath : appInfo.libs) jars.add(toUrl(jarPath));
+            for (EjbJarInfo info : appInfo.ejbJars) {
+                jars.add(toUrl(info.jarPath));
+            }
+            for (ClientInfo info : appInfo.clients) {
+                jars.add(toUrl(info.codebase));
+            }
+            for (String jarPath : appInfo.libs) {
+                jars.add(toUrl(jarPath));
+            }
 
+            // Create the class loader
             ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), org.apache.openejb.OpenEJB.class.getClassLoader());
 
-            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
-            HashMap<String, Map> allFactories = new HashMap();
+            // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
+            // to the class loader which must be added before any classes are loaded
+            HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            	PersistenceDeployer pm = null;        
-                Map<String, EntityManagerFactory> factories = null;
                 try {
-                	pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null));
-                	URL url = new File(ejbJar.jarPath).toURL();
-                	ClassLoader tmpClassLoader = new URLClassLoader(new URL[]{url}, classLoader);
-                	ResourceFinder resourceFinder = new ResourceFinder("",tmpClassLoader,url);        	
-                	factories = pm.deploy(resourceFinder.findAll("META-INF/persistence.xml"),classLoader);
-        		} catch (PersistenceDeployerException e1) {
-        			throw new OpenEJBException(e1);			
-        		} catch (IOException e) {
-        			throw new OpenEJBException(e);
-        		}
-        		allFactories.put(ejbJar.jarPath,factories);                
-            }            
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {            	
+                    URL url = new File(ejbJar.jarPath).toURL();
+                    ResourceFinder resourceFinder = new ResourceFinder("", classLoader, url);
+
+                    PersistenceDeployer persistenceDeployer = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
+                    Map<String, EntityManagerFactory> factories = persistenceDeployer.deploy(resourceFinder.findAll("META-INF/persistence.xml"), classLoader);
+                    allFactories.put(ejbJar.jarPath, factories);
+                } catch (PersistenceDeployerException e1) {
+                    throw new OpenEJBException(e1);
+                } catch (IOException e) {
+                    throw new OpenEJBException(e);
+                }
+            }
+
+            // EJB
+            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
+            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 deployments2.putAll(ejbJarBuilder.build(ejbJar,allFactories));
             }
 
+            // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
                 JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
                 Context context = (Context) jndiEncBuilder.build().lookup("env");
@@ -290,7 +318,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-
+        // Containers
         ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool)this).props);
         List containers = (List) containersBuilder.buildContainers(deployments2);
         for (int i1 = 0; i1 < containers.size(); i1++) {
@@ -304,7 +332,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        // roleMapping used later in buildMethodPermissions
+        // Security  - roleMapping used later in buildMethodPermissions
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
         org.apache.openejb.DeploymentInfo [] deployments = containerSystem.deployments();
         for (int i = 0; i < deployments.length; i++) {
@@ -312,19 +340,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
         }
 
+        // Security - apply role mappings
         for (ContainerInfo container : containerSystemInfo.containers) {
             for (EnterpriseBeanInfo beanInfo : container.ejbeans) {
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId);
                 applySecurityRoleReference(deployment, beanInfo, roleMapping);
             }
         }
+
         /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
         for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
             javax.naming.InitialContext cntx = assembleRemoteJndiContext(contextInfo);
             containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.jndiContextId, cntx);
         }
 
-        return containerSystem;
+       return containerSystem;
     }
 
     private URL toUrl(String jarPath) throws OpenEJBException {
@@ -359,5 +389,4 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
         containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
     }
-        
 }

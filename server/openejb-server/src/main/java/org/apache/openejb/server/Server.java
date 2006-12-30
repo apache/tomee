@@ -16,29 +16,21 @@
  */
 package org.apache.openejb.server;
 
-import java.util.Properties;
-import java.net.URI;
 import java.io.IOException;
+import java.net.URI;
+import java.util.Properties;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.PropertiesService;
-import org.apache.openejb.util.SafeToolkit;
 
 /**
  * @org.apache.xbean.XBean element="server"
  *   description="OpenEJB Server"
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class Server implements org.apache.openejb.spi.Service {
-
-    private SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB EJB Server");
-    private Messages _messages = new Messages("org.apache.openejb.server");
-    private Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server");
-
     // FIXME: Remove it completely once we ensure PropertiesService (below) works well
     Properties props;
     
@@ -98,8 +90,6 @@ public class Server implements org.apache.openejb.spi.Service {
 
     public static class ServerServiceFactory {
         public ServerService createService(URI location) throws IOException {
-            String scheme = location.getScheme();
-            
             return null;
         }
     }

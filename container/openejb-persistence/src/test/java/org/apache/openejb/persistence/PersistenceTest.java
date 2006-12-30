@@ -51,7 +51,7 @@ public class PersistenceTest extends TestCase {
             ClassLoader cl = this.getClass().getClassLoader();
 
             // Get a EntityManagerFactory list
-            PersistenceDeployer pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null));
+            PersistenceDeployer pm = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), null);
             Map<String, EntityManagerFactory> factories = pm.deploy(cl);
             for (Map.Entry<String, EntityManagerFactory> entry : factories.entrySet()) {
                 // Store EntityManagerFactory in the JNDI

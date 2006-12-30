@@ -35,7 +35,7 @@ public class OpenJpaProviderTest extends TestCase {
         // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
         System.setProperty("derby.system.home", "target");
 
-        PersistenceDeployer deployer = new PersistenceDeployer(new TestDataSourceResolver());
+        PersistenceDeployer deployer = new PersistenceDeployer(new TestDataSourceResolver(), null);
 
         Map<String, EntityManagerFactory> map = deployer.deploy(Thread.currentThread().getContextClassLoader());
 

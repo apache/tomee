@@ -27,11 +27,9 @@ import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +40,10 @@ class EnterpriseBeanBuilder {
     private final List<InterceptorInfo> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
-    private final Map<String, Map> factories;
+    private final Map<String, Map<String, EntityManagerFactory>> factories;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, List<InterceptorInfo> defaultInterceptors, Map<String, Map> factories) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, List<InterceptorInfo> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
 
@@ -63,29 +61,6 @@ class EnterpriseBeanBuilder {
         }
         this.cl = cl;
         this.factories = factories;
-    }
-
-    static class Loader {
-        protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
-        private final ClassLoader classLoader;
-        private final String ejbDeploymentId;
-
-        public Loader(String codebase, String ejbDeploymentId) throws OpenEJBException {
-            try {
-                this.classLoader = new URLClassLoader(new URL[]{new File(codebase).toURL()});
-            } catch (MalformedURLException e) {
-                throw new OpenEJBException(messages.format("cl0001", codebase, e.getMessage()));
-            }
-            this.ejbDeploymentId = ejbDeploymentId;
-        }
-
-        public Class load(String className, String artifact) throws OpenEJBException {
-            try {
-                return classLoader.loadClass(className);
-            } catch (ClassNotFoundException e) {
-                throw new OpenEJBException(messages.format("classNotFound." + artifact, className, ejbDeploymentId, e.getMessage()));
-            }
-        }
     }
 
     public Object build() throws OpenEJBException {

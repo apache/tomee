@@ -53,6 +53,8 @@
         <version>2.2.1</version>
     </dependency>
   </dependencies>
+
+<!--
   <build>
     <plugins>
       <plugin>
@@ -64,7 +66,7 @@
               <tasks>
                 <java classname="org.apache.openjpa.enhance.PCEnhancer">
                   <arg value="-p"/>
-                  <arg value="${basedir}/src/temp-persistence.xml"/>
+                  <arg value="${basedir}/src/main/resources/META-INF/persistence.xml"/>
                   <classpath>
                     <path refid="maven.dependency.classpath"/>
                     <path refid="maven.compile.classpath"/>
@@ -80,5 +82,6 @@
       </plugin>
     </plugins>
   </build>
+-->
 
 </project>

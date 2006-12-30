@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.Messages;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class EjbJarBuilder {
         this.classLoader = classLoader;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar,HashMap<String, Map> allFactories) throws OpenEJBException {
+    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, Map<String, Map<String, EntityManagerFactory>> allFactories) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
         
         

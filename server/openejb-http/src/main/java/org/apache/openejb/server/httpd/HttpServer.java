@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -146,7 +145,7 @@ public class HttpServer implements ServerService {
             req.readMessage(in);
             res.setRequest(req);
         } catch (Throwable t) {
-            res.setCode(HttpURLConnection.HTTP_BAD_REQUEST);
+            res.setCode(400);
             res.setResponseString("Could not read the request");
             res.getPrintWriter().println(t.getMessage());
             t.printStackTrace(res.getPrintWriter());

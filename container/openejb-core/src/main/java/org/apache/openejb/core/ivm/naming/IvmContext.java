@@ -17,6 +17,12 @@
 package org.apache.openejb.core.ivm.naming;
 
 import java.io.ObjectStreamException;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +30,8 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Properties;
+import java.net.URL;
 
 import javax.naming.Binding;
 import javax.naming.CompositeName;
@@ -38,8 +46,6 @@ import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.ClassLoaderUtil;
 
-import com.sun.naming.internal.ResourceManager;
-
 /*
 * This class wrappers a specific NameNode which is the data model for the JNDI
 * name space. This class provides javax.naming.Context specific functionality
@@ -49,7 +55,8 @@ import com.sun.naming.internal.ResourceManager;
 /**
  * @org.apache.xbean.XBean element="ivmContext"
  */
-public class IvmContext implements Context, java.io.Serializable {
+public class IvmContext implements Context, Serializable {
+    private static final long serialVersionUID = -626353930051783641L;
     Hashtable myEnv;
     boolean readOnly = false;
     HashMap fastCache = new HashMap();
@@ -157,16 +164,14 @@ public class IvmContext implements Context, java.io.Serializable {
 
     public static ObjectFactory [] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
-            Set factories = new HashSet();
-            Hashtable jndiProps = ResourceManager.getInitialEnvironment(null);
-            String pkgs = (String) jndiProps.get(Context.URL_PKG_PREFIXES);
-            if (pkgs == null) {
+            Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
+            String urlPackagePrefixes = getUrlPackagePrefixes();
+            if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
             }
-            StringTokenizer parser = new StringTokenizer(pkgs, ":");
-
-            while (parser.hasMoreTokens()) {
-                String className = parser.nextToken() + ".java.javaURLContextFactory";
+            for (StringTokenizer tokenizer = new StringTokenizer(urlPackagePrefixes, ":"); tokenizer.hasMoreTokens();) {
+                String urlPackagePrefix = tokenizer.nextToken();
+                String className = urlPackagePrefix + ".java.javaURLContextFactory";
                 if (className.equals("org.apache.openejb.core.ivm.naming.java.javaURLContextFactory"))
                     continue;
                 try {
@@ -187,6 +192,53 @@ public class IvmContext implements Context, java.io.Serializable {
             System.arraycopy(temp, 0, federatedFactories, 0, federatedFactories.length);
         }
         return federatedFactories;
+    }
+
+    private static String getUrlPackagePrefixes() {
+        // 1. System.getProperty
+        String urlPackagePrefixes = System.getProperty(Context.URL_PKG_PREFIXES);
+
+        // 2. Thread.currentThread().getContextClassLoader().getResources("jndi.properties")
+        if (urlPackagePrefixes == null) {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+
+            try {
+                Enumeration<URL> resources = classLoader.getResources("jndi.properties");
+                while (urlPackagePrefixes == null && resources.hasMoreElements()) {
+                    URL resource = resources.nextElement();
+                    InputStream in = resource.openStream();
+                    urlPackagePrefixes = getUrlPackagePrefixes(in);
+                }
+            } catch (IOException ignored) {
+            }
+        }
+
+        // 3. ${java.home}/lib/jndi.properties
+        if (urlPackagePrefixes == null) {
+            String javahome = System.getProperty("java.home");
+            if (javahome != null) {
+                try {
+                    File propertiesFile = new File(new File(javahome, "lib"), "jndi.properties");
+                    InputStream in = new FileInputStream(propertiesFile);
+                    urlPackagePrefixes = getUrlPackagePrefixes(in);
+                } catch (FileNotFoundException ignored) {
+                }
+            }
+
+        }
+        return urlPackagePrefixes;
+    }
+
+    private static String getUrlPackagePrefixes(InputStream in) {
+        try {
+            Properties properties = new Properties();
+            properties.load(in);
+            String urlPackagePrefixes = properties.getProperty(Context.URL_PKG_PREFIXES);
+            return urlPackagePrefixes;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public Object lookup(Name compositName) throws NamingException {
@@ -239,7 +291,7 @@ public class IvmContext implements Context, java.io.Serializable {
         rename(oldname.toString(), newname.toString());
     }
 
-    public NamingEnumeration list(String name)
+    public NamingEnumeration<NameClassPair> list(String name)
             throws NamingException {
         Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
@@ -249,12 +301,12 @@ public class IvmContext implements Context, java.io.Serializable {
         }
     }
 
-    public NamingEnumeration list(Name name)
+    public NamingEnumeration<NameClassPair> list(Name name)
             throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration listBindings(String name)
+    public NamingEnumeration<Binding> listBindings(String name)
             throws NamingException {
         Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
@@ -264,7 +316,7 @@ public class IvmContext implements Context, java.io.Serializable {
         }
     }
 
-    public NamingEnumeration listBindings(Name name)
+    public NamingEnumeration<Binding> listBindings(Name name)
             throws NamingException {
         return listBindings(name.toString());
     }

@@ -28,13 +28,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class PersistenceDeployer {
-
     public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
 
     public static final String PROVIDER_PROP = "javax.persistence.provider";
@@ -45,19 +43,40 @@ public class PersistenceDeployer {
 
     public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
 
-    private String providerEnv = null;
-
-    private String transactionTypeEnv = null;
-
-    private String jtaDataSourceEnv = null;
-
-    private String nonJtaDataSourceEnv = null;
+    /**
+     * Used to resolve jta and non-jta data cource names for actual DataSource objects.
+     */
     private final DataSourceResolver dataSourceResolver;
 
-    public PersistenceDeployer(DataSourceResolver dataSourceResolver) {
+    /**
+     * External handler which handles adding a runtime ClassTransformer to the classloader.
+     */
+    private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
 
+    /**
+     * If set, overrides the persistence provider class name in the persistence.xml.
+     */
+    private String providerEnv;
+
+    /**
+     * If set, overrides the transaction type in the persistence.xml.
+     */
+    private String transactionTypeEnv;
+
+    /**
+     * If set, overrides the jta data source class name in the persistence.xml.
+     */
+    private String jtaDataSourceEnv;
+
+    /**
+     * If set, overrides the non-jta data source class name in the persistence.xml.
+     */
+    private String nonJtaDataSourceEnv;
+
+    public PersistenceDeployer(DataSourceResolver dataSourceResolver, PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
         loadSystemProps();
         this.dataSourceResolver = dataSourceResolver;
+        this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
     private void loadSystemProps() {
@@ -68,17 +87,15 @@ public class PersistenceDeployer {
     }
 
     public Map<String, EntityManagerFactory> loadPersistence(ClassLoader cl, URL url) throws PersistenceDeployerException {
-
         try {
-
-            Map<String, EntityManagerFactory> factories = new HashMap();
+            Map<String, EntityManagerFactory> factories = new HashMap<String, EntityManagerFactory>();
 
             org.apache.openejb.persistence.dd.Persistence persistence = JaxbPersistenceFactory.getPersistence(url);
 
             List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
             for (PersistenceUnit pu : persistenceUnits) {
-                PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl();
+                PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
                 unitInfo.setPersistenceUnitName(pu.getName());
                 if (providerEnv != null) {
                     unitInfo.setPersistenceProviderClassName(providerEnv);
@@ -108,12 +125,14 @@ public class PersistenceDeployer {
                 unitInfo.setMappingFileNames(pu.getMappingFile());
 
                 // Handle Properties
-                List<org.apache.openejb.persistence.dd.Property> puiProperties = pu.getProperties().getProperty();
-                Properties properties = new Properties();
-                for (org.apache.openejb.persistence.dd.Property property : puiProperties) {
-                    properties.put(property.getName(), property.getValue());
+                org.apache.openejb.persistence.dd.Properties puiProperties = pu.getProperties();
+                if (puiProperties != null) {
+                    Properties properties = new Properties();
+                    for (org.apache.openejb.persistence.dd.Property property : puiProperties.getProperty()) {
+                        properties.put(property.getName(), property.getValue());
+                    }
+                    unitInfo.setProperties(properties);
                 }
-                unitInfo.setProperties(properties);
 
                 // Persistence Unit Transaction Type
                 if (transactionTypeEnv != null) {
@@ -142,14 +161,11 @@ public class PersistenceDeployer {
                 String rootUrlPath = url.toExternalForm().replaceFirst("!?META-INF/persistence.xml$","");
                 unitInfo.setPersistenceUnitRootUrl(new URL(rootUrlPath));
 
-                // TODO - What do we do here?
-                // unitInfo.setNewTempClassLoader(???);
-
                 String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
                 if (persistenceProviderClassName == null){
                     continue;
                 }
-                Class clazz = (Class) cl.loadClass(persistenceProviderClassName);
+                Class clazz = cl.loadClass(persistenceProviderClassName);
                 PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
                 EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
@@ -186,15 +202,13 @@ public class PersistenceDeployer {
     
     public Map<String, EntityManagerFactory> deploy(List<URL> urls,ClassLoader cl) throws PersistenceDeployerException {
 
-        Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
+        Map<String, EntityManagerFactory> factories = new HashMap<String, EntityManagerFactory>();
         // Read the persistence.xml files      
-        
-        Iterator<URL> iter = urls.iterator();
-        while (iter.hasNext()) {
-            URL url = iter.next();            
-            factoryList.putAll(loadPersistence(cl, url));               
+
+        for (URL url : urls) {
+            factories.putAll(loadPersistence(cl, url));
         }        
-        return factoryList;
+        return factories;
     }
 
 

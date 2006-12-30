@@ -33,6 +33,7 @@ REM================================================
 SETLOCAL
 
 set OPENEJB_CORE_JAR=%OPENEJB_HOME%/lib/openejb-core-${pom.version}.jar
+set OPENEJB_JAVAAGENT_JAR=%OPENEJB_HOME%/lib/openejb-javaagent-${pom.version}.jar
 
 rem find OPENEJB_HOME if it does not exist due to either an invalid value passed
 rem by the user or the %0 problem on Windows 9x
@@ -78,25 +79,25 @@ goto EOF
 REM================================================
 :VALIDATE 
    shift
-   java -jar %OPENEJB_CORE_JAR% validate %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% validate %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :DEPLOY 
    shift
-   java -jar %OPENEJB_CORE_JAR% deploy %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% deploy %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :START_SERVER
    shift
-   java -jar %OPENEJB_CORE_JAR% start %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% start %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
 :STOP_SERVER
    shift
-   java -jar %OPENEJB_CORE_JAR% stop %1 %2 %3 %4 %5 %6 %7 %8 %9
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% stop %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 goto EOF
 REM================================================
@@ -106,44 +107,44 @@ goto EOF
 REM================================================
 :TEST_INTRAVM
 
-   java -jar %OPENEJB_CORE_JAR% test local
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test local
          
 if /I %P2% EQU _ goto TEST_SERVER
 goto EOF
 REM================================================
 :TEST_SERVER
 
-   java -jar %OPENEJB_CORE_JAR% test remote
+   java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test remote
    
 goto EOF
 REM================================================
 :HELP_TEST
    
-	java -jar %OPENEJB_CORE_JAR% test --help
+	java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test --help
 
 goto EOF
 REM================================================
 :HELP_DEPLOY
    
-	java -jar %OPENEJB_CORE_JAR% deploy --help
+	java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% deploy --help
 	
 goto EOF
 REM================================================
 :HELP_VALIDATE
    
-	java -jar %OPENEJB_CORE_JAR% validate --help
+	java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% validate --help
 
 goto EOF
 REM================================================
 :HELP_START
    
-	java -jar %OPENEJB_CORE_JAR% start --help
+	java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% start --help
 
 goto EOF
 REM================================================
 :HELP_STOP
    
-	java -jar %OPENEJB_CORE_JAR% stop --help
+	java -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% stop --help
 
 goto EOF
 
