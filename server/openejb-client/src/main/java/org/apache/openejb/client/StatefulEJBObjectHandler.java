@@ -52,7 +52,7 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
 
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(EJB_OBJECT_REMOVE);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE);
         req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
         req.setDeploymentId(ejb.deploymentID);
@@ -62,7 +62,7 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
 
         EJBResponse res = request(req);
 
-        if (EJB_ERROR == res.getResponseCode()) {
+        if (ResponseCodes.EJB_ERROR == res.getResponseCode()) {
             throw (Throwable) res.getResult();
         }
 

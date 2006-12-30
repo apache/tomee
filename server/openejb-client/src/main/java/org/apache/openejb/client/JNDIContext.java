@@ -35,7 +35,7 @@ import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
 
 
-public class JNDIContext implements Serializable, InitialContextFactory, Context, RequestMethods, ResponseCodes {
+public class JNDIContext implements Serializable, InitialContextFactory, Context {
 
     private transient String tail = "/";
     private transient ServerMetaData server;
@@ -129,14 +129,14 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
 
         switch (res.getResponseCode()) {
-            case AUTH_GRANTED:
+            case ResponseCodes.AUTH_GRANTED:
                 client = res.getIdentity();
                 break;
-            case AUTH_REDIRECT:
+            case ResponseCodes.AUTH_REDIRECT:
                 client = res.getIdentity();
                 server = res.getServer();
                 break;
-            case AUTH_DENIED:
+            case ResponseCodes.AUTH_DENIED:
                 throw new AuthenticationException("This principle is not authorized.");
         }
     }
@@ -174,7 +174,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
 
         JNDIRequest req = new JNDIRequest();
-        req.setRequestMethod(JNDIRequest.JNDI_LOOKUP);
+        req.setRequestMethod(RequestMethodConstants.JNDI_LOOKUP);
         req.setRequestString(name);
         req.setModuleId(moduleId);
 
@@ -186,37 +186,37 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
 
         switch (res.getResponseCode()) {
-            case JNDI_EJBHOME:
+            case ResponseCodes.JNDI_EJBHOME:
                 return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
 
-            case JNDI_BUSINESS_OBJECT:
+            case ResponseCodes.JNDI_BUSINESS_OBJECT:
                 return createBusinessObject(res.getResult());
 
-            case JNDI_OK:
+            case ResponseCodes.JNDI_OK:
                 return res.getResult();
 
-            case JNDI_INJECTIONS:
+            case ResponseCodes.JNDI_INJECTIONS:
                 return res.getResult();
 
-            case JNDI_CONTEXT:
+            case ResponseCodes.JNDI_CONTEXT:
                 JNDIContext subCtx = new JNDIContext(this);
                 if (!name.endsWith("/")) name += '/';
                 subCtx.tail = name;
                 return subCtx;
 
-            case JNDI_DATA_SOURCE:
+            case ResponseCodes.JNDI_DATA_SOURCE:
                 return createDataSource((DataSourceMetaData) res.getResult());
 
-            case JNDI_NOT_FOUND:
+            case ResponseCodes.JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " not found");
 
-            case JNDI_NAMING_EXCEPTION:
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
                 throw (NamingException) res.getResult();
 
-            case JNDI_RUNTIME_EXCEPTION:
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
                 throw (RuntimeException) res.getResult();
 
-            case JNDI_ERROR:
+            case ResponseCodes.JNDI_ERROR:
                 throw (Error) res.getResult();
 
             default:

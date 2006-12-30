@@ -30,12 +30,12 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBRequest;
-import org.apache.openejb.client.RequestMethods;
+import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
-public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer, ResponseCodes, RequestMethods {
+public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
@@ -103,13 +103,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer, Resp
             oos = new ObjectOutputStream(out);
 
             switch (requestType) {
-                case EJB_REQUEST:
+                case RequestMethodConstants.EJB_REQUEST:
                     processEjbRequest(ois, oos);
                     break;
-                case JNDI_REQUEST:
+                case RequestMethodConstants.JNDI_REQUEST:
                     processJndiRequest(ois, oos);
                     break;
-                case AUTH_REQUEST:
+                case RequestMethodConstants.AUTH_REQUEST:
                     processAuthRequest(ois, oos);
                     break;
                 default:

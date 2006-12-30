@@ -22,10 +22,10 @@ import java.io.ObjectOutputStream;
 import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
-import org.apache.openejb.client.RequestMethods;
+import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 
-class AuthRequestHandler implements ResponseCodes, RequestMethods {
+class AuthRequestHandler {
 
     AuthRequestHandler(EjbDaemon daemon) {
     }
@@ -42,7 +42,7 @@ class AuthRequestHandler implements ResponseCodes, RequestMethods {
             client.setClientIdentity(new String((String) req.getPrinciple()));
 
             res.setIdentity(client);
-            res.setResponseCode(AUTH_GRANTED);
+            res.setResponseCode(ResponseCodes.AUTH_GRANTED);
 
             res.writeExternal(out);
         } catch (Throwable t) {

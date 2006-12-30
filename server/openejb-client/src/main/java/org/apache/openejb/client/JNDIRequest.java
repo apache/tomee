@@ -35,7 +35,7 @@ public class JNDIRequest implements Request {
     }
 
     public byte getRequestType() {
-        return JNDI_REQUEST;
+        return RequestMethodConstants.JNDI_REQUEST;
     }
 
     public int getRequestMethod() {

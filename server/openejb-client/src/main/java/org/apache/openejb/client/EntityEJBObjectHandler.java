@@ -54,7 +54,7 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
 
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(EJB_OBJECT_REMOVE);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE);
 
         req.setMethodParameters(args);
         req.setMethodInstance(method);
@@ -66,13 +66,13 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
         EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 throw new SystemException((ThrowableArtifact) res.getResult());
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case EJB_OK:
+            case ResponseCodes.EJB_OK:
                 invalidateAllHandlers(getRegistryId());
                 return null;
             default:

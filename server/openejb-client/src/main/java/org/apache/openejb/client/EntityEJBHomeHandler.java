@@ -32,7 +32,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(EJB_HOME_FIND);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_FIND);
 
         req.setMethodParameters(args);
         req.setMethodInstance(method);
@@ -48,21 +48,21 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
         Object[] primaryKeys = null;
 
         switch (res.getResponseCode()) {
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 throw new SystemException((ThrowableArtifact) res.getResult());
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
 
-            case EJB_OK_FOUND:
+            case ResponseCodes.EJB_OK_FOUND:
                 primKey = res.getResult();
                 handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
                 handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                 registerHandler(ejb.deploymentID + ":" + primKey, handler);
                 return handler.createEJBObjectProxy();
 
-            case EJB_OK_FOUND_COLLECTION:
+            case ResponseCodes.EJB_OK_FOUND_COLLECTION:
 
                 primaryKeys = (Object[]) res.getResult();
 
@@ -74,7 +74,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                     primaryKeys[i] = handler.createEJBObjectProxy();
                 }
                 return java.util.Arrays.asList(primaryKeys);
-            case EJB_OK_FOUND_ENUMERATION:
+            case ResponseCodes.EJB_OK_FOUND_ENUMERATION:
 
                 primaryKeys = (Object[]) res.getResult();
 

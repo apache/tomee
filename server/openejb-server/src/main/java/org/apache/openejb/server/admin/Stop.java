@@ -23,9 +23,12 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.util.JarUtils;
 
-public class Stop implements org.apache.openejb.client.RequestMethods {
+
+public class Stop {
+
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
 
     public static void stop(String host, int port) {
@@ -34,7 +37,7 @@ public class Stop implements org.apache.openejb.client.RequestMethods {
             Socket socket = new Socket(host, port);
             OutputStream out = socket.getOutputStream();
 
-            out.write(STOP_REQUEST_Stop);
+            out.write(RequestMethodConstants.STOP_REQUEST_Stop);
 
         } catch (ConnectException e) {
             System.out.println(":: server not running ::");

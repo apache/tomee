@@ -29,21 +29,18 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.Injection;
 import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
-import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.JNDIRequest;
 import org.apache.openejb.client.JNDIResponse;
-import org.apache.openejb.client.RequestMethods;
+import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.InjectionMetaData;
 
-class JndiRequestHandler implements ResponseCodes, RequestMethods {
+class JndiRequestHandler {
     private final EjbDaemon daemon;
 
     private Context ejbJndiTree;
@@ -82,7 +79,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                     for (Injection injection : injections) {
                         metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
                     }
-                    res.setResponseCode(JNDI_INJECTIONS);
+                    res.setResponseCode(ResponseCodes.JNDI_INJECTIONS);
                     res.setResult(metaData);
                     res.writeExternal(out);
                     return;
@@ -95,7 +92,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
             }
 
             if (object instanceof Context) {
-                res.setResponseCode(JNDI_CONTEXT);
+                res.setResponseCode(ResponseCodes.JNDI_CONTEXT);
                 res.writeExternal(out);
                 return;
             } else if (object == null) {
@@ -103,17 +100,17 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
             } else if (object instanceof JdbcConnectionFactory){
                 JdbcConnectionFactory cf = (JdbcConnectionFactory) object;
                 DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getJdbcDriver(), cf.getJdbcUrl(), cf.getDefaultUserName(), cf.getDefaultPassword());
-                res.setResponseCode(JNDI_DATA_SOURCE);
+                res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
                 res.setResult(dataSourceMetaData);
                 res.writeExternal(out);
                 return;
             }
         } catch (NameNotFoundException e) {
-            res.setResponseCode(JNDI_NOT_FOUND);
+            res.setResponseCode(ResponseCodes.JNDI_NOT_FOUND);
             res.writeExternal(out);
             return;
         } catch (NamingException e) {
-            res.setResponseCode(JNDI_NAMING_EXCEPTION);
+            res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             res.setResult(e);
             res.writeExternal(out);
             return;
@@ -126,12 +123,12 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
         } catch (Exception e) {
             // Not a proxy.  See if it's serializable and send it
             if (object instanceof java.io.Serializable){
-                res.setResponseCode(JNDI_OK);
+                res.setResponseCode(ResponseCodes.JNDI_OK);
                 res.setResult(object);
                 res.writeExternal(out);
                 return;
             } else {
-                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 res.setResult(new NamingException("Expected an ejb proxy, found unknown object: type="+object.getClass().getName() + ", toString="+object));
                 res.writeExternal(out);
                 return;
@@ -144,7 +141,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
 
         switch(proxyInfo.getInterfaceType()){
             case EJB_HOME: {
-                res.setResponseCode(JNDI_EJBHOME);
+                res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                         deployment.getRemoteInterface(),
                         deployment.getPrimaryKeyClass(),
@@ -155,12 +152,12 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                 break;
             }
             case EJB_LOCAL_HOME: {
-                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 res.setResult(new NamingException("Not remotable: '"+name+"'. EJBLocalHome interfaces are not remotable as per the EJB specification."));
                 break;
             }
             case BUSINESS_REMOTE: {
-                res.setResponseCode(JNDI_BUSINESS_OBJECT);
+                res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                         deployment.getBusinessRemoteInterface(),
                         deployment.getPrimaryKeyClass(),
@@ -174,7 +171,7 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
             case BUSINESS_LOCAL: {
                 String property = SystemInstance.get().getProperty("openejb.businessLocal", "remotable");
                 if (property.equalsIgnoreCase("remotable")) {
-                    res.setResponseCode(JNDI_BUSINESS_OBJECT);
+                    res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                     EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                             deployment.getBusinessLocalInterface(),
                             deployment.getPrimaryKeyClass(),
@@ -184,13 +181,13 @@ class JndiRequestHandler implements ResponseCodes, RequestMethods {
                     Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                     res.setResult(data);
                 } else {
-                    res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                    res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                     res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.businessLocal=remotable' in the server."));
                 }
                 break;
             }
             default: {
-                res.setResponseCode(JNDI_NAMING_EXCEPTION);
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 res.setResult(new NamingException("Not remotable: '"+name+"'."));
             }
         }

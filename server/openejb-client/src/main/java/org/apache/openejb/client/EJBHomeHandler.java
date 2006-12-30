@@ -152,7 +152,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     }
 
     public Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(EJB_HOME_METHOD);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_METHOD);
 
         req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
@@ -163,13 +163,13 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 throw new SystemException((ThrowableArtifact) res.getResult());
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case EJB_OK:
+            case ResponseCodes.EJB_OK:
 
                 return res.getResult();
             default:
@@ -182,7 +182,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     /*-------------------------------------------------*/
 
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(EJB_HOME_CREATE);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_CREATE);
 
         req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
@@ -193,13 +193,13 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 throw new SystemException((ThrowableArtifact) res.getResult());
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case EJB_OK:
+            case ResponseCodes.EJB_OK:
 
                 Object primKey = res.getResult();
                 EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);

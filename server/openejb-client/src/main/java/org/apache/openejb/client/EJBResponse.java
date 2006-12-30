@@ -50,31 +50,31 @@ public class EJBResponse implements Response {
     public String toString() {
         StringBuffer s = null;
         switch (responseCode) {
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 s = new StringBuffer("EJB_APP_EXCEPTION");
                 break;
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 s = new StringBuffer("EJB_ERROR");
                 break;
-            case EJB_OK:
+            case ResponseCodes.EJB_OK:
                 s = new StringBuffer("EJB_OK");
                 break;
-            case EJB_OK_CREATE:
+            case ResponseCodes.EJB_OK_CREATE:
                 s = new StringBuffer("EJB_OK_CREATE");
                 break;
-            case EJB_OK_FOUND:
+            case ResponseCodes.EJB_OK_FOUND:
                 s = new StringBuffer("EJB_OK_FOUND");
                 break;
-            case EJB_OK_FOUND_COLLECTION:
+            case ResponseCodes.EJB_OK_FOUND_COLLECTION:
                 s = new StringBuffer("EJB_OK_FOUND_COLLECTION");
                 break;
-            case EJB_OK_FOUND_ENUMERATION:
+            case ResponseCodes.EJB_OK_FOUND_ENUMERATION:
                 s = new StringBuffer("EJB_OK_FOUND_ENUMERATION");
                 break;
-            case EJB_OK_NOT_FOUND:
+            case ResponseCodes.EJB_OK_NOT_FOUND:
                 s = new StringBuffer("EJB_OK_NOT_FOUND");
                 break;
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 s = new StringBuffer("EJB_SYS_EXCEPTION");
                 break;
             default:

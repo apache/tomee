@@ -53,27 +53,27 @@ public class JNDIResponse implements Response {
         responseCode = in.readByte();
 
         switch (responseCode) {
-            case JNDI_BUSINESS_OBJECT:
-            case JNDI_OK:
-            case JNDI_NAMING_EXCEPTION:
-            case JNDI_RUNTIME_EXCEPTION:
-            case JNDI_ERROR:
+            case ResponseCodes.JNDI_BUSINESS_OBJECT:
+            case ResponseCodes.JNDI_OK:
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
+            case ResponseCodes.JNDI_ERROR:
                 result = in.readObject();
                 break;
-            case JNDI_CONTEXT:
-            case JNDI_NOT_FOUND:
+            case ResponseCodes.JNDI_CONTEXT:
+            case ResponseCodes.JNDI_NOT_FOUND:
                 break;
-            case JNDI_EJBHOME:
+            case ResponseCodes.JNDI_EJBHOME:
                 EJBMetaDataImpl m = new EJBMetaDataImpl();
                 m.readExternal(in);
                 result = m;
                 break;
-            case JNDI_DATA_SOURCE:
+            case ResponseCodes.JNDI_DATA_SOURCE:
                 DataSourceMetaData ds = new DataSourceMetaData();
                 ds.readExternal(in);
                 result = ds;
                 break;
-            case JNDI_INJECTIONS:
+            case ResponseCodes.JNDI_INJECTIONS:
                 InjectionMetaData imd = new InjectionMetaData();
                 imd.readExternal(in);
                 result = imd;
@@ -86,25 +86,25 @@ public class JNDIResponse implements Response {
         out.writeByte((byte) responseCode);
 
         switch (responseCode) {
-            case JNDI_BUSINESS_OBJECT:
-            case JNDI_OK:
-            case JNDI_NAMING_EXCEPTION:
-            case JNDI_RUNTIME_EXCEPTION:
-            case JNDI_ERROR:
+            case ResponseCodes.JNDI_BUSINESS_OBJECT:
+            case ResponseCodes.JNDI_OK:
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
+            case ResponseCodes.JNDI_ERROR:
                 out.writeObject(result);
                 break;
-            case JNDI_CONTEXT:
-            case JNDI_NOT_FOUND:
+            case ResponseCodes.JNDI_CONTEXT:
+            case ResponseCodes.JNDI_NOT_FOUND:
                 break;
-            case JNDI_EJBHOME:
+            case ResponseCodes.JNDI_EJBHOME:
                 EJBMetaDataImpl m = (EJBMetaDataImpl) result;
                 m.writeExternal(out);
                 break;
-            case JNDI_DATA_SOURCE:
+            case ResponseCodes.JNDI_DATA_SOURCE:
                 DataSourceMetaData ds = (DataSourceMetaData) result;
                 ds.writeExternal(out);
                 break;
-            case JNDI_INJECTIONS:
+            case ResponseCodes.JNDI_INJECTIONS:
                 InjectionMetaData imd = (InjectionMetaData) result;
                 imd.writeExternal(out);
                 break;

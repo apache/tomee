@@ -23,7 +23,7 @@ import java.util.*;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.client.RequestMethods;
+import org.apache.openejb.client.RequestMethodConstants;
 
 public class AdminDaemon implements ServerService {
 
@@ -45,10 +45,10 @@ public class AdminDaemon implements ServerService {
             }
 
             switch (requestType) {
-                case RequestMethods.STOP_REQUEST_Quit:
-                case RequestMethods.STOP_REQUEST_quit:
-                case RequestMethods.STOP_REQUEST_Stop:
-                case RequestMethods.STOP_REQUEST_stop:
+                case RequestMethodConstants.STOP_REQUEST_Quit:
+                case RequestMethodConstants.STOP_REQUEST_quit:
+                case RequestMethodConstants.STOP_REQUEST_Stop:
+                case RequestMethodConstants.STOP_REQUEST_stop:
                     ServiceManager.getManager().stop();
 
             }

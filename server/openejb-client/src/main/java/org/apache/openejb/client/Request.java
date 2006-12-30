@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public interface Request extends Externalizable, RequestMethods {
+public interface Request extends Externalizable {
 
     public byte getRequestType();
 

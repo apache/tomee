@@ -188,7 +188,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 //      checkAuthorization(method);
 //      return container.invoke(deploymentID, method, args, primaryKey, getThreadSpecificSecurityIdentity());
 
-        EJBRequest req = new EJBRequest(EJB_OBJECT_BUSINESS_METHOD);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD);
 
         req.setMethodParameters(args);
         req.setMethodInstance(method);
@@ -212,13 +212,13 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 //          }
 //        }
         switch (res.getResponseCode()) {
-            case EJB_ERROR:
+            case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
-            case EJB_SYS_EXCEPTION:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
                 throw new SystemException((ThrowableArtifact) res.getResult());
-            case EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case EJB_OK:
+            case ResponseCodes.EJB_OK:
                 return res.getResult();
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());

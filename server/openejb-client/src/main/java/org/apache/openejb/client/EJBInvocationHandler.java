@@ -21,11 +21,10 @@ import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
 
-public abstract class EJBInvocationHandler implements InvocationHandler, Serializable, ResponseCodes, RequestMethods {
+public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
     protected static final Method EQUALS = getMethod(Object.class, "equals", null);
     protected static final Method HASHCODE = getMethod(Object.class, "hashCode", null);

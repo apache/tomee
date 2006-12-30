@@ -60,17 +60,17 @@ public class AuthenticationResponse implements Response {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         responseCode = in.readByte();
         switch (responseCode) {
-            case AUTH_GRANTED:
+            case ResponseCodes.AUTH_GRANTED:
                 identity = new ClientMetaData();
                 identity.readExternal(in);
                 break;
-            case AUTH_REDIRECT:
+            case ResponseCodes.AUTH_REDIRECT:
                 identity = new ClientMetaData();
                 identity.readExternal(in);
                 server = new ServerMetaData();
                 server.readExternal(in);
                 break;
-            case AUTH_DENIED:
+            case ResponseCodes.AUTH_DENIED:
                 break;
         }
     }
@@ -78,14 +78,14 @@ public class AuthenticationResponse implements Response {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeByte((byte) responseCode);
         switch (responseCode) {
-            case AUTH_GRANTED:
+            case ResponseCodes.AUTH_GRANTED:
                 identity.writeExternal(out);
                 break;
-            case AUTH_REDIRECT:
+            case ResponseCodes.AUTH_REDIRECT:
                 identity.writeExternal(out);
                 server.writeExternal(out);
                 break;
-            case AUTH_DENIED:
+            case ResponseCodes.AUTH_DENIED:
                 break;
         }
     }

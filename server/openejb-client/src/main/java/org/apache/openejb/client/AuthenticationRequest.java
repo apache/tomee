@@ -34,7 +34,7 @@ public class AuthenticationRequest implements Request {
     }
 
     public byte getRequestType() {
-        return AUTH_REQUEST;
+        return RequestMethodConstants.AUTH_REQUEST;
     }
 
     public Object getPrinciple() {

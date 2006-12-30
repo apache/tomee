@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.client;
 
-public interface RequestMethods {
+public class RequestMethodConstants {
+
+    private RequestMethodConstants() { }
 
     public static final byte EJB_REQUEST = (byte) 0;
     public static final byte JNDI_REQUEST = (byte) 1;

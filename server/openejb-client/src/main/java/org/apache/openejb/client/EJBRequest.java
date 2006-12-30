@@ -326,7 +326,7 @@ public class EJBRequest implements Request {
     }
 
     public byte getRequestType() {
-        return EJB_REQUEST;
+        return RequestMethodConstants.EJB_REQUEST;
     }
 
     public int getRequestMethod() {
@@ -364,40 +364,40 @@ public class EJBRequest implements Request {
     public String toString() {
         StringBuffer s = null;
         switch (requestMethod) {
-            case EJB_HOME_GET_EJB_META_DATA:
+            case RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA:
                 s = new StringBuffer("EJB_HOME.GET_EJB_META_DATA");
                 break;
-            case EJB_HOME_GET_HOME_HANDLE:
+            case RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE:
                 s = new StringBuffer("EJB_HOME.GET_HOME_HANDLE");
                 break;
-            case EJB_HOME_REMOVE_BY_HANDLE:
+            case RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE:
                 s = new StringBuffer("EJB_HOME.REMOVE_BY_HANDLE");
                 break;
-            case EJB_HOME_REMOVE_BY_PKEY:
+            case RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY:
                 s = new StringBuffer("EJB_HOME.REMOVE_BY_PKEY");
                 break;
-            case EJB_HOME_FIND:
+            case RequestMethodConstants.EJB_HOME_FIND:
                 s = new StringBuffer("EJB_HOME.FIND");
                 break;
-            case EJB_HOME_CREATE:
+            case RequestMethodConstants.EJB_HOME_CREATE:
                 s = new StringBuffer("EJB_HOME.CREATE");
                 break;
-            case EJB_OBJECT_GET_EJB_HOME:
+            case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
                 s = new StringBuffer("EJB_OBJECT.GET_EJB_HOME");
                 break;
-            case EJB_OBJECT_GET_HANDLE:
+            case RequestMethodConstants.EJB_OBJECT_GET_HANDLE:
                 s = new StringBuffer("EJB_OBJECT.GET_HANDLE");
                 break;
-            case EJB_OBJECT_GET_PRIMARY_KEY:
+            case RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY:
                 s = new StringBuffer("EJB_OBJECT.GET_PRIMARY_KEY");
                 break;
-            case EJB_OBJECT_IS_IDENTICAL:
+            case RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL:
                 s = new StringBuffer("EJB_OBJECT.IS_IDENTICAL");
                 break;
-            case EJB_OBJECT_REMOVE:
+            case RequestMethodConstants.EJB_OBJECT_REMOVE:
                 s = new StringBuffer("EJB_OBJECT.REMOVE");
                 break;
-            case EJB_OBJECT_BUSINESS_METHOD:
+            case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
                 s = new StringBuffer("EJB_OBJECT.BUSINESS_METHOD");
                 break;
         }
