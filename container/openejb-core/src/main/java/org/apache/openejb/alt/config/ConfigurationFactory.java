@@ -42,6 +42,7 @@ import org.apache.openejb.assembler.classic.IntraVmServerInfo;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ManagedConnectionFactoryInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.RoleMappingInfo;
@@ -81,7 +82,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     private final List<EntityContainerInfo> entityContainers = new ArrayList<EntityContainerInfo>();
     private final List<StatefulSessionContainerInfo> sfsbContainers = new ArrayList<StatefulSessionContainerInfo>();
     private final List<StatelessSessionContainerInfo> slsbContainers = new ArrayList<StatelessSessionContainerInfo>();
-
+    private final List<MdbContainerInfo> mdbContainers = new ArrayList<MdbContainerInfo>();
     private Map<String,ContainerInfo> containerTable = new HashMap<String,ContainerInfo>();
 
     private Properties props;
@@ -163,7 +164,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.containerSystem.entityContainers.addAll(entityContainers);
         sys.containerSystem.statefulContainers.addAll(sfsbContainers);
         sys.containerSystem.statelessContainers.addAll(slsbContainers);
-
+        sys.containerSystem.mdbContainers.addAll(mdbContainers);
+        
         List<AppInfo> appInfos = new ArrayList<AppInfo>();
         {
             AppInfo appInfo = new AppInfo();
@@ -478,8 +480,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 entityContainers.add((EntityContainerInfo) ci);
             } else if (c.getCtype().equals("MESSAGE")) {
                 c = (Container) initService(c, DEFAULT_MDB_CONTAINER);
-                ci = new EntityContainerInfo();
-                entityContainers.add((EntityContainerInfo) ci);
+                ci = new MdbContainerInfo();
+                mdbContainers.add((MdbContainerInfo) ci);
             } else {
                 throw new OpenEJBException("Unrecognized contianer type " + c.getCtype());
             }
@@ -507,6 +509,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         this.containers.addAll(sfsbContainers);
         this.containers.addAll(slsbContainers);
         this.containers.addAll(entityContainers);
+        this.containers.addAll(mdbContainers);
 
         for (ContainerInfo containerInfo : this.containers) {
             containerTable.put(containerInfo.containerName, containerInfo);

@@ -143,7 +143,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) {
+    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) throws OpenEJBException {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -162,8 +162,11 @@ public class AssemblerTool {
                             }
                             if (deploymentInfo.getHomeInterface() != null) {
                                 resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
-                            } else {
                             }
+                            if(deploymentInfo.getMdbInterface() != null) {
+                            	resolveMethods(methods, deploymentInfo.getMdbInterface(), methodInfo);
+                            }
+
                         } else if (methodInfo.methodIntf.equals("Home")) {
                             resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {

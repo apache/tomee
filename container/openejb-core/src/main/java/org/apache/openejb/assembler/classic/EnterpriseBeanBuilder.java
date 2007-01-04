@@ -152,6 +152,7 @@ class EnterpriseBeanBuilder {
 
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
+        deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
 
         // interceptors
         InterceptorBuilder interceptorBuilder = new InterceptorBuilder(defaultInterceptors, bean);
@@ -165,8 +166,8 @@ class EnterpriseBeanBuilder {
             deployment.setPrePassivate(getCallback(ejbClass, statefulBeanInfo.prePassivate));
             deployment.setPostActivate(getCallback(ejbClass, statefulBeanInfo.postActivate));
         }
-        
-        if (ejbType.isSession()) {
+
+        if (ejbType.isSession() || ejbType.isMessageDriven()) {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));
         }
 
@@ -228,6 +229,34 @@ class EnterpriseBeanBuilder {
         }
         return callback;
     }
+
+    private Method getTimeout(Class ejbClass, NamedMethodInfo info) {
+        Method timeout = null;
+        try {
+            if (info.methodParams != null) {
+                List<Class> parameterTypes = new ArrayList<Class>();
+
+                for (String paramType : info.methodParams) {
+                    try {
+                        parameterTypes.add(Class.forName(paramType));
+                    } catch (ClassNotFoundException cnfe) {
+                        throw (IllegalStateException) new IllegalStateException("Parameter class could not be loaded for type " + paramType).initCause(cnfe);
+                    }
+                }
+
+                try {
+                    timeout = ejbClass.getMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
+                } catch (NoSuchMethodException e) {
+                    throw (IllegalStateException) new IllegalStateException("Timeout Callback method does not exist: " + ejbClass.getName() + "." + info.methodName).initCause(e);
+                }
+            }
+        } catch (Exception e) {
+            warnings.add(e);
+        }
+
+        return timeout;
+    }
+
 
     private Class loadClass(String className, String messageCode) throws OpenEJBException {
         Class clazz = load(className, messageCode);

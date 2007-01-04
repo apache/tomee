@@ -48,6 +48,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public String transactionType;
     public JndiEncInfo jndiEnc;
+    public NamedMethodInfo timeoutMethod;
+    
     public final List<SecurityRoleReferenceInfo> securityRoleReferences = new ArrayList<SecurityRoleReferenceInfo>();
 
     public final List<LifecycleCallbackInfo> postConstruct = new ArrayList<LifecycleCallbackInfo>();
@@ -56,4 +58,5 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public boolean excludeDefaultInterceptors;
     public final List<InterceptorInfo> classInterceptors = new ArrayList<InterceptorInfo>();
     public final List<MethodInterceptorInfo> methodInterceptors = new ArrayList<MethodInterceptorInfo>();
+    
 }

@@ -32,6 +32,7 @@ import javax.ejb.SessionSynchronization;
 import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.ejb.MessageDrivenBean;
+import javax.ejb.TimedObject;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
@@ -41,6 +42,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
@@ -51,6 +53,7 @@ import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessBeanManagedTxPolicy;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
+import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TxManditory;
 import org.apache.openejb.core.transaction.TxNever;
@@ -58,8 +61,8 @@ import org.apache.openejb.core.transaction.TxNotSupported;
 import org.apache.openejb.core.transaction.TxRequired;
 import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.core.transaction.TxSupports;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 /**
@@ -81,6 +84,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Method preDestroy;
     private Method prePassivate;
     private Method postActivate;
+    private Method ejbTimeout;
 
     private boolean isBeanManagedTransaction;
     private boolean isReentrant;
@@ -173,6 +177,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 throw new SystemException(e);
             }
         }
+        if (TimedObject.class.isAssignableFrom(beanClass)) {
+            try {
+                this.ejbTimeout = beanClass.getMethod("ejbTimeout");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
@@ -184,7 +195,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         if (MessageDrivenBean.class.isAssignableFrom(beanClass)){
             try {
-                this.preDestroy = MessageDrivenBean.class.getMethod("ejbRemove");
+                this.preDestroy = beanClass.getMethod("ejbRemove");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        if (TimedObject.class.isAssignableFrom(beanClass)) {
+            try {
+                this.ejbTimeout = beanClass.getMethod("ejbTimeout");
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }
@@ -232,6 +250,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     policy = new StatefulBeanManagedTxPolicy((TransactionContainer) container);
                 } else if (componentType == BeanType.STATELESS) {
                     policy = new StatelessBeanManagedTxPolicy((TransactionContainer) container);
+                } else if (componentType == BeanType.MESSAGE_DRIVEN) {
+                    policy = new MessageDrivenBeanManagedTxPolicy((TransactionContainer) container);
                 }
             } else if (componentType == BeanType.STATEFUL) {
                 policy = new TxNotSupported((TransactionContainer) container);
@@ -416,7 +436,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         securityRoleReferenceMap.put(securityRoleReference, physicalRoles);
     }
 
-    public void setMethodTransactionAttribute(Method method, String transAttribute) {
+    public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {
         Byte byteValue = null;
         TransactionPolicy policy = null;
 
@@ -475,6 +495,24 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             } else {
 
                 policy = new StatefulContainerManagedTxPolicy(policy);
+            }
+        }
+
+        /**
+           Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
+           bean message listener methods. The use of the other transaction attributes is not meaningful
+           for message-driven bean message listener methods because there is no pre-existing client transaction
+           context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
+         */
+        if (componentType.isMessageDriven() && !isBeanManagedTransaction && container instanceof TransactionContainer) {
+            if (policy.policyType != policy.NotSupported && policy.policyType != policy.Required) {
+                if (method.equals(this.ejbTimeout) && policy.policyType == policy.RequiresNew) {
+                    // do nothing. This is allowed as the timer callback method for a message driven bean
+                    // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
+                } else {
+                    throw new OpenEJBException("The transaction attribute " + policy.policyToString() + "is not supported for the method "
+                                               + method.getName() + " of the Message Driven Bean " + beanClass.getName());
+                }
             }
         }
         methodTransactionAttributes.put(method, byteValue);
@@ -659,7 +697,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     beanMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                     createMethod = beanMethod;
                     /*
-                    Entity beans have a ejbCreate and ejbPostCreate methods with matching 
+                    Entity beans have a ejbCreate and ejbPostCreate methods with matching
                     parameters. This code maps that relationship.
                     */
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
@@ -843,5 +881,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public String getJarPath() {
         return jarPath;
+    }
+
+    public Method getEjbTimeout() {
+        return ejbTimeout;
+    }
+
+    public void setEjbTimeout(Method ejbTimeout) {
+        this.ejbTimeout = ejbTimeout;
     }
 }

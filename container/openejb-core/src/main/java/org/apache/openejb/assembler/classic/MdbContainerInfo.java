@@ -14,23 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb;
+package org.apache.openejb.assembler.classic;
 
-/**
- * @version $Rev$ $Date$
- */
-public enum BeanType {
-    STATEFUL, STATELESS, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN;
+public class MdbContainerInfo extends ContainerInfo {
 
-    public boolean isEntity(){
-        return this == CMP_ENTITY || this == BMP_ENTITY;
-    }
-
-    public boolean isSession(){
-        return this == STATEFUL || this == STATELESS;
-    }
-
-    public boolean isMessageDriven() {
-        return this == MESSAGE_DRIVEN;
+    public MdbContainerInfo() {
+        containerType = MDB_CONTAINER;
     }
 }

@@ -224,7 +224,7 @@ public class Assembler implements org.apache.openejb.spi.Assembler {
         return wrappedContainers;
     }
 
-    protected void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, MethodTransactionInfo[] transactionInfos) {
+    protected void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, MethodTransactionInfo[] transactionInfos) throws OpenEJBException {
         if (deploymentInfo.isBeanManagedTransaction()) {
             // deployments with bean managed transactions don't have transaction attributes
             return;

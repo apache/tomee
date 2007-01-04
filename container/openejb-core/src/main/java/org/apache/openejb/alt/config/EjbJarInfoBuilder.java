@@ -30,6 +30,7 @@ import org.apache.openejb.assembler.classic.MethodInfo;
 import org.apache.openejb.assembler.classic.MethodInterceptorInfo;
 import org.apache.openejb.assembler.classic.MethodPermissionInfo;
 import org.apache.openejb.assembler.classic.MethodTransactionInfo;
+import org.apache.openejb.assembler.classic.NamedMethodInfo;
 import org.apache.openejb.assembler.classic.QueryInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
@@ -463,8 +464,15 @@ public class EjbJarInfoBuilder {
 
         copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
         copyCallbacks(mdb.getPreDestroy(), bean.preDestroy);
-
+        NamedMethodInfo timeoutMethodInfo = new NamedMethodInfo();
+        if (mdb.getTimeoutMethod() != null) {
+            timeoutMethodInfo.methodName = mdb.getTimeoutMethod().getMethodName();
+            if (mdb.getTimeoutMethod().getMethodParams() != null) {
+                timeoutMethodInfo.methodParams = mdb.getTimeoutMethod().getMethodParams().getMethodParam();
+            }
+        }
         EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
+        bean.timeoutMethod = timeoutMethodInfo;
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
                     + mdb.getEjbName()

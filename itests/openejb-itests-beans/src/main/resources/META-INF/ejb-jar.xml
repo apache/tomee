@@ -909,7 +909,7 @@
 		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
 		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
 	    </persistence-unit-ref>
-            
+
         </session>
 
         <!--
@@ -1010,7 +1010,7 @@
 		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
 		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
 	    </persistence-unit-ref>
-            
+
         </session>
 
         <!--
@@ -1573,7 +1573,7 @@
 		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
 		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
 	    </persistence-unit-ref>
-            
+
         </session>
 
         <!--
@@ -1794,7 +1794,7 @@
 		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
 		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
 	    </persistence-unit-ref>
-            
+
         </entity>
 
         <!--
@@ -1898,7 +1898,7 @@
 		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
 		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
 	    </persistence-unit-ref>
-            
+
         </entity>
 
         <!--
@@ -1948,19 +1948,19 @@
 
         <message-driven>
             <description>
-            Blah blah blah . . . 
+            Blah blah blah . . .
             </description>
             <ejb-name>BasicMdbBean</ejb-name>
             <ejb-class>org.apache.openejb.test.mdb.BasicMdbBean</ejb-class>
             <messaging-type>javax.jms.MessageListener</messaging-type>
-            <transaction-type>Container</transaction-type>            
+            <transaction-type>Container</transaction-type>
             <message-destination-type>javax.jms.Queue</message-destination-type>
             <message-destination-link>SendReceiveQueue</message-destination-link>
             <activation-config>
-           		<activation-property>
-                	<activation-config-property-name>destination</activation-config-property-name>
+                <activation-config-property>
+                    <activation-config-property-name>destination</activation-config-property-name>
                     <activation-config-property-value>SendReceiveQueue</activation-config-property-value>
-                </activation-property>
+                </activation-config-property>
             </activation-config>
         </message-driven>
     </enterprise-beans>
@@ -2271,6 +2271,12 @@
             </method>
             <trans-attribute>Never</trans-attribute>
         </container-transaction>
-
+        <container-transaction>
+            <method>
+                <ejb-name>BasicMdbBean</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
     </assembly-descriptor>
 </ejb-jar>

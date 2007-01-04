@@ -16,28 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.Properties;
 import java.util.List;
-import java.util.ArrayList;
 
-public abstract class ContainerInfo extends InfoObject {
 
-    public static final int ENTITY_CONTAINER = 0;
-    
-    public static final int MDB_CONTAINER = 1;
+public class NamedMethodInfo extends InfoObject {
 
-    public static final int STATEFUL_SESSION_CONTAINER = 2;
-
-    public static final int STATELESS_SESSION_CONTAINER = 3;
-
-    public String description;
-    public String displayName;
-    public String containerName;
-    public String codebase;
-    public String className;
-    public final List<EnterpriseBeanInfo> ejbeans = new ArrayList<EnterpriseBeanInfo>();
-    public Properties properties;
-    public final List<String> constructorArgs = new ArrayList<String>();
-
-    public int containerType;
+    public String methodName;
+    public List<String> methodParams;
+    public String id;
 }

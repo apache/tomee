@@ -25,6 +25,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.log4j.Logger;
@@ -41,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
-public class MdbContainer implements Container {
+public class MdbContainer implements Container, TransactionContainer {
     protected static final Logger logger = Logger.getLogger("OpenEJB");
     private static final Object[] NO_ARGS = new Object[0];
 
@@ -316,6 +317,7 @@ public class MdbContainer implements Container {
         }
     }
 
+
     private static class MdbCallContext {
         private Method deliveryMethod;
         private ClassLoader adapterClassLoader;
@@ -335,5 +337,9 @@ public class MdbContainer implements Container {
     private void restoreAdapterClassLoader(MdbCallContext mdbCallContext) {
         Thread.currentThread().setContextClassLoader(mdbCallContext.adapterClassLoader);
         mdbCallContext.adapterClassLoader = null;
+    }
+
+    public void discardInstance(Object instance, ThreadContext context) {
+        // TODO Auto-generated method stub
     }
 }
