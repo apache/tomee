@@ -15,34 +15,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmp;
+package org.apache.openejb.core.cmp.cmp2;
 
-public class AllowedOperationsCmp2Bean_JPA extends AllowedOperationsCmp2Bean {
-    public Integer id;
-    private String firstName;
-    private String lastName;
+//
+// WARNING: Do not refactor this class.  It is used by the Cmp2Generator.
+//
+public interface Cmp2Entity {
+    Object OpenEJB_getPrimaryKey();
 
-    public Integer getId() {
-        return id;
-    }
+    void OpenEJB_deleted();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    Object OpenEJB_addCmr(String name, Object bean);
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+    void OpenEJB_removeCmr(String name, Object value);
 }

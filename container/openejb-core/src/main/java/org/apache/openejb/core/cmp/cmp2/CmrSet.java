@@ -15,10 +15,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.cmp.jpa;
+package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.cmp.CmpUtil;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
@@ -32,26 +31,18 @@ import java.util.Collections;
 
 public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> extends AbstractSet<Proxy> {
     private final EntityBean source;
-    private final Class<? extends EntityBean> sourceType;
     private final String sourceProperty;
-    private final CmpWrapperFactory sourceWrapperFactory;
     private final CoreDeploymentInfo relatedInfo;
-    private final Class<Bean> relatedType;
     private final String relatedProperty;
-    private final CmpWrapperFactory relatedWrapperFactory;
     private final CollectionRef<Bean> relatedBeanRef;
     private Class relatedLocal;
 
-    public CmrSet(EntityBean source, String sourceProperty, CmpWrapperFactory sourceWrapperFactory, CoreDeploymentInfo relatedInfo, Class<Bean> relatedType, String relatedProperty, CmpWrapperFactory relatedWrapperFactory, CollectionRef<Bean> relatedBeanRef) {
+    public CmrSet(EntityBean source, String sourceProperty, CoreDeploymentInfo relatedInfo, String relatedProperty, CollectionRef<Bean> relatedBeanRef) {
         this.source = source;
         this.sourceProperty = sourceProperty;
-        this.sourceWrapperFactory = sourceWrapperFactory;
         this.relatedInfo = relatedInfo;
-        this.relatedType = relatedType;
         this.relatedProperty = relatedProperty;
-        this.relatedWrapperFactory = relatedWrapperFactory;
         this.relatedBeanRef = relatedBeanRef;
-        this.sourceType = source.getClass();
 
         relatedLocal = relatedInfo.getLocalInterface();
     }
@@ -73,10 +64,10 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     }
 
     public boolean addAll(Collection<? extends Proxy> c) {
-        Set entityBeans = getEntityBeans(c, relatedLocal);
+        Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
-        for (Iterator iterator = entityBeans.iterator(); iterator.hasNext();) {
-            Bean bean = (Bean) iterator.next();
+        for (Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext();) {
+            Bean bean = iterator.next();
             changed = add(bean) || changed;
         }
         return changed;
@@ -100,12 +91,12 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         boolean changed = getRelatedBeans(true).add(newEntity);
         if (changed) {
             // set the back reference in the new related bean
-            Object oldBackRef = getCmpWrapper(newEntity).addCmr(relatedProperty, source);
+            Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
             // to clear the back reference in that old bean
             if (oldBackRef != null) {
-                getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newEntity);
+                toCmp2Entity(oldBackRef).OpenEJB_removeCmr(sourceProperty, newEntity);
             }
         }
         return changed;
@@ -119,7 +110,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         Bean entity = getEntityBean((EJBLocalObject) o);
         boolean changed = entity != null && getRelatedBeans(false).remove(entity);
         if (changed) {
-            getCmpWrapper(entity).removeCmr(relatedProperty, source);
+            toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
         }
         return changed;
     }
@@ -132,7 +123,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
             Bean entity = iterator.next();
             if (!entityBeans.contains(entity)) {
                 iterator.remove();
-                getCmpWrapper(entity).removeCmr(relatedProperty, source);
+                toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
                 changed = true;
             }
         }
@@ -155,7 +146,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
 
             public void remove() {
                 iterator.remove();
-                getCmpWrapper(currentEntity).removeCmr(relatedProperty, source);
+                toCmp2Entity(currentEntity).OpenEJB_removeCmr(relatedProperty, source);
             }
         };
     }
@@ -163,27 +154,27 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     private Proxy getEjbProxy(Bean entity) throws EJBException {
         if (entity == null) return null;
 
-        Proxy ejbProxy = (Proxy) CmpUtil.getEjbProxy(relatedInfo, entity);
+        Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
     private Bean getEntityBean(EJBLocalObject proxy) {
         if (proxy == null) return null;
 
-        Bean bean = (Bean) CmpUtil.getEntityBean(proxy);
+        Bean bean = Cmp2Util.<Bean>getEntityBean(proxy);
         return bean;
     }
 
-    private static Set<Object> getEntityBeans(Collection<?> proxies, Class type) {
+    private static <Bean extends EntityBean> Set<Bean> getEntityBeans(Collection<?> proxies, Class type) {
         if (proxies == null) return null;
 
-        Set<Object> entities = new HashSet<Object>();
+        Set<Bean> entities = new HashSet<Bean>();
         for (Object value : proxies) {
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalArgumentException("Object is not an instance of " + type.getName() +
                                     ": " + (value == null ? "null" : value.getClass().getName()));
             }
-            EntityBean entity = CmpUtil.getEntityBean((EJBLocalObject) value);
+            Bean entity = Cmp2Util.<Bean>getEntityBean((EJBLocalObject) value);
             if (entity == null) {
                 throw new IllegalArgumentException("Entity has been deleted");
             }
@@ -192,14 +183,8 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return entities;
     }
 
-    private CmpWrapper getCmpWrapper(Object object) {
-        if (object == null) return null;
-        if (sourceType.isInstance(object)) {
-            return sourceWrapperFactory.createCmpEntityBean(object);
-        } else if (relatedType.isInstance(object)) {
-            return relatedWrapperFactory.createCmpEntityBean(object);
-        }
-        throw new IllegalArgumentException("Unknown cmp bean type " + object.getClass().getName());
+    private Cmp2Entity toCmp2Entity(Object object) {
+        return (Cmp2Entity) object;
     }
 
     private Collection<Bean> getRelatedBeans(boolean mustExist) {

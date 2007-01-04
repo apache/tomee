@@ -17,47 +17,46 @@
  */
 package org.apache.openejb.core.cmp;
 
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.Container;
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Enumerator;
-import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TransactionContext;
-import org.apache.openejb.core.transaction.TxRequired;
-import org.apache.openejb.core.transaction.TxManditory;
-import org.apache.openejb.core.transaction.TxRequiresNew;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.Operations;
-import org.apache.openejb.core.entity.EntityContext;
-
-import javax.ejb.EntityBean;
-import javax.ejb.RemoveException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBObject;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.CreateException;
+import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
 import javax.ejb.ObjectNotFoundException;
+import javax.ejb.RemoveException;
 import javax.transaction.TransactionManager;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Field;
-import java.rmi.RemoteException;
-import java.rmi.NoSuchObjectException;
-import java.util.List;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Map;
-import java.util.HashMap;
+
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.entity.EntityContext;
+import org.apache.openejb.core.transaction.TransactionContainer;
+import org.apache.openejb.core.transaction.TransactionContext;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TxManditory;
+import org.apache.openejb.core.transaction.TxRequired;
+import org.apache.openejb.core.transaction.TxRequiresNew;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Enumerator;
 
 /**
  * @org.apache.xbean.XBean element="cmpContainer"
@@ -125,19 +124,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        // try to set deploymentInfo static field on bean implementation class
-        try {
-            Field field = deploymentInfo.getBeanClass().getField("deploymentInfo");
-            field.set(null, deploymentInfo);
-        } catch (Exception e) {
-            // ignore
-        }
-
         Object deploymentId = deploymentInfo.getDeploymentID();
-
-        deploymentsById.put(deploymentId, deploymentInfo);
-        deploymentsByClass.put(deploymentInfo.getBeanClass(), deploymentInfo);
-        deploymentInfo.setContainer(this);
 
         Object cmpEngineKey = deploymentInfo.getJarPath();
         if (cmpEngineKey == null) {
@@ -151,6 +138,19 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
         cmpEngine.deploy(deploymentInfo);
         cmpEnginesByDeployment.put(deploymentId, cmpEngine);
+
+        // try to set deploymentInfo static field on bean implementation class
+        try {
+            Field field = deploymentInfo.getCmpBeanImpl().getField("deploymentInfo");
+            field.set(null, deploymentInfo);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // add to indexes
+        deploymentsById.put(deploymentId, deploymentInfo);
+        deploymentsByClass.put(deploymentInfo.getCmpBeanImpl(), deploymentInfo);
+        deploymentInfo.setContainer(this);
     }
 
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
@@ -203,6 +203,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
+        ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(deployInfo.getClassLoader());
         try {
 
             boolean authorized = securityService.isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
@@ -254,6 +256,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 obtains from the DeploymentInfo object associated with the current thread context.
             */
             ThreadContext.setThreadContext(oldCallContext);
+            Thread.currentThread().setContextClassLoader(oldCL);
         }
     }
 
@@ -263,10 +266,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private EntityBean createNewInstance(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         try {
-            EntityBean bean = (EntityBean) deploymentInfo.getBeanClass().newInstance();
+            EntityBean bean = (EntityBean) deploymentInfo.getCmpBeanImpl().newInstance();
             return bean;
         } catch (Exception e) {
-            throw new EJBException("Unable to create new entity bean instance");
+            throw new EJBException("Unable to create new entity bean instance " + deploymentInfo.getCmpBeanImpl(), e);
         }
     }
 
@@ -383,14 +386,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             return entityBean.getClass().getField("deleted").getBoolean(entityBean);
         } catch (NoSuchFieldException e) {
             return false;
-        } catch (Exception e) {
-            throw new EJBException(e);
-        }
-    }
-
-    private void setDeleted(EntityBean entityBean, boolean deleted) {
-        try {
-            entityBean.getClass().getField("deleted").setBoolean(entityBean, deleted);
         } catch (Exception e) {
             throw new EJBException(e);
         }

@@ -15,34 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmp;
+package org.apache.openejb.core.cmp.cmp2;
 
-public class BasicCmp2Bean_JPA extends BasicCmp2Bean {
-    public Integer id;
-    private String firstName;
-    private String lastName;
+import javax.ejb.EntityBean;
 
-    public Integer getId() {
-        return id;
-    }
+import org.apache.openejb.core.cmp.KeyGenerator;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+public class Cmp2KeyGenerator implements KeyGenerator {
+    public Object getPrimaryKey(EntityBean entity) {
+        Cmp2Entity cmp2Entity = (Cmp2Entity) entity;
+        Object primaryKey = cmp2Entity.OpenEJB_getPrimaryKey();
+        return primaryKey;
     }
 }

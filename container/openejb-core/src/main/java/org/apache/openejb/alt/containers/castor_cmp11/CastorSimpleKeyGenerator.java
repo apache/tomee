@@ -15,13 +15,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity;
+package org.apache.openejb.alt.containers.castor_cmp11;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.SimpleKeyGenerator;
+import org.exolab.castor.persist.spi.Complex;
 
-public interface SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject> {
-    public Proxy get(Bean entity) throws EJBException;
-    public Bean set(Bean oldValue, Proxy newValue) throws EJBException;
+public class CastorSimpleKeyGenerator extends SimpleKeyGenerator implements CastorKeyGenerator {
+    public CastorSimpleKeyGenerator(Class beanClass, String pkField) throws OpenEJBException {
+        super(beanClass, pkField);
+    }
+
+    public Complex getJdoComplex(Object primaryKey) {
+        Complex complex = new Complex(primaryKey);
+        return complex;
+    }
+
+    public boolean isKeyComplex() {
+        return false;
+    }
 }

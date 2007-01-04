@@ -144,7 +144,7 @@
         </executions>
         <configuration>
           <namespace>http://openejb.apache.org/schemas/core</namespace>
-          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType</excludedClasses>
+          <excludedClasses>org.apache.openejb.alt.config.ejb,org.apache.openejb.util.io,org.apache.openejb.InterfaceType,org.apache.openejb.BeanType,org.apache.openejb.core.cmp.cmp2.CmrStyle</excludedClasses>
         </configuration>
       </plugin>
     </plugins>

@@ -15,11 +15,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.cmp.jpa;
+package org.apache.openejb.core.cmp.cmp2;
 
 import java.util.Collection;
 
-public class CollectionRef<E> {
+public final class CollectionRef<E> {
     private Collection<E> collection;
 
     public Collection<E> get() {

@@ -15,79 +15,68 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.cmp.jpa;
+package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.test.entity.SingleValuedCmr;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
 
-public class SingleValuedCmrImpl<Bean extends EntityBean, Proxy extends EJBLocalObject> implements SingleValuedCmr<Bean, Proxy> {
+//
+// WARNING: Do not refactor this class.  It is used by the Cmp2Generator.
+//
+public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject> {
     private final EntityBean source;
-    private final Class<? extends EntityBean> sourceType;
     private final String sourceProperty;
-    private final Class<Bean> relatedType;
     private final String relatedProperty;
     private final CoreDeploymentInfo relatedInfo;
-    private final CmpWrapperFactory sourceWrapperFactory;
-    private final CmpWrapperFactory relatedWrapperFactory;
 
-    public SingleValuedCmrImpl(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
+    public SingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
         if (sourceProperty == null) throw new NullPointerException("sourceProperty is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
         if (relatedProperty == null) throw new NullPointerException("relatedProperty is null");
         this.source = source;
         this.sourceProperty = sourceProperty;
-        this.relatedType = relatedType;
         this.relatedProperty = relatedProperty;
-        this.sourceType = source.getClass();
 
-        this.relatedInfo = CmpUtil.getDeploymentInfo(relatedType);
-
-        sourceWrapperFactory = new CmpWrapperFactory(sourceType);
-        relatedWrapperFactory = new CmpWrapperFactory(relatedType);
+        this.relatedInfo = Cmp2Util.getDeploymentInfo(relatedType);
     }
 
     public Proxy get(Bean entity) throws EJBException {
         if (entity == null) return null;
 
-        Proxy ejbProxy = (Proxy) CmpUtil.getEjbProxy(relatedInfo, entity);
+        Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
+    public void deleted(Bean oldBean) throws EJBException {
+        set(oldBean, null);
+    }
+
     public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
-        Bean newBean = (Bean) CmpUtil.getEntityBean(newValue);
+        Bean newBean = Cmp2Util.<Bean>getEntityBean(newValue);
 
         // clear back reference in the old related bean
         if (oldBean != null) {
-            getCmpWrapper(oldBean).removeCmr(relatedProperty, source);
+            toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
         }
 
         if (newValue != null) {
             // set the back reference in the new related bean
-            Object oldBackRef = getCmpWrapper(newBean).addCmr(relatedProperty, source);
+            Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
             // to clear the back reference in that old bean
             if (oldBackRef != null) {
-                getCmpWrapper(oldBackRef).removeCmr(sourceProperty, newBean);
+                toCmp2Entity(oldBackRef).OpenEJB_removeCmr(sourceProperty, newBean);
             }
         }
         return newBean;
     }
 
-    private CmpWrapper getCmpWrapper(Object object) {
-        if (object == null) return null;
-        if (sourceType.isInstance(object)) {
-            return sourceWrapperFactory.createCmpEntityBean(object);
-        } else if (relatedType.isInstance(object)) {
-            return relatedWrapperFactory.createCmpEntityBean(object);
-        }
-        throw new IllegalArgumentException("Unknown cmp bean type " + object.getClass().getName());
+    private Cmp2Entity toCmp2Entity(Object object) {
+        return (Cmp2Entity) object;
     }
-
 }

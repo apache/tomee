@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +41,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
-import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
+import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.stateful.SessionSynchronizationTxPolicy;
@@ -215,10 +214,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public byte getTransactionAttribute(Method method) {
         Byte byteWrapper = methodTransactionAttributes.get(method);
-        if (byteWrapper == null)
+        if (byteWrapper == null) {
             return TX_NOT_SUPPORTED;// non remote or home interface method
-        else
+        } else {
             return byteWrapper;
+        }
     }
 
     public TransactionPolicy getTransactionPolicy(Method method) {
@@ -244,7 +244,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
             methodTransactionPolicies.put(method, policy);
         }
-        if (policy == null) policy = new NoTransactionPolicy();
+        if (policy == null) {
+            policy = new NoTransactionPolicy();
+        }
         return policy ;
     }
 
@@ -263,7 +265,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
     public Collection<String> getAuthorizedRoles(Method method) {
         Collection<String> roleSet = methodPermissions.get(method);
-        if (roleSet == null) return Collections.emptySet();
+        if (roleSet == null) {
+            return Collections.emptySet();
+        }
         return roleSet;
     }
 
@@ -723,12 +727,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     protected String extractHomeBeanMethodName(String methodName) {
-        if (methodName.equals("create"))
+        if (methodName.equals("create")) {
             return "ejbCreate";
-        else if (methodName.startsWith("find"))
+        } else if (methodName.startsWith("find")) {
             return "ejbF" + methodName.substring(1);
-        else
+        } else {
             return "ejbH" + methodName.substring(1);
+        }
     }
 
     public Method getCreateMethod() {
@@ -776,20 +781,28 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     // CMP specific data
     //
 
+    private boolean cmp2;
     private KeyGenerator keyGenerator;
-    private Field primKeyField;
+    private String primaryKeyField;
     private String[] cmrFields;
+    private Class cmpBeanImpl;
 
     private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
 
-    public Field getPrimaryKeyField() {
-        return primKeyField;
+    public boolean isCmp2() {
+        return cmp2;
     }
 
-    public void setPrimKeyField(String fieldName) throws java.lang.NoSuchFieldException {
-        if (componentType == BeanType.CMP_ENTITY && !java.lang.reflect.Modifier.isAbstract(beanClass.getModifiers())) {
-            primKeyField = beanClass.getField(fieldName);
-        }
+    public void setCmp2(boolean cmp2) {
+        this.cmp2 = cmp2;
+    }
+
+    public String getPrimaryKeyField() {
+        return primaryKeyField;
+    }
+
+    public void setPrimaryKeyField(String primaryKeyField) {
+        this.primaryKeyField = primaryKeyField;
     }
 
     public String [] getCmrFields() {
@@ -814,6 +827,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public String getQuery(Method queryMethod) {
         return queryMethodMap.get(queryMethod);
+    }
+
+    public Class getCmpBeanImpl() {
+        return cmpBeanImpl;
+    }
+
+    public void setCmpBeanImpl(Class cmpBeanImpl) {
+        this.cmpBeanImpl = cmpBeanImpl;
     }
 
     public void setJarPath(String jarPath) {

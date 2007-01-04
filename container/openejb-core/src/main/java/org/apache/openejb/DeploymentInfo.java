@@ -67,7 +67,7 @@ public interface DeploymentInfo {
 
     public Class getBusinessRemoteInterface();
 
-    public java.lang.reflect.Field getPrimaryKeyField();
+    public String getPrimaryKeyField();
 
     public boolean isReentrant();
 

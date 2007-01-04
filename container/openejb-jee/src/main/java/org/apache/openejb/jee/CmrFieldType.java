@@ -28,6 +28,16 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * must be either: java.util.Collection or java.util.Set.
  */
 public enum CmrFieldType {
-    @XmlEnumValue("java.util.Collection") COLLECTION,
-    @XmlEnumValue("java.util.Set") SET
+    @XmlEnumValue("java.util.Collection") COLLECTION("java.util.Collection"),
+    @XmlEnumValue("java.util.Set") SET("java.util.Set");
+
+    private final String value;
+
+    CmrFieldType(String value) {
+       this.value = value;
+   }
+
+    public String toString() {
+        return value;
+    }
 }

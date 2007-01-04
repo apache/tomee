@@ -14,24 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core.cmp;
 
-import java.util.List;
-import java.util.ArrayList;
-
-public class EntityBeanInfo extends EnterpriseBeanInfo {
-
-    public String primKeyClass;
-    public String primKeyField;
-    public String persistenceType;
-    public String reentrant;
-    public final List<String> cmpFieldNames = new ArrayList<String>();
-    public final List<CmrFieldInfo> cmrFields = new ArrayList<CmrFieldInfo>();
-    public int cmpVersion;
-    public final List<QueryInfo> queries = new ArrayList<QueryInfo>();
-
-    public EntityBeanInfo() {
-        type = ENTITY;
-    }
-
+public interface KeyGenerator {
+    Object getPrimaryKey(javax.ejb.EntityBean bean);
 }

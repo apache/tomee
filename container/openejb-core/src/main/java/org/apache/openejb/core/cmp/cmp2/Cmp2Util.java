@@ -15,13 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.cmp;
+package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.cmp.CmpContainer;
+import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
 import org.apache.openejb.ProxyInfo;
 
 import javax.ejb.EJBLocalObject;
@@ -29,7 +30,7 @@ import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalHome;
 import java.lang.reflect.Field;
 
-public class CmpUtil {
+public class Cmp2Util {
     public static Object getPrimaryKey(CoreDeploymentInfo deploymentInfo, EntityBean entity){
         if (entity == null) return null;
 
@@ -39,7 +40,7 @@ public class CmpUtil {
         return primaryKey;
     }
 
-    public static EntityBean getEntityBean(EJBLocalObject proxy) {
+    public static <Bean extends EntityBean> Bean getEntityBean(EJBLocalObject proxy) {
         if (proxy == null) return null;
 
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
@@ -50,11 +51,11 @@ public class CmpUtil {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
         CmpContainer container = (CmpContainer) handler.container;
-        EntityBean entity = (EntityBean) container.getEjbInstance(handler.deploymentInfo, handler.primaryKey);
+        Bean entity = (Bean) container.getEjbInstance(handler.deploymentInfo, handler.primaryKey);
         return entity;
     }
 
-    public static EJBLocalObject getEjbProxy(CoreDeploymentInfo deploymentInfo, EntityBean entity){
+    public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(CoreDeploymentInfo deploymentInfo, EntityBean entity){
         if (entity == null) return null;
 
         // build the primary key
@@ -77,7 +78,7 @@ public class CmpUtil {
         EntityEjbHomeHandler handler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
 
         // create the proxy
-        EJBLocalObject proxy = (EJBLocalObject) handler.createProxy(proxyInfo);
+        Proxy proxy = (Proxy) handler.createProxy(proxyInfo);
         return proxy;
     }
 

@@ -16,36 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.EnvProps;
-import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.javaagent.Agent;
-import org.apache.openejb.core.ConnectorReference;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.TransactionManagerWrapper;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
-import org.apache.openejb.persistence.PersistenceDeployer;
-import org.apache.openejb.persistence.PersistenceDeployerException;
-import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
-import org.apache.openejb.core.TemporaryClassLoader;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.OpenEJBErrorHandler;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.xbean.finder.ResourceFinder;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
-
-import javax.naming.Context;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -54,8 +28,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
+import javax.naming.Context;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.TransactionManager;
+
+import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.EnvProps;
+import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.ConnectorReference;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.TransactionManagerWrapper;
+import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
+import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.persistence.PersistenceDeployer;
+import org.apache.openejb.persistence.PersistenceDeployerException;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OpenEJBErrorHandler;
+import org.apache.openejb.util.SafeToolkit;
+import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -267,8 +268,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 jars.add(toUrl(jarPath));
             }
 
+            // Generate the cmp2 concrete subclasses
+            Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo);
+            File generatedJar = cmp2Builder.getJarFile();
+            if (generatedJar != null) {
+                jars.add(generatedJar.toURL());
+            }
+
             // Create the class loader
-            ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), org.apache.openejb.OpenEJB.class.getClassLoader());
+            ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded

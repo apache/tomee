@@ -19,7 +19,6 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
@@ -101,7 +100,7 @@ class EnterpriseBeanBuilder {
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, new File(bean.codebase).getPath());
         IvmContext root = (IvmContext) jndiEncBuilder.build();
 
-        DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, ejbClass.getClassLoader(), root);
+        DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
             deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType);
@@ -174,6 +173,7 @@ class EnterpriseBeanBuilder {
         if (ejbType.isEntity()) {
             EntityBeanInfo entity = (EntityBeanInfo) bean;
 
+            deployment.setCmp2(entity.cmpVersion == 2);
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
             if (ejbType == BeanType.CMP_ENTITY) {
@@ -194,11 +194,7 @@ class EnterpriseBeanBuilder {
                 deployment.setCmrFields(entity.cmpFieldNames.toArray(new String[]{}));
 
                 if (entity.primKeyField != null) {
-                    try {
-                        deployment.setPrimKeyField(entity.primKeyField);
-                    } catch (NoSuchFieldException e) {
-                        throw new SystemException("Can not set prim-key-field on deployment " + entity.ejbDeploymentId, e);
-                    }
+                    deployment.setPrimaryKeyField(entity.primKeyField);
                 }
             }
         }

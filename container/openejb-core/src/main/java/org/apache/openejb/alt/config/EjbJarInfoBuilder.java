@@ -35,6 +35,7 @@ import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
+import org.apache.openejb.assembler.classic.CmrFieldInfo;
 import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
@@ -61,6 +62,9 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.EjbRelation;
+import org.apache.openejb.jee.EjbRelationshipRole;
+import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.ArrayList;
@@ -68,6 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * @version $Revision$ $Date$
@@ -147,6 +152,10 @@ public class EjbJarInfoBuilder {
             }
         }
 
+        if (jar.getEjbJar().getRelationships() != null) {
+            initRelationships(jar, infos);
+        }
+
         if (!"tomcat-webapp".equals(SystemInstance.get().getProperty("openejb.loader"))) {
 //            try {
 //                File jarFile = new File(jar.getJarURI());
@@ -157,6 +166,58 @@ public class EjbJarInfoBuilder {
 //            }
         }
         return ejbJar;
+    }
+
+    private void initRelationships(EjbModule jar, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
+        for (EjbRelation ejbRelation : jar.getEjbJar().getRelationships().getEjbRelation()) {
+            Iterator<EjbRelationshipRole> iterator = ejbRelation.getEjbRelationshipRole().iterator();
+            EjbRelationshipRole left = iterator.next();
+            EjbRelationshipRole right = iterator.next();
+
+            // left role info
+            CmrFieldInfo leftCmrFieldInfo = initRelationshipRole(left, infos);
+            CmrFieldInfo rightCmrFieldInfo = initRelationshipRole(right, infos);
+            leftCmrFieldInfo.mappedBy = rightCmrFieldInfo;
+            rightCmrFieldInfo.mappedBy = leftCmrFieldInfo;
+        }
+    }
+
+    private CmrFieldInfo initRelationshipRole(EjbRelationshipRole role, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
+        CmrFieldInfo cmrFieldInfo = new CmrFieldInfo();
+
+        // find the entityBeanInfo info for this role
+        String ejbName = role.getRelationshipRoleSource().getEjbName();
+        EnterpriseBeanInfo enterpriseBeanInfo = infos.get(ejbName);
+        if (enterpriseBeanInfo == null) {
+            throw new OpenEJBException("Relation role source ejb not found " + ejbName);
+        }
+        if (!(enterpriseBeanInfo instanceof EntityBeanInfo)) {
+            throw new OpenEJBException("Relation role source ejb is not an entity bean " + ejbName);
+        }
+        EntityBeanInfo entityBeanInfo = (EntityBeanInfo) enterpriseBeanInfo;
+        cmrFieldInfo.roleSource = entityBeanInfo;
+
+        // RoleName: this may be null
+        cmrFieldInfo.roleName = role.getEjbRelationshipRoleName();
+
+        // CmrFieldName: is null for uni-directional relationships
+        if (role.getCmrField() != null) {
+            cmrFieldInfo.fieldName = role.getCmrField().getCmrFieldName();
+            // CollectionType: java.util.Collection or java.util.Set
+            if (role.getCmrField().getCmrFieldType() != null) {
+                cmrFieldInfo.fieldType = role.getCmrField().getCmrFieldType().toString();
+            }
+        }
+
+        // CascadeDelete
+        cmrFieldInfo.cascadeDelete = role.getCascadeDelete() != null;
+        // Multiplicity: one or many
+        cmrFieldInfo.many = role.getMultiplicity() == Multiplicity.MANY;
+
+        // add the field to the entityBean
+        entityBeanInfo.cmrFields.add(cmrFieldInfo);
+
+        return cmrFieldInfo;
     }
 
     private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar, Map<String, EnterpriseBeanInfo> beanInfos) throws OpenEJBException {

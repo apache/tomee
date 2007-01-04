@@ -17,20 +17,21 @@
  */
 package org.apache.openejb.test.entity.cmr.onetomany;
 
-import org.apache.openejb.test.entity.SingleValuedCmr;
-import org.apache.openejb.test.entity.CmrFactory;
+import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
+import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 
-public class BBean_JPA extends BBean {
+public class ExampleBBean_JPA extends BBean implements Cmp2Entity {
     public static Object deploymentInfo;
-    public transient boolean deleted;
-    public Integer field1;
+    private transient boolean deleted;
+    private Integer field1;
     private String field2;
     private Integer field3;
     private String field4;
-    private ABean_JPA a;
-    private SingleValuedCmr<ABean_JPA, ALocal> aCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, "a", ABean_JPA.class, "b");
-    private ABean_JPA aNonCascade;
-    private SingleValuedCmr<ABean_JPA, ALocal> aNonCascadeCmr = CmrFactory.cmrFactory.createSingleValuedCmr(this, "aNonCascade", ABean_JPA.class, "bNonCascade");
+    private ExampleABean_JPA a;
+    private SingleValuedCmr aCmr = new SingleValuedCmr(this, "a", ExampleABean_JPA.class, "b");
+
+    private ExampleABean_JPA aNonCascade;
+    private SingleValuedCmr aNonCascadeCmr = new SingleValuedCmr(this, "aNonCascade", ExampleABean_JPA.class, "bNonCascade");
 
     public Integer getField1() {
         return field1;
@@ -65,43 +66,49 @@ public class BBean_JPA extends BBean {
     }
 
     public ALocal getA() {
-        return aCmr.get(a);
+        return (ALocal) aCmr.get(a);
     }
 
     public void setA(ALocal a) {
-        this.a = aCmr.set(this.a, a);
+        this.a = (ExampleABean_JPA) aCmr.set(this.a, a);
     }
 
     public ALocal getANonCascade() {
-        return aNonCascadeCmr.get(aNonCascade);
+        return (ALocal) aNonCascadeCmr.get(aNonCascade);
     }
 
     public void setANonCascade(ALocal aNonCascade) {
-        this.aNonCascade = aNonCascadeCmr.set(this.aNonCascade, aNonCascade);
+        this.aNonCascade = (ExampleABean_JPA) aNonCascadeCmr.set(this.aNonCascade, aNonCascade);
+    }
+
+    public Object OpenEJB_getPrimaryKey() {
+        return field1;
     }
 
     public void OpenEJB_deleted() {
         if (deleted) return;
         deleted = true;
 
-        aCmr.set(a, null);
-        aNonCascadeCmr.set(aNonCascade, null);
+        aCmr.deleted(a);
+        aNonCascadeCmr.deleted(aNonCascade);
     }
 
     public Object OpenEJB_addCmr(String name, Object bean) {
         if (deleted) return null;
 
-        Object oldValue;
         if ("a".equals(name)) {
-            oldValue = a;
-            a = (ABean_JPA) bean;
-        } else if ("aNonCascade".equals(name)) {
-            oldValue = aNonCascade;
-            aNonCascade = (ABean_JPA) bean;
-        } else {
-            throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
+            Object oldValue = a;
+            a = (ExampleABean_JPA) bean;
+            return oldValue;
         }
-        return oldValue;
+
+        if ("aNonCascade".equals(name)) {
+            Object oldValue = aNonCascade;
+            aNonCascade = (ExampleABean_JPA) bean;
+            return oldValue;
+        }
+
+        throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 
     public void OpenEJB_removeCmr(String name, Object bean) {
@@ -109,10 +116,13 @@ public class BBean_JPA extends BBean {
 
         if ("a".equals(name)) {
             a = null;
-        } else if ("aNonCascade".equals(name)) {
-            aNonCascade = null;
-        } else {
-            throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
+            return;
         }
+
+        if ("aNonCascade".equals(name)) {
+            aNonCascade = null;
+            return;
+        }
+        throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 }

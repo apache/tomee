@@ -20,6 +20,8 @@ package org.apache.openejb.core.cmp.jpa;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.Set;
+import java.util.HashSet;
 import javax.ejb.CreateException;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
@@ -32,13 +34,15 @@ import javax.persistence.Query;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.apache.openejb.SystemException;
-import org.apache.openejb.alt.containers.castor_cmp11.KeyGenerator;
-import org.apache.openejb.alt.containers.castor_cmp11.KeyGeneratorFactory;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
+import org.apache.openejb.core.cmp.SimpleKeyGenerator;
+import org.apache.openejb.core.cmp.ComplexKeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
 import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
@@ -53,12 +57,32 @@ public class JpaCmpEngine implements CmpEngine {
 
     private final Map<Transaction, EntityManager> transactionData = new WeakHashMap<Transaction, EntityManager>();
 
+    private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
+        protected Set<EntityBean> initialValue() {
+            return new HashSet<EntityBean>();
+        }
+    };
+
     public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) {
         this.cmpCallback = cmpCallback;
         this.transactionManager = transactionManager;
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
+    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        Class beanClass = deploymentInfo.getBeanClass();
+        if (deploymentInfo.isCmp2()) {
+            String beanClassName = beanClass.getName();
+            String cmpBeanImplName = beanClassName + "_JPA";
+            ClassLoader classLoader = deploymentInfo.getClassLoader();
+            try {
+                Class<?> cmpBeanImpl = classLoader.loadClass(cmpBeanImplName);
+                deploymentInfo.setCmpBeanImpl(cmpBeanImpl);
+            } catch (ClassNotFoundException e) {
+                throw new OpenEJBException("CMP 2.x implementation class not found " + cmpBeanImplName);
+            }
+        } else {
+            deploymentInfo.setCmpBeanImpl(beanClass);
+        }
         configureKeyGenerator(deploymentInfo);
     }
 
@@ -88,9 +112,14 @@ public class JpaCmpEngine implements CmpEngine {
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
         // TODO verify that extract primary key requires a flush followed by a merge
-        entityManager.persist(bean);
-        entityManager.flush();
-        bean = entityManager.merge(bean);
+        creating.get().add(bean);
+        try {
+            entityManager.persist(bean);
+            entityManager.flush();
+            bean = entityManager.merge(bean);
+        } finally {
+            creating.get().remove(bean);
+        }
 
         // extract the primary key from the bean
         KeyGenerator kg = deploymentInfo.getKeyGenerator();
@@ -101,7 +130,7 @@ public class JpaCmpEngine implements CmpEngine {
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getBeanClass();
+        Class<?> beanClass = deploymentInfo.getCmpBeanImpl();
         EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, primaryKey);
         return bean;
@@ -109,7 +138,7 @@ public class JpaCmpEngine implements CmpEngine {
 
     public void removeBean(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getBeanClass();
+        Class<?> beanClass = deploymentInfo.getCmpBeanImpl();
 
         EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
@@ -153,13 +182,17 @@ public class JpaCmpEngine implements CmpEngine {
         return results;
     }
 
-    private void configureKeyGenerator(CoreDeploymentInfo di) throws SystemException {
-        try {
-            KeyGenerator kg = KeyGeneratorFactory.createKeyGenerator(di);
-            di.setKeyGenerator(kg);
-        } catch (Exception e) {
-            logger.error("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
-            throw new SystemException("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
+    private void configureKeyGenerator(CoreDeploymentInfo di) throws OpenEJBException {
+        if (di.isCmp2()) {
+            di.setKeyGenerator(new Cmp2KeyGenerator());
+        } else {
+            String primaryKeyField = di.getPrimaryKeyField();
+            Class cmpBeanImpl = di.getCmpBeanImpl();
+            if (primaryKeyField != null) {
+                di.setKeyGenerator(new SimpleKeyGenerator(cmpBeanImpl, primaryKeyField));
+            } else {
+                di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
+            }
         }
     }
 
@@ -242,8 +275,10 @@ public class JpaCmpEngine implements CmpEngine {
 
         public void beforeStore(LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
-            Object bean = lifecycleEvent.getSource();
-            cmpCallback.ejbStore((EntityBean) bean);
+            EntityBean bean = (EntityBean) lifecycleEvent.getSource();
+            if (!creating.get().contains(bean)) {
+                cmpCallback.ejbStore(bean);
+            }
         }
 
         public void afterAttach(LifecycleEvent lifecycleEvent) {

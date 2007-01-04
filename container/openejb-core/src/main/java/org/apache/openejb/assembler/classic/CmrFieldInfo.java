@@ -15,34 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmp;
+package org.apache.openejb.assembler.classic;
 
-public class RmiIiopCmp2Bean_JPA extends RmiIiopCmp2Bean {
-    public Integer id;
-    private String firstName;
-    private String lastName;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+public class CmrFieldInfo extends InfoObject {
+    public EntityBeanInfo roleSource;
+    public String roleName;
+    public String fieldName;
+    public String fieldType;
+    public boolean cascadeDelete;
+    public boolean many;
+    public CmrFieldInfo mappedBy;
 }

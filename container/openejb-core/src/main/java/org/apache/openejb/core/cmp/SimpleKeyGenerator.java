@@ -15,34 +15,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmp;
+package org.apache.openejb.core.cmp;
 
-public class EncCmp2Bean_JPA extends EncCmp2Bean {
-    public Integer id;
-    private String firstName;
-    private String lastName;
+import java.lang.reflect.Field;
+import javax.ejb.EntityBean;
 
-    public Integer getId() {
-        return id;
+import org.apache.openejb.OpenEJBException;
+
+public class SimpleKeyGenerator extends AbstractKeyGenerator {
+    private final Field pkField;
+
+    public SimpleKeyGenerator(Class beanClass, String pkField) throws OpenEJBException {
+        this.pkField = getField(beanClass, pkField);
+        if (!isValidPkField(this.pkField)) {
+            throw new OpenEJBException("Invalid primray key field: " + pkField);
+        }
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public Object getPrimaryKey(EntityBean bean) {
+        Object value = getFieldValue(pkField, bean);
+        return value;
     }
 }

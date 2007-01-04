@@ -24,6 +24,9 @@
     <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
     <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <!--<properties>-->
+      <!--<property name="openjpa.Log" value="DefaultLevel=TRACE"/>-->
+    <!--</properties>-->
   </persistence-unit>
   <persistence-unit name="openjpa-test-unit">
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>

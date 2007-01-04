@@ -17,32 +17,6 @@
  */
 package org.apache.openejb.alt.containers.castor_cmp11;
 
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.cmp.CmpCallback;
-import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.util.Logger;
-import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.JDOManager;
-import org.exolab.castor.jdo.OQLQuery;
-import org.exolab.castor.jdo.PersistenceException;
-import org.exolab.castor.jdo.QueryResults;
-import org.exolab.castor.mapping.AccessMode;
-import org.exolab.castor.persist.spi.CallbackInterceptor;
-import org.exolab.castor.persist.spi.InstanceFactory;
-
-import javax.ejb.CreateException;
-import javax.ejb.DuplicateKeyException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityBean;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -56,6 +30,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import javax.ejb.CreateException;
+import javax.ejb.DuplicateKeyException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.cmp.CmpCallback;
+import org.apache.openejb.core.cmp.CmpEngine;
+import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.util.Logger;
+import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.JDOManager;
+import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
+import org.exolab.castor.jdo.QueryResults;
+import org.exolab.castor.mapping.AccessMode;
+import org.exolab.castor.persist.spi.CallbackInterceptor;
+import org.exolab.castor.persist.spi.InstanceFactory;
 
 public class CastorCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
@@ -316,7 +317,7 @@ public class CastorCmpEngine implements CmpEngine {
     }
 
     private Object getCastorPrimaryKey(ThreadContext callContext, Object primaryKey) {
-        KeyGenerator kg = callContext.getDeploymentInfo().getKeyGenerator();
+        CastorKeyGenerator kg = (CastorKeyGenerator) callContext.getDeploymentInfo().getKeyGenerator();
         if (kg.isKeyComplex()) {
             return kg.getJdoComplex(primaryKey);
         } else {
@@ -348,8 +349,13 @@ public class CastorCmpEngine implements CmpEngine {
 
     private void configureKeyGenerator(CoreDeploymentInfo di) throws SystemException {
         try {
-            KeyGenerator kg = KeyGeneratorFactory.createKeyGenerator(di);
-            di.setKeyGenerator(kg);
+            String primaryKeyField = di.getPrimaryKeyField();
+            Class beanClass = di.getBeanClass();
+            if (primaryKeyField != null) {
+                di.setKeyGenerator(new CastorSimpleKeyGenerator(beanClass, primaryKeyField));
+            } else {
+                di.setKeyGenerator(new CastorComplexKeyGenerator(beanClass, di.getPrimaryKeyClass()));
+            }
         } catch (Exception e) {
             logger.error("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);
             throw new SystemException("Unable to create KeyGenerator for deployment id = " + di.getDeploymentID(), e);

@@ -91,11 +91,7 @@ public class CmpDeploymentFactory extends AbstractDeploymentFactory {
         deploymentInfo.setCmrFields(cmpFields == null? new String[0] : cmpFields);
         deploymentInfo.setIsReentrant(reentrant);
         if (primKeyField != null) {
-            try {
-                deploymentInfo.setPrimKeyField(primKeyField);
-            } catch (NoSuchFieldException e) {
-                throw new SystemException("Can not set prim-key-field on deployment " + id, e);
-            }
+            deploymentInfo.setPrimaryKeyField(primKeyField);
         }
 
         Class home = deploymentInfo.getHomeInterface();

@@ -15,16 +15,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity;
+package org.apache.openejb.core.cmp.cmp2;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import java.util.Set;
+import org.objectweb.asm.Type;
 
-public interface MultiValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject> {
-    Set<Proxy> get(Set<Bean> others);
+public class CmpField {
+    private final String name;
+    private final Type type;
 
-    void set(Set<Bean> oldValue, Set<Proxy> newValue);
+    public CmpField(String name, Type type) {
+        this.name = name;
+        this.type = type;
+    }
 
-    void deleted(Set<Bean> relatedBeans);
+    public String getName() {
+        return name;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getDescriptor() {
+        return type.getDescriptor();
+    }
 }

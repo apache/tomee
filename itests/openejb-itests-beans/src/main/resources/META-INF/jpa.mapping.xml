@@ -46,7 +46,7 @@
     </attributes>
   </entity>
 
-  <entity class="org.apache.openejb.test.entity.cmp.BasicCmpBean" access="FIELD">
+  <entity class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -66,7 +66,7 @@
     </attributes>
   </entity>
 
-  <entity name="BasicCmp2Bean" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA" access="PROPERTY">
+  <entity name="BasicCmp2Bean" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -105,7 +105,7 @@
     </attributes>
   </entity>
 
-  <entity name="AllowedOperationsCmp2Bean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA" access="PROPERTY">
+  <entity name="AllowedOperationsCmp2Bean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -161,7 +161,7 @@
     </attributes>
   </entity>
 
-  <entity name="EncCmp2Bean" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA" access="PROPERTY">
+  <entity name="EncCmp2Bean" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -198,7 +198,7 @@
     </attributes>
   </entity>
 
-  <entity name="RmiIiopCmp2Bean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA" access="PROPERTY">
+  <entity name="RmiIiopCmp2Bean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA">
     <description>Simple Entity Bean</description>
 
     <table name="entity"/>
@@ -216,7 +216,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean_JPA" access="PROPERTY">
+  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean_JPA">
     <table name="OneOwning"/>
     <attributes>
       <id name="id">
@@ -228,7 +228,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean_JPA" access="PROPERTY">
+  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean_JPA">
     <table name="OneInverse"/>
     <attributes>
       <id name="id">
@@ -237,7 +237,7 @@
     </attributes>
   </entity>
 
-  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean_JPA" access="PROPERTY">
+  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean_JPA">
     <table name="ManyOwning"/>
     <attributes>
       <id name="id">

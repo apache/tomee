@@ -18,14 +18,12 @@
 
 package org.apache.openejb.jee;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -44,44 +42,44 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationType", propOrder = {
-        "content"
+        "description",
+        "ejbRelationName",
+        "ejbRelationshipRole"
         })
 public class EjbRelation {
+    @XmlElement(required = true)
+    protected List<Text> description;
+    @XmlElement(name = "ejb-relation-name")
+    protected String ejbRelationName;
 
-    @XmlElementRefs({
-    @XmlElementRef(name = "ejb-relation-name", namespace = "http://java.sun.com/xml/ns/javaee", type = JAXBElement.class),
-    @XmlElementRef(name = "ejb-relationship-role", namespace = "http://java.sun.com/xml/ns/javaee", type = JAXBElement.class),
-    @XmlElementRef(name = "description", namespace = "http://java.sun.com/xml/ns/javaee", type = JAXBElement.class)
-            })
-    protected List<JAXBElement<?>> content;
+    @XmlElement(name = "ejb-relationship-role", required = true)
+    protected List<EjbRelationshipRole> ejbRelationshipRole;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
 
-    /**
-     * Gets the rest of the content model.
-     * <p/>
-     * <p/>
-     * You are getting this "catch-all" property because of the following reason:
-     * The field name "EjbRelationshipRole" is used by two different parts of a schema. See:
-     * line 766 of openejb3/container/openejb-jee/src/main/xsd/ejb-jar_3_0.xsd
-     * line 764 of openejb3/container/openejb-jee/src/main/xsd/ejb-jar_3_0.xsd
-     * <p/>
-     * To get rid of this property, apply a property customization to one
-     * of both of the following declarations to change their names:
-     * Gets the value of the content property.
-     * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link EjbRelationshipRole }{@code >}
-     * {@link JAXBElement }{@code <}{@link Text }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     */
-    public List<JAXBElement<?>> getContent() {
-        if (content == null) {
-            content = new ArrayList<JAXBElement<?>>();
+    public List<Text> getDescription() {
+        if (description == null) {
+            description = new ArrayList<Text>();
         }
-        return this.content;
+        return this.description;
+    }
+
+    public String getEjbRelationName() {
+        return ejbRelationName;
+    }
+
+    public void setEjbRelationName(String value) {
+        this.ejbRelationName = value;
+    }
+
+    public List<EjbRelationshipRole> getEjbRelationshipRole() {
+        if (ejbRelationshipRole == null) {
+            ejbRelationshipRole = new ArrayList<EjbRelationshipRole>();
+        }
+        return ejbRelationshipRole;
     }
 
     public String getId() {
