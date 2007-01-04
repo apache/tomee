@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 <!DOCTYPE databases PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
-                           "http://castor.exolab.org/mapping.dtd">
+        "http://castor.exolab.org/mapping.dtd">
 
 <!--
 ======================================================
@@ -25,9 +25,9 @@ Mapping for Container-Managed Persistence EntityBeans
 in the Default CMP Container
 ======================================================
 
-Referenced By: 
-    conf/cmp_global_tx_database.xml 
-    conf/cmp_local_tx_database.xml  
+Referenced By:
+    conf/cmp_global_tx_database.xml
+    conf/cmp_local_tx_database.xml
 
 This is the mapping file for the Default CMP Container
  defined in the conf/service-jar.xml file.
@@ -53,83 +53,83 @@ Both point to this mapping file:
   <class name="org.apache.openejb.test.entity.cmp.BasicCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
-    
-    <map-to table="entity" />
-    
-    <field name="primaryKey" type="integer" direct="true" >
+
+    <map-to table="entity"/>
+
+    <field name="primaryKey" type="integer" direct="true">
       <sql name="id" type="integer"/>
     </field>
-    
-    <field name="firstName" type="string" direct="true" >
-      <sql name="first_name" type="char" dirty="check" />
+
+    <field name="firstName" type="string" direct="true">
+      <sql name="first_name" type="char" dirty="check"/>
     </field>
-  
-    <field name="lastName" type="string" direct="true" >
-      <sql name="last_name" type="char" dirty="check" />
+
+    <field name="lastName" type="string" direct="true">
+      <sql name="last_name" type="char" dirty="check"/>
     </field>
-  
-  
+
+
   </class>
-  
+
   <!--  Mapping for AllowedOperationsCmpBean  -->
   <class name="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
-    
-    <map-to table="entity" />
-    
-    <field name="primaryKey" type="integer" direct="true" >
+
+    <map-to table="entity"/>
+
+    <field name="primaryKey" type="integer" direct="true">
       <sql name="id" type="integer"/>
     </field>
-    
-    <field name="firstName" type="string" direct="true" >
-      <sql name="first_name" type="char" dirty="check" />
+
+    <field name="firstName" type="string" direct="true">
+      <sql name="first_name" type="char" dirty="check"/>
     </field>
-  
-    <field name="lastName" type="string" direct="true" >
-      <sql name="last_name" type="char" dirty="check" />
+
+    <field name="lastName" type="string" direct="true">
+      <sql name="last_name" type="char" dirty="check"/>
     </field>
-  
-  
+
+
   </class>
-  
+
   <class name="org.apache.openejb.test.entity.cmp.EncCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
-    
-    <map-to table="entity" />
-    
-    <field name="primaryKey" type="integer" direct="true" >
+
+    <map-to table="entity"/>
+
+    <field name="primaryKey" type="integer" direct="true">
       <sql name="id" type="integer"/>
     </field>
-    
-    <field name="firstName" type="string" direct="true" >
-      <sql name="first_name" type="char" dirty="check" />
+
+    <field name="firstName" type="string" direct="true">
+      <sql name="first_name" type="char" dirty="check"/>
     </field>
-  
-    <field name="lastName" type="string" direct="true" >
-      <sql name="last_name" type="char" dirty="check" />
+
+    <field name="lastName" type="string" direct="true">
+      <sql name="last_name" type="char" dirty="check"/>
     </field>
-  
-  
+
+
   </class>
 
   <class name="org.apache.openejb.test.entity.cmp.ContextLookupCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
 
-    <map-to table="entity" />
+    <map-to table="entity"/>
 
-    <field name="primaryKey" type="integer" direct="true" >
+    <field name="primaryKey" type="integer" direct="true">
       <sql name="id" type="integer"/>
     </field>
 
-    <field name="firstName" type="string" direct="true" >
-      <sql name="first_name" type="char" dirty="check" />
+    <field name="firstName" type="string" direct="true">
+      <sql name="first_name" type="char" dirty="check"/>
     </field>
 
-    <field name="lastName" type="string" direct="true" >
-      <sql name="last_name" type="char" dirty="check" />
+    <field name="lastName" type="string" direct="true">
+      <sql name="last_name" type="char" dirty="check"/>
     </field>
 
 
@@ -139,22 +139,22 @@ Both point to this mapping file:
   <class name="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean"
          identity="primaryKey">
     <description>Simple Entity Bean</description>
-    
-    <map-to table="entity" />
-    
-    <field name="primaryKey" type="integer" direct="true" >
+
+    <map-to table="entity"/>
+
+    <field name="primaryKey" type="integer" direct="true">
       <sql name="id" type="integer"/>
     </field>
-    
-    <field name="firstName" type="string" direct="true" >
-      <sql name="first_name" type="char" dirty="check" />
+
+    <field name="firstName" type="string" direct="true">
+      <sql name="first_name" type="char" dirty="check"/>
     </field>
-  
-    <field name="lastName" type="string" direct="true" >
-      <sql name="last_name" type="char" dirty="check" />
+
+    <field name="lastName" type="string" direct="true">
+      <sql name="last_name" type="char" dirty="check"/>
     </field>
-  
-  
+
+
   </class>
 
 

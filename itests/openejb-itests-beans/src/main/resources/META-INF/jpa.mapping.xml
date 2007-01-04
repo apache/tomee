@@ -22,9 +22,9 @@
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
 
   <!--<table-generator name="id_gen"-->
-      <!--pk-column-name="name"-->
-      <!--value-column-name="value"-->
-      <!--pk-column-value="entity">-->
+  <!--pk-column-name="name"-->
+  <!--value-column-name="value"-->
+  <!--pk-column-value="entity">-->
   <!--</table-generator>-->
 
   <entity class="org.apache.openejb.test.entity.cmp2.Employee">
@@ -244,7 +244,7 @@
         <column name="col_id"/>
       </id>
       <basic name="field1">
-        <column name="col_field1"/>                                                                                 
+        <column name="col_field1"/>
       </basic>
     </attributes>
   </entity>
@@ -288,7 +288,7 @@
       <one-to-one name="a">
         <join-column name="FKA1"/>
         <cascade>
-          <cascade-all/> 
+          <cascade-all/>
         </cascade>
       </one-to-one>
     </attributes>

@@ -17,175 +17,217 @@
     limitations under the License.
 -->
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
-	<ejb-deployment ejb-name="BasicCmpBean" deployment-id="client/tests/entity/cmp/BasicCmpHome" container-id="Default CMP Container">
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <query>
-        <query-method>
-            <method-name>findByLastName</method-name>
-            <method-params>
-                <method-param>java.lang.String</method-param>
-            </method-params>
-        </query-method>
-        <object-ql>
-            SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1
-        </object-ql>
-    </query>
-    <query>
-        <query-method>
-            <method-name>findEmptyCollection</method-name>
-            <method-params/>
-        </query-method>
-        <object-ql>
-            SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'
-        </object-ql>
-    </query>
-  </ejb-deployment>
-  <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome" container-id="Default CMP Container">
+  <ejb-deployment ejb-name="BasicCmpBean" deployment-id="client/tests/entity/cmp/BasicCmpHome"
+                  container-id="Default CMP Container">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
     <query>
-        <query-method>
-            <method-name>findByLastName</method-name>
-            <method-params>
-                <method-param>java.lang.String</method-param>
-            </method-params>
-        </query-method>
-        <object-ql>
-            SELECT o FROM BasicCmp2Bean o WHERE o.lastName = ?1
-        </object-ql>
+      <query-method>
+        <method-name>findByLastName</method-name>
+        <method-params>
+          <method-param>java.lang.String</method-param>
+        </method-params>
+      </query-method>
+      <object-ql>
+        SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1
+      </object-ql>
     </query>
     <query>
-        <query-method>
-            <method-name>findEmptyCollection</method-name>
-            <method-params/>
-        </query-method>
-        <object-ql>
-            SELECT o FROM BasicCmp2Bean o WHERE 'true' = 'false'
-        </object-ql>
+      <query-method>
+        <method-name>findEmptyCollection</method-name>
+        <method-params/>
+      </query-method>
+      <object-ql>
+        SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'
+      </object-ql>
     </query>
   </ejb-deployment>
-	<ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome" container-id="Default CMP Container">
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <query>
-        <query-method>
-            <method-name>findByLastName</method-name>
-            <method-params>
-                <method-param>java.lang.String</method-param>
-            </method-params>
-        </query-method>
-        <object-ql>
-            SELECT o FROM AllowedOperationsCmpBean o WHERE o.lastName = ?1
-        </object-ql>
-    </query>
-    <query>
-        <query-method>
-            <method-name>findEmptyCollection</method-name>
-            <method-params/>
-        </query-method>
-        <object-ql>
-            SELECT o FROM AllowedOperationsCmpBean o WHERE 'true' = 'false'
-        </object-ql>
-    </query>
-	</ejb-deployment>
-  <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome" container-id="Default CMP Container">
+  <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome"
+                  container-id="Default CMP Container">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
     <query>
-        <query-method>
-            <method-name>findByLastName</method-name>
-            <method-params>
-                <method-param>java.lang.String</method-param>
-            </method-params>
-        </query-method>
-        <object-ql>
-            SELECT o FROM AllowedOperationsCmp2Bean o WHERE o.lastName = ?1
-        </object-ql>
+      <query-method>
+        <method-name>findByLastName</method-name>
+        <method-params>
+          <method-param>java.lang.String</method-param>
+        </method-params>
+      </query-method>
+      <object-ql>
+        SELECT o FROM BasicCmp2Bean o WHERE o.lastName = ?1
+      </object-ql>
     </query>
     <query>
-        <query-method>
-            <method-name>findEmptyCollection</method-name>
-            <method-params/>
-        </query-method>
-        <object-ql>
-            SELECT o FROM AllowedOperationsCmp2Bean o WHERE 'true' = 'false'
-        </object-ql>
+      <query-method>
+        <method-name>findEmptyCollection</method-name>
+        <method-params/>
+      </query-method>
+      <object-ql>
+        SELECT o FROM BasicCmp2Bean o WHERE 'true' = 'false'
+      </object-ql>
     </query>
   </ejb-deployment>
-	<ejb-deployment ejb-name="EncCmpBean" deployment-id="client/tests/entity/cmp/EncBean" container-id="Default CMP Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome"
+                  container-id="Default CMP Container">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+    <query>
+      <query-method>
+        <method-name>findByLastName</method-name>
+        <method-params>
+          <method-param>java.lang.String</method-param>
+        </method-params>
+      </query-method>
+      <object-ql>
+        SELECT o FROM AllowedOperationsCmpBean o WHERE o.lastName = ?1
+      </object-ql>
+    </query>
+    <query>
+      <query-method>
+        <method-name>findEmptyCollection</method-name>
+        <method-params/>
+      </query-method>
+      <object-ql>
+        SELECT o FROM AllowedOperationsCmpBean o WHERE 'true' = 'false'
+      </object-ql>
+    </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncCmp2Bean" deployment-id="client/tests/entity/cmp2/EncBean" container-id="Default CMP Container">
+  <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome"
+                  container-id="Default CMP Container">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+    <query>
+      <query-method>
+        <method-name>findByLastName</method-name>
+        <method-params>
+          <method-param>java.lang.String</method-param>
+        </method-params>
+      </query-method>
+      <object-ql>
+        SELECT o FROM AllowedOperationsCmp2Bean o WHERE o.lastName = ?1
+      </object-ql>
+    </query>
+    <query>
+      <query-method>
+        <method-name>findEmptyCollection</method-name>
+        <method-params/>
+      </query-method>
+      <object-ql>
+        SELECT o FROM AllowedOperationsCmp2Bean o WHERE 'true' = 'false'
+      </object-ql>
+    </query>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="EncCmpBean" deployment-id="client/tests/entity/cmp/EncBean"
+                  container-id="Default CMP Container">
     <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
   </ejb-deployment>
-	<ejb-deployment ejb-name="ContextLookupCmpBean" deployment-id="client/tests/entity/cmp/ContextLookupCmpBean" container-id="Default CMP Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    </ejb-deployment>
-	<ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
-	<ejb-deployment ejb-name="Cmp2 RMI-IIOP Bean" deployment-id="client/tests/entity/cmp2/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="EncCmp2Bean" deployment-id="client/tests/entity/cmp2/EncBean"
+                  container-id="Default CMP Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupCmpBean" deployment-id="client/tests/entity/cmp/ContextLookupCmpBean"
+                  container-id="Default CMP Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="Cmp2 RMI-IIOP Bean" deployment-id="client/tests/entity/cmp2/RMI-over-IIOP/EJBHome"
+                  container-id="Default CMP Container"/>
 
   <!-- CMR Test Beans -->
-	<ejb-deployment ejb-name="OneToOneA" deployment-id="client/tests/entity/cmr/oneToOne/AHome" container-id="Default CMP Container"/>
-	<ejb-deployment ejb-name="OneToOneB" deployment-id="client/tests/entity/cmr/oneToOne/BHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="OneToManyA" deployment-id="client/tests/entity/cmr/oneToMany/AHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="OneToManyB" deployment-id="client/tests/entity/cmr/oneToMany/BHome" container-id="Default CMP Container"/>
-	<ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome" container-id="Default CMP Container"/>
-	<ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome" container-id="Default CMP Container"/>
-	<ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToOneA" deployment-id="client/tests/entity/cmr/oneToOne/AHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToOneB" deployment-id="client/tests/entity/cmr/oneToOne/BHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToManyA" deployment-id="client/tests/entity/cmr/oneToMany/AHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneToManyB" deployment-id="client/tests/entity/cmr/oneToMany/BHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome"
+                  container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome"
+                  container-id="Default CMP Container"/>
 
-	<ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome" container-id="Default Stateful Container"/>
-	<ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome" container-id="Default Stateful Container"/>
-	<ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome" container-id="Default Stateful Container"/>
-	<ejb-deployment ejb-name="BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedTransactionTests/EJBHome" container-id="Default Stateful Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="EncStatefulBean" deployment-id="client/tests/stateful/EncBean" container-id="Default Stateful Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean" container-id="Default Stateful Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome" container-id="Default Stateful Container"/>
-	<ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome" container-id="Default Stateless Container">
-		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="BasicStatelessPojoBean" deployment-id="client/tests/stateless/BasicStatelessPojoHome" container-id="Default Stateless Container">
-		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="Basic BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedBasicStatelessHome" container-id="Default Stateless Container">
-		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="DatabaseBean" deployment-id="client/tools/DatabaseHome" container-id="Default Stateless Container">
-		<resource-link res-ref-name="database" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedTransactionTests/EJBHome" container-id="Default Stateless Container">
-		<resource-link res-ref-name="database" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="EncStatelessBean" deployment-id="client/tests/stateless/EncBean" container-id="Default Stateless Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="ContextLookupStatelessBean" deployment-id="client/tests/stateless/ContextLookupStatelessBean" container-id="Default Stateless Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="ContextLookupStatelessPojoBean" deployment-id="client/tests/stateless/ContextLookupStatelessPojoBean" container-id="Default Stateless Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome" container-id="Default Stateless Container"/>
-	<ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome" container-id="Default BMP Container">
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="AOBasicBmpBean" deployment-id="client/tests/entity/bmp/allowed_operations/EntityHome" container-id="Default BMP Container">
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-		<resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="EncBmpBean" deployment-id="client/tests/entity/bmp/EncBean" container-id="Default BMP Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="ContextLookupBmpBean" deployment-id="client/tests/entity/bmp/ContextLookupBmpBean" container-id="Default BMP Container">
-		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-	</ejb-deployment>
-	<ejb-deployment ejb-name="Bmp RMI-IIOP Bean" deployment-id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome" container-id="Default BMP Container"/>
-	<ejb-deployment ejb-name="BasicMdbBean" deployment-id="client/tests/messagedriven/mdb/BasicMdb" container-id="Default MDB Container"/>
+  <ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome"
+                  container-id="Default Stateful Container"/>
+  <ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome"
+                  container-id="Default Stateful Container"/>
+  <ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome"
+                  container-id="Default Stateful Container"/>
+  <ejb-deployment ejb-name="BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedTransactionTests/EJBHome"
+                  container-id="Default Stateful Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="EncStatefulBean" deployment-id="client/tests/stateful/EncBean"
+                  container-id="Default Stateful Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean"
+                  container-id="Default Stateful Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome"
+                  container-id="Default Stateful Container"/>
+  <ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="BasicStatelessPojoBean" deployment-id="client/tests/stateless/BasicStatelessPojoHome"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="Basic BMT StatelessBean"
+                  deployment-id="client/tests/stateless/BeanManagedBasicStatelessHome"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="DatabaseBean" deployment-id="client/tools/DatabaseHome"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="database" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="BMT StatelessBean"
+                  deployment-id="client/tests/stateless/BeanManagedTransactionTests/EJBHome"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="database" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="EncStatelessBean" deployment-id="client/tests/stateless/EncBean"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupStatelessBean"
+                  deployment-id="client/tests/stateless/ContextLookupStatelessBean"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupStatelessPojoBean"
+                  deployment-id="client/tests/stateless/ContextLookupStatelessPojoBean"
+                  container-id="Default Stateless Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome"
+                  container-id="Default Stateless Container"/>
+  <ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome"
+                  container-id="Default BMP Container">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="AOBasicBmpBean" deployment-id="client/tests/entity/bmp/allowed_operations/EntityHome"
+                  container-id="Default BMP Container">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="EncBmpBean" deployment-id="client/tests/entity/bmp/EncBean"
+                  container-id="Default BMP Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupBmpBean" deployment-id="client/tests/entity/bmp/ContextLookupBmpBean"
+                  container-id="Default BMP Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="Bmp RMI-IIOP Bean" deployment-id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome"
+                  container-id="Default BMP Container"/>
+  <ejb-deployment ejb-name="BasicMdbBean" deployment-id="client/tests/messagedriven/mdb/BasicMdb"
+                  container-id="Default MDB Container"/>
 </openejb-jar>
