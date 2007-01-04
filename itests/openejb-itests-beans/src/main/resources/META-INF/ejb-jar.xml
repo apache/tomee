@@ -1578,6 +1578,121 @@
 
         <!--
         ########################################################
+        ID:  client/tests/stateless/ContextLookupStatelessPojoBean
+        ########################################################
+        -->
+
+        <session>
+            <description>
+                The stateless bean for the JNDI ENC tests
+            </description>
+            <ejb-name>ContextLookupStatelessPojoBean</ejb-name>
+            <home>org.apache.openejb.test.stateless.EncStatelessHome</home>
+            <remote>org.apache.openejb.test.stateless.EncStatelessObject</remote>
+            <ejb-class>org.apache.openejb.test.stateless.ContextLookupStatelessBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+
+
+            <env-entry>
+                <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>Success</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Boolean</env-entry-name>
+                <env-entry-type>java.lang.Boolean</env-entry-type>
+                <env-entry-value>true</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/String</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Double</env-entry-name>
+                <env-entry-type>java.lang.Double</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Long</env-entry-name>
+                <env-entry-type>java.lang.Long</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Float</env-entry-name>
+                <env-entry-type>java.lang.Float</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Integer</env-entry-name>
+                <env-entry-type>java.lang.Integer</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Short</env-entry-name>
+                <env-entry-type>java.lang.Short</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Byte</env-entry-name>
+                <env-entry-type>java.lang.Byte</env-entry-type>
+                <env-entry-value>1</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>stateless/references/Character</env-entry-name>
+                <env-entry-type>java.lang.Character</env-entry-type>
+                <env-entry-value>D</env-entry-value>
+            </env-entry>
+            <ejb-ref>
+                <ejb-ref-name>stateless/beanReferences/Enterprise_bean_access</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+                <ejb-link>BasicStatefulBean</ejb-link>
+            </ejb-ref>
+            <ejb-ref>
+                <ejb-ref-name>stateless/beanReferences/bmp_entity</ejb-ref-name>
+                <ejb-ref-type>Entity</ejb-ref-type>
+                <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+                <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+                <ejb-link>BasicBmpBean</ejb-link>
+            </ejb-ref>
+            <ejb-ref>
+                <ejb-ref-name>stateless/beanReferences/stateful</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+                <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+                <ejb-link>BasicStatefulBean</ejb-link>
+            </ejb-ref>
+            <ejb-ref>
+                <ejb-ref-name>stateless/beanReferences/stateless</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+                <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+                <ejb-link>BasicStatelessBean</ejb-link>
+            </ejb-ref>
+            <security-role-ref>
+                <role-name>TheMan</role-name>
+                <role-link>Executive</role-link>
+            </security-role-ref>
+            <resource-ref>
+                <res-ref-name>datasource</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+            <persistence-unit-ref>
+		<description>
+		    Persistence unit for testing the functionality.
+		</description>
+		<persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+		<persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+	    </persistence-unit-ref>
+
+        </session>
+
+        <!--
+        ########################################################
         ID:  client/tests/stateless/RMI-over-IIOP/EJBHome
         ########################################################
         -->

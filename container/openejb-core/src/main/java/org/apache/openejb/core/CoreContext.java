@@ -16,20 +16,22 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.proxy.ProxyManager;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.TimerService;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
-
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.util.proxy.ProxyManager;
-
 import java.util.List;
 
 public abstract class CoreContext implements java.io.Serializable {
@@ -131,13 +133,15 @@ public abstract class CoreContext implements java.io.Serializable {
 
 
         Class businessLocalInterface = di.getBusinessLocalInterface();
-        if (businessLocalInterface != null && businessLocalInterface.getName().equals(interfce.getName())){
+        if (businessLocalInterface != null && businessLocalInterface.getName().equals(interfce.getName())) {
             interfaceType = InterfaceType.BUSINESS_LOCAL;
-        } else if (di.getBusinessRemoteInterface() == null && di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
+        } else
+        if (di.getBusinessRemoteInterface() == null && di.getBusinessRemoteInterface().getName().equals(interfce.getName()))
+        {
             interfaceType = InterfaceType.BUSINESS_REMOTE;
         } else {
             // TODO: verify if this is the right exception
-            throw new RuntimeException("Component has no such interface "+interfce.getName());
+            throw new RuntimeException("Component has no such interface " + interfce.getName());
         }
 
         Object newProxy = null;
@@ -185,7 +189,8 @@ public abstract class CoreContext implements java.io.Serializable {
             int status = getTransactionManager().getStatus();
             if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK)
                 return true;
-            else if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
+            else
+            if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
                 throw new IllegalStateException("No current transaction");
             else
                 return false;
@@ -221,10 +226,19 @@ public abstract class CoreContext implements java.io.Serializable {
             throw new java.lang.IllegalStateException("container-managed transaction beans can not access the UserTransaction");
     }
 
-    public Object lookup(String name){
-        throw new UnsupportedOperationException("lookup");
-    }
+    public Object lookup(String name) {
+        Context initialContext = null;
+        Object object = null;
 
+        try {
+            initialContext = new InitialContext();
+            object = initialContext.lookup("java:comp/env/"+name);
+        } catch (NamingException nex) {
+            // @see http://java.sun.com/javaee/5/docs/api/javax/ejb/EJBContext.html#lookup(java.lang.String)
+            throw new IllegalArgumentException(nex);
+        }
+        return object;
+    }
 
     /*----------------------------------------------------*/
     /* UNSUPPORTED DEPRICATED METHODS                     */

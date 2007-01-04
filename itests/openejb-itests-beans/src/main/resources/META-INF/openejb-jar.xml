@@ -167,6 +167,9 @@
 	<ejb-deployment ejb-name="ContextLookupStatelessBean" deployment-id="client/tests/stateless/ContextLookupStatelessBean" container-id="Default Stateless Container">
 		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
 	</ejb-deployment>
+	<ejb-deployment ejb-name="ContextLookupStatelessPojoBean" deployment-id="client/tests/stateless/ContextLookupStatelessPojoBean" container-id="Default Stateless Container">
+		<resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+	</ejb-deployment>
 	<ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome" container-id="Default Stateless Container"/>
 	<ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome" container-id="Default BMP Container">
 		<resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
