@@ -394,16 +394,12 @@
             <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>commons-primitives</groupId>
             <artifactId>commons-primitives</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -612,10 +608,6 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
           </exclusion>
-          <exclusion>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -642,10 +634,6 @@
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -737,6 +725,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
         <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+        <version>1.0-M1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
