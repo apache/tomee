@@ -386,47 +386,11 @@ public class AssemblerTool {
     /*------------------------------------------------------*/
     /*    Methods for easy exception handling               */
     /*------------------------------------------------------*/
-    public void handleException(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2, arg3));
-    }
-
-    public void handleException(String errorCode, Object arg0, Object arg1, Object arg2) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2));
-    }
-
-    public void handleException(String errorCode, Object arg0, Object arg1) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, arg0, arg1));
-    }
-
-    public void handleException(String errorCode, Object arg0) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, arg0));
+    public void handleException(String errorCode, Object... args) throws OpenEJBException {
+        throw new OpenEJBException(messages.format(errorCode, args));
     }
 
     public void handleException(String errorCode) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode));
-    }
-
-    /*------------------------------------------------------*/
-    /*  Methods for logging exceptions that are noteworthy  */
-    /*  but not bad enough to stop the container system.    */
-    /*------------------------------------------------------*/
-    public void logWarning(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) {
-        System.out.println("Warning: " + messages.format(errorCode, arg0, arg1, arg2, arg3));
-    }
-
-    public void logWarning(String errorCode, Object arg0, Object arg1, Object arg2) {
-        System.out.println("Warning: " + messages.format(errorCode, arg0, arg1, arg2));
-    }
-
-    public void logWarning(String errorCode, Object arg0, Object arg1) {
-        System.out.println("Warning: " + messages.format(errorCode, arg0, arg1));
-    }
-
-    public void logWarning(String errorCode, Object arg0) {
-        System.out.println("Warning: " + messages.format(errorCode, arg0));
-    }
-
-    public void logWarning(String errorCode) {
-        System.out.println("Warning: " + messages.format(errorCode));
     }
 }
