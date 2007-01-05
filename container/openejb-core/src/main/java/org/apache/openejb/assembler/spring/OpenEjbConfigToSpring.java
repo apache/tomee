@@ -282,19 +282,6 @@ public class OpenEjbConfigToSpring {
             writer.endElement();
         }
 
-        for (MethodPermissionInfo permissionInfo : configInfo.containerSystem.methodPermissions) {
-            writer.startElement("o:permission");
-            writer.addAttribute("roleNames", createCsv(permissionInfo.roleNames));
-            writeMethodInfos(permissionInfo.methods);
-            writer.endElement();
-        }
-
-        for (MethodTransactionInfo transactionInfo : configInfo.containerSystem.methodTransactions) {
-            writer.startElement("o:transaction");
-            writer.addAttribute("transAttribute", transactionInfo.transAttribute);
-            writeMethodInfos(transactionInfo.methods);
-            writer.endElement();
-        }
 
         writer.endElement();
     }

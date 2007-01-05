@@ -238,14 +238,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         sys.containerSystem.applications.addAll(appInfos);
 
-        SecurityRoleInfo defaultRole = new SecurityRoleInfo();
-        defaultRole.description = "The role applied to recurity references that are not linked.";
-        defaultRole.roleName = EjbJarInfoBuilder.DEFAULT_SECURITY_ROLE;
-        ejbJarInfoBuilder.getSecurityRoleInfos().add(defaultRole);
-
-        sys.containerSystem.securityRoles.addAll(ejbJarInfoBuilder.getSecurityRoleInfos());
-        sys.containerSystem.methodPermissions.addAll(ejbJarInfoBuilder.getMethodPermissionInfos());
-        sys.containerSystem.methodTransactions.addAll(ejbJarInfoBuilder.getMethodTransactionInfos());
+//        SecurityRoleInfo defaultRole = new SecurityRoleInfo();
+//        defaultRole.description = "The role applied to recurity references that are not linked.";
+//        defaultRole.roleName = EjbJarInfoBuilder.DEFAULT_SECURITY_ROLE;
+//        ejbJarInfoBuilder.getSecurityRoleInfos().add(defaultRole);
 
         initSecutityService(openejb, sys.facilities);
 
@@ -316,12 +312,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 configLocation,
                 ssp);
 
-        for (SecurityRoleInfo role : sys.containerSystem.securityRoles) {
-            RoleMappingInfo roleMappingInfo = new RoleMappingInfo();
-            roleMappingInfo.logicalRoleNames.add(role.roleName);
-            roleMappingInfo.physicalRoleNames.add(role.roleName);
-            ssi.roleMappings.add(roleMappingInfo);
-        }
+// DMB: commented out 1/4/07
+//        for (SecurityRoleInfo role : sys.containerSystem.securityRoles) {
+//            RoleMappingInfo roleMappingInfo = new RoleMappingInfo();
+//            roleMappingInfo.logicalRoleNames.add(role.roleName);
+//            roleMappingInfo.physicalRoleNames.add(role.roleName);
+//            ssi.roleMappings.add(roleMappingInfo);
+//        }
 
         facilities.securityService = ssi;
     }

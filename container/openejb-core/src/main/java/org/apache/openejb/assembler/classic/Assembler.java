@@ -254,6 +254,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         };
 
+        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
 
         HashMap<String, DeploymentInfo> deployments2 = new HashMap<String, DeploymentInfo>();
         for (AppInfo appInfo : containerSystemInfo.applications) {
@@ -299,7 +300,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                deployments2.putAll(ejbJarBuilder.build(ejbJar,allFactories));
+                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
+                deployments2.putAll(deployments);
+                for (DeploymentInfo deploymentInfo : deployments.values()) {
+                    applyMethodPermissions((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
+                    applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
+                }
+                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                    CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
+                    applySecurityRoleReference(deployment, beanInfo, roleMapping);
+                }
             }
 
             // App Client
@@ -341,22 +351,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments1[j];
                 containerSystem.addDeployment(deployment);
                 jndiBuilder.bind(deployment);
-            }
-        }
-
-        // Security  - roleMapping used later in buildMethodPermissions
-        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
-        org.apache.openejb.DeploymentInfo [] deployments = containerSystem.deployments();
-        for (int i = 0; i < deployments.length; i++) {
-            applyMethodPermissions((org.apache.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodPermissions, roleMapping);
-            applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deployments[i], containerSystemInfo.methodTransactions);
-        }
-
-        // Security - apply role mappings
-        for (ContainerInfo container : containerSystemInfo.containers) {
-            for (EnterpriseBeanInfo beanInfo : container.ejbeans) {
-                CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId);
-                applySecurityRoleReference(deployment, beanInfo, roleMapping);
             }
         }
 

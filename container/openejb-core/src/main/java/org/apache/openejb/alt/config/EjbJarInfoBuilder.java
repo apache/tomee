@@ -83,9 +83,6 @@ public class EjbJarInfoBuilder {
     public static final String DEFAULT_SECURITY_ROLE = "openejb.default.security.role";
     public static List<String> deploymentIds = new ArrayList<String>();
     public static List<String> securityRoles = new ArrayList<String>();
-    private List<MethodPermissionInfo> methodPermissionInfos = new ArrayList<MethodPermissionInfo>();
-    private List<MethodTransactionInfo> methodTransactionInfos = new ArrayList<MethodTransactionInfo>();
-    private List<SecurityRoleInfo> securityRoleInfos = new ArrayList<SecurityRoleInfo>();
 
 
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
@@ -144,9 +141,9 @@ public class EjbJarInfoBuilder {
 
         if (jar.getEjbJar().getAssemblyDescriptor() != null) {
             initInterceptors(jar, ejbJar, infos);
-            initSecurityRoles(jar);
-            initMethodPermissions(jar, ejbds);
-            initMethodTransactions(jar, ejbds);
+            initSecurityRoles(jar, ejbJar);
+            initMethodPermissions(jar, ejbds, ejbJar);
+            initMethodTransactions(jar, ejbds, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 resolveRoleLinks(jar, bean, items.get(bean.ejbName));
@@ -317,7 +314,7 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initMethodTransactions(EjbModule jar, Map ejbds) {
+    private void initMethodTransactions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
 
         List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
         List<MethodTransactionInfo> infos = new ArrayList<MethodTransactionInfo>();
@@ -327,15 +324,13 @@ public class EjbJarInfoBuilder {
             info.description = cTx.getDescription();
             info.transAttribute = cTx.getTransAttribute().toString();
             info.methods.addAll(getMethodInfos(cTx.getMethod(), ejbds));
-            infos.add(info);
+            ejbJarInfo.methodTransactions.add(info);
         }
-        getMethodTransactionInfos().addAll(infos);
     }
 
-    private void initSecurityRoles(EjbModule jar) {
+    private void initSecurityRoles(EjbModule jar, EjbJarInfo ejbJarInfo) {
 
         List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
-        List<SecurityRoleInfo> infos = new ArrayList<SecurityRoleInfo>();
 
         for (SecurityRole sr : roles) {
             SecurityRoleInfo info = new SecurityRoleInfo();
@@ -348,15 +343,13 @@ public class EjbJarInfoBuilder {
             } else {
                 securityRoles.add(sr.getRoleName());
             }
-            infos.add(info);
+            ejbJarInfo.securityRoles.add(info);
         }
-        getSecurityRoleInfos().addAll(infos);
     }
 
-    private void initMethodPermissions(EjbModule jar, Map ejbds) {
+    private void initMethodPermissions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
 
         List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
-        List<MethodPermissionInfo> infos = new ArrayList<MethodPermissionInfo>();
 
         for (MethodPermission mp : methodPermissions) {
             MethodPermissionInfo info = new MethodPermissionInfo();
@@ -365,10 +358,8 @@ public class EjbJarInfoBuilder {
             info.roleNames.addAll(mp.getRoleName());
             info.methods.addAll(getMethodInfos(mp.getMethod(), ejbds));
 
-            infos.add(info);
+            ejbJarInfo.methodPermissions.add(info);
         }
-
-        getMethodPermissionInfos().addAll(infos);
     }
 
     private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, JndiConsumer item) {
@@ -573,17 +564,5 @@ public class EjbJarInfoBuilder {
             }
         }
         return bean;
-    }
-
-    public List<MethodPermissionInfo> getMethodPermissionInfos() {
-        return methodPermissionInfos;
-    }
-
-    public List<MethodTransactionInfo> getMethodTransactionInfos() {
-        return methodTransactionInfos;
-    }
-
-    public List<SecurityRoleInfo> getSecurityRoleInfos() {
-        return securityRoleInfos;
     }
 }

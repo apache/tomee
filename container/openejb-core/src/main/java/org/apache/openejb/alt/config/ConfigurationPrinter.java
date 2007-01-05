@@ -28,6 +28,8 @@ import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 
 import java.util.ListIterator;
 
@@ -105,72 +107,76 @@ public class ConfigurationPrinter {
             }
         }
 
-        if (conf.containerSystem.securityRoles != null) {
-            out(0, "--Security Roles------------");
-            for (ListIterator<SecurityRoleInfo> iterator = conf.containerSystem.securityRoles.listIterator(); iterator.hasNext();) {
-                SecurityRoleInfo securityRole =  iterator.next();
-                out(1, "--[" + iterator.previousIndex() + "]----------------------");
-                out(1, "            ", securityRole);
-                out(1, "description ", securityRole.description);
-                out(1, "roleName    ", securityRole.roleName);
-            }
-        }
-
-        if (conf.containerSystem.methodPermissions != null) {
-            out(0, "--Method Permissions--------");
-            for (ListIterator<MethodPermissionInfo> iterator = conf.containerSystem.methodPermissions.listIterator(); iterator.hasNext();) {
-                MethodPermissionInfo methodPermission =  iterator.next();
-
-                out(1, "--[" + iterator.previousIndex() + "]----------------------");
-                out(1, "            ", methodPermission);
-                out(1, "description ", methodPermission.description);
-                out(1, "roleNames   ", methodPermission.roleNames);
-                if (methodPermission.roleNames != null) {
-                    for (ListIterator<String> roleNameIterator = methodPermission.roleNames.listIterator(); roleNameIterator.hasNext();) {
-                        String roleName = roleNameIterator.next();
-                        out(1, "roleName[" + roleNameIterator.previousIndex() + "]   ", roleName);
+        for (AppInfo app : conf.containerSystem.applications) {
+            for (EjbJarInfo ejbJar : app.ejbJars) {
+                if (!ejbJar.securityRoles.isEmpty()) {
+                    out(0, "--Security Roles------------");
+                    for (ListIterator<SecurityRoleInfo> iterator = ejbJar.securityRoles.listIterator(); iterator.hasNext();) {
+                        SecurityRoleInfo securityRole =  iterator.next();
+                        out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(1, "            ", securityRole);
+                        out(1, "description ", securityRole.description);
+                        out(1, "roleName    ", securityRole.roleName);
                     }
                 }
-                out(1, "methods     ", methodPermission.methods);
-                if (methodPermission.methods != null) {
-                    for (MethodInfo methodInfo : methodPermission.methods) {
-                        out(2, "description    ", methodInfo.description);
-                        out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
-                        out(2, "methodIntf     ", methodInfo.methodIntf);
-                        out(2, "methodName     ", methodInfo.methodName);
-                        if (methodInfo.methodParams != null) {
-                            out(2, "methodParams   ", methodInfo.methodParams);
-                            for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
-                                String methodParam = paramIterator.next();
-                                out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+
+                if (!ejbJar.methodPermissions.isEmpty()) {
+                    out(0, "--Method Permissions--------");
+                    for (ListIterator<MethodPermissionInfo> iterator = ejbJar.methodPermissions.listIterator(); iterator.hasNext();) {
+                        MethodPermissionInfo methodPermission =  iterator.next();
+
+                        out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(1, "            ", methodPermission);
+                        out(1, "description ", methodPermission.description);
+                        out(1, "roleNames   ", methodPermission.roleNames);
+                        if (methodPermission.roleNames != null) {
+                            for (ListIterator<String> roleNameIterator = methodPermission.roleNames.listIterator(); roleNameIterator.hasNext();) {
+                                String roleName = roleNameIterator.next();
+                                out(1, "roleName[" + roleNameIterator.previousIndex() + "]   ", roleName);
+                            }
+                        }
+                        out(1, "methods     ", methodPermission.methods);
+                        if (methodPermission.methods != null) {
+                            for (MethodInfo methodInfo : methodPermission.methods) {
+                                out(2, "description    ", methodInfo.description);
+                                out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
+                                out(2, "methodIntf     ", methodInfo.methodIntf);
+                                out(2, "methodName     ", methodInfo.methodName);
+                                if (methodInfo.methodParams != null) {
+                                    out(2, "methodParams   ", methodInfo.methodParams);
+                                    for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                                        String methodParam = paramIterator.next();
+                                        out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
 
-        if (!conf.containerSystem.methodTransactions.isEmpty()) {
-            out(0, "--Method Transactions-------");
+                if (!ejbJar.methodTransactions.isEmpty()) {
+                    out(0, "--Method Transactions-------");
 
-            for (ListIterator<MethodTransactionInfo> iterator = conf.containerSystem.methodTransactions.listIterator(); iterator.hasNext();) {
-                MethodTransactionInfo methodTransaction = iterator.next();
+                    for (ListIterator<MethodTransactionInfo> iterator = ejbJar.methodTransactions.listIterator(); iterator.hasNext();) {
+                        MethodTransactionInfo methodTransaction = iterator.next();
 
-                out(1, "--[" + iterator.previousIndex() + "]----------------------");
-                out(1, "               ", methodTransaction);
-                out(1, "description    ", methodTransaction.description);
-                out(1, "transAttribute ", methodTransaction.transAttribute);
-                out(1, "methods        ", methodTransaction.methods);
-                for (MethodInfo methodInfo : methodTransaction.methods) {
-                    out(2, "description    ", methodInfo.description);
-                    out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
-                    out(2, "methodIntf     ", methodInfo.methodIntf);
-                    out(2, "methodName     ", methodInfo.methodName);
-                    if (methodInfo.methodParams != null) {
-                        out(2, "methodParams   ", methodInfo.methodParams);
-                        for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
-                            String methodParam = paramIterator.next();
-                            out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                        out(1, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(1, "               ", methodTransaction);
+                        out(1, "description    ", methodTransaction.description);
+                        out(1, "transAttribute ", methodTransaction.transAttribute);
+                        out(1, "methods        ", methodTransaction.methods);
+                        for (MethodInfo methodInfo : methodTransaction.methods) {
+                            out(2, "description    ", methodInfo.description);
+                            out(2, "ejbDeploymentId", methodInfo.ejbDeploymentId);
+                            out(2, "methodIntf     ", methodInfo.methodIntf);
+                            out(2, "methodName     ", methodInfo.methodName);
+                            if (methodInfo.methodParams != null) {
+                                out(2, "methodParams   ", methodInfo.methodParams);
+                                for (ListIterator<String> paramIterator = methodInfo.methodParams.listIterator(); paramIterator.hasNext();) {
+                                    String methodParam = paramIterator.next();
+                                    out(3, "param[" + paramIterator.previousIndex() + "]", methodParam);
+                                }
+                            }
                         }
                     }
                 }

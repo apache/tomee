@@ -31,7 +31,4 @@ public class ContainerSystemInfo extends InfoObject {
     public final List<StatelessSessionContainerInfo> statelessContainers = new ArrayList<StatelessSessionContainerInfo>();
     public final List<StatefulSessionContainerInfo> statefulContainers = new ArrayList<StatefulSessionContainerInfo>();
     public final List<MdbContainerInfo> mdbContainers = new ArrayList<MdbContainerInfo>();
-    public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
-    public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
-    public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
 }

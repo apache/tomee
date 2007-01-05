@@ -148,8 +148,8 @@ public class DeploymentsFactory implements FactoryBean {
                 continue;
             }
 
-            transferMethodTransactionInfos(infoBuilder);
-            transferMethodPermissionInfos(infoBuilder);
+            transferMethodTransactionInfos(jarInfo);
+            transferMethodPermissionInfos(jarInfo);
 
             HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,allFactories);
 
@@ -163,23 +163,23 @@ public class DeploymentsFactory implements FactoryBean {
         return deployments;
     }
 
-    private void transferMethodTransactionInfos(EjbJarInfoBuilder infoBuilder) {
+    private void transferMethodTransactionInfos(EjbJarInfo jarInfo) {
         List<MethodTransactionInfo> infos = new ArrayList<MethodTransactionInfo>();
         if (assembly.getMethodTransactions() != null){
             infos.addAll(Arrays.asList(assembly.getMethodTransactions()));
         }
-        for (org.apache.openejb.assembler.classic.MethodTransactionInfo info : infoBuilder.getMethodTransactionInfos()) {
+        for (org.apache.openejb.assembler.classic.MethodTransactionInfo info : jarInfo.methodTransactions) {
             infos.add(new MethodTransactionInfo(info));
         }
         assembly.setMethodTransactions(infos.toArray(new MethodTransactionInfo[]{}));
     }
 
-    private void transferMethodPermissionInfos(EjbJarInfoBuilder infoBuilder) {
+    private void transferMethodPermissionInfos(EjbJarInfo jarInfo) {
         List<MethodPermissionInfo> infos = new ArrayList<MethodPermissionInfo>();
         if (assembly.getMethodPermissions() != null){
             infos.addAll(Arrays.asList(assembly.getMethodPermissions()));
         }
-        for (org.apache.openejb.assembler.classic.MethodPermissionInfo info : infoBuilder.getMethodPermissionInfos()) {
+        for (org.apache.openejb.assembler.classic.MethodPermissionInfo info : jarInfo.methodPermissions) {
             infos.add(new MethodPermissionInfo(info));
         }
         assembly.setMethodPermissions(infos.toArray(new MethodPermissionInfo[]{}));

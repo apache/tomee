@@ -143,7 +143,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) throws OpenEJBException {
+    public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) throws OpenEJBException {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -197,7 +197,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions) {
+    public static void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -218,7 +218,7 @@ public class AssemblerTool {
         }
     }
 
-    public void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions, AssemblerTool.RoleMapping roleMapping) {
+    public static void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions, AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.
@@ -241,7 +241,7 @@ public class AssemblerTool {
     * @see org.apache.openejb.assembler.classic.MethodPermissionInfo
     * @see org.apache.openejb.assembler.classic.AssemblerTool.RoleMapping
     */
-    public void applyRoleMappings(MethodPermissionInfo methodPermission,
+    public static void applyRoleMappings(MethodPermissionInfo methodPermission,
                                   AssemblerTool.RoleMapping roleMapping) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
@@ -288,7 +288,7 @@ public class AssemblerTool {
 
     }
 
-    protected List<Method> resolveMethodInfo(MethodInfo methodInfo, org.apache.openejb.core.CoreDeploymentInfo di) {
+    protected static List<Method> resolveMethodInfo(MethodInfo methodInfo, org.apache.openejb.core.CoreDeploymentInfo di) {
         /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
          there is a lot of complex code here, I'm sure something could go wrong the user
          might want to know about.

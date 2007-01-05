@@ -57,7 +57,7 @@ public class DependenceValidationTest extends TestCase {
 
         // Nothing may depend on the Assembler except the config code or spring assembler
         String springAssembler = "org.apache.openejb.assembler.spring";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.alt.config", springAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.alt.config", springAssembler, "org.apache.openejb.assembler.dynamic");
 
         // Nothing may depend on the Spring Assembler
         assertNotDependentOn("org.apache.openejb", springAssembler);
