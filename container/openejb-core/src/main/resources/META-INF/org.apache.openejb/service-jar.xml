@@ -272,6 +272,8 @@
 
     #Password pass
     Password
+
+    Unmanaged false
   </ServiceProvider>
 
   <!--
