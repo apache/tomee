@@ -16,8 +16,52 @@
  */
 package org.apache.openejb.assembler.dynamic;
 
+import org.apache.openejb.assembler.classic.InfoObject;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.alt.config.DeploymentModule;
+import org.apache.openejb.alt.config.AppModule;
+import org.apache.openejb.alt.config.EjbModule;
+import org.apache.openejb.alt.config.ClientModule;
+import org.apache.openejb.OpenEJBException;
+
+import java.net.URL;
+
 /**
  * @version $Rev$ $Date$
  */
 public class ModuleDeployer {
+
+    public InfoObject deploy(DeploymentModule url) throws OpenEJBException {
+        return null;
+    }
+
+    public AppInfo deployApp(AppModule ejbModule) throws OpenEJBException {
+        return null;
+    }
+
+    public EjbJarInfo deployEjbJar(EjbModule ejbModule) throws OpenEJBException {
+        return null;
+    }
+
+    public ClientInfo deployClient(ClientModule clientModule) throws OpenEJBException {
+        return null;
+    }
+
+    public InfoObject deploy(URL url) throws OpenEJBException {
+        return null;
+    }
+
+    public AppInfo deployApp(URL url) throws OpenEJBException {
+        return null;
+    }
+
+    public EjbJarInfo deployEjbJar(URL url) throws OpenEJBException {
+        return null;
+    }
+
+    public ClientInfo deployClient(URL url) throws OpenEJBException {
+        return null;
+    }
 }
