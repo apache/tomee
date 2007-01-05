@@ -53,6 +53,7 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase{
         //suite.addTest(new BMTStatefulAllowedOperationsTests());
         suite.addTest(new StatefulJndiEncTests());
         suite.addTest(new StatefulContextLookupTests());
+        suite.addTest(new StatefulPojoContextLookupTests());
         suite.addTest(new StatefulRmiIiopTests());
         /* TO DO
         suite.addTest(new StatefulEjbContextTests());

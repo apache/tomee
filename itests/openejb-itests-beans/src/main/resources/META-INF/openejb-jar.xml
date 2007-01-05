@@ -167,6 +167,10 @@
                   container-id="Default Stateful Container">
     <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
   </ejb-deployment>
+  <ejb-deployment ejb-name="ContextLookupStatefulPojoBean" deployment-id="client/tests/stateful/ContextLookupStatefulPojoBean"
+                  container-id="Default Stateful Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
   <ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome"
                   container-id="Default Stateful Container"/>
   <ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome"
