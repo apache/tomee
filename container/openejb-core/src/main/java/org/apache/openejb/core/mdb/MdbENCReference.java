@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateless;
-
-import org.apache.openejb.core.ivm.naming.Reference;
+package org.apache.openejb.core.mdb;
 
 import javax.naming.NameNotFoundException;
 
-public class EncReference extends org.apache.openejb.core.ivm.naming.ENCReference {
+import org.apache.openejb.core.ivm.naming.ENCReference;
+import org.apache.openejb.core.ivm.naming.Reference;
 
-    public EncReference(Reference ref) {
+
+public class MdbENCReference extends ENCReference {
+
+    public MdbENCReference(Reference ref) {
         super(ref);
     }
 
@@ -34,5 +36,4 @@ public class EncReference extends org.apache.openejb.core.ivm.naming.ENCReferenc
         }        
 */
     }
-
 }

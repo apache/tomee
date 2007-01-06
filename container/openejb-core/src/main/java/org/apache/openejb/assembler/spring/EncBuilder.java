@@ -27,7 +27,6 @@ import javax.transaction.UserTransaction;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JndiReference;
@@ -204,7 +203,7 @@ public class EncBuilder {
 
     static class EntityRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.entity.EncReference(reference);
+            return new org.apache.openejb.core.entity.EntityENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
@@ -214,21 +213,21 @@ public class EncBuilder {
 
     static class StatelessRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateless.EncReference(reference);
+            return new org.apache.openejb.core.stateless.StatelessENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateless.EncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateless.StatelessENCUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class StatefulRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateful.EncReference(reference);
+            return new org.apache.openejb.core.stateful.StatefulENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.EncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateful.StatefulENCUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 }

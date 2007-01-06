@@ -296,7 +296,7 @@ public class JndiEncBuilder {
 
     static class EntityRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.entity.EncReference(reference);
+            return new org.apache.openejb.core.entity.EntityENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
@@ -306,31 +306,31 @@ public class JndiEncBuilder {
 
     static class StatelessRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateless.EncReference(reference);
+            return new org.apache.openejb.core.stateless.StatelessENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateless.EncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateless.StatelessENCUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class StatefulRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateful.EncReference(reference);
+            return new org.apache.openejb.core.stateful.StatefulENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.EncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateful.StatefulENCUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class MessageDrivenRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.mdb.EncReference(reference);
+            return new org.apache.openejb.core.mdb.MdbENCReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.mdb.EncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.mdb.MdbENCUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
     

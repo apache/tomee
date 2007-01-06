@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.mdb;
-
-import org.apache.openejb.core.ivm.naming.Reference;
+package org.apache.openejb.core.stateless;
 
 import javax.naming.NameNotFoundException;
 
-public class EncReference extends org.apache.openejb.core.ivm.naming.ENCReference {
+import org.apache.openejb.core.ivm.naming.ENCReference;
+import org.apache.openejb.core.ivm.naming.Reference;
 
-    public EncReference(Reference ref) {
+
+public class StatelessENCReference extends ENCReference {
+
+    public StatelessENCReference(Reference ref) {
         super(ref);
     }
 
     public void checkOperation(byte operation) throws NameNotFoundException {
-
 /*
         if( operation != Operations.OP_BUSINESS ){
             throw new NameNotFoundException("Operation Not Allowed");
