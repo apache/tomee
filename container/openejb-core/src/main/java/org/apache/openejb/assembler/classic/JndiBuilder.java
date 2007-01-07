@@ -169,11 +169,11 @@ public class JndiBuilder {
         Reference ref = new ObjectReference(proxy);
 
         if (deployment.getComponentType() == BeanType.STATEFUL) {
-            ref = new org.apache.openejb.core.stateful.StatefulENCReference(ref);
+            ref = new org.apache.openejb.core.stateful.StatefulEncReference(ref);
         } else if (deployment.getComponentType() == BeanType.STATELESS) {
-            ref = new org.apache.openejb.core.stateless.StatelessENCReference(ref);
+            ref = new org.apache.openejb.core.stateless.StatelessEncReference(ref);
         } else {
-            ref = new org.apache.openejb.core.entity.EntityENCReference(ref);
+            ref = new org.apache.openejb.core.entity.EntityEncReference(ref);
         }
         return ref;
     }

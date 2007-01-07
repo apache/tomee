@@ -20,7 +20,7 @@ import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.Operations;
-import org.apache.openejb.core.ivm.naming.ENCReference;
+import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 
 
@@ -29,17 +29,17 @@ import org.apache.openejb.core.ivm.naming.ObjectReference;
  * JNDI ENC of a message driven bean.  When the getObject( ) method is invoked the
  * Operation is checked to ensure that its is allowed for the bean's current state.
  */
-public class MdbENCUserTransaction extends ENCReference {
+public class MdbEncUserTransaction extends EncReference {
 
     /**
      * This constructor take a new CoreUserTransaction object as the object reference
      */
-    public MdbENCUserTransaction(CoreUserTransaction reference) {
+    public MdbEncUserTransaction(CoreUserTransaction reference) {
         super(new ObjectReference(reference));
     }
 
     /**
-     * This method is invoked by the ENCReference super class each time its
+     * This method is invoked by the EncReference super class each time its
      * getObject() method is called within the container system.  This checkOperation
      * method ensures that the message driven bean is in the correct state before the super
      * class can return the requested reference object.

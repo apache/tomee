@@ -14,25 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateful;
+package org.apache.openejb.core.stateless;
 
 import javax.naming.NameNotFoundException;
 
-import org.apache.openejb.core.Operations;
-import org.apache.openejb.core.ivm.naming.ENCReference;
+import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 
 
-public class StatefulENCReference extends ENCReference {
+public class StatelessEncReference extends EncReference {
 
-    public StatefulENCReference(Reference ref) {
+    public StatelessEncReference(Reference ref) {
         super(ref);
     }
 
     public void checkOperation(byte operation) throws NameNotFoundException {
-
-        if (operation == Operations.OP_AFTER_COMPLETION) {
+/*
+        if( operation != Operations.OP_BUSINESS ){
             throw new NameNotFoundException("Operation Not Allowed");
-        }
+        }        
+*/
     }
+
 }

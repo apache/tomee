@@ -203,7 +203,7 @@ public class EncBuilder {
 
     static class EntityRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.entity.EntityENCReference(reference);
+            return new org.apache.openejb.core.entity.EntityEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
@@ -213,21 +213,21 @@ public class EncBuilder {
 
     static class StatelessRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateless.StatelessENCReference(reference);
+            return new org.apache.openejb.core.stateless.StatelessEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateless.StatelessENCUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateless.StatelessEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class StatefulRefereceWrapper extends EncBuilder.ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateful.StatefulENCReference(reference);
+            return new org.apache.openejb.core.stateful.StatefulEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.StatefulENCUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateful.StatefulEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 }

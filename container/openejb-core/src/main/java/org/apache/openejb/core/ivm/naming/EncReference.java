@@ -25,16 +25,16 @@ import org.apache.openejb.core.ThreadContext;
   JNDI ENC of a entity, stateful and stateless beans.  When the getObject( ) method is invoked the 
   Operation is checked to ensure that its is allowed for the bean's current state.
 
-  This class is subclassed by ENCReference in the entity, stateful and stateless packages 
+  This class is subclassed by EncReference in the entity, stateful and stateless packages
   of org.apache.openejb.core.
 */
 
-public abstract class ENCReference implements Reference {
+public abstract class EncReference implements Reference {
 
     protected Reference ref = null;
     protected boolean checking = true;
 
-    public ENCReference(Reference ref) {
+    public EncReference(Reference ref) {
         this.ref = ref;
     }
 

@@ -296,7 +296,7 @@ public class JndiEncBuilder {
 
     static class EntityRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.entity.EntityENCReference(reference);
+            return new org.apache.openejb.core.entity.EntityEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
@@ -306,31 +306,31 @@ public class JndiEncBuilder {
 
     static class StatelessRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateless.StatelessENCReference(reference);
+            return new org.apache.openejb.core.stateless.StatelessEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateless.StatelessENCUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateless.StatelessEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class StatefulRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateful.StatefulENCReference(reference);
+            return new org.apache.openejb.core.stateful.StatefulEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.StatefulENCUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateful.StatefulEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
 
     static class MessageDrivenRefereceWrapper extends ReferenceWrapper {
         public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.mdb.MdbENCReference(reference);
+            return new org.apache.openejb.core.mdb.MdbEncReference(reference);
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.mdb.MdbENCUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.mdb.MdbEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
     

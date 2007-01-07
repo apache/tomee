@@ -14,39 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateful;
+package org.apache.openejb.core.stateless;
 
 import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.Operations;
-import org.apache.openejb.core.ivm.naming.ENCReference;
+import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 
 
 /**
  * This class is a wrapper for CoreUserTransaction reference in the
- * JNDI ENC of a stateful bean.  When the getObject( ) method is invoked the
+ * JNDI ENC of a stateless bean.  When the getObject( ) method is invoked the
  * Operation is checked to ensure that its is allowed for the bean's current state.
  */
-public class StatefulENCUserTransaction extends ENCReference {
+
+public class StatelessEncUserTransaction extends EncReference {
 
     /**
      * This constructor take a new CoreUserTransaction object as the object reference
      */
-    public StatefulENCUserTransaction(CoreUserTransaction reference) {
+    public StatelessEncUserTransaction(CoreUserTransaction reference) {
         super(new ObjectReference(reference));
     }
 
     /**
-     * This method is invoked by the ENCReference super class each time its
+     * This method is invoked by the EncReference super class each time its
      * getObject() method is called within the container system.  This checkOperation
-     * method ensures that the stateful bean is in the correct state before the super
+     * method ensures that the stateless bean is in the correct state before the super
      * class can return the requested reference object.
      */
     public void checkOperation(byte operation) throws NameNotFoundException {
-        if (operation == Operations.OP_SET_CONTEXT || operation == Operations.OP_AFTER_COMPLETION || operation == Operations.OP_BEFORE_COMPLETION) {
+        if (operation == Operations.OP_SET_CONTEXT) {
             throw new NameNotFoundException("Operation Not Allowed");
         }
     }
+
 }
