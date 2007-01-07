@@ -16,19 +16,25 @@
  */
 package org.apache.openejb.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Hashtable;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import org.apache.openejb.OpenEJBException;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class JarUtils {
 
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -39,21 +45,22 @@ public class JarUtils {
 
     private static boolean alreadySet = false;
 
+    @SuppressWarnings("unchecked")
     public static void setHandlerSystemProperty() {
         if (!alreadySet) {
             /*
              * Setup the java protocol handler path to include org.apache.openejb.util.urlhandler
              * so that org.apache.openejb.util.urlhandler.resource.Handler will be used for URLs
              * of the form "resource:/path".
-             */
+             */ 
             /*try {
                 String oldPkgs = System.getProperty( "java.protocol.handler.pkgs" );
-
+            
                 if ( oldPkgs == null )
                     System.setProperty( "java.protocol.handler.pkgs", "org.apache.openejb.util.urlhandler" );
                 else if ( oldPkgs.indexOf( "org.apache.openejb.util.urlhandler" ) < 0 )
                     System.setProperty( "java.protocol.handler.pkgs", oldPkgs + "|" + "org.apache.openejb.util.urlhandler" );
-
+            
             } catch ( SecurityException ex ) {
             }*/
             Hashtable urlHandlers = (Hashtable) AccessController.doPrivileged(
@@ -111,44 +118,35 @@ public class JarUtils {
     }
 
     public static void addFileToJar(String jarFile, String file) throws OpenEJBException {
-        ByteArrayOutputStream errorBytes = new ByteArrayOutputStream();
-
-        /* NOTE: Sadly, we have to play this little game 
-         * with temporarily switching the standard error
-         * stream to capture the errors.
-         * Although you can pass in an error stream in 
-         * the constructor of the jar tool, they are not
-         * used when an error occurs.
-         */
-        PrintStream newErr = new PrintStream(errorBytes);
-        PrintStream oldErr = System.err;
-        System.setErr(newErr);
-
-        sun.tools.jar.Main jarTool = new sun.tools.jar.Main(newErr, newErr, "config_utils");
-
-        String[] args = new String[]{"uf", jarFile, file};
-        jarTool.run(args);
-
-        System.setErr(oldErr);
-
         try {
-            errorBytes.close();
-            newErr.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", jarFile, e.getLocalizedMessage()));
-        }
+            JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
+            File tempJar = File.createTempFile("temp", "jar");
+            JarOutputStream jos = new JarOutputStream(new FileOutputStream(tempJar));
+            JarEntry nextJarEntry = null;
+            while ((nextJarEntry = jis.getNextJarEntry()) != null) {
+                jos.putNextEntry(nextJarEntry);
+            }
+            jis.close();
+            jos.putNextEntry(new JarEntry(file));
+            FileInputStream fis = new FileInputStream(file);
+            for (int c = fis.read(); c != -1; c = fis.read()) {
+                jos.write(c);
+            }
+            fis.close();
+            jos.close();
 
-        String error = new String(errorBytes.toByteArray());
-        if (error.indexOf("java.io.IOException") != -1) {
-
-            int begin = error.indexOf(':') + 1;
-            int end = error.indexOf('\n');
-            String message = error.substring(begin, end);
-            throw new OpenEJBException(messages.format("file.0003", file, jarFile, message));
+            File oldJar = new File(jarFile);
+            oldJar.delete();
+            tempJar.renameTo(oldJar);
+        } catch (FileNotFoundException e) {
+            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()));
+        } catch (IOException e) {
+            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()));
         }
 
     }
 
+    @SuppressWarnings("unchecked")
     public static JarFile getJarFile(String jarFile) throws OpenEJBException {
         /*[1.1]  Get the jar ***************/
         JarFile jar = null;
@@ -163,6 +161,7 @@ public class JarUtils {
         return jar;
     }
 
+    @SuppressWarnings("unchecked")
     public static ClassLoader getContextClassLoader() {
         return (ClassLoader) java.security.AccessController.doPrivileged(
                 new java.security.PrivilegedAction() {
@@ -170,7 +169,6 @@ public class JarUtils {
                         return Thread.currentThread().getContextClassLoader();
                     }
                 }
-        );
+        );    
     }
-
 }
