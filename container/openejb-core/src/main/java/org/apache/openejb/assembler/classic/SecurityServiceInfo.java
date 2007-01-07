@@ -23,8 +23,4 @@ public class SecurityServiceInfo extends ServiceInfo {
 
     public final List<RoleMappingInfo> roleMappings = new ArrayList<RoleMappingInfo>();
 
-    public SecurityServiceInfo() {
-        serviceType = SECURITY_SERVICE;
-    }
-
 }

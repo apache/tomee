@@ -210,7 +210,7 @@
   -->
   <ServiceProvider
           id="Default JDK 1.2 ProxyFactory"
-          provider-type="Proxy"
+          provider-type="ProxyFactory"
           class-name="org.apache.openejb.util.proxy.Jdk12ProxyFactory"/>
 
   <!--
@@ -220,7 +220,7 @@
   -->
   <ServiceProvider
           id="Default JDK 1.3 ProxyFactory"
-          provider-type="Proxy"
+          provider-type="ProxyFactory"
           class-name="org.apache.openejb.util.proxy.Jdk13ProxyFactory"/>
 
   <!--
@@ -230,7 +230,7 @@
   -->
   <ServiceProvider
           id="Default Security Service"
-          provider-type="Security"
+          provider-type="SecurityService"
           class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
 
   <!--
@@ -240,7 +240,7 @@
   -->
   <ServiceProvider
           id="Default Transaction Manager"
-          provider-type="Transaction"
+          provider-type="TransactionService"
           class-name="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
 
   <!--

@@ -47,7 +47,7 @@ public class ConfigurationPrinter {
         for (ContainerInfo container : conf.containerSystem.containers) {
             out(1, "className    ", container.className);
             out(1, "codebase     ", container.codebase);
-            out(1, "containerName", container.containerName);
+            out(1, "containerName", container.id);
             out(1, "containerType", container.containerType);
             out(1, "description  ", container.description);
             out(1, "displayName  ", container.displayName);

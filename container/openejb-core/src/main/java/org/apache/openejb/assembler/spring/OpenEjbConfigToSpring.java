@@ -35,8 +35,6 @@ import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.MethodInfo;
-import org.apache.openejb.assembler.classic.MethodPermissionInfo;
-import org.apache.openejb.assembler.classic.MethodTransactionInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.QueryInfo;

@@ -68,7 +68,7 @@ public class AssemblerTool {
             return ic;
         } catch (javax.naming.NamingException ne) {
 
-            throw new org.apache.openejb.OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + context.jndiContextId + "+ could not be resolved.", ne);
+            throw new org.apache.openejb.OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + context.id + "+ could not be resolved.", ne);
         }
     }
 
@@ -80,7 +80,7 @@ public class AssemblerTool {
          */
         Class managerClass = SafeToolkit.loadClass(cmInfo.className, cmInfo.codebase);
 
-        checkImplementation(CONNECTION_MANAGER, managerClass, "ConnectionManager", cmInfo.connectionManagerId);
+        checkImplementation(CONNECTION_MANAGER, managerClass, "ConnectionManager", cmInfo.id);
 
         ConnectionManager connectionManager = (ConnectionManager) toolkit.newInstance(managerClass);
 
@@ -124,9 +124,9 @@ public class AssemblerTool {
     }
 
     public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {
-        Class factoryClass = SafeToolkit.loadClass(ivmInfo.proxyFactoryClassName, ivmInfo.codebase);
+        Class factoryClass = SafeToolkit.loadClass(ivmInfo.className, ivmInfo.codebase);
 
-        checkImplementation(PROXY_FACTORY, factoryClass, "ProxyFactory", ivmInfo.factoryName);
+        checkImplementation(PROXY_FACTORY, factoryClass, "ProxyFactory", ivmInfo.id);
 
         ProxyFactory factory = (ProxyFactory) toolkit.newInstance(factoryClass);
 

@@ -17,15 +17,18 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ServiceInfo extends InfoObject implements ServiceTypeConstants {
 
-    public int serviceType;
+    public String serviceType;
     public String description;
-    public String serviceName;
+    public String id;
     public String displayName;
-    public String factoryClassName;
+    public String className;
     public String codebase;
     public Properties properties;
+    public final List<String> constructorArgs = new ArrayList<String>();
 
 }

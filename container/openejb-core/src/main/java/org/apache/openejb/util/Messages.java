@@ -66,31 +66,11 @@ public class Messages {
         _rbFormats.put(_resourceName, _formats);
     }
 
-    public String format(String message, Object arg1) {
-        return format(message, new Object[]{arg1});
-    }
-
-    public String format(String message, Object arg1, Object arg2) {
-        return format(message, new Object[]{arg1, arg2});
-    }
-
-    public String format(String message, Object arg1, Object arg2, Object arg3) {
-        return format(message, new Object[]{arg1, arg2, arg3});
-    }
-
-    public String format(String message, Object arg1, Object arg2, Object arg3, Object arg4) {
-        return format(message, new Object[]{arg1, arg2, arg3, arg4});
-    }
-
-    public String format(String message, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
-        return format(message, new Object[]{arg1, arg2, arg3, arg4, arg5});
-    }
-
     public String format(String message) {
         return message(message);
     }
 
-    public String format(String message, Object[] args) {
+    public String format(String message, Object... args) {
         if (_locale != _globalLocale) {
             synchronized (Messages.class) {
                 init();

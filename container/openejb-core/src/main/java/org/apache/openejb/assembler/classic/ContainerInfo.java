@@ -20,7 +20,7 @@ import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 
-public abstract class ContainerInfo extends InfoObject {
+public abstract class ContainerInfo extends ServiceInfo {
 
     public static final int ENTITY_CONTAINER = 0;
     
@@ -30,14 +30,7 @@ public abstract class ContainerInfo extends InfoObject {
 
     public static final int STATELESS_SESSION_CONTAINER = 3;
 
-    public String description;
-    public String displayName;
-    public String containerName;
-    public String codebase;
-    public String className;
     public final List<EnterpriseBeanInfo> ejbeans = new ArrayList<EnterpriseBeanInfo>();
-    public Properties properties;
-    public final List<String> constructorArgs = new ArrayList<String>();
 
     public int containerType;
 }

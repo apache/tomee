@@ -77,7 +77,7 @@ public class ContainersBuilder {
     }
 
     private Container buildContainer(ContainerInfo containerInfo, Map<String, CoreDeploymentInfo> deploymentsList) throws OpenEJBException {
-        String containerName = containerInfo.containerName;
+        String containerName = containerInfo.id;
         ContainerInfo service = containerInfo;
 
         Properties systemProperties = System.getProperties();
