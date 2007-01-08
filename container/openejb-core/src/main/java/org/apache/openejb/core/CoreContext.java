@@ -226,6 +226,13 @@ public abstract class CoreContext implements java.io.Serializable {
             throw new java.lang.IllegalStateException("container-managed transaction beans can not access the UserTransaction");
     }
 
+    /**
+     * Lookup a resource within the component's private naming context.
+     * @param name - Name of the entry (relative to java:comp/env).
+     * @return The looked-up object.
+     * @see http://java.sun.com/javaee/5/docs/api/javax/ejb/EJBContext.html#lookup(java.lang.String)
+     * @see EJB3.0 "Core Contracts and Requirements", section 4.5.2, table 2.
+     */
     public Object lookup(String name) {
         Context initialContext = null;
         Object object = null;
@@ -234,7 +241,6 @@ public abstract class CoreContext implements java.io.Serializable {
             initialContext = new InitialContext();
             object = initialContext.lookup("java:comp/env/"+name);
         } catch (NamingException nex) {
-            // @see http://java.sun.com/javaee/5/docs/api/javax/ejb/EJBContext.html#lookup(java.lang.String)
             throw new IllegalArgumentException(nex);
         }
         return object;
