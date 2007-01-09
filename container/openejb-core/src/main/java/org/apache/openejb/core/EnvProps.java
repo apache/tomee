@@ -59,10 +59,4 @@ public class EnvProps {
 
 
     public static final String PASSWORD = "Password";
-
-
-    public static final String GLOBAL_TX_DATABASE = "Global_TX_Database";
-
-
-    public static final String LOCAL_TX_DATABASE = "Local_TX_Database";
 }
