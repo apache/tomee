@@ -16,32 +16,29 @@
  */
 package org.apache.openejb.core.ivm;
 
-import org.apache.openejb.util.FastThreadLocal;
-
 public class IntraVmCopyMonitor {
+    private static final ThreadLocal<IntraVmCopyMonitor> threadMonitor = new ThreadLocal<IntraVmCopyMonitor>();
 
-    private static FastThreadLocal threadStorage = new FastThreadLocal();
+    private boolean intraVmCopyOperation = false;
 
-    boolean intraVmCopyOperation = false;
+    private boolean statefulPassivationOperation = false;
 
-    boolean statefulPassivationOperation = false;
-
-    IntraVmCopyMonitor() {
+    private IntraVmCopyMonitor() {
     }
 
     public static boolean exists() {
-        return (threadStorage.get() != null);
+        return (threadMonitor.get() != null);
     }
 
     public static void release() {
-        threadStorage.set(null);
+        threadMonitor.set(null);
     }
 
-    static IntraVmCopyMonitor getMonitor() {
-        IntraVmCopyMonitor monitor = (IntraVmCopyMonitor) threadStorage.get();
+    private static IntraVmCopyMonitor getMonitor() {
+        IntraVmCopyMonitor monitor = threadMonitor.get();
         if (monitor == null) {
             monitor = new IntraVmCopyMonitor();
-            threadStorage.set(monitor);
+            threadMonitor.set(monitor);
         }
         return monitor;
     }
@@ -68,17 +65,11 @@ public class IntraVmCopyMonitor {
 
     public static boolean isIntraVmCopyOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
-        if (monitor.intraVmCopyOperation)
-            return true;
-        else
-            return false;
+        return monitor.intraVmCopyOperation;
     }
 
     public static boolean isStatefulPassivationOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
-        if (monitor.statefulPassivationOperation)
-            return true;
-        else
-            return false;
+        return monitor.statefulPassivationOperation;
     }
 }

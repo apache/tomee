@@ -19,40 +19,46 @@ package org.apache.openejb.resource;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.Collections;
+import java.util.Properties;
+import java.io.Serializable;
 
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionEventListener;
+import javax.resource.spi.ApplicationServerInternalException;
+import javax.resource.ResourceException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.SystemException;
+import javax.transaction.RollbackException;
 
 /**
  * @org.apache.xbean.XBean element="sharedLocalConnectionManager"
  */
-public class SharedLocalConnectionManager implements javax.resource.spi.ConnectionManager,
-        javax.resource.spi.ConnectionEventListener,
-        java.io.Serializable {
+public class SharedLocalConnectionManager implements ConnectionManager, ConnectionEventListener, Serializable {
+    private static final long serialVersionUID = -276853822988761008L;
 
-    private Set connSet;
-    private SpecialHashThreadLocal threadLocal = new SpecialHashThreadLocal();
-    private HashMap factoryMap = new HashMap();
+    private final ThreadLocal<ConnectionCache> threadConnectionCache = new ThreadLocal<ConnectionCache>() {
+        protected ConnectionCache initialValue() {
+            return new ConnectionCache();
+        }
+    };
+    private final Set<ManagedConnection> connSet = Collections.synchronizedSet(new HashSet<ManagedConnection>());
     private TransactionManager transactionManager;
 
-    public void init(java.util.Properties props) {
+    public void init(Properties props) {
         transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
     }
 
-    public SharedLocalConnectionManager() throws javax.resource.spi.ApplicationServerInternalException {
-        connSet = java.util.Collections.synchronizedSet(new HashSet());
-    }
-
-    public java.lang.Object allocateConnection(ManagedConnectionFactory factory,
-                                               ConnectionRequestInfo cxRequestInfo)
-            throws javax.resource.ResourceException {
-
-        ManagedConnection conn = (ManagedConnection) threadLocal.get(factory);
+    public Object allocateConnection(ManagedConnectionFactory factory, ConnectionRequestInfo cxRequestInfo) throws ResourceException {
+        ConnectionCache connectionCache = threadConnectionCache.get();
+        ManagedConnection conn = connectionCache.getConnection(factory);
         if (conn == null) {
             conn = factory.matchManagedConnections(connSet, null, cxRequestInfo);
             if (conn != null) {
@@ -75,13 +81,13 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
                 if (tx != null) {
                     tx.registerSynchronization(new Synchronizer(conn.getLocalTransaction()));
                 }
-            } catch (javax.transaction.SystemException se) {
-                throw new javax.resource.spi.ApplicationServerInternalException("Can not obtain a Transaction object from TransactionManager. " + se.getMessage());
-            } catch (javax.transaction.RollbackException re) {
-                throw new javax.resource.spi.ApplicationServerInternalException("Can not register org.apache.openejb.resource.LocalTransacton with transaciton manager. Transaction has already been rolled back" + re.getMessage());
+            } catch (SystemException se) {
+                throw new ApplicationServerInternalException("Can not obtain a Transaction object from TransactionManager. " + se.getMessage());
+            } catch (RollbackException re) {
+                throw new ApplicationServerInternalException("Can not register org.apache.openejb.resource.LocalTransacton with transaciton manager. Transaction has already been rolled back" + re.getMessage());
             }
 
-            threadLocal.put(factory, conn);
+            connectionCache.putConnection(factory, conn);
         }
 
         Object handle = conn.getConnection(null, cxRequestInfo);
@@ -113,12 +119,10 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
     public void connectionErrorOccurred(ConnectionEvent event) {
         ManagedConnection conn = (ManagedConnection) event.getSource();
 
-        ManagedConnectionFactory mcf = (ManagedConnectionFactory) threadLocal.getKey(conn);
         try {
             conn.destroy();
-            if (threadLocal.get(mcf) == conn) {
-                threadLocal.put(mcf, null);
-            }
+
+            threadConnectionCache.get().removeConnection(conn);
         } catch (javax.resource.ResourceException re) {
 
         }
@@ -134,26 +138,21 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
 
     private void cleanup(ManagedConnection conn) {
         if (conn != null) {
-
-            ManagedConnectionFactory mcf = (ManagedConnectionFactory) threadLocal.getKey(conn);
             try {
                 conn.cleanup();
                 connSet.add(conn);
-
-            } catch (javax.resource.ResourceException re) {
+            } catch (ResourceException re) {
                 try {
-
                     conn.destroy();
-                } catch (javax.resource.ResourceException re2) {
-
+                } catch (ResourceException re2) {
                 }
             }
-            threadLocal.put(mcf, null);
+
+            threadConnectionCache.get().removeConnection(conn);
         }
     }
 
     public void localTransactionStarted(ConnectionEvent event) {
-
     }
 
     static class Synchronizer implements javax.transaction.Synchronization {
@@ -183,25 +182,29 @@ public class SharedLocalConnectionManager implements javax.resource.spi.Connecti
         }
     }
 
-    /*
-    * This class allows the ConnectionManager to determine the key used for
-    * any object stored in this type of HashThreadLocal.  Its needed when handling
-    * ConnectionListner events because the key (ManagedConnectionFactory) used to
-    * store values (ManagedConnecitons) is not available.
-    */
-    static class SpecialHashThreadLocal extends org.apache.openejb.util.HashThreadLocal {
-        HashMap keyMap = new HashMap();
+    /**
+     * Thread scoped cache of connections.
+     */
+    private static class ConnectionCache {
+        private final Map<ManagedConnectionFactory,ManagedConnection> connectionByFactory =
+                new HashMap<ManagedConnectionFactory,ManagedConnection>();
+        private final Map<ManagedConnection,ManagedConnectionFactory> factoriesByConnection = new
+                HashMap<ManagedConnection,ManagedConnectionFactory>();
 
-        public synchronized void put(Object key, Object value) {
-            if (!keyMap.containsKey(key)) {
-                keyMap.put(value, key);
-            }
-            super.put(key, value);
+        public ManagedConnection getConnection(ManagedConnectionFactory factory) {
+            return connectionByFactory.get(factory);
         }
 
-        public synchronized Object getKey(Object value) {
-            return keyMap.get(value);
+        public void putConnection(ManagedConnectionFactory factory, ManagedConnection connection) {
+            connectionByFactory.put(factory, connection);
+            factoriesByConnection.put(connection, factory);
+        }
+
+        public void removeConnection(ManagedConnection connection) {
+            ManagedConnectionFactory factory = factoriesByConnection.remove(connection);
+            if (factory != null) {
+                connectionByFactory.remove(factory);
+            }
         }
     }
-
 }

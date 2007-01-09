@@ -25,25 +25,20 @@ import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.openejb.util.FastThreadLocal;
-
 public class IntraVmArtifact implements Externalizable {
+    private static final ThreadLocal<List<Object>> handles = new ThreadLocal<List<Object>>() {
+        protected List<Object> initialValue() {
+            return new ArrayList<Object>();
+        }
+    };
+
+    // todo why not put in message catalog?
+    private static final String NO_ARTIFACT_ERROR = "The artifact this object represents could not be found.";
 
     private int instanceHandle;
 
-    private static FastThreadLocal thread = new FastThreadLocal();
-
-    private static final String NO_MAP_ERROR = "There is no HashMap stored in the thread.  This object may have been moved outside the Virtual Machine.";
-
-    private static final String NO_ARTIFACT_ERROR = "The artifact this object represents could not be found.";
-
     public IntraVmArtifact(Object obj) {
-
-        List list = (List) thread.get();
-        if (list == null) {
-            list = new ArrayList();
-            thread.set(list);
-        }
+        List<Object> list = handles.get();
         instanceHandle = list.size();
         list.add(obj);
     }
@@ -59,11 +54,11 @@ public class IntraVmArtifact implements Externalizable {
         instanceHandle = in.read();
     }
 
-    private Object readResolve() throws ObjectStreamException {
-        List list = (List) thread.get();
-        if (list == null) throw new InvalidObjectException(NO_MAP_ERROR);
+    protected Object readResolve() throws ObjectStreamException {
+        List<Object> list = handles.get();
         Object artifact = list.get(instanceHandle);
         if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
+        // todo WHY?
         if (list.size() == instanceHandle + 1) {
             list.clear();
         }

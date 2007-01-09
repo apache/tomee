@@ -21,19 +21,18 @@ package org.apache.openejb.timer;
  * @version $Rev$ $Date$
  */
 public class TimerState {
-
-    private static final ThreadLocal timerState = new ThreadLocal() {
-        protected Object initialValue() {
+    private static final ThreadLocal<Boolean> timerState = new ThreadLocal<Boolean>() {
+        protected Boolean initialValue() {
             return Boolean.FALSE;
         }
     };
 
-    public static final boolean getTimerState() {
-        return ((Boolean)timerState.get()).booleanValue();
+    public static boolean getTimerState() {
+        return timerState.get();
     }
 
-    public static final void setTimerState(boolean state) {
-        timerState.set(Boolean.valueOf(state));
+    public static void setTimerState(boolean state) {
+        timerState.set(state);
     }
 
 }

@@ -24,17 +24,17 @@ import java.util.Collection;
  * @org.apache.xbean.XBean element="pseudoSecurityService"
  */
 public class PseudoSecurityService implements SecurityService {
-    private final ThreadLocal<Object> threadStorage = new ThreadLocal<Object>();
+    private final ThreadLocal<Object> securityIdentity = new ThreadLocal<Object>();
 
     public void init(java.util.Properties props) {
     }
 
     public Object getSecurityIdentity() {
-        return threadStorage.get();
+        return securityIdentity.get();
     }
 
     public void setSecurityIdentity(Object securityIdentity) {
-        threadStorage.set(securityIdentity);
+        this.securityIdentity.set(securityIdentity);
     }
 
     public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames) {

@@ -25,32 +25,7 @@ import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.openejb.util.FastThreadLocal;
-
 public class ImmutableArtifact implements Externalizable {
-
-    /**
-     * A handle created using information about the object
-     * instance for which this IntraVMArtifact was created.
-     */
-    private int instanceHandle;
-    
-    /**
-     * Holds a list of threads.  Each thread gets a HashMap to store 
-     * instances artifacts of the intra-vm.  The instances are not serialized,
-     * instead, a key for the object is serialized to the stream.
-     * 
-     * At deserialization, the key is used to get the original object
-     * instance from the List
-     */
-    private static FastThreadLocal thread = new FastThreadLocal();
-    
-    /**
-     * Error detailing that the List for this Thread can not be found.
-     */
-    // TODO: move text to Message.properties
-    private static final String NO_MAP_ERROR = "There is no HashMap stored in the thread.  This object may have been moved outside the Virtual Machine.";
-    
     /**
      * Error detailing that the object instance can not be found in the thread's List.
      */
@@ -58,26 +33,42 @@ public class ImmutableArtifact implements Externalizable {
     private static final String NO_ARTIFACT_ERROR = "The artifact this object represents could not be found.";
 
     /**
+     * Holds a list of threads.  Each thread gets a HashMap to store
+     * instances artifacts of the intra-vm.  The instances are not serialized,
+     * instead, a key for the object is serialized to the stream.
+     * <p/>
+     * At deserialization, the key is used to get the original object
+     * instance from the List
+     */
+    private static ThreadLocal<List<Object>> handles = new ThreadLocal<List<Object>>() {
+        protected List<Object> initialValue() {
+            return new ArrayList<Object>();
+        }
+    };
+
+    /**
+     * A handle created using information about the object
+     * instance for which this IntraVMArtifact was created.
+     */
+    private int instanceHandle;
+
+    /**
      * Used to creat an ImmutableArtifact object that can represent
      * the true intra-vm artifact in a stream.
-     * 
-     * @param obj    The object instance this class should represent in the stream.
+     *
+     * @param obj The object instance this class should represent in the stream.
      */
     public ImmutableArtifact(Object obj) {
         // the prev implementation used a hash map and removed the handle in the readResolve method
         // which would prevent marshaling of objects with the same hashcode in one request.
-        List list = (List)thread.get();
-        if (list == null) {
-            list = new ArrayList();
-            thread.set(list);
-        }
+        List<Object> list = handles.get();
         instanceHandle = list.size();
         list.add(obj);
-            }
+    }
 
     /**
      * This class is Externalizable and this public, no-arg, constructor is required.
-     * 
+     * <p/>
      * This constructor should only be used by the deserializing stream.
      */
     public ImmutableArtifact() {
@@ -85,21 +76,21 @@ public class ImmutableArtifact implements Externalizable {
 
     /**
      * Writes the instanceHandle to the stream.
-     * 
+     *
      * @param out
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException{
-        out.write(instanceHandle);                                            
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.write(instanceHandle);
     }
 
     /**
      * Reads the instanceHandle from the stream
-     * 
+     *
      * @param in
-     * @exception IOException
+     * @throws IOException
      */
-    public void readExternal(ObjectInput in) throws IOException{
+    public void readExternal(ObjectInput in) throws IOException {
         instanceHandle = in.read();
     }
 
@@ -108,16 +99,16 @@ public class ImmutableArtifact implements Externalizable {
      * This class implements the readResolve method of the serialization API.
      * In the readResolve method, the original object instance is retrieved
      * from the List and returned instead.
-     * 
-     * @return 
-     * @exception ObjectStreamException
+     *
+     * @return
+     * @throws ObjectStreamException
      */
-    private Object readResolve() throws ObjectStreamException{
-        List list = (List) thread.get();
-        if (list == null) throw new InvalidObjectException(NO_MAP_ERROR);
+    protected Object readResolve() throws ObjectStreamException {
+        List list = handles.get();
         Object artifact = list.get(instanceHandle);
-        if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR+instanceHandle);
-        if(list.size()==instanceHandle+1) {
+        if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
+        // todo WHY?
+        if (list.size() == instanceHandle + 1) {
             list.clear();
         }
         return artifact;

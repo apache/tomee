@@ -17,7 +17,6 @@
 package org.apache.openejb.core;
 
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.util.FastThreadLocal;
 
 import org.apache.openejb.core.ivm.IntraVmServer;
 import org.apache.openejb.spi.ApplicationServer;
@@ -29,8 +28,9 @@ import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 
 public class ServerFederation implements ApplicationServer {
+    private static final IntraVmServer localServer = new IntraVmServer();
 
-    private static FastThreadLocal threadStorage = new FastThreadLocal();
+    private static final ThreadLocal<ApplicationServer> applicationServer = new ThreadLocal<ApplicationServer>();
 
     public Handle getHandle(ProxyInfo proxyInfo) {
         return getApplicationServer().getHandle(proxyInfo);
@@ -53,17 +53,20 @@ public class ServerFederation implements ApplicationServer {
     }
 
     public static void setApplicationServer(ApplicationServer server) {
+        // todo why do we restrict null?  This makes call to setApplicationServer non symetrical. Throw an exception?
         if (server != null) {
-            threadStorage.set(server);
+            applicationServer.set(server);
         }
     }
 
     public static ApplicationServer getApplicationServer() {
-        ApplicationServer server = (ApplicationServer) threadStorage.get();
-
-        return (server == null) ? localServer : server;
+        ApplicationServer server = applicationServer.get();
+        if (server == null) {
+            // todo: consider making this the thread local intialValue
+            return localServer;
+        }
+        return server;
     }
 
-    private static final IntraVmServer localServer = new IntraVmServer();
 }
 
