@@ -98,4 +98,9 @@ public interface DeploymentInfo {
     public interface BusinessRemoteHome extends javax.ejb.EJBHome {
         Object create();
     }
+
+    public <T> T get(Class<T> type);
+
+    public <T> T set(Class<T> type, T value);
+
 }

@@ -93,6 +93,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private BusinessLocalHome businessLocalHomeRef;
     private BusinessRemoteHome businessRemoteHomeRef;
+    private final HashMap<Class, Object> data = new HashMap();
+
 
     private Object containerData;
 
@@ -210,6 +212,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         createMethodMap();
     }
 
+    public <T> T get(Class<T> type) {
+        return (T)data.get(type);
+    }
+
+    public <T> T set(Class<T> type, T value) {
+        return (T) data.put(type, value);
+    }
+    
     public List<Injection> getInjections() {
         return injections;
     }
