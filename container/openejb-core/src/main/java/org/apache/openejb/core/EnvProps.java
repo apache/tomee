@@ -34,8 +34,6 @@ public class EnvProps {
 
     public final static String IM_STRICT_POOLING = "StrictPooling";
 
-    public final static String THREAD_CONTEXT_IMPL = "org/openejb/core/ThreadContext/IMPL_CLASS";
-
     /*
     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
     * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and 

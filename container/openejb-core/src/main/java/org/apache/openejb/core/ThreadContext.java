@@ -16,12 +16,9 @@
  */
 package org.apache.openejb.core;
 
-import org.apache.openejb.ClassLoaderUtil;
-
 public class ThreadContext implements Cloneable {
 
     protected static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
-    protected static Class implClass = ThreadContext.class;
 
     protected boolean valid = false;
     protected CoreDeploymentInfo deploymentInfo;
@@ -30,34 +27,6 @@ public class ThreadContext implements Cloneable {
     protected Object securityIdentity;
     protected Object unspecified;
 
-    static {
-        String className = System.getProperty(EnvProps.THREAD_CONTEXT_IMPL);
-
-        if (className == null) {
-            className = System.getProperty(EnvProps.THREAD_CONTEXT_IMPL);
-        }
-
-        if (className != null) {
-            try {
-                ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
-                implClass = Class.forName(className, true, cl);
-            } catch (Exception e) {
-                System.out.println("Can not load ThreadContext class. org.apache.openejb.core.threadcontext_class = " + className);
-                e.printStackTrace();
-                implClass = null;
-            }
-        }
-    }
-
-    protected static ThreadContext newThreadContext() {
-        try {
-            return (ThreadContext) implClass.newInstance();
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            throw new RuntimeException("ThreadContext implemenation class could not be instantiated. Class type = " + implClass + " exception message = " + e.getMessage());
-        }
-    }
 
     public static boolean isValid() {
         ThreadContext tc = threadStorage.get();
@@ -94,7 +63,7 @@ public class ThreadContext implements Cloneable {
     public static ThreadContext getThreadContext() {
         ThreadContext tc = threadStorage.get();
         if (tc == null) {
-            tc = ThreadContext.newThreadContext();
+            tc = new ThreadContext();
             threadStorage.set(tc);
         }
         return tc;
