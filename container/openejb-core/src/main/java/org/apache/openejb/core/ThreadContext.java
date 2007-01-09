@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core;
 
+import java.util.HashMap;
+
 public class ThreadContext implements Cloneable {
 
     protected static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
@@ -26,7 +28,15 @@ public class ThreadContext implements Cloneable {
     protected Operation currentOperation;
     protected Object securityIdentity;
     protected Object unspecified;
+    private final HashMap<Class, Object> data = new HashMap();
 
+    public <T> T get(Class<T> type) {
+        return (T)data.get(type);
+    }
+
+    public <T> T set(Class<T> type, T value) {
+        return (T) data.put(type, value);
+    }
 
     public static boolean isValid() {
         ThreadContext tc = threadStorage.get();
@@ -43,6 +53,7 @@ public class ThreadContext implements Cloneable {
         currentOperation = null;
         securityIdentity = null;
         unspecified = null;
+        data.clear();
     }
 
     public static void invalidate() {
