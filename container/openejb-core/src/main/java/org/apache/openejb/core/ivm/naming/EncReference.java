@@ -47,9 +47,9 @@ public abstract class EncReference implements Reference {
     * Obtains the referenced object.
     */
     public Object getObject() throws javax.naming.NamingException {
-        if (ThreadContext.isValid()) {
-            ThreadContext cntx = ThreadContext.getThreadContext();
-            checkOperation(cntx.getCurrentOperation());
+        ThreadContext callContext = ThreadContext.getThreadContext();
+        if (callContext != null) {
+            checkOperation(callContext.getCurrentOperation());
         }
         return ref.getObject();
     }

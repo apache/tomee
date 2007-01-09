@@ -22,7 +22,6 @@ import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.IntraVmHandle;
@@ -61,7 +60,7 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, method, args, primKey, ThreadContext.getThreadContext().getSecurityIdentity());
+        container.invoke(deploymentID, method, args, primKey, getThreadSpecificSecurityIdentity());
         if (stub != null) {
             stub.invalidateReference();
         }

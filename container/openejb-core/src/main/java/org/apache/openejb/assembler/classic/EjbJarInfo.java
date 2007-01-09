@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class EjbJarInfo extends InfoObject {
+    public String moduleId;
     public String jarPath;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
     public final List<InterceptorInfo> defaultInterceptors = new ArrayList<InterceptorInfo>();

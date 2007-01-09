@@ -37,6 +37,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -91,13 +92,10 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {
+        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-
-            org.apache.openejb.core.CoreDeploymentInfo deployInfo = (org.apache.openejb.core.CoreDeploymentInfo) this.getDeploymentInfo(deployID);
-
-            ThreadContext callContext = ThreadContext.getThreadContext();
-            callContext.set(deployInfo, primKey, securityIdentity);
-
             boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
@@ -134,19 +132,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             return retValue;
 
         } finally {
-            /*
-                The thread context must be stripped from the thread before returning or throwing an exception
-                so that an object outside the container does not have access to a
-                bean's JNDI ENC.  In addition, its important for the
-                org.apache.openejb.core.ivm.java.javaURLContextFactory, which determines the context
-                of a JNDI lookup based on the presence of a ThreadContext object.  If no ThreadContext
-                object is available, then the request is assumed to be made from outside the container
-                system and is given the global OpenEJB JNDI name space instead.  If there is a thread context,
-                then the request is assumed to be made from within the container system and so the
-                javaContextFactory must return the JNDI ENC of the current enterprise bean which it
-                obtains from the DeploymentInfo object associated with the current thread context.
-            */
-            ThreadContext.setThreadContext(null);
+            ThreadContext.exit(oldCallContext);
         }
     }
 

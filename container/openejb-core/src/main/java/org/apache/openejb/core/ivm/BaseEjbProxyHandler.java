@@ -113,7 +113,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected Object getThreadSpecificSecurityIdentity() {
         ThreadContext context = ThreadContext.getThreadContext();
-        if (context.valid()) {
+        if (context != null) {
             return context.getSecurityIdentity();
         } else {
             return getSecurityService().getSecurityIdentity();
@@ -142,33 +142,33 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             else
                 throw new UnsupportedOperationException("Unkown method: " + method);
         }
-        /* Preserve the context
-            When entering a container the ThreadContext will change to match the context of
-            the bean being serviced. That changes the current context of the calling bean,
-            so the context must be preserved and then resourced after request is serviced.
-            The context is restored in the finnaly clause below.
-
-            We could have same some typing by obtaining a ref to the ThreadContext and then
-            setting the current ThreadContext to null, but this results in more object creation
-            since the container will create a new context on the invoke( ) operation if the current
-            context is null. Getting the context values and resetting them reduces object creation.
-            It's ugly but performant.
-        */
-
-        ThreadContext cntext = null;
-        CoreDeploymentInfo depInfo = null;
-        Object prmryKey = null;
-        Operation crrntOperation = null;
-        Object scrtyIdentity = null;
-        boolean cntextValid = false;
-        cntext = ThreadContext.getThreadContext();
-        if (cntext.valid()) {
-            depInfo = cntext.getDeploymentInfo();
-            prmryKey = cntext.getPrimaryKey();
-            crrntOperation = cntext.getCurrentOperation();
-            scrtyIdentity = cntext.getSecurityIdentity();
-            cntextValid = true;
-        }
+//        /* Preserve the context
+//            When entering a container the ThreadContext will change to match the context of
+//            the bean being serviced. That changes the current context of the calling bean,
+//            so the context must be preserved and then resourced after request is serviced.
+//            The context is restored in the finnaly clause below.
+//
+//            We could have same some typing by obtaining a ref to the ThreadContext and then
+//            setting the current ThreadContext to null, but this results in more object creation
+//            since the container will create a new context on the invoke( ) operation if the current
+//            context is null. Getting the context values and resetting them reduces object creation.
+//            It's ugly but performant.
+//        */
+//
+//        ThreadContext cntext = null;
+//        CoreDeploymentInfo depInfo = null;
+//        Object prmryKey = null;
+//        Operation crrntOperation = null;
+//        Object scrtyIdentity = null;
+//        boolean cntextValid = false;
+//        cntext = ThreadContext.getThreadContext();
+//        if (cntext.valid()) {
+//            depInfo = cntext.getDeploymentInfo();
+//            prmryKey = cntext.getPrimaryKey();
+//            crrntOperation = cntext.getCurrentOperation();
+//            scrtyIdentity = cntext.getSecurityIdentity();
+//            cntextValid = true;
+//        }
 
         String jndiEnc = System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
 //        System.setProperty(javax.naming.Context.URL_PKG_PREFIXES,"org.apache.openejb.core.ivm.naming");
@@ -230,10 +230,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         } finally {
 //            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, jndiEnc);
 
-            if (cntextValid) {
-                cntext.set(depInfo, prmryKey, scrtyIdentity);
-                cntext.setCurrentOperation(crrntOperation);
-            }
+//            if (cntextValid) {
+//                cntext.set(depInfo, prmryKey, scrtyIdentity);
+//                cntext.setCurrentOperation(crrntOperation);
+//            }
             if (doIntraVmCopy == true) {
 
                 IntraVmCopyMonitor.postCopyOperation();

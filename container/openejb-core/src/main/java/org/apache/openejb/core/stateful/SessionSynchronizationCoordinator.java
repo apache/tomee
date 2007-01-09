@@ -23,19 +23,19 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionSynchronization;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {
+    private static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    private static java.util.HashMap coordinators = new java.util.HashMap();
-    public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static Map<Transaction,SessionSynchronizationCoordinator> coordinators = new HashMap<Transaction,SessionSynchronizationCoordinator>();
 
-    private final HashMap sessionSynchronizations = new java.util.HashMap();
+    private final Map<Object,ThreadContext> sessionSynchronizations = new HashMap<Object,ThreadContext>();
     private final TransactionManager transactionManager;
 
     private SessionSynchronizationCoordinator(TransactionManager transactionManager) {
@@ -45,13 +45,14 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
     public static void registerSessionSynchronization(SessionSynchronization session, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException {
         SessionSynchronizationCoordinator coordinator = null;
 
-        coordinator = (SessionSynchronizationCoordinator) coordinators.get(context.currentTx);
+        coordinator = coordinators.get(context.currentTx);
 
         if (coordinator == null) {
             coordinator = new SessionSynchronizationCoordinator(context.getTransactionManager());
             try {
                 context.currentTx.registerSynchronization(coordinator);
             } catch (Exception e) {
+                // todo this seems bad...
                 logger.error("Transaction.registerSynchronization failed.", e);
                 return;
             }
@@ -67,7 +68,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         if (registered) return;
 
         try {
-            callContext = (ThreadContext) callContext.clone();
+            callContext = new ThreadContext(callContext.getDeploymentInfo(), callContext.getPrimaryKey(), callContext.getSecurityIdentity());
         } catch (Exception e) {
         }
         sessionSynchronizations.put(callContext.getPrimaryKey(), callContext);
@@ -90,15 +91,13 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
     public void beforeCompletion() {
 
-        ThreadContext originalContext = ThreadContext.getThreadContext();
-
         Object[] contexts = sessionSynchronizations.values().toArray();
 
         for (int i = 0; i < contexts.length; i++) {
 
             ThreadContext callContext = (ThreadContext) contexts[i];
 
-            ThreadContext.setThreadContext(callContext);
+            ThreadContext oldCallContext = ThreadContext.enter(callContext);
             StatefulInstanceManager instanceManager = null;
 
             try {
@@ -112,7 +111,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 bean.beforeCompletion();
-                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean) bean);
+                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {
@@ -141,14 +140,12 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 /* [4] throw the java.rmi.RemoteException to the client */
                 throw new RuntimeException(message);
             } finally {
-                ThreadContext.setThreadContext(originalContext);
+                ThreadContext.exit(oldCallContext);
             }
         }
     }
 
     public void afterCompletion(int status) {
-
-        ThreadContext originalContext = ThreadContext.getThreadContext();
 
         Object[] contexts = sessionSynchronizations.values().toArray();
 
@@ -162,7 +159,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
             ThreadContext callContext = (ThreadContext) contexts[i];
 
-            ThreadContext.setThreadContext(callContext);
+            ThreadContext oldCallContext = ThreadContext.enter(callContext);
             StatefulInstanceManager instanceManager = null;
 
             try {
@@ -177,7 +174,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
 
                 bean.afterCompletion(status == Status.STATUS_COMMITTED);
-                instanceManager.poolInstance(callContext.getPrimaryKey(), (EnterpriseBean) bean);
+                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {
@@ -208,7 +205,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
                 throw new RuntimeException(message);
             } finally {
-                ThreadContext.setThreadContext(originalContext);
+                ThreadContext.exit(oldCallContext);
             }
         }
     }

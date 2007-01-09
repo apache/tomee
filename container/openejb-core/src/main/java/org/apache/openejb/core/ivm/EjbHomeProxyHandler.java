@@ -275,7 +275,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, method, args, primKey, ThreadContext.getThreadContext().getSecurityIdentity());
+        container.invoke(deploymentID, method, args, primKey, getThreadSpecificSecurityIdentity());
 
         /*
          * This operation takes care of invalidating all the EjbObjectProxyHanders associated with

@@ -74,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Iterator;
+import java.io.File;
 
 /**
  * @version $Revision$ $Date$
@@ -107,6 +108,7 @@ public class EjbJarInfoBuilder {
 
         EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.jarPath = jar.getJarURI();
+        ejbJar.moduleId = new File(ejbJar.jarPath).getName().replaceFirst(".jar$","");
 
 
         for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {

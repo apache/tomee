@@ -66,12 +66,13 @@ public class javaURLContextFactory implements ObjectFactory, InitialContextFacto
     public Context getContext() {
         Context jndiCtx = null;
 
-        if (!ThreadContext.isValid()) {
+        ThreadContext callContext = ThreadContext.getThreadContext();
+        if (callContext == null) {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             return containerSystem.getJNDIContext();
         }
 
-        CoreDeploymentInfo di = ThreadContext.getThreadContext().getDeploymentInfo();
+        CoreDeploymentInfo di = callContext.getDeploymentInfo();
         if (di != null) {
             return di.getJndiEnc();
         } else {

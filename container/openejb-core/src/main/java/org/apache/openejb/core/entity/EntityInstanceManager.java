@@ -30,6 +30,8 @@ import org.apache.openejb.util.Stack;
 import javax.ejb.EntityBean;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -517,8 +519,7 @@ public class EntityInstanceManager {
     * to the method ready pool. Instances of this class are not recycled anymore, because modern VMs
     * (JDK1.3 and above) perform better for objects that are short lived.
     */
-    protected class SyncronizationWrapper
-            implements javax.transaction.Synchronization {
+    protected class SyncronizationWrapper implements Synchronization {
         private EntityBean bean;
         /*
         * <tt>isAvailable<tt> determines if the wrapper is still associated with a bean.  If the bean identity is removed (ejbRemove)
@@ -527,23 +528,22 @@ public class EntityInstanceManager {
         */
         private boolean isAvailable;
         private boolean isAssociated;
-        private final ThreadContext context;
         private final Key myIndex;
+        private final CoreDeploymentInfo deploymentInfo;
+        private final Object primaryKey;
+        private final Object securityIdentity;
 
-        public SyncronizationWrapper(EntityBean ebean, Key key, boolean available, ThreadContext ctx) throws OpenEJBException {
-            if (ebean == null || ctx == null || key == null) {
+        public SyncronizationWrapper(EntityBean bean, Key key, boolean available, ThreadContext callContext) throws OpenEJBException {
+            if (bean == null || callContext == null || key == null) {
                 throw new IllegalArgumentException();
             }
-            bean = ebean;
+            this.bean = bean;
             isAvailable = available;
             myIndex = key;
             isAssociated = true;
-            try {
-                context = (ThreadContext) ctx.clone();
-            } catch (CloneNotSupportedException e) {
-                logger.error("Thread context class " + ctx.getClass() + " doesn't implement the Cloneable interface!", e);
-                throw new OpenEJBException("Thread context class " + ctx.getClass() + " doesn't implement the Cloneable interface!");
-            }
+            deploymentInfo = callContext.getDeploymentInfo();
+            primaryKey = callContext.getPrimaryKey();
+            securityIdentity = callContext.getSecurityIdentity();
         }
 
         public void disassociate() {
@@ -558,37 +558,41 @@ public class EntityInstanceManager {
             return isAvailable;
         }
 
-        public void setEntityBean(EntityBean ebean) {
+        public synchronized void setEntityBean(EntityBean ebean) {
             isAvailable = true;
             bean = ebean;
         }
 
-        public EntityBean getEntityBean() {
+        public synchronized EntityBean getEntityBean() {
             isAvailable = false;
             return bean;
         }
 
         public void beforeCompletion() {
             if (isAssociated) {
+                EntityBean bean;
+                synchronized (this) {
+                    bean = this.bean;
+                }
 
-                ThreadContext currentContext = ThreadContext.getThreadContext();
-                ThreadContext.setThreadContext(context);
-                Operation orginalOperation = context.getCurrentOperation();
-                context.setCurrentOperation(org.apache.openejb.core.Operation.OP_STORE);
+                ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
+                callContext.setCurrentOperation(Operation.OP_STORE);
+
+                ThreadContext oldCallContext = ThreadContext.enter(callContext);
+
                 try {
                     bean.ejbStore();
                 } catch (Exception re) {
                     logger.error("Exception occured during ejbStore()", re);
-                    javax.transaction.TransactionManager txmgr = getTransactionManager();
+                    TransactionManager transactionManager = getTransactionManager();
                     try {
-                        txmgr.setRollbackOnly();
-                    } catch (javax.transaction.SystemException se) {
+                        transactionManager.setRollbackOnly();
+                    } catch (SystemException se) {
                         logger.error("Transaction manager reported error during setRollbackOnly()", se);
                     }
 
                 } finally {
-
-                    ThreadContext.setThreadContext(currentContext);
+                    ThreadContext.exit(oldCallContext);
                 }
             }
         }
@@ -596,7 +600,6 @@ public class EntityInstanceManager {
         public void afterCompletion(int status) {
             txReadyPool.remove(myIndex);
         }
-
     }
 }
 

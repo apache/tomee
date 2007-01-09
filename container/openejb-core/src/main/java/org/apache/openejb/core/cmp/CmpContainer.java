@@ -156,16 +156,14 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
         CmpEngine cmpEngine = getCmpEngine(deployInfo.getDeploymentID());
 
-        ThreadContext callContext = new ThreadContext();
-        callContext.setDeploymentInfo(deployInfo);
+        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey, null);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             Object bean = cmpEngine.loadBean(callContext, primaryKey);
             return bean;
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -198,13 +196,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
-        ThreadContext callContext = new ThreadContext();
-        callContext.set(deployInfo, primKey, securityIdentity);
+        ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
-        ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(deployInfo.getClassLoader());
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
 
             boolean authorized = securityService.isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
@@ -243,20 +237,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             return retValue;
         } finally {
-            /*
-                The thread context must be stripped from the thread before returning or throwing an exception
-                so that an object outside the container does not have access to a
-                bean's JNDI ENC.  In addition, its important for the
-                org.apache.openejb.core.ivm.java.javaURLContextFactory, which determines the context
-                of a JNDI lookup based on the presence of a ThreadContext object.  If no ThreadContext
-                object is available, then the request is assumed to be made from outside the container
-                system and is given the global OpenEJB JNDI name space instead.  If there is a thread context,
-                then the request is assumed to be made from within the container system and so the
-                javaContextFactory must return the JNDI ENC of the current enterprise bean which it
-                obtains from the DeploymentInfo object associated with the current thread context.
-            */
-            ThreadContext.setThreadContext(oldCallContext);
-            Thread.currentThread().setContextClassLoader(oldCL);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -280,8 +261,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         KeyGenerator keyGenerator = deployInfo.getKeyGenerator();
         Object primaryKey = keyGenerator.getPrimaryKey(entityBean);
 
-        ThreadContext callContext = new ThreadContext();
-        callContext.set(deployInfo, primaryKey, null);
+        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey, null);
         return callContext;
     }
 
@@ -291,18 +271,16 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         // activating entity doen't have a primary key
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfoByClass(entityBean.getClass());
 
-        ThreadContext callContext = new ThreadContext();
-        callContext.setDeploymentInfo(deployInfo);
+        ThreadContext callContext = new ThreadContext(deployInfo, null, null);
         callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.setEntityContext(new EntityContext(transactionManager, securityService));
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -312,14 +290,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_UNSET_CONTEXT);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.unsetEntityContext();
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -329,14 +306,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_LOAD);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbLoad();
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -346,14 +322,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_STORE);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbStore();
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -364,8 +339,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_REMOVE);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbRemove();
         } catch (RemoteException e) {
@@ -377,7 +351,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 entityBean.getClass().getMethod("OpenEJB_deleted").invoke(entityBean);
             } catch (Exception ignored) {
             }
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -397,18 +371,16 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         // activating entity doen't have a primary key
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfoByClass(entityBean.getClass());
 
-        ThreadContext callContext = new ThreadContext();
-        callContext.setDeploymentInfo(deployInfo);
+        ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_ACTIVATE);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbActivate();
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 
@@ -418,14 +390,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.OP_PASSIVATE);
 
-        ThreadContext oldCallContext = ThreadContext.getThreadContext();
-        ThreadContext.setThreadContext(callContext);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbPassivate();
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
-            ThreadContext.setThreadContext(oldCallContext);
+            ThreadContext.exit(oldCallContext);
         }
     }
 

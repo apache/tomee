@@ -163,29 +163,28 @@ public class MdbContainer implements Container, TransactionContainer {
         if (deployInfo == null) throw new SystemException("Unknown deployment " + deployId);
 
         // intialize call context
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        callContext.setDeploymentInfo(deployInfo);
-        MdbCallContext mdbCallContext = new MdbCallContext();
-        callContext.setUnspecified(mdbCallContext);
-        mdbCallContext.deliveryMethod = method;
+        ThreadContext callContext = new ThreadContext(deployInfo, null, null);
+        ThreadContext oldContext = ThreadContext.enter(callContext);
 
-        // create the tx data
+        // create mdb context
+        MdbCallContext mdbCallContext = new MdbCallContext();
+        callContext.set(MdbCallContext.class, mdbCallContext);
+        mdbCallContext.deliveryMethod = method;
+        mdbCallContext.oldCallContext = oldContext;
+
+        // add tx data
         mdbCallContext.txPolicy = deployInfo.getTransactionPolicy(method);
         mdbCallContext.txContext = new TransactionContext(callContext, transactionManager);
-
-        // install the application classloader
-        installAppClassLoader(mdbCallContext, deployInfo.getClassLoader());
 
         // call the tx before method
         try {
             mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
             enlistResource(xaResource);
         } catch (ApplicationException e) {
-            restoreAdapterClassLoader(mdbCallContext);
-
+            ThreadContext.exit(oldContext);
             throw new SystemException("Should never get an Application exception", e);
         } catch (SystemException e) {
-            restoreAdapterClassLoader(mdbCallContext);
+            ThreadContext.exit(oldContext);
             throw e;
         }
     }
@@ -211,7 +210,7 @@ public class MdbContainer implements Container, TransactionContainer {
         // get the context data
         ThreadContext callContext = ThreadContext.getThreadContext();
         CoreDeploymentInfo deployInfo = callContext.getDeploymentInfo();
-        MdbCallContext mdbCallContext = (MdbCallContext) callContext.getUnspecified();
+        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         if (mdbCallContext == null) {
             throw new IllegalStateException("beforeDelivery was not called");
@@ -286,8 +285,7 @@ public class MdbContainer implements Container, TransactionContainer {
     public void afterDelivery(Object instance) throws SystemException {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
-        MdbCallContext mdbCallContext = (MdbCallContext) callContext.getUnspecified();
-        ThreadContext.setThreadContext(null);
+        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         // invoke the tx after method
         try {
@@ -295,15 +293,14 @@ public class MdbContainer implements Container, TransactionContainer {
         } catch (ApplicationException e) {
             throw new SystemException("Should never get an Application exception", e);
         } finally {
-            restoreAdapterClassLoader(mdbCallContext);
+            ThreadContext.exit(mdbCallContext.oldCallContext);
         }
     }
 
     public void release(Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
-        MdbCallContext mdbCallContext = (MdbCallContext) callContext.getUnspecified();
-        ThreadContext.setThreadContext(null);
+        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         // if we have an mdb call context we need to invoke the after invoke method
         if (mdbCallContext != null) {
@@ -312,7 +309,7 @@ public class MdbContainer implements Container, TransactionContainer {
             } catch (Exception e) {
                 logger.error("error while releasing message endpoint", e);
             } finally {
-                restoreAdapterClassLoader(mdbCallContext);
+                ThreadContext.exit(mdbCallContext.oldCallContext);
             }
         }
     }
@@ -320,23 +317,9 @@ public class MdbContainer implements Container, TransactionContainer {
 
     private static class MdbCallContext {
         private Method deliveryMethod;
-        private ClassLoader adapterClassLoader;
         private TransactionPolicy txPolicy;
         private TransactionContext txContext;
-    }
-
-    private void installAppClassLoader(MdbCallContext mdbCallContext, ClassLoader applicationClassLoader) {
-        Thread currentThread = Thread.currentThread();
-
-        mdbCallContext.adapterClassLoader = currentThread.getContextClassLoader();
-        if (mdbCallContext.adapterClassLoader != applicationClassLoader) {
-            currentThread.setContextClassLoader(applicationClassLoader);
-        }
-    }
-
-    private void restoreAdapterClassLoader(MdbCallContext mdbCallContext) {
-        Thread.currentThread().setContextClassLoader(mdbCallContext.adapterClassLoader);
-        mdbCallContext.adapterClassLoader = null;
+        private ThreadContext oldCallContext;
     }
 
     public void discardInstance(Object instance, ThreadContext context) {

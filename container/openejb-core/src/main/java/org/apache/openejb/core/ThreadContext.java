@@ -17,124 +17,126 @@
 package org.apache.openejb.core;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ThreadContext implements Cloneable {
+import org.apache.openejb.util.Logger;
 
-    protected static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
-
-    protected boolean valid = false;
-    protected CoreDeploymentInfo deploymentInfo;
-    protected Object primaryKey;
-    protected Operation currentOperation;
-    protected Object securityIdentity;
-    protected Object unspecified;
-    private final HashMap<Class, Object> data = new HashMap();
-
-    public <T> T get(Class<T> type) {
-        return (T)data.get(type);
-    }
-
-    public <T> T set(Class<T> type, T value) {
-        return (T) data.put(type, value);
-    }
-
-    public static boolean isValid() {
-        ThreadContext tc = threadStorage.get();
-        if (tc != null)
-            return tc.valid;
-        else
-            return false;
-    }
-
-    protected void makeInvalid() {
-        valid = false;
-        deploymentInfo = null;
-        primaryKey = null;
-        currentOperation = null;
-        securityIdentity = null;
-        unspecified = null;
-        data.clear();
-    }
-
-    public static void invalidate() {
-        ThreadContext tc = threadStorage.get();
-        if (tc != null)
-            tc.makeInvalid();
-    }
-
-    public static void setThreadContext(ThreadContext tc) {
-        if (tc == null) {
-            tc = threadStorage.get();
-            if (tc != null) tc.makeInvalid();
-        } else {
-            threadStorage.set(tc);
-        }
-    }
+public class ThreadContext {
+    private static final Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
+    private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
 
     public static ThreadContext getThreadContext() {
-        ThreadContext tc = threadStorage.get();
-        if (tc == null) {
-            tc = new ThreadContext();
-            threadStorage.set(tc);
+        ThreadContext threadContext = threadStorage.get();
+        return threadContext;
+    }
+
+    public static ThreadContext enter(ThreadContext newContext) {
+        if (newContext == null) {
+            throw new NullPointerException("newContext is null");
         }
-        return tc;
+
+        // set the thread context class loader
+        newContext.oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(newContext.deploymentInfo.getClassLoader());
+
+        // update thread local
+        ThreadContext oldContext = threadStorage.get();
+        threadStorage.set(newContext);
+
+        // notify listeners
+        for (ThreadContextListener listener : listeners) {
+            try {
+                listener.contextEntered(oldContext, newContext);
+            } catch (Throwable e) {
+                log.warning("ThreadContextListener threw an exception", e);
+            }
+        }
+
+        // return old context so it can be used for exit call below
+        return oldContext;
     }
 
-    public Operation getCurrentOperation() {
-        return currentOperation;
+    public static void exit(ThreadContext oldContext) {
+        ThreadContext exitingContext = threadStorage.get();
+        if (exitingContext == null) {
+            throw new IllegalStateException("No existing context");
+        }
+
+        // set the thread context class loader back
+        Thread.currentThread().setContextClassLoader(exitingContext.oldClassLoader);
+        exitingContext.oldClassLoader = null;
+
+        // update thread local
+        threadStorage.set(oldContext);
+
+        // notify listeners
+        for (ThreadContextListener listener : listeners) {
+            try {
+                listener.contextExited(exitingContext, oldContext);
+            } catch (Throwable e) {
+                log.warning("ThreadContextListener threw an exception", e);
+            }
+        }
     }
 
-    public Object getPrimaryKey() {
-        return primaryKey;
+    public static void addThreadContextListener(ThreadContextListener listener) {
+        listeners.add(listener);
+    }
+
+    public static void removeThreadContextListener(ThreadContextListener listener) {
+        listeners.remove(listener);
+    }
+
+    private final CoreDeploymentInfo deploymentInfo;
+    private Object primaryKey;
+    private Operation currentOperation;
+    private final Object securityIdentity;
+    private final HashMap<Class, Object> data = new HashMap<Class, Object>();
+    private ClassLoader oldClassLoader;
+
+    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
+        if (deploymentInfo == null) {
+            throw new NullPointerException("deploymentInfo is null");
+        }
+        this.deploymentInfo = deploymentInfo;
+        this.primaryKey = primaryKey;
+        this.securityIdentity = securityIdentity;
     }
 
     public CoreDeploymentInfo getDeploymentInfo() {
         return deploymentInfo;
     }
 
-    public Object getSecurityIdentity() {
-        return securityIdentity;
-    }
-
-    public Object getUnspecified() {
-        return unspecified;
-    }
-
-    public void set(CoreDeploymentInfo di, Object primKey, Object securityIdentity) {
-        setDeploymentInfo(di);
-        setPrimaryKey(primKey);
-        setSecurityIdentity(securityIdentity);
-        valid = true;
-    }
-
-    public void setCurrentOperation(Operation op) {
-        currentOperation = op;
-        valid = true;
+    public Object getPrimaryKey() {
+        return primaryKey;
     }
 
     public void setPrimaryKey(Object primKey) {
         primaryKey = primKey;
-        valid = true;
     }
 
-    public void setSecurityIdentity(Object identity) {
-        securityIdentity = identity;
-        valid = true;
+    public Object getSecurityIdentity() {
+        return securityIdentity;
     }
 
-    public void setDeploymentInfo(CoreDeploymentInfo info) {
-        deploymentInfo = info;
+    public Operation getCurrentOperation() {
+        return currentOperation;
     }
 
-    public void setUnspecified(Object obj) {
-        unspecified = obj;
+    public void setCurrentOperation(Operation op) {
+        currentOperation = op;
     }
 
-    public boolean valid() {
-        return valid;
+    @SuppressWarnings({"unchecked"})
+    public <T> T get(Class<T> type) {
+        return (T)data.get(type);
     }
 
-    public java.lang.Object clone() throws java.lang.CloneNotSupportedException {
-        return super.clone();
+    @SuppressWarnings({"unchecked"})
+    public <T> T set(Class<T> type, T value) {
+        return (T) data.put(type, value);
     }
+
 }
