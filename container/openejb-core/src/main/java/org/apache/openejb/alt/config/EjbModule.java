@@ -29,17 +29,14 @@ import java.io.File;
  */
 public class EjbModule implements DeploymentModule {
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
     private final String jarURI;
     private final EjbJar ejbJar;
     private final OpenejbJar openejbJar;
     private final String moduleId;
 
-    public EjbModule(String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
-        this(null, jarURI, ejbJar, openejbJar);
-    }
-
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+        if (classLoader == null) throw new NullPointerException("classLoader is null");
         this.classLoader = classLoader;
         this.ejbJar = ejbJar;
         this.jarURI = jarURI;
@@ -70,9 +67,5 @@ public class EjbModule implements DeploymentModule {
 
     public ClassLoader getClassLoader() {
         return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 }
