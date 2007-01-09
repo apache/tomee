@@ -19,7 +19,7 @@ package org.apache.openejb.core.stateful;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.spi.SecurityService;
@@ -36,7 +36,7 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
     }
 
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
-        /*  
+        /*
         The methodCategory will be one of the following constants.
 
         SECURITY_METHOD:
@@ -45,20 +45,20 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
         EJBHOME_METHOD
         USER_TRANSACTION_METHOD:
 
-        The super class, CoreContext determines if Context.getUserTransaction( ) method 
+        The super class, CoreContext determines if Context.getUserTransaction( ) method
         maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
         beans may access this method.
 
-        The USER_TRANSACTION_METHOD will never be passed as a methodCategory in the SessionSynchronization 
+        The USER_TRANSACTION_METHOD will never be passed as a methodCategory in the SessionSynchronization
         interface methods. The CoreContext won't allow it.
 
         */
         ThreadContext callContext = ThreadContext.getThreadContext();
 
         switch (callContext.getCurrentOperation()) {
-            case Operations.OP_SET_CONTEXT:
-                /* 
-                Allowed Operations: 
+            case OP_SET_CONTEXT:
+                /*
+                Allowed Operations:
                     getEJBHome
                 Prohibited Operations:
                     getCallerPrincipal
@@ -72,13 +72,13 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                 if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case Operations.OP_CREATE:
-            case Operations.OP_REMOVE:
-            case Operations.OP_ACTIVATE:
-            case Operations.OP_PASSIVATE:
-            case Operations.OP_AFTER_COMPLETION:
-                /* 
-                Allowed Operations: 
+            case OP_CREATE:
+            case OP_REMOVE:
+            case OP_ACTIVATE:
+            case OP_PASSIVATE:
+            case OP_AFTER_COMPLETION:
+                /*
+                Allowed Operations:
                     getEJBHome
                     getCallerPrincipal
                     isCallerInRole
@@ -93,9 +93,9 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                     throw new IllegalStateException("Invalid operation attempted");
                 else
                     break;
-            case Operations.OP_BUSINESS:
-            case Operations.OP_AFTER_BEGIN:
-            case Operations.OP_BEFORE_COMPLETION:
+            case OP_BUSINESS:
+            case OP_AFTER_BEGIN:
+            case OP_BEFORE_COMPLETION:
                 /* 
                 Allowed Operations: 
                     getEJBHome

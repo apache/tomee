@@ -18,7 +18,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.util.Logger;
@@ -72,8 +72,8 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         }
         sessionSynchronizations.put(callContext.getPrimaryKey(), callContext);
 
-        byte currentOperation = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(Operations.OP_AFTER_BEGIN);
+        Operation currentOperation = callContext.getCurrentOperation();
+        callContext.setCurrentOperation(Operation.OP_AFTER_BEGIN);
         try {
 
             session.afterBegin();
@@ -105,10 +105,10 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 StatefulContainer container = (StatefulContainer) callContext.getDeploymentInfo().getContainer();
                 instanceManager = container.getInstanceManager();
                 /*
-                * the operation must be set before the instance is obtained from the pool, so 
+                * the operation must be set before the instance is obtained from the pool, so
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
-                callContext.setCurrentOperation(Operations.OP_BEFORE_COMPLETION);
+                callContext.setCurrentOperation(Operation.OP_BEFORE_COMPLETION);
 
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 bean.beforeCompletion();
@@ -169,10 +169,10 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 StatefulContainer container = (StatefulContainer) callContext.getDeploymentInfo().getContainer();
                 instanceManager = container.getInstanceManager();
                 /*
-                * the operation must be set before the instance is obtained from the pool, so 
+                * the operation must be set before the instance is obtained from the pool, so
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
-                callContext.setCurrentOperation(Operations.OP_AFTER_COMPLETION);
+                callContext.setCurrentOperation(Operation.OP_AFTER_COMPLETION);
 
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
 

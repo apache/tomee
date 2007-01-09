@@ -20,7 +20,7 @@ import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
@@ -112,7 +112,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
             Object bean = instanceManager.getInstance(callContext);
 
-            callContext.setCurrentOperation(Operations.OP_BUSINESS);
+            callContext.setCurrentOperation(Operation.OP_BUSINESS);
 
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 

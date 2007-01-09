@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm.naming;
 import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.Operation;
 
 /*
   This class is a wrapper for an Intra-VM EJB or Connector references in the 
@@ -48,11 +49,10 @@ public abstract class EncReference implements Reference {
     public Object getObject() throws javax.naming.NamingException {
         if (ThreadContext.isValid()) {
             ThreadContext cntx = ThreadContext.getThreadContext();
-            byte operation = cntx.getCurrentOperation();
-            checkOperation(operation);
+            checkOperation(cntx.getCurrentOperation());
         }
         return ref.getObject();
     }
 
-    public abstract void checkOperation(byte opertionType) throws NameNotFoundException;
+    public abstract void checkOperation(Operation opertionType) throws NameNotFoundException;
 }

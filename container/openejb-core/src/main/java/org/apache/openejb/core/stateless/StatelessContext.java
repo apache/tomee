@@ -19,7 +19,7 @@ package org.apache.openejb.core.stateless;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.spi.SecurityService;
@@ -34,13 +34,13 @@ public class StatelessContext
     }
 
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
-        /*  
+        /*
         SECURITY_METHOD:
         USER_TRANSACTION_METHOD:
         ROLLBACK_METHOD:
         EJBOBJECT_METHOD:
 
-        The super class, CoreContext determines if Context.getUserTransaction( ) method 
+        The super class, CoreContext determines if Context.getUserTransaction( ) method
         maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
         beans may access this method.
 
@@ -49,9 +49,9 @@ public class StatelessContext
         CoreDeploymentInfo di = callContext.getDeploymentInfo();
 
         switch (callContext.getCurrentOperation()) {
-            case Operations.OP_SET_CONTEXT:
-                /* 
-                Allowed Operations: 
+            case OP_SET_CONTEXT:
+                /*
+                Allowed Operations:
                     getEJBHome
                 Prohibited Operations:
                     getCallerPrincipal
@@ -65,10 +65,10 @@ public class StatelessContext
                 if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case Operations.OP_CREATE:
-            case Operations.OP_REMOVE:
-                /* 
-                Allowed Operations: 
+            case OP_CREATE:
+            case OP_REMOVE:
+                /*
+                Allowed Operations:
                     getEJBHome
                     getEJBObject
                     getPrimaryKey
@@ -85,7 +85,7 @@ public class StatelessContext
                     break;
                 else
                     throw new IllegalStateException("Invalid operation attempted");
-            case Operations.OP_BUSINESS:
+            case OP_BUSINESS:
                 /* 
                 Allowed Operations: 
                     getEJBHome

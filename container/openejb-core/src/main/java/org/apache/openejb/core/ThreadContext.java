@@ -23,7 +23,7 @@ public class ThreadContext implements Cloneable {
     protected boolean valid = false;
     protected CoreDeploymentInfo deploymentInfo;
     protected Object primaryKey;
-    protected byte currentOperation;
+    protected Operation currentOperation;
     protected Object securityIdentity;
     protected Object unspecified;
 
@@ -40,7 +40,7 @@ public class ThreadContext implements Cloneable {
         valid = false;
         deploymentInfo = null;
         primaryKey = null;
-        currentOperation = (byte) 0;
+        currentOperation = null;
         securityIdentity = null;
         unspecified = null;
     }
@@ -69,7 +69,7 @@ public class ThreadContext implements Cloneable {
         return tc;
     }
 
-    public byte getCurrentOperation() {
+    public Operation getCurrentOperation() {
         return currentOperation;
     }
 
@@ -96,7 +96,7 @@ public class ThreadContext implements Cloneable {
         valid = true;
     }
 
-    public void setCurrentOperation(byte op) {
+    public void setCurrentOperation(Operation op) {
         currentOperation = op;
         valid = true;
     }

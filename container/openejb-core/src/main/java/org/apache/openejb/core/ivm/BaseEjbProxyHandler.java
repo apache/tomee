@@ -40,6 +40,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -157,7 +158,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         ThreadContext cntext = null;
         CoreDeploymentInfo depInfo = null;
         Object prmryKey = null;
-        byte crrntOperation = (byte) 0;
+        Operation crrntOperation = null;
         Object scrtyIdentity = null;
         boolean cntextValid = false;
         cntext = ThreadContext.getThreadContext();

@@ -22,7 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.spi.SecurityService;
@@ -101,8 +101,8 @@ public class StatefulInstanceManager {
 
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        byte currentOperation = threadContext.getCurrentOperation();
-        threadContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
+        Operation currentOperation = threadContext.getCurrentOperation();
+        threadContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
 
         try {
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
@@ -163,16 +163,16 @@ public class StatefulInstanceManager {
             if (entry != null) {
 
                 if (entry.isTimedOut()) {
-                    /* Since the bean instance hasn't had its ejbActivate() method called yet, 
-                       it is still considered to be passivated at this point. Instances that timeout 
-                       while passivated must be evicted WITHOUT having their ejbRemove() 
-                       method invoked. Section 6.6 of EJB 1.1 specification.  
+                    /* Since the bean instance hasn't had its ejbActivate() method called yet,
+                       it is still considered to be passivated at this point. Instances that timeout
+                       while passivated must be evicted WITHOUT having their ejbRemove()
+                       method invoked. Section 6.6 of EJB 1.1 specification.
                     */
                     throw new InvalidateReferenceException(new NoSuchObjectException("Timed Out"));
                 }
 
-                byte currentOperation = callContext.getCurrentOperation();
-                callContext.setCurrentOperation(Operations.OP_ACTIVATE);
+                Operation currentOperation = callContext.getCurrentOperation();
+                callContext.setCurrentOperation(Operation.OP_ACTIVATE);
 
                 try {
                     Method postActivate = callContext.getDeploymentInfo().getPostActivate();
@@ -234,8 +234,8 @@ public class StatefulInstanceManager {
                     }
                     return entry.bean;
                 } else {
-                    byte currentOperation = callContext.getCurrentOperation();
-                    if (currentOperation == Operations.OP_AFTER_COMPLETION || currentOperation == Operations.OP_BEFORE_COMPLETION) {
+                    Operation currentOperation = callContext.getCurrentOperation();
+                    if (currentOperation == Operation.OP_AFTER_COMPLETION || currentOperation == Operation.OP_BEFORE_COMPLETION) {
                         return entry.bean;
                     } else {
                         throw new ApplicationException(new RemoteException("Concurrent calls not allowed"));
@@ -247,8 +247,8 @@ public class StatefulInstanceManager {
 
     protected void handleTimeout(BeanEntry entry, ThreadContext threadContext) {
 
-        byte currentOperation = threadContext.getCurrentOperation();
-        threadContext.setCurrentOperation(Operations.OP_REMOVE);
+        Operation currentOperation = threadContext.getCurrentOperation();
+        threadContext.setCurrentOperation(Operation.OP_REMOVE);
 
         try {
             Method preDestroy = threadContext.getDeploymentInfo().getPreDestroy();
@@ -261,9 +261,9 @@ public class StatefulInstanceManager {
             }
         } catch (Throwable callbackException) {
             /*
-              Exceptions are processed "quietly"; they are not reported to the client since 
-              the timeout that caused the ejbRemove() operation did not, "technically", take 
-              place in the context of a client call. Logically, it may have timeout sometime 
+              Exceptions are processed "quietly"; they are not reported to the client since
+              the timeout that caused the ejbRemove() operation did not, "technically", take
+              place in the context of a client call. Logically, it may have timeout sometime
               before the client call.
             */
             String logMessage = "An unexpected exception occured while invoking the ejbRemove method on the timed-out Stateful SessionBean instance; " + callbackException.getClass().getName() + " " + callbackException.getMessage();
@@ -332,7 +332,7 @@ public class StatefulInstanceManager {
         Hashtable stateTable = new Hashtable(bulkPassivationSize);
 
         BeanEntry currentEntry;
-        final byte currentOperation = threadContext.getCurrentOperation();
+        final Operation currentOperation = threadContext.getCurrentOperation();
         Method prePassivate = threadContext.getDeploymentInfo().getPrePassivate();
         try {
             for (int i = 0; i < bulkPassivationSize; ++i) {
@@ -344,7 +344,7 @@ public class StatefulInstanceManager {
                 if (currentEntry.isTimedOut()) {
                     handleTimeout(currentEntry, threadContext);
                 } else {
-                    threadContext.setCurrentOperation(Operations.OP_PASSIVATE);
+                    threadContext.setCurrentOperation(Operation.OP_PASSIVATE);
                     try {
                         if (prePassivate != null){
                             // TODO Are all beans in the stateTable the same type?

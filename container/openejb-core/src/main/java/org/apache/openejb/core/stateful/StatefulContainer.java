@@ -21,7 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -218,7 +218,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
             }
 
             Object bean = instanceManager.obtainInstance(primKey, callContext);
-            callContext.setCurrentOperation(Operations.OP_BUSINESS);
+            callContext.setCurrentOperation(Operation.OP_BUSINESS);
             Object returnValue = null;
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
@@ -315,7 +315,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         try {
             Object bean = instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
             if (bean != null) {
-                callContext.setCurrentOperation(Operations.OP_REMOVE);
+                callContext.setCurrentOperation(Operation.OP_REMOVE);
                 Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
                 if (preDestroy != null) {
                     _invoke(callMethod, preDestroy, null, bean, callContext);
@@ -337,7 +337,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         Object bean = instanceManager.newInstance(primaryKey, beanType);
 
         // Do postConstructs or create(...)
-        callContext.setCurrentOperation(Operations.OP_CREATE);
+        callContext.setCurrentOperation(Operation.OP_CREATE);
         if (bean instanceof SessionBean) {
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
             _invoke(callMethod, runMethod, args, bean, callContext);

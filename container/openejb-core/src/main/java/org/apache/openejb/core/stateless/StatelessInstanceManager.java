@@ -24,7 +24,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
@@ -94,7 +94,7 @@ public class StatelessInstanceManager {
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
-            byte originalOperation = callContext.getCurrentOperation();
+            Operation originalOperation = callContext.getCurrentOperation();
 
             try {
                 Context ctx = deploymentInfo.getJndiEnc();
@@ -108,10 +108,10 @@ public class StatelessInstanceManager {
                     }
                 }
 
-                callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
+                callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
                 bean = objectRecipe.create(beanClass.getClassLoader());
-                callContext.setCurrentOperation(Operations.OP_CREATE);
+                callContext.setCurrentOperation(Operation.OP_CREATE);
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null){
@@ -158,7 +158,7 @@ public class StatelessInstanceManager {
 
     public void freeInstance(ThreadContext callContext, Object bean) {
         try {
-            callContext.setCurrentOperation(Operations.OP_REMOVE);
+            callContext.setCurrentOperation(Operation.OP_REMOVE);
             Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
             if (preDestroy != null){
                 preDestroy.invoke(bean);

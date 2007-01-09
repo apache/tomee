@@ -46,7 +46,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.entity.EntityContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -236,7 +236,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             }
 
             // business method
-            callContext.setCurrentOperation(Operations.OP_BUSINESS);
+            callContext.setCurrentOperation(Operation.OP_BUSINESS);
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             Object retValue = businessMethod(callMethod, runMethod, args, callContext);
@@ -293,7 +293,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = new ThreadContext();
         callContext.setDeploymentInfo(deployInfo);
-        callContext.setCurrentOperation(Operations.OP_SET_CONTEXT);
+        callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -310,7 +310,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
 
         ThreadContext callContext = createThreadContext(entityBean);
-        callContext.setCurrentOperation(Operations.OP_UNSET_CONTEXT);
+        callContext.setCurrentOperation(Operation.OP_UNSET_CONTEXT);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -327,7 +327,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
 
         ThreadContext callContext = createThreadContext(entityBean);
-        callContext.setCurrentOperation(Operations.OP_LOAD);
+        callContext.setCurrentOperation(Operation.OP_LOAD);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -344,7 +344,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
 
         ThreadContext callContext = createThreadContext(entityBean);
-        callContext.setCurrentOperation(Operations.OP_STORE);
+        callContext.setCurrentOperation(Operation.OP_STORE);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -362,7 +362,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         if (isDeleted(entityBean)) return;
 
         ThreadContext callContext = createThreadContext(entityBean);
-        callContext.setCurrentOperation(Operations.OP_REMOVE);
+        callContext.setCurrentOperation(Operation.OP_REMOVE);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -399,7 +399,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = new ThreadContext();
         callContext.setDeploymentInfo(deployInfo);
-        callContext.setCurrentOperation(Operations.OP_ACTIVATE);
+        callContext.setCurrentOperation(Operation.OP_ACTIVATE);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -416,7 +416,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
 
         ThreadContext callContext = createThreadContext(entityBean);
-        callContext.setCurrentOperation(Operations.OP_PASSIVATE);
+        callContext.setCurrentOperation(Operation.OP_PASSIVATE);
 
         ThreadContext oldCallContext = ThreadContext.getThreadContext();
         ThreadContext.setThreadContext(callContext);
@@ -486,7 +486,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             setEntityContext(bean);
 
             try {
-                callContext.setCurrentOperation(Operations.OP_HOME);
+                callContext.setCurrentOperation(Operation.OP_HOME);
 
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
@@ -549,7 +549,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             /*
               Set the context for allowed operations
             */
-            callContext.setCurrentOperation(Operations.OP_CREATE);
+            callContext.setCurrentOperation(Operation.OP_CREATE);
 
             /*
               Invoke the proper ejbCreate() method on the instance
@@ -569,7 +569,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             /*
               Set the current operation for the allowed operations check
             */
-            callContext.setCurrentOperation(Operations.OP_POST_CREATE);
+            callContext.setCurrentOperation(Operation.OP_POST_CREATE);
 
             /*
               Obtain the ejbPostCreate method that matches the ejbCreate method

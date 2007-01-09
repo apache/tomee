@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateful;
+package org.apache.openejb.core;
 
-import javax.naming.NameNotFoundException;
-
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ivm.naming.EncReference;
-import org.apache.openejb.core.ivm.naming.Reference;
-
-
-public class StatefulEncReference extends EncReference {
-
-    public StatefulEncReference(Reference ref) {
-        super(ref);
-    }
-
-    public void checkOperation(Operation operation) throws NameNotFoundException {
-
-        if (operation == Operation.OP_AFTER_COMPLETION) {
-            throw new NameNotFoundException("Operation Not Allowed");
-        }
-    }
+public enum Operation {
+    OP_BUSINESS,
+    OP_AFTER_BEGIN,
+    OP_AFTER_COMPLETION,
+    OP_BEFORE_COMPLETION,
+    OP_REMOVE,
+    OP_SET_CONTEXT,
+    OP_UNSET_CONTEXT,
+    OP_CREATE,
+    OP_POST_CREATE,
+    OP_ACTIVATE,
+    OP_PASSIVATE,
+    OP_FIND,
+    OP_HOME,
+    OP_LOAD,
+    OP_STORE
 }

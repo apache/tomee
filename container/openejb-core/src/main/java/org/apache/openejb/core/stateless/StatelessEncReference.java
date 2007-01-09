@@ -20,6 +20,7 @@ import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.Operation;
 
 
 public class StatelessEncReference extends EncReference {
@@ -28,7 +29,7 @@ public class StatelessEncReference extends EncReference {
         super(ref);
     }
 
-    public void checkOperation(byte operation) throws NameNotFoundException {
+    public void checkOperation(Operation operation) throws NameNotFoundException {
 /*
         if( operation != Operations.OP_BUSINESS ){
             throw new NameNotFoundException("Operation Not Allowed");

@@ -19,7 +19,7 @@ package org.apache.openejb.core.stateless;
 import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.Operations;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 
@@ -45,8 +45,8 @@ public class StatelessEncUserTransaction extends EncReference {
      * method ensures that the stateless bean is in the correct state before the super
      * class can return the requested reference object.
      */
-    public void checkOperation(byte operation) throws NameNotFoundException {
-        if (operation == Operations.OP_SET_CONTEXT) {
+    public void checkOperation(Operation operation) throws NameNotFoundException {
+        if (operation == Operation.OP_SET_CONTEXT) {
             throw new NameNotFoundException("Operation Not Allowed");
         }
     }

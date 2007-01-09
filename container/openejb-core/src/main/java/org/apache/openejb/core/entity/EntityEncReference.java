@@ -20,6 +20,7 @@ import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.Operation;
 
 
 /**
@@ -40,7 +41,7 @@ public class EntityEncReference extends EncReference {
      * method ensures that the entity bean is in the correct state before the super
      * class can return the requested reference object.
      */
-    public void checkOperation(byte operation) throws NameNotFoundException {
+    public void checkOperation(Operation operation) throws NameNotFoundException {
 
         /*        if( operation == Operations.OP_SET_CONTEXT || 
             operation == Operations.OP_UNSET_CONTEXT || 
