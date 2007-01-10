@@ -52,6 +52,10 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
     private final Set<ManagedConnection> connSet = Collections.synchronizedSet(new HashSet<ManagedConnection>());
     private TransactionManager transactionManager;
 
+    public SharedLocalConnectionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public void init(Properties props) {
         transactionManager = (TransactionManager) props.get(TransactionManager.class.getName());
     }

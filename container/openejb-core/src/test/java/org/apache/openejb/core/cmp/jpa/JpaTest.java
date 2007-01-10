@@ -220,15 +220,9 @@ public class JpaTest extends TestCase {
     }
 
     private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
-        JdbcManagedConnectionFactory mcf = new JdbcManagedConnectionFactory();
-        mcf.setDriver("org.hsqldb.jdbcDriver");
-        mcf.setUrl("jdbc:hsqldb:mem:JpaTest");
-        mcf.setDefaultUserName("sa");
-        mcf.setDefaultPassword("");
-        mcf.start();
+        JdbcManagedConnectionFactory mcf = new JdbcManagedConnectionFactory("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:JpaTest", "sa", "", false);
 
-        SharedLocalConnectionManager connectionManager = new SharedLocalConnectionManager();
-        connectionManager.setTransactionManager(transactionManager);
+        SharedLocalConnectionManager connectionManager = new SharedLocalConnectionManager(transactionManager);
 
         DataSource connectionFactory = (DataSource) mcf.createConnectionFactory(connectionManager);
         return connectionFactory;

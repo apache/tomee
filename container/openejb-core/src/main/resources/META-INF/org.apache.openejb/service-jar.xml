@@ -251,6 +251,7 @@
   <ServiceProvider
           id="Default JDBC Database"
           provider-type="Connector"
+          constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
           class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
 
     # Driver class name
@@ -271,7 +272,7 @@
     # Default password
 
     #Password pass
-    Password
+    Password  
 
     Unmanaged false
   </ServiceProvider>
@@ -284,6 +285,7 @@
   <ServiceProvider
           id="Default Local TX ConnectionManager"
           provider-type="ConnectionManager"
+          constructor="transactionManager"
           class-name="org.apache.openejb.resource.SharedLocalConnectionManager"/>
 
 

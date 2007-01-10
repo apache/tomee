@@ -16,25 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.transaction.TransactionManager;
-
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.EnvProps;
@@ -45,7 +26,6 @@ import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.TransactionManagerWrapper;
-import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
@@ -60,9 +40,29 @@ import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.TransactionManager;
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
+
 
     private org.apache.openejb.core.CoreContainerSystem containerSystem;
     private TransactionManager transactionManager;
@@ -97,7 +97,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void init(Properties props) throws OpenEJBException {
         this.props = props;
-
         /* Get Configuration ////////////////////////////*/
         String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
         if (className == null) {
@@ -135,7 +134,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static Map<String, Object> getContext() {
         Map<String, Object> map = context.get();
-        if (map == null){
+        if (map == null) {
             map = new HashMap<String, Object>();
             context.set(map);
         }
@@ -220,28 +219,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         createTransactionManager(configInfo.facilities.transactionService);
 
-        createSecurityService(configInfo);
+        createSecurityService(configInfo.facilities.securityService);
 
         /*[6] Assemble Connector(s) //////////////////////////////////////////*/
         Map<String, ConnectionManager> connectionManagerMap = new HashMap<String, ConnectionManager>();
         // connectors are optional in the openejb_config.dtd
         for (ConnectionManagerInfo cmInfo : configInfo.facilities.connectionManagers) {
-            ConnectionManager connectionManager = assembleConnectionManager(cmInfo);
+            ConnectionManager connectionManager = createConnectionManager(cmInfo);
             connectionManagerMap.put(cmInfo.id, connectionManager);
         }
 
         // connectors are optional in the openejb_config.dtd
         for (ConnectorInfo conInfo : configInfo.facilities.connectors) {
-            ConnectionManager connectionManager = connectionManagerMap.get(conInfo.connectionManagerId);
-            if (connectionManager == null) {
-                throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
-            }
-
-            ManagedConnectionFactory managedConnectionFactory = assembleManagedConnectionFactory(conInfo.managedConnectionFactory);
-
-            ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
-
-            containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
+            createConnector(connectionManagerMap, conInfo);
         }
 
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
@@ -319,12 +309,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (ClientInfo clientInfo : appInfo.clients) {
                 JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
                 Context context = (Context) jndiEncBuilder.build().lookup("env");
-                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/env", context);
-                if (clientInfo.codebase != null){
-                    containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/path", clientInfo.codebase);
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
+                if (clientInfo.codebase != null) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
                 }
                 if (clientInfo.mainClass != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/mainClass", clientInfo.mainClass);
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
                 }
                 ArrayList<Injection> injections = new ArrayList<Injection>();
                 JndiEncInfo jndiEnc = clientInfo.jndiEnc;
@@ -335,18 +325,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
                             injections.add(injection);
                         } catch (ClassNotFoundException e) {
-                            logger.error("Injection Target invalid: class="+target.className+", name="+target.propertyName+".  Exception: "+e.getMessage(), e);
+                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
                         }
                     }
                 }
-                containerSystem.getJNDIContext().bind("java:openejb/client/"+clientInfo.moduleId+"/comp/injections", injections);
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
             }
         }
 
         JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
         // Containers
-        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool)this).props);
+        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool) this).props);
         List containers = (List) containersBuilder.buildContainers(deployments2);
         for (int i1 = 0; i1 < containers.size(); i1++) {
             Container container1 = (Container) containers.get(i1);
@@ -365,7 +355,105 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
         }
 
-       return containerSystem;
+        return containerSystem;
+    }
+
+    private void createConnector(Map<String, ConnectionManager> connectionManagerMap, ConnectorInfo conInfo) throws OpenEJBException, NamingException {
+        ManagedConnectionFactoryInfo serviceInfo = conInfo.managedConnectionFactory;
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        ConnectionManager connectionManager = (ConnectionManager) props.get(conInfo.connectionManagerId);
+        if (connectionManager == null) {
+            throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
+        }
+
+        ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
+
+        ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
+
+        containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
+    }
+
+    private ConnectionManager createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        Object object = props.get("TransactionManager");
+        serviceRecipe.setProperty("transactionManager", new StaticRecipe(object));
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType+"/"+serviceInfo.id, service);
+
+        SystemInstance.get().setComponent(interfce, service);
+
+        getContext().put(interfce.getName(), service);
+
+        props.put(interfce.getName(), service);
+        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.id, service);
+
+        return (ConnectionManager) service;
+    }
+
+    private void createSecurityService(ServiceInfo serviceInfo) throws Exception {
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType, service);
+
+        SystemInstance.get().setComponent(interfce, service);
+
+        getContext().put(interfce.getName(), service);
+
+        props.put(interfce.getName(), service);
+        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.id, service);
+
+        this.securityService = (SecurityService) service;
+    }
+
+    private void createTransactionManager(TransactionServiceInfo serviceInfo) throws NamingException, OpenEJBException {
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        TransactionManager unwrappedTransactionManager = (TransactionManager) service;
+        ObjectRecipe txManagerWrapperRecipe = new ObjectRecipe(TransactionManagerWrapper.class, new String[]{"transactionManager"}, new Class[]{TransactionManager.class});
+        txManagerWrapperRecipe.setProperty("transactionManager", new StaticRecipe(unwrappedTransactionManager));
+        service = txManagerWrapperRecipe.create();
+
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType, service);
+
+        SystemInstance.get().setComponent(interfce, service);
+
+        getContext().put(interfce.getName(), service);
+
+        props.put(interfce.getName(), service);
+        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.id, service);
+
+        this.transactionManager = (TransactionManager) service;
     }
 
     private URL toUrl(String jarPath) throws OpenEJBException {
@@ -376,52 +464,5 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void createSecurityService(OpenEjbConfiguration configInfo) throws Exception {
-        securityService = create(configInfo.facilities.securityService);
 
-        install(this.containerSystem, securityService);
-
-        props.put(SecurityService.class.getName(), securityService);
-    }
-
-    public static SecurityService install(CoreContainerSystem containerSystem, SecurityService securityService) throws NamingException {
-        containerSystem.getJNDIContext().bind("java:openejb/SecurityService", securityService);
-        SystemInstance.get().setComponent(SecurityService.class, securityService);
-        return securityService;
-    }
-
-    public static SecurityService create(SecurityServiceInfo serviceInfo) throws OpenEJBException {
-        ObjectRecipe securityServiceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.properties);
-        Object service = securityServiceRecipe.create();
-        checkImplementation(SECURITY_SERVICE, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
-
-        return (SecurityService) service;
-    }
-
-    private void createTransactionManager(TransactionServiceInfo transactionService) throws NamingException, OpenEJBException {
-        TransactionManager unwrappedTransactionManager = create(transactionService);
-        TransactionManager transactionManager = install(this.containerSystem, unwrappedTransactionManager);
-
-        getContext().put(TransactionManager.class.getName(), transactionManager);
-        props.put(TransactionManager.class.getName(), transactionManager);
-        this.transactionManager = transactionManager;
-    }
-
-    public static TransactionManager install(CoreContainerSystem containerSystem, TransactionManager unwrappedTransactionManager) throws NamingException {
-        ObjectRecipe txManagerWrapperRecipe = new ObjectRecipe(TransactionManagerWrapper.class, new String[]{"transactionManager"},new Class[]{TransactionManager.class});
-        txManagerWrapperRecipe.setProperty("transactionManager", new StaticRecipe(unwrappedTransactionManager));
-        TransactionManager transactionManager = (TransactionManager) txManagerWrapperRecipe.create();
-
-        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
-        containerSystem.getJNDIContext().bind("java:openejb/TransactionManager", transactionManager);
-        return transactionManager;
-    }
-
-    public static TransactionManager create(TransactionServiceInfo transactionService) throws OpenEJBException {
-        TransactionServiceInfo serviceInfo = transactionService;
-        ObjectRecipe txServiceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.properties);
-        Object service = txServiceRecipe.create();
-        checkImplementation(TRANSACTION_MANAGER, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
-        return (TransactionManager) service;
-    }
 }

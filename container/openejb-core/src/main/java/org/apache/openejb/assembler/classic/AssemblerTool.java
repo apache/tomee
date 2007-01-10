@@ -43,11 +43,23 @@ public class AssemblerTool {
     public static final Class TRANSACTION_MANAGER = TransactionManager.class;
     public static final Class CONNECTION_MANAGER = javax.resource.spi.ConnectionManager.class;
     public static final Class CONNECTOR = javax.resource.spi.ManagedConnectionFactory.class;
+    public static final Class CONTAINER = org.apache.openejb.Container.class;
+
+    public static final Map<String, Class> serviceInterfaces = new HashMap<String, Class>();
+    static {
+        serviceInterfaces.put("ProxyFactory", PROXY_FACTORY);
+        serviceInterfaces.put("SecurityService", SECURITY_SERVICE);
+        serviceInterfaces.put("TransactionManager", TRANSACTION_MANAGER);
+        serviceInterfaces.put("ConnectionManager", CONNECTION_MANAGER);
+        serviceInterfaces.put("Connector", CONNECTOR);
+        serviceInterfaces.put("Container", CONTAINER);
+    }
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
 
     protected Properties props;
+    protected Properties services;
 
     static {
         System.setProperty("noBanner", "true");
@@ -67,57 +79,6 @@ public class AssemblerTool {
 
             throw new org.apache.openejb.OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + context.id + "+ could not be resolved.", ne);
         }
-    }
-
-    public ConnectionManager assembleConnectionManager(ConnectionManagerInfo cmInfo)
-            throws OpenEJBException, java.lang.Exception {
-        /*TODO: Add better exception handling, this method throws java.lang.Exception,
-         which is not very specific. Only a very specific OpenEJBException should be
-         thrown.
-         */
-        Class managerClass = SafeToolkit.loadClass(cmInfo.className, cmInfo.codebase);
-
-        checkImplementation(CONNECTION_MANAGER, managerClass, "ConnectionManager", cmInfo.id);
-
-        ConnectionManager connectionManager = (ConnectionManager) toolkit.newInstance(managerClass);
-
-        if (cmInfo.properties != null) {
-            Properties clonedProps = (Properties) (this.props.clone());
-            clonedProps.putAll(cmInfo.properties);
-            applyProperties(connectionManager, clonedProps);
-        }
-
-        return connectionManager;
-    }
-
-    public ManagedConnectionFactory assembleManagedConnectionFactory(ManagedConnectionFactoryInfo mngedConFactInfo)
-            throws org.apache.openejb.OpenEJBException, java.lang.Exception {
-
-        ManagedConnectionFactory managedConnectionFactory = null;
-        try {
-            Class factoryClass = SafeToolkit.loadClass(mngedConFactInfo.className, mngedConFactInfo.codebase);
-            checkImplementation(CONNECTOR, factoryClass, "Connector", mngedConFactInfo.id);
-
-            managedConnectionFactory = (ManagedConnectionFactory) toolkit.newInstance(factoryClass);
-        } catch (Exception e) {
-            throw new OpenEJBException("Could not instantiate Connector '" + mngedConFactInfo.id + "'.", e);
-        }
-
-        try {
-
-            if (mngedConFactInfo.properties != null) {
-                Properties clonedProps = (Properties) (this.props.clone());
-                clonedProps.putAll(mngedConFactInfo.properties);
-                applyProperties(managedConnectionFactory, clonedProps);
-            }
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            throw new OpenEJBException("Could not initialize Connector '" + mngedConFactInfo.id + "'.", ite.getTargetException());
-        } catch (Exception e) {
-
-            throw new OpenEJBException("Could not initialize Connector '" + mngedConFactInfo.id + "'.", e);
-        }
-
-        return managedConnectionFactory;
     }
 
     public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {

@@ -42,6 +42,16 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
     private String driver;
     private boolean unmanaged;
 
+
+    public JdbcManagedConnectionFactory(String driver, String url, String defaultUserName, String defaultPassword, boolean unmanaged) throws ResourceAdapterInternalException {
+        this.defaultPassword = defaultPassword;
+        this.defaultUserName = defaultUserName;
+        this.driver = driver;
+        this.unmanaged = unmanaged;
+        this.url = url;
+        start();
+    }
+
     public void init(java.util.Properties props) throws javax.resource.spi.ResourceAdapterInternalException {
         defaultUserName = props.getProperty(EnvProps.USER_NAME);
         defaultPassword = props.getProperty(EnvProps.PASSWORD);
@@ -50,6 +60,7 @@ public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedC
         unmanaged = props.getProperty("Unmanaged", "false").equalsIgnoreCase("true");
         start();
     }
+
 
     public String getDefaultUserName() {
         return defaultUserName;
