@@ -147,13 +147,13 @@ public class OneToOneTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            ALocal a = createA(2);
+            ALocal a = createA(3);
             BLocal b = findB(11);
             b.setA(a);
         } finally {
             completeTransaction();
         }
-        assertLinked(2, 11);
+        assertLinked(3, 11);
     }
 
     public void test09_BSetAExistingANewB() throws Exception {
