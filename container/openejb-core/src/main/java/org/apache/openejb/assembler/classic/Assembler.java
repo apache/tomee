@@ -35,6 +35,8 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.proxy.ProxyFactory;
+import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
@@ -198,6 +200,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      */
     public org.apache.openejb.core.CoreContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
+        containerSystem = new org.apache.openejb.core.CoreContainerSystem();
+
+        ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
+
         /*[1] Assemble ProxyFactory //////////////////////////////////////////
 
             This operation must take place first because of interdependencies.
@@ -206,31 +212,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             Naming Service for OpenEJB.  This requires that a proxy for the deployed bean's
             EJBHome be created. The proxy requires that the default proxy factory is set.
         */
-
-        this.applyProxyFactory(configInfo.facilities.intraVmServer);
-        /*[1]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
-
-        ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
-
-
-        containerSystem = new org.apache.openejb.core.CoreContainerSystem();
+        createProxyFactory(configInfo.facilities.intraVmServer);
 
         createTransactionManager(configInfo.facilities.transactionService);
 
         createSecurityService(configInfo.facilities.securityService);
 
-        /*[6] Assemble Connector(s) //////////////////////////////////////////*/
-        Map<String, ConnectionManager> connectionManagerMap = new HashMap<String, ConnectionManager>();
-        // connectors are optional in the openejb_config.dtd
-        for (ConnectionManagerInfo cmInfo : configInfo.facilities.connectionManagers) {
-            ConnectionManager connectionManager = createConnectionManager(cmInfo);
-            connectionManagerMap.put(cmInfo.id, connectionManager);
+        for (ConnectionManagerInfo connectionManagerInfo : configInfo.facilities.connectionManagers) {
+            createConnectionManager(connectionManagerInfo);
         }
 
-        // connectors are optional in the openejb_config.dtd
-        for (ConnectorInfo conInfo : configInfo.facilities.connectors) {
-            createConnector(connectionManagerMap, conInfo);
+        for (ConnectorInfo connectorInfo : configInfo.facilities.connectors) {
+            createConnector(connectorInfo);
         }
 
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
@@ -250,6 +243,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         HashMap<String, DeploymentInfo> deployments2 = new HashMap<String, DeploymentInfo>();
         for (AppInfo appInfo : containerSystemInfo.applications) {
+
             List<URL> jars = new ArrayList<URL>();
             for (EjbJarInfo info : appInfo.ejbJars) {
                 jars.add(toUrl(info.jarPath));
@@ -357,7 +351,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return containerSystem;
     }
 
-    private void createConnector(Map<String, ConnectionManager> connectionManagerMap, ConnectorInfo conInfo) throws OpenEJBException, NamingException {
+    private void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        ProxyManager.registerFactory(serviceInfo.id, (ProxyFactory) service);
+        ProxyManager.setDefaultFactory(serviceInfo.id);
+
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
+
+        SystemInstance.get().setComponent(interfce, service);
+
+        getContext().put(interfce.getName(), service);
+
+        props.put(interfce.getName(), service);
+        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.id, service);
+    }
+
+    private void createConnector(ConnectorInfo conInfo) throws OpenEJBException, NamingException {
         ManagedConnectionFactoryInfo serviceInfo = conInfo.managedConnectionFactory;
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);

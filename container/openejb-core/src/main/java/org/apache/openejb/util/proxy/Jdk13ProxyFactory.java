@@ -27,6 +27,10 @@ import org.apache.openejb.OpenEJBException;
  * @org.apache.xbean.XBean 
  */
 public class Jdk13ProxyFactory implements ProxyFactory {
+
+    public Jdk13ProxyFactory() {
+    }
+
     public void init(Properties props) throws OpenEJBException {
         start();
     }

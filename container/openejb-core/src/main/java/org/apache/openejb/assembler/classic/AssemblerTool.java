@@ -81,19 +81,6 @@ public class AssemblerTool {
         }
     }
 
-    public void applyProxyFactory(IntraVmServerInfo ivmInfo) throws OpenEJBException {
-        Class factoryClass = SafeToolkit.loadClass(ivmInfo.className, ivmInfo.codebase);
-
-        checkImplementation(PROXY_FACTORY, factoryClass, "ProxyFactory", ivmInfo.id);
-
-        ProxyFactory factory = (ProxyFactory) toolkit.newInstance(factoryClass);
-
-        factory.init(ivmInfo.properties);
-        ProxyManager.registerFactory("ivm_server", factory);
-        ProxyManager.setDefaultFactory("ivm_server");
-
-    }
-
     public void applyProperties(Object target, Properties props) throws java.lang.reflect.InvocationTargetException, java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
         if (props != null /*&& props.size()>0*/) {
             Method method = target.getClass().getMethod("init", Properties.class);
