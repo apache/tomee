@@ -90,9 +90,9 @@ public class ThreadContext {
     }
 
     private final CoreDeploymentInfo deploymentInfo;
-    private Object primaryKey;
-    private Operation currentOperation;
+    private final Object primaryKey;
     private final Object securityIdentity;
+    private Operation currentOperation;
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
 
@@ -111,10 +111,6 @@ public class ThreadContext {
 
     public Object getPrimaryKey() {
         return primaryKey;
-    }
-
-    public void setPrimaryKey(Object primKey) {
-        primaryKey = primKey;
     }
 
     public Object getSecurityIdentity() {

@@ -503,68 +503,46 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         txPolicy.beforeInvoke(bean, txContext);
 
         try {
-
-            /*
-              Obtain a bean instance from the method ready pool
-            */
+            // Obtain a bean instance from the method ready pool
             bean = createNewInstance(callContext);
 
             // set the entity context
             setEntityContext(bean);
 
-            /*
-               Obtain the proper ejbCreate() method
-            */
+            // Obtain the proper ejbCreate() method
             Method ejbCreateMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
-            /*
-              Set the context for allowed operations
-            */
+            // Set current operation for allowed operations
             callContext.setCurrentOperation(Operation.OP_CREATE);
 
-            /*
-              Invoke the proper ejbCreate() method on the instance
-            */
+            // Invoke the proper ejbCreate() method on the instance
             ejbCreateMethod.invoke(bean, args);
 
             // create the new bean
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo.getDeploymentID());
             primaryKey = cmpEngine.createBean(bean, callContext);
 
-            /*
-              place the primary key into the current ThreadContext so its available for
-              the ejbPostCreate()
-            */
-            callContext.setPrimaryKey(primaryKey);
-
-            /*
-              Set the current operation for the allowed operations check
-            */
-            callContext.setCurrentOperation(Operation.OP_POST_CREATE);
-
-            /*
-              Obtain the ejbPostCreate method that matches the ejbCreate method
-            */
+            // determine post create callback method
             Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod(ejbCreateMethod);
 
-            /*
-              Invoke the ejbPostCreate method on the bean instance
-            */
-            ejbPostCreateMethod.invoke(bean, args);
+            // create a new context containing the pk for the post create call
+            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
+            postCreateContext.setCurrentOperation(Operation.OP_POST_CREATE);
 
-            /*
-            According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
-            method executes in the same transaction context as the previous ejbCreate(...) method."
+            ThreadContext oldContext = ThreadContext.enter(postCreateContext);
+            try {
+                // Invoke the ejbPostCreate method on the bean instance
+                ejbPostCreateMethod.invoke(bean, args);
 
-            The bean is first insterted using db.create( ) and then after ejbPostCreate( ) its
-            updated using db.update(). This protocol allows for visablity of the bean after ejbCreate
-            within the current trasnaction.
-            */
-
-            /*
-              Reset the primary key in the ThreadContext to null, its original value
-            */
-            callContext.setPrimaryKey(null);
+                // According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
+                // method executes in the same transaction context as the previous ejbCreate(...) method."
+                //
+                // The bean is first insterted using db.create( ) and then after ejbPostCreate( ) its
+                // updated using db.update(). This protocol allows for visablity of the bean after ejbCreate
+                // within the current trasnaction.
+            } finally {
+                ThreadContext.exit(oldContext);
+            }
 
         } catch (InvocationTargetException ite) {// handle enterprise bean exceptions
             if (ite.getTargetException() instanceof RuntimeException) {

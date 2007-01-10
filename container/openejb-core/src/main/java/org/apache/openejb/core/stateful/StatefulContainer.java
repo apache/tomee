@@ -210,7 +210,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
             methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
 
             switch (methodType){
-                case CREATE: return createEJBObject(callMethod, args, callContext);
+                case CREATE: return createEJBObject(callContext.getDeploymentInfo(), callMethod, args, callContext.getSecurityIdentity());
                 case REMOVE: removeEJBObject(callMethod, args, callContext); return null;
             }
 
@@ -311,31 +311,37 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
 
     }
 
-    protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class beanType = deploymentInfo.getBeanClass();
-        Object primaryKey = this.newPrimaryKey();
-        callContext.setPrimaryKey(primaryKey);
+    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object [] args, Object securityIdentity) throws OpenEJBException {
+        // generate a new primary key
+        Object primaryKey = newPrimaryKey();
 
-        Object bean = instanceManager.newInstance(primaryKey, beanType);
+        ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
+        createContext.setCurrentOperation(Operation.OP_CREATE);
+        ThreadContext oldContext = ThreadContext.enter(createContext);
+        try {
+            // allocate a new instance
+            Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
 
-        // Do postConstructs or create(...)
-        callContext.setCurrentOperation(Operation.OP_CREATE);
-        if (bean instanceof SessionBean) {
-            Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-            _invoke(callMethod, runMethod, args, bean, callContext);
-        } else {
-            Method postConstruct = deploymentInfo.getPostConstruct();
-            if (postConstruct != null){
-                _invoke(callMethod, postConstruct, args, bean, callContext);
+            // Invoke postConstructs or create(...)
+            if (bean instanceof SessionBean) {
+                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                _invoke(callMethod, runMethod, args, bean, createContext);
+            } else {
+                Method postConstruct = deploymentInfo.getPostConstruct();
+                if (postConstruct != null){
+                    _invoke(callMethod, postConstruct, args, bean, createContext);
+                }
             }
+
+
+            instanceManager.poolInstance(primaryKey, bean);
+
+            Class callingClass = callMethod.getDeclaringClass();
+            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        } finally {
+            ThreadContext.exit(oldContext);
         }
-
-        instanceManager.poolInstance(primaryKey, bean);
-
-        Class callingClass = callMethod.getDeclaringClass();
-        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
-        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
     }
 
     protected Object newPrimaryKey() {

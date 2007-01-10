@@ -261,14 +261,10 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     protected void didCreateBean(ThreadContext callContext, EntityBean bean) throws org.apache.openejb.OpenEJBException {
     }
 
-    protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
-
-        org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
+    protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         callContext.setCurrentOperation(Operation.OP_CREATE);
-        EntityBean bean = null;
-        Object primaryKey = null;
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
@@ -288,25 +284,45 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         * super classes afterInvoke( ) method will be executed committing the transaction if its a CMT.
         */
 
-        txPolicy.beforeInvoke(bean, txContext);
+        txPolicy.beforeInvoke(null, txContext);
 
+        EntityBean bean = null;
+        Object primaryKey = null;
         try {
-
+            // Get new ready instance
             bean = instanceManager.obtainInstance(callContext);
+
+            // Obtain the proper ejbCreate() method
             Method ejbCreateMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
+            // invoke the ejbCreate which returns the primary key
             primaryKey = ejbCreateMethod.invoke(bean, args);
 
-            callContext.setPrimaryKey(primaryKey);
             didCreateBean(callContext, bean);
-            callContext.setCurrentOperation(Operation.OP_POST_CREATE);
 
+            // determine post create callback method
             Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod(ejbCreateMethod);
 
-            ejbPostCreateMethod.invoke(bean, args);
+            // create a new context containing the pk for the post create call
+            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
+            postCreateContext.setCurrentOperation(Operation.OP_POST_CREATE);
 
-            primaryKey = callContext.getPrimaryKey();
-            callContext.setPrimaryKey(null);
+            ThreadContext oldContext = ThreadContext.enter(postCreateContext);
+            try {
+                // Invoke the ejbPostCreate method on the bean instance
+                ejbPostCreateMethod.invoke(bean, args);
+
+                // According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
+                // method executes in the same transaction context as the previous ejbCreate(...) method."
+                //
+                // The bean is first insterted using db.create( ) and then after ejbPostCreate( ) its
+                // updated using db.update(). This protocol allows for visablity of the bean after ejbCreate
+                // within the current trasnaction.
+            } finally {
+                ThreadContext.exit(oldContext);
+            }
+
+            // update pool
             instanceManager.poolInstance(callContext, bean);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
             if (ite.getTargetException() instanceof RuntimeException) {
@@ -333,15 +349,15 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             txPolicy.afterInvoke(bean, txContext);
         }
 
+        // return a proxy to the bean
         Class callingClass = callMethod.getDeclaringClass();
         Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
         return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
 
     }
 
-    protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
-        org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
+    protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.OP_FIND);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
