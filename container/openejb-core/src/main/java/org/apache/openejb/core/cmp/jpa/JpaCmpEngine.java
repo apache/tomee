@@ -33,6 +33,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.Synchronization;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.KeyGenerator;
@@ -99,6 +100,7 @@ public class JpaCmpEngine implements CmpEngine {
                     OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
                     openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
                 }
+                transaction.registerSynchronization(new JpaSynchronization(transaction, entityManager));
                 transactionData.put(transaction, entityManager);
             }
             return entityManager;
@@ -193,6 +195,24 @@ public class JpaCmpEngine implements CmpEngine {
             } else {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }
+        }
+    }
+
+    private class JpaSynchronization implements Synchronization {
+        private final Transaction transaction;
+        private final EntityManager entityManager;
+
+        public JpaSynchronization(Transaction transaction, EntityManager entityManager) {
+            this.transaction = transaction;
+            this.entityManager = entityManager;
+        }
+
+        public void beforeCompletion() {
+        }
+
+        public void afterCompletion(int i) {
+            entityManager.close();
+            transactionData.remove(transaction);
         }
     }
 
