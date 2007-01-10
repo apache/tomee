@@ -189,7 +189,7 @@ public class OpenejbDescriptor extends org.exolab.castor.xml.util.XMLClassDescri
         }
         desc.setValidator(fieldValidator);
 
-        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.apache.openejb.alt.config.sys.TransactionService.class, "_transactionService", "TransactionService", org.exolab.castor.xml.NodeType.Element);
+        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.apache.openejb.alt.config.sys.TransactionManager.class, "_transactionService", "TransactionService", org.exolab.castor.xml.NodeType.Element);
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue(java.lang.Object object)
                     throws IllegalStateException {
@@ -201,7 +201,7 @@ public class OpenejbDescriptor extends org.exolab.castor.xml.util.XMLClassDescri
                     throws IllegalStateException, IllegalArgumentException {
                 try {
                     Openejb target = (Openejb) object;
-                    target.setTransactionService((org.apache.openejb.alt.config.sys.TransactionService) value);
+                    target.setTransactionService((org.apache.openejb.alt.config.sys.TransactionManager) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
@@ -209,7 +209,7 @@ public class OpenejbDescriptor extends org.exolab.castor.xml.util.XMLClassDescri
             }
 
             public java.lang.Object newInstance(java.lang.Object parent) {
-                return new org.apache.openejb.alt.config.sys.TransactionService();
+                return new org.apache.openejb.alt.config.sys.TransactionManager();
             }
         });
         desc.setHandler(handler);

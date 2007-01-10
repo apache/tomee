@@ -27,7 +27,7 @@ package org.apache.openejb.alt.config.sys;
 
 import org.exolab.castor.xml.validators.*;
 
-public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
+public class TransactionManagerDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
 
 
     private java.lang.String nsPrefix;
@@ -39,10 +39,10 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
     private org.exolab.castor.xml.XMLFieldDescriptor identity;
 
 
-    public TransactionServiceDescriptor() {
+    public TransactionManagerDescriptor() {
         super();
         nsURI = "http://www.openejb.org/System/Configuration";
-        xmlName = "TransactionService";
+        xmlName = "TransactionManager";
         org.exolab.castor.xml.util.XMLFieldDescriptorImpl desc = null;
         org.exolab.castor.xml.XMLFieldHandler handler = null;
         org.exolab.castor.xml.FieldValidator fieldValidator = null;
@@ -52,14 +52,14 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue(java.lang.Object object)
                     throws IllegalStateException {
-                TransactionService target = (TransactionService) object;
+                TransactionManager target = (TransactionManager) object;
                 return target.getContent();
             }
 
             public void setValue(java.lang.Object object, java.lang.Object value)
                     throws IllegalStateException, IllegalArgumentException {
                 try {
-                    TransactionService target = (TransactionService) object;
+                    TransactionManager target = (TransactionManager) object;
                     target.setContent((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
@@ -89,14 +89,14 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue(java.lang.Object object)
                     throws IllegalStateException {
-                TransactionService target = (TransactionService) object;
+                TransactionManager target = (TransactionManager) object;
                 return target.getId();
             }
 
             public void setValue(java.lang.Object object, java.lang.Object value)
                     throws IllegalStateException, IllegalArgumentException {
                 try {
-                    TransactionService target = (TransactionService) object;
+                    TransactionManager target = (TransactionManager) object;
                     target.setId((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
@@ -127,14 +127,14 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue(java.lang.Object object)
                     throws IllegalStateException {
-                TransactionService target = (TransactionService) object;
+                TransactionManager target = (TransactionManager) object;
                 return target.getProvider();
             }
 
             public void setValue(java.lang.Object object, java.lang.Object value)
                     throws IllegalStateException, IllegalArgumentException {
                 try {
-                    TransactionService target = (TransactionService) object;
+                    TransactionManager target = (TransactionManager) object;
                     target.setProvider((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
@@ -163,14 +163,14 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
         handler = (new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue(java.lang.Object object)
                     throws IllegalStateException {
-                TransactionService target = (TransactionService) object;
+                TransactionManager target = (TransactionManager) object;
                 return target.getJar();
             }
 
             public void setValue(java.lang.Object object, java.lang.Object value)
                     throws IllegalStateException, IllegalArgumentException {
                 try {
-                    TransactionService target = (TransactionService) object;
+                    TransactionManager target = (TransactionManager) object;
                     target.setJar((java.lang.String) value);
                 }
                 catch (java.lang.Exception ex) {
@@ -212,7 +212,7 @@ public class TransactionServiceDescriptor extends org.exolab.castor.xml.util.XML
     }
 
     public java.lang.Class getJavaClass() {
-        return org.apache.openejb.alt.config.sys.TransactionService.class;
+        return org.apache.openejb.alt.config.sys.TransactionManager.class;
     }
 
     public java.lang.String getNameSpacePrefix() {

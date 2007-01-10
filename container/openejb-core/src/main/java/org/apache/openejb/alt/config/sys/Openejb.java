@@ -41,7 +41,7 @@ public class Openejb implements java.io.Serializable {
 
     private org.apache.openejb.alt.config.sys.SecurityService _securityService;
 
-    private org.apache.openejb.alt.config.sys.TransactionService _transactionService;
+    private org.apache.openejb.alt.config.sys.TransactionManager _transactionManager;
 
     private org.apache.openejb.alt.config.sys.ConnectionManager _connectionManager;
 
@@ -266,8 +266,8 @@ public class Openejb implements java.io.Serializable {
         return this._securityService;
     }
 
-    public org.apache.openejb.alt.config.sys.TransactionService getTransactionService() {
-        return this._transactionService;
+    public org.apache.openejb.alt.config.sys.TransactionManager getTransactionService() {
+        return this._transactionManager;
     }
 
     public boolean isValid() {
@@ -443,8 +443,8 @@ public class Openejb implements java.io.Serializable {
         this._securityService = securityService;
     }
 
-    public void setTransactionService(org.apache.openejb.alt.config.sys.TransactionService transactionService) {
-        this._transactionService = transactionService;
+    public void setTransactionService(org.apache.openejb.alt.config.sys.TransactionManager transactionManager) {
+        this._transactionManager = transactionManager;
     }
 
     public static java.lang.Object unmarshal(java.io.Reader reader)

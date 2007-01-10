@@ -93,7 +93,7 @@
     
     <!--
     -->
-	<xsd:element name="TransactionService">
+	<xsd:element name="TransactionManager">
         <xsd:complexType mixed='true'>
 			<xsd:attribute name="id" type="xsd:string" use="required" />
 			<xsd:attribute name="provider" type="xsd:string" />
@@ -117,7 +117,7 @@
 				<xsd:element ref="Container" maxOccurs="unbounded"/>
 				<xsd:element ref="JndiProvider" minOccurs="0" maxOccurs="unbounded"/>
                 <xsd:element ref="SecurityService" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="TransactionService" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="TransactionManager" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ConnectionManager" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ProxyFactory" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Connector" minOccurs="0" maxOccurs="unbounded"/>

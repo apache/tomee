@@ -240,7 +240,7 @@
   -->
   <ServiceProvider
           id="Default Transaction Manager"
-          provider-type="TransactionService"
+          provider-type="TransactionManager"
           class-name="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
 
   <!--

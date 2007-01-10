@@ -28,7 +28,7 @@ package org.apache.openejb.alt.config.sys;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 
-public class TransactionService implements java.io.Serializable, org.apache.openejb.alt.config.Service {
+public class TransactionManager implements java.io.Serializable, org.apache.openejb.alt.config.Service {
 
 
     private java.lang.String _id;
@@ -40,7 +40,7 @@ public class TransactionService implements java.io.Serializable, org.apache.open
     private java.lang.String _content = "";
 
 
-    public TransactionService() {
+    public TransactionManager() {
         super();
         setContent("");
     }
@@ -102,7 +102,7 @@ public class TransactionService implements java.io.Serializable, org.apache.open
 
     public static java.lang.Object unmarshal(java.io.Reader reader)
             throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-        return (org.apache.openejb.alt.config.sys.TransactionService) Unmarshaller.unmarshal(org.apache.openejb.alt.config.sys.TransactionService.class, reader);
+        return (org.apache.openejb.alt.config.sys.TransactionManager) Unmarshaller.unmarshal(org.apache.openejb.alt.config.sys.TransactionManager.class, reader);
     }
 
     public void validate()

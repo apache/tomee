@@ -27,7 +27,7 @@ import org.apache.openejb.alt.config.sys.Openejb;
 import org.apache.openejb.alt.config.sys.ProxyFactory;
 import org.apache.openejb.alt.config.sys.SecurityService;
 import org.apache.openejb.alt.config.sys.ServiceProvider;
-import org.apache.openejb.alt.config.sys.TransactionService;
+import org.apache.openejb.alt.config.sys.TransactionManager;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
@@ -278,7 +278,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     private void initTransactionService(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
 
-        facilities.transactionService = createService(openejb.getTransactionService(), new TransactionServiceInfo(), DEFAULT_TRANSACTION_MANAGER, TransactionService.class);
+        facilities.transactionService = createService(openejb.getTransactionService(), new TransactionServiceInfo(), DEFAULT_TRANSACTION_MANAGER, TransactionManager.class);
 
     }
 
