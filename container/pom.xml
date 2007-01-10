@@ -33,6 +33,5 @@
     <module>openejb-javaagent</module>
     <module>openejb-jee</module>
     <module>openejb-persistence</module>
-    <module>openejb-builder</module>
   </modules>
 </project>
