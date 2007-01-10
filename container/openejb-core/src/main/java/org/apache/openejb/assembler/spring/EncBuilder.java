@@ -152,7 +152,7 @@ public class EncBuilder {
         for (ResourceReferenceInfo referenceInfo : encInfo.resourceRefs) {
             Reference reference = null;
             if (referenceInfo.getResourceId() != null) {
-                String jndiName = "java:openejb/connector/" + referenceInfo.getResourceId();
+                String jndiName = "java:openejb/Connector/" + referenceInfo.getResourceId();
                 reference = new IntraVmJndiReference(jndiName);
             } else {
                 String openEjbSubContextName1 = "java:openejb/remote_jndi_contexts/" + referenceInfo.getRemoteContextId();

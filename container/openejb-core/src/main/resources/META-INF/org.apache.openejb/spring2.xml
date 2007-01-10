@@ -53,7 +53,7 @@
   <o:jndiBinding id="jndiBinding" context="#jndiContext">
     <property name="bindings">
       <map>
-        <entry key="java:openejb/connector/Default JDBC Database">
+        <entry key="java:openejb/Connector/Default JDBC Database">
           <o:connectorRef manager="#defaultConnectionManager" factory="#defaultJdbcDatabase"/>
         </entry>
         <entry key="java:openejb/TransactionManager" value-ref="transactionManager"/>

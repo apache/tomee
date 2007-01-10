@@ -377,7 +377,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
 
-        containerSystem.getJNDIContext().bind("java:openejb/connector/" + conInfo.connectorId, reference);
+        containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + conInfo.connectorId, reference);
     }
 
     private ConnectionManager createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
@@ -392,7 +392,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
         checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
 
-        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType+"/"+serviceInfo.id, service);
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
 
         SystemInstance.get().setComponent(interfce, service);
 

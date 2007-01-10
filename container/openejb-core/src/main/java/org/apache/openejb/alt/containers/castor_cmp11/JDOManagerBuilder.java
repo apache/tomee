@@ -78,7 +78,7 @@ public class JDOManagerBuilder {
      *
      * <jdo-conf>
      *   <database name="Global_TX_Database" engine="instantdb">
-     *     <jndi name="java:openejb/connector/Default JDBC Database" />
+     *     <jndi name="java:openejb/Connector/Default JDBC Database" />
      *     <mapping href="default.cmp_mapping.xml" />
      *   </database>
      *   <transaction-demarcation mode="global">

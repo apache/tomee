@@ -225,14 +225,14 @@ public class JndiEncBuilder {
             Reference reference = null;
 
             if (referenceInfo.resourceID != null) {
-                String jndiName = "java:openejb/connector/" + referenceInfo.resourceID;
+                String jndiName = "java:openejb/Connector/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else if (referenceInfo.location != null) {
                 String openEjbSubContextName1 = "java:openejb/remote_jndi_contexts/" + referenceInfo.location.jndiContextId;
                 String jndiName2 = referenceInfo.location.remoteRefName;
                 reference = new JndiReference(openEjbSubContextName1, jndiName2);
             } else {
-                String jndiName = "java:openejb/connector/" + referenceInfo.referenceName;
+                String jndiName = "java:openejb/Connector/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
