@@ -21,7 +21,6 @@ import org.apache.activemq.ra.ActiveMQActivationSpec;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.TransactionManagerWrapper;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
@@ -37,7 +36,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 
 public class ActiveMQContainer extends MdbContainer {
     public ActiveMQContainer(Object containerID,
-                             TransactionManagerWrapper transactionManager,
+                             GeronimoTransactionManager transactionManager,
                              SecurityService securityService,
                              Map<String, DeploymentInfo> deploymentRegistry,
                              String serverUrl,
@@ -47,7 +46,7 @@ public class ActiveMQContainer extends MdbContainer {
         super(containerID,
                 transactionManager,
                 securityService,
-                createActiveMQResourceAdapter((GeronimoTransactionManager) transactionManager.getTxManager(), serverUrl, threadPoolSize),
+                createActiveMQResourceAdapter(transactionManager, serverUrl, threadPoolSize),
                 ActiveMQActivationSpec.class,
                 instanceLimit);
 

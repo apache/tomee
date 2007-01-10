@@ -22,19 +22,21 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.transaction.Status;
+
+import org.apache.openejb.util.Logger;
 
 /**
  * @org.apache.xbean.XBean element="userTransaction"
  */
 public class CoreUserTransaction implements javax.transaction.UserTransaction, java.io.Serializable {
+    private static final long serialVersionUID = 9203248912222645965L;
+    private static final Logger transactionLogger = Logger.getInstance("Transaction", "org.apache.openejb.util.resources");
 
     private transient TransactionManager transactionManager;
 
-    private transient final org.apache.log4j.Category transactionLogger;
-
     public CoreUserTransaction(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-        transactionLogger = org.apache.log4j.Category.getInstance("Transaction");
     }
 
     private TransactionManager transactionManager() {
@@ -71,7 +73,7 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
     public int getStatus() throws SystemException {
         int status = transactionManager().getStatus();
         if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("User transaction " + transactionManager().getTransaction() + " has status " + org.apache.openejb.core.TransactionManagerWrapper.getStatus(status));
+            transactionLogger.info("User transaction " + transactionManager().getTransaction() + " has status " + getStatus(status));
         }
         return status;
     }
@@ -87,4 +89,51 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
         transactionManager().setTransactionTimeout(seconds);
     }
 
+    private static String getStatus(int status) {
+        StringBuffer buffer;
+
+        buffer = new StringBuffer(100);
+        switch (status) {
+            case Status.STATUS_ACTIVE:
+                buffer.append("STATUS_ACTIVE: ");
+                buffer.append("A transaction is associated with the target object and it is in the active state.");
+                break;
+            case Status.STATUS_COMMITTED:
+                buffer.append("STATUS_COMMITTED: ");
+                buffer.append("A transaction is associated with the target object and it has been committed.");
+                break;
+            case Status.STATUS_COMMITTING:
+                buffer.append("STATUS_COMMITTING: ");
+                buffer.append("A transaction is associated with the target object and it is in the process of committing.");
+                break;
+            case Status.STATUS_MARKED_ROLLBACK:
+                buffer.append("STATUS_MARKED_ROLLBACK: ");
+                buffer.append("A transaction is associated with the target object and it has been marked for rollback, perhaps as a result of a setRollbackOnly operation.");
+                break;
+            case Status.STATUS_NO_TRANSACTION:
+                buffer.append("STATUS_NO_TRANSACTION: ");
+                buffer.append("No transaction is currently associated with the target object.");
+                break;
+            case Status.STATUS_PREPARED:
+                buffer.append("STATUS_PREPARED: ");
+                buffer.append("A transaction is associated with the target object and it has been prepared, i.e.");
+                break;
+            case Status.STATUS_PREPARING:
+                buffer.append("STATUS_PREPARING: ");
+                buffer.append("A transaction is associated with the target object and it is in the process of preparing.");
+                break;
+            case Status.STATUS_ROLLEDBACK:
+                buffer.append("STATUS_ROLLEDBACK: ");
+                buffer.append("A transaction is associated with the target object and the outcome has been determined as rollback.");
+                break;
+            case Status.STATUS_ROLLING_BACK:
+                buffer.append("STATUS_ROLLING_BACK: ");
+                buffer.append("A transaction is associated with the target object and it is in the process of rolling back.");
+                break;
+            default:
+                buffer.append("Unknown status ").append(status);
+                break;
+        }
+        return buffer.toString();
+    }
 }

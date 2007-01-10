@@ -25,7 +25,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.TemporaryClassLoader;
-import org.apache.openejb.core.TransactionManagerWrapper;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
@@ -437,11 +436,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
         checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
-
-        TransactionManager unwrappedTransactionManager = (TransactionManager) service;
-        ObjectRecipe txManagerWrapperRecipe = new ObjectRecipe(TransactionManagerWrapper.class, new String[]{"transactionManager"}, new Class[]{TransactionManager.class});
-        txManagerWrapperRecipe.setProperty("transactionManager", new StaticRecipe(unwrappedTransactionManager));
-        service = txManagerWrapperRecipe.create();
 
         this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType, service);
 
