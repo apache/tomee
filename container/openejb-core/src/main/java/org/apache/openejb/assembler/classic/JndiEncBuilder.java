@@ -53,6 +53,7 @@ public class JndiEncBuilder {
     private final EnvEntryInfo[] envEntries;
     private final ResourceReferenceInfo[] resourceRefs;
     private final PersistenceUnitInfo[] persistenceUnitRefs;
+    private final PersistenceContextInfo[] persistenceContextRefs;
     private final Map<String, EntityManagerFactory> entityManagerFactories;
     private final Map<String, Map<String, EntityManagerFactory>> allFactories;
     private final String jarPath;
@@ -109,6 +110,12 @@ public class JndiEncBuilder {
         	persistenceUnitRefs = new PersistenceUnitInfo[]{};
         }      
         
+        if ((jndiEnc != null && jndiEnc.persistenceContextRefs != null)) {
+        	persistenceContextRefs = jndiEnc.persistenceContextRefs.toArray(new PersistenceContextInfo[0]);
+        } else {
+        	persistenceContextRefs = new PersistenceContextInfo[]{};
+        }
+
         if(allFactories != null){
         	this.allFactories = allFactories;
         } else {
@@ -249,6 +256,27 @@ public class JndiEncBuilder {
             
             reference = new PersistenceUnitReference(factory);
             bindings.put(normalize(puRefInfo.referenceName), wrapReference(reference));
+        }
+
+        for (int i = 0; i < persistenceContextRefs.length; i++) {
+            PersistenceContextInfo contextInfo = persistenceContextRefs[i];
+
+            EntityManagerFactory factory;
+            if (contextInfo.persistenceUnitName != null) {
+                if (contextInfo.persistenceUnitName.indexOf("#") == -1) {
+                    factory = entityManagerFactories.get(contextInfo.persistenceUnitName);
+                } else {
+                    factory = findEntityManagerFactory(allFactories, jarPath, contextInfo.persistenceUnitName);
+                }
+            } else if (entityManagerFactories.size() == 1) {
+                factory = entityManagerFactories.values().toArray(new EntityManagerFactory[1])[0];
+            } else {
+                throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
+            }
+
+// TODO create persistence context reference here
+//            Reference reference = new PersistenceUnitReference(factory);
+//            bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
         }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));

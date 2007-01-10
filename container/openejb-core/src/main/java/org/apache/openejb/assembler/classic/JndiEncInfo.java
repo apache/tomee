@@ -26,4 +26,5 @@ public class JndiEncInfo extends InfoObject {
     public final List<EjbLocalReferenceInfo> ejbLocalReferences = new ArrayList<EjbLocalReferenceInfo>();
     public final List<ResourceReferenceInfo> resourceRefs = new ArrayList<ResourceReferenceInfo>();
     public final List<PersistenceUnitInfo> persistenceUnitRefs = new ArrayList<PersistenceUnitInfo>();
+    public final List<PersistenceContextInfo> persistenceContextRefs = new ArrayList<PersistenceContextInfo>();
 }

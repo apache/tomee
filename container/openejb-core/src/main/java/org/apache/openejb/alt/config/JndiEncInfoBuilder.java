@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.InjectionInfo;
+import org.apache.openejb.assembler.classic.PersistenceContextInfo;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
@@ -35,6 +36,9 @@ import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.Property;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -107,21 +111,42 @@ public class JndiEncInfoBuilder {
         jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName));
 
         jndi.persistenceUnitRefs.addAll(buildPersistenceUnitRefInfos(jndiConsumer));
+
+        jndi.persistenceContextRefs.addAll(buildPersistenceContextRefInfos(jndiConsumer));
         return jndi;
     }
 
     private List<PersistenceUnitInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
         ArrayList<PersistenceUnitInfo> infos = new ArrayList<PersistenceUnitInfo>();
         for (PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
-        	PersistenceUnitInfo info = new PersistenceUnitInfo();
+            PersistenceUnitInfo info = new PersistenceUnitInfo();
             info.referenceName = puRef.getPersistenceUnitRefName();
-            info.persistenceUnitName = puRef.getPersistenceUnitName();            
+            info.persistenceUnitName = puRef.getPersistenceUnitName();
             infos.add(info);
         }
-        return infos;       
+        return infos;
     }
 
-    private void buildAmbiguousEjbRefInfos(JndiEncInfo jndi, JndiConsumer jndiConsumer, String referringComponent) throws OpenEJBException {
+    private List<PersistenceContextInfo> buildPersistenceContextRefInfos(JndiConsumer jndiConsumer) {
+        ArrayList<PersistenceContextInfo> infos = new ArrayList<PersistenceContextInfo>();
+
+        for (PersistenceContextRef contextRef : jndiConsumer.getPersistenceContextRef()) {
+            PersistenceContextInfo info = new PersistenceContextInfo();
+            info.referenceName = contextRef.getPersistenceContextRefName();
+            info.persistenceUnitName = contextRef.getPersistenceUnitName();
+            info.extended = (contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED);
+            List<Property> persistenceProperty = contextRef.getPersistenceProperty();
+            for (Property property : persistenceProperty) {
+                String name = property.getName();
+                String value = property.getValue();
+                info.properties.setProperty(name, value);
+            }
+            infos.add(info);
+        }
+        return infos;
+    }
+
+    private void buildAmbiguousEjbRefInfos(JndiEncInfo sjndi, JndiConsumer jndiConsumer, String referringComponent) throws OpenEJBException {
         ArrayList<EjbRef> ejbRefs = new ArrayList<EjbRef>(jndiConsumer.getEjbRef());
         for (EjbRef ejb : ejbRefs) {
             if (ejb.getType() != EjbRef.Type.UNKNOWN) continue;

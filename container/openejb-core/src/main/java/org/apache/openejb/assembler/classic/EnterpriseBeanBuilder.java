@@ -142,6 +142,14 @@ class EnterpriseBeanBuilder {
             }
         }
 
+        for (PersistenceContextInfo info : bean.jndiEnc.persistenceContextRefs) {
+            for (InjectionInfo target : info.targets) {
+                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
+                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                deployment.getInjections().add(injection);
+            }
+        }
+
         for (ResourceReferenceInfo info : bean.jndiEnc.resourceRefs) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
