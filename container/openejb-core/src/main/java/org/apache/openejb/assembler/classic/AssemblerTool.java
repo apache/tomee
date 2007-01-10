@@ -26,6 +26,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import javax.naming.InitialContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Properties;
@@ -39,20 +40,16 @@ public class AssemblerTool {
 
     public static final Class PROXY_FACTORY = org.apache.openejb.util.proxy.ProxyFactory.class;
     public static final Class SECURITY_SERVICE = org.apache.openejb.spi.SecurityService.class;
-    public static final Class TRANSACTION_SERVICE = org.apache.openejb.spi.TransactionService.class;
+    public static final Class TRANSACTION_MANAGER = TransactionManager.class;
     public static final Class CONNECTION_MANAGER = javax.resource.spi.ConnectionManager.class;
     public static final Class CONNECTOR = javax.resource.spi.ManagedConnectionFactory.class;
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
-    protected static final Map<String, ClassLoader> codebases = new HashMap<String, ClassLoader>();
 
     protected Properties props;
 
     static {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        codebases.put("CLASSPATH", cl);
-
         System.setProperty("noBanner", "true");
     }
 
@@ -351,7 +348,7 @@ public class AssemblerTool {
 
     }
 
-    protected void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
+    protected static void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
         if (!intrfce.isAssignableFrom(factory)) {
             handleException("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName());
         }
@@ -386,11 +383,11 @@ public class AssemblerTool {
     /*------------------------------------------------------*/
     /*    Methods for easy exception handling               */
     /*------------------------------------------------------*/
-    public void handleException(String errorCode, Object... args) throws OpenEJBException {
+    public static void handleException(String errorCode, Object... args) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, args));
     }
 
-    public void handleException(String errorCode) throws OpenEJBException {
+    public static void handleException(String errorCode) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode));
     }
 }

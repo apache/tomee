@@ -390,13 +390,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return securityService;
     }
 
-    public static SecurityService create(SecurityServiceInfo service) {
-        ObjectRecipe securityServiceRecipe = new ObjectRecipe(service.className, service.properties);
-        SecurityService securityService = (SecurityService) securityServiceRecipe.create();
-        return securityService;
+    public static SecurityService create(SecurityServiceInfo serviceInfo) throws OpenEJBException {
+        ObjectRecipe securityServiceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.properties);
+        Object service = securityServiceRecipe.create();
+        checkImplementation(SECURITY_SERVICE, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        return (SecurityService) service;
     }
 
-    private void createTransactionManager(TransactionServiceInfo transactionService) throws NamingException {
+    private void createTransactionManager(TransactionServiceInfo transactionService) throws NamingException, OpenEJBException {
         TransactionManager unwrappedTransactionManager = create(transactionService);
         TransactionManager transactionManager = install(this.containerSystem, unwrappedTransactionManager);
 
@@ -415,10 +417,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return transactionManager;
     }
 
-    public static TransactionManager create(TransactionServiceInfo transactionService) {
-        TransactionServiceInfo service = transactionService;
-        ObjectRecipe txServiceRecipe = new ObjectRecipe(service.className, service.properties);
-        TransactionManager unwrappedTransactionManager = (TransactionManager) txServiceRecipe.create();
-        return unwrappedTransactionManager;
+    public static TransactionManager create(TransactionServiceInfo transactionService) throws OpenEJBException {
+        TransactionServiceInfo serviceInfo = transactionService;
+        ObjectRecipe txServiceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.properties);
+        Object service = txServiceRecipe.create();
+        checkImplementation(TRANSACTION_MANAGER, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        return (TransactionManager) service;
     }
 }

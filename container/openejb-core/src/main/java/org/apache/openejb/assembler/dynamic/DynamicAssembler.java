@@ -37,42 +37,9 @@ import java.util.Properties;
  */
 public class DynamicAssembler {
     private final CoreContainerSystem system;
-    private final TransactionManager transactionManager;
-    private final SecurityService securityService;
 
     public DynamicAssembler() {
-        this(null, null);
-    }
-
-    public DynamicAssembler(TransactionManager transactionManager, SecurityService securityService) {
-
-        Assembler.installNaming();
-
         system = new CoreContainerSystem();
-        try {
-            if (transactionManager == null){
-                // TODO: get some defaults
-                TransactionServiceInfo transactionServiceInfo = new TransactionServiceInfo();
-                transactionServiceInfo.className = "org.apache.geronimo.transaction.manager.GeronimoTransactionManager";
-                transactionServiceInfo.properties = new Properties();
-//                transactionServiceInfo.serviceName = ""
-                transactionManager = Assembler.create(transactionServiceInfo);
-            }
-            this.transactionManager = transactionManager = Assembler.install(system, transactionManager);
-        } catch (NamingException e) {
-            throw new RuntimeException("Could not install TransactionManager", e);
-        }
-
-        try {
-            if (securityService == null){
-                // TODO: get some defaults
-                SecurityServiceInfo securityServiceInfo = new SecurityServiceInfo();
-                securityService = Assembler.create(securityServiceInfo);
-            }
-            this.securityService = securityService = Assembler.install(system, securityService);
-        } catch (NamingException e) {
-            throw new RuntimeException("Could not install SecurityService", e);
-        }
     }
 
     public void add(InfoObject info) throws OpenEJBException {
