@@ -60,20 +60,9 @@ public class ContainersBuilder {
         for (ContainerInfo serviceInfo : containerInfos) {
 
             Map<String, CoreDeploymentInfo> deploymentsList = new HashMap<String, CoreDeploymentInfo>();
-//            for (EnterpriseBeanInfo bean : containerInfo.ejbeans) {
-//                String ejbDeploymentId = bean.ejbDeploymentId;
-//                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(ejbDeploymentId);
-//                deploymentsList.put(ejbDeploymentId, deployment);
-//            }
 
             Container container = buildContainer(serviceInfo, deploymentsList);
             container = wrapContainer(container);
-
-//            DeploymentInfo [] deploys = container.deployments();
-//            for (int x = 0; x < deploys.length; x++) {
-//                CoreDeploymentInfo di = (CoreDeploymentInfo) deploys[x];
-//                di.setContainer(container);
-//            }
 
             containers.add(container);
 

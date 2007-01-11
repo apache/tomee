@@ -17,8 +17,4 @@
 package org.apache.openejb.assembler.classic;
 
 public class EntityContainerInfo extends ContainerInfo {
-    public EntityContainerInfo() {
-        containerType = ENTITY_CONTAINER;
-    }
-
 }

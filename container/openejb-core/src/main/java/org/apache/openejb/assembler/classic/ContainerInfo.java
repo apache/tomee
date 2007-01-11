@@ -22,15 +22,4 @@ import java.util.ArrayList;
 
 public abstract class ContainerInfo extends ServiceInfo {
 
-    public static final int ENTITY_CONTAINER = 0;
-    
-    public static final int MDB_CONTAINER = 1;
-
-    public static final int STATEFUL_SESSION_CONTAINER = 2;
-
-    public static final int STATELESS_SESSION_CONTAINER = 3;
-
-    public final List<EnterpriseBeanInfo> ejbeans = new ArrayList<EnterpriseBeanInfo>();
-
-    public int containerType;
 }
