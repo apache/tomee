@@ -53,62 +53,63 @@ public class ConfigurationPrinter {
             out(1, "displayName  ", container.displayName);
             out(1, "properties   ");
             container.properties.list(System.out);
-            out(1, "ejbeans      ", container.ejbeans.size());
-            for (EnterpriseBeanInfo bean : container.ejbeans) {
-                out(2, "codebase       ", bean.codebase);
-                out(2, "description    ", bean.description);
-                out(2, "displayName    ", bean.displayName);
-                out(2, "ejbClass       ", bean.ejbClass);
-                out(2, "ejbDeploymentId", bean.ejbDeploymentId);
-                out(2, "ejbName        ", bean.ejbName);
-                out(2, "home           ", bean.home);
-                out(2, "largeIcon      ", bean.largeIcon);
-                out(2, "remote         ", bean.remote);
-                out(2, "smallIcon      ", bean.smallIcon);
-                out(2, "transactionType", bean.transactionType);
-                out(2, "type           ", bean.type);
-
-                JndiEncInfo jndiEnc = bean.jndiEnc;
-                out(2, "jndiEnc        ", jndiEnc);
-                out(2, "envEntries     ", jndiEnc.envEntries.size());
-                for (ListIterator<EnvEntryInfo> iterator = jndiEnc.envEntries.listIterator(); iterator.hasNext();) {
-                    EnvEntryInfo envEntry = iterator.next();
-                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
-                    out(3, "name  ", envEntry.name);
-                    out(3, "type  ", envEntry.type);
-                    out(3, "value ", envEntry.value);
-                }
-                out(2, "ejbReferences  ", jndiEnc.ejbReferences.size());
-                for (ListIterator<EjbReferenceInfo> iterator = jndiEnc.ejbReferences.listIterator(); iterator.hasNext();) {
-                    EjbReferenceInfo ejbReference = iterator.next();
-                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
-                    out(3, "homeType        ", ejbReference.homeType);
-                    out(3, "referenceName   ", ejbReference.referenceName);
-                    out(3, "location        ", ejbReference.location);
-                    out(3, "ejbDeploymentId ", ejbReference.location.ejbDeploymentId);
-                    out(3, "jndiContextId   ", ejbReference.location.jndiContextId);
-                    out(3, "remote          ", ejbReference.location.remote);
-                    out(3, "remoteRefName   ", ejbReference.location.remoteRefName);
-                }
-                out(2, "resourceRefs   ", jndiEnc.resourceRefs.size());
-                for (ListIterator<ResourceReferenceInfo> iterator = jndiEnc.resourceRefs.listIterator(); iterator.hasNext();) {
-                    ResourceReferenceInfo resourceRef = iterator.next();
-                    out(3, "--[" + iterator.previousIndex() + "]----------------------");
-                    out(3, "referenceAuth   ", resourceRef.referenceAuth);
-                    out(3, "referenceName   ", resourceRef.referenceName);
-                    out(3, "referenceType   ", resourceRef.referenceType);
-                    if (resourceRef.location != null) {
-                        out(3, "location        ", resourceRef.location);
-                        out(3, "jndiContextId   ", resourceRef.location.jndiContextId);
-                        out(3, "remote          ", resourceRef.location.remote);
-                        out(3, "remoteRefName   ", resourceRef.location.remoteRefName);
-                    }
-                }
-            }
         }
 
         for (AppInfo app : conf.containerSystem.applications) {
             for (EjbJarInfo ejbJar : app.ejbJars) {
+                out(1, "ejbeans      ", ejbJar.enterpriseBeans.size());
+                for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                    out(2, "codebase       ", bean.codebase);
+                    out(2, "description    ", bean.description);
+                    out(2, "displayName    ", bean.displayName);
+                    out(2, "ejbClass       ", bean.ejbClass);
+                    out(2, "ejbDeploymentId", bean.ejbDeploymentId);
+                    out(2, "ejbName        ", bean.ejbName);
+                    out(2, "home           ", bean.home);
+                    out(2, "largeIcon      ", bean.largeIcon);
+                    out(2, "remote         ", bean.remote);
+                    out(2, "smallIcon      ", bean.smallIcon);
+                    out(2, "transactionType", bean.transactionType);
+                    out(2, "type           ", bean.type);
+
+                    JndiEncInfo jndiEnc = bean.jndiEnc;
+                    out(2, "jndiEnc        ", jndiEnc);
+                    out(2, "envEntries     ", jndiEnc.envEntries.size());
+                    for (ListIterator<EnvEntryInfo> iterator = jndiEnc.envEntries.listIterator(); iterator.hasNext();) {
+                        EnvEntryInfo envEntry = iterator.next();
+                        out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(3, "name  ", envEntry.name);
+                        out(3, "type  ", envEntry.type);
+                        out(3, "value ", envEntry.value);
+                    }
+                    out(2, "ejbReferences  ", jndiEnc.ejbReferences.size());
+                    for (ListIterator<EjbReferenceInfo> iterator = jndiEnc.ejbReferences.listIterator(); iterator.hasNext();) {
+                        EjbReferenceInfo ejbReference = iterator.next();
+                        out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(3, "homeType        ", ejbReference.homeType);
+                        out(3, "referenceName   ", ejbReference.referenceName);
+                        out(3, "location        ", ejbReference.location);
+                        out(3, "ejbDeploymentId ", ejbReference.location.ejbDeploymentId);
+                        out(3, "jndiContextId   ", ejbReference.location.jndiContextId);
+                        out(3, "remote          ", ejbReference.location.remote);
+                        out(3, "remoteRefName   ", ejbReference.location.remoteRefName);
+                    }
+                    out(2, "resourceRefs   ", jndiEnc.resourceRefs.size());
+                    for (ListIterator<ResourceReferenceInfo> iterator = jndiEnc.resourceRefs.listIterator(); iterator.hasNext();) {
+                        ResourceReferenceInfo resourceRef = iterator.next();
+                        out(3, "--[" + iterator.previousIndex() + "]----------------------");
+                        out(3, "referenceAuth   ", resourceRef.referenceAuth);
+                        out(3, "referenceName   ", resourceRef.referenceName);
+                        out(3, "referenceType   ", resourceRef.referenceType);
+                        if (resourceRef.location != null) {
+                            out(3, "location        ", resourceRef.location);
+                            out(3, "jndiContextId   ", resourceRef.location.jndiContextId);
+                            out(3, "remote          ", resourceRef.location.remote);
+                            out(3, "remoteRefName   ", resourceRef.location.remoteRefName);
+                        }
+                    }
+                }
+
                 if (!ejbJar.securityRoles.isEmpty()) {
                     out(0, "--Security Roles------------");
                     for (ListIterator<SecurityRoleInfo> iterator = ejbJar.securityRoles.listIterator(); iterator.hasNext();) {

@@ -432,6 +432,7 @@ public class EjbJarInfoBuilder {
                     + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
+        bean.containerId = d.getContainerId();
 
         Icon icon = s.getIcon();
         bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
@@ -472,6 +473,7 @@ public class EjbJarInfoBuilder {
                     + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
+        bean.containerId = d.getContainerId();
 
         Icon icon = mdb.getIcon();
         bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
@@ -518,6 +520,7 @@ public class EjbJarInfoBuilder {
                     + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
+        bean.containerId = d.getContainerId();
 
         Icon icon = e.getIcon();
         bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();

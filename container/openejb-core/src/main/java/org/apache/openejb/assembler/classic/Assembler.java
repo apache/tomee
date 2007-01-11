@@ -241,7 +241,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
 
-        HashMap<String, DeploymentInfo> deployments2 = new HashMap<String, DeploymentInfo>();
+        // Containers
+        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystem, containerSystemInfo, props);
+        List containers = (List) containersBuilder.buildContainers(new HashMap<String, DeploymentInfo>());
+        for (int i1 = 0; i1 < containers.size(); i1++) {
+            Container container = (Container) containers.get(i1);
+            containerSystem.addContainer(container.getContainerID(), container);
+        }
+
+        JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
         for (AppInfo appInfo : containerSystemInfo.applications) {
 
             List<URL> jars = new ArrayList<URL>();
@@ -284,14 +292,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // EJB
-            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(classLoader);
+            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
-                deployments2.putAll(deployments);
+
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     applyMethodPermissions((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
                     applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
+                    containerSystem.addDeployment(deploymentInfo);
+                    jndiBuilder.bind(deploymentInfo);
                 }
+
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
                     applySecurityRoleReference(deployment, beanInfo, roleMapping);
@@ -323,22 +334,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
-            }
-        }
-
-        JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
-
-        // Containers
-        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystemInfo, ((AssemblerTool) this).props);
-        List containers = (List) containersBuilder.buildContainers(deployments2);
-        for (int i1 = 0; i1 < containers.size(); i1++) {
-            Container container1 = (Container) containers.get(i1);
-            containerSystem.addContainer(container1.getContainerID(), container1);
-            org.apache.openejb.DeploymentInfo[] deployments1 = container1.deployments();
-            for (int j = 0; j < deployments1.length; j++) {
-                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments1[j];
-                containerSystem.addDeployment(deployment);
-                jndiBuilder.bind(deployment);
             }
         }
 

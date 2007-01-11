@@ -58,5 +58,6 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public boolean excludeDefaultInterceptors;
     public final List<InterceptorInfo> classInterceptors = new ArrayList<InterceptorInfo>();
     public final List<MethodInterceptorInfo> methodInterceptors = new ArrayList<MethodInterceptorInfo>();
-    
+
+    public String containerId;
 }

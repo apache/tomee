@@ -141,7 +141,6 @@ public class SystemInstance {
      * @param type the class type of the component required
      */
     public <T> T setComponent(Class<T> type, T value) {
-//    public Object setComponent(Class type, Object value) {
         return (T)components.put(type, value);
     }
 
@@ -175,4 +174,5 @@ public class SystemInstance {
     public boolean hasProperty(String propName) {
         return this.internalProperties.get(propName) != null;
     }
+
 }

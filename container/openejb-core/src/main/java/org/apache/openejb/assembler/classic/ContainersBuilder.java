@@ -21,6 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
@@ -29,6 +30,7 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.transaction.TransactionManager;
+import javax.naming.NamingException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,35 +45,50 @@ public class ContainersBuilder {
     private final Properties props;
     private final List<ContainerInfo> containerInfos;
     private final String[] decorators;
+    private CoreContainerSystem containerSystem;
 
-    public ContainersBuilder(ContainerSystemInfo containerSystemInfo, Properties props) {
+    public ContainersBuilder(CoreContainerSystem containerSystem, ContainerSystemInfo containerSystemInfo, Properties props) {
         this.props = props;
         this.containerInfos = containerSystemInfo.containers;
         String decorators = props.getProperty("openejb.container.decorators");
         this.decorators = (decorators == null) ? new String[]{} : decorators.split(":");
-
+        this.containerSystem = containerSystem;
     }
 
-    public Object buildContainers(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+    public Object buildContainers(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException, NamingException {
         List<Container> containers = new ArrayList<Container>();
-        for (ContainerInfo containerInfo : containerInfos) {
+        for (ContainerInfo serviceInfo : containerInfos) {
 
             Map<String, CoreDeploymentInfo> deploymentsList = new HashMap<String, CoreDeploymentInfo>();
-            for (EnterpriseBeanInfo bean : containerInfo.ejbeans) {
-                String ejbDeploymentId = bean.ejbDeploymentId;
-                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(ejbDeploymentId);
-                deploymentsList.put(ejbDeploymentId, deployment);
-            }
+//            for (EnterpriseBeanInfo bean : containerInfo.ejbeans) {
+//                String ejbDeploymentId = bean.ejbDeploymentId;
+//                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(ejbDeploymentId);
+//                deploymentsList.put(ejbDeploymentId, deployment);
+//            }
 
-            Container container = buildContainer(containerInfo, deploymentsList);
+            Container container = buildContainer(serviceInfo, deploymentsList);
             container = wrapContainer(container);
 
-            DeploymentInfo [] deploys = container.deployments();
-            for (int x = 0; x < deploys.length; x++) {
-                CoreDeploymentInfo di = (CoreDeploymentInfo) deploys[x];
-                di.setContainer(container);
-            }
+//            DeploymentInfo [] deploys = container.deployments();
+//            for (int x = 0; x < deploys.length; x++) {
+//                CoreDeploymentInfo di = (CoreDeploymentInfo) deploys[x];
+//                di.setContainer(container);
+//            }
+
             containers.add(container);
+
+            Class interfce = AssemblerTool.serviceInterfaces.get(serviceInfo.serviceType);
+            AssemblerTool.checkImplementation(interfce, container.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, container);
+
+            SystemInstance.get().setComponent(interfce, container);
+
+            props.put(interfce.getName(), container);
+            props.put(serviceInfo.serviceType, container);
+            props.put(serviceInfo.id, container);
+
         }
         return containers;
     }

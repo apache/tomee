@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -123,14 +124,15 @@ public class StatelessContainerTest extends TestCase {
 
         EjbModule jar = new EjbModule(this.getClass().getClassLoader(), "", ejbJar, openejbJar);
 
-        HashMap<String, DeploymentInfo> ejbs = build(jar);
-        deploymentInfo = ejbs.get("widget");
-
         PseudoTransactionService transactionManager = new PseudoTransactionService();
         PseudoSecurityService securityService = new PseudoSecurityService();
         SystemInstance.get().setComponent(SecurityService.class, securityService);
-        container = new StatelessContainer("Stateless Container", transactionManager, securityService, ejbs, 10, 0, false);
-        ((CoreDeploymentInfo)deploymentInfo).setContainer(container);
+        container = new StatelessContainer("Stateless Container", transactionManager, securityService, new HashMap(), 10, 0, false);
+        Properties props = new Properties();
+        props.put(container.getContainerID(), container);
+
+        HashMap<String, DeploymentInfo> ejbs = build(props, jar);
+        deploymentInfo = ejbs.get("widget");
 
         ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
         ProxyManager.setDefaultFactory("ivm_server");
@@ -146,10 +148,10 @@ public class StatelessContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(EjbModule jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule jar) throws OpenEJBException {
         EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
-        EjbJarBuilder builder = new EjbJarBuilder(this.getClass().getClassLoader());
+        EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
         EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
         HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
         return ejbs;

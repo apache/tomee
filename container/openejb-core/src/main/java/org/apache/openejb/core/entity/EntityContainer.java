@@ -89,6 +89,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         deploymentRegistry = registry;
         org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
+        instanceManager.deploy(info);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {

@@ -426,7 +426,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 logger.fatal(msg);
                 throw new OpenEJBException(msg);
             }
-            cInfo.ejbeans.add(bean);
+            bean.containerId = d.getContainerId();
         }
     }
 

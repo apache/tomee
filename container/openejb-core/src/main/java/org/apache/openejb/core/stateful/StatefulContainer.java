@@ -63,7 +63,6 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
 
         for (CoreDeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
-
             deploymentInfo.setContainerData(new Data(new Index(methods)));
         }
     }
@@ -186,11 +185,18 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         return containerID;
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+    public void deploy(Object deploymentID, DeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploy(deploymentID, (CoreDeploymentInfo)deploymentInfo);
+    }
+    
+    private void deploy(Object deploymentID, CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
+        deploymentInfo.setContainerData(new Data(new Index(methods)));
+
         HashMap registry = (HashMap) deploymentRegistry.clone();
-        registry.put(deploymentID, info);
+        registry.put(deploymentID, deploymentInfo);
         deploymentRegistry = registry;
-        CoreDeploymentInfo di = (CoreDeploymentInfo) info;
+        CoreDeploymentInfo di = (CoreDeploymentInfo) deploymentInfo;
         di.setContainer(this);
     }
 

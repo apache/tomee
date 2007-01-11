@@ -81,7 +81,11 @@ public class MdbContainer implements Container, TransactionContainer {
         return containerID;
     }
 
-    public void deploy(Object deploymentId, DeploymentInfo deploymentInfo) throws OpenEJBException {
+    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+    }
+
+    // TODO: DMB: Temporarily commenting out as it locks the VM
+    public void LOCKUP_deploy(Object deploymentId, DeploymentInfo deploymentInfo) throws OpenEJBException {
         // create the activation spec
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 

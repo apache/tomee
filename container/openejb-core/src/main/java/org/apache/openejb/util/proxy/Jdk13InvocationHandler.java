@@ -40,15 +40,13 @@ public class Jdk13InvocationHandler implements java.lang.reflect.InvocationHandl
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (delegate != null) {
-            if (args == null) {
-                args = new Object[0];
-
-            }
-            return delegate.invoke(proxy, method, args);
-        } else {
+        if (delegate == null) {
             throw new NullPointerException("No invocation handler for proxy " + proxy);
         }
+        if (args == null) {
+            args = new Object[0];
+        }
+        return delegate.invoke(proxy, method, args);
     }
 }
 

@@ -72,8 +72,12 @@ public class EntityInstanceManager {
         org.apache.openejb.DeploymentInfo[] deploymentInfos = this.container.deployments();
         for (int i = 0; i < deploymentInfos.length; i++) {
             org.apache.openejb.DeploymentInfo deploymentInfo = deploymentInfos[i];
-            poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
+            deploy(deploymentInfo);
         }
+    }
+
+    public void deploy(org.apache.openejb.DeploymentInfo deploymentInfo) {
+        poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
     }
 
     public EntityBean obtainInstance(ThreadContext callContext)
