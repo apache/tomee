@@ -190,4 +190,14 @@ public class BmpContextLookupTests extends BmpTestClient{
         }
     }
 
+    public void test15_lookupPersistenceContext() {
+        try{
+            ejbObject.lookupPersistenceContext();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
 }

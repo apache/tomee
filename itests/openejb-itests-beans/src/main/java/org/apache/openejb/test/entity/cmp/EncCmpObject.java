@@ -33,6 +33,7 @@ public interface EncCmpObject extends javax.ejb.EJBObject{
 
     public void lookupResource() throws TestFailureException, RemoteException;
     public void lookupPersistenceUnit() throws TestFailureException, RemoteException;
+    public void lookupPersistenceContext() throws TestFailureException, RemoteException;
 
     public void lookupStringEntry()  throws TestFailureException, RemoteException;
     public void lookupDoubleEntry()  throws TestFailureException, RemoteException;

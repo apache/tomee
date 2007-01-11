@@ -18,7 +18,10 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.persistence.JtaEntityManager;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JndiReference;
@@ -26,6 +29,7 @@ import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -141,12 +145,17 @@ public class JndiEncBuilder {
 
         // bind TransactionSynchronizationRegistry
         TransactionSynchronizationRegistry synchronizationRegistry = (TransactionSynchronizationRegistry) Assembler.getContext().get(TransactionSynchronizationRegistry.class.getName());
-        if (synchronizationRegistry == null && transactionManager instanceof TransactionSynchronizationRegistry) {
-            synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
+        if (synchronizationRegistry == null) {
+            // todo this should be move to the main service assembler
+            if (transactionManager instanceof TransactionSynchronizationRegistry) {
+                synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
+            } else {
+                synchronizationRegistry = new SimpleTransactionSynchronizationRegistry(transactionManager);
+            }
+            // todo make sure this gets into the system instance
+            Assembler.getContext().put(TransactionSynchronizationRegistry.class.getName(), synchronizationRegistry);
         }
-        if (synchronizationRegistry != null) {
-            bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
-        }
+        bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
         // bind UserTransaction if bean managed transactions
         if (beanManagedTransactions) {
@@ -286,9 +295,15 @@ public class JndiEncBuilder {
                 throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
             }
 
-// TODO create persistence context reference here
-//            Reference reference = new PersistenceUnitReference(factory);
-//            bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
+            JtaEntityManagerRegistry jtaEntityManagerRegistry = (JtaEntityManagerRegistry) Assembler.getContext().get(JtaEntityManagerRegistry.class.getName());
+            if (jtaEntityManagerRegistry == null) {
+                // todo make sure this gets into the system instance
+                jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
+                Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
+            }
+            JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+            Reference reference = new PersistenceContextReference(jtaEntityManager);
+            bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
         }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));

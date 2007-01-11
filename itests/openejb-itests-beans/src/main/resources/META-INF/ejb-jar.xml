@@ -289,6 +289,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
       <persistence-unit-ref>
         <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -401,6 +408,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
       <persistence-unit-ref>
         <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -508,6 +522,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
       <persistence-unit-ref>
         <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -933,6 +954,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
 
     </session>
 
@@ -1034,6 +1062,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1134,6 +1169,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1234,6 +1276,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1589,6 +1638,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1703,6 +1759,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1817,6 +1880,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -2037,7 +2107,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
-
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -2141,6 +2217,13 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
     </entity>
 
     <!--

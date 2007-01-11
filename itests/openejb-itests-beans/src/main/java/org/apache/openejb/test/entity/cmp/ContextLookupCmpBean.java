@@ -29,6 +29,7 @@ import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
 import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
@@ -305,6 +306,24 @@ public class ContextLookupCmpBean implements javax.ejb.EntityBean {
         }
     }
     
+    public void lookupPersistenceContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                Assert.assertNotNull("The EntityManager is null", em);
+
+                // call a do nothing method to assure entity manager actually exists
+                em.getFlushMode();
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     //
     // Remote interface methods
     //=============================
