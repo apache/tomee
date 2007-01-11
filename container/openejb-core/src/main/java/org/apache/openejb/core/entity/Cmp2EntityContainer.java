@@ -33,12 +33,11 @@ import java.util.Map;
  */
 public class Cmp2EntityContainer implements org.apache.openejb.RpcContainer, TransactionContainer {
 
-    private Map deploymentRegistry;
+    private Map deploymentRegistry = new HashMap();
 
     private Object containerID = null;
 
-    public Cmp2EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Map registry) throws OpenEJBException {
-        this.deploymentRegistry = registry;
+    public Cmp2EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService) throws OpenEJBException {
         this.containerID = id;
     }
 

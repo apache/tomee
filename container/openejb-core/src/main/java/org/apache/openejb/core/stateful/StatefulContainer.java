@@ -45,7 +45,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
 
     private StatefulInstanceManager instanceManager;
 
-    private HashMap<String,CoreDeploymentInfo> deploymentRegistry;
+    private HashMap<String,CoreDeploymentInfo> deploymentRegistry = new HashMap<String,CoreDeploymentInfo>();
 
     private Object containerID = null;
 
@@ -53,8 +53,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, Class passivator, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
-        this.deploymentRegistry = registry;
+    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Class passivator, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
@@ -188,7 +187,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
     public void deploy(Object deploymentID, DeploymentInfo deploymentInfo) throws OpenEJBException {
         deploy(deploymentID, (CoreDeploymentInfo)deploymentInfo);
     }
-    
+
     private void deploy(Object deploymentID, CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
         deploymentInfo.setContainerData(new Data(new Index(methods)));

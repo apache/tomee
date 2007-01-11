@@ -127,7 +127,7 @@ public class StatelessContainerTest extends TestCase {
         PseudoTransactionService transactionManager = new PseudoTransactionService();
         PseudoSecurityService securityService = new PseudoSecurityService();
         SystemInstance.get().setComponent(SecurityService.class, securityService);
-        container = new StatelessContainer("Stateless Container", transactionManager, securityService, new HashMap(), 10, 0, false);
+        container = new StatelessContainer("Stateless Container", transactionManager, securityService, 10, 0, false);
         Properties props = new Properties();
         props.put(container.getContainerID(), container);
 

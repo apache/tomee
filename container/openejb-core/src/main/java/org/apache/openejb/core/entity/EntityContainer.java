@@ -50,7 +50,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
     private EntityInstanceManager instanceManager;
 
-    private Map deploymentRegistry;
+    private Map<String,CoreDeploymentInfo> deploymentRegistry  = new HashMap<String,CoreDeploymentInfo>();
 
     private Object containerID = null;
 
@@ -58,8 +58,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Map registry, int poolSize) throws OpenEJBException {
-        this.deploymentRegistry = registry;
+    public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, int poolSize) throws OpenEJBException {
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
@@ -68,11 +67,11 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     }
 
     public DeploymentInfo [] deployments() {
-        return (DeploymentInfo []) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
+        return deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
 
     public DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return (DeploymentInfo) deploymentRegistry.get(deploymentID);
+        return deploymentRegistry.get(deploymentID);
     }
 
     public int getContainerType() {

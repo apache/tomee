@@ -242,11 +242,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
 
         // Containers
-        ContainersBuilder containersBuilder = new ContainersBuilder(containerSystem, containerSystemInfo, props);
-        List containers = (List) containersBuilder.buildContainers(new HashMap<String, DeploymentInfo>());
-        for (int i1 = 0; i1 < containers.size(); i1++) {
-            Container container = (Container) containers.get(i1);
-            containerSystem.addContainer(container.getContainerID(), container);
+        for (ContainerInfo serviceInfo : containerSystemInfo.containers) {
+            createContainer(serviceInfo);
         }
 
         JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
@@ -344,6 +341,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         return containerSystem;
+    }
+
+    private void createContainer(ContainerInfo serviceInfo) throws OpenEJBException, NamingException {
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+
+        serviceRecipe.setProperty("id", new StaticRecipe(serviceInfo.id));
+        serviceRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
+        serviceRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())));
+
+        Object service = serviceRecipe.create();
+
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+
+        this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
+
+        SystemInstance.get().setComponent(interfce, service);
+
+        props.put(interfce.getName(), service);
+        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.id, service);
+
+        containerSystem.addContainer(serviceInfo.id, (Container) service);
     }
 
     private void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {

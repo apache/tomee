@@ -50,7 +50,7 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
-                   constructor="id, transactionManager, securityService, deployments, CmpEngineFactory, Engine, ConnectorName"
+                   constructor="id, transactionManager, securityService, CmpEngineFactory, Engine, ConnectorName"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
     #CmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
@@ -69,7 +69,7 @@
   -->
   <ServiceProvider id="Default CMP2 Container"
                    provider-type="Container"
-                   constructor="id, transactionManager, securityService, deployments"
+                   constructor="id, transactionManager, securityService"
                    class-name="org.apache.openejb.core.entity.Cmp2EntityContainer">
   </ServiceProvider>
 
@@ -81,7 +81,7 @@
   <ServiceProvider
           id="Default BMP Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, deployments, PoolSize"
+          constructor="id, transactionManager, securityService, PoolSize"
           class-name="org.apache.openejb.core.entity.EntityContainer">
 
     # Specifies the size of the bean pools for this
@@ -101,7 +101,7 @@
   <ServiceProvider
           id="Default Stateless Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, deployments, TimeOut, PoolSize, StrictPooling"
+          constructor="id, transactionManager, securityService, TimeOut, PoolSize, StrictPooling"
           class-name="org.apache.openejb.core.stateless.StatelessContainer">
 
     # Specifies the time to wait between invocations. This
@@ -142,7 +142,7 @@
   <ServiceProvider
           id="Default Stateful Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, deployments, Passivator, TimeOut, PoolSize, BulkPassivate"
+          constructor="id, transactionManager, securityService, Passivator, TimeOut, PoolSize, BulkPassivate"
           class-name="org.apache.openejb.core.stateful.StatefulContainer">
 
     # The passivator is responsible for writing beans to disk
@@ -185,7 +185,7 @@
   <ServiceProvider
           id="Default MDB Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, deployments, ServerUrl, ThreadPoolSize, InstanceLimit"
+          constructor="id, transactionManager, securityService, ServerUrl, ThreadPoolSize, InstanceLimit"
           class-name="org.apache.openejb.core.mdb.ActiveMQContainer">
 
     # Specifies the url used to create the ActiveMQ resource adapter.

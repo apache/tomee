@@ -88,7 +88,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     protected final Map<Object, CmpEngine> cmpEngines = new HashMap<Object, CmpEngine>();
 
 
-    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap<Object, DeploymentInfo> registry, String cmpEngineFactory, String engine, String connectorName) throws OpenEJBException {
+    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) throws OpenEJBException {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.containerID = id;
@@ -97,10 +97,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         this.engine = engine;
 
         cmpCallback = new ContainerCmpCallback();
-
-        for (DeploymentInfo deploymentInfo : registry.values()) {
-            deploy((CoreDeploymentInfo) deploymentInfo);
-        }
     }
 
     public Object getContainerID() {

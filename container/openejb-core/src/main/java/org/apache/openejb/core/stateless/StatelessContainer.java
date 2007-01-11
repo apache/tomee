@@ -44,14 +44,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
     private StatelessInstanceManager instanceManager;
 
-    private HashMap<String,DeploymentInfo> deploymentRegistry;
+    private HashMap<String,DeploymentInfo> deploymentRegistry = new HashMap<String,DeploymentInfo>();
 
     private Object containerID = null;
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, HashMap registry, int timeOut, int poolSize, boolean strictPooling) throws OpenEJBException {
-        this.deploymentRegistry = registry;
+    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, int timeOut, int poolSize, boolean strictPooling) throws OpenEJBException {
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;

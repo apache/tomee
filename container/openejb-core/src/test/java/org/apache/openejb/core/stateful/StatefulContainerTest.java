@@ -163,7 +163,7 @@ public class StatefulContainerTest extends TestCase {
 
 
         // Create the Container
-        container = new StatefulContainer("Stateful Container", transactionManager, securityService, new HashMap(),null, 10, 0, 1);
+        container = new StatefulContainer("Stateful Container", transactionManager, securityService,null, 10, 0, 1);
         Properties props = new Properties();
         props.put(container.getContainerID(), container);
 

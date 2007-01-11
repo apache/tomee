@@ -38,7 +38,6 @@ public class ActiveMQContainer extends MdbContainer {
     public ActiveMQContainer(Object containerID,
                              GeronimoTransactionManager transactionManager,
                              SecurityService securityService,
-                             Map<String, DeploymentInfo> deploymentRegistry,
                              String serverUrl,
                              int threadPoolSize,
                              int instanceLimit) throws OpenEJBException {
@@ -50,21 +49,6 @@ public class ActiveMQContainer extends MdbContainer {
                 ActiveMQActivationSpec.class,
                 instanceLimit);
 
-        // deploy the beans
-        try {
-            for (Map.Entry<String, DeploymentInfo> entry : deploymentRegistry.entrySet()) {
-                deploy(entry.getKey(), entry.getValue());
-            }
-        } catch (OpenEJBException e) {
-            // there was a failure deploying the beans... undeploy them
-            for (DeploymentInfo deploymentInfo : deployments()) {
-                try {
-                    undeploy(deploymentInfo.getDeploymentID());
-                } finally {
-                    logger.error("Error undeploying " + deploymentInfo.getDeploymentID(), e);
-                }
-            }
-        }
     }
 
     public static ActiveMQResourceAdapter createActiveMQResourceAdapter(GeronimoTransactionManager transactionManager, String serverUrl, int threadPoolSize) throws OpenEJBException {
