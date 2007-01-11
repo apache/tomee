@@ -649,6 +649,9 @@ public class Logger {
         }
 
         public void configure() {
+            // make openjpa use log4j
+            System.setProperty("openjpa.Log", "log4j");
+
             Properties properties = null;
 
             String config = props.getProperty("log4j.configuration");
