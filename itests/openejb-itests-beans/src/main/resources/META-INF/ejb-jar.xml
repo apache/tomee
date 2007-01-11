@@ -69,10 +69,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -106,10 +106,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -139,10 +139,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -181,10 +181,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -296,10 +296,10 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -415,10 +415,10 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -529,10 +529,10 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -565,10 +565,10 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -610,10 +610,10 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--
@@ -651,10 +651,10 @@
         </query-method>
         <ejb-ql>SELECT OBJECT(A) FROM OneToOneA A</ejb-ql>
       </query>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
     <entity>
       <ejb-name>OneToOneB</ejb-name>
@@ -689,10 +689,10 @@
         </query-method>
         <ejb-ql>SELECT OBJECT(B) FROM OneToOneB B</ejb-ql>
       </query>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <entity>
@@ -722,10 +722,10 @@
         </query-method>
         <ejb-ql>SELECT OBJECT(A) FROM OneToManyA A</ejb-ql>
       </query>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
     <entity>
       <ejb-name>OneToManyB</ejb-name>
@@ -760,10 +760,10 @@
         </query-method>
         <ejb-ql>SELECT OBJECT(B) FROM OneToManyB B</ejb-ql>
       </query>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <entity>
@@ -784,10 +784,10 @@
         <field-name>field1</field-name>
       </cmp-field>
       <primkey-field>id</primkey-field>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <entity>
@@ -804,10 +804,10 @@
         <field-name>id</field-name>
       </cmp-field>
       <primkey-field>id</primkey-field>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <entity>
@@ -837,10 +837,10 @@
         </query-method>
         <ejb-ql>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</ejb-ql>
       </query>
-      <persistence-unit-ref>
-        <persistence-unit-ref-name>openejb/cmp</persistence-unit-ref-name>
+      <persistence-context-ref>
+        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-unit-ref>
+      </persistence-context-ref>
     </entity>
 
     <!--

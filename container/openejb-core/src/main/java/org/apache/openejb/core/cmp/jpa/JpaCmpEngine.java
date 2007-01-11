@@ -17,32 +17,29 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.Synchronization;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.ComplexKeyGenerator;
+import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
 import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
@@ -54,9 +51,7 @@ public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
 
     private final CmpCallback cmpCallback;
-    private final TransactionManager transactionManager;
-
-    private final Map<Transaction, EntityManager> transactionData = new WeakHashMap<Transaction, EntityManager>();
+    private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
     private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
         protected Set<EntityBean> initialValue() {
@@ -64,9 +59,8 @@ public class JpaCmpEngine implements CmpEngine {
         }
     };
 
-    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, String connectorName, ClassLoader classLoader) {
+    public JpaCmpEngine(CmpCallback cmpCallback) {
         this.cmpCallback = cmpCallback;
-        this.transactionManager = transactionManager;
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -88,24 +82,38 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
+        EntityManager entityManager = null;
         try {
-            Transaction transaction = transactionManager.getTransaction();
-            EntityManager entityManager = transactionData.get(transaction);
-            if (entityManager == null) {
-                EntityManagerFactory entityManagerFactory = (EntityManagerFactory) deploymentInfo.getJndiEnc().lookup("env/openejb/cmp");
+            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("env/openejb/cmp");
+        } catch (NamingException ignroed) {
+        }
 
-                // todo close entityManager when tx completes
-                entityManager = entityManagerFactory.createEntityManager();
-                if (entityManager instanceof OpenJPAEntityManager) {
-                    OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
-                    openjpaEM.addLifecycleListener(new OpenJPALifecycleListener(), (Class[])null);
-                }
-                transaction.registerSynchronization(new JpaSynchronization(transaction, entityManager));
-                transactionData.put(transaction, entityManager);
-            }
-            return entityManager;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (entityManager == null) {
+            throw new EJBException("Entity manager not found at \"openejb/cmp\" in jndi ejb " + deploymentInfo.getDeploymentID());
+        }
+
+        registerListener(entityManager);
+
+        return entityManager;
+    }
+
+    private synchronized void registerListener(EntityManager entityManager) {
+        // check if listener is already registered
+        if (entityManagerListeners.containsKey(entityManager)) {
+            return;
+        }
+
+        if (entityManager instanceof OpenJPAEntityManager) {
+            OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
+            OpenJPALifecycleListener listener = new OpenJPALifecycleListener();
+            openjpaEM.addLifecycleListener(listener, (Class[])null);
+            entityManagerListeners.put(entityManager,  listener);
+            return;
+        }
+
+        Object delegate = entityManager.getDelegate();
+        if (delegate != entityManager && delegate instanceof EntityManager) {
+            registerListener((EntityManager) delegate);
         }
     }
 
@@ -181,6 +189,7 @@ public class JpaCmpEngine implements CmpEngine {
                 cmpCallback.ejbActivate(entity);
             }
         }
+        //noinspection unchecked
         return results;
     }
 
@@ -195,24 +204,6 @@ public class JpaCmpEngine implements CmpEngine {
             } else {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }
-        }
-    }
-
-    private class JpaSynchronization implements Synchronization {
-        private final Transaction transaction;
-        private final EntityManager entityManager;
-
-        public JpaSynchronization(Transaction transaction, EntityManager entityManager) {
-            this.transaction = transaction;
-            this.entityManager = entityManager;
-        }
-
-        public void beforeCompletion() {
-        }
-
-        public void afterCompletion(int i) {
-            entityManager.close();
-            transactionData.remove(transaction);
         }
     }
 
