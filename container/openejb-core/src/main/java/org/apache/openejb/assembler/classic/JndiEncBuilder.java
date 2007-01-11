@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -134,10 +135,21 @@ public class JndiEncBuilder {
     public Context build() throws OpenEJBException {
         Map<String, Object> bindings = new HashMap<String, Object>();
 
-        if (beanManagedTransactions) {
-            Object obj = Assembler.getContext().get(TransactionManager.class.getName());
-            TransactionManager transactionManager = (TransactionManager) obj;
+        // bind TransactionManager
+        TransactionManager transactionManager = (TransactionManager) Assembler.getContext().get(TransactionManager.class.getName());
+        bindings.put("java:comp/TransactionManager", transactionManager);
 
+        // bind TransactionSynchronizationRegistry
+        TransactionSynchronizationRegistry synchronizationRegistry = (TransactionSynchronizationRegistry) Assembler.getContext().get(TransactionSynchronizationRegistry.class.getName());
+        if (synchronizationRegistry == null && transactionManager instanceof TransactionSynchronizationRegistry) {
+            synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
+        }
+        if (synchronizationRegistry != null) {
+            bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
+        }
+
+        // bind UserTransaction if bean managed transactions
+        if (beanManagedTransactions) {
             Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction(transactionManager));
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
