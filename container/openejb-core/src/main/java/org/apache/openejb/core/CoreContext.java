@@ -16,13 +16,7 @@
  */
 package org.apache.openejb.core;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.ProxyManager;
-
+import java.util.List;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -32,7 +26,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
-import java.util.List;
+
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InternalErrorException;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.core.ivm.IntraVmProxy;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.proxy.ProxyManager;
+
 
 public abstract class CoreContext implements java.io.Serializable {
 
@@ -124,40 +127,32 @@ public abstract class CoreContext implements java.io.Serializable {
     }
 
     public Object getBusinessObject(Class interfce) {
-        // TODO: This implementation isn't complete
         ThreadContext threadContext = ThreadContext.getThreadContext();
         DeploymentInfo di = threadContext.getDeploymentInfo();
 
-
         InterfaceType interfaceType;
-
-
-        Class businessLocalInterface = di.getBusinessLocalInterface();
-        if (businessLocalInterface != null && businessLocalInterface.getName().equals(interfce.getName())) {
+        if (di.getBusinessLocalInterface() != null && di.getBusinessLocalInterface().getName().equals(interfce.getName())) {
             interfaceType = InterfaceType.BUSINESS_LOCAL;
-        } else
-        if (di.getBusinessRemoteInterface() == null && di.getBusinessRemoteInterface().getName().equals(interfce.getName()))
-        {
+        } else if (di.getBusinessRemoteInterface() != null && di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
             interfaceType = InterfaceType.BUSINESS_REMOTE;
         } else {
-            // TODO: verify if this is the right exception
-            throw new RuntimeException("Component has no such interface " + interfce.getName());
+            throw new IllegalArgumentException("Component has no such interface " + interfce.getName());
         }
 
-        Object newProxy = null;
+        Object newProxy;
         try {
             EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
-            Class[] interfaces = new Class[]{interfce, org.apache.openejb.core.ivm.IntraVmProxy.class};
+            Class[] interfaces = new Class[]{interfce, IntraVmProxy.class};
             newProxy = ProxyManager.newProxyInstance(interfaces, handler);
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + interfce.getName() + " interface");
+            throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
         }
         return newProxy;
     }
 
     public EJBLocalHome getEJBLocalHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) threadContext.getDeploymentInfo();
+        org.apache.openejb.core.CoreDeploymentInfo di = threadContext.getDeploymentInfo();
 
         return di.getEJBLocalHome();
     }
@@ -189,8 +184,7 @@ public abstract class CoreContext implements java.io.Serializable {
             int status = getTransactionManager().getStatus();
             if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK)
                 return true;
-            else
-            if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
+            else if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
                 throw new IllegalStateException("No current transaction");
             else
                 return false;
@@ -228,6 +222,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     /**
      * Lookup a resource within the component's private naming context.
+     *
      * @param name - Name of the entry (relative to java:comp/env).
      * @return The looked-up object.
      * @see http://java.sun.com/javaee/5/docs/api/javax/ejb/EJBContext.html#lookup(java.lang.String)
@@ -239,7 +234,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
         try {
             initialContext = new InitialContext();
-            object = initialContext.lookup("java:comp/env/"+name);
+            object = initialContext.lookup("java:comp/env/" + name);
         } catch (NamingException nex) {
             throw new IllegalArgumentException(nex);
         }
