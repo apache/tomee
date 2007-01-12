@@ -16,29 +16,31 @@
  */
 package org.apache.openejb.core.stateful;
 
+import java.io.Serializable;
 import javax.transaction.Transaction;
 
-public class BeanEntry implements java.io.Serializable {
-    protected final Object bean;
-    protected Object primaryKey;
-    protected Object ancillaryState;
-    protected transient Transaction transaction;
-    protected long timeStamp;
-    protected long timeOutInterval;
-    protected boolean inQue = false;
+public class BeanEntry implements Serializable {
+    private static final long serialVersionUID = 5940667199866151048L;
 
-    protected BeanEntry(Object beanInstance, Object primKey, Object ancillary, long timeOut) {
+    protected final Object bean;
+    protected final Object primaryKey;
+    protected boolean inQueue = false;
+    private long timeStamp;
+    private long timeOutInterval;
+    protected transient Transaction beanTransaction;
+
+    protected BeanEntry(Object beanInstance, Object primKey, long timeOut) {
         bean = beanInstance;
         primaryKey = primKey;
-        ancillaryState = ancillary;
-        transaction = null;
+        beanTransaction = null;
         timeStamp = System.currentTimeMillis();
         timeOutInterval = timeOut;
     }
 
     protected boolean isTimedOut() {
-        if (timeOutInterval == 0)
+        if (timeOutInterval == 0) {
             return false;
+        }
         long now = System.currentTimeMillis();
         return (now - timeStamp) > timeOutInterval;
     }

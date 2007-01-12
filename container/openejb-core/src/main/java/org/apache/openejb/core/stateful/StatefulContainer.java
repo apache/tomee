@@ -21,6 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -33,25 +34,30 @@ import org.apache.openejb.util.Index;
 
 import javax.ejb.SessionBean;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.rmi.dgc.VMID;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
  */
-public class StatefulContainer implements org.apache.openejb.RpcContainer, TransactionContainer {
+public class StatefulContainer implements RpcContainer, TransactionContainer {
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    private StatefulInstanceManager instanceManager;
+    private final Object containerID;
+    private final TransactionManager transactionManager;
+    private final SecurityService securityService;
+    private final StatefulInstanceManager instanceManager;
 
-    private HashMap<String,CoreDeploymentInfo> deploymentRegistry = new HashMap<String,CoreDeploymentInfo>();
+    /**
+     * Index used for getDeployments() and getDeploymentInfo(deploymentId).
+     */
+    protected final Map<Object, DeploymentInfo> deploymentsById = new HashMap<Object, DeploymentInfo>();
 
-    private Object containerID = null;
-
-    final static protected Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
-    private TransactionManager transactionManager;
-    private SecurityService securityService;
 
     public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Class passivator, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
         this.containerID = id;
@@ -59,11 +65,6 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         this.securityService = securityService;
 
         instanceManager = new StatefulInstanceManager(transactionManager, securityService, passivator, timeOut, poolSize, bulkPassivate);
-
-        for (CoreDeploymentInfo deploymentInfo : deploymentRegistry.values()) {
-            Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
-            deploymentInfo.setContainerData(new Data(new Index(methods)));
-        }
     }
 
     private class Data {
@@ -79,7 +80,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
     }
 
     private Map<Method, MethodType> getLifecycelMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
-        Map<Method, MethodType> methods = new HashMap();
+        Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
         Method preDestroy = deploymentInfo.getPreDestroy();
         if (preDestroy != null){
@@ -165,15 +166,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
     }
 
     private static enum MethodType {
-        CREATE, REMOVE, BUSINESS;
-    }
-
-    public DeploymentInfo [] deployments() {
-        return (DeploymentInfo []) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
-    }
-
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return (DeploymentInfo) deploymentRegistry.get(deploymentID);
+        CREATE, REMOVE, BUSINESS
     }
 
     public int getContainerType() {
@@ -184,72 +177,148 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         return containerID;
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploy(deploymentID, (CoreDeploymentInfo)deploymentInfo);
+    public StatefulInstanceManager getInstanceManager() {
+        return instanceManager;
     }
 
-    private void deploy(Object deploymentID, CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+    public synchronized DeploymentInfo[] deployments() {
+        return deploymentsById.values().toArray(new DeploymentInfo[deploymentsById.size()]);
+    }
+
+    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        return deploymentsById.get(deploymentID);
+    }
+
+    public void deploy(Object deploymentId, DeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploy(deploymentId, (CoreDeploymentInfo)deploymentInfo);
+    }
+
+    private synchronized void deploy(Object deploymentId, CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
-        deploymentInfo.setContainerData(new Data(new Index(methods)));
+        deploymentInfo.setContainerData(new Data(new Index<Method,MethodType>(methods)));
 
-        HashMap registry = (HashMap) deploymentRegistry.clone();
-        registry.put(deploymentID, deploymentInfo);
-        deploymentRegistry = registry;
-        CoreDeploymentInfo di = (CoreDeploymentInfo) deploymentInfo;
-        di.setContainer(this);
+        deploymentsById.put(deploymentId, deploymentInfo);
+        deploymentInfo.setContainer(this);
     }
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {
+    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
-        ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
+
+        Data data = (Data) deployInfo.getContainerData();
+        MethodType methodType = data.getMethodIndex().get(callMethod);
+        methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
+
+        switch (methodType) {
+            case CREATE:
+                ProxyInfo proxyInfo = createEJBObject(deployInfo, callMethod, args, securityIdentity);
+                return proxyInfo;
+            case REMOVE:
+                removeEJBObject(deployInfo, primKey, callMethod, args, securityIdentity);
+                return null;
+            default:
+                Object value = businessMethod(deployInfo, primKey, callMethod, args, securityIdentity);
+                return value;
+        }
+    }
+
+    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object [] args, Object securityIdentity) throws OpenEJBException {
+        // generate a new primary key
+        Object primaryKey = newPrimaryKey();
+
+        ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
+        createContext.setCurrentOperation(Operation.OP_CREATE);
+        ThreadContext oldCallContext = ThreadContext.enter(createContext);
+        try {
+            checkAuthorization(deploymentInfo, callMethod, securityIdentity);
+
+            // allocate a new instance
+            Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
+
+            // Invoke postConstructs or create(...)
+            if (bean instanceof SessionBean) {
+                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                _invoke(callMethod, runMethod, args, bean, createContext);
+            } else {
+                Method postConstruct = deploymentInfo.getPostConstruct();
+                if (postConstruct != null){
+                    _invoke(callMethod, postConstruct, args, bean, createContext);
+                }
+            }
+
+
+            instanceManager.poolInstance(primaryKey, bean);
+
+            Class callingClass = callMethod.getDeclaringClass();
+            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        } finally {
+            ThreadContext.exit(oldCallContext);
+        }
+    }
+
+    protected Object newPrimaryKey() {
+        return new VMID();
+    }
+
+    protected void removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Method callMethod, Object[] args, Object securityIdentity) throws OpenEJBException {
+        ThreadContext callContext = new ThreadContext(deploymentInfo, primKey, securityIdentity);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
-
-            if (!authorized){
-                throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+            checkAuthorization(deploymentInfo, callMethod, securityIdentity);
+            try {
+                Object bean = instanceManager.obtainInstance(primKey, callContext);
+                if (bean != null) {
+                    callContext.setCurrentOperation(Operation.OP_REMOVE);
+                    Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
+                    if (preDestroy != null) {
+                        _invoke(callMethod, preDestroy, null, bean, callContext);
+                    }
+                }
+            } finally {
+                instanceManager.freeInstance(callContext.getPrimaryKey());
             }
+        } finally {
+            ThreadContext.exit(oldCallContext);
+        }
+    }
 
-            Data data = (Data) deployInfo.getContainerData();
-            MethodType methodType = data.getMethodIndex().get(callMethod);
-            methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
-
-            switch (methodType){
-                case CREATE: return createEJBObject(callContext.getDeploymentInfo(), callMethod, args, callContext.getSecurityIdentity());
-                case REMOVE: removeEJBObject(callMethod, args, callContext); return null;
-            }
+    private Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Method callMethod, Object[] args, Object securityIdentity) throws OpenEJBException {
+        ThreadContext callContext = new ThreadContext(deploymentInfo, primKey, securityIdentity);
+        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        try {
+            checkAuthorization(deploymentInfo, callMethod, securityIdentity);
 
             Object bean = instanceManager.obtainInstance(primKey, callContext);
             callContext.setCurrentOperation(Operation.OP_BUSINESS);
             Object returnValue = null;
-            Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
+            Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
             returnValue = _invoke(callMethod, runMethod, args, bean, callContext);
 
             instanceManager.poolInstance(primKey, bean);
 
             return returnValue;
-
         } finally {
             ThreadContext.exit(oldCallContext);
         }
     }
 
-    private SecurityService getSecurityService() {
-        return securityService;
+    private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod, Object securityIdentity) throws ApplicationException {
+        boolean authorized = securityService.isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+        if (!authorized) {
+            throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+        }
     }
 
-    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
+    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext) throws OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
-        txContext.context.put(StatefulInstanceManager.class, instanceManager);
+        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
         try {
             txPolicy.beforeInvoke(bean, txContext);
-        } catch (org.apache.openejb.ApplicationException e) {
-            if (e.getRootCause() instanceof javax.transaction.TransactionRequiredException ||
-                    e.getRootCause() instanceof java.rmi.RemoteException) {
+        } catch (ApplicationException e) {
+            if (e.getRootCause() instanceof TransactionRequiredException ||
+                    e.getRootCause() instanceof RemoteException) {
 
                 instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
             }
@@ -259,7 +328,7 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         Object returnValue = null;
         try {
             returnValue = runMethod.invoke(bean, args);
-        } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exception
+        } catch (InvocationTargetException ite) {// handle enterprise bean exception
             if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
 
@@ -288,69 +357,6 @@ public class StatefulContainer implements org.apache.openejb.RpcContainer, Trans
         }
 
         return returnValue;
-    }
-
-    private TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
-    public StatefulInstanceManager getInstanceManager() {
-        return instanceManager;
-    }
-
-    protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
-
-        try {
-            Object bean = instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
-            if (bean != null) {
-                callContext.setCurrentOperation(Operation.OP_REMOVE);
-                Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
-                if (preDestroy != null) {
-                    _invoke(callMethod, preDestroy, null, bean, callContext);
-                }
-            }
-        } finally {
-            instanceManager.freeInstance(callContext.getPrimaryKey());
-        }
-
-    }
-
-    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object [] args, Object securityIdentity) throws OpenEJBException {
-        // generate a new primary key
-        Object primaryKey = newPrimaryKey();
-
-        ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
-        createContext.setCurrentOperation(Operation.OP_CREATE);
-        ThreadContext oldContext = ThreadContext.enter(createContext);
-        try {
-            // allocate a new instance
-            Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
-
-            // Invoke postConstructs or create(...)
-            if (bean instanceof SessionBean) {
-                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-                _invoke(callMethod, runMethod, args, bean, createContext);
-            } else {
-                Method postConstruct = deploymentInfo.getPostConstruct();
-                if (postConstruct != null){
-                    _invoke(callMethod, postConstruct, args, bean, createContext);
-                }
-            }
-
-
-            instanceManager.poolInstance(primaryKey, bean);
-
-            Class callingClass = callMethod.getDeclaringClass();
-            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
-            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
-        } finally {
-            ThreadContext.exit(oldContext);
-        }
-    }
-
-    protected Object newPrimaryKey() {
-        return new java.rmi.dgc.VMID();
     }
 
     public void discardInstance(Object bean, ThreadContext threadContext) {

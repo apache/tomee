@@ -16,23 +16,21 @@
  */
 package org.apache.openejb.core.stateful;
 
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.Container;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import java.rmi.RemoteException;
-
 public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
-
     public StatefulBeanManagedTxPolicy(TransactionContainer container) {
-        this();
-        if (container instanceof org.apache.openejb.Container &&
-                ((org.apache.openejb.Container) container).getContainerType() != org.apache.openejb.Container.STATEFUL) {
-            throw new IllegalArgumentException();
+        if (container instanceof Container && ((Container) container).getContainerType() != Container.STATEFUL) {
+            throw new IllegalArgumentException("Container is not an StatefulContainer");
         }
         this.container = container;
     }
@@ -45,45 +43,47 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         return "TX_BeanManaged: ";
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
         try {
+            StatefulInstanceManager instanceManager = ((StatefulContainer)container).getInstanceManager();
 
-            StatefulInstanceManager instanceManager = (StatefulInstanceManager) context.context.get(StatefulInstanceManager.class);
+            // suspend any transaction currently associated with this thread
             // if no transaction ---> suspend returns null
             context.clientTx = suspendTransaction(context);
 
-            // Get any previously started transaction
+            // Resume previous Bean transaction if there was one
             Object primaryKey = context.callContext.getPrimaryKey();
-            Object possibleBeanTx = instanceManager.getAncillaryState(primaryKey);
-            if (possibleBeanTx instanceof Transaction) {
-                context.currentTx = (Transaction) possibleBeanTx;
+            Transaction beanTransaction = instanceManager.getBeanTransaction(primaryKey);
+            if (beanTransaction != null) {
+                context.currentTx = beanTransaction;
                 resumeTransaction(context, context.currentTx);
             }
-        } catch (org.apache.openejb.OpenEJBException e) {
+        } catch (OpenEJBException e) {
             handleSystemException(e.getRootCause(), instance, context);
         }
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
         try {
-
+            // Get the transaction after the method invocation
             context.currentTx = context.getTransactionManager().getTransaction();
 
-            /*
-
-            */
-            if (context.currentTx != null &&
-                    context.currentTx.getStatus() != Status.STATUS_COMMITTED &&
-                    context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK) {
-
-                suspendTransaction(context);
+            // If it is not complete, suspend the transaction
+            if (context.currentTx != null) {
+                int status = context.currentTx.getStatus();
+                if (status != Status.STATUS_COMMITTED && status != Status.STATUS_ROLLEDBACK) {
+                    suspendTransaction(context);
+                } else {
+                    // transaction is complete, so there is no need to maintain a referecne to it
+                    context.clientTx = null;
+                }
             }
 
+            // Update the user transaction reference in the bean instance data
             Object primaryKey = context.callContext.getPrimaryKey();
-            StatefulInstanceManager instanceManager = (StatefulInstanceManager) context.context.get(StatefulInstanceManager.class);
-            instanceManager.setAncillaryState(primaryKey, context.currentTx);
-
-        } catch (org.apache.openejb.OpenEJBException e) {
+            StatefulInstanceManager instanceManager = ((StatefulContainer)container).getInstanceManager();
+            instanceManager.setBeanTransaction(primaryKey, context.currentTx);
+        } catch (OpenEJBException e) {
             handleSystemException(e.getRootCause(), instance, context);
         } catch (javax.transaction.SystemException e) {
             handleSystemException(e, instance, context);
@@ -95,12 +95,10 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     }
 
     public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
-
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
-
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         logSystemException(sysException);
 
         if (context.currentTx != null) markTxRollbackOnly(context.currentTx);
@@ -108,25 +106,6 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         discardBeanInstance(instance, context.callContext);
 
         throwExceptionToServer(sysException);
-
-    }
-
-    protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {
-
-        RemoteException re = new RemoteException("The bean encountered a non-application exception.", sysException);
-
-        throw new InvalidateReferenceException(re);
-
-    }
-
-    protected void throwTxExceptionToServer(Throwable sysException) throws ApplicationException {
-        /* Throw javax.transaction.TransactionRolledbackException to remote client */
-
-        String message = "The transaction was rolled back because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
-        javax.transaction.TransactionRolledbackException txException = new javax.transaction.TransactionRolledbackException(message);
-
-        throw new InvalidateReferenceException(txException);
-
     }
 }
 
