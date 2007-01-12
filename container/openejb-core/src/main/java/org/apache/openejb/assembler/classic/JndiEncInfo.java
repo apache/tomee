@@ -16,8 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class JndiEncInfo extends InfoObject {
 

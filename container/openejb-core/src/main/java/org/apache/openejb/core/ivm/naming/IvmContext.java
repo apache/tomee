@@ -16,23 +16,24 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import java.io.ObjectStreamException;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.Properties;
-import java.net.URL;
-
 import javax.naming.Binding;
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -42,9 +43,11 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
 import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 
 /*
 * This class wrappers a specific NameNode which is the data model for the JNDI
@@ -56,10 +59,11 @@ import org.apache.openejb.ClassLoaderUtil;
  * @org.apache.xbean.XBean element="ivmContext"
  */
 public class IvmContext implements Context, Serializable {
+
     private static final long serialVersionUID = -626353930051783641L;
-    Hashtable myEnv;
+    Hashtable<String, Object> myEnv;
     boolean readOnly = false;
-    HashMap fastCache = new HashMap();
+    Map<String, Object> fastCache = new HashMap<String, Object>();
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
@@ -78,12 +82,12 @@ public class IvmContext implements Context, Serializable {
         mynode = node;
     }
 
-    public IvmContext(Hashtable environment) throws NamingException {
+    public IvmContext(Hashtable<String, Object> environment) throws NamingException {
         this();
         if (environment == null)
             throw new NamingException("Invalid Argument");
         else
-            myEnv = (Hashtable) environment.clone();
+            myEnv = (Hashtable<String, Object>) environment.clone();
 
     }
 
@@ -92,7 +96,7 @@ public class IvmContext implements Context, Serializable {
             return this;
         }
 
-        String compoundName = null;
+        String compoundName;
         int indx = compositName.indexOf(":");
         if (indx > -1) {
             /*
@@ -128,14 +132,14 @@ public class IvmContext implements Context, Serializable {
         if (obj.getClass() == IvmContext.class)
             ((IvmContext) obj).myEnv = myEnv;
         else if (obj instanceof Reference) {
-            /*
-             EJB references and resource references are wrapped in special
-             org.apache.openejb.core.ivm.naming.Reference types that check to
-             see if the current operation is allowed access to the entry (See EJB 1.1/2.0 Allowed Operations)
-             If the operation is not allowed, a javax.naming.NameNotFoundException is thrown.
-
-             A Reference type can also carry out dynamic resolution of references if necessary.
-            */
+            /**
+             * EJB references and resource references are wrapped in special
+             * org.apache.openejb.core.ivm.naming.Reference types that check to
+             * see if the current operation is allowed access to the entry (See EJB 1.1/2.0 Allowed Operations)
+             * If the operation is not allowed, a javax.naming.NameNotFoundException is thrown.
+             *
+             * A Reference type can also carry out dynamic resolution of references if necessary.
+             */
             obj = ((Reference) obj).getObject();
         }
         return obj;
@@ -143,17 +147,16 @@ public class IvmContext implements Context, Serializable {
 
     protected Object federate(String compositName) throws NamingException {
         ObjectFactory factories [] = getFederatedFactories();
-        for (int i = 0; i < factories.length; i++) {
+        for (ObjectFactory factory : factories) {
             try {
-                javax.naming.CompositeName name = new javax.naming.CompositeName(compositName);
-                Object obj = factories[i].getObjectInstance(null, name, null, null);
+                CompositeName name = new CompositeName(compositName);
+                Object obj = factory.getObjectInstance(null, name, null, null);
 
                 if (obj instanceof Context)
                     return ((Context) obj).lookup(compositName);
                 else if (obj != null)
                     return obj;
-            } catch (Exception nnfe) {
-
+            } catch (Exception doNothing) {
             }
         }
 
@@ -281,18 +284,15 @@ public class IvmContext implements Context, Serializable {
         unbind(name.toString());
     }
 
-    public void rename(String oldname, String newname)
-            throws NamingException {
+    public void rename(String oldname, String newname) throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
 
-    public void rename(Name oldname, Name newname)
-            throws NamingException {
+    public void rename(Name oldname, Name newname) throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
 
-    public NamingEnumeration<NameClassPair> list(String name)
-            throws NamingException {
+    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
         Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
             return new MyListEnumeration(((IvmContext) obj).mynode);
@@ -301,13 +301,11 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public NamingEnumeration<NameClassPair> list(Name name)
-            throws NamingException {
+    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration<Binding> listBindings(String name)
-            throws NamingException {
+    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
         Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
             return new MyBindingEnumeration(((IvmContext) obj).mynode);
@@ -316,8 +314,7 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public NamingEnumeration<Binding> listBindings(Name name)
-            throws NamingException {
+    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
         return listBindings(name.toString());
     }
 
@@ -357,8 +354,7 @@ public class IvmContext implements Context, Serializable {
         return lookupLink(name.toString());
     }
 
-    public NameParser getNameParser(String name)
-            throws NamingException {
+    public NameParser getNameParser(String name) throws NamingException {
         throw new javax.naming.OperationNotSupportedException();
     }
 
@@ -366,30 +362,26 @@ public class IvmContext implements Context, Serializable {
         return getNameParser(name.toString());
     }
 
-    public String composeName(String name, String prefix)
-            throws NamingException {
+    public String composeName(String name, String prefix) throws NamingException {
         Name result = composeName(new CompositeName(name),
-                new CompositeName(prefix));
+                                  new CompositeName(prefix));
         return result.toString();
     }
 
-    public Name composeName(Name name, Name prefix)
-            throws NamingException {
+    public Name composeName(Name name, Name prefix) throws NamingException {
         Name result = (Name) (prefix.clone());
         result.addAll(name);
         return result;
     }
 
-    public Object addToEnvironment(String propName, Object propVal)
-            throws NamingException {
+    public Object addToEnvironment(String propName, Object propVal) throws NamingException {
         if (myEnv == null) {
-            myEnv = new Hashtable(5, 0.75f);
+            myEnv = new Hashtable<String, Object>(5);
         }
         return myEnv.put(propName, propVal);
     }
 
-    public Object removeFromEnvironment(String propName)
-            throws NamingException {
+    public Object removeFromEnvironment(String propName) throws NamingException {
         if (myEnv == null)
             return null;
         return myEnv.remove(propName);
@@ -398,7 +390,7 @@ public class IvmContext implements Context, Serializable {
     public Hashtable getEnvironment() throws NamingException {
         if (myEnv == null) {
 
-            return new Hashtable(3, 0.75f);
+            return new Hashtable(3);
         } else {
             return (Hashtable) myEnv.clone();
         }
@@ -411,11 +403,12 @@ public class IvmContext implements Context, Serializable {
     public void close() throws NamingException {
     }
 
-    protected void checkReadOnly() throws javax.naming.OperationNotSupportedException {
-        if (readOnly) throw new javax.naming.OperationNotSupportedException();
+    protected void checkReadOnly() throws OperationNotSupportedException {
+        if (readOnly) throw new OperationNotSupportedException();
     }
 
     protected class MyBindingEnumeration extends MyNamingEnumeration {
+
         public MyBindingEnumeration(NameNode parentNode) {
             super(parentNode);
         }
@@ -432,6 +425,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     protected class MyListEnumeration extends MyNamingEnumeration {
+
         public MyListEnumeration(NameNode parentNode) {
             super(parentNode);
         }
@@ -447,7 +441,8 @@ public class IvmContext implements Context, Serializable {
 
     }
 
-    protected abstract class MyNamingEnumeration implements javax.naming.NamingEnumeration {
+    protected abstract class MyNamingEnumeration implements NamingEnumeration {
+
         Enumeration myEnum;
 
         public MyNamingEnumeration(NameNode parentNode) {
@@ -466,7 +461,7 @@ public class IvmContext implements Context, Serializable {
             buildEnumeration(vect);
         }
 
-        abstract protected void buildEnumeration(Vector vect);
+        abstract protected void buildEnumeration(Vector<NameNode> vect);
 
         protected void gatherNodes(NameNode node, Vector vect) {
             if (node.lessTree != null) {
@@ -501,12 +496,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     protected Object writeReplace() throws ObjectStreamException {
-        if (org.apache.openejb.core.ivm.IntraVmCopyMonitor.isStatefulPassivationOperation()) {
+        if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
 
             return new JndiEncArtifact(this);
         }
 
-        throw new java.io.NotSerializableException("IntraVM java.naming.Context objects can not be passed as arguments");
+        throw new NotSerializableException("IntraVM java.naming.Context objects can not be passed as arguments");
     }
 
     /* for testing only*/

@@ -21,15 +21,17 @@ import javax.naming.NameNotFoundException;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.Operation;
 
-/*
-  This class is a wrapper for an Intra-VM EJB or Connector references in the 
-  JNDI ENC of a entity, stateful and stateless beans.  When the getObject( ) method is invoked the 
-  Operation is checked to ensure that its is allowed for the bean's current state.
 
-  This class is subclassed by EncReference in the entity, stateful and stateless packages
-  of org.apache.openejb.core.
-*/
-
+/**
+ * This class is a wrapper for an Intra-VM EJB or Connector references in the
+ * JNDI ENC of a entity, stateful and stateless beans.  When the getObject( ) method is invoked the
+ * Operation is checked to ensure that its is allowed for the bean's current state.
+ * <p/>
+ * This class is subclassed by EncReference in the entity, stateful and stateless packages
+ * of org.apache.openejb.core.
+ *
+ * @version $Rev: 493626 $ $Date: 2007-01-06 17:09:34 -0800 (Sat, 06 Jan 2007) $
+ */
 public abstract class EncReference implements Reference {
 
     protected Reference ref = null;

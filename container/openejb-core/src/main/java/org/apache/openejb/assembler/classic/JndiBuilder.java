@@ -16,16 +16,20 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
-import org.apache.openejb.core.ivm.naming.Reference;
-import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
+
+import org.apache.openejb.BeanType;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.entity.EntityEncReference;
+import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
+import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
+import org.apache.openejb.core.ivm.naming.ObjectReference;
+import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.stateful.StatefulEncReference;
+import org.apache.openejb.core.stateless.StatelessEncReference;
+
 
 /**
  * @version $Rev$ $Date$
@@ -40,7 +44,9 @@ public class JndiBuilder {
     }
 
     public static interface JndiNameStrategy {
+
         public static enum Interface {
+
             REMOTE_HOME, LOCAL_HOME, BUSINESS_LOCAL, BUSINESS_REMOTE, SERVICE_ENDPOINT
         }
 
@@ -49,6 +55,7 @@ public class JndiBuilder {
 
     // TODO: put these into the classpath and get them with xbean-finder
     public static class LegacyAddedSuffixStrategy implements JndiNameStrategy {
+
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
             String id = deploymentInfo.getDeploymentID() + "";
             if (id.charAt(0) == '/') {
@@ -70,6 +77,7 @@ public class JndiBuilder {
     }
 
     public static class AddedSuffixStrategy implements JndiNameStrategy {
+
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
             String id = deploymentInfo.getDeploymentID() + "";
             if (id.charAt(0) == '/') {
@@ -92,6 +100,7 @@ public class JndiBuilder {
 
 
     public static class CommonPrefixStrategy implements JndiNameStrategy {
+
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
             String id = deploymentInfo.getDeploymentID() + "";
             if (id.charAt(0) == '/') {
@@ -113,6 +122,7 @@ public class JndiBuilder {
     }
 
     public static class InterfaceSimpleNameStrategy implements JndiNameStrategy {
+
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
             return interfce.getSimpleName();
         }
@@ -129,7 +139,7 @@ public class JndiBuilder {
                 context.bind("openejb/ejb/" + name, getReference(deployment.getEJBHome(), deployment));
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind home interface for deployment "+id, e);
+            throw new RuntimeException("Unable to bind home interface for deployment " + id, e);
         }
 
         try {
@@ -139,7 +149,7 @@ public class JndiBuilder {
                 context.bind("openejb/ejb/" + name, getReference(deployment.getEJBLocalHome(), deployment));
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind local interface for deployment "+id, e);
+            throw new RuntimeException("Unable to bind local interface for deployment " + id, e);
         }
 
         try {
@@ -150,7 +160,7 @@ public class JndiBuilder {
                 context.bind("openejb/ejb/" + name, new BusinessLocalReference(businessLocalHome));
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind business local interface for deployment "+id, e);
+            throw new RuntimeException("Unable to bind business local interface for deployment " + id, e);
         }
 
         try {
@@ -169,11 +179,11 @@ public class JndiBuilder {
         Reference ref = new ObjectReference(proxy);
 
         if (deployment.getComponentType() == BeanType.STATEFUL) {
-            ref = new org.apache.openejb.core.stateful.StatefulEncReference(ref);
+            ref = new StatefulEncReference(ref);
         } else if (deployment.getComponentType() == BeanType.STATELESS) {
-            ref = new org.apache.openejb.core.stateless.StatelessEncReference(ref);
+            ref = new StatelessEncReference(ref);
         } else {
-            ref = new org.apache.openejb.core.entity.EntityEncReference(ref);
+            ref = new EntityEncReference(ref);
         }
         return ref;
     }
