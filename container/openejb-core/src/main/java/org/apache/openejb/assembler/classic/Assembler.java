@@ -25,6 +25,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
@@ -43,6 +44,7 @@ import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -68,6 +70,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private org.apache.openejb.core.CoreContainerSystem containerSystem;
     private TransactionManager transactionManager;
     private org.apache.openejb.spi.SecurityService securityService;
+    private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
+    private final JndiBuilder jndiBuilder;
+    private final CoreContainerSystem coreContainerSystem;
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
@@ -94,6 +99,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
 
     public Assembler() {
+        persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
+
+        installNaming();
+
+        coreContainerSystem = containerSystem = new CoreContainerSystem();
+
+        jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
     }
 
     public void init(Properties props) throws OpenEJBException {
@@ -108,8 +120,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         configFactory.init(props);
         config = configFactory.getOpenEjbConfiguration();
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
-        installNaming();
     }
 
     public static void installNaming() {
@@ -145,7 +155,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void build() throws OpenEJBException {
         setContext(new HashMap<String, Object>());
         try {
-            containerSystem = buildContainerSystem(config);
+            buildContainerSystem(config);
         } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
              * Let the exception pass through to the top and be logged.
@@ -200,7 +210,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      */
     public org.apache.openejb.core.CoreContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
-        containerSystem = new org.apache.openejb.core.CoreContainerSystem();
 
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
@@ -214,6 +223,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         */
         createProxyFactory(configInfo.facilities.intraVmServer);
 
+        for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
+            createExternalContext(contextInfo);
+        }
+
         createTransactionManager(configInfo.facilities.transactionService);
 
         createSecurityService(configInfo.facilities.securityService);
@@ -226,124 +239,153 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             createConnector(connectorInfo);
         }
 
-        PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
-            public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
-                Instrumentation instrumentation = Agent.getInstrumentation();
-                if (instrumentation != null) {
-                    instrumentation.addTransformer(classFileTransformer);
-                }
-            }
-
-            public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
-                return new TemporaryClassLoader(classLoader);
-            }
-        };
-
-        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
+//        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
 
         // Containers
         for (ContainerInfo serviceInfo : containerSystemInfo.containers) {
             createContainer(serviceInfo);
         }
 
-        JndiBuilder jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
         for (AppInfo appInfo : containerSystemInfo.applications) {
 
-            List<URL> jars = new ArrayList<URL>();
-            for (EjbJarInfo info : appInfo.ejbJars) {
-                jars.add(toUrl(info.jarPath));
-            }
-            for (ClientInfo info : appInfo.clients) {
-                jars.add(toUrl(info.codebase));
-            }
-            for (String jarPath : appInfo.libs) {
-                jars.add(toUrl(jarPath));
-            }
-
-            // Generate the cmp2 concrete subclasses
-            Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo);
-            File generatedJar = cmp2Builder.getJarFile();
-            if (generatedJar != null) {
-                jars.add(generatedJar.toURL());
-            }
-
-            // Create the class loader
-            ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
-
-            // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
-            // to the class loader which must be added before any classes are loaded
-            HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                try {
-                    URL url = new File(ejbJar.jarPath).toURL();
-                    ResourceFinder resourceFinder = new ResourceFinder("", classLoader, url);
-
-                    PersistenceDeployer persistenceDeployer = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
-                    Map<String, EntityManagerFactory> factories = persistenceDeployer.deploy(resourceFinder.findAll("META-INF/persistence.xml"), classLoader);
-                    allFactories.put(ejbJar.jarPath, factories);
-                } catch (PersistenceDeployerException e1) {
-                    throw new OpenEJBException(e1);
-                } catch (IOException e) {
-                    throw new OpenEJBException(e);
-                }
-            }
-
-            // EJB
-            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
-
-                for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    applyMethodPermissions((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
-                    applyTransactionAttributes((org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
-                    containerSystem.addDeployment(deploymentInfo);
-                    jndiBuilder.bind(deploymentInfo);
-                }
-
-                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                    CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
-                    applySecurityRoleReference(deployment, beanInfo, roleMapping);
-                }
-            }
-
-            // App Client
-            for (ClientInfo clientInfo : appInfo.clients) {
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
-                Context context = (Context) jndiEncBuilder.build().lookup("env");
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
-                if (clientInfo.codebase != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
-                }
-                if (clientInfo.mainClass != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
-                }
-                ArrayList<Injection> injections = new ArrayList<Injection>();
-                JndiEncInfo jndiEnc = clientInfo.jndiEnc;
-                for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
-                    for (InjectionInfo target : info.targets) {
-                        try {
-                            Class targetClass = classLoader.loadClass(target.className);
-                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                            injections.add(injection);
-                        } catch (ClassNotFoundException e) {
-                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
-                        }
-                    }
-                }
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
-            }
-        }
-
-        /*[4]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-        for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
-            javax.naming.InitialContext cntx = assembleRemoteJndiContext(contextInfo);
-            containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
+            createApplication(appInfo, createAppClassLoader(appInfo));
         }
 
         return containerSystem;
     }
 
-    private void createContainer(ContainerInfo serviceInfo) throws OpenEJBException, NamingException {
+    public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.ejbJars.add(ejbJar);
+        createApplication(appInfo);
+    }
+
+    public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.ejbJars.add(ejbJar);
+        createApplication(appInfo, classLoader);
+    }
+
+    public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.clients.add(clientInfo);
+        createApplication(appInfo);
+    }
+
+    public void createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.clients.add(clientInfo);
+        createApplication(appInfo, classLoader);
+    }
+
+    public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
+        createApplication(appInfo, createAppClassLoader(appInfo));
+    }
+    
+    public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+
+        // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
+        // to the class loader which must be added before any classes are loaded
+        HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            try {
+                URL url = new File(ejbJar.jarPath).toURL();
+                ResourceFinder resourceFinder = new ResourceFinder("", classLoader, url);
+
+                PersistenceDeployer persistenceDeployer = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
+                Map<String, EntityManagerFactory> factories = persistenceDeployer.deploy(resourceFinder.findAll("META-INF/persistence.xml"), classLoader);
+                allFactories.put(ejbJar.jarPath, factories);
+            } catch (PersistenceDeployerException e1) {
+                throw new OpenEJBException(e1);
+            } catch (IOException e) {
+                throw new OpenEJBException(e);
+            }
+        }
+
+        // EJB
+        EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
+            RoleMapping roleMapping = new RoleMapping(new ArrayList());
+            for (DeploymentInfo deploymentInfo : deployments.values()) {
+                applyMethodPermissions((CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
+                applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
+                containerSystem.addDeployment(deploymentInfo);
+                jndiBuilder.bind(deploymentInfo);
+            }
+
+            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
+                applySecurityRoleReference(deployment, beanInfo, roleMapping);
+            }
+        }
+
+        // App Client
+        for (ClientInfo clientInfo : appInfo.clients) {
+            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
+            Context context = (Context) jndiEncBuilder.build().lookup("env");
+            containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
+            if (clientInfo.codebase != null) {
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
+            }
+            if (clientInfo.mainClass != null) {
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
+            }
+            ArrayList<Injection> injections = new ArrayList<Injection>();
+            JndiEncInfo jndiEnc = clientInfo.jndiEnc;
+            for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
+                for (InjectionInfo target : info.targets) {
+                    try {
+                        Class targetClass = classLoader.loadClass(target.className);
+                        Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                        injections.add(injection);
+                    } catch (ClassNotFoundException e) {
+                        logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
+                    }
+                }
+            }
+            containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
+        }
+    }
+
+    public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
+        List<URL> jars = new ArrayList<URL>();
+        for (EjbJarInfo info : appInfo.ejbJars) {
+            jars.add(toUrl(info.jarPath));
+        }
+        for (ClientInfo info : appInfo.clients) {
+            jars.add(toUrl(info.codebase));
+        }
+        for (String jarPath : appInfo.libs) {
+            jars.add(toUrl(jarPath));
+        }
+
+        // Generate the cmp2 concrete subclasses
+        Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo);
+        File generatedJar = cmp2Builder.getJarFile();
+        if (generatedJar != null) {
+            jars.add(generatedJar.toURL());
+        }
+
+        // Create the class loader
+        ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+        return classLoader;
+    }
+
+    public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException, NamingException {
+        InitialContext result;
+        try {
+            InitialContext ic = new InitialContext(contextInfo.properties);
+            result = ic;
+        } catch (NamingException ne) {
+
+            throw new OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + contextInfo.id + "+ could not be resolved.", ne);
+        }
+        InitialContext cntx = result;
+        containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
+    }
+
+    public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException, NamingException {
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
@@ -368,7 +410,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         containerSystem.addContainer(serviceInfo.id, (Container) service);
     }
 
-    private void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
+    public void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
@@ -392,7 +434,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.id, service);
     }
 
-    private void createConnector(ConnectorInfo conInfo) throws OpenEJBException, NamingException {
+    public void createConnector(ConnectorInfo conInfo) throws OpenEJBException, NamingException {
         ManagedConnectionFactoryInfo serviceInfo = conInfo.managedConnectionFactory;
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
@@ -415,7 +457,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + conInfo.connectorId, reference);
     }
 
-    private ConnectionManager createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
+    public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
@@ -437,10 +479,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.serviceType, service);
         props.put(serviceInfo.id, service);
 
-        return (ConnectionManager) service;
     }
 
-    private void createSecurityService(ServiceInfo serviceInfo) throws Exception {
+    public void createSecurityService(ServiceInfo serviceInfo) throws Exception {
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
@@ -463,7 +504,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         this.securityService = (SecurityService) service;
     }
 
-    private void createTransactionManager(TransactionServiceInfo serviceInfo) throws NamingException, OpenEJBException {
+    public void createTransactionManager(TransactionServiceInfo serviceInfo) throws NamingException, OpenEJBException {
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
@@ -494,4 +535,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
 
+    private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
+        public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+            Instrumentation instrumentation = Agent.getInstrumentation();
+            if (instrumentation != null) {
+                instrumentation.addTransformer(classFileTransformer);
+            }
+        }
+
+        public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+            return new TemporaryClassLoader(classLoader);
+        }
+    }
 }

@@ -21,11 +21,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
-import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.naming.InitialContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -38,54 +34,23 @@ import java.util.Map;
 
 public class AssemblerTool {
 
-    public static final Class PROXY_FACTORY = org.apache.openejb.util.proxy.ProxyFactory.class;
-    public static final Class SECURITY_SERVICE = org.apache.openejb.spi.SecurityService.class;
-    public static final Class TRANSACTION_MANAGER = TransactionManager.class;
-    public static final Class CONNECTION_MANAGER = javax.resource.spi.ConnectionManager.class;
-    public static final Class CONNECTOR = javax.resource.spi.ManagedConnectionFactory.class;
-    public static final Class CONTAINER = org.apache.openejb.Container.class;
-
     public static final Map<String, Class> serviceInterfaces = new HashMap<String, Class>();
     static {
-        serviceInterfaces.put("ProxyFactory", PROXY_FACTORY);
-        serviceInterfaces.put("SecurityService", SECURITY_SERVICE);
-        serviceInterfaces.put("TransactionManager", TRANSACTION_MANAGER);
-        serviceInterfaces.put("ConnectionManager", CONNECTION_MANAGER);
-        serviceInterfaces.put("Connector", CONNECTOR);
-        serviceInterfaces.put("Container", CONTAINER);
+        serviceInterfaces.put("ProxyFactory", ProxyFactory.class);
+        serviceInterfaces.put("SecurityService", org.apache.openejb.spi.SecurityService.class);
+        serviceInterfaces.put("TransactionManager", TransactionManager.class);
+        serviceInterfaces.put("ConnectionManager", javax.resource.spi.ConnectionManager.class);
+        serviceInterfaces.put("Connector", javax.resource.spi.ManagedConnectionFactory.class);
+        serviceInterfaces.put("Container", org.apache.openejb.Container.class);
     }
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
 
     protected Properties props;
-    protected Properties services;
 
     static {
         System.setProperty("noBanner", "true");
-    }
-
-    /*
-    TODO: The Exception Handling here isn't up-to-date and doesn't
-    use a message number. Message numbers allow the message text to
-    be internationalized.
-    */
-    public InitialContext assembleRemoteJndiContext(JndiContextInfo context)
-            throws org.apache.openejb.OpenEJBException {
-        try {
-            InitialContext ic = new InitialContext(context.properties);
-            return ic;
-        } catch (javax.naming.NamingException ne) {
-
-            throw new org.apache.openejb.OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + context.id + "+ could not be resolved.", ne);
-        }
-    }
-
-    public void applyProperties(Object target, Properties props) throws java.lang.reflect.InvocationTargetException, java.lang.IllegalAccessException, java.lang.NoSuchMethodException {
-        if (props != null /*&& props.size()>0*/) {
-            Method method = target.getClass().getMethod("init", Properties.class);
-            method.invoke(target, props);
-        }
     }
 
     public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) throws OpenEJBException {
@@ -298,7 +263,7 @@ public class AssemblerTool {
 
     protected static void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
         if (!intrfce.isAssignableFrom(factory)) {
-            handleException("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName());
+            throw new OpenEJBException(messages.format("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName()));
         }
     }
 
@@ -326,16 +291,5 @@ public class AssemblerTool {
         } else
             return cl.loadClass(className);
 
-    }
-
-    /*------------------------------------------------------*/
-    /*    Methods for easy exception handling               */
-    /*------------------------------------------------------*/
-    public static void handleException(String errorCode, Object... args) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, args));
-    }
-
-    public static void handleException(String errorCode) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode));
     }
 }
