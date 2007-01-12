@@ -31,4 +31,7 @@ public class ServiceInfo extends InfoObject implements ServiceTypeConstants {
     public Properties properties;
     public final List<String> constructorArgs = new ArrayList<String>();
 
+    /** Optional **/
+    public String factoryMethod;
+    
 }

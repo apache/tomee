@@ -67,12 +67,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
 
 
-    private org.apache.openejb.core.CoreContainerSystem containerSystem;
-    private TransactionManager transactionManager;
-    private org.apache.openejb.spi.SecurityService securityService;
+    private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
     private final JndiBuilder jndiBuilder;
-    private final CoreContainerSystem coreContainerSystem;
+    private TransactionManager transactionManager;
+    private SecurityService securityService;
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
@@ -89,21 +88,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
     protected OpenEjbConfiguration config;
 
-    //==================================
-    // Error messages
-
-    private String INVALID_CONNECTION_MANAGER_ERROR = "Invalid connection manager specified for connector identity = ";
-
-    // Error messages
-    //==================================
-
-
     public Assembler() {
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
         installNaming();
 
-        coreContainerSystem = containerSystem = new CoreContainerSystem();
+        containerSystem = new CoreContainerSystem();
 
         jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
     }
@@ -181,7 +171,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     /////////////////////////////////////////////////////////////////////
 
     /**
-     * When given a complete OpenEjbConfiguration graph this method,
+     * When given a complete OpenEjbConfiguration graph this method
      * will construct an entire container system and return a reference to that
      * container system, as ContainerSystem instance.
      * <p/>
@@ -194,21 +184,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * This method performs the following actions(in order):
      * <p/>
      * 1  Assembles ProxyFactory
-     * 2  Assembles Containers and Deployments
-     * 3  Assembles SecurityService
-     * 4  Apply method permissions, role refs, and tx attributes
-     * 5  Assembles TransactionService
-     * 6  Assembles ConnectionManager(s)
-     * 7  Assembles Connector(s)
+     * 2  Assembles External JNDI Contexts
+     * 3  Assembles TransactionService
+     * 4  Assembles SecurityService
+     * 5  Assembles ConnectionManagers
+     * 6  Assembles Connectors
+     * 7  Assembles Containers
+     * 8  Assembles Applications
      * </pre>
      *
      * @param configInfo
-     * @return ContainerSystem
      * @throws Exception if there was a problem constructing the ContainerSystem.
      * @throws Exception
      * @see OpenEjbConfiguration
      */
-    public org.apache.openejb.core.CoreContainerSystem buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
+    public void buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
 
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
@@ -250,8 +240,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             createApplication(appInfo, createAppClassLoader(appInfo));
         }
-
-        return containerSystem;
     }
 
     public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
@@ -281,7 +269,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
         createApplication(appInfo, createAppClassLoader(appInfo));
     }
-    
+
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
 
         // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -387,7 +375,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException, NamingException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         serviceRecipe.setProperty("id", new StaticRecipe(serviceInfo.id));
@@ -412,7 +400,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         Object service = serviceRecipe.create();
@@ -435,9 +423,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createConnector(ConnectorInfo conInfo) throws OpenEJBException, NamingException {
+
         ManagedConnectionFactoryInfo serviceInfo = conInfo.managedConnectionFactory;
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         Object service = serviceRecipe.create();
@@ -447,7 +436,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         ConnectionManager connectionManager = (ConnectionManager) props.get(conInfo.connectionManagerId);
         if (connectionManager == null) {
-            throw new RuntimeException(INVALID_CONNECTION_MANAGER_ERROR + conInfo.connectorId);
+            throw new RuntimeException("Invalid connection manager specified for connector identity = " + conInfo.connectorId);
         }
 
         ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
@@ -458,7 +447,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         Object object = props.get("TransactionManager");
@@ -483,7 +473,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createSecurityService(ServiceInfo serviceInfo) throws Exception {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         Object service = serviceRecipe.create();
@@ -505,7 +495,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws NamingException, OpenEJBException {
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.constructorArgs.toArray(new String[0]), null);
+
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
 
         Object service = serviceRecipe.create();

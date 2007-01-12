@@ -329,7 +329,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     }
 
-    private <T extends ServiceInfo> T createService(Service service, T info, String defaultId, Class type) throws OpenEJBException {
+    public <T extends ServiceInfo> T createService(Service service, T info, String defaultId, Class type) throws OpenEJBException {
         service = (Service) initService(service, defaultId, type);
         ServiceProvider provider = ServiceUtils.getServiceProvider(service);
 
