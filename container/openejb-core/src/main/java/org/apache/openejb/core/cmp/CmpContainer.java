@@ -107,11 +107,11 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return Container.ENTITY;
     }
 
-    public DeploymentInfo[] deployments() {
+    public synchronized DeploymentInfo[] deployments() {
         return deploymentsById.values().toArray(new DeploymentInfo[deploymentsById.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
         return deploymentsById.get(deploymentID);
     }
 
@@ -123,7 +123,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         deploy((CoreDeploymentInfo) deploymentInfo);
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+    public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Object deploymentId = deploymentInfo.getDeploymentID();
 
         Object cmpEngineKey = deploymentInfo.getJarPath();
