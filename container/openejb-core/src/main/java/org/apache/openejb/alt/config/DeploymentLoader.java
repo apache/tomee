@@ -19,18 +19,18 @@ package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
-import javax.ejb.Stateless;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.jar.Manifest;
 import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * @version $Revision$ $Date$
@@ -112,8 +112,8 @@ public class DeploymentLoader {
                     logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
                 }
 
-                Map<String,URL> ejbModules = new HashMap();
-                Map<String,URL> clientModules = new HashMap();
+                Map<String, URL> ejbModules = new HashMap();
+                Map<String, URL> clientModules = new HashMap();
 
                 URL applicationXmlUrl = descriptors.get("application.xml");
 
@@ -135,7 +135,7 @@ public class DeploymentLoader {
                     }
                 } else {
                     application = new Application();
-                    HashMap<String,URL> files = new HashMap();
+                    HashMap<String, URL> files = new HashMap();
                     scanDir(appDir, files, "");
                     files.remove("META-INF/MANIFEST.MF");
                     for (Map.Entry<String, URL> entry : files.entrySet()) {
@@ -144,15 +144,15 @@ public class DeploymentLoader {
 
                         try {
                             Class moduleType = discoverModuleType(entry.getValue(), tmpClassLoader);
-                            if (EjbModule.class.equals(moduleType)){
+                            if (EjbModule.class.equals(moduleType)) {
                                 ejbModules.put(entry.getKey(), entry.getValue());
-                            } else if (ClientModule.class.equals(moduleType)){
+                            } else if (ClientModule.class.equals(moduleType)) {
                                 clientModules.put(entry.getKey(), entry.getValue());
                             }
                         } catch (UnsupportedOperationException e) {
                             // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
                         } catch (Exception e) {
-                            throw new OpenEJBException("Unable to determine the module type of "+ entry.getKey()+": Exception: "+ e.getMessage(), e);
+                            throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
                         }
                     }
                 }
@@ -256,7 +256,7 @@ public class DeploymentLoader {
         }
     }
 
-    public static void scanDir(File dir, Map<String,URL> files, String path) {
+    public static void scanDir(File dir, Map<String, URL> files, String path) {
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
                 scanDir(file, files, path + file.getName() + "/");
@@ -265,7 +265,7 @@ public class DeploymentLoader {
                 try {
                     files.put(path + name, file.toURL());
                 } catch (MalformedURLException e) {
-                    logger.warning("EAR path bad: "+path + name, e);
+                    logger.warning("EAR path bad: " + path + name, e);
                 }
             }
         }
@@ -294,21 +294,21 @@ public class DeploymentLoader {
         }
 
         URL manifestUrl = descriptors.get("MANIFEST.MF");
-        if (manifestUrl != null){
+        if (manifestUrl != null) {
             InputStream is = manifestUrl.openStream();
             Manifest manifest = new Manifest(is);
             String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
-            if (mainClass != null){
+            if (mainClass != null) {
                 return ClientModule.class;
             }
         }
 
-        ClassFinder classFinder = new ClassFinder(new TemporaryClassLoader(new URL[]{baseUrl},classLoader), baseUrl);
+        ClassFinder classFinder = new ClassFinder(new TemporaryClassLoader(new URL[]{baseUrl}, classLoader), baseUrl);
         List<Class> beans = classFinder.findAnnotatedClasses(Stateless.class);
         beans.addAll(classFinder.findAnnotatedClasses(Stateful.class));
         beans.addAll(classFinder.findAnnotatedClasses(javax.ejb.MessageDriven.class));
 
-        if (beans.size() > 0){
+        if (beans.size() > 0) {
             return EjbModule.class;
         }
 
@@ -325,7 +325,7 @@ public class DeploymentLoader {
     }
 
     private File unpack(File jarFile) throws OpenEJBException {
-        if (jarFile.isDirectory()){
+        if (jarFile.isDirectory()) {
             return jarFile;
         }
 

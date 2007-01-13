@@ -44,10 +44,10 @@ import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -57,11 +57,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Collections;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
@@ -74,8 +74,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     public static OpenEjbConfiguration sys;
 
-    private final List<ContainerInfo> containers  = new ArrayList<ContainerInfo>();
-    private Map<String,ContainerInfo> containerTable = new HashMap<String,ContainerInfo>();
+    private final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
+    private Map<String, ContainerInfo> containerTable = new HashMap<String, ContainerInfo>();
 
     private Properties props = new Properties();
     public EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
@@ -98,7 +98,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         }
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation, props);
-        if (configLocation != null){
+        if (configLocation != null) {
             this.props.setProperty("openejb.configuration", configLocation);
         }
     }
@@ -183,7 +183,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     private DynamicDeployer getDeployer(Openejb openejb) {
         DynamicDeployer deployer;
         // TODO: Create some way to enable one versus the other
-        if (false){
+        if (false) {
             deployer = new AutoDeployer(openejb);
 
         } else {
@@ -245,8 +245,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         String jarLocation = clientModule.getJarLocation();
         File file = new File(jarLocation);
         String name = file.getName();
-        if (name.endsWith(".jar") || name.endsWith(".zip")){
-            name = name.replaceFirst("....$","");
+        if (name.endsWith(".jar") || name.endsWith(".zip")) {
+            name = name.replaceFirst("....$", "");
         }
         return name;
     }

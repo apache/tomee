@@ -21,14 +21,14 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.UrlSet;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -86,9 +86,9 @@ public class DeploymentsResolver {
         }
 
         HashMap<String, URL> files = new HashMap<String, URL>();
-        DeploymentLoader.scanDir(dir, files,"");
+        DeploymentLoader.scanDir(dir, files, "");
         for (String fileName : files.keySet()) {
-            if (fileName.endsWith(".class")){
+            if (fileName.endsWith(".class")) {
                 if (!jarList.contains(dir.getAbsolutePath())) {
                     jarList.add(dir.getAbsolutePath());
                 }
@@ -102,7 +102,7 @@ public class DeploymentsResolver {
         //
         ////////////////////////////////
         for (String fileName : files.keySet()) {
-            if (fileName.endsWith(".jar") || fileName.endsWith(".ear")){
+            if (fileName.endsWith(".jar") || fileName.endsWith(".ear")) {
                 File jar = new File(dir, fileName);
 
                 if (jarList.contains(jar.getAbsolutePath())) continue;
@@ -143,22 +143,22 @@ public class DeploymentsResolver {
         return jarList;
     }
 
-    /*
-        * The algorithm of OpenEJB deployments class-path inclusion and exclusion is implemented as follows:
-        * 	1- If the string value of the resource URL matches the include class-path pattern
-        *     Then load this resource
-        *  2- If the string value of the resource URL matches the exclude class-path pattern
-        *     Then ignore this resource
-        *  3- If the include and exclude class-path patterns are not defined
-        *     Then load this resource
-        *
-        * The previous steps are based on the following points:
-        *  1- Include class-path pattern has the highst priority
-        *     This helps in case both patterns are defined using the same values.
-        *     This appears in step 1 and 2 of the above algorithm.
-        *	2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
-        *	   This appears in step 3 of the above algorithm.
-        */
+    /**
+     * The algorithm of OpenEJB deployments class-path inclusion and exclusion is implemented as follows:
+     * 1- If the string value of the resource URL matches the include class-path pattern
+     * Then load this resource
+     * 2- If the string value of the resource URL matches the exclude class-path pattern
+     * Then ignore this resource
+     * 3- If the include and exclude class-path patterns are not defined
+     * Then load this resource
+     * <p/>
+     * The previous steps are based on the following points:
+     * 1- Include class-path pattern has the highst priority
+     * This helps in case both patterns are defined using the same values.
+     * This appears in step 1 and 2 of the above algorithm.
+     * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
+     * This appears in step 3 of the above algorithm.
+     */
     private static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
 
         Deployments deployment = null;
@@ -175,32 +175,32 @@ public class DeploymentsResolver {
             urlSet = urlSet.excludeJavaExtDirs();
             urlSet = urlSet.excludeJavaEndorsedDirs();
             urlSet = urlSet.excludeJavaHome();
-            urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path",""));
+            urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
             urlSet = urlSet.exclude(exclude);
             urlSet = urlSet.include(includes);
 
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();
-            if (size == 0 && include.length() > 0){
-                DeploymentLoader.logger.warning("No classpath URLs matched.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+            if (size == 0 && include.length() > 0) {
+                DeploymentLoader.logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 return;
             } else if (size == 0) {
                 return;
             } else if (size < 10) {
-                DeploymentLoader.logger.debug("Inspecting classpath for applications: "+urls.size()+" urls.");
+                DeploymentLoader.logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else if (size < 50) {
-                DeploymentLoader.logger.info("Inspecting classpath for applications: "+urls.size()+" urls. Consider adjusting your exclude/include.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+                DeploymentLoader.logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
             } else {
-                DeploymentLoader.logger.warning("Inspecting classpath for applications: "+urls.size()+" urls.");
-                DeploymentLoader.logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+                DeploymentLoader.logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
+                DeploymentLoader.logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
             }
 
             long begin = System.currentTimeMillis();
             for (URL url : urls) {
                 try {
                     Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader);
-                    if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)){
+                    if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
                         deployment = new Deployments();
                         if (url.getProtocol().equals("jar")) {
                             url = new URL(url.getFile().replaceFirst("!.*$", ""));
@@ -219,7 +219,7 @@ public class DeploymentsResolver {
                         loadFrom(deployment, base, jarList);
                     }
                 } catch (IOException e) {
-                    DeploymentLoader.logger.warning("Unable to determine the module type of "+ url.toExternalForm()+": Exception: "+ e.getMessage(), e);
+                    DeploymentLoader.logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
                 } catch (UnsupportedOperationException ignore) {
                 }
             }
@@ -227,22 +227,22 @@ public class DeploymentsResolver {
             long time = end - begin;
 
             if (time < 1000) {
-                DeploymentLoader.logger.debug("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
+                DeploymentLoader.logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {
-                DeploymentLoader.logger.info("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
-            } else if (time < 10000){
-                DeploymentLoader.logger.warning("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.");
-                DeploymentLoader.logger.warning("Consider adjusting your "+CLASSPATH_EXCLUDE +" and "+CLASSPATH_INCLUDE +" settings.  Current settings: exclude='"+exclude+"', include='"+include+"'");
+                DeploymentLoader.logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+            } else if (time < 10000) {
+                DeploymentLoader.logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                DeploymentLoader.logger.warning("Consider adjusting your " + CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" + exclude + "', include='" + include + "'");
             } else {
-                DeploymentLoader.logger.fatal("Searched "+urls.size()+" classpath urls in "+time+" milliseconds.  Average "+(time/urls.size())+" milliseconds per url.  TOO LONG!");
-                DeploymentLoader.logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: "+CLASSPATH_EXCLUDE +"='"+exclude+"', "+CLASSPATH_INCLUDE+"='"+include+"'");
+                DeploymentLoader.logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
+                DeploymentLoader.logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 List<String> list = new ArrayList<String>();
                 for (URL url : urls) {
                     list.add(url.toExternalForm());
                 }
                 Collections.sort(list);
                 for (String url : list) {
-                    DeploymentLoader.logger.info("Matched: "+url);
+                    DeploymentLoader.logger.info("Matched: " + url);
                 }
             }
         } catch (IOException e1) {
