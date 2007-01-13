@@ -27,8 +27,4 @@ public class ContainerSystemInfo extends InfoObject {
     public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
     public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
 
-    public final List<EntityContainerInfo> entityContainers = new ArrayList<EntityContainerInfo>();
-    public final List<StatelessSessionContainerInfo> statelessContainers = new ArrayList<StatelessSessionContainerInfo>();
-    public final List<StatefulSessionContainerInfo> statefulContainers = new ArrayList<StatefulSessionContainerInfo>();
-    public final List<MdbContainerInfo> mdbContainers = new ArrayList<MdbContainerInfo>();
 }

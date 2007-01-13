@@ -159,10 +159,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         initContainerInfos(openejb);
 
         sys.containerSystem.containers.addAll(containers);
-        sys.containerSystem.entityContainers.addAll(entityContainers);
-        sys.containerSystem.statefulContainers.addAll(sfsbContainers);
-        sys.containerSystem.statelessContainers.addAll(slsbContainers);
-        sys.containerSystem.mdbContainers.addAll(mdbContainers);
 
         List<AppInfo> appInfos = new ArrayList<AppInfo>();
         {
@@ -360,48 +356,35 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         Container[] containers = conf.getContainer();
 
         for (Container declaration : containers) {
-            ServiceInfo info;
+            ContainerInfo info;
             String defaultId;
             if (declaration.getCtype().equals("STATELESS")) {
                 defaultId = DEFAULT_STATELESS_CONTAINER;
                 info = new StatelessSessionContainerInfo();
-                slsbContainers.add((StatelessSessionContainerInfo) info);
             } else if (declaration.getCtype().equals("STATEFUL")) {
                 defaultId = DEFAULT_STATEFUL_CONTAINER;
                 info = new StatefulSessionContainerInfo();
-                sfsbContainers.add((StatefulSessionContainerInfo) info);
             } else if (declaration.getCtype().equals("BMP_ENTITY")) {
                 defaultId = DEFAULT_BMP_CONTAINER;
                 info = new EntityContainerInfo();
-                entityContainers.add((EntityContainerInfo) info);
             } else if (declaration.getCtype().equals("CMP_ENTITY")) {
                 defaultId = DEFAULT_CMP_CONTAINER;
                 info = new EntityContainerInfo();
-                entityContainers.add((EntityContainerInfo) info);
             } else if (declaration.getCtype().equals("CMP2_ENTITY")) {
                 defaultId = DEFAULT_CMP2_CONTAINER;
                 info = new EntityContainerInfo();
-                entityContainers.add((EntityContainerInfo) info);
             } else if (declaration.getCtype().equals("MESSAGE")) {
                 defaultId = DEFAULT_MDB_CONTAINER;
                 info = new MdbContainerInfo();
-                mdbContainers.add((MdbContainerInfo) info);
             } else {
                 throw new OpenEJBException("Unrecognized contianer type " + declaration.getCtype());
             }
 
             createService(declaration, info, defaultId, Container.class);
+
+            this.containers.add(info);
+            containerTable.put(info.id, info);
         }
-
-        this.containers.addAll(sfsbContainers);
-        this.containers.addAll(slsbContainers);
-        this.containers.addAll(entityContainers);
-        this.containers.addAll(mdbContainers);
-
-        for (ContainerInfo containerInfo : this.containers) {
-            containerTable.put(containerInfo.id, containerInfo);
-        }
-
     }
 
     private List<String> parseConstructorArgs(ServiceProvider service) {
