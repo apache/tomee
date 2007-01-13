@@ -22,6 +22,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -33,14 +36,18 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Index;
 
 import javax.ejb.SessionBean;
+import javax.ejb.EJBException;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionRequiredException;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.rmi.dgc.VMID;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
@@ -52,6 +59,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final StatefulInstanceManager instanceManager;
+    // todo this should be part of the constructor
+    private final JtaEntityManagerRegistry entityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
@@ -64,7 +73,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatefulInstanceManager(transactionManager, securityService, passivator, timeOut, poolSize, bulkPassivate);
+        instanceManager = new StatefulInstanceManager(transactionManager, securityService, entityManagerRegistry, passivator, timeOut, poolSize, bulkPassivate);
     }
 
     private class Data {
@@ -225,14 +234,19 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         // generate a new primary key
         Object primaryKey = newPrimaryKey();
 
+
         ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
         createContext.setCurrentOperation(Operation.OP_CREATE);
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
 
+            // create the extended entity managers
+            Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
+
             // allocate a new instance
             Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
+            instanceManager.setEntityManagers(primaryKey, entityManagers);
 
             // Invoke postConstructs or create(...)
             if (bean instanceof SessionBean) {
@@ -244,7 +258,6 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                     _invoke(callMethod, postConstruct, args, bean, createContext);
                 }
             }
-
 
             instanceManager.poolInstance(primaryKey, bean);
 
@@ -275,6 +288,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                     }
                 }
             } finally {
+                // todo destroy extended persistence contexts
                 instanceManager.freeInstance(callContext.getPrimaryKey());
             }
         } finally {
@@ -327,6 +341,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         Object returnValue = null;
         try {
+            registerEntityManagers(callContext);
             returnValue = runMethod.invoke(bean, args);
         } catch (InvocationTargetException ite) {// handle enterprise bean exception
             if (ite.getTargetException() instanceof RuntimeException) {
@@ -352,11 +367,70 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             txPolicy.handleSystemException(re, bean, txContext);
 
         } finally {
-
+            unregisterEntityManagers(callContext);
             txPolicy.afterInvoke(bean, txContext);
         }
 
         return returnValue;
+    }
+
+    private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {
+        // create the extended entity managers
+        Index<EntityManagerFactory, Map> factories = deploymentInfo.getExtendedEntityManagerFactories();
+        Index<EntityManagerFactory,EntityManager> entityManagers = null;
+        if (factories != null && factories.size() > 0) {
+            entityManagers = new Index<EntityManagerFactory, EntityManager>(new ArrayList<EntityManagerFactory>(factories.keySet()));
+            for (Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
+                EntityManagerFactory entityManagerFactory = entry.getKey();
+                Map properties = entry.getValue();
+
+
+                EntityManager entityManager = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
+                if (entityManager == null) {
+                    if (properties != null) {
+                        entityManager = entityManagerFactory.createEntityManager(properties);
+                    } else {
+                        entityManager = entityManagerFactory.createEntityManager();
+                    }
+                }
+                entityManagers.put(entityManagerFactory, entityManager);
+            }
+        }
+        return entityManagers;
+    }
+
+    private void registerEntityManagers(ThreadContext callContext) throws OpenEJBException {
+        if (entityManagerRegistry == null) return;
+
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+
+        // get the factories
+        Index<EntityManagerFactory, Map> factories = deploymentInfo.getExtendedEntityManagerFactories();
+        if (factories == null) return;
+
+        // get the managers for the factories
+        Object primaryKey = callContext.getPrimaryKey();
+        Map<EntityManagerFactory, EntityManager> entityManagers = instanceManager.getEntityManagers(primaryKey, factories);
+        if (entityManagers == null) return;
+
+        // register them
+        try {
+            entityManagerRegistry.addEntityManagers((String)deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
+        } catch (EntityManagerAlreadyRegisteredException e) {
+            throw new EJBException(e);
+        }
+    }
+
+    private void unregisterEntityManagers(ThreadContext callContext) {
+        if (entityManagerRegistry == null) return;
+
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+
+        // get the managers for the factories
+        Object primaryKey = callContext.getPrimaryKey();
+
+        // register them
+        entityManagerRegistry.removeEntityManagers((String)deploymentInfo.getDeploymentID(), primaryKey);
     }
 
     public void discardInstance(Object bean, ThreadContext threadContext) {

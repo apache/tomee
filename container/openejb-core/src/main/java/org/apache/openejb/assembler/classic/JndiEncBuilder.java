@@ -21,7 +21,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JndiReference;
@@ -145,17 +144,10 @@ public class JndiEncBuilder {
 
         // bind TransactionSynchronizationRegistry
         TransactionSynchronizationRegistry synchronizationRegistry = (TransactionSynchronizationRegistry) Assembler.getContext().get(TransactionSynchronizationRegistry.class.getName());
-        if (synchronizationRegistry == null) {
-            // todo this should be move to the main service assembler
-            if (transactionManager instanceof TransactionSynchronizationRegistry) {
-                synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
-            } else {
-                synchronizationRegistry = new SimpleTransactionSynchronizationRegistry(transactionManager);
-            }
-            // todo make sure this gets into the system instance
-            Assembler.getContext().put(TransactionSynchronizationRegistry.class.getName(), synchronizationRegistry);
-        }
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
+
+        // get JtaEntityManagerRegistry
+        JtaEntityManagerRegistry jtaEntityManagerRegistry = (JtaEntityManagerRegistry) Assembler.getContext().get(JtaEntityManagerRegistry.class.getName());
 
         // bind UserTransaction if bean managed transactions
         if (beanManagedTransactions) {
@@ -261,46 +253,16 @@ public class JndiEncBuilder {
         
         for (int i = 0; i < persistenceUnitRefs.length; i++){
         	PersistenceUnitInfo puRefInfo = persistenceUnitRefs[i];
-            Reference reference = null;
-            EntityManagerFactory factory = null;
-            if (puRefInfo.persistenceUnitName != null) {    
-            	if(puRefInfo.persistenceUnitName.indexOf("#") == -1){
-            		factory = entityManagerFactories.get(puRefInfo.persistenceUnitName);
-            	}else{
-            		factory = findEntityManagerFactory(allFactories,jarPath,puRefInfo.persistenceUnitName);
-            	}
-            }else if(entityManagerFactories.size() == 1){
-            	factory = entityManagerFactories.values().toArray(new EntityManagerFactory[1])[0];
-            }else{
-            	throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
-            }
-            
-            reference = new PersistenceUnitReference(factory);
+            EntityManagerFactory factory = findEntityManagerFactory(puRefInfo.persistenceUnitName);
+
+            Reference reference = new PersistenceUnitReference(factory);
             bindings.put(normalize(puRefInfo.referenceName), wrapReference(reference));
         }
 
         for (int i = 0; i < persistenceContextRefs.length; i++) {
             PersistenceContextInfo contextInfo = persistenceContextRefs[i];
+            EntityManagerFactory factory = findEntityManagerFactory(contextInfo.persistenceUnitName);
 
-            EntityManagerFactory factory;
-            if (contextInfo.persistenceUnitName != null) {
-                if (contextInfo.persistenceUnitName.indexOf("#") == -1) {
-                    factory = entityManagerFactories.get(contextInfo.persistenceUnitName);
-                } else {
-                    factory = findEntityManagerFactory(allFactories, jarPath, contextInfo.persistenceUnitName);
-                }
-            } else if (entityManagerFactories.size() == 1) {
-                factory = entityManagerFactories.values().toArray(new EntityManagerFactory[1])[0];
-            } else {
-                throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
-            }
-
-            JtaEntityManagerRegistry jtaEntityManagerRegistry = (JtaEntityManagerRegistry) Assembler.getContext().get(JtaEntityManagerRegistry.class.getName());
-            if (jtaEntityManagerRegistry == null) {
-                // todo make sure this gets into the system instance
-                jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
-                Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
-            }
             JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
             Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
@@ -375,7 +337,7 @@ public class JndiEncBuilder {
         }
 
         public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.StatefulEncUserTransaction((CoreUserTransaction) userTransaction);
+            return new org.apache.openejb.core.stateful.StatefulEncUserTransaction(userTransaction);
         }
     }
 
@@ -400,6 +362,22 @@ public class JndiEncBuilder {
         }
     }
     
+    public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {
+        EntityManagerFactory factory;
+        if (persistenceName != null) {
+            if (persistenceName.indexOf("#") == -1) {
+                factory = entityManagerFactories.get(persistenceName);
+            } else {
+                factory = findEntityManagerFactory(allFactories, jarPath, persistenceName);
+            }
+        } else if (entityManagerFactories.size() == 1) {
+            factory = entityManagerFactories.values().toArray(new EntityManagerFactory[1])[0];
+        } else {
+            throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
+        }
+        return factory;
+    }
+
     /**
      * This method will currently support paths like ../../xyz/ejbmodule.jar#PuName, ././xyz/ejbmodule.jar#PuName
      * and ejbmodule.jar#PuName. For all other types of path it will throw an exception stating an invalid

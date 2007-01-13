@@ -33,6 +33,7 @@ import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
@@ -64,6 +65,7 @@ import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.Index;
 
 /**
  * @org.apache.xbean.XBean element="deployment"
@@ -93,7 +95,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private BusinessLocalHome businessLocalHomeRef;
     private BusinessRemoteHome businessRemoteHomeRef;
-    private final HashMap<Class, Object> data = new HashMap();
+    private final Map<Class, Object> data = new HashMap<Class, Object>();
 
 
     private Object containerData;
@@ -114,6 +116,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private String jarPath;
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
+    private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -212,16 +215,26 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         createMethodMap();
     }
 
+    @SuppressWarnings({"unchecked"})
     public <T> T get(Class<T> type) {
         return (T)data.get(type);
     }
 
+    @SuppressWarnings({"unchecked"})
     public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
     }
-    
+
     public List<Injection> getInjections() {
         return injections;
+    }
+
+    public Index<EntityManagerFactory,Map> getExtendedEntityManagerFactories() {
+        return extendedEntityManagerFactories;
+    }
+
+    public void setExtendedEntityManagerFactories(Index<EntityManagerFactory, Map> extendedEntityManagerFactories) {
+        this.extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
     public Object getContainerData() {
@@ -515,8 +528,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
            context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
          */
         if (componentType.isMessageDriven() && !isBeanManagedTransaction && container instanceof TransactionContainer) {
-            if (policy.policyType != policy.NotSupported && policy.policyType != policy.Required) {
-                if (method.equals(this.ejbTimeout) && policy.policyType == policy.RequiresNew) {
+            if (policy.policyType != TransactionPolicy.NotSupported && policy.policyType != TransactionPolicy.Required) {
+
+                if (method.equals(this.ejbTimeout) && policy.policyType == TransactionPolicy.RequiresNew) {
                     // do nothing. This is allowed as the timer callback method for a message driven bean
                     // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
                 } else {

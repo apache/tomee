@@ -18,21 +18,23 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 public class StatefulContext extends org.apache.openejb.core.CoreContext implements javax.ejb.SessionContext {
 
-    public StatefulContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
+    public StatefulContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
+        super(transactionManager, securityService, userTransaction);
     }
 
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
@@ -69,8 +71,9 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                     getPrimaryKey
                     getUserTransaction
                 */
-                if (methodCategory != EJBHOME_METHOD)
+                if (methodCategory != EJBHOME_METHOD) {
                     throw new IllegalStateException("Invalid operation attempted");
+                }
                 break;
             case OP_CREATE:
             case OP_REMOVE:
@@ -89,10 +92,11 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                     getRollbackOnly,
                     setRollbackOnly
                 */
-                if (methodCategory == ROLLBACK_METHOD)
+                if (methodCategory == ROLLBACK_METHOD) {
                     throw new IllegalStateException("Invalid operation attempted");
-                else
+                } else {
                     break;
+                }
             case OP_BUSINESS:
             case OP_AFTER_BEGIN:
             case OP_BEFORE_COMPLETION:
@@ -137,8 +141,10 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
         private Object readResolve() throws ObjectStreamException {
             // DMB: Could easily be done generically with an recipie
             TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
             SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            return new StatefulContext(transactionManager, securityService);
+            StatefulUserTransaction userTransaction = new StatefulUserTransaction(new CoreUserTransaction(transactionManager), jtaEntityManagerRegistry);
+            return new StatefulContext(transactionManager, securityService, userTransaction);
         }
     }
 }

@@ -25,6 +25,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Index;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -173,6 +175,15 @@ class EnterpriseBeanBuilder {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
             deployment.setPrePassivate(getCallback(ejbClass, statefulBeanInfo.prePassivate));
             deployment.setPostActivate(getCallback(ejbClass, statefulBeanInfo.postActivate));
+
+            Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
+            for (PersistenceContextInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
+                if (info.extended) {
+                    EntityManagerFactory entityManagerFactory = jndiEncBuilder.findEntityManagerFactory(info.persistenceUnitName);
+                    extendedEntityManagerFactories.put(entityManagerFactory, info.properties);
+                }
+            }
+            deployment.setExtendedEntityManagerFactories(new Index<EntityManagerFactory, Map>(extendedEntityManagerFactories));
         }
 
         if (ejbType.isSession() || ejbType.isMessageDriven()) {

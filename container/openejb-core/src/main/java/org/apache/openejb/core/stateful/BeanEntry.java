@@ -17,7 +17,13 @@
 package org.apache.openejb.core.stateful;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
 import javax.transaction.Transaction;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+
+import org.apache.openejb.util.Index;
 
 public class BeanEntry implements Serializable {
     private static final long serialVersionUID = 5940667199866151048L;
@@ -28,6 +34,11 @@ public class BeanEntry implements Serializable {
     private long timeStamp;
     private long timeOutInterval;
     protected transient Transaction beanTransaction;
+    // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
+    // This would require that we crete an id and that we track it
+    // alternatively, we could use ImmutableArtifact with some read/write replace magic
+    private transient Map<EntityManagerFactory, EntityManager> entityManagers;
+    private EntityManager[] entityManagerArray;
 
     protected BeanEntry(Object beanInstance, Object primKey, long timeOut) {
         bean = beanInstance;
@@ -50,4 +61,25 @@ public class BeanEntry implements Serializable {
             timeStamp = System.currentTimeMillis();
         }
     }
-}         
+
+    public Map<EntityManagerFactory, EntityManager> getEntityManagers(Index<EntityManagerFactory, Map> factories) {
+        if (entityManagers == null && entityManagerArray != null) {
+            entityManagers = new HashMap<EntityManagerFactory, EntityManager>();
+            for (int i = 0; i < entityManagerArray.length; i++) {
+                EntityManagerFactory entityManagerFactory = factories.getKey(i);
+                EntityManager entityManager = entityManagerArray[i];
+                entityManagers.put(entityManagerFactory, entityManager);
+            }
+        }
+        return entityManagers;
+    }
+
+    public void setEntityManagers(Index<EntityManagerFactory, EntityManager> entityManagers) {
+        this.entityManagers = entityManagers;
+        if (entityManagers != null) {
+            entityManagerArray = entityManagers.values().toArray(new EntityManager[entityManagers.size()]);
+        } else {
+            entityManagerArray = null;
+        }
+    }
+}

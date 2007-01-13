@@ -17,11 +17,13 @@
 package org.apache.openejb.core.stateful;
 
 import javax.naming.NameNotFoundException;
+import javax.transaction.UserTransaction;
 
-import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.loader.SystemInstance;
 
 
 /**
@@ -34,8 +36,9 @@ public class StatefulEncUserTransaction extends EncReference {
     /**
      * This constructor take a new CoreUserTransaction object as the object reference
      */
-    public StatefulEncUserTransaction(CoreUserTransaction reference) {
-        super(new ObjectReference(reference));
+    public StatefulEncUserTransaction(UserTransaction userTransaction) {
+        super(new ObjectReference(new StatefulUserTransaction(userTransaction,
+                SystemInstance.get().getComponent(JtaEntityManagerRegistry.class))));
     }
 
     /**

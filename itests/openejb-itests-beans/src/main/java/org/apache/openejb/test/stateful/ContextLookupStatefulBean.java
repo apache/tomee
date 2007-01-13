@@ -27,10 +27,12 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
+import javax.ejb.CreateException;
 import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 import java.rmi.RemoteException;
 
 /**
@@ -42,6 +44,10 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
 
     private String name;
     private SessionContext ejbContext;
+    private EntityManager extendedEntityManager;
+
+    // Used for testing propigation
+    private static EntityManager inheritedDelegate;
 
     //=============================
     // Home interface methods
@@ -54,8 +60,7 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
      * @throws javax.ejb.CreateException
      * @see EncStatefulHome#create
      */
-    public void ejbCreate(String name)
-            throws javax.ejb.CreateException {
+    public void ejbCreate(String name) throws CreateException {
         this.name = name;
     }
     //
@@ -307,6 +312,117 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+
+    public void lookupExtendedPersistenceContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                Assert.assertNotNull("The EntityManager is null", em);
+
+                // call a do nothing method to assure entity manager actually exists
+                em.getFlushMode();
+
+                if (extendedEntityManager != null) {
+                    Assert.assertSame("Extended entity manager should be the same instance that was found last time",
+                            extendedEntityManager,
+                            em);
+                    Assert.assertSame("Extended entity manager delegate should be the same instance that was found last time",
+                            extendedEntityManager.getDelegate(),
+                            em.getDelegate());
+                }
+                extendedEntityManager = em;
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupPropagatedPersistenceContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                Assert.assertNotNull("The EntityManager is null", em);
+
+                // call a do nothing method to assure entity manager actually exists
+                em.getFlushMode();
+
+                // get the raw entity manager so we can test it below
+                inheritedDelegate = (EntityManager) em.getDelegate();
+
+                // The extended entity manager is not propigated to a non-extended entity manager unless there is a transaction
+                EntityManager nonExtendedEm = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                nonExtendedEm.getFlushMode();
+                EntityManager nonExtendedDelegate = ((EntityManager) nonExtendedEm.getDelegate());
+                Assert.assertTrue("non-extended entity manager should be open", nonExtendedDelegate.isOpen());
+                Assert.assertNotSame("Extended non-extended entity manager shound not be the same instance as extendend entity manager when accessed out side of a transactions",
+                        inheritedDelegate,
+                        nonExtendedDelegate);
+
+                // When the non-extended entity manager is accessed within a transaction is should see the stateful extended context.
+                //
+                // Note: this code also tests EBJ 3.0 Persistence spec 5.9.1 "UserTransaction is begun within the method, the
+                // container associates the persistence context with the JTA transaction and calls EntityManager.joinTransaction."
+                // If our the extended entity manager were not associted with the transaction, the non-extended entity manager would
+                // not see it.
+                UserTransaction userTransaction = ejbContext.getUserTransaction();
+                userTransaction.begin();
+                try {
+                    Assert.assertSame("Extended non-extended entity manager to be same instance as extendend entity manager",
+                            inheritedDelegate,
+                            nonExtendedEm.getDelegate());
+                } finally {
+                    userTransaction.commit();
+                }
+
+                // When a stateful bean with an extended entity manager creates another stateful bean, the new bean will
+                // inherit the extended entity manager (assuming it contains an extended entity manager for the same persistence
+                // unit).
+                EncStatefulHome home = (EncStatefulHome) ejbContext.getEJBHome();
+                EncStatefulObject encStatefulObject = home.create("PropagatedPersistenceContext");
+
+                // test the new stateful bean recieved the context
+                encStatefulObject.testPropgation();
+
+                // remove the bean
+                encStatefulObject.remove();
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void testPropgation() throws TestFailureException {
+        if (inheritedDelegate == null) return;
+        try {
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                Assert.assertNotNull("The EntityManager is null", em);
+
+                // call a do nothing method to assure entity manager actually exists
+                em.getFlushMode();
+
+                EntityManager delegate = (EntityManager) em.getDelegate();
+                Assert.assertSame("Extended entity manager delegate should be the same instance that was found last time",
+                        inheritedDelegate,
+                        delegate);
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }

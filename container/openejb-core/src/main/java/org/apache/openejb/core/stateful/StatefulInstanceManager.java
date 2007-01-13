@@ -22,6 +22,7 @@ import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.naming.Context;
@@ -29,18 +30,23 @@ import javax.naming.NamingException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionRolledbackException;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Index;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
@@ -61,10 +67,12 @@ public class StatefulInstanceManager {
 
     private final TransactionManager transactionManager;
     private final SecurityService securityService;
+    private final JtaEntityManagerRegistry jtaEntityManagerRegistry;
 
-    public StatefulInstanceManager(TransactionManager transactionManager, SecurityService securityService, Class passivatorClass, int timeout, int poolSize, int bulkPassivate) throws OpenEJBException {
+    public StatefulInstanceManager(TransactionManager transactionManager, SecurityService securityService, JtaEntityManagerRegistry jtaEntityManagerRegistry, Class passivatorClass, int timeout, int poolSize, int bulkPassivate) throws OpenEJBException {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
+        this.jtaEntityManagerRegistry = jtaEntityManagerRegistry;
         this.lruQueue = new BeanEntryQueue(poolSize);
         if (poolSize == 0) {
             this.bulkPassivationSize = 1;
@@ -89,6 +97,16 @@ public class StatefulInstanceManager {
     public void setBeanTransaction(Object primaryKey, Transaction beanTransaction) throws OpenEJBException {
         BeanEntry entry = getBeanEntry(primaryKey);
         entry.beanTransaction = beanTransaction;
+    }
+
+    public Map<EntityManagerFactory, EntityManager> getEntityManagers(Object primaryKey, Index<EntityManagerFactory, Map> factories) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(primaryKey);
+        return entry.getEntityManagers(factories);
+    }
+
+    public void setEntityManagers(Object primaryKey, Index<EntityManagerFactory, EntityManager> entityManagers) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(primaryKey);
+        entry.setEntityManagers(entityManagers);
     }
 
     public Object newInstance(Object primaryKey, Class beanClass) throws OpenEJBException {
@@ -141,7 +159,8 @@ public class StatefulInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return new StatefulContext(transactionManager, securityService);
+        StatefulUserTransaction userTransaction = new StatefulUserTransaction(new CoreUserTransaction(transactionManager), jtaEntityManagerRegistry);
+        return new StatefulContext(transactionManager, securityService, userTransaction);
     }
 
     public Object obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {

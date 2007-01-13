@@ -19,7 +19,7 @@ package org.apache.openejb.persistence;
 
 
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TransactionRequiredException;
@@ -167,11 +167,15 @@ public class JtaEntityManagerRegistry {
 
     private class ExtendedRegistry {
         private final Map<InstanceId, Map<EntityManagerFactory, EntityManager>> entityManagersByDeploymentId =
-                new TreeMap<InstanceId, Map<EntityManagerFactory, EntityManager>>();
+                new HashMap<InstanceId, Map<EntityManagerFactory, EntityManager>>();
 
         private void addEntityManagers(InstanceId instanceId, Map<EntityManagerFactory, EntityManager> entityManagers) throws EntityManagerAlreadyRegisteredException {
-            if (instanceId == null) throw new NullPointerException("instanceId is null");
-            if (entityManagers == null) throw new NullPointerException("entityManagers is null");
+            if (instanceId == null) {
+                throw new NullPointerException("instanceId is null");
+            }
+            if (entityManagers == null) {
+                throw new NullPointerException("entityManagers is null");
+            }
 
             if (isTransactionActive()) {
                 for (Map.Entry<EntityManagerFactory, EntityManager> entry : entityManagers.entrySet()) {
@@ -199,7 +203,9 @@ public class JtaEntityManagerRegistry {
         }
 
         private EntityManager getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
-            if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
+            if (entityManagerFactory == null) {
+                throw new NullPointerException("entityManagerFactory is null");
+            }
 
             for (Map<EntityManagerFactory, EntityManager> entityManagers : entityManagersByDeploymentId.values()) {
                 EntityManager entityManager = entityManagers.get(entityManagerFactory);
@@ -223,8 +229,12 @@ public class JtaEntityManagerRegistry {
                 return;
             }
 
-            for (EntityManager entityManager : entityManagers.values()) {
+            for (Map.Entry<EntityManagerFactory, EntityManager> entry : entityManagers.entrySet()) {
+                EntityManagerFactory entityManagerFactory = entry.getKey();
+                EntityManager entityManager = entry.getValue();
                 entityManager.joinTransaction();
+                EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
+                transactionRegistry.putResource(txKey, entityManager);
             }
         }
     }

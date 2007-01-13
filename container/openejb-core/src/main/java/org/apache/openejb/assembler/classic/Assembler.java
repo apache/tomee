@@ -16,39 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.EnvProps;
-import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.ConnectorReference;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.TemporaryClassLoader;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.javaagent.Agent;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
-import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
-import org.apache.openejb.persistence.PersistenceDeployer;
-import org.apache.openejb.persistence.PersistenceDeployerException;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.OpenEJBErrorHandler;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.proxy.ProxyFactory;
-import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.xbean.finder.ResourceFinder;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -61,6 +28,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+
+import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.EnvProps;
+import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.ConnectorReference;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
+import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.persistence.PersistenceDeployer;
+import org.apache.openejb.persistence.PersistenceDeployerException;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OpenEJBErrorHandler;
+import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.proxy.ProxyFactory;
+import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.StaticRecipe;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -515,6 +518,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.id, service);
 
         this.transactionManager = (TransactionManager) service;
+
+        // todo find a better place for this
+
+        // TransactionSynchronizationRegistry
+        TransactionSynchronizationRegistry synchronizationRegistry ;
+        if (transactionManager instanceof TransactionSynchronizationRegistry) {
+            synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
+        } else {
+            // todo this sould be built
+            synchronizationRegistry = new SimpleTransactionSynchronizationRegistry(transactionManager);
+        }
+        Assembler.getContext().put(TransactionSynchronizationRegistry.class.getName(), synchronizationRegistry);
+        SystemInstance.get().setComponent(TransactionSynchronizationRegistry.class, synchronizationRegistry);
+
+        // JtaEntityManagerRegistry
+        // todo this sould be built
+        JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
+        Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
+        SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
     }
 
     private URL toUrl(String jarPath) throws OpenEJBException {

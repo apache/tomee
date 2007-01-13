@@ -961,7 +961,6 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-
     </session>
 
     <!--
@@ -1068,6 +1067,14 @@
         </description>
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/ExtendedTestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <persistence-context-type>Extended</persistence-context-type>
       </persistence-context-ref>
     </session>
 
@@ -1176,6 +1183,14 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/ExtendedTestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <persistence-context-type>Extended</persistence-context-type>
+      </persistence-context-ref>
     </session>
 
     <!--
@@ -1282,6 +1297,14 @@
         </description>
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/ExtendedTestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <persistence-context-type>Extended</persistence-context-type>
       </persistence-context-ref>
     </session>
 

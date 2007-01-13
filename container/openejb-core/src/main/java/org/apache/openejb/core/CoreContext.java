@@ -26,6 +26,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+import java.util.List;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
@@ -49,7 +51,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public final static byte EJBHOME_METHOD = (byte) 5;
 
-    private final CoreUserTransaction userTransaction;
+    private final UserTransaction userTransaction;
     private final SecurityService securityService;
     private final TransactionManager transactionManager;
 
@@ -57,6 +59,12 @@ public abstract class CoreContext implements java.io.Serializable {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.userTransaction = new CoreUserTransaction(transactionManager);
+    }
+
+    protected CoreContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
+        this.transactionManager = transactionManager;
+        this.securityService = securityService;
+        this.userTransaction = userTransaction;
     }
 
     private TransactionManager getTransactionManager() {
@@ -176,18 +184,21 @@ public abstract class CoreContext implements java.io.Serializable {
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
-        if (di.isBeanManagedTransaction())
+        if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly( ) method");
+        }
 
         checkBeanState(ROLLBACK_METHOD);
         try {
             int status = getTransactionManager().getStatus();
-            if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK)
+            if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK) {
                 return true;
-            else if (status == Status.STATUS_NO_TRANSACTION)// this would be true for Supports tx attribute where no tx was propagated
+            } else if (status == Status.STATUS_NO_TRANSACTION) {
+                // this would be true for Supports tx attribute where no tx was propagated
                 throw new IllegalStateException("No current transaction");
-            else
+            } else {
                 return false;
+            }
         } catch (javax.transaction.SystemException se) {
             throw new RuntimeException("Transaction service has thrown a SystemException");
         }
@@ -196,8 +207,9 @@ public abstract class CoreContext implements java.io.Serializable {
     public void setRollbackOnly() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
-        if (di.isBeanManagedTransaction())
+        if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly( ) method");
+        }
 
         checkBeanState(ROLLBACK_METHOD);
 
@@ -216,8 +228,9 @@ public abstract class CoreContext implements java.io.Serializable {
         if (di.isBeanManagedTransaction()) {
             checkBeanState(USER_TRANSACTION_METHOD);
             return userTransaction;
-        } else
+        } else {
             throw new java.lang.IllegalStateException("container-managed transaction beans can not access the UserTransaction");
+        }
     }
 
     /**

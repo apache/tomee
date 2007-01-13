@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
@@ -40,7 +39,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
 
     public Index(Map<K,V> map) {
         entries = new IndexEntry[map.size()];
-        keyIndicies = new LinkedHashMap(map.size());
+        keyIndicies = new LinkedHashMap<K,Integer>(map.size());
 
         int i = 0;
         for (Entry<K, V> entry : map.entrySet()) {
@@ -52,9 +51,21 @@ public class Index<K,V> extends AbstractMap<K,V> {
         entrySet = new IndexEntrySet();
     }
 
+    public Index(List<K> keys) {
+        entries = new IndexEntry[keys.size()];
+        keyIndicies = new LinkedHashMap<K,Integer>(keys.size());
+        for (int i = 0; i < keys.size(); i++) {
+            K key = keys.get(i);
+            entries[i] = new IndexEntry<K,V>(key, null);
+            keyIndicies.put(key, new Integer(i));
+        }
+
+        entrySet = new IndexEntrySet();
+    }
+
     public Index(K[] keys) {
         entries = new IndexEntry[keys.length];
-        keyIndicies = new LinkedHashMap(keys.length);
+        keyIndicies = new LinkedHashMap<K,Integer>(keys.length);
         for (int i = 0; i < keys.length; i++) {
             K key = keys[i];
             entries[i] = new IndexEntry<K,V>(key, null);
@@ -64,19 +75,20 @@ public class Index<K,V> extends AbstractMap<K,V> {
         entrySet = new IndexEntrySet();
     }
 
-    public List<V> valuesList() {
+    public List<V> values() {
         if (indexValueList == null) {
             indexValueList = new IndexValueList<V>();
         }
         return indexValueList;
     }
 
-    public Collection<V> values() {
-        return valuesList();
+    public Set<Entry<K,V>> entrySet() {
+        return entrySet;
     }
 
-    public Set entrySet() {
-        return entrySet;
+    public K getKey(int index) {
+        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException("" + index);
+        return entries[index].getKey();
     }
 
     public V get(int index) {
@@ -93,7 +105,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
     }
 
     public V put(K key, V value) {
-        int i = indexOf((K) key);
+        int i = indexOf(key);
         if (i < 0) {
             throw new IllegalArgumentException("Index does not contain this key and new entries cannot be added: " + (K) key);
         }
@@ -109,7 +121,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
     }
 
     public int indexOf(K key) {
-        Integer index = (Integer) keyIndicies.get(key);
+        Integer index = keyIndicies.get(key);
         if (index == null) {
             return -1;
         }
@@ -142,6 +154,9 @@ public class Index<K,V> extends AbstractMap<K,V> {
 
     public Object[] toArray() {
         return toArray(new Object[entries.length]);
+    }
+
+    public static interface ListSet extends List, Set {
     }
 
     public Object[] toArray(Object values[]) {
