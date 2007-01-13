@@ -146,51 +146,8 @@ public class DeploymentLoader {
         }
     }
 
-    public static enum Type {
-        JAR, DIR, CLASSPATH
-    }
 
-    public List<DeploymentModule> load(Type type, Object source) throws OpenEJBException {
-        Deployments deployments = new Deployments();
-        switch (type) {
-            case JAR:
-                deployments.setJar((String) source);
-                break;
-            case DIR:
-                deployments.setDir((String) source);
-                break;
-            case CLASSPATH:
-                deployments.setClasspath((ClassLoader) source);
-                break;
-        }
-
-        List<Deployments> list = new ArrayList();
-        list.add(deployments);
-        return loadDeploymentsList(list, null);
-    }
-
-    public List<DeploymentModule> loadDeploymentsList(List<Deployments> deployments, DynamicDeployer deployer) throws OpenEJBException {
-
-        if (deployer == null) {
-            deployer = new DynamicDeployer() {
-                public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-                    return ejbModule;
-                }
-
-                public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-                    return clientModule;
-                }
-            };
-        }
-
-        deployer = new AnnotationDeployer(deployer);
-
-        if (!SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true")) {
-            deployer = new ValidateEjbModule(deployer);
-        } else {
-            logger.info("Validation is disabled.");
-        }
-
+    public List<DeploymentModule> loadModules(List<Deployments> deployments, DynamicDeployer deployer) {
         List<DeploymentModule> deployedJars = new ArrayList();
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
@@ -240,22 +197,22 @@ public class DeploymentLoader {
                     loadAppModule(jarFile, deployer, deployedJars);
 
                 } else {
+
                     EjbJarUtils ejbJarUtils = new EjbJarUtils(jarFile.getAbsolutePath());
                     EjbModule undeployedModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+
+
                     EjbModule ejbModule = deployer.deploy(undeployedModule);
 
-                    /* Add it to the Vector ***************/
-                    deployedJars.add(ejbModule);
+                    AppModule appModule = new AppModule(classLoader, null);
+                    appModule.getEjbModules().add(ejbModule);
+                    deployedJars.add(appModule);
                 }
 
             } catch (OpenEJBException e) {
                 e.printStackTrace();
                 ConfigUtils.logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             }
-        }
-
-        for (DeploymentModule ejbModule : deployedJars) {
-            logger.info("Loaded Module: " + ejbModule.getJarLocation());
         }
         return deployedJars;
     }

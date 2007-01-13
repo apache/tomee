@@ -40,7 +40,6 @@ import org.apache.openejb.assembler.classic.EntityContainerInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.IntraVmServerInfo;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
-import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ManagedConnectionFactoryInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -77,18 +76,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     public static OpenEjbConfiguration sys;
 
     private final List<ContainerInfo> containers  = new ArrayList<ContainerInfo>();
-    private final List<EntityContainerInfo> entityContainers = new ArrayList<EntityContainerInfo>();
-    private final List<StatefulSessionContainerInfo> sfsbContainers = new ArrayList<StatefulSessionContainerInfo>();
-    private final List<StatelessSessionContainerInfo> slsbContainers = new ArrayList<StatelessSessionContainerInfo>();
-    private final List<MdbContainerInfo> mdbContainers = new ArrayList<MdbContainerInfo>();
     private Map<String,ContainerInfo> containerTable = new HashMap<String,ContainerInfo>();
 
-    private Properties props;
+    private Properties props = new Properties();
     public EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
+
+    public ConfigurationFactory() {
+    }
 
     public void init(Properties props) throws OpenEJBException {
         this.props = props;
 
+        findConfiguration(props);
+
+    }
+
+    private void findConfiguration(Properties props) throws OpenEJBException {
         configLocation = props.getProperty("openejb.conf.file");
 
         if (configLocation == null) {
@@ -99,35 +102,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         if (configLocation != null){
             this.props.setProperty("openejb.configuration", configLocation);
         }
-
-    }
-
-    public static void main(String[] args) {
-        try {
-            ConfigurationFactory conf = new ConfigurationFactory();
-            conf.configLocation = args[0];
-            conf.init(null);
-            OpenEjbConfiguration openejb = conf.getOpenEjbConfiguration();
-
-            ConfigurationPrinter.printConf(openejb);
-        } catch (Exception e) {
-            System.out.println("[OpenEJB] " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
         Openejb openejb;
-        DynamicDeployer deployer;
         if (configLocation != null) {
             openejb = ConfigUtils.readConfig(configLocation);
-            deployer = new AutoDeployer(openejb);
         } else {
             openejb = new Openejb();
-            deployer = new AutoConfigAndDeploy(openejb);
         }
 
+        DynamicDeployer deployer = getDeployer(openejb);
 
         List<Deployments> deployments = new ArrayList<Deployments>(Arrays.asList(openejb.getDeployments()));
 
@@ -142,7 +128,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             deployments.add(deployment);
         }
 
-        List<DeploymentModule> deployedJars = new DeploymentLoader().loadDeploymentsList(deployments, deployer);
+        DeploymentLoader deploymentLoader = new DeploymentLoader();
+
+        List<DeploymentModule> deployedJars = deploymentLoader.loadModules(deployments, deployer);
+
+        for (DeploymentModule ejbModule : deployedJars) {
+            DeploymentLoader.logger.info("Loaded Module: " + ejbModule.getJarLocation());
+        }
 
         DeploymentModule[] jars = deployedJars.toArray(new DeploymentModule[]{});
 
@@ -161,28 +153,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.containerSystem.containers.addAll(containers);
 
         List<AppInfo> appInfos = new ArrayList<AppInfo>();
-        {
-            AppInfo appInfo = new AppInfo();
-            for (DeploymentModule jar : jars) {
-                if (!(jar instanceof EjbModule)) {
-                    continue;
-                }
-                EjbModule ejbModule = (EjbModule) jar;
-                try {
-                    EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
-                    if (ejbJarInfo == null) {
-                        continue;
-                    }
-                    assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
-                    appInfo.ejbJars.add(ejbJarInfo);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
-                }
-            }
-
-            appInfos.add(appInfo);
-        }
 
         for (DeploymentModule module : jars) {
             if (!(module instanceof AppModule)) {
@@ -190,43 +160,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             }
             AppModule appModule = (AppModule) module;
 
-            AppInfo appInfo = new AppInfo();
-            for (EjbModule ejbModule : appModule.getEjbModules()) {
-                try {
-                    EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
-                    if (ejbJarInfo == null) {
-                        continue;
-                    }
-                    assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
-                    appInfo.ejbJars.add(ejbJarInfo);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
-                }
-            }
-
-            for (ClientModule clientModule : appModule.getClientModules()) {
-
-                ApplicationClient applicationClient = clientModule.getApplicationClient();
-                ClientInfo clientInfo = new ClientInfo();
-                clientInfo.description = applicationClient.getDescription();
-                clientInfo.displayName = applicationClient.getDisplayName();
-                clientInfo.codebase = clientModule.getJarLocation();
-                clientInfo.mainClass = clientModule.getMainClass();
-                clientInfo.moduleId = getClientModuleId(clientModule);
-
-                JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-                JndiEncInfo jndiEncInfo = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
-                clientInfo.jndiEnc = jndiEncInfo;
-                appInfo.clients.add(clientInfo);
-            }
-
-            appInfo.jarPath = appModule.getJarLocation();
-            List<URL> additionalLibraries = appModule.getAdditionalLibraries();
-            for (URL url : additionalLibraries) {
-                File file = new File(url.getPath());
-                appInfo.libs.add(file.getAbsolutePath());
-            }
+            AppInfo appInfo = configureAppModule(appModule);
             appInfos.add(appInfo);
         }
 
@@ -241,6 +175,67 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         SystemInstance.get().setComponent(OpenEjbConfiguration.class, sys);
         return sys;
+    }
+
+    private DynamicDeployer getDeployer(Openejb openejb) {
+        DynamicDeployer deployer;
+        // TODO: Create some way to enable one versus the other
+        if (false){
+            deployer = new AutoDeployer(openejb);
+
+        } else {
+            deployer = new AutoConfigAndDeploy(openejb);
+        }
+
+        deployer = new AnnotationDeployer(deployer);
+
+        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
+        if (shouldValidate) {
+            deployer = new ValidateEjbModule(deployer);
+        } else {
+            DeploymentLoader.logger.info("Validation is disabled.");
+        }
+        return deployer;
+    }
+
+    public AppInfo configureAppModule(AppModule appModule) throws OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            try {
+                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
+                if (ejbJarInfo == null) {
+                    continue;
+                }
+                assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
+                appInfo.ejbJars.add(ejbJarInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
+            }
+        }
+
+        for (ClientModule clientModule : appModule.getClientModules()) {
+
+            ApplicationClient applicationClient = clientModule.getApplicationClient();
+            ClientInfo clientInfo = new ClientInfo();
+            clientInfo.description = applicationClient.getDescription();
+            clientInfo.displayName = applicationClient.getDisplayName();
+            clientInfo.codebase = clientModule.getJarLocation();
+            clientInfo.mainClass = clientModule.getMainClass();
+            clientInfo.moduleId = getClientModuleId(clientModule);
+
+            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
+            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
+            appInfo.clients.add(clientInfo);
+        }
+
+        appInfo.jarPath = appModule.getJarLocation();
+        List<URL> additionalLibraries = appModule.getAdditionalLibraries();
+        for (URL url : additionalLibraries) {
+            File file = new File(url.getPath());
+            appInfo.libs.add(file.getAbsolutePath());
+        }
+        return appInfo;
     }
 
     private static String getClientModuleId(ClientModule clientModule) {
