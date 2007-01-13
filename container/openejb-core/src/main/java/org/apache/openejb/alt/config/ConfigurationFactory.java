@@ -21,7 +21,6 @@ import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.sys.ConnectionManager;
 import org.apache.openejb.alt.config.sys.Connector;
 import org.apache.openejb.alt.config.sys.Container;
-import org.apache.openejb.alt.config.sys.Deployments;
 import org.apache.openejb.alt.config.sys.JndiProvider;
 import org.apache.openejb.alt.config.sys.Openejb;
 import org.apache.openejb.alt.config.sys.ProxyFactory;
@@ -115,28 +114,32 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         DynamicDeployer deployer = getDeployer(openejb);
 
-        List<Deployments> deployments = new ArrayList<Deployments>(Arrays.asList(openejb.getDeployments()));
+        DeploymentLoader deploymentLoader = new DeploymentLoader(props);
 
-        //// getOption /////////////////////////////////  BEGIN  ////////////////////
-        String flag = props.getProperty("openejb.deployments.classpath", "true").toLowerCase();
-        boolean searchClassPath = flag.equals("true");
-        //// getOption /////////////////////////////////  END  ////////////////////
+        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
 
-        if (searchClassPath) {
-            Deployments deployment = new Deployments();
-            deployment.setClasspath(this.getClass().getClassLoader());
-            deployments.add(deployment);
+        List<DeploymentModule> appModules = new ArrayList();
+
+        for (String pathname : jarList) {
+
+            File jarFile = new File(pathname);
+            DeploymentLoader.logger.debug("Beginning load: " + jarFile.getAbsolutePath());
+
+            try {
+
+                AppModule appModule = deploymentLoader.load(jarFile, deployer);
+                appModules.add(appModule);
+
+                DeploymentLoader.logger.info("Loaded Module: " + appModule.getJarLocation());
+
+            } catch (OpenEJBException e) {
+                e.printStackTrace();
+                ConfigUtils.logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+            }
+
         }
 
-        DeploymentLoader deploymentLoader = new DeploymentLoader();
-
-        List<DeploymentModule> deployedJars = deploymentLoader.loadModules(deployments, deployer);
-
-        for (DeploymentModule ejbModule : deployedJars) {
-            DeploymentLoader.logger.info("Loaded Module: " + ejbModule.getJarLocation());
-        }
-
-        DeploymentModule[] jars = deployedJars.toArray(new DeploymentModule[]{});
+        DeploymentModule[] jars = appModules.toArray(new DeploymentModule[]{});
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
