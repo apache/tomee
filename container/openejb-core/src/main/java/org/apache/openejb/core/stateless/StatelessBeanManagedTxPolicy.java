@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -28,8 +29,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
     public StatelessBeanManagedTxPolicy(TransactionContainer container) {
         this();
-        if (container instanceof org.apache.openejb.Container &&
-                ((org.apache.openejb.Container) container).getContainerType() != org.apache.openejb.Container.STATELESS) {
+        if (container.getContainerType() != ContainerType.STATELESS) {
             throw new IllegalArgumentException();
         }
 

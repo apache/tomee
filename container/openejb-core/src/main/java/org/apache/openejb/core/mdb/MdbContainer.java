@@ -22,6 +22,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Container;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -73,8 +74,8 @@ public class MdbContainer implements Container, TransactionContainer {
         return deployments.get(deploymentID);
     }
 
-    public int getContainerType() {
-        return Container.MESSAGE_DRIVEN;
+    public ContainerType getContainerType() {
+        return ContainerType.MESSAGE_DRIVEN;
     }
 
     public Object getContainerID() {

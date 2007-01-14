@@ -65,8 +65,8 @@ import java.util.Properties;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.alt.config.rules");
-    protected static final Messages messages = new Messages("org.apache.openejb.alt.config.rules");
+    public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private String configLocation = "";
 
@@ -123,18 +123,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         for (String pathname : jarList) {
 
             File jarFile = new File(pathname);
-            DeploymentLoader.logger.debug("Beginning load: " + jarFile.getAbsolutePath());
+            logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
             try {
 
                 AppModule appModule = deploymentLoader.load(jarFile, deployer);
                 appModules.add(appModule);
 
-                DeploymentLoader.logger.info("Loaded Module: " + appModule.getJarLocation());
+                logger.info("Loaded Module: " + appModule.getJarLocation());
 
             } catch (OpenEJBException e) {
                 e.printStackTrace();
-                ConfigUtils.logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+                logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             }
 
         }

@@ -23,13 +23,14 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 
 public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     public StatefulBeanManagedTxPolicy(TransactionContainer container) {
-        if (container instanceof Container && ((Container) container).getContainerType() != Container.STATEFUL) {
+        if (container.getContainerType() != ContainerType.STATEFUL) {
             throw new IllegalArgumentException("Container is not an StatefulContainer");
         }
         this.container = container;

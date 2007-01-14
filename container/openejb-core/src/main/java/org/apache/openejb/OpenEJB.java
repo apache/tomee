@@ -175,16 +175,19 @@ public final class OpenEJB {
                     for (int i = 0; i < c.length; i++) {
                         String entry = "   ";
                         switch (c[i].getContainerType()) {
-                            case Container.ENTITY:
-                                entry += "ENTITY      ";
+                            case BMP_ENTITY:
+                                entry += "BMP ENTITY  ";
                                 break;
-                            case Container.STATEFUL:
+                            case CMP_ENTITY:
+                                entry += "CMP ENTITY  ";
+                                break;
+                            case STATEFUL:
                                 entry += "STATEFUL    ";
                                 break;
-                            case Container.STATELESS:
+                            case STATELESS:
                                 entry += "STATELESS   ";
                                 break;
-                            case Container.MESSAGE_DRIVEN:
+                            case MESSAGE_DRIVEN:
                                 entry += "MESSAGE     ";
                                 break;
                         }
@@ -211,6 +214,9 @@ public final class OpenEJB {
                                 break;
                             case STATELESS:
                                 entry += "STATELESS   ";
+                                break;
+                            case MESSAGE_DRIVEN:
+                                entry += "MESSAGE     ";
                                 break;
                         }
                         entry += d[i].getDeploymentID();

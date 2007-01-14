@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 
@@ -29,8 +30,7 @@ public class StatefulContainerManagedTxPolicy extends org.apache.openejb.core.tr
         this.policy = policy;
         this.container = policy.getContainer();
         this.policyType = policy.policyType;
-        if (container instanceof org.apache.openejb.Container &&
-                ((org.apache.openejb.Container) container).getContainerType() != org.apache.openejb.Container.STATEFUL) {
+        if (container.getContainerType() != ContainerType.STATEFUL) {
             throw new IllegalArgumentException();
         }
     }

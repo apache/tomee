@@ -19,6 +19,7 @@ package org.apache.openejb.core.entity;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -61,8 +62,8 @@ public class Cmp2EntityContainer implements org.apache.openejb.RpcContainer, Tra
         return containerID;
     }
 
-    public int getContainerType() {
-        return Container.ENTITY;
+    public ContainerType getContainerType() {
+        return ContainerType.CMP_ENTITY;
     }
 
     public DeploymentInfo getDeploymentInfo(Object deploymentID) {

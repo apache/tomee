@@ -18,6 +18,7 @@ package org.apache.openejb.core;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContainer;
 
 import java.lang.reflect.Method;
@@ -34,7 +35,7 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         return container.invoke(deployID, callMethod, args, primKey, securityIdentity);
     }
 
-    public int getContainerType() {
+    public ContainerType getContainerType() {
         return container.getContainerType();
     }
 

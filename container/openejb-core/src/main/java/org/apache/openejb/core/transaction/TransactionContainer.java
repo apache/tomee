@@ -17,8 +17,9 @@
 package org.apache.openejb.core.transaction;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.Container;
 
-public interface TransactionContainer {
+public interface TransactionContainer extends Container {
 
     public void discardInstance(Object instance, ThreadContext context);
 

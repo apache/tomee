@@ -45,6 +45,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -103,8 +104,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return containerID;
     }
 
-    public int getContainerType() {
-        return Container.ENTITY;
+    public ContainerType getContainerType() {
+        return ContainerType.CMP_ENTITY;
     }
 
     public synchronized DeploymentInfo[] deployments() {

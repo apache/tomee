@@ -21,6 +21,7 @@ import javax.transaction.Status;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -30,9 +31,7 @@ public class MessageDrivenBeanManagedTxPolicy extends TransactionPolicy {
 
     public MessageDrivenBeanManagedTxPolicy(TransactionContainer container) {
         this();
-        if (container instanceof org.apache.openejb.Container &&
-            ((org.apache.openejb.Container) container).getContainerType() != org.apache.openejb.Container.MESSAGE_DRIVEN)
-        {
+        if (container.getContainerType() != ContainerType.MESSAGE_DRIVEN) {
             throw new IllegalArgumentException();
         }
 

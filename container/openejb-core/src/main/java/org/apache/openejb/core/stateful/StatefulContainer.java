@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
@@ -178,8 +179,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         CREATE, REMOVE, BUSINESS
     }
 
-    public int getContainerType() {
-        return Container.STATEFUL;
+    public ContainerType getContainerType() {
+        return ContainerType.STATEFUL;
     }
 
     public Object getContainerID() {

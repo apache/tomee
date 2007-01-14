@@ -20,6 +20,7 @@ import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -71,8 +72,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return (DeploymentInfo) deploymentRegistry.get(deploymentID);
     }
 
-    public int getContainerType() {
-        return Container.STATELESS;
+    public ContainerType getContainerType() {
+        return ContainerType.STATELESS;
     }
 
     public Object getContainerID() {

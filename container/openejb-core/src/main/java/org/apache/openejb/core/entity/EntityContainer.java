@@ -34,6 +34,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -74,8 +75,8 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         return deploymentRegistry.get(deploymentID);
     }
 
-    public int getContainerType() {
-        return Container.ENTITY;
+    public ContainerType getContainerType() {
+        return ContainerType.BMP_ENTITY;
     }
 
     public Object getContainerID() {

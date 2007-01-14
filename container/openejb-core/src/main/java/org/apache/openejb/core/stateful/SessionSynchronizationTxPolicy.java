@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 
@@ -31,8 +32,7 @@ public class SessionSynchronizationTxPolicy extends org.apache.openejb.core.tran
         this.policy = policy;
         this.container = policy.getContainer();
         this.policyType = policy.policyType;
-        if (container instanceof org.apache.openejb.Container &&
-                ((org.apache.openejb.Container) container).getContainerType() != org.apache.openejb.Container.STATEFUL ||
+        if (container.getContainerType() != ContainerType.STATEFUL ||
                 policyType == TransactionPolicy.Never ||
                 policyType == TransactionPolicy.NotSupported) {
             throw new IllegalArgumentException();
