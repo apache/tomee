@@ -49,6 +49,16 @@ public class AutoDeployer implements DynamicDeployer {
     public void init() throws OpenEJBException {
     }
 
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            deploy(ejbModule);
+        }
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            deploy(clientModule);
+        }
+        return appModule;
+    }
+
     public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
         ApplicationClient applicationClient = clientModule.getApplicationClient();
         List<ResourceRef> resourceRefs = applicationClient.getResourceRef();

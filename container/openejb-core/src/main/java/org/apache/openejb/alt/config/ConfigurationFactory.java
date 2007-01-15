@@ -128,6 +128,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             try {
 
                 AppModule appModule = deploymentLoader.load(jarFile, deployer);
+                deployer.deploy(appModule);
                 appModules.add(appModule);
 
                 logger.info("Loaded Module: " + appModule.getJarLocation());

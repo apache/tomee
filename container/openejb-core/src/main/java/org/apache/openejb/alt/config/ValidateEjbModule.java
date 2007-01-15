@@ -29,12 +29,23 @@ public class ValidateEjbModule implements DynamicDeployer {
         this.deployer = deployer;
     }
 
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        appModule = deployer.deploy(appModule);
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            deploy(ejbModule);
+        }
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            deploy(clientModule);
+        }
+        return appModule;
+    }
+
     public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-        return deployer.deploy(clientModule);
+//        return deployer.deploy(clientModule);
+        return null;
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-        ejbModule = deployer.deploy(ejbModule);
 
         EjbValidator validator = new EjbValidator();
         EjbSet set = validator.validateJar(ejbModule);

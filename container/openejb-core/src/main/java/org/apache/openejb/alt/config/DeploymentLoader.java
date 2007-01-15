@@ -197,7 +197,7 @@ public class DeploymentLoader {
 
                         EjbModule ejbModule = new EjbModule(appClassLoader, ejbFile.getAbsolutePath(), ejbJar, openejbJar);
 
-                        ejbModule = deployer.deploy(ejbModule);
+//                        ejbModule = deployer.deploy(ejbModule);
 
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
@@ -226,7 +226,7 @@ public class DeploymentLoader {
 
                         ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass);
 
-                        clientModule = deployer.deploy(clientModule);
+//                        clientModule = deployer.deploy(clientModule);
 
                         appModule.getClientModules().add(clientModule);
                     } catch (Exception e) {
@@ -244,10 +244,10 @@ public class DeploymentLoader {
         } else {
 
             EjbJarUtils ejbJarUtils = new EjbJarUtils(jarFile.getAbsolutePath());
-            EjbModule undeployedModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
 
 
-            EjbModule ejbModule = deployer.deploy(undeployedModule);
+//            EjbModule ejbModule = deployer.deploy(undeployedModule);
 
             AppModule appModule = new AppModule(classLoader, null);
             appModule.getEjbModules().add(ejbModule);

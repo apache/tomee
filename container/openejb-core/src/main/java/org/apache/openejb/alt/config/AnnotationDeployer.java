@@ -90,21 +90,38 @@ public class AnnotationDeployer implements DynamicDeployer {
         processAnnotatedBeans = new ProcessAnnotatedBeans();
     }
 
-    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-        clientModule = discoverBeansInClassLoader.deploy(clientModule);
-        clientModule = deployer.deploy(clientModule);
-        clientModule = processAnnotatedBeans.deploy(clientModule);
-        return clientModule;
-    }
+//    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+//        clientModule = discoverBeansInClassLoader.deploy(clientModule);
+//        clientModule = deployer.deploy(clientModule);
+//        clientModule = processAnnotatedBeans.deploy(clientModule);
+//        return clientModule;
+//    }
+//
+//    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+//        ejbModule = discoverBeansInClassLoader.deploy(ejbModule);
+//        ejbModule = deployer.deploy(ejbModule);
+//        ejbModule = processAnnotatedBeans.deploy(ejbModule);
+//        return ejbModule;
+//    }
 
-    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-        ejbModule = discoverBeansInClassLoader.deploy(ejbModule);
-        ejbModule = deployer.deploy(ejbModule);
-        ejbModule = processAnnotatedBeans.deploy(ejbModule);
-        return ejbModule;
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        appModule = discoverBeansInClassLoader.deploy(appModule);
+        appModule = deployer.deploy(appModule);
+        appModule = processAnnotatedBeans.deploy(appModule);
+        return appModule;
     }
 
     public static class DiscoverBeansInClassLoader implements DynamicDeployer {
+
+        public AppModule deploy(AppModule appModule) throws OpenEJBException {
+            for (EjbModule ejbModule : appModule.getEjbModules()) {
+                deploy(ejbModule);
+            }
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                deploy(clientModule);
+            }
+            return appModule;
+        }
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
             return clientModule;
@@ -186,6 +203,17 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
+
+        public AppModule deploy(AppModule appModule) throws OpenEJBException {
+            for (EjbModule ejbModule : appModule.getEjbModules()) {
+                deploy(ejbModule);
+            }
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                deploy(clientModule);
+            }
+            return appModule;
+        }
+
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
             ClassLoader classLoader = clientModule.getClassLoader();
             Class clazz = null;
