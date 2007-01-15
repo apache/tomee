@@ -20,7 +20,7 @@ import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ServiceInfo extends InfoObject implements ServiceTypeConstants {
+public class ServiceInfo extends InfoObject {
 
     public String serviceType;
     public String description;

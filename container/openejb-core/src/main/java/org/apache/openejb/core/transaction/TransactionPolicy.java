@@ -16,40 +16,50 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.rmi.RemoteException;
-
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.Logger;
 
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import java.rmi.RemoteException;
+
 public abstract class TransactionPolicy {
+    public Type getPolicyType() {
+        return policyType;
+    }
 
-    public static final int Mandatory = 0;
-    public static final int Never = 1;
-    public static final int NotSupported = 2;
-    public static final int Required = 3;
-    public static final int RequiresNew = 4;
-    public static final int Supports = 5;
-    public static final int BeanManaged = 6;
+    public static enum Type {
+        Mandatory,
+        Never,
+        NotSupported,
+        Required,
+        RequiresNew,
+        Supports,
+        BeanManaged;
+    }
 
-    public int policyType;
+
+    private final Type policyType;
+    protected final TransactionContainer container;
     private TransactionManager manager;
-    protected TransactionContainer container;
 
     protected final static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
     protected final static Logger txLogger = Logger.getInstance("Transaction", "org.apache.openejb.util.resources");
+
+    public TransactionPolicy(Type policyType, TransactionContainer container) {
+        this.policyType = policyType;
+        this.container = container;
+    }
 
     public TransactionContainer getContainer() {
         return container;
     }
 
     public String policyToString() {
-        return "Internal Error: no such policy";
+        return policyType.toString();
     }
 
     public abstract void handleApplicationException(Throwable appException, TransactionContext context) throws org.apache.openejb.ApplicationException;
@@ -65,7 +75,7 @@ public abstract class TransactionPolicy {
             if (tx != null) {
                 tx.setRollbackOnly();
                 if (txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString() + "setRollbackOnly() on transaction " + tx);
+                    txLogger.info("TX " + policyToString() + ": setRollbackOnly() on transaction " + tx);
                 }
             }
         } catch (javax.transaction.SystemException se) {
@@ -78,7 +88,7 @@ public abstract class TransactionPolicy {
         try {
             Transaction tx = context.getTransactionManager().suspend();
             if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "Suspended transaction " + tx);
+                txLogger.info("TX " + policyToString() + ": Suspended transaction " + tx);
             }
             return tx;
         } catch (javax.transaction.SystemException se) {
@@ -91,11 +101,11 @@ public abstract class TransactionPolicy {
         try {
             if (tx == null) {
                 if (txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString() + "No transaction to resume");
+                    txLogger.info("TX " + policyToString() + ": No transaction to resume");
                 }
             } else {
                 if (txLogger.isInfoEnabled()) {
-                    txLogger.info(policyToString() + "Resuming transaction " + tx);
+                    txLogger.info("TX " + policyToString() + ": Resuming transaction " + tx);
                 }
                 context.getTransactionManager().resume(tx);
             }
@@ -117,7 +127,7 @@ public abstract class TransactionPolicy {
     protected void commitTransaction(TransactionContext context, Transaction tx) throws SystemException {
         try {
             if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "Committing transaction " + tx);
+                txLogger.info("TX " + policyToString() + ": Committing transaction " + tx);
             }
             if (tx.equals(context.getTransactionManager().getTransaction())) {
 
@@ -157,7 +167,7 @@ public abstract class TransactionPolicy {
     protected void rollbackTransaction(TransactionContext context, Transaction tx) throws SystemException {
         try {
             if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "Rolling back transaction " + tx);
+                txLogger.info("TX " + policyToString() + ": Rolling back transaction " + tx);
             }
             if (tx.equals(context.getTransactionManager().getTransaction())) {
 
@@ -212,7 +222,7 @@ public abstract class TransactionPolicy {
         try {
             context.getTransactionManager().begin();
             if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "Started transaction " + context.getTransactionManager().getTransaction());
+                txLogger.info("TX " + policyToString() + ": Started transaction " + context.getTransactionManager().getTransaction());
             }
         } catch (javax.transaction.NotSupportedException nse) {
             logger.error("", nse);

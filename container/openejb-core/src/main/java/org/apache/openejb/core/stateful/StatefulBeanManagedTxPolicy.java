@@ -20,7 +20,6 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ContainerType;
@@ -30,18 +29,10 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 
 public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     public StatefulBeanManagedTxPolicy(TransactionContainer container) {
+        super(Type.BeanManaged, container);
         if (container.getContainerType() != ContainerType.STATEFUL) {
             throw new IllegalArgumentException("Container is not an StatefulContainer");
         }
-        this.container = container;
-    }
-
-    public StatefulBeanManagedTxPolicy() {
-        policyType = BeanManaged;
-    }
-
-    public String policyToString() {
-        return "TX_BeanManaged: ";
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {

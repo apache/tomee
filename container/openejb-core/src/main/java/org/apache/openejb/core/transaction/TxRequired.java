@@ -23,16 +23,7 @@ import org.apache.openejb.ApplicationException;
 public class TxRequired extends TransactionPolicy {
 
     public TxRequired(TransactionContainer container) {
-        this();
-        this.container = container;
-    }
-
-    public TxRequired() {
-        policyType = Required;
-    }
-
-    public String policyToString() {
-        return "TX_Required: ";
+        super(Type.Required, container);
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {

@@ -16,23 +16,14 @@
  */
 package org.apache.openejb.core.transaction;
 
-import javax.transaction.Status;
-
 import org.apache.openejb.ApplicationException;
+
+import javax.transaction.Status;
 
 public class TxRequiresNew extends TransactionPolicy {
 
     public TxRequiresNew(TransactionContainer container) {
-        this();
-        this.container = container;
-    }
-
-    public TxRequiresNew() {
-        policyType = RequiresNew;
-    }
-
-    public String policyToString() {
-        return "TX_RequiresNew: ";
+        super(Type.RequiresNew, container);
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
@@ -65,7 +56,7 @@ public class TxRequiresNew extends TransactionPolicy {
             if (context.clientTx != null) {
                 resumeTransaction(context, context.clientTx);
             } else if (txLogger.isInfoEnabled()) {
-                txLogger.info(policyToString() + "No transaction to resume");
+                txLogger.info("TX " + policyToString() + ": No transaction to resume");
             }
         }
     }

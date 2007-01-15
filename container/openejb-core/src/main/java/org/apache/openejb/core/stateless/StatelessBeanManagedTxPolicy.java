@@ -28,16 +28,10 @@ import java.rmi.RemoteException;
 public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
     public StatelessBeanManagedTxPolicy(TransactionContainer container) {
-        this();
+        super(Type.BeanManaged, container);
         if (container.getContainerType() != ContainerType.STATELESS) {
             throw new IllegalArgumentException();
         }
-
-        this.container = container;
-    }
-
-    public StatelessBeanManagedTxPolicy() {
-        policyType = BeanManaged;
     }
 
     public String policyToString() {

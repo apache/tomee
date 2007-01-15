@@ -21,16 +21,7 @@ import org.apache.openejb.ApplicationException;
 public class TxNever extends TransactionPolicy {
 
     public TxNever(TransactionContainer container) {
-        this();
-        this.container = container;
-    }
-
-    public TxNever() {
-        policyType = Never;
-    }
-
-    public String policyToString() {
-        return "TX_Never: ";
+        super(Type.Never, container);
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {

@@ -30,20 +30,10 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 public class MessageDrivenBeanManagedTxPolicy extends TransactionPolicy {
 
     public MessageDrivenBeanManagedTxPolicy(TransactionContainer container) {
-        this();
+        super(Type.BeanManaged, container);
         if (container.getContainerType() != ContainerType.MESSAGE_DRIVEN) {
             throw new IllegalArgumentException();
         }
-
-        this.container = container;
-    }
-
-    public MessageDrivenBeanManagedTxPolicy() {
-        policyType = BeanManaged;
-    }
-
-    public String policyToString() {
-        return "TX_BeanManaged: ";
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {

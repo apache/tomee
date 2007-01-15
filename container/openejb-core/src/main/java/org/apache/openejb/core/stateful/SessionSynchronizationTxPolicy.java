@@ -29,12 +29,11 @@ public class SessionSynchronizationTxPolicy extends org.apache.openejb.core.tran
     protected TransactionPolicy policy;
 
     public SessionSynchronizationTxPolicy(TransactionPolicy policy) {
+        super(policy.getPolicyType(), policy.getContainer());
         this.policy = policy;
-        this.container = policy.getContainer();
-        this.policyType = policy.policyType;
         if (container.getContainerType() != ContainerType.STATEFUL ||
-                policyType == TransactionPolicy.Never ||
-                policyType == TransactionPolicy.NotSupported) {
+                getPolicyType() == TransactionPolicy.Type.Never ||
+                getPolicyType() == TransactionPolicy.Type.NotSupported) {
             throw new IllegalArgumentException();
         }
 

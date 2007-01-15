@@ -288,24 +288,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             methodTransactionPolicies.put(method, policy);
         }
         if (policy == null) {
-            policy = new NoTransactionPolicy();
+            policy = new TxSupports((TransactionContainer) container);
         }
         return policy ;
     }
 
-    private static class NoTransactionPolicy extends TransactionPolicy {
-        public void afterInvoke(Object bean, TransactionContext context) throws ApplicationException, SystemException {
-        }
-
-        public void beforeInvoke(Object bean, TransactionContext context) throws SystemException, ApplicationException {
-        }
-
-        public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
-        }
-
-        public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-        }
-    }
     public Collection<String> getAuthorizedRoles(Method method) {
         Collection<String> roleSet = methodPermissions.get(method);
         if (roleSet == null) {
@@ -528,9 +515,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
            context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
          */
         if (componentType.isMessageDriven() && !isBeanManagedTransaction && container instanceof TransactionContainer) {
-            if (policy.policyType != TransactionPolicy.NotSupported && policy.policyType != TransactionPolicy.Required) {
+            if (policy.getPolicyType() != TransactionPolicy.Type.NotSupported && policy.getPolicyType() != TransactionPolicy.Type.Required) {
 
-                if (method.equals(this.ejbTimeout) && policy.policyType == TransactionPolicy.RequiresNew) {
+                if (method.equals(this.ejbTimeout) && policy.getPolicyType() == TransactionPolicy.Type.RequiresNew) {
                     // do nothing. This is allowed as the timer callback method for a message driven bean
                     // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
                 } else {

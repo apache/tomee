@@ -27,9 +27,8 @@ public class StatefulContainerManagedTxPolicy extends org.apache.openejb.core.tr
     protected TransactionPolicy policy;
 
     public StatefulContainerManagedTxPolicy(TransactionPolicy policy) {
+        super(policy.getPolicyType(), policy.getContainer());
         this.policy = policy;
-        this.container = policy.getContainer();
-        this.policyType = policy.policyType;
         if (container.getContainerType() != ContainerType.STATEFUL) {
             throw new IllegalArgumentException();
         }

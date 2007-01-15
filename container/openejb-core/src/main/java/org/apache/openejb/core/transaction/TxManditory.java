@@ -21,16 +21,7 @@ import org.apache.openejb.ApplicationException;
 public class TxManditory extends TransactionPolicy {
 
     public TxManditory(TransactionContainer container) {
-        this();
-        this.container = container;
-    }
-
-    public TxManditory() {
-        policyType = Mandatory;
-    }
-
-    public String policyToString() {
-        return "TX_Mandatory: ";
+        super(Type.Mandatory, container);
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {

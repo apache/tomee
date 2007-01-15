@@ -21,16 +21,7 @@ import org.apache.openejb.ApplicationException;
 public class TxSupports extends TransactionPolicy {
 
     public TxSupports(TransactionContainer container) {
-        this();
-        this.container = container;
-    }
-
-    public TxSupports() {
-        policyType = Supports;
-    }
-
-    public String policyToString() {
-        return "TX_Supports: ";
+        super(Type.Supports, container);
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
