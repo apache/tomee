@@ -25,10 +25,10 @@ import java.util.ArrayList;
  * @version $Rev$ $Date$
  */
 public class ClientModule implements DeploymentModule {
-    private final ApplicationClient applicationClient;
-    private final String jarLocation;
-    private final ClassLoader classLoader;
-    private final String mainClass;
+    private ApplicationClient applicationClient;
+    private String jarLocation;
+    private ClassLoader classLoader;
+    private String mainClass;
 
     public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
         this.applicationClient = applicationClient;
@@ -41,16 +41,31 @@ public class ClientModule implements DeploymentModule {
         return applicationClient;
     }
 
+    public void setApplicationClient(ApplicationClient applicationClient) {
+        this.applicationClient = applicationClient;
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     public String getJarLocation() {
         return jarLocation;
     }
 
+    public void setJarLocation(String jarLocation) {
+        this.jarLocation = jarLocation;
+    }
+
     public String getMainClass() {
         return mainClass;
     }
 
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
+    }
 }

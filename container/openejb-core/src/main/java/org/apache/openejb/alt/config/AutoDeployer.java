@@ -34,9 +34,9 @@ public class AutoDeployer implements DynamicDeployer {
 
     private Container[] containers;
     private Connector[] resources;
-    private ClassLoader classLoader;
-    private String jarLocation;
-    private String moduleId;
+//    private ClassLoader classLoader;
+//    private String jarLocation;
+//    private String moduleId;
 
     public AutoDeployer(Openejb config) {
         /* Load container list */
@@ -60,29 +60,27 @@ public class AutoDeployer implements DynamicDeployer {
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
         if (ejbModule.getOpenejbJar() != null){
-            return new EjbModule(ejbModule.getClassLoader(), ejbModule.getJarURI(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar());
+            return ejbModule;
         }
 
-        this.jarLocation = ejbModule.getJarURI();
-        this.classLoader = ejbModule.getClassLoader();
-        this.moduleId = ejbModule.getModuleId();
         OpenejbJar openejbJar = new OpenejbJar();
+        ejbModule.setOpenejbJar(openejbJar);
 
         Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
-        ;
 
         for (int i = 0; i < beans.length; i++) {
-            openejbJar.getEjbDeployment().add(deployBean(beans[i], this.jarLocation));
+            openejbJar.getEjbDeployment().add(deployBean(ejbModule, beans[i]));
         }
-        return new EjbModule(ejbModule.getClassLoader(), this.jarLocation, ejbModule.getEjbJar(), openejbJar);
+//        return new EjbModule(ejbModule.getClassLoader(), ejbModule.getJarURI(), ejbModule.getEjbJar(), openejbJar);
+        return ejbModule;
     }
 
-    private EjbDeployment deployBean(Bean bean, String jarLocation) throws OpenEJBException {
+    private EjbDeployment deployBean(EjbModule ejbModule, Bean bean) throws OpenEJBException {
         EjbDeployment deployment = new EjbDeployment();
 
         deployment.setEjbName(bean.getEjbName());
 
-        deployment.setDeploymentId(autoAssignDeploymentId(bean));
+        deployment.setDeploymentId(autoAssignDeploymentId(ejbModule.getModuleId(), bean));
 
         deployment.setContainerId(autoAssignContainerId(bean));
 
@@ -98,13 +96,13 @@ public class AutoDeployer implements DynamicDeployer {
 
         if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
             if (bean.getHome() != null) {
-                Class tempBean = loadClass(bean.getHome());
+                Class tempBean = loadClass(ejbModule, bean.getHome());
                 if (hasFinderMethods(tempBean)) {
                     throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                 }
             }
             if (bean.getLocalHome() != null) {
-                Class tempBean = loadClass(bean.getLocalHome());
+                Class tempBean = loadClass(ejbModule, bean.getLocalHome());
                 if (hasFinderMethods(tempBean)) {
                     throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                 }
@@ -114,11 +112,11 @@ public class AutoDeployer implements DynamicDeployer {
         return deployment;
     }
 
-    private Class loadClass(String className) throws OpenEJBException {
+    private Class loadClass(EjbModule ejbModule, String className) throws OpenEJBException {
         try {
-            return classLoader.loadClass(className);
+            return ejbModule.getClassLoader().loadClass(className);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, this.jarLocation));
+            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, ejbModule.getJarURI()));
         }
     }
 
@@ -134,7 +132,7 @@ public class AutoDeployer implements DynamicDeployer {
         return false;
     }
 
-    private String autoAssignDeploymentId(Bean bean) throws OpenEJBException {
+    private String autoAssignDeploymentId(String moduleId, Bean bean) throws OpenEJBException {
         return moduleId + "/" + bean.getEjbName();
     }
 

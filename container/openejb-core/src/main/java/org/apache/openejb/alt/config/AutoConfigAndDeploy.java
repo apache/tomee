@@ -43,8 +43,8 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Openejb config;
-    private ClassLoader classLoader;
-    private String jarLocation;
+//    private ClassLoader classLoader;
+//    private String jarLocation;
 
     public AutoConfigAndDeploy(Openejb config) {
         this.config = config;
@@ -58,14 +58,15 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-        this.jarLocation = ejbModule.getJarURI();
-        this.classLoader = ejbModule.getClassLoader();
+        String jarLocation = ejbModule.getJarURI();
+        ClassLoader classLoader = ejbModule.getClassLoader();
 
         OpenejbJar openejbJar;
         if (ejbModule.getOpenejbJar() != null) {
             openejbJar = ejbModule.getOpenejbJar();
         } else {
             openejbJar = new OpenejbJar();
+            ejbModule.setOpenejbJar(openejbJar);
         }
 
         Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
@@ -136,7 +137,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
                 List<Query> queries = ejbDeployment.getQuery();
                 if (bean.getHome() != null) {
-                    Class interfce = loadClass(bean.getHome());
+                    Class interfce = loadClass(bean.getHome(), classLoader, jarLocation);
                     List finderMethods = getFinderMethods(interfce);
                     for (Query query : queries) {
                         finderMethods.remove(new Key(query));
@@ -146,7 +147,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     }
                 }
                 if (bean.getLocalHome() != null) {
-                    Class interfce = loadClass(bean.getLocalHome());
+                    Class interfce = loadClass(bean.getLocalHome(), classLoader, jarLocation);
                     List finderMethods = getFinderMethods(interfce);
                     for (Query query : queries) {
                         finderMethods.remove(new Key(query));
@@ -158,8 +159,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             }
         }
 
-
-        return new EjbModule(classLoader, this.jarLocation, ejbModule.getEjbJar(), openejbJar);
+        return ejbModule;
     }
 
     private static class Key {
@@ -213,11 +213,11 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         return containerMap;
     }
 
-    private Class loadClass(String className) throws OpenEJBException {
+    private Class loadClass(String className, ClassLoader classLoader, String jarLocation) throws OpenEJBException {
         try {
             return classLoader.loadClass(className);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, this.jarLocation));
+            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, jarLocation));
         }
     }
 

@@ -29,11 +29,11 @@ import java.io.File;
  */
 public class EjbModule implements DeploymentModule {
 
-    private final ClassLoader classLoader;
-    private final String jarURI;
-    private final EjbJar ejbJar;
-    private final OpenejbJar openejbJar;
-    private final String moduleId;
+    private ClassLoader classLoader;
+    private String jarURI;
+    private EjbJar ejbJar;
+    private OpenejbJar openejbJar;
+    private String moduleId;
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) throw new NullPointerException("classLoader is null");
@@ -45,27 +45,47 @@ public class EjbModule implements DeploymentModule {
         moduleId = file.getName().replaceFirst(".jar$","");
     }
 
-    public String getModuleId() {
-        return moduleId;
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     public EjbJar getEjbJar() {
         return ejbJar;
     }
 
-    public OpenejbJar getOpenejbJar() {
-        return openejbJar;
+    public void setEjbJar(EjbJar ejbJar) {
+        this.ejbJar = ejbJar;
     }
 
     public String getJarURI() {
         return jarURI;
     }
 
+    public void setJarURI(String jarURI) {
+        this.jarURI = jarURI;
+    }
+
     public String getJarLocation() {
         return getJarURI();
     }
+    
+    public String getModuleId() {
+        return moduleId;
+    }
 
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public OpenejbJar getOpenejbJar() {
+        return openejbJar;
+    }
+
+    public void setOpenejbJar(OpenejbJar openejbJar) {
+        this.openejbJar = openejbJar;
     }
 }
