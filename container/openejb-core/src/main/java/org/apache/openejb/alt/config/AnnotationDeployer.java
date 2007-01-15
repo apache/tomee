@@ -90,20 +90,6 @@ public class AnnotationDeployer implements DynamicDeployer {
         processAnnotatedBeans = new ProcessAnnotatedBeans();
     }
 
-//    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-//        clientModule = discoverBeansInClassLoader.deploy(clientModule);
-//        clientModule = deployer.deploy(clientModule);
-//        clientModule = processAnnotatedBeans.deploy(clientModule);
-//        return clientModule;
-//    }
-//
-//    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-//        ejbModule = discoverBeansInClassLoader.deploy(ejbModule);
-//        ejbModule = deployer.deploy(ejbModule);
-//        ejbModule = processAnnotatedBeans.deploy(ejbModule);
-//        return ejbModule;
-//    }
-
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         appModule = discoverBeansInClassLoader.deploy(appModule);
         appModule = deployer.deploy(appModule);

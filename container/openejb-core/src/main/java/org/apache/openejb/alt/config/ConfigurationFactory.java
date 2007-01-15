@@ -114,7 +114,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         DynamicDeployer deployer = getDeployer(openejb);
 
-        DeploymentLoader deploymentLoader = new DeploymentLoader(props);
+        DeploymentLoader deploymentLoader = new DeploymentLoader();
 
         List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
 
@@ -127,8 +127,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
             try {
 
-                AppModule appModule = deploymentLoader.load(jarFile, deployer);
+                AppModule appModule = deploymentLoader.load(jarFile);
+
                 deployer.deploy(appModule);
+
                 appModules.add(appModule);
 
                 logger.info("Loaded Module: " + appModule.getJarLocation());

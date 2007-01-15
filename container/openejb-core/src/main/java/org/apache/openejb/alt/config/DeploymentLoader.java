@@ -53,13 +53,13 @@ public class DeploymentLoader {
 
     public static Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
 
-    public DeploymentLoader(Properties props) {
+    public DeploymentLoader() {
         // For some reason intellij won't log to the one we configured statically
         logger = EjbJarUtils.logger;
     }
 
 
-    public AppModule load(File jarFile, DynamicDeployer deployer) throws OpenEJBException {
+    public AppModule load(File jarFile) throws OpenEJBException {
         ClassLoader classLoader = getClassLoader(jarFile);
 
         URL baseUrl = getFileUrl(jarFile);
@@ -197,8 +197,6 @@ public class DeploymentLoader {
 
                         EjbModule ejbModule = new EjbModule(appClassLoader, ejbFile.getAbsolutePath(), ejbJar, openejbJar);
 
-//                        ejbModule = deployer.deploy(ejbModule);
-
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
                         logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
@@ -225,8 +223,6 @@ public class DeploymentLoader {
                         String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
 
                         ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass);
-
-//                        clientModule = deployer.deploy(clientModule);
 
                         appModule.getClientModules().add(clientModule);
                     } catch (Exception e) {

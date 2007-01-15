@@ -43,8 +43,6 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Openejb config;
-//    private ClassLoader classLoader;
-//    private String jarLocation;
 
     public AutoConfigAndDeploy(Openejb config) {
         this.config = config;
