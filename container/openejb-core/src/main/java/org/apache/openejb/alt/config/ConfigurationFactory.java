@@ -79,8 +79,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     private Properties props = new Properties();
     public EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
+    private Openejb openejb;
+    private DynamicDeployer deployer;
+    private final DeploymentLoader deploymentLoader;
 
     public ConfigurationFactory() {
+        deploymentLoader = new DeploymentLoader();
     }
 
     public void init(Properties props) throws OpenEJBException {
@@ -105,44 +109,26 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
-        Openejb openejb;
         if (configLocation != null) {
             openejb = ConfigUtils.readConfig(configLocation);
         } else {
             openejb = new Openejb();
         }
 
-        DynamicDeployer deployer = getDeployer(openejb);
-
-        DeploymentLoader deploymentLoader = new DeploymentLoader();
+        deployer = getDeployer(openejb);
 
         List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
 
-        List<DeploymentModule> appModules = new ArrayList();
 
+        List<AppInfo> appInfos = new ArrayList<AppInfo>();
         for (String pathname : jarList) {
 
             File jarFile = new File(pathname);
-            logger.debug("Beginning load: " + jarFile.getAbsolutePath());
+            
+            AppInfo appInfo = configureApplication(jarFile);
 
-            try {
-
-                AppModule appModule = deploymentLoader.load(jarFile);
-
-                deployer.deploy(appModule);
-
-                appModules.add(appModule);
-
-                logger.info("Loaded Module: " + appModule.getJarLocation());
-
-            } catch (OpenEJBException e) {
-                e.printStackTrace();
-                logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
-            }
-
+            appInfos.add(appInfo);
         }
-
-        DeploymentModule[] jars = appModules.toArray(new DeploymentModule[]{});
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
@@ -158,17 +144,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         sys.containerSystem.containers.addAll(containers);
 
-        List<AppInfo> appInfos = new ArrayList<AppInfo>();
-
-        for (DeploymentModule module : jars) {
-            if (!(module instanceof AppModule)) {
-                continue;
-            }
-            AppModule appModule = (AppModule) module;
-
-            AppInfo appInfo = configureAppModule(appModule);
-            appInfos.add(appInfo);
-        }
 
         sys.containerSystem.applications.addAll(appInfos);
 
@@ -182,6 +157,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         SystemInstance.get().setComponent(OpenEjbConfiguration.class, sys);
         return sys;
     }
+
 
     private DynamicDeployer getDeployer(Openejb openejb) {
         DynamicDeployer deployer;
@@ -204,7 +180,28 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         return deployer;
     }
 
-    public AppInfo configureAppModule(AppModule appModule) throws OpenEJBException {
+    public AppInfo configureApplication(File jarFile) {
+        logger.debug("Beginning load: " + jarFile.getAbsolutePath());
+
+        AppInfo appInfo = null;
+        try {
+
+            AppModule appModule = deploymentLoader.load(jarFile);
+
+            appInfo = configureApplication(appModule);
+
+            logger.info("Loaded Module: " + appModule.getJarLocation());
+
+        } catch (OpenEJBException e) {
+            e.printStackTrace();
+            logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+        }
+        return appInfo;
+    }
+
+    public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
+        deployer.deploy(appModule);
+
         AppInfo appInfo = new AppInfo();
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             try {
@@ -396,14 +393,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         return Arrays.asList(constructor.split("[ ,]+"));
     }
 
-    private void assignBeansToContainers(List<EnterpriseBeanInfo> beans, Map ejbds)
-            throws OpenEJBException {
+    private void assignBeansToContainers(List<EnterpriseBeanInfo> beans, Map ejbds) throws OpenEJBException {
+
+        List<String> containerIds = new ArrayList();
+        Container[] containers = openejb.getContainer();
+        for (Container container : containers) {
+            containerIds.add(container.getId());
+        }
 
         for (EnterpriseBeanInfo bean : beans) {
             EjbDeployment d = (EjbDeployment) ejbds.get(bean.ejbName);
 
-            ContainerInfo cInfo = containerTable.get(d.getContainerId());
-            if (cInfo == null) {
+            if (!containerIds.contains(d.getContainerId())) {
 
                 String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
 
