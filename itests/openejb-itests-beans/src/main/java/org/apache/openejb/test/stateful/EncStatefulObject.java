@@ -37,7 +37,7 @@ public interface EncStatefulObject extends javax.ejb.EJBObject{
     public void lookupExtendedPersistenceContext() throws TestFailureException, RemoteException;
     public void lookupPropagatedPersistenceContext() throws TestFailureException, RemoteException;
     public void testPropgation() throws TestFailureException, RemoteException;
-
+    public void lookupSessionContext() throws TestFailureException,RemoteException;
     public void lookupStringEntry()  throws TestFailureException, RemoteException;
     public void lookupDoubleEntry()  throws TestFailureException, RemoteException;
     public void lookupLongEntry()    throws TestFailureException, RemoteException;

@@ -232,4 +232,14 @@ public class StatefulJndiEncTests extends StatefulTestClient{
         }
     }
 
+    public void test18_lookupSessionContext() {
+        try{
+            ejbObject.lookupSessionContext();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+    
 }

@@ -24,6 +24,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
 
+import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
@@ -431,6 +432,31 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
         }
     }
 
+    public void lookupSessionContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+
+                // lookup in enc
+                SessionContext sctx = (SessionContext)ctx.lookup("java:comp/env/sessioncontext");
+                Assert.assertNotNull("The SessionContext got from java:comp/env/sessioncontext is null", sctx );
+
+                // lookup using global name
+                EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
+                Assert.assertNotNull("The SessionContext got from java:comp/EJBContext is null ", ejbCtx );                
+
+                // verify context was set via legacy set method
+                Assert.assertNotNull("The SessionContext is null from setter method", ejbContext );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+        
+    }
+    
     //
     // Remote interface methods
     //=============================

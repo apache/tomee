@@ -22,6 +22,7 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
+import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
@@ -95,6 +96,8 @@ public class ContextLookupStatefulPojoBean {
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
+                InitialContext ctx = new InitialContext();
+                ejbContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
                 String expected = new String("1");
                 String actual = (String) ejbContext.lookup("stateful/references/String");
 
@@ -404,12 +407,28 @@ public class ContextLookupStatefulPojoBean {
         }
     }
 
+    public void lookupSessionContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);                
 
-    /**
-     * Set the associated session context. The container calls this method
-     * after the instance creation.
-     */
-    public void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
+                // lookup in enc
+                SessionContext sctx = (SessionContext)ctx.lookup("java:comp/env/sessioncontext");
+                Assert.assertNotNull("The SessionContext got from java:comp/env/sessioncontext is null", sctx );
+
+                // lookup using global name
+                EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
+                Assert.assertNotNull("The SessionContext got from java:comp/EJBContext is null ", ejbCtx );
+
+                // verify context was set via legacy set method
+                Assert.assertNotNull("The SessionContext is null from setter method", ejbContext );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+        
     }
 }

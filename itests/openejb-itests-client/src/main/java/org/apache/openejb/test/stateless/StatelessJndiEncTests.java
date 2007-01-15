@@ -198,8 +198,17 @@ public class StatelessJndiEncTests extends StatelessTestClient{
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
-    
-    public void test15_lookupPersistenceContext() {
+
+    public void test15_lookupSessionContext() {
+        try{
+            ejbObject.lookupSessionContext();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+    public void test16_lookupPersistenceContext() {
         try{
             ejbObject.lookupPersistenceContext();
         } catch (TestFailureException e){

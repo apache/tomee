@@ -166,7 +166,7 @@ public class StatelessContainerTest extends TestCase {
     }
 
     public static enum Lifecycle {
-        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
+        CONSTRUCTOR, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
     }
 
     public static class WidgetBean implements Widget, RemoteWidget {
@@ -178,7 +178,7 @@ public class StatelessContainerTest extends TestCase {
         }
 
         public void setSessionContext(SessionContext sessionContext) {
-            lifecycle.push(Lifecycle.INJECTION);
+            //lifecycle.push(Lifecycle.INJECTION);
         }
 
         public Stack<Lifecycle> getLifecycle() {

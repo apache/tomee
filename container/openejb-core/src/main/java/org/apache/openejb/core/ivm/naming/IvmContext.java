@@ -37,6 +37,7 @@ import java.util.Vector;
 import javax.naming.Binding;
 import javax.naming.CompositeName;
 import javax.naming.Context;
+import javax.naming.LinkRef;
 import javax.naming.Name;
 import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
@@ -141,6 +142,8 @@ public class IvmContext implements Context, Serializable {
              * A Reference type can also carry out dynamic resolution of references if necessary.
              */
             obj = ((Reference) obj).getObject();
+        } else if (obj instanceof LinkRef) {
+            obj = lookup(((LinkRef)obj).getLinkName());
         }
         return obj;
     }

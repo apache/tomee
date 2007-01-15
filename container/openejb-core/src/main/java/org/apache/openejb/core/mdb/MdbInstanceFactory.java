@@ -26,6 +26,9 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.ejb.MessageDrivenBean;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.resource.spi.UnavailableException;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
@@ -161,11 +164,20 @@ public class MdbInstanceFactory {
         ThreadContext callContext = ThreadContext.getThreadContext();
         Operation originalOperation = callContext.getCurrentOperation();
         try {
-
-            // construct the bean instance
-            callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
-            MdbContext mdbContext = new MdbContext(transactionManager, securityService);
-            objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
+            Context ctx = deploymentInfo.getJndiEnc();            
+            // construct the bean instance            
+            MdbContext mdbContext = null;
+            try {
+                mdbContext = (MdbContext) ctx.lookup("java:comp/EJBContext");
+            } catch (NamingException e) {               
+                mdbContext = new MdbContext(transactionManager, securityService);
+                ctx.bind("java:comp/EJBContext",mdbContext);
+            }
+            // only in this case should the callback be used
+            if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
+                callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
+            }
             Object bean = objectRecipe.create();
 
             // call the post construct method

@@ -30,7 +30,9 @@ import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 
+import javax.ejb.EJBContext;
 import javax.naming.Context;
+import javax.naming.LinkRef;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
@@ -56,6 +58,7 @@ public class JndiEncBuilder {
     private final EjbLocalReferenceInfo[] ejbLocalReferences;
     private final EnvEntryInfo[] envEntries;
     private final ResourceReferenceInfo[] resourceRefs;
+    private final ResourceEnvReferenceInfo[] resourceEnvRefs;
     private final PersistenceUnitInfo[] persistenceUnitRefs;
     private final PersistenceContextInfo[] persistenceContextRefs;
     private final Map<String, EntityManagerFactory> entityManagerFactories;
@@ -108,6 +111,12 @@ public class JndiEncBuilder {
             resourceRefs = new ResourceReferenceInfo[]{};
         }
 
+        if ((jndiEnc != null && jndiEnc.resourceEnvRefs != null)) {
+            resourceEnvRefs = jndiEnc.resourceEnvRefs.toArray(new ResourceEnvReferenceInfo[0]);
+        } else {
+            resourceEnvRefs = new ResourceEnvReferenceInfo[]{};
+        }
+        
         if ((jndiEnc != null && jndiEnc.persistenceUnitRefs != null)) {
         	persistenceUnitRefs = jndiEnc.persistenceUnitRefs.toArray(new PersistenceUnitInfo[0]);
         } else {
@@ -250,7 +259,24 @@ public class JndiEncBuilder {
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
-        
+                
+        for (int i = 0; i < resourceEnvRefs.length; i++) {
+            ResourceEnvReferenceInfo referenceInfo = resourceEnvRefs[i];
+            Reference reference = null;
+            LinkRef linkRef = null;
+            try {
+                if (EJBContext.class.isAssignableFrom(Class.forName(referenceInfo.resourceEnvRefType))) {
+                    String jndiName = "java:comp/EJBContext";
+                    linkRef = new LinkRef(jndiName);               
+                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    continue;
+                }                 
+            } catch (ClassNotFoundException e) {                
+                throw new OpenEJBException(e);
+            }     
+        //TODO code for handling other resource-env-refs need to be added here. 
+        }
+                                
         for (int i = 0; i < persistenceUnitRefs.length; i++){
         	PersistenceUnitInfo puRefInfo = persistenceUnitRefs[i];
             EntityManagerFactory factory = findEntityManagerFactory(puRefInfo.persistenceUnitName);

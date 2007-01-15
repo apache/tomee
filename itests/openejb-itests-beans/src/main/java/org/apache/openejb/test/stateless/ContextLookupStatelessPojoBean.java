@@ -22,10 +22,12 @@ import org.apache.openejb.test.stateful.BasicStatefulObject;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
+import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.ejb.EJBException;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 
@@ -36,12 +38,12 @@ import java.rmi.RemoteException;
 
 public class ContextLookupStatelessPojoBean {
 
-    private SessionContext ejbContext;
+    
 
     public void lookupEntityBean() throws TestFailureException {
         try {
             try {
-                BasicBmpHome home = (BasicBmpHome) ejbContext.lookup("stateless/beanReferences/bmp_entity");
+                BasicBmpHome home = (BasicBmpHome) getSessionContext().lookup("stateless/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicBmpObject object = home.createObject("Enc Bean");
@@ -57,7 +59,7 @@ public class ContextLookupStatelessPojoBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             try {
-                BasicStatefulHome home = (BasicStatefulHome) ejbContext.lookup("stateless/beanReferences/stateful");
+                BasicStatefulHome home = (BasicStatefulHome) getSessionContext().lookup("stateless/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicStatefulObject object = home.createObject("Enc Bean");
@@ -73,7 +75,7 @@ public class ContextLookupStatelessPojoBean {
     public void lookupStatelessBean() throws TestFailureException {
         try {
             try {
-                BasicStatelessHome home = (BasicStatelessHome) ejbContext.lookup("stateless/beanReferences/stateless");
+                BasicStatelessHome home = (BasicStatelessHome) getSessionContext().lookup("stateless/beanReferences/stateless");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicStatelessObject object = home.createObject();
@@ -90,7 +92,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 String expected = new String("1");
-                String actual = (String) ejbContext.lookup("stateless/references/String");
+                String actual = (String) getSessionContext().lookup("stateless/references/String");
 
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -107,7 +109,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Double expected = new Double(1.0D);
-                Double actual = (Double) ejbContext.lookup("stateless/references/Double");
+                Double actual = (Double) getSessionContext().lookup("stateless/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -124,7 +126,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Long expected = new Long(1L);
-                Long actual = (Long) ejbContext.lookup("stateless/references/Long");
+                Long actual = (Long) getSessionContext().lookup("stateless/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -141,7 +143,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Float expected = new Float(1.0F);
-                Float actual = (Float) ejbContext.lookup("stateless/references/Float");
+                Float actual = (Float) getSessionContext().lookup("stateless/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -158,7 +160,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Integer expected = new Integer(1);
-                Integer actual = (Integer) ejbContext.lookup("stateless/references/Integer");
+                Integer actual = (Integer) getSessionContext().lookup("stateless/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -175,7 +177,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Short expected = new Short((short) 1);
-                Short actual = (Short) ejbContext.lookup("stateless/references/Short");
+                Short actual = (Short) getSessionContext().lookup("stateless/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -192,7 +194,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Boolean expected = new Boolean(true);
-                Boolean actual = (Boolean) ejbContext.lookup("stateless/references/Boolean");
+                Boolean actual = (Boolean) getSessionContext().lookup("stateless/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -209,7 +211,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Byte expected = new Byte((byte) 1);
-                Byte actual = (Byte) ejbContext.lookup("stateless/references/Byte");
+                Byte actual = (Byte) getSessionContext().lookup("stateless/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -226,7 +228,7 @@ public class ContextLookupStatelessPojoBean {
         try {
             try {
                 Character expected = new Character('D');
-                Character actual = (Character) ejbContext.lookup("stateless/references/Character");
+                Character actual = (Character) getSessionContext().lookup("stateless/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -242,7 +244,7 @@ public class ContextLookupStatelessPojoBean {
     public void lookupResource() throws TestFailureException {
         try {
             try {
-                Object obj = ejbContext.lookup("datasource");
+                Object obj = getSessionContext().lookup("datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e) {
@@ -268,6 +270,28 @@ public class ContextLookupStatelessPojoBean {
             throw new TestFailureException(afe);
         }
     }
+    
+    public void lookupSessionContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);                
+
+                // lookup in enc
+                SessionContext sctx = (SessionContext)ctx.lookup("java:comp/env/sessioncontext");
+                Assert.assertNotNull("The SessionContext got from java:comp/env/sessioncontext is null", sctx );
+
+                // lookup using global name
+                EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
+                Assert.assertNotNull("The SessionContext got from java:comp/EJBContext is null ", ejbCtx );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+        
+    }    
 
     public void lookupPersistenceContext() throws TestFailureException{
         try{
@@ -291,7 +315,14 @@ public class ContextLookupStatelessPojoBean {
      * Set the associated session context. The container calls this method
      * after the instance creation.
      */
-    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
-        ejbContext = ctx;
+    public SessionContext getSessionContext() throws EJBException, RemoteException {
+        SessionContext ejbContext = null;
+        try {
+            ejbContext = (SessionContext) new InitialContext().lookup("java:comp/EJBContext");
+        } catch (NamingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return ejbContext;
     }
 }

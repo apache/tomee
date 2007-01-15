@@ -34,11 +34,11 @@ import javax.ejb.SessionBean;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.persistence.EntityManagerFactory;
+import javax.naming.Context;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
@@ -54,7 +54,6 @@ import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessBeanManagedTxPolicy;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TxManditory;
 import org.apache.openejb.core.transaction.TxNever;
@@ -406,7 +405,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         isBeanManagedTransaction = value;
     }
 
-    public javax.naming.Context getJndiEnc() {
+    public Context getJndiEnc() {
         return context.getJndiContext();
     }
 

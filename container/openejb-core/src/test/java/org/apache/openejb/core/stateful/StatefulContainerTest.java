@@ -207,7 +207,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public static enum Lifecycle {
-        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2, PRE_DESTROY
+        CONSTRUCTOR, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2, PRE_DESTROY
     }
 
     public static class WidgetBean implements Widget, RemoteWidget, Serializable {
@@ -221,7 +221,7 @@ public class StatefulContainerTest extends TestCase {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
         public void setSessionContext(SessionContext sessionContext){
-            lifecycle.push(Lifecycle.INJECTION);
+        //    lifecycle.push(Lifecycle.INJECTION);
         }
 
         public Stack<Lifecycle> getLifecycle() {

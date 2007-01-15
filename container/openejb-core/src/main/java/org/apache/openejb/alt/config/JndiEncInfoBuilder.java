@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.EjbReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
@@ -33,6 +34,7 @@ import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
@@ -103,6 +105,9 @@ public class JndiEncInfoBuilder {
 
         /* Build Resource References *****************/
         jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
+        
+        /* Build Resource Environment References *****************/
+        jndi.resourceEnvRefs.addAll(buildResourceEnvRefInfos(jndiConsumer));
 
         buildAmbiguousEjbRefInfos(jndi, jndiConsumer, ejbName);
 
@@ -271,6 +276,19 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
+    private List<ResourceEnvReferenceInfo> buildResourceEnvRefInfos(JndiConsumer item) {
+        List<ResourceEnvReferenceInfo> infos = new ArrayList<ResourceEnvReferenceInfo>();
+        for (ResourceEnvRef res : item.getResourceEnvRef()) {
+            ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
+            info.resourceEnvRefName = res.getResourceEnvRefName();
+            info.resourceEnvRefType = res.getResourceEnvRefType();
+            info.mappedName = res.getMappedName();           
+            info.targets.addAll(buildInjectionInfos(res));
+            infos.add(info);
+        }
+        return infos;
+    }
+    
     private List<EnvEntryInfo> buildEnvEntryInfos(JndiConsumer item) {
         List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
         for (EnvEntry env : item.getEnvEntry()) {

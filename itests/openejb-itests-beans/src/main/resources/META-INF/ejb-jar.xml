@@ -1054,6 +1054,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>      
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1169,6 +1173,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>            
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1284,6 +1292,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>            
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1654,6 +1666,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1775,6 +1791,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>            
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1896,6 +1916,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>sessioncontext</resource-env-ref-name>
+        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+      </resource-env-ref>            
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.

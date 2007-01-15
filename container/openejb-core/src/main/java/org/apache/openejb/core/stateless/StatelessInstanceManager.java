@@ -97,7 +97,18 @@ public class StatelessInstanceManager {
             Operation originalOperation = callContext.getCurrentOperation();
 
             try {
-                Context ctx = deploymentInfo.getJndiEnc();
+                Context ctx = deploymentInfo.getJndiEnc();                                
+                SessionContext sessionContext = null;
+                try {
+                    sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
+                } catch (NamingException e1) {
+                    sessionContext = createSessionContext();  
+                    ctx.bind("java:comp/EJBContext", sessionContext);
+                }                
+                if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
+                    callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                    objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
+                }
                 for (Injection injection : deploymentInfo.getInjections()) {
                     try {
                         String jndiName = injection.getJndiName();
@@ -107,9 +118,6 @@ public class StatelessInstanceManager {
                         logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
                     }
                 }
-
-                callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
-                objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
                 bean = objectRecipe.create(beanClass.getClassLoader());
                 callContext.setCurrentOperation(Operation.OP_CREATE);
 

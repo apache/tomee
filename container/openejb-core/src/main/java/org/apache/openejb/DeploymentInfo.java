@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.List;
+import javax.naming.Context;
 
 public interface DeploymentInfo {
 
@@ -68,6 +69,8 @@ public interface DeploymentInfo {
     public Class getBusinessRemoteInterface();
 
     public String getPrimaryKeyField();
+
+    public Context getJndiEnc();
 
     public boolean isReentrant();
 

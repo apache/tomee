@@ -16,17 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ResourceEnvReferenceLocationInfo extends InfoObject {
 
+    public boolean remote;
+    public String remoteRefName;
+    public String jndiContextId;
 
-public class JndiEncInfo extends InfoObject {
-
-    public final List<EnvEntryInfo> envEntries = new ArrayList<EnvEntryInfo>();
-    public final List<EjbReferenceInfo> ejbReferences = new ArrayList<EjbReferenceInfo>();
-    public final List<EjbLocalReferenceInfo> ejbLocalReferences = new ArrayList<EjbLocalReferenceInfo>();
-    public final List<ResourceReferenceInfo> resourceRefs = new ArrayList<ResourceReferenceInfo>();
-    public final List<PersistenceUnitInfo> persistenceUnitRefs = new ArrayList<PersistenceUnitInfo>();
-    public final List<PersistenceContextInfo> persistenceContextRefs = new ArrayList<PersistenceContextInfo>();
-    public final List <ResourceEnvReferenceInfo> resourceEnvRefs = new ArrayList<ResourceEnvReferenceInfo>();
 }

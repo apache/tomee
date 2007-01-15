@@ -113,8 +113,7 @@ public class StatefulInstanceManager {
         Object bean = null;
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        Operation currentOperation = threadContext.getCurrentOperation();
-        threadContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+        Operation currentOperation = threadContext.getCurrentOperation();       
         try {
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
             objectRecipe.allow(Option.FIELD_INJECTION);
@@ -124,6 +123,17 @@ public class StatefulInstanceManager {
             ThreadContext callContext = ThreadContext.getThreadContext();
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Context ctx = deploymentInfo.getJndiEnc();
+            SessionContext sessionContext = null;
+            try {
+                sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
+            } catch (NamingException e1) {
+                sessionContext = createSessionContext();  
+                ctx.bind("java:comp/EJBContext", sessionContext);
+            }
+            if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
+                threadContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
+            }
             for (Injection injection : deploymentInfo.getInjections()) {
                 try {
                     String jndiName = injection.getJndiName();
@@ -132,10 +142,7 @@ public class StatefulInstanceManager {
                 } catch (NamingException e) {
                     logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
                 }
-            }
-
-            objectRecipe.setProperty("sessionContext", new StaticRecipe(createSessionContext()));
-
+            }            
             bean = objectRecipe.create(beanClass.getClassLoader());
         } catch (Throwable callbackException) {
             /*
