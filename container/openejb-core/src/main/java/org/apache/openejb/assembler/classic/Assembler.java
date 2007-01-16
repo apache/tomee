@@ -424,7 +424,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         config.containerSystem.containers.add(serviceInfo);
     }
 
-    public void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
+    public void createProxyFactory(ProxyFactoryInfo serviceInfo) throws OpenEJBException, NamingException {
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);

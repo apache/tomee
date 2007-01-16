@@ -38,10 +38,6 @@ public class ServiceUtils {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    public static ServiceProvider getServiceProvider(Service service) throws OpenEJBException {
-        return getServiceProvider(service.getProvider());
-    }
-
     public static ServiceProvider getServiceProvider(String id) throws OpenEJBException {
 
         String providerName = null;

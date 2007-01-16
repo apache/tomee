@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
-
 public abstract class ContainerInfo extends ServiceInfo {
 
 }

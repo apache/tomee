@@ -16,16 +16,5 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
-import java.util.ArrayList;
-
-public class FacilitiesInfo extends InfoObject {
-
-    public ProxyFactoryInfo intraVmServer;
-    public final List<JndiContextInfo> remoteJndiContexts = new ArrayList<JndiContextInfo>();
-    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
-    public final List<ConnectionManagerInfo> connectionManagers = new ArrayList<ConnectionManagerInfo>();
-    public TransactionServiceInfo transactionService;
-    public SecurityServiceInfo securityService;
-
+public class CmpEntityContainerInfo extends ContainerInfo {
 }

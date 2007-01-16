@@ -16,6 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public class IntraVmServerInfo extends ServiceInfo {
+public class ProxyFactoryInfo extends ServiceInfo {
 
 }
