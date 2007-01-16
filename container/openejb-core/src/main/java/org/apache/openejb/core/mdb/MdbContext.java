@@ -19,7 +19,6 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.CoreContext;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -53,7 +52,7 @@ public class MdbContext extends CoreContext implements javax.ejb.MessageDrivenCo
         ThreadContext callContext = ThreadContext.getThreadContext();
 
         switch (callContext.getCurrentOperation()) {
-            case OP_SET_CONTEXT:
+            case SET_CONTEXT:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -69,8 +68,8 @@ public class MdbContext extends CoreContext implements javax.ejb.MessageDrivenCo
                 if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case OP_CREATE:
-            case OP_REMOVE:
+            case CREATE:
+            case REMOVE:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -89,7 +88,7 @@ public class MdbContext extends CoreContext implements javax.ejb.MessageDrivenCo
                     break;
                 else
                     throw new IllegalStateException("Invalid operation attempted");
-            case OP_BUSINESS:
+            case BUSINESS:
                 /*
                 Allowed Operations:
                     getEJBHome

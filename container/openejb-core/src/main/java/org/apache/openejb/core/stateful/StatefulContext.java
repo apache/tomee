@@ -58,7 +58,7 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
         ThreadContext callContext = ThreadContext.getThreadContext();
 
         switch (callContext.getCurrentOperation()) {
-            case OP_SET_CONTEXT:
+            case SET_CONTEXT:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -75,11 +75,11 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                     throw new IllegalStateException("Invalid operation attempted");
                 }
                 break;
-            case OP_CREATE:
-            case OP_REMOVE:
-            case OP_ACTIVATE:
-            case OP_PASSIVATE:
-            case OP_AFTER_COMPLETION:
+            case CREATE:
+            case REMOVE:
+            case ACTIVATE:
+            case PASSIVATE:
+            case AFTER_COMPLETION:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -87,7 +87,7 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                     isCallerInRole
                     getEJBObject
                     getPrimaryKey
-                    getUserTransaction (not allowed in OP_AFTER_COMPLETION)
+                    getUserTransaction (not allowed in AFTER_COMPLETION)
                 Prohibited Operations:
                     getRollbackOnly,
                     setRollbackOnly
@@ -97,9 +97,9 @@ public class StatefulContext extends org.apache.openejb.core.CoreContext impleme
                 } else {
                     break;
                 }
-            case OP_BUSINESS:
-            case OP_AFTER_BEGIN:
-            case OP_BEFORE_COMPLETION:
+            case BUSINESS:
+            case AFTER_BEGIN:
+            case BEFORE_COMPLETION:
                 /* 
                 Allowed Operations: 
                     getEJBHome

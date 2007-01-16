@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
@@ -237,7 +236,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
 
         ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
-        createContext.setCurrentOperation(Operation.OP_CREATE);
+        createContext.setCurrentOperation(Operation.CREATE);
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
@@ -282,7 +281,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             try {
                 Object bean = instanceManager.obtainInstance(primKey, callContext);
                 if (bean != null) {
-                    callContext.setCurrentOperation(Operation.OP_REMOVE);
+                    callContext.setCurrentOperation(Operation.REMOVE);
                     Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
                     if (preDestroy != null) {
                         _invoke(callMethod, preDestroy, null, bean, callContext);
@@ -304,9 +303,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
 
             Object bean = instanceManager.obtainInstance(primKey, callContext);
-            callContext.setCurrentOperation(Operation.OP_BUSINESS);
+            callContext.setCurrentOperation(Operation.BUSINESS);
             Object returnValue = null;
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+
+            callContext.set(Method.class, runMethod);
 
             returnValue = _invoke(callMethod, runMethod, args, bean, callContext);
 

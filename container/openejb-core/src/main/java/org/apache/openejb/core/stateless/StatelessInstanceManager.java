@@ -97,16 +97,16 @@ public class StatelessInstanceManager {
             Operation originalOperation = callContext.getCurrentOperation();
 
             try {
-                Context ctx = deploymentInfo.getJndiEnc();                                
+                Context ctx = deploymentInfo.getJndiEnc();
                 SessionContext sessionContext = null;
                 try {
                     sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e1) {
-                    sessionContext = createSessionContext();  
+                    sessionContext = createSessionContext();
                     ctx.bind("java:comp/EJBContext", sessionContext);
-                }                
+                }
                 if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
-                    callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                    callContext.setCurrentOperation(Operation.SET_CONTEXT);
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
                 }
                 for (Injection injection : deploymentInfo.getInjections()) {
@@ -119,7 +119,7 @@ public class StatelessInstanceManager {
                     }
                 }
                 bean = objectRecipe.create(beanClass.getClassLoader());
-                callContext.setCurrentOperation(Operation.OP_CREATE);
+                callContext.setCurrentOperation(Operation.CREATE);
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null){
@@ -166,7 +166,7 @@ public class StatelessInstanceManager {
 
     public void freeInstance(ThreadContext callContext, Object bean) {
         try {
-            callContext.setCurrentOperation(Operation.OP_REMOVE);
+            callContext.setCurrentOperation(Operation.REMOVE);
             Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
             if (preDestroy != null){
                 preDestroy.invoke(bean);

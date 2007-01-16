@@ -130,7 +130,7 @@ public class MdbInstanceFactory {
         Operation originalOperation = callContext.getCurrentOperation();
         try {
             // call post destroy method
-            callContext.setCurrentOperation(Operation.OP_REMOVE);
+            callContext.setCurrentOperation(Operation.REMOVE);
             Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
             if (preDestroy != null){
                 preDestroy.invoke(bean);
@@ -164,24 +164,24 @@ public class MdbInstanceFactory {
         ThreadContext callContext = ThreadContext.getThreadContext();
         Operation originalOperation = callContext.getCurrentOperation();
         try {
-            Context ctx = deploymentInfo.getJndiEnc();            
-            // construct the bean instance            
+            Context ctx = deploymentInfo.getJndiEnc();
+            // construct the bean instance
             MdbContext mdbContext = null;
             try {
                 mdbContext = (MdbContext) ctx.lookup("java:comp/EJBContext");
-            } catch (NamingException e) {               
+            } catch (NamingException e) {
                 mdbContext = new MdbContext(transactionManager, securityService);
                 ctx.bind("java:comp/EJBContext",mdbContext);
             }
             // only in this case should the callback be used
             if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
-                callContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                callContext.setCurrentOperation(Operation.SET_CONTEXT);
                 objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
             }
             Object bean = objectRecipe.create();
 
             // call the post construct method
-            callContext.setCurrentOperation(Operation.OP_CREATE);
+            callContext.setCurrentOperation(Operation.CREATE);
             Method postConstruct = deploymentInfo.getPostConstruct();
             if (postConstruct != null){
                 postConstruct.invoke(bean);

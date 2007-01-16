@@ -31,7 +31,7 @@ public class StatefulEncReference extends EncReference {
 
     public void checkOperation(Operation operation) throws NameNotFoundException {
 
-        if (operation == Operation.OP_AFTER_COMPLETION) {
+        if (operation == Operation.AFTER_COMPLETION) {
             throw new NameNotFoundException("Operation Not Allowed");
         }
     }

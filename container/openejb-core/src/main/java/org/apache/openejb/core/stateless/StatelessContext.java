@@ -19,7 +19,6 @@ package org.apache.openejb.core.stateless;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.spi.SecurityService;
@@ -49,7 +48,7 @@ public class StatelessContext
         CoreDeploymentInfo di = callContext.getDeploymentInfo();
 
         switch (callContext.getCurrentOperation()) {
-            case OP_SET_CONTEXT:
+            case SET_CONTEXT:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -65,8 +64,8 @@ public class StatelessContext
                 if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case OP_CREATE:
-            case OP_REMOVE:
+            case CREATE:
+            case REMOVE:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -85,7 +84,7 @@ public class StatelessContext
                     break;
                 else
                     throw new IllegalStateException("Invalid operation attempted");
-            case OP_BUSINESS:
+            case BUSINESS:
                 /* 
                 Allowed Operations: 
                     getEJBHome

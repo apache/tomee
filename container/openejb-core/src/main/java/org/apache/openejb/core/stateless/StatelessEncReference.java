@@ -31,7 +31,7 @@ public class StatelessEncReference extends EncReference {
 
     public void checkOperation(Operation operation) throws NameNotFoundException {
 /*
-        if( operation != Operations.OP_BUSINESS ){
+        if( operation != Operations.BUSINESS ){
             throw new NameNotFoundException("Operation Not Allowed");
         }        
 */

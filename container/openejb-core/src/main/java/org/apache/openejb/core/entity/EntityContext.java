@@ -19,7 +19,6 @@ package org.apache.openejb.core.entity;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
@@ -54,8 +53,8 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
         org.apache.openejb.DeploymentInfo di = callContext.getDeploymentInfo();
 
         switch (callContext.getCurrentOperation()) {
-            case OP_SET_CONTEXT:
-            case OP_UNSET_CONTEXT:
+            case SET_CONTEXT:
+            case UNSET_CONTEXT:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -71,9 +70,9 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
                 if (methodCategory != EJBHOME_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case OP_CREATE:
-            case OP_FIND:
-            case OP_HOME:
+            case CREATE:
+            case FIND:
+            case HOME:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -89,8 +88,8 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
                 if (methodCategory == EJBOBJECT_METHOD)
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
-            case OP_ACTIVATE:
-            case OP_PASSIVATE:
+            case ACTIVATE:
+            case PASSIVATE:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -107,10 +106,10 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
 
-            case OP_POST_CREATE:
-            case OP_REMOVE:
-            case OP_LOAD:
-            case OP_STORE:
+            case POST_CREATE:
+            case REMOVE:
+            case LOAD:
+            case STORE:
                 /* 
                 Allowed Operations: 
                     getEJBHome

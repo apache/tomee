@@ -238,6 +238,9 @@ public class MdbContainer implements Container, TransactionContainer {
             // determine the target method on the bean instance class
             Method targetMethod = deployInfo.getMatchingBeanMethod(method);
 
+
+            callContext.set(Method.class, targetMethod);
+
             // invoke the target method
             returnValue = _invoke(instance, targetMethod, args, mdbCallContext);
             return returnValue;

@@ -108,7 +108,7 @@ public class EntityInstanceManager {
                     * code is an extra precaution.
                     */
                     throw new org.apache.openejb.InvalidateReferenceException(new javax.ejb.NoSuchEntityException("Entity not found: " + primaryKey));
-                } else if (callContext.getCurrentOperation() == Operation.OP_REMOVE) {
+                } else if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
                     *  To avoid calling ejbStore( ) on a bean that after its removed, we can not delegate
                     *  the wrapper is marked as disassociated from the transaction to avoid processing the
@@ -148,7 +148,7 @@ public class EntityInstanceManager {
                 EntityBean bean = getPooledInstance(callContext);
                 wrapper = new SyncronizationWrapper(bean, key, false, callContext);
 
-                if (callContext.getCurrentOperation() == Operation.OP_REMOVE) {
+                if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
                     *  To avoid calling ejbStore( ) on a bean that after its removed, we can not delegate
                     *  the wrapper is marked as disassociated from the transaction to avoid processing the
@@ -170,7 +170,7 @@ public class EntityInstanceManager {
                 }
                 loadingBean(bean, callContext);
                 Operation orginalOperation = callContext.getCurrentOperation();
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.OP_LOAD);
+                callContext.setCurrentOperation(org.apache.openejb.core.Operation.LOAD);
                 try {
                     bean.ejbLoad();
                 } catch (Exception e) {
@@ -216,7 +216,7 @@ public class EntityInstanceManager {
             }
 
             Operation currentOp = callContext.getCurrentOperation();
-            callContext.setCurrentOperation(org.apache.openejb.core.Operation.OP_SET_CONTEXT);
+            callContext.setCurrentOperation(org.apache.openejb.core.Operation.SET_CONTEXT);
 
             try {
                 /*
@@ -246,8 +246,8 @@ public class EntityInstanceManager {
             reusingBean(bean, callContext);
         }
 
-        if ((callContext.getCurrentOperation() == org.apache.openejb.core.Operation.OP_BUSINESS) ||
-                (callContext.getCurrentOperation() == org.apache.openejb.core.Operation.OP_REMOVE)) {
+        if ((callContext.getCurrentOperation() == org.apache.openejb.core.Operation.BUSINESS) ||
+                (callContext.getCurrentOperation() == org.apache.openejb.core.Operation.REMOVE)) {
             /*
             * When a bean is retrieved from the bean pool to service a client's business method request it must be
             * notified that its about to enter service by invoking its ejbActivate( ) method. A bean instance
@@ -259,7 +259,7 @@ public class EntityInstanceManager {
             */
             Operation currentOp = callContext.getCurrentOperation();
 
-            callContext.setCurrentOperation(org.apache.openejb.core.Operation.OP_ACTIVATE);
+            callContext.setCurrentOperation(org.apache.openejb.core.Operation.ACTIVATE);
             try {
                 /*
                 In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -311,7 +311,7 @@ public class EntityInstanceManager {
             Key key = new Key(currentTx, callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
             SyncronizationWrapper wrapper = (SyncronizationWrapper) txReadyPool.get(key);
             if (wrapper != null) {
-                if (callContext.getCurrentOperation() == Operation.OP_REMOVE) {
+                if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
                     * The bean is being returned to the pool after it has been removed. Its
                     * important at this point to mark the bean as disassociated to prevent
@@ -354,7 +354,7 @@ public class EntityInstanceManager {
             Then the bean instance is simply returned to the methodReady pool
             */
 
-            if (primaryKey != null && callContext.getCurrentOperation() != Operation.OP_REMOVE) {
+            if (primaryKey != null && callContext.getCurrentOperation() != Operation.REMOVE) {
                 /*
                 * If the bean has a primary key; And its not being returned following a remove operation;
                 * then the bean is being returned to the method ready pool after successfully executing a business method or create
@@ -363,7 +363,7 @@ public class EntityInstanceManager {
                 */
                 Operation currentOp = callContext.getCurrentOperation();
 
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.OP_PASSIVATE);
+                callContext.setCurrentOperation(org.apache.openejb.core.Operation.PASSIVATE);
 
                 try {
                     /*
@@ -407,7 +407,7 @@ public class EntityInstanceManager {
         discardInstance(callContext, bean);
 
         Operation currentOp = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(org.apache.openejb.core.Operation.OP_UNSET_CONTEXT);
+        callContext.setCurrentOperation(org.apache.openejb.core.Operation.UNSET_CONTEXT);
 
         try {
             /*
@@ -580,7 +580,7 @@ public class EntityInstanceManager {
                 }
 
                 ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
-                callContext.setCurrentOperation(Operation.OP_STORE);
+                callContext.setCurrentOperation(Operation.STORE);
 
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
 

@@ -17,19 +17,23 @@
 package org.apache.openejb.core;
 
 public enum Operation {
-    OP_BUSINESS,
-    OP_AFTER_BEGIN,
-    OP_AFTER_COMPLETION,
-    OP_BEFORE_COMPLETION,
-    OP_REMOVE,
-    OP_SET_CONTEXT,
-    OP_UNSET_CONTEXT,
-    OP_CREATE,
-    OP_POST_CREATE,
-    OP_ACTIVATE,
-    OP_PASSIVATE,
-    OP_FIND,
-    OP_HOME,
-    OP_LOAD,
-    OP_STORE
+    INJECTION,
+    LIFECYCLE,
+    BUSINESS,
+    BUSINESS_WS,
+    TIMEOUT,
+    AFTER_BEGIN,
+    AFTER_COMPLETION,
+    BEFORE_COMPLETION,
+    REMOVE,
+    SET_CONTEXT,
+    UNSET_CONTEXT,
+    CREATE,
+    POST_CREATE,
+    ACTIVATE,
+    PASSIVATE,
+    FIND,
+    HOME,
+    LOAD,
+    STORE
 }

@@ -74,7 +74,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         sessionSynchronizations.put(callContext.getPrimaryKey(), callContext);
 
         Operation currentOperation = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(Operation.OP_AFTER_BEGIN);
+        callContext.setCurrentOperation(Operation.AFTER_BEGIN);
         try {
 
             session.afterBegin();
@@ -107,7 +107,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 * the operation must be set before the instance is obtained from the pool, so
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
-                callContext.setCurrentOperation(Operation.OP_BEFORE_COMPLETION);
+                callContext.setCurrentOperation(Operation.BEFORE_COMPLETION);
 
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 bean.beforeCompletion();
@@ -169,7 +169,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 * the operation must be set before the instance is obtained from the pool, so
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
-                callContext.setCurrentOperation(Operation.OP_AFTER_COMPLETION);
+                callContext.setCurrentOperation(Operation.AFTER_COMPLETION);
 
                 SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
 

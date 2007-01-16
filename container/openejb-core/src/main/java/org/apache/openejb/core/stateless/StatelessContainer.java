@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateless;
 
-import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
@@ -109,9 +108,11 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
             Object bean = instanceManager.getInstance(callContext);
 
-            callContext.setCurrentOperation(Operation.OP_BUSINESS);
+            callContext.setCurrentOperation(Operation.BUSINESS);
 
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
+
+            callContext.set(Method.class, runMethod);
 
             Object retValue = _invoke(callMethod, runMethod, args, bean, callContext);
             instanceManager.poolInstance(callContext, bean);

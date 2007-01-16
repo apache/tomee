@@ -113,7 +113,7 @@ public class StatefulInstanceManager {
         Object bean = null;
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        Operation currentOperation = threadContext.getCurrentOperation();       
+        Operation currentOperation = threadContext.getCurrentOperation();
         try {
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
             objectRecipe.allow(Option.FIELD_INJECTION);
@@ -127,11 +127,11 @@ public class StatefulInstanceManager {
             try {
                 sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
             } catch (NamingException e1) {
-                sessionContext = createSessionContext();  
+                sessionContext = createSessionContext();
                 ctx.bind("java:comp/EJBContext", sessionContext);
             }
             if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
-                threadContext.setCurrentOperation(Operation.OP_SET_CONTEXT);
+                threadContext.setCurrentOperation(Operation.SET_CONTEXT);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
             }
             for (Injection injection : deploymentInfo.getInjections()) {
@@ -142,7 +142,7 @@ public class StatefulInstanceManager {
                 } catch (NamingException e) {
                     logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
                 }
-            }            
+            }
             bean = objectRecipe.create(beanClass.getClassLoader());
         } catch (Throwable callbackException) {
             /*
@@ -203,7 +203,7 @@ public class StatefulInstanceManager {
             // if it is not in the queue, the bean is already being invoked
             // the only reentrant/concurrent operations allowed are Session synchronization callbacks
             Operation currentOperation = callContext.getCurrentOperation();
-            if (currentOperation != Operation.OP_AFTER_COMPLETION && currentOperation != Operation.OP_BEFORE_COMPLETION) {
+            if (currentOperation != Operation.AFTER_COMPLETION && currentOperation != Operation.BEFORE_COMPLETION) {
                 throw new ApplicationException(new RemoteException("Concurrent calls not allowed"));
             }
 
@@ -228,7 +228,7 @@ public class StatefulInstanceManager {
 
         // call the activate method
         Operation currentOperation = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(Operation.OP_ACTIVATE);
+        callContext.setCurrentOperation(Operation.ACTIVATE);
         try {
             Method postActivate = callContext.getDeploymentInfo().getPostActivate();
             if (postActivate != null) {
@@ -259,7 +259,7 @@ public class StatefulInstanceManager {
 
     protected void handleTimeout(BeanEntry entry, ThreadContext threadContext) {
         Operation currentOperation = threadContext.getCurrentOperation();
-        threadContext.setCurrentOperation(Operation.OP_REMOVE);
+        threadContext.setCurrentOperation(Operation.REMOVE);
 
         try {
             Method preDestroy = threadContext.getDeploymentInfo().getPreDestroy();
@@ -351,7 +351,7 @@ public class StatefulInstanceManager {
                 if (currentEntry.isTimedOut()) {
                     handleTimeout(currentEntry, threadContext);
                 } else {
-                    threadContext.setCurrentOperation(Operation.OP_PASSIVATE);
+                    threadContext.setCurrentOperation(Operation.PASSIVATE);
                     try {
                         if (prePassivate != null) {
                             // TODO Are all beans in the stateTable the same type?

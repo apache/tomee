@@ -48,7 +48,7 @@ public class StatefulEncUserTransaction extends EncReference {
      * class can return the requested reference object.
      */
     public void checkOperation(Operation operation) throws NameNotFoundException {
-        if (operation == Operation.OP_SET_CONTEXT || operation == Operation.OP_AFTER_COMPLETION || operation == Operation.OP_BEFORE_COMPLETION) {
+        if (operation == Operation.SET_CONTEXT || operation == Operation.AFTER_COMPLETION || operation == Operation.BEFORE_COMPLETION) {
             throw new NameNotFoundException("Operation Not Allowed");
         }
     }

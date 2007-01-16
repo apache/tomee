@@ -43,10 +43,10 @@ public class EntityEncReference extends EncReference {
      */
     public void checkOperation(Operation operation) throws NameNotFoundException {
 
-        /*        if( operation == Operations.OP_SET_CONTEXT || 
-            operation == Operations.OP_UNSET_CONTEXT || 
-            operation == Operations.OP_PASSIVATE ||
-            operation == Operations.OP_ACTIVATE ){
+        /*        if( operation == Operations.SET_CONTEXT ||
+            operation == Operations.UNSET_CONTEXT ||
+            operation == Operations.PASSIVATE ||
+            operation == Operations.ACTIVATE ){
                 throw new NameNotFoundException("Operation Not Allowed");
         }
 */
