@@ -65,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Iterator;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -347,16 +348,95 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return configureDefaultService(type);
         }
 
-        String serviceType = service.getClass().getSimpleName();
-
-        String serviceId = service.getId();
-
-        String providerId = (service.getProvider() != null) ? service.getProvider() : serviceId;
+        String providerId = (service.getProvider() != null) ? service.getProvider() : service.getId();
 
         ServiceProvider provider = ServiceUtils.getServiceProvider(providerId);
 
-        String itemContent = service.getContent();
+        Properties props = getDefaultProperties(provider);
 
+        Properties declaredProperties = getDeclaredProperties(service);
+
+        props.putAll(declaredProperties);
+
+        String serviceId = service.getId();
+        Properties serviceProperties = getSystemProperties(serviceId);
+
+        props.putAll(serviceProperties);
+        Properties properties = props;
+
+        if (!provider.getProviderType().equals(service.getClass().getSimpleName())) {
+            throw new OpenEJBException(messages.format("conf.4902", service, service.getClass().getSimpleName()));
+        }
+
+        T info = null;
+
+        try {
+            info = type.newInstance();
+        } catch (Exception e) {
+            throw new OpenEJBException("Cannot instantiate class " + type.getName(), e);
+        }
+
+        info.serviceType = provider.getProviderType();
+        info.codebase = service.getJar();
+        info.description = provider.getDescription();
+        info.displayName = provider.getDisplayName();
+        info.className = provider.getClassName();
+        info.id = service.getId();
+        info.properties = properties;
+        info.constructorArgs.addAll(parseConstructorArgs(provider));
+
+//        String serviceId = serviceType + ":" + info.id;
+//        if (serviceIds.contains(serviceId)) {
+//            handleException("conf.0105", configLocation, info.id, serviceType);
+//        }
+
+//        serviceIds.add(serviceId);
+
+        return info;
+    }
+
+    private <T extends ServiceInfo>Properties getSystemProperties(String serviceId) {
+        // Override with system properties
+        Properties serviceProperties = new Properties();
+        String prefix = serviceId + ".";
+        Properties sysProps = new Properties(System.getProperties());
+        sysProps.putAll(SystemInstance.get().getProperties());
+        for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
+            Map.Entry entry1 = (Map.Entry) iterator1.next();
+            String key = (String) entry1.getKey();
+            String value = (String) entry1.getValue();
+            if (key.startsWith(prefix)) {
+                key = key.replaceFirst(prefix, "");
+                serviceProperties.setProperty(key, value);
+            }
+        }
+        return serviceProperties;
+    }
+
+    private <T extends ServiceInfo>Properties getDeclaredProperties(Service service) throws OpenEJBException {
+        /* 3. Load properties from the content in the Container
+        *    element of the configuration file.
+        */
+        Properties declaredProperties = new Properties();
+        try {
+            if (service.getContent() != null) {
+                String content = service.getContent();
+                StringBufferInputStream in = new StringBufferInputStream(content);
+
+                try {
+                    declaredProperties.load(in);
+                } catch (IOException ex) {
+                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()));
+                }
+
+            }
+        } catch (OpenEJBException ex) {
+            throw new OpenEJBException(ServiceUtils.messages.format("conf.0014", service.getClass().getSimpleName(), service.getId(), configLocation, ex.getLocalizedMessage()));
+        }
+        return declaredProperties;
+    }
+
+    private <T extends ServiceInfo>Properties getDefaultProperties(ServiceProvider provider) throws OpenEJBException {
         Properties props = new Properties();
 
         try {
@@ -380,57 +460,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         } catch (OpenEJBException ex) {
             throw new OpenEJBException(ServiceUtils.messages.format("conf.0013", provider.getId(), null, ex.getLocalizedMessage()));
         }
-
-        /* 3. Load properties from the content in the Container
-        *    element of the configuration file.
-        */
-        try {
-            if (itemContent != null) {
-                String content = itemContent;
-                StringBufferInputStream in = new StringBufferInputStream(content);
-
-                try {
-                    props.load(in);
-                } catch (IOException ex) {
-                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()));
-                }
-
-            }
-        } catch (OpenEJBException ex) {
-            throw new OpenEJBException(ServiceUtils.messages.format("conf.0014", serviceType, serviceId, configLocation, ex.getLocalizedMessage()));
-        }
-
-        Properties properties = props;
-
-        if (!provider.getProviderType().equals(serviceType)) {
-            throw new OpenEJBException(messages.format("conf.4902", service, serviceType));
-        }
-
-        T info = null;
-
-        try {
-            info = type.newInstance();
-        } catch (Exception e) {
-            throw new OpenEJBException("Cannot instantiate class " + type.getName(), e);
-        }
-
-        info.serviceType = provider.getProviderType();
-        info.codebase = service.getJar();
-        info.description = provider.getDescription();
-        info.displayName = provider.getDisplayName();
-        info.className = provider.getClassName();
-        info.id = serviceId;
-        info.properties = properties;
-        info.constructorArgs.addAll(parseConstructorArgs(provider));
-
-//        String serviceId = serviceType + ":" + info.id;
-//        if (serviceIds.contains(serviceId)) {
-//            handleException("conf.0105", configLocation, info.id, serviceType);
-//        }
-
-//        serviceIds.add(serviceId);
-
-        return info;
+        return props;
     }
 
     static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap();
