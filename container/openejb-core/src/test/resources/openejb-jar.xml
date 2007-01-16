@@ -9,9 +9,7 @@
                     <method-param>java.lang.String</method-param>
                 </method-params>
             </query-method>
-            <object-ql>
-                SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1
-            </object-ql>
+            <object-ql>SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1</object-ql>
         </query>
     </ejb-deployment>
     <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome" container-id="Default CMP Container">
