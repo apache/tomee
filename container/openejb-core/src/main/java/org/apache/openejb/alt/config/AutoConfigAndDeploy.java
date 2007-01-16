@@ -92,7 +92,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 String containerId = getUsableContainer(containerInfoType);
 
                 if (containerId == null){
-                    ContainerInfo containerInfo = configFactory.configureDefaultService(containerInfoType);
+                    ContainerInfo containerInfo = configFactory.configureService(containerInfoType);
                     logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
                     configFactory.install(containerInfo);
                     containerId = containerInfo.id;
@@ -107,7 +107,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             // create the container if it doesn't exist
             if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId())) {
 
-                ContainerInfo containerInfo = configFactory.configureDefaultService(ConfigurationFactory.getContainerInfoType(bean.getType()));
+                ContainerInfo containerInfo = configFactory.configureService(ConfigurationFactory.getContainerInfoType(bean.getType()));
                 logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
                 configFactory.install(containerInfo);
 
@@ -127,7 +127,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     if (!connectorMap.contains(resRefName)) {
                         String name = resRefName.replaceFirst(".*/", "");
                         if (!connectorMap.contains(name)) {
-                            ConnectorInfo connectorInfo = configFactory.configureDefaultService(ConnectorInfo.class);
+                            ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
                             id = connectorInfo.id = name;
                             logger.warning("Auto-creating a connector for res-ref-name '" + resRefName + "' in bean '" + ejbDeployment.getDeploymentId() + "': Connector(id=" + id + ").  THERE IS LITTLE CHANCE THIS WILL WORK!");
                             configFactory.install(connectorInfo);
@@ -147,7 +147,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                         if (connectorMap.size() > 0) {
                             id = connectorMap.get(0);
                         } else {
-                            ConnectorInfo connectorInfo = configFactory.configureDefaultService(ConnectorInfo.class);
+                            ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
                             id = connectorInfo.id;
                             logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
                             configFactory.install(connectorInfo);

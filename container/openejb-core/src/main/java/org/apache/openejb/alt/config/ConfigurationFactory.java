@@ -327,7 +327,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         defaultProviders.put(ConnectorInfo.class, new DefaultService("Default JDBC Database", Connector.class));
     }
 
-    protected <T extends ServiceInfo> T configureDefaultService(Class<? extends T> type) throws OpenEJBException {
+    public <T extends ServiceInfo> T configureService(Class<? extends T> type) throws OpenEJBException {
         DefaultService defaultService = defaultProviders.get(type);
 
         Service service = null;
@@ -345,27 +345,47 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private <T extends ServiceInfo>T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
         if (service == null) {
-            return configureDefaultService(type);
+            return configureService(type);
         }
 
-        String providerId = (service.getProvider() != null) ? service.getProvider() : service.getId();
+        Properties declaredProperties = getDeclaredProperties(service);
+
+        return configureService(type, service.getId(), declaredProperties, service.getProvider(), service.getClass().getSimpleName());
+    }
+
+    /**
+     *
+     * @param type required
+     * @param serviceId required
+     * @param declaredProperties optional
+     * @param providerId optional
+     * @param serviceType optional
+     * @return
+     * @throws OpenEJBException
+     */
+    public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
+        if (type == null) throw new NullPointerException("type");
+        if (serviceId == null) throw new NullPointerException("serviceId");
+        if (providerId ==  null){
+            providerId = serviceId;
+        }
+        if (declaredProperties == null){
+            declaredProperties = new Properties();
+        }
 
         ServiceProvider provider = ServiceUtils.getServiceProvider(providerId);
 
         Properties props = getDefaultProperties(provider);
 
-        Properties declaredProperties = getDeclaredProperties(service);
 
         props.putAll(declaredProperties);
 
-        String serviceId = service.getId();
         Properties serviceProperties = getSystemProperties(serviceId);
 
         props.putAll(serviceProperties);
-        Properties properties = props;
 
-        if (!provider.getProviderType().equals(service.getClass().getSimpleName())) {
-            throw new OpenEJBException(messages.format("conf.4902", service, service.getClass().getSimpleName()));
+        if (serviceType != null && !provider.getProviderType().equals(serviceType)) {
+            throw new OpenEJBException(messages.format("conf.4902", serviceId, serviceType));
         }
 
         T info = null;
@@ -377,12 +397,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         info.serviceType = provider.getProviderType();
-        info.codebase = service.getJar();
         info.description = provider.getDescription();
         info.displayName = provider.getDisplayName();
         info.className = provider.getClassName();
-        info.id = service.getId();
-        info.properties = properties;
+        info.id = serviceId;
+        info.properties = props;
         info.constructorArgs.addAll(parseConstructorArgs(provider));
 
 //        String serviceId = serviceType + ":" + info.id;
