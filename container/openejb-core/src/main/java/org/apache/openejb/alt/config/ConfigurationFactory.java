@@ -124,7 +124,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         for (String pathname : jarList) {
 
             File jarFile = new File(pathname);
-            
+
             AppInfo appInfo = configureApplication(jarFile);
 
             appInfos.add(appInfo);
@@ -154,7 +154,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         initSecutityService(openejb, sys.facilities);
 
-        SystemInstance.get().setComponent(OpenEjbConfiguration.class, sys);
         return sys;
     }
 

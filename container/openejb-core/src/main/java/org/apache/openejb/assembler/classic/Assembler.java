@@ -75,6 +75,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final JndiBuilder jndiBuilder;
     private TransactionManager transactionManager;
     private SecurityService securityService;
+    private OpenEjbConfigurationFactory configFactory;
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
         return containerSystem;
@@ -99,6 +100,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         containerSystem = new CoreContainerSystem();
 
         jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
+
+        setConfiguration(new OpenEjbConfiguration());
+    }
+
+    private void setConfiguration(OpenEjbConfiguration config) {
+        this.config = config;
+        if (config.containerSystem == null) {
+            config.containerSystem = new ContainerSystemInfo();
+        }
+
+        if (config.facilities == null) {
+            config.facilities = new FacilitiesInfo();
+        }
+
+        SystemInstance.get().setComponent(OpenEjbConfiguration.class, this.config);
     }
 
     public void init(Properties props) throws OpenEJBException {
@@ -109,9 +125,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             className = props.getProperty("openejb.configurator", "org.apache.openejb.alt.config.ConfigurationFactory");
         }
 
-        OpenEjbConfigurationFactory configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
+        configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
         configFactory.init(props);
-        config = configFactory.getOpenEjbConfiguration();
+
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
@@ -148,6 +164,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void build() throws OpenEJBException {
         setContext(new HashMap<String, Object>());
         try {
+            OpenEjbConfiguration config = configFactory.getOpenEjbConfiguration();
             buildContainerSystem(config);
         } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
@@ -374,6 +391,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         InitialContext cntx = result;
         containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
+
+        // Update the config tree
+        config.facilities.remoteJndiContexts.add(contextInfo);
     }
 
     public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException, NamingException {
@@ -399,6 +419,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.id, service);
 
         containerSystem.addContainer(serviceInfo.id, (Container) service);
+
+        // Update the config tree
+        config.containerSystem.containers.add(serviceInfo);
     }
 
     public void createProxyFactory(IntraVmServerInfo serviceInfo) throws OpenEJBException, NamingException {
@@ -423,6 +446,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(interfce.getName(), service);
         props.put(serviceInfo.serviceType, service);
         props.put(serviceInfo.id, service);
+
+        // Update the config tree
+        config.facilities.intraVmServer = serviceInfo;
     }
 
     public void createConnector(ConnectorInfo conInfo) throws OpenEJBException, NamingException {
@@ -447,6 +473,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
 
         containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + conInfo.connectorId, reference);
+
+        // Update the config tree
+        config.facilities.connectors.add(conInfo);
     }
 
     public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException, java.lang.reflect.InvocationTargetException, IllegalAccessException, NoSuchMethodException, NamingException {
@@ -472,9 +501,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.serviceType, service);
         props.put(serviceInfo.id, service);
 
+        // Update the config tree
+        config.facilities.connectionManagers.add(serviceInfo);
     }
 
-    public void createSecurityService(ServiceInfo serviceInfo) throws Exception {
+    public void createSecurityService(SecurityServiceInfo serviceInfo) throws Exception {
 
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
@@ -495,6 +526,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.id, service);
 
         this.securityService = (SecurityService) service;
+
+        // Update the config tree
+        config.facilities.securityService = serviceInfo;
     }
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws NamingException, OpenEJBException {
@@ -518,6 +552,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         props.put(serviceInfo.id, service);
 
         this.transactionManager = (TransactionManager) service;
+
+        // Update the config tree
+        config.facilities.transactionService = serviceInfo;
 
         // todo find a better place for this
 
