@@ -26,6 +26,7 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.ResourceFinder;
 
@@ -52,6 +53,7 @@ public class DeploymentLoader {
     private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap();
 
     public static Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     public DeploymentLoader() {
         // For some reason intellij won't log to the one we configured statically
@@ -355,7 +357,7 @@ public class DeploymentLoader {
             URL[] urls = new URL[]{jarFile.toURL()};
             return new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(ConfigurationFactory.messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
+            throw new OpenEJBException(messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
         }
     }
 

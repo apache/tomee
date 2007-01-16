@@ -18,6 +18,8 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -81,9 +83,12 @@ import java.io.File;
  */
 public class EjbJarInfoBuilder {
 
+    public static Messages messages = new Messages("org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+
     public static final String DEFAULT_SECURITY_ROLE = "openejb.default.security.role";
-    public static List<String> deploymentIds = new ArrayList<String>();
-    public static List<String> securityRoles = new ArrayList<String>();
+    private final List<String> deploymentIds = new ArrayList<String>();
+    private final List<String> securityRoles = new ArrayList<String>();
 
 
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
@@ -98,8 +103,9 @@ public class EjbJarInfoBuilder {
                     ConfigUtils.logger.i18n.warning("conf.0018", bean.getEjbName(), jar.getJarURI());
                 }
             }
-            ConfigUtils.logger.i18n.warning("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
-            return null;
+            String message = messages.format("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
+            logger.warning(message);
+            throw new OpenEJBException(message);
         }
 
         Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
@@ -125,9 +131,9 @@ public class EjbJarInfoBuilder {
             ejbJar.enterpriseBeans.add(beanInfo);
 
             if (deploymentIds.contains(beanInfo.ejbDeploymentId)) {
-                ConfigUtils.logger.i18n.warning("conf.0100", beanInfo.ejbDeploymentId, jar.getJarURI(), beanInfo.ejbName);
-
-                return null;
+                String message = messages.format("conf.0100", beanInfo.ejbDeploymentId, jar.getJarURI(), beanInfo.ejbName);
+                logger.warning(message);
+                throw new OpenEJBException(message);
             }
 
             deploymentIds.add(beanInfo.ejbDeploymentId);

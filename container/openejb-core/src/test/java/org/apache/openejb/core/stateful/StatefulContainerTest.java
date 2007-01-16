@@ -189,7 +189,6 @@ public class StatefulContainerTest extends TestCase {
     }
 
     private HashMap<String, DeploymentInfo> build(Properties props, EjbModule jar) throws OpenEJBException {
-        EjbJarInfoBuilder.deploymentIds.clear();
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
         EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
         EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);

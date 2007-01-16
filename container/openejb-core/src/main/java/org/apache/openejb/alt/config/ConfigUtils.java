@@ -44,7 +44,7 @@ public class ConfigUtils {
 
     /**
      * @param config configuration file to read
-     * @return unmarshalled configuration of type {@link OpenEJB}
+     * @return unmarshalled configuration of type {@link org.apache.openejb.OpenEJB}
      * @throws OpenEJBException something wrong with file reading
      */
     public static Openejb readConfig(String config) throws OpenEJBException {

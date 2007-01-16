@@ -134,48 +134,6 @@ public class ServiceUtils {
         }
     }
 
-    public static Properties assemblePropertiesFor(String confItem, String itemId, String itemContent,
-                                                   String confFile, ServiceProvider service) throws OpenEJBException {
-
-        Properties props = new Properties();
-
-        try {
-            /*
-             * 1. Load properties from the properties file referenced
-             *    by the service provider
-             */
-            if (service.getPropertiesFile() != null) {
-                props = loadProperties(service.getPropertiesFile().getFile());
-            }
-
-            /*
-             * 2. Load properties from the content in the service provider
-             *    element of the service-jar.xml
-             */
-
-            if (service.getContent() != null) {
-                StringBufferInputStream in = new StringBufferInputStream(service.getContent());
-                props = loadProperties(in, props);
-            }
-        } catch (OpenEJBException ex) {
-            throw new OpenEJBException(messages.format("conf.0013", service.getId(), null, ex.getLocalizedMessage()));
-        }
-
-        /* 3. Load properties from the content in the Container
-         *    element of the configuration file.
-         */
-        try {
-            if (itemContent != null) {
-                StringBufferInputStream in = new StringBufferInputStream(itemContent);
-                props = loadProperties(in, props);
-            }
-        } catch (OpenEJBException ex) {
-            throw new OpenEJBException(messages.format("conf.0014", confItem, itemId, confFile, ex.getLocalizedMessage()));
-        }
-
-        return props;
-    }
-
     public static Properties loadProperties(String pFile) throws OpenEJBException {
         return loadProperties(pFile, new Properties());
     }
@@ -184,7 +142,20 @@ public class ServiceUtils {
         try {
             File pfile = new File(propertiesFile);
             InputStream in = new FileInputStream(pfile);
-            return loadProperties(in, defaults);
+
+            try {
+                /*
+                This may not work as expected.  The desired effect is that
+                the load method will read in the properties and overwrite
+                the values of any properties that may have previously been
+                defined.
+                */
+                defaults.load(in);
+            } catch (IOException ex) {
+                throw new OpenEJBException(messages.format("conf.0012", ex.getLocalizedMessage()));
+            }
+
+            return defaults;
         } catch (FileNotFoundException ex) {
             throw new OpenEJBException(messages.format("conf.0006", propertiesFile, ex.getLocalizedMessage()));
         } catch (IOException ex) {
@@ -192,24 +163,6 @@ public class ServiceUtils {
         } catch (SecurityException ex) {
             throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()));
         }
-    }
-
-    public static Properties loadProperties(InputStream in, Properties defaults)
-            throws OpenEJBException {
-
-        try {
-            /*
-            This may not work as expected.  The desired effect is that
-            the load method will read in the properties and overwrite
-            the values of any properties that may have previously been
-            defined.
-            */
-            defaults.load(in);
-        } catch (IOException ex) {
-            throw new OpenEJBException(messages.format("conf.0012", ex.getLocalizedMessage()));
-        }
-
-        return defaults;
     }
 
 }
