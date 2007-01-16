@@ -17,35 +17,32 @@
  */
 package org.apache.openejb.alt.config;
 
-import org.apache.openejb.alt.config.sys.Openejb;
-import org.apache.openejb.alt.config.sys.Container;
-import org.apache.openejb.alt.config.sys.Connector;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.alt.config.ejb.MethodParams;
+import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.Query;
 import org.apache.openejb.alt.config.ejb.QueryMethod;
-import org.apache.openejb.alt.config.ejb.MethodParams;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.SafeToolkit;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    private final Openejb config;
+    private final ConfigurationFactory configFactory;
 
-    public AutoConfigAndDeploy(Openejb config) {
-        this.config = config;
+    public AutoConfigAndDeploy(ConfigurationFactory configFactory) {
+        this.configFactory = configFactory;
     }
 
     public void init() throws OpenEJBException {
@@ -83,26 +80,37 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             final Bean bean = beans[i];
 
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
-            if (ejbDeployment == null){
+            if (ejbDeployment == null) {
 
                 ejbDeployment = new EjbDeployment();
 
                 ejbDeployment.setEjbName(bean.getEjbName());
                 ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean));
-                ejbDeployment.setContainerId(autoAssignContainerId(bean));
 
-                logger.warning("Auto-deploying ejb "+bean.getEjbName()+": EjbDeployment(deployment-id="+ejbDeployment.getDeploymentId()+", container-id="+ejbDeployment.getContainerId()+")");
+                Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(bean.getType());
+
+                String containerId = getUsableContainer(containerInfoType);
+
+                if (containerId == null){
+                    ContainerInfo containerInfo = configFactory.configureDefault(containerInfoType);
+                    logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
+                    configFactory.install(containerInfo);
+                    containerId = containerInfo.id;
+                }
+
+                ejbDeployment.setContainerId(containerId);
+
+                logger.warning("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
                 openejbJar.getEjbDeployment().add(ejbDeployment);
             }
 
             // create the container if it doesn't exist
-            Map<String, Container> containerMap = getContainersById();
-            if (!containerMap.containsKey(ejbDeployment.getContainerId())){
-                Container container = new Container();
-                container.setId(ejbDeployment.getContainerId());
-                container.setCtype(bean.getType());
-                logger.warning("Auto-creating a container for bean "+ejbDeployment.getDeploymentId()+": Container(type="+container.getCtype()+", id="+container.getId()+")");
-                config.addContainer(container);
+            if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId())) {
+
+                ContainerInfo containerInfo = configFactory.configureDefault(ConfigurationFactory.getContainerInfoType(bean.getType()));
+                logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
+                configFactory.install(containerInfo);
+
             }
 
             // check the resource refs
@@ -110,39 +118,45 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             for (int j = 0; j < refs.length; j++) {
                 ResourceRef ref = refs[j];
                 ResourceLink link = ejbDeployment.getResourceLink(ref.getResRefName());
-                if (link == null){
+                if (link == null) {
                     link = new ResourceLink();
-                    Map<String, Connector> connectorMap = getConnectorsById();
+                    List<String> connectorMap = configFactory.getConnectorIds();
                     String resRefName = ref.getResRefName();
-                    Connector connector = connectorMap.get(resRefName);
-                    if (connector == null){
-                        String name = resRefName.replaceFirst(".*/","");
-                        connector = connectorMap.get(name);
-                        if (connector == null){
-                            connector = new Connector();
-                            connector.setId(name);
-                            logger.warning("Auto-creating a connector for res-ref-name '"+resRefName+"' in bean "+ejbDeployment.getDeploymentId()+": Connector(id="+connector.getId()+").  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                            config.addConnector(connector);
+
+                    String id = null;
+                    if (!connectorMap.contains(resRefName)) {
+                        String name = resRefName.replaceFirst(".*/", "");
+                        if (!connectorMap.contains(name)) {
+                            ConnectorInfo connectorInfo = configFactory.configureDefault(ConnectorInfo.class);
+                            id = connectorInfo.id = name;
+                            logger.warning("Auto-creating a connector for res-ref-name '" + resRefName + "' in bean '" + ejbDeployment.getDeploymentId() + "': Connector(id=" + id + ").  THERE IS LITTLE CHANCE THIS WILL WORK!");
+                            configFactory.install(connectorInfo);
                         }
                     }
-                    logger.warning("Auto-linking res-ref-name '"+resRefName+"' in bean "+ejbDeployment.getDeploymentId()+" to Connector(id="+connector.getId()+")");
-                    link.setResId(connector.getId());
+                    logger.warning("Auto-linking res-ref-name '" + resRefName + "' in bean " + ejbDeployment.getDeploymentId() + " to Connector(id=" + id + ")");
+                    link.setResId(id);
                     link.setResRefName(resRefName);
                     ejbDeployment.addResourceLink(link);
                 } else {
-                    Map<String, Connector> connectorMap = getConnectorsById();
-                    Connector connector = connectorMap.get(link.getResId());
-                    if (connector == null) {
-                        logger.error("Bad resource-link: No such connector with specified res-id: ResourceLink(res-ref-name="+link.getResRefName()+", res-id"+link.getResId()+")");
-                        connector = new Connector();
-                        connector.setId(link.getResId());
-                        logger.warning("Auto-creating a connector with res-id "+link.getResId()+".  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                        config.addConnector(connector);
+
+                    List<String> connectorMap = configFactory.getConnectorIds();
+                    if (!connectorMap.contains(link.getResId())) {
+                        logger.error("Bad resource-link in bean '" + ejbDeployment.getDeploymentId() + "': No such connector with specified res-id: ResourceLink(res-ref-name=" + link.getResRefName() + ", res-id" + link.getResId() + ")");
+
+                        String id = null;
+                        if (connectorMap.size() > 0) {
+                            id = connectorMap.get(0);
+                        } else {
+                            ConnectorInfo connectorInfo = configFactory.configureDefault(ConnectorInfo.class);
+                            id = connectorInfo.id;
+                            logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
+                            configFactory.install(connectorInfo);
+                        }
                     }
                 }
             }
 
-            if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
+            if (bean.getType().equals("CMP_ENTITY") && ((EntityBean) bean).getCmpVersion() == 1) {
                 List<Query> queries = ejbDeployment.getQuery();
                 if (bean.getHome() != null) {
                     Class interfce = loadClass(bean.getHome(), classLoader, jarLocation);
@@ -150,7 +164,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     for (Query query : queries) {
                         finderMethods.remove(new Key(query));
                     }
-                    if (finderMethods.size() != 0){
+                    if (finderMethods.size() != 0) {
                         throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                     }
                 }
@@ -160,7 +174,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     for (Query query : queries) {
                         finderMethods.remove(new Key(query));
                     }
-                    if (finderMethods.size() != 0){
+                    if (finderMethods.size() != 0) {
                         throw new OpenEJBException("CMP 1.1 Beans with finder methods cannot be autodeployed; finder methods require OQL Select statements which cannot be generated accurately.");
                     }
                 }
@@ -188,38 +202,20 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             }
             MethodParams mp = qmethod.getMethodParams();
             int length = method.getParameterTypes().length;
-            if ( (mp == null && length != 0) || mp == null || mp.getMethodParam().size() != length) {
+            if ((mp == null && length != 0) || mp == null || mp.getMethodParam().size() != length) {
                 return false;
             }
             List<String> params = mp.getMethodParam();
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 Class<?> type = method.getParameterTypes()[i];
-                if (!type.getName().equals(params.get(i))){
+                if (!type.getName().equals(params.get(i))) {
                     return false;
                 }
             }
             return true;
         }
     }
-    private Map<String, Connector> getConnectorsById() {
-        Connector[] connectorList = config.getConnector();
-        Map<String,Connector> connectorMap = new HashMap();
-        for (int k = 0; k < connectorList.length; k++) {
-            Connector connector = connectorList[k];
-            connectorMap.put(connector.getId(), connector);
-        }
-        return connectorMap;
-    }
 
-    private Map<String, Container> getContainersById() {
-        Container[] containerList = config.getContainer();
-        Map<String,Container> containerMap = new HashMap();
-        for (int j = 0; j < containerList.length; j++) {
-            Container container = containerList[j];
-            containerMap.put(container.getId(), container);
-        }
-        return containerMap;
-    }
 
     private Class loadClass(String className, ClassLoader classLoader, String jarLocation) throws OpenEJBException {
         try {
@@ -241,30 +237,17 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         return finderMethods;
     }
 
-    private String autoAssignDeploymentId(Bean bean){
+    private String autoAssignDeploymentId(Bean bean) {
         return bean.getEjbName();
     }
 
-    private String autoAssignContainerId(Bean bean) {
-        Container[] usableContainers = EjbJarUtils.getUsableContainers(config.getContainer(), bean);
-
-        if (usableContainers != null && usableContainers.length > 0){
-            return usableContainers[0].getId();
-        } else {
-            String type = bean.getType();
-            if (type.equals(Bean.BMP_ENTITY)){
-                return ProviderDefaults.DEFAULT_BMP_CONTAINER;
-            } else if (type.equals(Bean.CMP_ENTITY)){
-                return ProviderDefaults.DEFAULT_CMP_CONTAINER;
-            } else if (type.equals(Bean.STATEFUL)){
-                return ProviderDefaults.DEFAULT_STATEFUL_CONTAINER;
-            } else if (type.equals(Bean.STATELESS)){
-                return ProviderDefaults.DEFAULT_STATELESS_CONTAINER;
-            } else if (type.equals(Bean.MESSAGE)){
-                return ProviderDefaults.DEFAULT_MDB_CONTAINER;
+    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {
+        for (ContainerInfo containerInfo : configFactory.getContainerInfos()) {
+            if (containerInfo.getClass().equals(containerInfoType)){
+                return containerInfo.id;
             }
-
-            throw new IllegalStateException("Unknown bean type "+type);
         }
+
+        return null;
     }
 }

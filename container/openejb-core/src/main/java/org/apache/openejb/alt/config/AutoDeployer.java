@@ -22,28 +22,23 @@ import java.util.List;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.ResourceLink;
-import org.apache.openejb.alt.config.sys.Connector;
-import org.apache.openejb.alt.config.sys.Container;
-import org.apache.openejb.alt.config.sys.Openejb;
 import org.apache.openejb.util.SafeToolkit;
 
 public class AutoDeployer implements DynamicDeployer {
 
-    private Container[] containers;
-    private Connector[] resources;
-//    private ClassLoader classLoader;
-//    private String jarLocation;
-//    private String moduleId;
+    private List<ContainerInfo> containers;
+    private List<String> resources;
 
-    public AutoDeployer(Openejb config) {
+    public AutoDeployer(ConfigurationFactory config) {
         /* Load container list */
-        this.containers = config.getContainer();
+        this.containers = config.getContainerInfos();
 
         /* Load resource list */
-        this.resources = config.getConnector();
+        this.resources = config.getConnectorIds();
     }
 
     public void init() throws OpenEJBException {
@@ -147,20 +142,31 @@ public class AutoDeployer implements DynamicDeployer {
     }
 
     private String autoAssignContainerId(Bean bean) throws OpenEJBException {
-        Container[] cs = getUsableContainers(bean);
+        Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(bean.getType());
 
-        if (cs.length == 0) {
+        String containerId = getUsableContainer(containerInfoType);
+
+        if (containerId == null) {
             throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file.");
         }
-        return cs[0].getId();
+        return containerId;
     }
 
+    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {
+        for (ContainerInfo containerInfo : containers) {
+            if (containerInfo.getClass().equals(containerInfoType)){
+                return containerInfo.id;
+            }
+        }
+
+        return null;
+    }
     private ResourceLink autoAssingResourceRef(ResourceRef ref) throws OpenEJBException {
-        if (resources.length == 0) {
+        if (resources.size() == 0) {
             throw new OpenEJBException("A Connector must be declared in the configuration file to satisfy the resource-ref " + ref.getResRefName());
         }
 
-        String id = resources[0].getId();
+        String id = resources.get(0);
         ref.setResLink(id);
         ResourceLink link = new ResourceLink();
         link.setResRefName(ref.getResRefName());
@@ -168,7 +174,4 @@ public class AutoDeployer implements DynamicDeployer {
         return link;
     }
 
-    private Container[] getUsableContainers(Bean bean) {
-        return EjbJarUtils.getUsableContainers(containers, bean);
-    }
 }

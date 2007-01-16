@@ -31,6 +31,7 @@ import java.util.jar.JarFile;
 import org.exolab.castor.util.Configuration;
 import org.exolab.castor.util.LocalConfiguration;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
