@@ -64,7 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class ConfigurationFactory implements OpenEjbConfigurationFactory, ProviderDefaults {
+public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -75,27 +75,38 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
     public static OpenEjbConfiguration sys;
 
-    private final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
-    private Map<String, ContainerInfo> containerTable = new HashMap<String, ContainerInfo>();
-
-    private Properties props = new Properties();
     public EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
+
     private Openejb openejb;
+
     private DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
 
     public ConfigurationFactory() {
         deploymentLoader = new DeploymentLoader();
+
+        DynamicDeployer deployer;
+        // TODO: Create some way to enable one versus the other
+        if (false) {
+            deployer = new AutoDeployer(this);
+
+        } else {
+            deployer = new AutoConfigAndDeploy(this);
+        }
+
+        deployer = new AnnotationDeployer(deployer);
+
+        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
+        if (shouldValidate) {
+            deployer = new ValidateEjbModule(deployer);
+        } else {
+            DeploymentLoader.logger.info("Validation is disabled.");
+        }
+        this.deployer = deployer;
     }
 
     public void init(Properties props) throws OpenEJBException {
-        this.props = props;
 
-        findConfiguration(props);
-
-    }
-
-    private void findConfiguration(Properties props) throws OpenEJBException {
         configLocation = props.getProperty("openejb.conf.file");
 
         if (configLocation == null) {
@@ -104,8 +115,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation, props);
         if (configLocation != null) {
-            this.props.setProperty("openejb.configuration", configLocation);
+            props.setProperty("openejb.configuration", configLocation);
         }
+
     }
 
     public void install(ContainerInfo serviceInfo) throws OpenEJBException {
@@ -139,58 +151,55 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         sys.facilities = new FacilitiesInfo();
 
 
-        initJndiProviders(openejb, sys.facilities);
-        initSecutityService(openejb, sys.facilities);
-        initTransactionService(openejb, sys.facilities);
-        initConnectors(openejb, sys.facilities);
-        initConnectionManagers(openejb, sys.facilities);
-        initProxyFactory(openejb, sys.facilities);
-        initContainerInfos(openejb);
+        for (JndiProvider provider : openejb.getJndiProvider()) {
 
-        deployer = getDeployer();
+            JndiContextInfo info = configureService(provider, JndiContextInfo.class);
+            sys.facilities.remoteJndiContexts.add(info);
+        }
+
+        sys.facilities.securityService = configureService(openejb.getSecurityService(), SecurityServiceInfo.class);
+
+        sys.facilities.transactionService = configureService(openejb.getTransactionService(), TransactionServiceInfo.class);
+
+        for (Connector connector : openejb.getConnector()) {
+
+            ConnectorInfo connectorInfo = configureService(connector, ConnectorInfo.class);
+            sys.facilities.connectors.add(connectorInfo);
+        }
+
+        ConnectionManagerInfo service = configureService(openejb.getConnectionManager(), ConnectionManagerInfo.class);
+        sys.facilities.connectionManagers.add(service);
+
+        sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
+
+        for (Container declaration : openejb.getContainer()) {
+
+            Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getCtype());
+
+            if (infoClass == null) {
+                throw new OpenEJBException("Unrecognized contianer type " + declaration.getCtype());
+            }
+
+            ContainerInfo info = configureService(declaration, infoClass);
+
+            sys.containerSystem.containers.add(info);
+        }
+
 
         List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
 
-        List<AppInfo> appInfos = new ArrayList<AppInfo>();
         for (String pathname : jarList) {
 
             File jarFile = new File(pathname);
 
             AppInfo appInfo = configureApplication(jarFile);
 
-            appInfos.add(appInfo);
+            sys.containerSystem.applications.add(appInfo);
         }
-
-
-        sys.containerSystem.containers.addAll(containers);
-
-
-        sys.containerSystem.applications.addAll(appInfos);
 
         return sys;
     }
 
-
-    private DynamicDeployer getDeployer() {
-        DynamicDeployer deployer;
-        // TODO: Create some way to enable one versus the other
-        if (false) {
-            deployer = new AutoDeployer(this);
-
-        } else {
-            deployer = new AutoConfigAndDeploy(this);
-        }
-
-        deployer = new AnnotationDeployer(deployer);
-
-        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
-        if (shouldValidate) {
-            deployer = new ValidateEjbModule(deployer);
-        } else {
-            DeploymentLoader.logger.info("Validation is disabled.");
-        }
-        return deployer;
-    }
 
     public AppInfo configureApplication(File jarFile) {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
@@ -221,8 +230,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
                 if (ejbJarInfo == null) {
                     continue;
                 }
-                assignBeansToContainers(ejbJarInfo.enterpriseBeans, ejbModule.getOpenejbJar().getDeploymentsByEjbName());
+
+                Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+
+                for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
+                    EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
+
+                    if (!getContainerIds().contains(d.getContainerId())) {
+                        String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
+                        logger.fatal(msg);
+                        throw new OpenEJBException(msg);
+                    }
+
+                    bean.containerId = d.getContainerId();
+                }
+
                 appInfo.ejbJars.add(ejbJarInfo);
+
             } catch (Exception e) {
                 e.printStackTrace();
                 ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
@@ -264,71 +288,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     }
 
 
-    private void initJndiProviders(Openejb openejb, FacilitiesInfo facilities)
-            throws OpenEJBException {
-        JndiProvider[] provider = openejb.getJndiProvider();
-
-        if (provider == null || provider.length < 1) return;
-
-        for (int i = 0; i < provider.length; i++) {
-            JndiContextInfo info = configureService(provider[i], JndiContextInfo.class);
-
-            facilities.remoteJndiContexts.add(info);
-        }
-    }
-
-    private void initSecutityService(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
-
-        facilities.securityService = configureService(openejb.getSecurityService(), SecurityServiceInfo.class);
-    }
-
-    private void initTransactionService(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
-
-        facilities.transactionService = configureService(openejb.getTransactionService(), TransactionServiceInfo.class);
-
-    }
-
-    private void initConnectors(Openejb openejb, FacilitiesInfo facilities)
-            throws OpenEJBException {
-
-        Connector[] conn = openejb.getConnector();
-
-        if (conn == null || conn.length < 1) return;
-
-        for (int i = 0; i < conn.length; i++) {
-
-            ConnectorInfo connectorInfo = configureService(conn[i], ConnectorInfo.class);
-
-            facilities.connectors.add(connectorInfo);
-        }
-    }
-
-    private void initConnectionManagers(Openejb openejb, FacilitiesInfo facilities)
-            throws OpenEJBException {
-
-        ConnectionManagerInfo service = configureService(openejb.getConnectionManager(), ConnectionManagerInfo.class);
-
-        facilities.connectionManagers.add(service);
-    }
-
-    private void initProxyFactory(Openejb openejb, FacilitiesInfo facilities) throws OpenEJBException {
-        String defaultId = null;
-        try {
-            String version = System.getProperty("java.vm.version");
-            if (version.startsWith("1.1") || version.startsWith("1.2")) {
-                defaultId = "Default JDK 1.2 ProxyFactory";
-            } else {
-                defaultId = "Default JDK 1.3 ProxyFactory";
-            }
-        } catch (Exception e) {
-
-            throw new RuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
-        }
-
-        facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
-
-    }
-
     public static class DefaultService {
         private final Class<? extends Service> type;
         private final String id;
@@ -342,16 +301,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
     private static final Map<Class<? extends ServiceInfo>, DefaultService> defaultProviders = new HashMap();
 
     static {
-        defaultProviders.put(MdbContainerInfo.class, new DefaultService(DEFAULT_MDB_CONTAINER, Container.class));
-        defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService(DEFAULT_STATEFUL_CONTAINER, Container.class));
-        defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService(DEFAULT_STATELESS_CONTAINER, Container.class));
-        defaultProviders.put(CmpEntityContainerInfo.class, new DefaultService(DEFAULT_CMP_CONTAINER, Container.class));
-        defaultProviders.put(BmpEntityContainerInfo.class, new DefaultService(DEFAULT_BMP_CONTAINER, Container.class));
-        defaultProviders.put(SecurityServiceInfo.class, new DefaultService(DEFAULT_SECURITY_SERVICE, SecurityService.class));
-        defaultProviders.put(TransactionServiceInfo.class, new DefaultService(DEFAULT_TRANSACTION_MANAGER, TransactionManager.class));
-        defaultProviders.put(ConnectionManagerInfo.class, new DefaultService(DEFAULT_LOCAL_TX_CON_MANAGER, ConnectionManager.class));
-        defaultProviders.put(ProxyFactoryInfo.class, new DefaultService(DEFAULT_JDK_13_PROXYFACTORY, ProxyFactory.class));
-        defaultProviders.put(ConnectorInfo.class, new DefaultService(DEFAULT_JDBC_DATABASE, Connector.class));
+        defaultProviders.put(MdbContainerInfo.class, new DefaultService("Default MDB Container", Container.class));
+        defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService("Default Stateful Container", Container.class));
+        defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService("Default Stateless Container", Container.class));
+        defaultProviders.put(CmpEntityContainerInfo.class, new DefaultService("Default CMP Container", Container.class));
+        defaultProviders.put(BmpEntityContainerInfo.class, new DefaultService("Default BMP Container", Container.class));
+        defaultProviders.put(SecurityServiceInfo.class, new DefaultService("Default Security Service", SecurityService.class));
+        defaultProviders.put(TransactionServiceInfo.class, new DefaultService("Default Transaction Manager", TransactionManager.class));
+        defaultProviders.put(ConnectionManagerInfo.class, new DefaultService("Default Local TX ConnectionManager", ConnectionManager.class));
+        defaultProviders.put(ProxyFactoryInfo.class, new DefaultService("Default JDK 1.3 ProxyFactory", ProxyFactory.class));
+        defaultProviders.put(ConnectorInfo.class, new DefaultService("Default JDBC Database", Connector.class));
     }
 
     protected <T extends ServiceInfo> T configureDefault(Class<? extends T> type) throws OpenEJBException {
@@ -396,7 +355,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         Properties properties = ServiceUtils.assemblePropertiesFor(serviceType, service.getId(), service.getContent(), configLocation, provider);
 
         if (!provider.getProviderType().equals(serviceType)) {
-            handleException("conf.4902", service, serviceType);
+            throw new OpenEJBException(messages.format("conf.4902", service, serviceType));
         }
 
         info.serviceType = provider.getProviderType();
@@ -429,25 +388,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
         containerTypes.put(Bean.MESSAGE, MdbContainerInfo.class);
     }
 
-    private void initContainerInfos(Openejb conf) throws OpenEJBException {
-
-        Container[] containers = conf.getContainer();
-
-        for (Container declaration : containers) {
-
-            Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getCtype());
-
-            if (infoClass == null) {
-                throw new OpenEJBException("Unrecognized contianer type " + declaration.getCtype());
-            }
-
-            ContainerInfo info = configureService(declaration, infoClass);
-
-            this.containers.add(info);
-            containerTable.put(info.id, info);
-        }
-    }
-
     public static Class<? extends ContainerInfo> getContainerInfoType(String ctype) {
         return containerTypes.get(ctype);
     }
@@ -458,28 +398,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             return Collections.EMPTY_LIST;
         }
         return Arrays.asList(constructor.split("[ ,]+"));
-    }
-
-    private void assignBeansToContainers(List<EnterpriseBeanInfo> beans, Map ejbds) throws OpenEJBException {
-
-        List<String> containerIds = new ArrayList();
-        Container[] containers = openejb.getContainer();
-        for (Container container : containers) {
-            containerIds.add(container.getId());
-        }
-
-        for (EnterpriseBeanInfo bean : beans) {
-            EjbDeployment d = (EjbDeployment) ejbds.get(bean.ejbName);
-
-            if (!getContainerIds().contains(d.getContainerId())) {
-
-                String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
-
-                logger.fatal(msg);
-                throw new OpenEJBException(msg);
-            }
-            bean.containerId = d.getContainerId();
-        }
     }
 
 
@@ -495,7 +413,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
             for (ConnectorInfo connectorInfo : sys.facilities.connectors) {
                 connectorIds.add(connectorInfo.id);
             }
-            
+
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null){
@@ -550,12 +468,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory, Provid
 
 
     private OpenEjbConfiguration getRunningConfig() {
-        OpenEjbConfiguration runningConfig = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        return runningConfig;
+        return SystemInstance.get().getComponent(OpenEjbConfiguration.class);
     }
 
-    public static void handleException(String errorCode, Object... args) throws OpenEJBException {
-        throw new OpenEJBException(messages.format(errorCode, args));
-    }
 }
 

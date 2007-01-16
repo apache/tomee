@@ -29,16 +29,11 @@ import org.apache.openejb.alt.config.ejb.ResourceLink;
 import org.apache.openejb.util.SafeToolkit;
 
 public class AutoDeployer implements DynamicDeployer {
-
-    private List<ContainerInfo> containers;
-    private List<String> resources;
+    private final ConfigurationFactory config;
 
     public AutoDeployer(ConfigurationFactory config) {
         /* Load container list */
-        this.containers = config.getContainerInfos();
-
-        /* Load resource list */
-        this.resources = config.getConnectorIds();
+        this.config = config;
     }
 
     public void init() throws OpenEJBException {
@@ -153,7 +148,7 @@ public class AutoDeployer implements DynamicDeployer {
     }
 
     private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {
-        for (ContainerInfo containerInfo : containers) {
+        for (ContainerInfo containerInfo : config.getContainerInfos()) {
             if (containerInfo.getClass().equals(containerInfoType)){
                 return containerInfo.id;
             }
@@ -162,6 +157,8 @@ public class AutoDeployer implements DynamicDeployer {
         return null;
     }
     private ResourceLink autoAssingResourceRef(ResourceRef ref) throws OpenEJBException {
+
+        List<String> resources = config.getConnectorIds();
         if (resources.size() == 0) {
             throw new OpenEJBException("A Connector must be declared in the configuration file to satisfy the resource-ref " + ref.getResRefName());
         }
