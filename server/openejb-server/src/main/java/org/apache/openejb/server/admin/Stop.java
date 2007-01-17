@@ -24,7 +24,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.openejb.client.RequestMethodConstants;
-import org.apache.openejb.util.JarUtils;
 
 
 public class Stop {
@@ -85,7 +84,6 @@ public class Stop {
     private static void printHelp() {
         String header = "OpenEJB Remote Server ";
         try {
-            JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
@@ -109,7 +107,6 @@ public class Stop {
     private static void printExamples() {
         String header = "OpenEJB Remote Server ";
         try {
-            JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");

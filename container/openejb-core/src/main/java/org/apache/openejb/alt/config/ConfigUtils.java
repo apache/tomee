@@ -24,6 +24,7 @@ import org.apache.openejb.alt.config.sys.Openejb;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -201,7 +202,8 @@ public class ConfigUtils {
         InputStream in = null;
         OutputStream out = null;
         try {
-            URL defaultConfig = new URL("resource:/default.openejb.conf");
+            ResourceFinder finder = new ResourceFinder("");
+            URL defaultConfig = finder.find("default.openejb.conf");
             in = defaultConfig.openStream();
             out = new FileOutputStream(config);
 

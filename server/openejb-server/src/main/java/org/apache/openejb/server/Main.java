@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.JarUtils;
 
 /**
  * Assemble OpenEJB instance and boot it up
@@ -65,8 +64,6 @@ public class Main {
         props.put("openejb.server.ip", "127.0.0.1");
         props.put("openejb.server.port", "4201");
         props.put("openejb.server.threads", "20");
-
-        JarUtils.setHandlerSystemProperty();
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-h")) {
@@ -128,7 +125,6 @@ public class Main {
         Properties versionInfo = new Properties();
 
         try {
-            JarUtils.setHandlerSystemProperty();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
         } catch (java.io.IOException e) {}
         System.out.println("OpenEJB Remote Server " + versionInfo.get("version") + "    build: "
@@ -139,7 +135,6 @@ public class Main {
     private static void printHelp() {
         String header = "OpenEJB Remote Server ";
         try {
-            JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");
@@ -161,7 +156,6 @@ public class Main {
     private static void printExamples() {
         String header = "OpenEJB Remote Server ";
         try {
-            JarUtils.setHandlerSystemProperty();
             Properties versionInfo = new Properties();
             versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
             header += versionInfo.get("version");

@@ -21,10 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Hashtable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -40,82 +36,9 @@ public class JarUtils {
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
 
     static {
-        setHandlerSystemProperty();
     }
 
     private static boolean alreadySet = false;
-
-    @SuppressWarnings("unchecked")
-    public static void setHandlerSystemProperty() {
-        if (!alreadySet) {
-            /*
-             * Setup the java protocol handler path to include org.apache.openejb.util.urlhandler
-             * so that org.apache.openejb.util.urlhandler.resource.Handler will be used for URLs
-             * of the form "resource:/path".
-             */ 
-            /*try {
-                String oldPkgs = System.getProperty( "java.protocol.handler.pkgs" );
-            
-                if ( oldPkgs == null )
-                    System.setProperty( "java.protocol.handler.pkgs", "org.apache.openejb.util.urlhandler" );
-                else if ( oldPkgs.indexOf( "org.apache.openejb.util.urlhandler" ) < 0 )
-                    System.setProperty( "java.protocol.handler.pkgs", oldPkgs + "|" + "org.apache.openejb.util.urlhandler" );
-            
-            } catch ( SecurityException ex ) {
-            }*/
-            Hashtable urlHandlers = (Hashtable) AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        public Object run() {
-                            java.lang.reflect.Field handlers = null;
-                            try {
-                                handlers = URL.class.getDeclaredField("handlers");
-                                handlers.setAccessible(true);
-                                return handlers.get(null);
-                            } catch (Exception e2) {
-                                e2.printStackTrace();
-                            }
-                            return null;
-                        }
-                    }
-            );
-            urlHandlers.put("resource", new org.apache.openejb.util.urlhandler.resource.Handler());
-            alreadySet = true;
-        }
-    }
-
-    public static File getJarContaining(String path) throws OpenEJBException {
-        File jarFile = null;
-        try {
-            URL url = new URL("resource:/" + path);
-
-            /*
-             * If we loaded the configuration from a jar, either from a jar:
-             * URL or a resource: URL, we must strip off the config file location
-             * from the URL.
-             */
-            String jarPath = null;
-            if (url.getProtocol().compareTo("resource") == 0) {
-                String resource = url.getFile().substring(1);
-
-                url = getContextClassLoader().getResource(resource);
-                if (url == null) {
-                    throw new OpenEJBException("Could not locate a jar containing the path " + path);
-                }
-            }
-
-            if (url != null) {
-                jarPath = url.getFile();
-                jarPath = jarPath.substring(0, jarPath.indexOf('!'));
-                jarPath = jarPath.substring("file:".length());
-            }
-
-            jarFile = new File(jarPath);
-            jarFile = jarFile.getAbsoluteFile();
-        } catch (Exception e) {
-            throw new OpenEJBException("Could not locate a jar containing the path " + path, e);
-        }
-        return jarFile;
-    }
 
     public static void addFileToJar(String jarFile, String file) throws OpenEJBException {
         try {

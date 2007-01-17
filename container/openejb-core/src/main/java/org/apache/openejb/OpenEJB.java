@@ -25,6 +25,7 @@ import org.apache.openejb.util.JarUtils;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.core.ServerFederation;
 
 import javax.transaction.TransactionManager;
@@ -59,7 +60,6 @@ public final class OpenEJB {
          * 2 usages
          */
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
-            JarUtils.setHandlerSystemProperty();
 
             Logger.initialize(initProps);
 
@@ -83,20 +83,16 @@ public final class OpenEJB {
             /*
             * Output startup message
             */
-            Properties versionInfo = new Properties();
+            OpenEjbVersion versionInfo = OpenEjbVersion.get();
 
-            try {
-                versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            } catch (java.io.IOException e) {
-            }
             if (initProps.getProperty("openejb.nobanner") == null) {
-                System.out.println("Apache OpenEJB " + versionInfo.get("version") + "    build: " + versionInfo.get("date") + "-" + versionInfo.get("time"));
-                System.out.println("" + versionInfo.get("url"));
+                System.out.println("Apache OpenEJB " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
+                System.out.println("" + versionInfo.getUrl());
             }
 
             Logger logger2 = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
-            logger2.i18n.info("startup.banner", versionInfo.get("url"), new Date(), versionInfo.get("copyright"),
-                    versionInfo.get("version"), versionInfo.get("date"), versionInfo.get("time"));
+            logger2.i18n.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
+                    versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
 
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());

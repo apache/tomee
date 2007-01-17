@@ -21,7 +21,6 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
-import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.openejb.OpenEJBException;
@@ -33,9 +32,9 @@ import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.alt.config.rules.CheckClasses;
 import org.apache.openejb.alt.config.rules.CheckMethods;
-import org.apache.openejb.util.JarUtils;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OpenEjbVersion;
 
 public class EjbValidator {
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
@@ -54,7 +53,6 @@ public class EjbValidator {
     /*    Constructors                                      */
     /*------------------------------------------------------*/
     public EjbValidator() throws OpenEJBException {
-        JarUtils.setHandlerSystemProperty();
     }
 
     public void addEjbSet(EjbSet set) {
@@ -274,27 +272,16 @@ public class EjbValidator {
         /*
          * Output startup message
          */
-        Properties versionInfo = new Properties();
 
-        try {
-            JarUtils.setHandlerSystemProperty();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-        } catch (java.io.IOException e) {
-        }
-
-        System.out.println("OpenEJB EJB Validation Tool " + versionInfo.get("version") + "    build: " + versionInfo.get("date") + "-" + versionInfo.get("time"));
-        System.out.println("" + versionInfo.get("url"));
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
+        System.out.println("OpenEJB EJB Validation Tool " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
+        System.out.println("" + versionInfo.getUrl());
     }
 
     private static void printHelp() {
         String header = "OpenEJB EJB Validation Tool ";
-        try {
-            JarUtils.setHandlerSystemProperty();
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
+        header += versionInfo.getVersion();
 
         System.out.println(header);
 
@@ -312,13 +299,8 @@ public class EjbValidator {
 
     private static void printExamples() {
         String header = "OpenEJB EJB Validation Tool ";
-        try {
-            JarUtils.setHandlerSystemProperty();
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
+        header += versionInfo.getVersion();
 
         System.out.println(header);
 

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.apache.xbean.finder.ResourceFinder;
 
 public class DTDResolver implements EntityResolver {
     public static HashMap dtds = new HashMap();
@@ -46,7 +47,8 @@ public class DTDResolver implements EntityResolver {
     public static byte[] getDtd(String dtdName) {
         try {
 
-            URL dtd = new URL("resource:/schema/" + dtdName);
+            ResourceFinder finder = new ResourceFinder("schema/");
+            URL dtd = finder.find(dtdName);
             InputStream in = dtd.openStream();
             if (in == null) return null;
 

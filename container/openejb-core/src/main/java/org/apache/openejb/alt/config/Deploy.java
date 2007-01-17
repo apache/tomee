@@ -45,6 +45,7 @@ import org.apache.openejb.util.JarUtils;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.OpenEjbVersion;
 
 /**
  * Deploy EJB beans
@@ -220,7 +221,7 @@ public class Deploy {
     }
 
     private List<String> searchEjbsInJar(File file) {
-    	// TODO: Implement it!
+        // TODO: Implement it!
         return new ArrayList<String>();
     }
 
@@ -798,36 +799,23 @@ public class Deploy {
     }
 
     private static void printVersion() {
-        /*
-         * Output startup message
-         */
-        Properties versionInfo = new Properties();
-
-        try {
-            JarUtils.setHandlerSystemProperty();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-        } catch (java.io.IOException e) {
-        }
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
 
         System.out.println(
                 DEPLOY_TOOL_MSG_HEADER + " "
-                        + versionInfo.get("version")
+                        + versionInfo.getVersion()
                         + "    build: "
-                        + versionInfo.get("date")
+                        + versionInfo.getDate()
                         + "-"
-                        + versionInfo.get("time"));
-        System.out.println("" + versionInfo.get("url"));
+                        + versionInfo.getTime());
+        System.out.println("" + versionInfo.getUrl());
     }
 
     private static void printHelp() {
         String header = DEPLOY_TOOL_MSG_HEADER + " ";
-        try {
-            JarUtils.setHandlerSystemProperty();
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
+        header += versionInfo.getVersion();
 
         System.out.println(header);
 
@@ -845,14 +833,9 @@ public class Deploy {
 
     private static void printExamples() {
         String header = DEPLOY_TOOL_MSG_HEADER + " ";
-        try {
-            JarUtils.setHandlerSystemProperty();
-            Properties versionInfo = new Properties();
-            versionInfo.load(
-                    new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
-        }
+
+        OpenEjbVersion versionInfo = OpenEjbVersion.get();
+        header += versionInfo.getVersion();
 
         System.out.println(header);
 

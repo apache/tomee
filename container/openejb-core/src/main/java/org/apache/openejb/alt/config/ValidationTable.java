@@ -27,6 +27,7 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.openejb.util.JarUtils;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -192,14 +193,8 @@ public class ValidationTable {
             /*
              * Output startup message
              */
-            Properties versionInfo = new Properties();
-
-            try {
-                JarUtils.setHandlerSystemProperty();
-                versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            } catch (java.io.IOException e) {
-            }
-            version = (String) versionInfo.get("version");
+            OpenEjbVersion versionInfo = OpenEjbVersion.get();
+            version = versionInfo.getVersion();
         }
         return version;
     }

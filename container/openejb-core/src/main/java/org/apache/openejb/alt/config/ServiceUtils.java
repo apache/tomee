@@ -23,6 +23,7 @@ import org.apache.openejb.alt.config.sys.ServiceProvider;
 import org.apache.openejb.alt.config.sys.ServicesJar;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -80,9 +81,12 @@ public class ServiceUtils {
     public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {
         try {
             Unmarshaller unmarshaller = new Unmarshaller(ServicesJar.class, "service-jar.xml");
-            URL serviceURL = new URL("resource:/META-INF/" + providerName + "/");
-            return (ServicesJar) unmarshaller.unmarshal(serviceURL);
+            ResourceFinder finder = new ResourceFinder("META-INF/", Thread.currentThread().getContextClassLoader());
+            URL url = finder.find(providerName + "/");
+            return (ServicesJar) unmarshaller.unmarshal(url);
         } catch (MalformedURLException e) {
+            throw new OpenEJBException(e);
+        } catch (IOException e) {
             throw new OpenEJBException(e);
         }
     }

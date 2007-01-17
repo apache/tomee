@@ -26,56 +26,53 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.openejb.util.JarUtils;
-
 /** This class takes care of HTTP Responses.  It sends data back to the browser.
  */
 public class HttpResponseImpl implements HttpResponse {
-    
+
     /** Response string */
     private String responseString = "OK";
 
     /** Code */
     private int code = 200;
-    
+
     /** Response headers */
     private HashMap<String,String> headers;
-    
+
     /** Response body */
     private byte[] body = new byte[0];
-    
-    /** the writer for the response */    
+
+    /** the writer for the response */
     private transient PrintWriter writer;
-    /** the raw body */    
+    /** the raw body */
     private transient ByteArrayOutputStream baos;
-    
-    /** the HTTP version */    
+
+    /** the HTTP version */
     public static final String HTTP_VERSION = "HTTP/1.1";
-    /** a line feed character */    
+    /** a line feed character */
     public static final String CRLF = "\r\n";
-    /** a space character */    
+    /** a space character */
     public static final String SP = " ";
-    /** a colon and space */    
+    /** a colon and space */
     public static final String CSP = ": ";
-    /** the server to send data from */    
+    /** the server to send data from */
     public static String server;
 
     private HttpRequestImpl request;
     private URLConnection content;
-    
+
     protected void setRequest(HttpRequestImpl request){
         this.request = request;
     }
-    
+
     /** sets a header to be sent back to the browser
      * @param name the name of the header
      * @param value the value of the header
-     */    
+     */
     public void setHeader(String name, String value){
         headers.put(name, value);
     }
@@ -83,21 +80,21 @@ public class HttpResponseImpl implements HttpResponse {
     /** Gets a header based on the name passed in
      * @param name The name of the header
      * @return the value of the header
-     */    
+     */
     public String getHeader(String name){
         return headers.get(name);
     }
 
     /** Gets the PrintWriter to send data to the browser
      * @return the PrintWriter to send data to the browser
-     */    
+     */
     public PrintWriter getPrintWriter(){
         return writer;
     }
 
     /** gets the OutputStream to send data to the browser
      * @return the OutputStream to send data to the browser
-     */    
+     */
     public OutputStream getOutputStream(){
         return baos;
     }
@@ -114,40 +111,40 @@ public class HttpResponseImpl implements HttpResponse {
      * CONNECT = 7
      * UNSUPPORTED = 8
      * @param code the code to be sent to the browser
-     */    
+     */
     public void setCode(int code){
         this.code = code;
     }
 
     /** gets the HTTP response code
      * @return the HTTP response code
-     */    
+     */
     public int getCode(){
         return code;
     }
 
     /** sets the content type to be sent back to the browser
      * @param type the type to be sent to the browser (i.e. "text/html")
-     */    
+     */
     public void setContentType(String type){
         setHeader("Content-Type", type);
     }
 
     /** gets the content type that will be sent to the browser
      * @return the content type (i.e. "text/html")
-     */    
+     */
     public String getContentType(){
         return getHeader("Content-Type");
     }
 
     /** Sets the response string to be sent to the browser
      * @param responseString the response string
-     */    
+     */
     public void setResponseString(String responseString){
        this.responseString = responseString;
     }
 
-    /** resets the data to be sent to the browser */    
+    /** resets the data to be sent to the browser */
     public void reset(){
         initBody();
     }
@@ -156,7 +153,7 @@ public class HttpResponseImpl implements HttpResponse {
      * string
      * @param code the code to be sent to the browser
      * @param responseString the response string to be sent to the browser
-     */    
+     */
     public void reset(int code, String responseString){
         setCode(code);
         setResponseString(responseString);
@@ -166,7 +163,7 @@ public class HttpResponseImpl implements HttpResponse {
     /*------------------------------------------------------------*/
     /*  Methods for writing out a response                        */
     /*------------------------------------------------------------*/
-    /** creates a new instance of HttpResponseImpl with default values */    
+    /** creates a new instance of HttpResponseImpl with default values */
     protected HttpResponseImpl(){
         this(200, "OK", "text/html");
     }
@@ -176,17 +173,17 @@ public class HttpResponseImpl implements HttpResponse {
      * for these codes
      * @param responseString the response string to be sent back
      * @param contentType the content type to be sent back
-     */    
+     */
     protected HttpResponseImpl(int code, String responseString, String contentType){
         this.responseString = responseString;
         this.headers = new HashMap();
         this.code = code;
-        
+
         // Default headers
         setHeader("Server", getServerName());
         setHeader("Connection","close");
         setHeader("Content-Type",contentType);
-        
+
         // create the body.
         initBody();
     }
@@ -214,7 +211,7 @@ public class HttpResponseImpl implements HttpResponse {
         writeBody(out);
     }
 
-     /** initalizes the body */     
+     /** initalizes the body */
     private void initBody(){
         baos = new ByteArrayOutputStream();
         writer = new PrintWriter( baos );
@@ -224,7 +221,7 @@ public class HttpResponseImpl implements HttpResponse {
      *
      * HTTP/1.1 200 OK
      * @return the string value of this HttpResponseImpl
-     */    
+     */
     public String toString(){
         StringBuffer buf = new StringBuffer(40);
 
@@ -258,7 +255,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     private void setCookieHeader() {
         if (request == null || request.getSession() == null) return;
-        
+
         HttpSession session = request.getSession(false);
 
         if (session == null) return;
@@ -271,7 +268,7 @@ public class HttpResponseImpl implements HttpResponse {
 
         headers.put(HttpRequest.HEADER_SET_COOKIE, cookie.toString());
     }
-    
+
     /** Writes a response line similar to this:
      *
      * HTTP/1.1 200 OK
@@ -292,7 +289,7 @@ public class HttpResponseImpl implements HttpResponse {
     /** writes the headers out to the browser
      * @param out the output stream to be sent to the browser
      * @throws java.io.IOException if an exception is thrown
-     */    
+     */
     private void writeHeaders(DataOutput out) throws IOException{
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             out.writeBytes(""+entry.getKey());
@@ -305,7 +302,7 @@ public class HttpResponseImpl implements HttpResponse {
     /** writes the body out to the browser
      * @param out the output stream that writes to the browser
      * @throws java.io.IOException if an exception is thrown
-     */    
+     */
     private void writeBody(DataOutput out) throws IOException{
         out.writeBytes(CRLF);
         if (content == null){
@@ -319,27 +316,26 @@ public class HttpResponseImpl implements HttpResponse {
 
     /** gets the name of the server being used
      * @return the name of the server
-     */    
+     */
     public String getServerName(){
         if (server == null) {
             String version = "???";
             String os = "(unknown os)";
-            
+
             try {
                 Properties versionInfo = new Properties();
-                JarUtils.setHandlerSystemProperty();
                 versionInfo.load( new URL( "resource:/openejb-version.properties" ).openConnection().getInputStream() );
                 version = versionInfo.getProperty( "version" );
                 os = System.getProperty("os.name")+"/"+System.getProperty("os.version")+" ("+System.getProperty("os.arch")+")";
             } catch (IOException e) {
             }
-            
+
             server = "OpenEJB/" +version+ " "+os;
         }
         return server;
     }
-    
-    
+
+
     /** This could be improved at some day in the future
      * to also include a stack trace of the exceptions
      * @param message the error message to be sent
@@ -353,7 +349,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param message the message of the error
      * @param t a Throwable to print a stack trace to
      * @return the HttpResponseImpl that this error belongs to
-     */    
+     */
     protected static HttpResponseImpl createError(String message, Throwable t){
         HttpResponseImpl res = new HttpResponseImpl(500, "Internal Server Error", "text/html");
         PrintWriter body = res.getPrintWriter();
@@ -383,7 +379,7 @@ public class HttpResponseImpl implements HttpResponse {
                 writer.close();
                 message = new String(baos.toByteArray());
                 StringTokenizer msg = new StringTokenizer(message, "\n\r");
-                
+
                 while (msg.hasMoreTokens()) {
                     body.print( msg.nextToken() );
                     body.println("<br>");
@@ -401,7 +397,7 @@ public class HttpResponseImpl implements HttpResponse {
     /** Creates a forbidden response to be sent to the browser using IP authentication
      * @param ip the ip that is forbidden
      * @return the HttpResponseImpl that this error belongs to
-     */    
+     */
     protected static HttpResponseImpl createForbidden(String ip){
         HttpResponseImpl res = new HttpResponseImpl(403, "Forbidden", "text/html");
         PrintWriter body = res.getPrintWriter();
@@ -422,7 +418,7 @@ public class HttpResponseImpl implements HttpResponse {
     /** writes this object out to a file
      * @param out the ObjectOutputStream to write to
      * @throws java.io.IOException if an exception is thrown
-     */    
+     */
     private void writeObject(java.io.ObjectOutputStream out) throws IOException{
         /** Response string */
         out.writeObject( responseString );
@@ -439,12 +435,12 @@ public class HttpResponseImpl implements HttpResponse {
         //System.out.println("[] body "+body.length );
         out.writeObject( body );
     }
-    
+
     /** Reads in a serilized HttpResponseImpl object from a file
      * @param in the input to read the object from
      * @throws java.io.IOException if an exception is thrown
      * @throws ClassNotFoundException if an exception is thrown
-     */    
+     */
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         /** Response string */
         this.responseString = (String)in.readObject();
