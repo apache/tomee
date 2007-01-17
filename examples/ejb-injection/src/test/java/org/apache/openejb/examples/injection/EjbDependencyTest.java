@@ -21,9 +21,6 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import org.apache.openejb.examples.injection.DataReaderLocal;
-import org.apache.openejb.examples.injection.DataReaderRemote;
-
 import junit.framework.TestCase;
 
 /**
@@ -60,5 +57,4 @@ public class EjbDependencyTest extends TestCase {
     	assertEquals(LOCAL_STORE_RESULT, ((DataReaderRemote)object).readDataFromLocalStore());
     	assertEquals(REMOTE_STORE_RESULT, ((DataReaderRemote)object).readDataFromRemoteStore());
     }
-
 }

@@ -47,5 +47,4 @@ public class DataReaderImpl implements DataReaderLocal, DataReaderRemote {
 	public String readDataFromRemoteStore() {
 		return "REMOTE:"+dataStoreRemote.getData();
 	}
-
 }

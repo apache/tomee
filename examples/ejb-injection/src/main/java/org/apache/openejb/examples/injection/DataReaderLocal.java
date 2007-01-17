@@ -29,5 +29,4 @@ public interface DataReaderLocal {
 	
 	public String readDataFromLocalStore();
 	public String readDataFromRemoteStore();
-
 }
