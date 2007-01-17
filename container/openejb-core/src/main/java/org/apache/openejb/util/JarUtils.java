@@ -35,11 +35,6 @@ public class JarUtils {
 
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
 
-    static {
-    }
-
-    private static boolean alreadySet = false;
-
     public static void addFileToJar(String jarFile, String file) throws OpenEJBException {
         try {
             JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
