@@ -391,7 +391,7 @@ public class JndiEncBuilder {
     public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {
         EntityManagerFactory factory;
         if (persistenceName != null) {
-            if (persistenceName.indexOf("#") == -1) {
+            if (persistenceName.indexOf("#") == -1 && !"".equals(persistenceName)) {
                 factory = entityManagerFactories.get(persistenceName);
             } else {
                 factory = findEntityManagerFactory(allFactories, jarPath, persistenceName);

@@ -105,7 +105,7 @@ public class JndiEncInfoBuilder {
 
         /* Build Resource References *****************/
         jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
-        
+
         /* Build Resource Environment References *****************/
         jndi.resourceEnvRefs.addAll(buildResourceEnvRefInfos(jndiConsumer));
 
@@ -127,6 +127,7 @@ public class JndiEncInfoBuilder {
             PersistenceUnitInfo info = new PersistenceUnitInfo();
             info.referenceName = puRef.getPersistenceUnitRefName();
             info.persistenceUnitName = puRef.getPersistenceUnitName();
+            info.targets.addAll(buildInjectionInfos(puRef));
             infos.add(info);
         }
         return infos;
@@ -282,13 +283,13 @@ public class JndiEncInfoBuilder {
             ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
             info.resourceEnvRefName = res.getResourceEnvRefName();
             info.resourceEnvRefType = res.getResourceEnvRefType();
-            info.mappedName = res.getMappedName();           
+            info.mappedName = res.getMappedName();
             info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
         }
         return infos;
     }
-    
+
     private List<EnvEntryInfo> buildEnvEntryInfos(JndiConsumer item) {
         List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
         for (EnvEntry env : item.getEnvEntry()) {

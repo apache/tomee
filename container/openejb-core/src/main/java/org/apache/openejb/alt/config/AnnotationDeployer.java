@@ -17,28 +17,29 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodTransaction;
+import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.jee.MethodTransaction;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -46,8 +47,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resources;
+import javax.ejb.EJB;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBs;
 import javax.ejb.Local;
 import javax.ejb.LocalHome;
+import javax.ejb.MessageDriven;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
@@ -55,23 +61,20 @@ import javax.ejb.RemoteHome;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.MessageDriven;
-import javax.ejb.EJB;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBs;
-import javax.ejb.EJBLocalHome;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceUnits;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
@@ -150,7 +153,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
                     ejbJar.addEnterpriseBean(new StatelessBean(ejbName, beanClass.getName()));
-                } else if (enterpriseBean.getEjbClass() == null){
+                } else if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
@@ -162,7 +165,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
                     ejbJar.addEnterpriseBean(new StatefulBean(ejbName, beanClass.getName()));
-                } else if (enterpriseBean.getEjbClass() == null){
+                } else if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
@@ -175,11 +178,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     MessageDrivenBean messageBean = new MessageDrivenBean(ejbName);
                     Class interfce = mdb.messageListenerInterface();
-                    if (interfce != null){
+                    if (interfce != null) {
                         messageBean.setMessagingType(interfce.getName());
                     }
                     ejbJar.addEnterpriseBean(messageBean);
-                } else if (enterpriseBean.getEjbClass() == null){
+                } else if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
@@ -206,7 +209,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             try {
                 clazz = classLoader.loadClass(clientModule.getMainClass());
             } catch (ClassNotFoundException e) {
-                throw new OpenEJBException("Unable to load Client main-class: "+clientModule.getMainClass(), e);
+                throw new OpenEJBException("Unable to load Client main-class: " + clientModule.getMainClass(), e);
             }
             ApplicationClient client = clientModule.getApplicationClient();
 
@@ -233,28 +236,32 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = (TransactionManagement) clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
-                    if(tx != null){
+                    if (tx != null) {
                         transactionType = tx.value();
                     }
-                    switch(transactionType){
-                        case BEAN: bean.setTransactionType(TransactionType.BEAN); break;
-                        case CONTAINER: bean.setTransactionType(TransactionType.CONTAINER); break;
+                    switch (transactionType) {
+                        case BEAN:
+                            bean.setTransactionType(TransactionType.BEAN);
+                            break;
+                        case CONTAINER:
+                            bean.setTransactionType(TransactionType.CONTAINER);
+                            break;
                     }
                 }
 
                 AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
-                if (assemblyDescriptor == null){
+                if (assemblyDescriptor == null) {
                     assemblyDescriptor = new AssemblyDescriptor();
                     ejbModule.getEjbJar().setAssemblyDescriptor(assemblyDescriptor);
                 }
 
-                if (bean.getTransactionType() == TransactionType.CONTAINER){
+                if (bean.getTransactionType() == TransactionType.CONTAINER) {
                     Map<String, List<MethodTransaction>> methodTransactions = assemblyDescriptor.getMethodTransactions(ejbName);
 
                     // SET THE DEFAULT
-                    if (!methodTransactions.containsKey("*")){
+                    if (!methodTransactions.containsKey("*")) {
                         TransactionAttribute attribute = (TransactionAttribute) clazz.getAnnotation(TransactionAttribute.class);
-                        if (attribute != null){
+                        if (attribute != null) {
                             ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, "*");
                             assemblyDescriptor.getContainerTransaction().add(ctx);
                         }
@@ -263,7 +270,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     List<Method> methods = classFinder.findAnnotatedMethods(TransactionAttribute.class);
                     for (Method method : methods) {
                         TransactionAttribute attribute = method.getAnnotation(TransactionAttribute.class);
-                        if (!methodTransactions.containsKey(method.getName())){
+                        if (!methodTransactions.containsKey(method.getName())) {
                             // no method with this name in descriptor
                             addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
                         } else {
@@ -271,7 +278,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             List<MethodTransaction> list = methodTransactions.get(method.getName());
                             for (MethodTransaction mtx : list) {
                                 MethodParams methodParams = mtx.getMethodParams();
-                                if (methodParams == null){
+                                if (methodParams == null) {
                                     // params not specified, so this is more specific
                                     addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
                                 } else {
@@ -284,7 +291,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                         for (int i = 0; i < params1.size(); i++) {
                                             String a = params1.get(i);
                                             String b = params2[i];
-                                            if (!a.equals(b)){
+                                            if (!a.equals(b)) {
                                                 // params not the same
                                                 addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
                                                 break;
@@ -373,7 +380,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         // Remove anything not eligable to be a remote or local interface
                         for (Class interfce : copy(interfaces)) {
                             String name = interfce.getName();
-                            if (name.equals("java.io.Serializable") || name.equals("java.io.Externalizable") || name.startsWith("javax.ejb.")) {
+                            if (name.equals("java.io.Serializable") || name.equals("java.io.Externalizable") || name.startsWith("javax.ejb."))
+                            {
                                 interfaces.remove(interfce);
                             }
                         }
@@ -398,10 +406,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         List<Class> remotes = new ArrayList<Class>();
                         Remote remote = (Remote) clazz.getAnnotation(Remote.class);
                         if (remote != null) {
-                            if (remote.value().length == 0){
-                                if (interfaces.size() != 1) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
-                                if (clazz.getAnnotation(Local.class) != null) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes you must not also annotate it with @Local.");
-                                if (interfaces.get(0).getAnnotation(Local.class) != null) throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the business interface itself must not be annotated as @Local.");
+                            if (remote.value().length == 0) {
+                                if (interfaces.size() != 1)
+                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
+                                if (clazz.getAnnotation(Local.class) != null)
+                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes you must not also annotate it with @Local.");
+                                if (interfaces.get(0).getAnnotation(Local.class) != null)
+                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the business interface itself must not be annotated as @Local.");
 
                                 remotes.add(interfaces.get(0));
                                 interfaces.remove(0);
@@ -415,10 +426,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         List<Class> locals = new ArrayList<Class>();
                         Local local = (Local) clazz.getAnnotation(Local.class);
                         if (local != null) {
-                            if (local.value().length == 0){
-                                if (interfaces.size() != 1) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
-                                if (clazz.getAnnotation(Remote.class) != null) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes you must not also annotate it with @Remote.");
-                                if (interfaces.get(0).getAnnotation(Remote.class) != null) throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the business interface itself must not be annotated as @Remote.");
+                            if (local.value().length == 0) {
+                                if (interfaces.size() != 1)
+                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
+                                if (clazz.getAnnotation(Remote.class) != null)
+                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes you must not also annotate it with @Remote.");
+                                if (interfaces.get(0).getAnnotation(Remote.class) != null)
+                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the business interface itself must not be annotated as @Remote.");
 
                                 locals.add(interfaces.get(0));
                                 interfaces.remove(0);
@@ -469,14 +483,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbModule;
         }
 
-        private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) {
+        private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) throws OpenEJBException {
             List<EJB> ejbList = new ArrayList<EJB>();
             EJBs ejbs = (EJBs) clazz.getAnnotation(EJBs.class);
-            if(ejbs != null){
+            if (ejbs != null) {
                 ejbList.addAll(Arrays.asList(ejbs.value()));
             }
             EJB e = (EJB) clazz.getAnnotation(EJB.class);
-            if (e != null){
+            if (e != null) {
                 ejbList.add(e);
             }
 
@@ -506,11 +520,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<Resource> resourceList = new ArrayList<Resource>();
             Resources resources = (Resources) clazz.getAnnotation(Resources.class);
-            if(resources != null){
+            if (resources != null) {
                 resourceList.addAll(Arrays.asList(resources.value()));
             }
             Resource r = (Resource) clazz.getAnnotation(Resource.class);
-            if (r != null){
+            if (r != null) {
                 resourceList.add(r);
             }
 
@@ -535,13 +549,73 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildResource(consumer, resource, member);
             }
 
+            List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
+            PersistenceUnits persistenceUnits = (PersistenceUnits) clazz.getAnnotation(PersistenceUnits.class);
+            if (persistenceUnits != null) {
+                persistenceUnitList.addAll(Arrays.asList(persistenceUnits.value()));
+            }
+            PersistenceUnit persistenceUnit = (PersistenceUnit) clazz.getAnnotation(PersistenceUnit.class);
+            if (persistenceUnit != null) {
+                persistenceUnitList.add(persistenceUnit);
+            }
+            for (PersistenceUnit pUnit : persistenceUnitList) {
+                buildPersistenceUnit(consumer, pUnit, null);
+            }
+            for (Field field : finder.findAnnotatedFields(PersistenceUnit.class)) {
+                PersistenceUnit pUnit = field.getAnnotation(PersistenceUnit.class);
+                Member member = new FieldMember(field);
+                buildPersistenceUnit(consumer, pUnit, member);
+            }
+            for (Method method : finder.findAnnotatedMethods(PersistenceUnit.class)) {
+                PersistenceUnit pUnit = method.getAnnotation(PersistenceUnit.class);
+                Member member = new MethodMember(method);
+                buildPersistenceUnit(consumer, pUnit, member);
+            }
+        }
 
+        private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
+            // Get the ref-name
+            String refName = persistenceUnit.name();
+            if (refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+            if (refName == null) {
+                throw new OpenEJBException("The name attribute is not specified for the class level annotation @PersistenceUnit with unitName=" + persistenceUnit.unitName()
+                        + ". It is mandatory for all class level PersistenceUnit annotations.");
+            }
+            PersistenceUnitRef persistenceUnitRef = null;
+            List<PersistenceUnitRef> persistenceUnitRefs = consumer.getPersistenceUnitRef();
+            for (PersistenceUnitRef puRef : persistenceUnitRefs) {
+                if (puRef.getPersistenceUnitRefName().equals(refName)) {
+                    persistenceUnitRef = puRef;
+                    break;
+                }
+            }
+
+
+            if (persistenceUnitRef == null) {
+                persistenceUnitRef = new PersistenceUnitRef();
+                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
+                persistenceUnitRef.setPersistenceUnitRefName(refName);
+                persistenceUnitRefs.add(persistenceUnitRef);
+            }
+            if (member != null) {
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                persistenceUnitRef.getInjectionTarget().add(target);
+            }
+
+            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().equals("")) {
+                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
+            }
         }
 
         private void buildResource(JndiConsumer consumer, Resource resource, Member member) {
             // Get the ref-name
             String refName = resource.name();
-            if (refName.equals("")){
+            if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
@@ -549,19 +623,19 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<EnvEntry> envEntries = consumer.getEnvEntry();
             for (EnvEntry envEntry : envEntries) {
-                if (envEntry.getName().equals(refName)){
+                if (envEntry.getName().equals(refName)) {
                     reference = envEntry;
                     break;
                 }
             }
 
-            if (reference == null){
+            if (reference == null) {
                 return;
             }
 
 //            reference.setName(refName);
 
-            if (member != null){
+            if (member != null) {
                 // Set the member name where this will be injected
                 InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(member.getDeclaringClass().getName());
@@ -570,7 +644,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // Override the mapped name if not set
-            if (reference.getMappedName() == null && !resource.mappedName().equals("")){
+            if (reference.getMappedName() == null && !resource.mappedName().equals("")) {
                 reference.setMappedName(resource.mappedName());
             }
 
@@ -585,7 +659,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // figuring out what to do with it.
             ejbRef.setType(EjbRef.Type.UNKNOWN);
 
-            if (member != null){
+            if (member != null) {
                 // Set the member name where this will be injected
                 InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(member.getDeclaringClass().getName());
@@ -594,26 +668,26 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             Class interfce = ejb.beanInterface();
-            if (interfce.equals(Object.class)){
-                interfce = (member == null)? null: member.getType();
+            if (interfce.equals(Object.class)) {
+                interfce = (member == null) ? null : member.getType();
             }
 
-            if (interfce != null && !interfce.equals(Object.class)){
-                if (EJBHome.class.isAssignableFrom(interfce)){
+            if (interfce != null && !interfce.equals(Object.class)) {
+                if (EJBHome.class.isAssignableFrom(interfce)) {
                     ejbRef.setHome(interfce.getName());
                     Method[] methods = interfce.getMethods();
                     for (Method method : methods) {
-                        if (method.getName().startsWith("create")){
+                        if (method.getName().startsWith("create")) {
                             ejbRef.setRemote(method.getReturnType().getName());
                             break;
                         }
                     }
                     ejbRef.setType(EjbRef.Type.REMOTE);
-                } else if (EJBLocalHome.class.isAssignableFrom(interfce)){
+                } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
                     ejbRef.setHome(interfce.getName());
                     Method[] methods = interfce.getMethods();
                     for (Method method : methods) {
-                        if (method.getName().startsWith("create")){
+                        if (method.getName().startsWith("create")) {
                             ejbRef.setRemote(method.getReturnType().getName());
                             break;
                         }
@@ -631,26 +705,26 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Get the ejb-ref-name
             String refName = ejb.name();
-            if (refName.equals("")){
+            if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
             ejbRef.setEjbRefName(refName);
 
             // Set the ejb-link, if any
             String ejbName = ejb.beanName();
-            if (ejbName.equals("")){
+            if (ejbName.equals("")) {
                 ejbName = null;
             }
             ejbRef.setEjbLink(ejbName);
 
             // Set the mappedName, if any
             String mappedName = ejb.mappedName();
-            if (mappedName.equals("")){
+            if (mappedName.equals("")) {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
 
-            switch(ejbRef.getType()){
+            switch (ejbRef.getType()) {
                 case UNKNOWN:
                 case REMOTE:
                     consumer.getEjbRef().add(ejbRef);
@@ -692,7 +766,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static interface Member {
         Class getDeclaringClass();
+
         String getName();
+
         Class getType();
     }
 
