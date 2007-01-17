@@ -93,30 +93,6 @@
     <url>http://svn.apache.org/viewvc/incubator/openejb/trunk/openejb3</url>
   </scm>
 
-  <properties>
-    <!--
-       - Used in openejb-core pom.xml
-      -->
-    <xbeanVersion>2.8</xbeanVersion>
-
-    <!--
-       - Remove the property once it's been figured out how to instruct maven-assembly-plugin
-       - to copy SNAPSHOTs as SNAPSHOTs not 20061004.144417-3.
-       - One SNAPSHOT library is used to generate MANIFEST.MF with Class-Path pointing to the library
-       - It references the above property - xbeanVersion - that holds SNAPSHOT which is not available
-       - in lib directory of a assembly as maven-assembly-plugin changes its name to numbers.
-       -
-       - Used in maven-jar-plugin in openejb-core pom.xml and below to declare xbean-finder dependency
-      -->
-    <removePropertyFromCorePomXbeanVersion>2.8</removePropertyFromCorePomXbeanVersion>
-
-    <!--
-       - Remove the property once a version, subsequent to 1.6.1, is found that can parse
-       - org.apache.openejb.alt.config.DeploymentLoader.  The enum seems to trip it up.
-      -->
-    <removePropertyFromPomQdoxVersion>1.6</removePropertyFromPomQdoxVersion>
-  </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -795,28 +771,18 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder</artifactId>
-        <version>${removePropertyFromCorePomXbeanVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-naming</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>2.8</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>
             <artifactId>mx4j</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-spring</artifactId>
-        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>

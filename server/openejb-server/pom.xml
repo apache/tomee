@@ -31,25 +31,6 @@
   <artifactId>openejb-server</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Core</name>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>maven-xbean-plugin</artifactId>
-        <version>${xbeanVersion}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>mapping</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <namespace>http://openejb.apache.org/schemas/server</namespace>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>

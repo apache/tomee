@@ -23,9 +23,6 @@ import java.util.Properties;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarUtils;
-import org.apache.openejb.util.PropertiesService;
-import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.apache.xbean.spring.context.SpringApplicationContext;
 
 /**
  * Assemble OpenEJB instance and boot it up
@@ -34,33 +31,15 @@ public class Main {
 
     private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
-    // TODO: Remove the static initializer once Main is fully XBean-ized
-    private static final SpringApplicationContext factory;
-    static {
-        factory = new ClassPathXmlApplicationContext("META-INF/openejb-server.xml");
-    }
-
     public static void main(String args[]) {
 
         try {
-            // Parse command-line arguments before OpenEJB is assembled by XBean
-            // Some arguments cause DontStartServerException to be thrown
             Properties props = parseArguments(args);
-
-            PropertiesService propertiesService = (PropertiesService) factory.getBean("propertiesService");
-            // FIXME: Remove parseArguments and let propertiesService take care of properties mgmt
-            propertiesService.putAll(props);
-            
-            // FIXME: Enable XBean-ized SystemInstance 
-            //SystemInstance system = (SystemInstance) factory.getBean("system");
-            
-            SystemInstance.init(propertiesService.getProperties());
+            SystemInstance.init(props);
             SystemInstance system = SystemInstance.get();
             File libs = system.getHome().getDirectory("lib");
             system.getClassPath().addJarsToPath(libs);
-
-            Server server = (Server) factory.getBean("server");
-            server.start();
+            initServer(props);
         } catch (DontStartServerException e) {
 
         } catch (Exception e) {
@@ -71,7 +50,7 @@ public class Main {
     /**
      * Parse arguments and override any {@link System} properties returned via
      * {@link System#getProperties()}.
-     * 
+     *
      * @param args
      *            command line arguments
      * @return properties as defined in System and on the command line
@@ -199,6 +178,12 @@ public class Main {
                 b = in.read();
             }
         } catch (java.io.IOException e) {}
+    }
+
+    private static void initServer(Properties props) throws Exception {
+        Server server = new Server();
+        server.init(props);
+        server.start();
     }
 }
 
