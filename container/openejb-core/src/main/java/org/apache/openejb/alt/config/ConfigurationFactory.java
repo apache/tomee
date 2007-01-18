@@ -198,18 +198,21 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         for (String pathname : jarList) {
 
-            File jarFile = new File(pathname);
+            try {
+                File jarFile = new File(pathname);
 
-            AppInfo appInfo = configureApplication(jarFile);
+                AppInfo appInfo = configureApplication(jarFile);
 
-            sys.containerSystem.applications.add(appInfo);
+                sys.containerSystem.applications.add(appInfo);
+            } catch (OpenEJBException alreadyHandled) {
+            }
         }
 
         return sys;
     }
 
 
-    public AppInfo configureApplication(File jarFile) {
+    public AppInfo configureApplication(File jarFile) throws OpenEJBException {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
         AppInfo appInfo = null;
@@ -222,8 +225,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             logger.info("Loaded Module: " + appModule.getJarLocation());
 
         } catch (OpenEJBException e) {
-            e.printStackTrace();
-            logger.i18n.warning("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+            String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+            logger.warning(message);
+            throw e;
         }
         return appInfo;
     }
@@ -268,7 +272,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             } catch (OpenEJBException e) {
                 ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
-                throw e; 
+                throw e;
             }
         }
 
