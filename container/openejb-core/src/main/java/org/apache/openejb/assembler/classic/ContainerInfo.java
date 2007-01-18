@@ -16,6 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public abstract class ContainerInfo extends ServiceInfo {
+public class ContainerInfo extends ServiceInfo {
 
 }
