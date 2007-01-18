@@ -29,6 +29,7 @@ import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
+import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 
 import javax.ejb.EJBContext;
 import javax.naming.Context;
@@ -40,8 +41,8 @@ import javax.transaction.UserTransaction;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -54,17 +55,11 @@ public class JndiEncBuilder {
 
     private final ReferenceWrapper referenceWrapper;
     private final boolean beanManagedTransactions;
-    private final EjbReferenceInfo[] ejbReferences;
-    private final EjbLocalReferenceInfo[] ejbLocalReferences;
-    private final EnvEntryInfo[] envEntries;
-    private final ResourceReferenceInfo[] resourceRefs;
-    private final ResourceEnvReferenceInfo[] resourceEnvRefs;
-    private final PersistenceUnitInfo[] persistenceUnitRefs;
-    private final PersistenceContextInfo[] persistenceContextRefs;
     private final Map<String, EntityManagerFactory> entityManagerFactories;
     private final Map<String, Map<String, EntityManagerFactory>> allFactories;
     private final String jarPath;
-    
+    private final JndiEncInfo jndiEnc;
+
 
     public JndiEncBuilder(JndiEncInfo jndiEnc) throws OpenEJBException {
         this(jndiEnc, null, null, null,null);
@@ -87,60 +82,20 @@ public class JndiEncBuilder {
 
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
-        if ((jndiEnc != null && jndiEnc.ejbReferences != null)) {
-            ejbReferences = jndiEnc.ejbReferences.toArray(new EjbReferenceInfo[0]);
-        } else {
-            ejbReferences = new EjbReferenceInfo[]{};
-        }
-
-        if ((jndiEnc != null && jndiEnc.ejbLocalReferences != null)) {
-            ejbLocalReferences = jndiEnc.ejbLocalReferences.toArray(new EjbLocalReferenceInfo[0]);
-        } else {
-            ejbLocalReferences = new EjbLocalReferenceInfo[]{};
-        }
-
-        if ((jndiEnc != null && jndiEnc.envEntries != null)) {
-            envEntries = jndiEnc.envEntries.toArray(new EnvEntryInfo[0]);
-        } else {
-            envEntries = new EnvEntryInfo[]{};
-        }
-
-        if ((jndiEnc != null && jndiEnc.resourceRefs != null)) {
-            resourceRefs = jndiEnc.resourceRefs.toArray(new ResourceReferenceInfo[0]);
-        } else {
-            resourceRefs = new ResourceReferenceInfo[]{};
-        }
-
-        if ((jndiEnc != null && jndiEnc.resourceEnvRefs != null)) {
-            resourceEnvRefs = jndiEnc.resourceEnvRefs.toArray(new ResourceEnvReferenceInfo[0]);
-        } else {
-            resourceEnvRefs = new ResourceEnvReferenceInfo[]{};
-        }
-        
-        if ((jndiEnc != null && jndiEnc.persistenceUnitRefs != null)) {
-        	persistenceUnitRefs = jndiEnc.persistenceUnitRefs.toArray(new PersistenceUnitInfo[0]);
-        } else {
-        	persistenceUnitRefs = new PersistenceUnitInfo[]{};
-        }      
-        
-        if ((jndiEnc != null && jndiEnc.persistenceContextRefs != null)) {
-        	persistenceContextRefs = jndiEnc.persistenceContextRefs.toArray(new PersistenceContextInfo[0]);
-        } else {
-        	persistenceContextRefs = new PersistenceContextInfo[]{};
-        }
+        this.jndiEnc = jndiEnc;
 
         if(allFactories != null){
-        	this.allFactories = allFactories;
+            this.allFactories = allFactories;
         } else {
-        	this.allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-        }    
-        
-        this.jarPath = path;    
-        
+            this.allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
+        }
+
+        this.jarPath = path;
+
         if(this.allFactories.get(jarPath) != null){
-        	entityManagerFactories = this.allFactories.get(jarPath);
+            entityManagerFactories = this.allFactories.get(jarPath);
         } else {
-        	entityManagerFactories = new HashMap<String, EntityManagerFactory>();
+            entityManagerFactories = new HashMap<String, EntityManagerFactory>();
         }
     }
 
@@ -164,50 +119,51 @@ public class JndiEncBuilder {
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
 
-        for (int i = 0; i < ejbReferences.length; i++) {
-            EjbReferenceInfo referenceInfo = ejbReferences[i];
-            EjbReferenceLocationInfo location = referenceInfo.location;
+        for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
             Reference reference = null;
 
-            if (!location.remote) {
+            if (referenceInfo.location != null) {
+                reference = buildReferenceLocation(referenceInfo.location);
+            } else {
                 // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                 if (referenceInfo.homeType == null){
-                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "BusinessRemote";
+                    String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessRemote";
                     reference = new IntraVmJndiReference(jndiName);
                 } else {
                     // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId;
+                    String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId;
                     reference = new IntraVmJndiReference(jndiName);
                 }
-            } else {
-                String openEjbSubContextName = "java:openejb/remote_jndi_contexts/" + location.jndiContextId;
-                reference = new JndiReference(openEjbSubContextName, location.remoteRefName);
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
 
-        for (int i = 0; i < ejbLocalReferences.length; i++) {
-            EjbLocalReferenceInfo referenceInfo = ejbLocalReferences[i];
-            EjbReferenceLocationInfo location = referenceInfo.location;
+        for (EjbLocalReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
 
             Reference reference = null;
 
-            if (location != null && !location.remote) {
-                if (referenceInfo.homeType == null){
-                    // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "BusinessLocal";
-                    reference = new IntraVmJndiReference(jndiName);
-                } else {
-                    String jndiName = "java:openejb/ejb/" + location.ejbDeploymentId + "Local";
-                    reference = new IntraVmJndiReference(jndiName);
-                }
-                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            if (referenceInfo.location != null) {
+                reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.homeType == null){
+                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
+                String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessLocal";
+                reference = new IntraVmJndiReference(jndiName);
+            } else {
+                String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "Local";
+                reference = new IntraVmJndiReference(jndiName);
             }
+            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
 
-        for (int i = 0; i < envEntries.length; i++) {
-            EnvEntryInfo entry = envEntries[i];
+        for (EnvEntryInfo entry : jndiEnc.envEntries) {
+
+            if (entry.location != null) {
+                Reference reference = buildReferenceLocation(entry.location);
+                bindings.put(normalize(entry.name), reference);
+                continue;
+            }
+
             try {
                 Class type = Class.forName(entry.type.trim());
                 Object obj = null;
@@ -242,56 +198,81 @@ public class JndiEncBuilder {
             }
         }
 
-        for (int i = 0; i < resourceRefs.length; i++) {
-            ResourceReferenceInfo referenceInfo = resourceRefs[i];
+        for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
             Reference reference = null;
 
-            if (referenceInfo.resourceID != null) {
+            if (referenceInfo.location != null) {
+                reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.resourceID != null) {
                 String jndiName = "java:openejb/Connector/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
-            } else if (referenceInfo.location != null) {
-                String openEjbSubContextName1 = "java:openejb/remote_jndi_contexts/" + referenceInfo.location.jndiContextId;
-                String jndiName2 = referenceInfo.location.remoteRefName;
-                reference = new JndiReference(openEjbSubContextName1, jndiName2);
             } else {
                 String jndiName = "java:openejb/Connector/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
-                
-        for (int i = 0; i < resourceEnvRefs.length; i++) {
-            ResourceEnvReferenceInfo referenceInfo = resourceEnvRefs[i];
-            Reference reference = null;
+
+        for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
             LinkRef linkRef = null;
             try {
                 if (EJBContext.class.isAssignableFrom(Class.forName(referenceInfo.resourceEnvRefType))) {
                     String jndiName = "java:comp/EJBContext";
-                    linkRef = new LinkRef(jndiName);               
+                    linkRef = new LinkRef(jndiName);
                     bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
                     continue;
-                }                 
-            } catch (ClassNotFoundException e) {                
+                }
+            } catch (ClassNotFoundException e) {
                 throw new OpenEJBException(e);
-            }     
-        //TODO code for handling other resource-env-refs need to be added here. 
+            }
+
+            if (referenceInfo.location != null){
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.resourceEnvRefName), wrapReference(reference));
+            }
+
+            //TODO code for handling other resource-env-refs need to be added here.
         }
-                                
-        for (int i = 0; i < persistenceUnitRefs.length; i++){
-        	PersistenceUnitInfo puRefInfo = persistenceUnitRefs[i];
-            EntityManagerFactory factory = findEntityManagerFactory(puRefInfo.persistenceUnitName);
+
+        for (PersistenceUnitInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
+            if (referenceInfo.location != null){
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+                continue;
+            }
+
+            EntityManagerFactory factory = findEntityManagerFactory(referenceInfo.persistenceUnitName);
 
             Reference reference = new PersistenceUnitReference(factory);
-            bindings.put(normalize(puRefInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
 
-        for (int i = 0; i < persistenceContextRefs.length; i++) {
-            PersistenceContextInfo contextInfo = persistenceContextRefs[i];
+        for (PersistenceContextInfo contextInfo : jndiEnc.persistenceContextRefs) {
+            if (contextInfo.location != null){
+                Reference reference = buildReferenceLocation(contextInfo.location);
+                bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
+                continue;
+            }
+
             EntityManagerFactory factory = findEntityManagerFactory(contextInfo.persistenceUnitName);
 
             JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
             Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
+        }
+
+        for (MessageDestinationReferenceInfo referenceInfo : jndiEnc.messageDestinationRefs) {
+            if (referenceInfo.location != null){
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            }
+        }
+
+        for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
+            if (referenceInfo.location != null){
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            }
         }
 
         IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
@@ -302,8 +283,7 @@ public class JndiEncBuilder {
             throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
         }
 
-        for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
+        for (Map.Entry<String, Object> entry : bindings.entrySet()) {
             String name = (String) entry.getKey();
             Object value = entry.getValue();
             try {
@@ -313,6 +293,15 @@ public class JndiEncBuilder {
             }
         }
         return enc;
+    }
+
+    private Reference buildReferenceLocation(ReferenceLocationInfo location) {
+        if (location.jndiProviderId != null){
+            String subContextName = "java:openejb/remote_jndi_contexts/" + location.jndiProviderId;
+            return new JndiReference(subContextName, location.jndiName);
+        } else {
+            return new JndiUrlReference(location.jndiName);
+        }
     }
 
     private String normalize(String name) {
@@ -376,7 +365,7 @@ public class JndiEncBuilder {
             return new org.apache.openejb.core.mdb.MdbEncUserTransaction((CoreUserTransaction) userTransaction);
         }
     }
-    
+
 
     private static class DefaultReferenceWrapper extends ReferenceWrapper {
         Object wrap(Reference reference) {
@@ -387,7 +376,7 @@ public class JndiEncBuilder {
             return reference;
         }
     }
-    
+
     public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {
         EntityManagerFactory factory;
         if (persistenceName != null) {
@@ -410,29 +399,29 @@ public class JndiEncBuilder {
      * path.The paths are calculated relative to the referencing component jar. See 16.10.2 in ejb core spec.
      */
     private EntityManagerFactory findEntityManagerFactory(Map<String, Map<String, EntityManagerFactory>> allFactories, String path, String puName) throws OpenEJBException{
-    	int index = puName.indexOf("#");
-    	String relativePath = puName.substring(0,index);
-    	String unitName = puName.substring(index+1,puName.length());
-    	if(new File(path).isFile()){
-    		path=path.substring(0,path.lastIndexOf(File.separator));
-    	}    	
-    	while(relativePath.startsWith("../")){
-    		relativePath = relativePath.substring(3,relativePath.length());
-    		path = path.substring(0,path.lastIndexOf(File.separator));
-    	}
-    	
-    	while(relativePath.startsWith("./")){
-    		relativePath = relativePath.substring(2,relativePath.length());    		
-    	}
-    	path = path + File.separator + relativePath;    	
-		path = new File(path).getPath();		
-    	Map factories = allFactories.get(path);
-    	if (factories != null){
-    		EntityManagerFactory factory = (EntityManagerFactory)factories.get(unitName);
-    		if(factory != null){
-    			return factory;     		 
-    		}
-    	}
-    	throw new OpenEJBException("The persistence unit referred by the persistence-unit-name tag "+puName+" could not be found");   	
+        int index = puName.indexOf("#");
+        String relativePath = puName.substring(0,index);
+        String unitName = puName.substring(index+1,puName.length());
+        if(new File(path).isFile()){
+            path=path.substring(0,path.lastIndexOf(File.separator));
+        }
+        while(relativePath.startsWith("../")){
+            relativePath = relativePath.substring(3,relativePath.length());
+            path = path.substring(0,path.lastIndexOf(File.separator));
+        }
+
+        while(relativePath.startsWith("./")){
+            relativePath = relativePath.substring(2,relativePath.length());
+        }
+        path = path + File.separator + relativePath;
+        path = new File(path).getPath();
+        Map factories = allFactories.get(path);
+        if (factories != null){
+            EntityManagerFactory factory = (EntityManagerFactory)factories.get(unitName);
+            if(factory != null){
+                return factory;
+            }
+        }
+        throw new OpenEJBException("The persistence unit referred by the persistence-unit-name tag "+puName+" could not be found");
     }
 }

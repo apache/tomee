@@ -64,7 +64,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class EjbRef implements Injectable {
+public class EjbRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -90,14 +90,14 @@ public class EjbRef implements Injectable {
     }
 
     @XmlTransient
-    protected Type type = Type.REMOTE;
+    protected Type refType = Type.REMOTE;
 
-    public Type getType() {
-        return type;
+    public Type getRefType() {
+        return refType;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setRefType(Type refType) {
+        this.refType = refType;
     }
 
     public List<Text> getDescription() {
@@ -109,6 +109,21 @@ public class EjbRef implements Injectable {
 
     public String getEjbRefName() {
         return ejbRefName;
+    }
+
+    public String getName() {
+        return getEjbRefName();
+    }
+
+    public String getType() {
+        return getEjbRefType().name();
+    }
+
+    public void setName(String name) {
+        setEjbRefName(name);
+    }
+
+    public void setType(String type) {
     }
 
     /**

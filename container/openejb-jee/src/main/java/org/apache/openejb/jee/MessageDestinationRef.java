@@ -76,7 +76,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class MessageDestinationRef implements Injectable {
+public class MessageDestinationRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;

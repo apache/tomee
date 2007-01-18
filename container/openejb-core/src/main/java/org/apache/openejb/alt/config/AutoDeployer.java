@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.alt.config;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
 import org.apache.openejb.alt.config.ejb.OpenejbJar;
 import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.util.SafeToolkit;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class AutoDeployer implements DynamicDeployer {
     private final ConfigurationFactory config;
@@ -59,7 +59,7 @@ public class AutoDeployer implements DynamicDeployer {
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-        if (ejbModule.getOpenejbJar() != null){
+        if (ejbModule.getOpenejbJar() != null) {
             return ejbModule;
         }
 
@@ -90,11 +90,14 @@ public class AutoDeployer implements DynamicDeployer {
             throw new OpenEJBException("Beans with more that one resource-ref cannot be autodeployed;  there is no accurate way to determine how the references should be mapped.");
         }
 
-        for (int i = 0; i < refs.length; i++) {
-            deployment.getResourceLink().add(autoAssingResourceRef(refs[i]));
+        for (ResourceRef ref : refs) {
+            if ((ref.getMappedName() + "").startsWith("jndi:")) {
+                continue;
+            }
+            deployment.getResourceLink().add(autoAssingResourceRef(ref));
         }
 
-        if (bean.getType().equals("CMP_ENTITY") && ((EntityBean)bean).getCmpVersion() == 1 ) {
+        if (bean.getType().equals("CMP_ENTITY") && ((EntityBean) bean).getCmpVersion() == 1) {
             if (bean.getHome() != null) {
                 Class tempBean = loadClass(ejbModule, bean.getHome());
                 if (hasFinderMethods(tempBean)) {
@@ -149,13 +152,14 @@ public class AutoDeployer implements DynamicDeployer {
 
     private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {
         for (ContainerInfo containerInfo : config.getContainerInfos()) {
-            if (containerInfo.getClass().equals(containerInfoType)){
+            if (containerInfo.getClass().equals(containerInfoType)) {
                 return containerInfo.id;
             }
         }
 
         return null;
     }
+
     private ResourceLink autoAssingResourceRef(ResourceRef ref) throws OpenEJBException {
 
         List<String> resources = config.getConnectorIds();

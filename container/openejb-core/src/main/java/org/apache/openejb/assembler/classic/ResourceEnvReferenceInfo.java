@@ -21,5 +21,6 @@ public class ResourceEnvReferenceInfo extends InjectableInfo {
     public String resourceEnvRefType;
     public String mappedName;
     public String resourceID;
-    public ResourceEnvReferenceLocationInfo location;
+
+    public ReferenceLocationInfo location;
 }

@@ -87,11 +87,12 @@ public class ConfigurationPrinter {
                         out(3, "--[" + iterator.previousIndex() + "]----------------------");
                         out(3, "homeType        ", ejbReference.homeType);
                         out(3, "referenceName   ", ejbReference.referenceName);
-                        out(3, "location        ", ejbReference.location);
-                        out(3, "ejbDeploymentId ", ejbReference.location.ejbDeploymentId);
-                        out(3, "jndiContextId   ", ejbReference.location.jndiContextId);
-                        out(3, "remote          ", ejbReference.location.remote);
-                        out(3, "remoteRefName   ", ejbReference.location.remoteRefName);
+                        out(3, "ejbDeploymentId ", ejbReference.ejbDeploymentId);
+                        if (ejbReference.location != null){
+                            out(3, "location        ", ejbReference.location);
+                            out(3, "jndiContextId   ", ejbReference.location.jndiProviderId);
+                            out(3, "remoteRefName   ", ejbReference.location.jndiName);
+                        }
                     }
                     out(2, "resourceRefs   ", jndiEnc.resourceRefs.size());
                     for (ListIterator<ResourceReferenceInfo> iterator = jndiEnc.resourceRefs.listIterator(); iterator.hasNext();) {
@@ -102,9 +103,8 @@ public class ConfigurationPrinter {
                         out(3, "referenceType   ", resourceRef.referenceType);
                         if (resourceRef.location != null) {
                             out(3, "location        ", resourceRef.location);
-                            out(3, "jndiContextId   ", resourceRef.location.jndiContextId);
-                            out(3, "remote          ", resourceRef.location.remote);
-                            out(3, "remoteRefName   ", resourceRef.location.remoteRefName);
+                            out(3, "jndiContextId   ", resourceRef.location.jndiName);
+                            out(3, "remoteRefName   ", resourceRef.location.jndiProviderId);
                         }
                     }
                 }

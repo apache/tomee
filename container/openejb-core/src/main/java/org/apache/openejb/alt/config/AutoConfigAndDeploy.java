@@ -114,9 +114,11 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             }
 
             // check the resource refs
-            ResourceRef[] refs = bean.getResourceRef();
-            for (int j = 0; j < refs.length; j++) {
-                ResourceRef ref = refs[j];
+            for (ResourceRef ref : bean.getResourceRef()) {
+                if ((ref.getMappedName() + "").startsWith("jndi:")){
+                    continue;
+                }
+                
                 ResourceLink link = ejbDeployment.getResourceLink(ref.getResRefName());
                 if (link == null) {
                     link = new ResourceLink();

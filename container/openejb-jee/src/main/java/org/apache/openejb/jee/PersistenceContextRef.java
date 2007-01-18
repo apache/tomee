@@ -71,7 +71,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class PersistenceContextRef implements Injectable {
+public class PersistenceContextRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -91,6 +91,21 @@ public class PersistenceContextRef implements Injectable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getName() {
+        return getPersistenceContextRefName();
+    }
+
+    public String getType() {
+        return getPersistenceContextType().name();
+    }
+
+    public void setName(String name) {
+        setPersistenceContextRefName(name);
+    }
+
+    public void setType(String type) {
+    }
 
     public List<Text> getDescription() {
         if (description == null) {

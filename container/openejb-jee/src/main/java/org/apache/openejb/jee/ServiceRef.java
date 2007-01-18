@@ -56,7 +56,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class ServiceRef implements Injectable {
+public class ServiceRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -90,6 +90,21 @@ public class ServiceRef implements Injectable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getName() {
+        return getServiceRefName();
+    }
+
+    public String getType() {
+        return getServiceRefType();
+    }
+
+    public void setName(String name) {
+        setServiceRefName(name);
+    }
+
+    public void setType(String type) {
+    }
 
     public List<Text> getDescription() {
         if (description == null) {

@@ -28,5 +28,7 @@ public class JndiEncInfo extends InfoObject {
     public final List<ResourceReferenceInfo> resourceRefs = new ArrayList<ResourceReferenceInfo>();
     public final List<PersistenceUnitInfo> persistenceUnitRefs = new ArrayList<PersistenceUnitInfo>();
     public final List<PersistenceContextInfo> persistenceContextRefs = new ArrayList<PersistenceContextInfo>();
-    public final List <ResourceEnvReferenceInfo> resourceEnvRefs = new ArrayList<ResourceEnvReferenceInfo>();
+    public final List<ResourceEnvReferenceInfo> resourceEnvRefs = new ArrayList<ResourceEnvReferenceInfo>();
+    public final List<MessageDestinationReferenceInfo> messageDestinationRefs = new ArrayList<MessageDestinationReferenceInfo>();
+    public final List<ServiceReferenceInfo> serviceRefs = new ArrayList<ServiceReferenceInfo>();
 }

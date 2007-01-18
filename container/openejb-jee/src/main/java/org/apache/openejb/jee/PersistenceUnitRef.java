@@ -64,7 +64,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class PersistenceUnitRef implements Injectable {
+public class PersistenceUnitRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -80,6 +80,21 @@ public class PersistenceUnitRef implements Injectable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getName() {
+        return getPersistenceUnitRefName();
+    }
+
+    public String getType() {
+        return getPersistenceUnitName();
+    }
+
+    public void setName(String name) {
+        setPersistenceUnitRefName(name);
+    }
+
+    public void setType(String type) {
+    }
 
     public List<Text> getDescription() {
         if (description == null) {

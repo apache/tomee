@@ -657,7 +657,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // whether to use an EjbLocalRef or EjbRef (remote).
             // We flag it uknown and let the linking code take care of
             // figuring out what to do with it.
-            ejbRef.setType(EjbRef.Type.UNKNOWN);
+            ejbRef.setRefType(EjbRef.Type.UNKNOWN);
 
             if (member != null) {
                 // Set the member name where this will be injected
@@ -682,7 +682,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             break;
                         }
                     }
-                    ejbRef.setType(EjbRef.Type.REMOTE);
+                    ejbRef.setRefType(EjbRef.Type.REMOTE);
                 } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
                     ejbRef.setHome(interfce.getName());
                     Method[] methods = interfce.getMethods();
@@ -692,13 +692,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                             break;
                         }
                     }
-                    ejbRef.setType(EjbRef.Type.LOCAL);
+                    ejbRef.setRefType(EjbRef.Type.LOCAL);
                 } else {
                     ejbRef.setRemote(interfce.getName());
                     if (interfce.getAnnotation(Local.class) != null) {
-                        ejbRef.setType(EjbRef.Type.LOCAL);
+                        ejbRef.setRefType(EjbRef.Type.LOCAL);
                     } else if (interfce.getAnnotation(Remote.class) != null) {
-                        ejbRef.setType(EjbRef.Type.REMOTE);
+                        ejbRef.setRefType(EjbRef.Type.REMOTE);
                     }
                 }
             }
@@ -724,7 +724,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             ejbRef.setMappedName(mappedName);
 
-            switch (ejbRef.getType()) {
+            switch (ejbRef.getRefType()) {
                 case UNKNOWN:
                 case REMOTE:
                     consumer.getEjbRef().add(ejbRef);

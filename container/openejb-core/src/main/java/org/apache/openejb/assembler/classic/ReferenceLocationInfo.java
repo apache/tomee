@@ -16,10 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public class ResourceReferenceLocationInfo extends InfoObject {
+public class ReferenceLocationInfo extends InfoObject {
 
-    public boolean remote;
-    public String remoteRefName;
-    public String jndiContextId;
+    public String jndiProviderId;
+    public String jndiName;
 
 }

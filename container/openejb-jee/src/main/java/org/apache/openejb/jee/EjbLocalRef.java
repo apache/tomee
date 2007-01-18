@@ -62,7 +62,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class EjbLocalRef implements Injectable {
+public class EjbLocalRef implements JndiReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -98,6 +98,20 @@ public class EjbLocalRef implements Injectable {
         this.localHome = ref.getHome();
     }
 
+    public String getName() {
+        return getEjbRefName();
+    }
+
+    public String getType() {
+        return getEjbRefType().name();
+    }
+
+    public void setName(String name) {
+        setEjbRefName(name);
+    }
+
+    public void setType(String type) {
+    }
 
 
     public List<Text> getDescription() {

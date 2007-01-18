@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,18 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core.ivm.naming;
 
-import java.util.Properties;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.loader.SystemInstance;
 
-/**
- * @version $Rev$ $Date$
- */
-public class PersistenceContextInfo extends InjectableInfo {
-    public String referenceName;
-    public String persistenceUnitName;
-    public boolean extended;
-    public final Properties properties = new Properties();
+import javax.naming.*;
+import javax.naming.NamingException;
+import java.util.Hashtable;
 
-    public ReferenceLocationInfo location;
+public class JndiUrlReference implements Reference {
+    private String jndiName;
+
+    public JndiUrlReference(String jndiName) {
+        this.jndiName = jndiName;
+    }
+
+    public Object getObject() throws javax.naming.NamingException {
+        return new InitialContext().lookup(jndiName);
+    }
+
 }
