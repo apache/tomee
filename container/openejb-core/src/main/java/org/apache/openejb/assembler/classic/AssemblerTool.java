@@ -47,7 +47,7 @@ public class AssemblerTool {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
 
-    protected Properties props;
+    protected Properties props = new Properties();
 
     static {
         System.setProperty("noBanner", "true");
