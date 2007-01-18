@@ -34,7 +34,11 @@ public class GlobalJndiDataSourceResolver implements DataSourceResolver {
     }
 
     public DataSource getDataSource(String name) throws Exception {
-    	try {
+        String hack = System.getProperty("duct tape");
+        if (hack != null){
+            return null;
+        }
+        try {
             initialContext = new InitialContext(jndiProperties);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
