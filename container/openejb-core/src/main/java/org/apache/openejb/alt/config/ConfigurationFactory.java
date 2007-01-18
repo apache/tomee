@@ -84,13 +84,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
+    private final boolean offline;
 
     public ConfigurationFactory() {
+        this(false);
+    }
+
+    public ConfigurationFactory(boolean offline) {
+        this.offline = offline;
         deploymentLoader = new DeploymentLoader();
 
         DynamicDeployer deployer;
-        // TODO: Create some way to enable one versus the other
-        if (false) {
+        if (offline) {
             deployer = new AutoDeployer(this);
 
         } else {
@@ -126,7 +131,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     protected void install(ContainerInfo serviceInfo) throws OpenEJBException {
         if (sys != null) {
             sys.containerSystem.containers.add(serviceInfo);
-        } else {
+        } else if (!offline) {
             Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
             assembler.createContainer(serviceInfo);
         }
@@ -135,7 +140,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     protected void install(ConnectorInfo serviceInfo) throws OpenEJBException {
         if (sys != null) {
             sys.facilities.connectors.add(serviceInfo);
-        } else {
+        } else if (!offline) {
             Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
             assembler.createConnector(serviceInfo);
         }
