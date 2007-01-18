@@ -166,11 +166,11 @@ public class MdbInstanceFactory {
         try {
             Context ctx = deploymentInfo.getJndiEnc();
             // construct the bean instance
-            MdbContext mdbContext = null;
+            OldMdbContext mdbContext = null;
             try {
-                mdbContext = (MdbContext) ctx.lookup("java:comp/EJBContext");
+                mdbContext = (OldMdbContext) ctx.lookup("java:comp/EJBContext");
             } catch (NamingException e) {
-                mdbContext = new MdbContext(transactionManager, securityService);
+                mdbContext = new OldMdbContext(transactionManager, securityService);
                 ctx.bind("java:comp/EJBContext",mdbContext);
             }
             // only in this case should the callback be used

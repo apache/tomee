@@ -14,47 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.entity;
+package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.transaction.TransactionManager;
+import javax.xml.rpc.handler.MessageContext;
 
-public class EntityContext extends org.apache.openejb.core.CoreContext implements javax.ejb.EntityContext {
-
-    public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
+public class OldStatelessContext
+        extends org.apache.openejb.core.CoreContext implements javax.ejb.SessionContext {
+    public OldStatelessContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
 
     public void checkBeanState(byte methodCategory) throws IllegalStateException {
         /*
-        The methodCategory will be one of the following constants.
-
         SECURITY_METHOD:
+        USER_TRANSACTION_METHOD:
         ROLLBACK_METHOD:
         EJBOBJECT_METHOD:
-        EJBHOME_METHOD
 
         The super class, CoreContext determines if Context.getUserTransaction( ) method
         maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
         beans may access this method.
 
-        The USER_TRANSACTION_METHOD constant will never be a methodCategory
-        because entity beans are not allowed to have "bean managed" transactions.
-
-        USER_TRANSACTION_METHOD:
         */
-
         ThreadContext callContext = ThreadContext.getThreadContext();
-        org.apache.openejb.DeploymentInfo di = callContext.getDeploymentInfo();
+        CoreDeploymentInfo di = callContext.getDeploymentInfo();
 
         switch (callContext.getCurrentOperation()) {
             case SET_CONTEXT:
-            case UNSET_CONTEXT:
                 /*
                 Allowed Operations:
                     getEJBHome
@@ -71,65 +65,56 @@ public class EntityContext extends org.apache.openejb.core.CoreContext implement
                     throw new IllegalStateException("Invalid operation attempted");
                 break;
             case CREATE:
-            case FIND:
-            case HOME:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                Prohibited Operations:
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                */
-                if (methodCategory == EJBOBJECT_METHOD)
-                    throw new IllegalStateException("Invalid operation attempted");
-                break;
-            case ACTIVATE:
-            case PASSIVATE:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getEJBObject
-                    getPrimaryKey
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                    getUserTransaction
-                */
-                if (methodCategory != EJBOBJECT_METHOD && methodCategory != EJBHOME_METHOD)
-                    throw new IllegalStateException("Invalid operation attempted");
-                break;
-
-            case POST_CREATE:
             case REMOVE:
-            case LOAD:
-            case STORE:
+                /*
+                Allowed Operations:
+                    getEJBHome
+                    getEJBObject
+                    getPrimaryKey
+                    getUserTransaction
+                Prohibited Operations:
+                    getCallerPrincipal
+                    getRollbackOnly,
+                    isCallerInRole
+                    setRollbackOnly
+                */
+                if (methodCategory == EJBHOME_METHOD
+                        || methodCategory == EJBOBJECT_METHOD
+                        || methodCategory == USER_TRANSACTION_METHOD)
+                    break;
+                else
+                    throw new IllegalStateException("Invalid operation attempted");
+            case BUSINESS:
                 /* 
                 Allowed Operations: 
                     getEJBHome
+                    getEJBObject
+                    getPrimaryKey
+                    getUserTransaction
                     getCallerPrincipal
                     getRollbackOnly,
                     isCallerInRole
                     setRollbackOnly
-                    getEJBObject
-                    getPrimaryKey
                 Prohibited Operations:
-                    getUserTransaction
                 */
                 break;
-
         }
 
     }
 
     protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new EntityEjbObjectHandler(container, pk, depID, interfaceType);
+        return new StatelessEjbObjectHandler(container, pk, depID, interfaceType);
     }
 
+    public MessageContext getMessageContext() {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    public Object getBusinessObject(Class businessInterface) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    public Class getInvokedBusinessInterface() {
+        throw new UnsupportedOperationException("not implemented");
+    }
 }

@@ -140,7 +140,7 @@ public class StatelessInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return (SessionContext) new StatelessContext(transactionManager, securityService);
+        return (SessionContext) new OldStatelessContext(transactionManager, securityService);
     }
 
     public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {

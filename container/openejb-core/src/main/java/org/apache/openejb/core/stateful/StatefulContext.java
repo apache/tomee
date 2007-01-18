@@ -16,135 +16,31 @@
  */
 package org.apache.openejb.core.stateful;
 
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.persistence.JtaEntityManagerRegistry;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.spi.SecurityService;
-
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-import javax.xml.rpc.handler.MessageContext;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
 
-public class StatefulContext extends org.apache.openejb.core.CoreContext implements javax.ejb.SessionContext {
+import org.apache.openejb.core.BaseSessionContext;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.spi.SecurityService;
+
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class StatefulContext extends BaseSessionContext {
+
+    public StatefulContext(TransactionManager transactionManager, SecurityService securityService) {
+        super(transactionManager, securityService);
+    }
 
     public StatefulContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
         super(transactionManager, securityService, userTransaction);
     }
 
-    public void checkBeanState(byte methodCategory) throws IllegalStateException {
-        /*
-        The methodCategory will be one of the following constants.
-
-        SECURITY_METHOD:
-        ROLLBACK_METHOD:
-        EJBOBJECT_METHOD:
-        EJBHOME_METHOD
-        USER_TRANSACTION_METHOD:
-
-        The super class, CoreContext determines if Context.getUserTransaction( ) method
-        maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
-        beans may access this method.
-
-        The USER_TRANSACTION_METHOD will never be passed as a methodCategory in the SessionSynchronization
-        interface methods. The CoreContext won't allow it.
-
-        */
-        ThreadContext callContext = ThreadContext.getThreadContext();
-
-        switch (callContext.getCurrentOperation()) {
-            case SET_CONTEXT:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                */
-                if (methodCategory != EJBHOME_METHOD) {
-                    throw new IllegalStateException("Invalid operation attempted");
-                }
-                break;
-            case CREATE:
-            case REMOVE:
-            case ACTIVATE:
-            case PASSIVATE:
-            case AFTER_COMPLETION:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getCallerPrincipal
-                    isCallerInRole
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction (not allowed in AFTER_COMPLETION)
-                Prohibited Operations:
-                    getRollbackOnly,
-                    setRollbackOnly
-                */
-                if (methodCategory == ROLLBACK_METHOD) {
-                    throw new IllegalStateException("Invalid operation attempted");
-                } else {
-                    break;
-                }
-            case BUSINESS:
-            case AFTER_BEGIN:
-            case BEFORE_COMPLETION:
-                /* 
-                Allowed Operations: 
-                    getEJBHome
-                    getCallerPrincipal
-                    isCallerInRole
-                    getEJBObject
-                    getPrimaryKey
-                    getRollbackOnly,
-                    setRollbackOnly
-                    getUserTransaction (business methods only)
-                Prohibited Operations:
-                */
-                break;
-        }
-
-    }
-
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new StatefulEjbObjectHandler(container, pk, depID, interfaceType);
-    }
-
-    public MessageContext getMessageContext() {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    public Object getBusinessObject(Class businessInterface) {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    public Class getInvokedBusinessInterface() {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    private Object writeReplace() throws ObjectStreamException {
-        return new A();
-    }
-
-    private static class A implements Serializable {
-        private Object readResolve() throws ObjectStreamException {
-            // DMB: Could easily be done generically with an recipie
-            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-            JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
-            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            StatefulUserTransaction userTransaction = new StatefulUserTransaction(new CoreUserTransaction(transactionManager), jtaEntityManagerRegistry);
-            return new StatefulContext(transactionManager, securityService, userTransaction);
-        }
+    protected void init() {
+        states[Operation.INJECTION.ordinal()] = INJECTION;
+        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
+        states[Operation.BUSINESS.ordinal()] = BUSINESS;
+        states[Operation.TIMEOUT.ordinal()] = TIMEOUT;
     }
 }

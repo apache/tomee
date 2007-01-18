@@ -265,7 +265,10 @@ public abstract class BaseContext implements EJBContext, Serializable {
         }
 
         public boolean isUserTransactionAccessAllowed() {
-            return true;
+            ThreadContext threadContext = ThreadContext.getThreadContext();
+            DeploymentInfo di = threadContext.getDeploymentInfo();
+
+            return di.isBeanManagedTransaction();
         }
 
         public boolean isMessageContextAccessAllowed() {

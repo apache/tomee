@@ -16,105 +16,42 @@
  */
 package org.apache.openejb.core.stateless;
 
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
+import org.apache.openejb.core.BaseSessionContext;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.transaction.TransactionManager;
-import javax.xml.rpc.handler.MessageContext;
 
-public class StatelessContext
-        extends org.apache.openejb.core.CoreContext implements javax.ejb.SessionContext {
+/**
+ * @version $Rev$ $Date$
+ */
+public class StatelessContext extends BaseSessionContext {
+
     public StatelessContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
 
-    public void checkBeanState(byte methodCategory) throws IllegalStateException {
-        /*
-        SECURITY_METHOD:
-        USER_TRANSACTION_METHOD:
-        ROLLBACK_METHOD:
-        EJBOBJECT_METHOD:
+    public StatelessContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
+        super(transactionManager, securityService, userTransaction);
+    }
 
-        The super class, CoreContext determines if Context.getUserTransaction( ) method
-        maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
-        beans may access this method.
+    protected void init() {
+        states[Operation.INJECTION.ordinal()] = INJECTION;
+        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
+        states[Operation.BUSINESS.ordinal()] = BUSINESS;
+        states[Operation.BUSINESS_WS.ordinal()] = BUSINESS_WS;
+        states[Operation.TIMEOUT.ordinal()] = TIMEOUT;
+    }
 
-        */
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        CoreDeploymentInfo di = callContext.getDeploymentInfo();
-
-        switch (callContext.getCurrentOperation()) {
-            case SET_CONTEXT:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                */
-                if (methodCategory != EJBHOME_METHOD)
-                    throw new IllegalStateException("Invalid operation attempted");
-                break;
-            case CREATE:
-            case REMOVE:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                */
-                if (methodCategory == EJBHOME_METHOD
-                        || methodCategory == EJBOBJECT_METHOD
-                        || methodCategory == USER_TRANSACTION_METHOD)
-                    break;
-                else
-                    throw new IllegalStateException("Invalid operation attempted");
-            case BUSINESS:
-                /* 
-                Allowed Operations: 
-                    getEJBHome
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                Prohibited Operations:
-                */
-                break;
+    /**
+     * Business method from web service endpoint
+     */
+    private final StatelessState BUSINESS_WS = new StatelessState() {
+        public Class getInvokedBusinessInterface() {
+            throw new IllegalStateException();
         }
+    };
 
-    }
-
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new StatelessEjbObjectHandler(container, pk, depID, interfaceType);
-    }
-
-    public MessageContext getMessageContext() {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    public Object getBusinessObject(Class businessInterface) {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    public Class getInvokedBusinessInterface() {
-        throw new UnsupportedOperationException("not implemented");
-    }
 }

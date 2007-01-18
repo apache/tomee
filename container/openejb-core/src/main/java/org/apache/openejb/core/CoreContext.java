@@ -27,7 +27,6 @@ import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-import java.util.List;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
@@ -171,7 +170,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public Object getPrimaryKey() {
         /*
-        * This method is only declared in the EntityContext interface and is therefor
+        * This method is only declared in the OldEntityContext interface and is therefor
         * unavailable in the SessionContext and doesn't not require a check for bean kind (Entity vs Session).
         */
         checkBeanState(EJBOBJECT_METHOD);

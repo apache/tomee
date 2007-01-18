@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateless;
+package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
 import java.security.Principal;
@@ -22,43 +22,33 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
 import javax.ejb.TimerService;
-import javax.transaction.UserTransaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
+import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 
 /**
  * @version $Rev$ $Date$
  */
-public class SlsbContext extends BaseContext implements SessionContext {
+public abstract class BaseSessionContext extends BaseContext implements SessionContext {
 
 
-    public SlsbContext(TransactionManager transactionManager, SecurityService securityService) {
+    public BaseSessionContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
 
-    public SlsbContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
+    public BaseSessionContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
         super(transactionManager, securityService, userTransaction);
-    }
-
-    protected void init() {
-        states[Operation.INJECTION.ordinal()] = INJECTION;
-        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
-        states[Operation.BUSINESS.ordinal()] = BUSINESS;
-        states[Operation.BUSINESS_WS.ordinal()] = BUSINESS_WS;
-        states[Operation.TIMEOUT.ordinal()] = TIMEOUT;
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
@@ -150,7 +140,7 @@ public class SlsbContext extends BaseContext implements SessionContext {
     /**
      * Dependency injection methods (e.g., setSessionContext)
      */
-    private final StatelessState INJECTION = new StatelessState() {
+    protected final StatelessState INJECTION = new StatelessState() {
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -227,7 +217,7 @@ public class SlsbContext extends BaseContext implements SessionContext {
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    private final StatelessState LIFECYCLE = new StatelessState() {
+    protected final StatelessState LIFECYCLE = new StatelessState() {
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -241,10 +231,6 @@ public class SlsbContext extends BaseContext implements SessionContext {
         }
 
         public boolean isCallerInRole(String roleName) {
-            throw new IllegalStateException();
-        }
-
-        public UserTransaction getUserTransaction() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -293,17 +279,9 @@ public class SlsbContext extends BaseContext implements SessionContext {
      * Business method from business interface or component interface; business
      * method interceptor method
      */
-    private final StatelessState BUSINESS = new StatelessState() {
+    protected final StatelessState BUSINESS = new StatelessState() {
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
-        }
-
-        public UserTransaction getUserTransaction() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
         }
 
         public boolean isMessageContextAccessAllowed() {
@@ -312,40 +290,15 @@ public class SlsbContext extends BaseContext implements SessionContext {
     };
 
     /**
-     * Business method from web service endpoint
-     */
-    private final StatelessState BUSINESS_WS = new StatelessState() {
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public UserTransaction getUserTransaction() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
-    };
-
-    /**
      * Timeout callback method
      */
-    private final StatelessState TIMEOUT = new StatelessState() {
+    protected final StatelessState TIMEOUT = new StatelessState() {
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
         }
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
-        }
-
-        public UserTransaction getUserTransaction() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
         }
 
         public boolean isMessageContextAccessAllowed() {

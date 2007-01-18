@@ -289,8 +289,8 @@ public class EntityInstanceManager {
         return bean;
     }
 
-    private org.apache.openejb.core.entity.EntityContext createEntityContext() {
-        return new EntityContext(transactionManager, securityService);
+    private org.apache.openejb.core.entity.OldEntityContext createEntityContext() {
+        return new OldEntityContext(transactionManager, securityService);
     }
 
     public void poolInstance(ThreadContext callContext, EntityBean bean)

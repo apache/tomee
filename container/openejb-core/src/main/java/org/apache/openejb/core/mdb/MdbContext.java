@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,136 +8,192 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreContext;
-import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
-
-import javax.transaction.TransactionManager;
-import javax.xml.rpc.handler.MessageContext;
+import java.security.Principal;
 import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.MessageDrivenContext;
+import javax.ejb.TimerService;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
-public class MdbContext extends CoreContext implements javax.ejb.MessageDrivenContext {
+import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.spi.SecurityService;
+
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class MdbContext extends BaseContext implements MessageDrivenContext {
+
     public MdbContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
 
-    public void checkBeanState(byte methodCategory) throws IllegalStateException {
-        /*
-        SECURITY_METHOD:
-        USER_TRANSACTION_METHOD:
-        ROLLBACK_METHOD:
-        EJBOBJECT_METHOD:
+    protected MdbContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
+        super(transactionManager, securityService, userTransaction);
+    }
 
-        The super class, CoreContext determines if Context.getUserTransaction( ) method
-        maybe called before invoking this.checkBeanState( ).  Only "bean managed" transaction
-        beans may access this method.
+    protected void init() {
+        states[Operation.INJECTION.ordinal()] = INJECTION;
+        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
+        states[Operation.BUSINESS.ordinal()] = BUSINESS_TIMEOUT;
+        states[Operation.TIMEOUT.ordinal()] = BUSINESS_TIMEOUT;
+    }
 
-        */
-        ThreadContext callContext = ThreadContext.getThreadContext();
-
-        switch (callContext.getCurrentOperation()) {
-            case SET_CONTEXT:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                */
-                if (methodCategory != EJBHOME_METHOD)
-                    throw new IllegalStateException("Invalid operation attempted");
-                break;
-            case CREATE:
-            case REMOVE:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                Prohibited Operations:
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                */
-                if (methodCategory == EJBHOME_METHOD
-                        || methodCategory == EJBOBJECT_METHOD
-                        || methodCategory == USER_TRANSACTION_METHOD)
-                    break;
-                else
-                    throw new IllegalStateException("Invalid operation attempted");
-            case BUSINESS:
-                /*
-                Allowed Operations:
-                    getEJBHome
-                    getEJBObject
-                    getPrimaryKey
-                    getUserTransaction
-                    getCallerPrincipal
-                    getRollbackOnly,
-                    isCallerInRole
-                    setRollbackOnly
-                Prohibited Operations:
-                */
-                break;
+    /**
+     * Dependency injection methods (e.g., setMessageDrivenContext)
+     */
+    protected final State INJECTION = new State() {
+        public EJBHome getEJBHome() {
+            throw new IllegalStateException();
         }
 
-    }
+        public EJBLocalHome getEJBLocalHome() {
+            throw new IllegalStateException();
+        }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new StatelessEjbObjectHandler(container, pk, depID, interfaceType);
-    }
+        public Principal getCallerPrincipal() {
+            throw new IllegalStateException();
+        }
 
-    public MessageContext getMessageContext() {
-        throw new UnsupportedOperationException("not implemented");
-    }
+        public boolean isCallerInRole(String roleName) {
+            throw new IllegalStateException();
+        }
 
-    public Object getBusinessObject(Class businessInterface) {
-        throw new UnsupportedOperationException("not implemented");
-    }
+        public UserTransaction getUserTransaction() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
 
-    public Class getInvokedBusinessInterface() {
-        throw new UnsupportedOperationException("not implemented");
-    }
+        public void setRollbackOnly() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
 
-    public Object getPrimaryKey() {
-        throw new UnsupportedOperationException("getPrimaryKey is not supported for a message driven bean");
-    }
+        public boolean getRollbackOnly() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
 
-    public EJBHome getEJBHome() {
-        throw new UnsupportedOperationException("getEJBHome is not supported for a message driven bean");
-    }
+        public TimerService getTimerService() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
 
-    public EJBObject getEJBObject() {
-        throw new UnsupportedOperationException("getEJBObject is not supported for a message driven bean");
-    }
+        public boolean isUserTransactionAccessAllowed() {
+            return false;
+        }
 
-    public EJBLocalObject getEJBLocalObject() {
-        throw new UnsupportedOperationException("getEJBLocalObject is not supported for a message driven bean");
-    }
+        public boolean isMessageContextAccessAllowed() {
+            return false;
+        }
 
-    public EJBLocalHome getEJBLocalHome() {
-        throw new UnsupportedOperationException("getEJBLocalHome is not supported for a message driven bean");
-    }
+        public boolean isResourceManagerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEnterpriseBeanAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEntityManagerFactoryAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEntityManagerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isTimerAccessAllowed() {
+            return false;
+        }
+    };
+
+    /**
+     * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
+     */
+    protected final State LIFECYCLE = new State() {
+        public EJBHome getEJBHome() {
+            throw new IllegalStateException();
+        }
+
+        public EJBLocalHome getEJBLocalHome() {
+            throw new IllegalStateException();
+        }
+
+        public Principal getCallerPrincipal() {
+            throw new IllegalStateException();
+        }
+
+        public boolean isCallerInRole(String roleName) {
+            throw new IllegalStateException();
+        }
+
+        public UserTransaction getUserTransaction() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public void setRollbackOnly() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean getRollbackOnly() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean isUserTransactionAccessAllowed() {
+            return false;
+        }
+
+        public boolean isMessageContextAccessAllowed() {
+            return false;
+        }
+
+        public boolean isResourceManagerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEnterpriseBeanAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEntityManagerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isTimerAccessAllowed() {
+            return super.isTimerAccessAllowed();    //todo: consider this autogenerated code
+        }
+    };
+
+    /**
+     * Message listener method, business method interceptor method
+     * and imeout callback method
+     */
+    protected final State BUSINESS_TIMEOUT = new State() {
+        public EJBHome getEJBHome() {
+            throw new IllegalStateException();
+        }
+
+        public EJBLocalHome getEJBLocalHome() {
+            throw new IllegalStateException();
+        }
+
+        public boolean isCallerInRole(String roleName) {
+            throw new IllegalStateException();
+        }
+
+        public UserTransaction getUserTransaction() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean isUserTransactionAccessAllowed() {
+            return false;
+        }
+    };
 }
