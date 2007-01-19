@@ -199,7 +199,8 @@ public class ServiceManager {
 
         // Override with system properties
         String prefix = serviceName + ".";
-        Properties sysProps = System.getProperties();
+        Properties sysProps = new Properties(System.getProperties());
+        sysProps.putAll(SystemInstance.get().getProperties());
         for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
             Map.Entry entry1 = (Map.Entry) iterator1.next();
             String key = (String) entry1.getKey();
