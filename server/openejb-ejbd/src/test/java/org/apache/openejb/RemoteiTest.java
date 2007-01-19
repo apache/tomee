@@ -21,6 +21,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
+import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
+import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 import org.apache.openejb.server.ServiceDaemon;
@@ -57,8 +59,8 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatelessTestSuite.suite());
         suite.addTest(StatefulTestSuite.suite());
         suite.addTest(BmpTestSuite.suite());
-        // TODO: The CmpTestSuite deadlocks intellij for some reason.
-//        suite.addTest(CmpTestSuite.suite());
+        suite.addTest(CmpLocalTestSuite.suite());
+//        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }
 
