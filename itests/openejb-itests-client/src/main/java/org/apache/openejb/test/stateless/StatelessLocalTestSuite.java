@@ -22,12 +22,11 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
- *
  * @version $Rev$ $Date$
  */
-public class StatelessLocalTestSuite extends junit.framework.TestCase{
+public class StatelessLocalTestSuite extends junit.framework.TestCase {
 
-    public StatelessLocalTestSuite(String name){
+    public StatelessLocalTestSuite(String name) {
         super(name);
     }
 
@@ -40,9 +39,9 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessLocalBusinessIntfcTests());
         // MNour: Why we put this remote test into this suite of local tests ???
         suite.addTest(new StatelessRemoteBusinessIntfcTests());
-        suite.addTest(new StatelessEjbHomeTests() );
-        suite.addTest(new StatelessPojoEjbLocalHomeTests() );
-        suite.addTest(new StatelessPojoEjbLocalObjectTests() );
+        suite.addTest(new StatelessEjbHomeTests());
+        suite.addTest(new StatelessPojoEjbLocalHomeTests());
+        suite.addTest(new StatelessPojoEjbLocalObjectTests());
         suite.addTest(new StatelessEjbObjectTests());
         suite.addTest(new StatelessRemoteIntfcTests());
         suite.addTest(new StatelessLocalIntfcTests());
@@ -55,6 +54,8 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessJndiEncTests());
         suite.addTest(new StatelessContextLookupTests());
         suite.addTest(new StatelessPojoContextLookupTests());
+        suite.addTest(new StatelessFieldInjectionTests());
+        suite.addTest(new StatelessSetterInjectionTests());
         suite.addTest(new StatelessRmiIiopTests());
         suite.addTest(new MiscEjbTests());
         /* TO DO

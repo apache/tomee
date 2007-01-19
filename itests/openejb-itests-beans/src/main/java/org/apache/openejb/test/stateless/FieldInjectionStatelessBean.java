@@ -14,31 +14,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.stateful;
+package org.apache.openejb.test.stateless;
+
+import org.apache.openejb.test.entity.bmp.BasicBmpHome;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.TestFailureException;
+
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.apache.openejb.test.TestFailureException;
-import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
 
-import javax.ejb.CreateException;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionBean;
-import javax.ejb.EJBException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 import java.rmi.RemoteException;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class FieldInjectionStatefulBean implements SessionBean {
+public class FieldInjectionStatelessBean implements SessionBean {
 
-
-    private String name;
     private SessionContext ejbContext;
     private BasicBmpHome bmpHome;
     private BasicStatefulHome statefulHome;
@@ -58,27 +58,9 @@ public class FieldInjectionStatefulBean implements SessionBean {
     private EntityManager eem;
     private EntityManager pem;
 
-    //=============================
-    // Home interface methods
-    //
 
-    /**
-     * Maps to EncStatefulHome.create
-     *
-     * @param name
-     * @throws javax.ejb.CreateException
-     * @see EncStatefulHome#create
-     */
-    public void ejbCreate(String name) throws CreateException {
-        this.name = name;
+    public void ejbCreate() throws CreateException {
     }
-    //
-    // Home interface methods
-    //=============================
-
-    //=============================
-    // Remote interface methods
-    //
 
     public void lookupEntityBean() throws TestFailureException {
         try {

@@ -53,7 +53,8 @@ public class StatefulTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatefulJndiEncTests());
         suite.addTest(new StatefulContextLookupTests());
         suite.addTest(new StatefulPojoContextLookupTests());
-//        suite.addTest(new StatefulFieldInjectionTests());
+        suite.addTest(new StatefulFieldInjectionTests());
+        suite.addTest(new StatefulSetterInjectionTests());
 //        suite.addTest(new StatefulPersistenceContextTests());
         suite.addTest(new StatefulRmiIiopTests());
         /* TO DO

@@ -16,48 +16,202 @@
  */
 package org.apache.openejb.test.stateful;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
+import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.CreateException;
-import javax.ejb.SessionContext;
 import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+
 import java.rmi.RemoteException;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class FieldInjectionStatefulBean implements SessionBean {
+public class SetterInjectionStatefulBean implements SessionBean {
 
 
     private String name;
-    private SessionContext ejbContext;
-    private BasicBmpHome bmpHome;
-    private BasicStatefulHome statefulHome;
-    private BasicStatelessHome statelessHome;
-    private String striing;
-    private Double doouble;
-    private Long loong;
-    private Float flooat;
-    private Integer inteeger;
-    private Short shoort;
-    private Boolean booolean;
-    private Byte byyte;
-    private Character chaaracter;
-    private DataSource daataSource;
-    private EntityManagerFactory emf;
-    private EntityManager em;
-    private EntityManager eem;
-    private EntityManager pem;
+    private SessionContext ejbContextField;
+    private BasicBmpHome bmpHomeField;
+    private BasicStatefulHome statefulHomeField;
+    private BasicStatelessHome statelessHomeField;
+    private String striingField;
+    private Double dooubleField;
+    private Long loongField;
+    private Float flooatField;
+    private Integer inteegerField;
+    private Short shoortField;
+    private Boolean boooleanField;
+    private Byte byyteField;
+    private Character chaaracterField;
+    private DataSource daataSourceField;
+    private EntityManagerFactory emfField;
+    private EntityManager emField;
+    private EntityManager eemField;
+    private EntityManager pemField;
 
+
+    public BasicBmpHome getBmpHome() {
+        return bmpHomeField;
+    }
+
+    public void setBmpHome(BasicBmpHome bmpHome) {
+        this.bmpHomeField = bmpHome;
+    }
+
+    public Boolean getBooolean() {
+        return boooleanField;
+    }
+
+    public void setBooolean(Boolean booolean) {
+        this.boooleanField = booolean;
+    }
+
+    public Byte getByyte() {
+        return byyteField;
+    }
+
+    public void setByyte(Byte byyte) {
+        this.byyteField = byyte;
+    }
+
+    public Character getChaaracter() {
+        return chaaracterField;
+    }
+
+    public void setChaaracter(Character chaaracter) {
+        this.chaaracterField = chaaracter;
+    }
+
+    public DataSource getDaataSource() {
+        return daataSourceField;
+    }
+
+    public void setDaataSource(DataSource daataSource) {
+        this.daataSourceField = daataSource;
+    }
+
+    public Double getDoouble() {
+        return dooubleField;
+    }
+
+    public void setDoouble(Double doouble) {
+        this.dooubleField = doouble;
+    }
+
+    public EntityManager getEem() {
+        return eemField;
+    }
+
+    public void setEem(EntityManager eem) {
+        this.eemField = eem;
+    }
+
+    public SessionContext getEjbContext() {
+        return ejbContextField;
+    }
+
+    public void setEjbContext(SessionContext ejbContext) {
+        this.ejbContextField = ejbContext;
+    }
+
+    public EntityManager getEm() {
+        return emField;
+    }
+
+    public void setEm(EntityManager em) {
+        this.emField = em;
+    }
+
+    public EntityManagerFactory getEmf() {
+        return emfField;
+    }
+
+    public void setEmf(EntityManagerFactory emf) {
+        this.emfField = emf;
+    }
+
+    public Float getFlooat() {
+        return flooatField;
+    }
+
+    public void setFlooat(Float flooat) {
+        this.flooatField = flooat;
+    }
+
+    public Integer getInteeger() {
+        return inteegerField;
+    }
+
+    public void setInteeger(Integer inteeger) {
+        this.inteegerField = inteeger;
+    }
+
+    public Long getLoong() {
+        return loongField;
+    }
+
+    public void setLoong(Long loong) {
+        this.loongField = loong;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public EntityManager getPem() {
+        return pemField;
+    }
+
+    public void setPem(EntityManager pem) {
+        this.pemField = pem;
+    }
+
+    public Short getShoort() {
+        return shoortField;
+    }
+
+    public void setShoort(Short shoort) {
+        this.shoortField = shoort;
+    }
+
+    public BasicStatefulHome getStatefulHome() {
+        return statefulHomeField;
+    }
+
+    public void setStatefulHome(BasicStatefulHome statefulHome) {
+        this.statefulHomeField = statefulHome;
+    }
+
+    public BasicStatelessHome getStatelessHome() {
+        return statelessHomeField;
+    }
+
+    public void setStatelessHome(BasicStatelessHome statelessHome) {
+        this.statelessHomeField = statelessHome;
+    }
+
+    public String getStriing() {
+        return striingField;
+    }
+
+    public void setStriing(String striing) {
+        this.striingField = striing;
+    }
     //=============================
     // Home interface methods
     //
@@ -82,7 +236,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupEntityBean() throws TestFailureException {
         try {
-            Assert.assertNotNull("The EJBObject is null", bmpHome);
+            Assert.assertNotNull("The EJBObject is null", bmpHomeField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -90,7 +244,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupStatefulBean() throws TestFailureException {
         try {
-            Assert.assertNotNull("The EJBObject is null", statefulHome);
+            Assert.assertNotNull("The EJBObject is null", statefulHomeField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -98,7 +252,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupStatelessBean() throws TestFailureException {
         try {
-            Assert.assertNotNull("The EJBObject is null", statelessHome);
+            Assert.assertNotNull("The EJBObject is null", statelessHomeField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -107,8 +261,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
     public void lookupStringEntry() throws TestFailureException {
         try {
             String expected = new String("1");
-            Assert.assertNotNull("The String looked up is null", striing);
-            Assert.assertEquals(expected, striing);
+            Assert.assertNotNull("The String looked up is null", striingField);
+            Assert.assertEquals(expected, striingField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -118,8 +272,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Double expected = new Double(1.0D);
 
-            Assert.assertNotNull("The Double looked up is null", doouble);
-            Assert.assertEquals(expected, doouble);
+            Assert.assertNotNull("The Double looked up is null", dooubleField);
+            Assert.assertEquals(expected, dooubleField);
 
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
@@ -130,8 +284,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Long expected = new Long(1L);
 
-            Assert.assertNotNull("The Long looked up is null", loong);
-            Assert.assertEquals(expected, loong);
+            Assert.assertNotNull("The Long looked up is null", loongField);
+            Assert.assertEquals(expected, loongField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -141,8 +295,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Float expected = new Float(1.0F);
 
-            Assert.assertNotNull("The Float looked up is null", flooat);
-            Assert.assertEquals(expected, flooat);
+            Assert.assertNotNull("The Float looked up is null", flooatField);
+            Assert.assertEquals(expected, flooatField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -152,8 +306,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Integer expected = new Integer(1);
 
-            Assert.assertNotNull("The Integer looked up is null", inteeger);
-            Assert.assertEquals(expected, inteeger);
+            Assert.assertNotNull("The Integer looked up is null", inteegerField);
+            Assert.assertEquals(expected, inteegerField);
 
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
@@ -164,8 +318,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Short expected = new Short((short) 1);
 
-            Assert.assertNotNull("The Short looked up is null", shoort);
-            Assert.assertEquals(expected, shoort);
+            Assert.assertNotNull("The Short looked up is null", shoortField);
+            Assert.assertEquals(expected, shoortField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -175,8 +329,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Boolean expected = new Boolean(true);
 
-            Assert.assertNotNull("The Boolean looked up is null", booolean);
-            Assert.assertEquals(expected, booolean);
+            Assert.assertNotNull("The Boolean looked up is null", boooleanField);
+            Assert.assertEquals(expected, boooleanField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -186,8 +340,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Byte expected = new Byte((byte) 1);
 
-            Assert.assertNotNull("The Byte looked up is null", byyte);
-            Assert.assertEquals(expected, byyte);
+            Assert.assertNotNull("The Byte looked up is null", byyteField);
+            Assert.assertEquals(expected, byyteField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -197,8 +351,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Character expected = new Character('D');
 
-            Assert.assertNotNull("The Character looked up is null", chaaracter);
-            Assert.assertEquals(expected, chaaracter);
+            Assert.assertNotNull("The Character looked up is null", chaaracterField);
+            Assert.assertEquals(expected, chaaracterField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -206,7 +360,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupResource() throws TestFailureException {
         try {
-            Assert.assertNotNull("The DataSource is null", daataSource);
+            Assert.assertNotNull("The DataSource is null", daataSourceField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -214,7 +368,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
-            Assert.assertNotNull("The EntityManagerFactory is null", emf);
+            Assert.assertNotNull("The EntityManagerFactory is null", emfField);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -222,11 +376,11 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupPersistenceContext() throws TestFailureException {
         try {
-            Assert.assertNotNull("The EntityManager is null", em);
+            Assert.assertNotNull("The EntityManager is null", emField);
 
             try {
                 // call a do nothing method to assure entity manager actually exists
-                em.getFlushMode();
+                emField.getFlushMode();
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }

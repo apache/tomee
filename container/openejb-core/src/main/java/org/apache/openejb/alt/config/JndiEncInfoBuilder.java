@@ -183,6 +183,7 @@ public class JndiEncInfoBuilder {
                 String value = property.getValue();
                 info.properties.setProperty(name, value);
             }
+            info.targets.addAll(buildInjectionInfos(contextRef));
             infos.add(info);
         }
         return infos;

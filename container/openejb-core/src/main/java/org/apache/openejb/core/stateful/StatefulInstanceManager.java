@@ -144,6 +144,12 @@ public class StatefulInstanceManager {
                 }
             }
             bean = objectRecipe.create(beanClass.getClassLoader());
+            Map unsetProperties = objectRecipe.getUnsetProperties();
+            if (unsetProperties.size() > 0){
+                for (Object property : unsetProperties.keySet()) {
+                    logger.warning("Injection: No such property '"+property+"' in class "+beanClass.getName());
+                }
+            }
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
