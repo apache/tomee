@@ -33,7 +33,10 @@ import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodTransaction;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.Property;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.StatefulBean;
@@ -64,6 +67,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContexts;
+import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
 import java.io.File;
@@ -116,6 +122,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return clientModule;
         }
 
+        @SuppressWarnings("unchecked")
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             ClassFinder finder;
             if (ejbModule.getJarURI() != null) {
@@ -131,14 +138,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     finder = new ClassFinder(ejbModule.getClassLoader(), url);
                 } catch (MalformedURLException e) {
-                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations.  EjbModule URL not valid: " + ejbModule.getJarURI(), e);
+                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. EjbModule URL not valid: " + ejbModule.getJarURI(), e);
                     return ejbModule;
                 }
             } else {
                 try {
                     finder = new ClassFinder(ejbModule.getClassLoader());
                 } catch (Exception e) {
-                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations.  ClassFinder failed.", e);
+                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. ClassFinder failed.", e);
                     return ejbModule;
                 }
             }
@@ -146,8 +153,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
+            // TODO: Anyone know how to avoid SuppressWarnings just for the below line
             List<Class> classes = finder.findAnnotatedClasses(Stateless.class);
-            for (Class beanClass : classes) {
+            for (Class<?> beanClass : classes) {
                 Stateless stateless = (Stateless) beanClass.getAnnotation(Stateless.class);
                 String ejbName = stateless.name().length() == 0 ? beanClass.getSimpleName() : stateless.name();
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
@@ -159,7 +167,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             classes = finder.findAnnotatedClasses(Stateful.class);
-            for (Class beanClass : classes) {
+            for (Class<?> beanClass : classes) {
                 Stateful stateful = (Stateful) beanClass.getAnnotation(Stateful.class);
                 String ejbName = stateful.name().length() == 0 ? beanClass.getSimpleName() : stateful.name();
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
@@ -171,13 +179,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             classes = finder.findAnnotatedClasses(MessageDriven.class);
-            for (Class beanClass : classes) {
+            for (Class<?> beanClass : classes) {
                 MessageDriven mdb = (MessageDriven) beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = mdb.name().length() == 0 ? beanClass.getSimpleName() : mdb.name();
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
                     MessageDrivenBean messageBean = new MessageDrivenBean(ejbName);
-                    Class interfce = mdb.messageListenerInterface();
+                    Class<?> interfce = mdb.messageListenerInterface();
                     if (interfce != null) {
                         messageBean.setMessagingType(interfce.getName());
                     }
@@ -205,7 +213,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
             ClassLoader classLoader = clientModule.getClassLoader();
-            Class clazz = null;
+            Class<?> clazz = null;
             try {
                 clazz = classLoader.loadClass(clientModule.getMainClass());
             } catch (ClassNotFoundException e) {
@@ -225,7 +233,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
 
-                Class clazz = null;
+                Class<?> clazz = null;
                 try {
                     clazz = classLoader.loadClass(bean.getEjbClass());
                 } catch (ClassNotFoundException e) {
@@ -344,10 +352,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean.getHome() == null) {
                         RemoteHome remoteHome = (RemoteHome) clazz.getAnnotation(RemoteHome.class);
                         if (remoteHome != null) {
-                            Class homeClass = remoteHome.value();
+                            Class<?> homeClass = remoteHome.value();
                             try {
                                 Method create = homeClass.getMethod("create");
-                                Class remoteClass = create.getReturnType();
+                                Class<?> remoteClass = create.getReturnType();
                                 remoteBean.setHome(homeClass.getName());
                                 remoteBean.setRemote(remoteClass.getName());
                             } catch (NoSuchMethodException e) {
@@ -359,10 +367,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean.getLocalHome() == null) {
                         LocalHome localHome = (LocalHome) clazz.getAnnotation(LocalHome.class);
                         if (localHome != null) {
-                            Class homeClass = localHome.value();
+                            Class<?> homeClass = localHome.value();
                             try {
                                 Method create = homeClass.getMethod("create");
-                                Class remoteClass = create.getReturnType();
+                                Class<?> remoteClass = create.getReturnType();
                                 remoteBean.setHome(homeClass.getName());
                                 remoteBean.setRemote(remoteClass.getName());
                             } catch (NoSuchMethodException e) {
@@ -374,11 +382,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean instanceof SessionBean) {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
-                        List<Class> interfaces = new ArrayList();
+                        List<Class> interfaces = new ArrayList<Class>();
                         interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
 
                         // Remove anything not eligable to be a remote or local interface
-                        for (Class interfce : copy(interfaces)) {
+                        for (Class<?> interfce : copy(interfaces)) {
                             String name = interfce.getName();
                             if (name.equals("java.io.Serializable") || name.equals("java.io.Externalizable") || name.startsWith("javax.ejb."))
                             {
@@ -396,7 +404,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         declared.add(sessionBean.getLocal());
                         declared.add(sessionBean.getServiceEndpoint());
 
-                        for (Class interfce : copy(interfaces)) {
+                        for (Class<?> interfce : copy(interfaces)) {
                             if (declared.contains(interfce.getName())) {
                                 // Interface type was declared in xml
                                 interfaces.remove(interfce);
@@ -495,7 +503,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (EJB ejb : ejbList) {
-
                 buildEjbRef(consumer, ejb, null);
             }
 
@@ -571,6 +578,30 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Member member = new MethodMember(method);
                 buildPersistenceUnit(consumer, pUnit, member);
             }
+
+            List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
+            PersistenceContexts persistenceContexts = (PersistenceContexts) clazz.getAnnotation(PersistenceContexts.class);
+            if(persistenceContexts != null){
+                persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
+            }
+            PersistenceContext persistenceContext = (PersistenceContext) clazz.getAnnotation(PersistenceContext.class);
+            if (persistenceContext != null){
+                persistenceContextList.add(persistenceContext);
+            }
+            for (PersistenceContext pCtx : persistenceContextList) {
+                buildPersistenceContext(consumer, pCtx, null);
+            }
+            for (Field field : finder.findAnnotatedFields(PersistenceContext.class)) {
+                PersistenceContext pCtx = field.getAnnotation(PersistenceContext.class);
+                Member member = new FieldMember(field);
+                buildPersistenceContext(consumer, pCtx, member);
+            }
+            for (Method method : finder.findAnnotatedMethods(PersistenceContext.class)) {
+                PersistenceContext pCtx = method.getAnnotation(PersistenceContext.class);
+                Member member = new MethodMember(method);
+                buildPersistenceContext(consumer, pCtx, member);
+            }
+
         }
 
         private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
@@ -650,6 +681,89 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         }
 
+        /**
+         * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
+         * @param consumer
+         * @param persistenceContext
+         * @param member
+         * @throws OpenEJBException
+         */
+        private void buildPersistenceContext(JndiConsumer consumer, PersistenceContext persistenceContext, Member member) throws OpenEJBException {
+            String refName = persistenceContext.name();
+            
+            if(refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+            
+            if(refName == null) {
+                throw new OpenEJBException("The name attribute is not specified for the class level annotation @PersistenceContext with unitName="
+                     + persistenceContext.unitName() + ". It is mandatory for all class level PersistenceContext annotations.");
+            }
+            PersistenceContextRef persistenceContextRef = null;
+            
+            List<PersistenceContextRef> persistenceContextRefs = consumer.getPersistenceContextRef();
+            for (PersistenceContextRef pcRef : persistenceContextRefs) {
+                if (pcRef.getPersistenceContextRefName().equals(refName)) {
+                    persistenceContextRef = pcRef;
+                    break;
+                }
+            }
+            
+            if (persistenceContextRef == null) {
+                persistenceContextRef = new PersistenceContextRef();
+                persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                persistenceContextRef.setPersistenceContextRefName(refName);
+                if(persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
+                } else {
+                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
+                }                
+                persistenceContextRefs.add(persistenceContextRef);
+            } else {
+                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
+                    persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                }
+                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
+                    if(persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
+                    } else {
+                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
+                    }                
+                }                
+            }
+            
+            List<Property> persistenceProperties = persistenceContextRef.getPersistenceProperty();
+            if (persistenceProperties == null) {
+                persistenceProperties = new ArrayList<Property>();
+                persistenceContextRef.setPersistenceProperty(persistenceProperties);
+            }
+            
+            Property property = null;
+            for(PersistenceProperty persistenceProperty : persistenceContext.properties()) {
+                boolean flag = true;
+                for(Property prpty : persistenceProperties) {
+                    if(prpty.getName().equals(persistenceProperty.name())) {
+                        flag = false;
+                        break;
+                    } 
+                }
+                if(flag) {
+                    property = new Property();
+                    property.setName(persistenceProperty.name());
+                    property.setValue(persistenceProperty.value());
+                    persistenceProperties.add(property);
+                }
+            }
+                        
+            if (member != null) {
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                persistenceContextRef.getInjectionTarget().add(target);
+            }                        
+        }
+        
         private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
             EjbRef ejbRef = new EjbRef();
 

@@ -168,4 +168,8 @@ public class PersistenceContextRef implements JndiReference {
         this.id = value;
     }
 
+    public void setPersistenceProperty(List<Property> persistenceProperty) {
+        this.persistenceProperty = persistenceProperty;
+    }
+
 }

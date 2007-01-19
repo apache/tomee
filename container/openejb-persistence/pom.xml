@@ -70,6 +70,11 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
     </dependency>
