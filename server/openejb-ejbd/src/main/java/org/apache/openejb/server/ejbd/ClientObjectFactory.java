@@ -72,7 +72,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     protected javax.ejb.EJBMetaData _getEJBMetaData(CallContext call, ProxyInfo info) {
 
         DeploymentInfo deployment = info.getDeploymentInfo();
-        int idCode = this.daemon.deploymentIndex.getDeploymentIndex(deployment);
+        int idCode = -1;
 
         EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
                 deployment.getRemoteInterface(),
@@ -86,7 +86,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     protected javax.ejb.Handle _getHandle(CallContext call, ProxyInfo info) {
         DeploymentInfo deployment = info.getDeploymentInfo();
 
-        int idCode = this.daemon.deploymentIndex.getDeploymentIndex(deployment);
+        int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -111,7 +111,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     protected javax.ejb.HomeHandle _getHomeHandle(CallContext call, ProxyInfo info) {
         DeploymentInfo deployment = info.getDeploymentInfo();
 
-        int idCode = this.daemon.deploymentIndex.getDeploymentIndex(deployment);
+        int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -135,7 +135,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     protected javax.ejb.EJBObject _getEJBObject(CallContext call, ProxyInfo info) {
         DeploymentInfo deployment = info.getDeploymentInfo();
 
-        int idCode = this.daemon.deploymentIndex.getDeploymentIndex(deployment);
+        int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -160,7 +160,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     protected javax.ejb.EJBHome _getEJBHome(CallContext call, ProxyInfo info) {
         DeploymentInfo deployment = info.getDeploymentInfo();
 
-        int idCode = this.daemon.deploymentIndex.getDeploymentIndex(deployment);
+        int idCode = -1;
 
         Object securityIdentity = null;
         try {

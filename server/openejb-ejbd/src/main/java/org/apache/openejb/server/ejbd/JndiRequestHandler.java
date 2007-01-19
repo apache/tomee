@@ -147,7 +147,7 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                        -1);
                 res.setResult(metaData);
                 break;
             }
@@ -163,7 +163,7 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                        -1);
                 Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                 res.setResult(data);
                 break;
@@ -177,7 +177,7 @@ class JndiRequestHandler {
                             deployment.getPrimaryKeyClass(),
                             deployment.getComponentType().toString(),
                             deploymentID,
-                            this.daemon.deploymentIndex.getDeploymentIndex(deploymentID));
+                            -1);
                     Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                     res.setResult(data);
                 } else {

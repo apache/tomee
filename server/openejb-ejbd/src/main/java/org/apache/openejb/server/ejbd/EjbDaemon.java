@@ -41,7 +41,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
 
     ClientObjectFactory clientObjectFactory;
-    DeploymentIndex deploymentIndex;
+//    DeploymentIndex deploymentIndex;
     EjbRequestHandler ejbHandler;
     JndiRequestHandler jndiHandler;
     AuthRequestHandler authHandler;
@@ -49,6 +49,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     boolean stop = false;
 
     static EjbDaemon thiss;
+    private ContainerSystem containerSystem;
 
     private EjbDaemon() {
     }
@@ -61,9 +62,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public void init(Properties props) throws Exception {
-        // TODO: DMB: Naughty naugty, static badness
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
+        containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+//        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
         clientObjectFactory = new ClientObjectFactory(this);
 
@@ -139,7 +139,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     protected DeploymentInfo getDeployment(EJBRequest req) throws RemoteException {
-        return deploymentIndex.getDeployment(req);
+        String deploymentId = req.getDeploymentId();
+        return containerSystem.getDeploymentInfo(deploymentId);
     }
 
     public void processEjbRequest(ObjectInputStream in, ObjectOutputStream out) {
