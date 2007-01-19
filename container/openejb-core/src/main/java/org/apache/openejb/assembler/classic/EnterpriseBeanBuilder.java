@@ -22,18 +22,18 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
-import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Index;
 
+import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -100,7 +100,7 @@ class EnterpriseBeanBuilder {
         final String transactionType = bean.transactionType;
 
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, new File(bean.codebase).getPath());
-        IvmContext root = (IvmContext) jndiEncBuilder.build();
+        Context root = (Context) jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
         CoreDeploymentInfo deployment;
@@ -229,18 +229,18 @@ class EnterpriseBeanBuilder {
         Method callback = null;
         for (LifecycleCallbackInfo info : callbackInfos) {
             try {
-                if (ejbClass.getName().equals(info.className)){
-                    if (callback != null){
-                        throw new IllegalStateException("Spec requirements only allow one callback method of a given type per class.  The following callback will be ignored: "+info.className+"."+info.method);
+                if (ejbClass.getName().equals(info.className)) {
+                    if (callback != null) {
+                        throw new IllegalStateException("Spec requirements only allow one callback method of a given type per class.  The following callback will be ignored: " + info.className + "." + info.method);
                     }
                     try {
                         callback = ejbClass.getMethod(info.method);
                     } catch (NoSuchMethodException e) {
-                        throw (IllegalStateException) new IllegalStateException("Callback method does not exist: "+info.className+"."+info.method).initCause(e);
+                        throw (IllegalStateException) new IllegalStateException("Callback method does not exist: " + info.className + "." + info.method).initCause(e);
                     }
 
                 } else {
-                    throw new UnsupportedOperationException("Callback: "+info.className+"."+info.method+" -- We currently do not support callbacks where the callback class is not the bean class.  If you need this feature, please let us know and we will complete it asap.");
+                    throw new UnsupportedOperationException("Callback: " + info.className + "." + info.method + " -- We currently do not support callbacks where the callback class is not the bean class.  If you need this feature, please let us know and we will complete it asap.");
                 }
             } catch (Exception e) {
                 warnings.add(e);
@@ -286,12 +286,12 @@ class EnterpriseBeanBuilder {
             clazz.getInterfaces();
             return clazz;
         } catch (NoClassDefFoundError e) {
-            if (clazz.getClassLoader() != cl){
+            if (clazz.getClassLoader() != cl) {
                 String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), cl, e.getMessage());
-                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message),e);
+                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
             } else {
                 String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
-                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message),e);
+                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
             }
         }
     }
