@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
  * interface, and CalculatorLocal, a local business interface
  * 
  */
+//START SNIPPET: code
 @Stateless
 public class CalculatorImpl implements CalculatorRemote, CalculatorLocal {
 
@@ -38,3 +39,4 @@ public class CalculatorImpl implements CalculatorRemote, CalculatorLocal {
 	}
 
 }
+//END SNIPPET: code

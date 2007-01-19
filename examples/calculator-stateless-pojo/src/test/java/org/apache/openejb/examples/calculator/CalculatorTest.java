@@ -24,7 +24,8 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 public class CalculatorTest extends TestCase {
-    
+
+	//START SNIPPET: setup	
 	private InitialContext initialContext;
 
     protected void setUp() throws Exception {
@@ -34,12 +35,14 @@ public class CalculatorTest extends TestCase {
 
         initialContext = new InitialContext(properties);
     }
+    //END SNIPPET: setup    
 
     /**
      * Lookup the Calculator bean via its remote home interface
      *
      * @throws Exception
      */
+    //START SNIPPET: remote
     public void testCalculatorViaRemoteInterface() throws Exception {
         Object object = initialContext.lookup("CalculatorImplBusinessRemote");
 
@@ -49,12 +52,14 @@ public class CalculatorTest extends TestCase {
 		assertEquals(10, calc.sum(4,6));
 		assertEquals(12, calc.multiply(3,4));
     }
+    //END SNIPPET: remote
     
     /**
      * Lookup the Calculator bean via its local home interface
      *
      * @throws Exception
      */
+    //START SNIPPET: local    
     public void testCalculatorViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("CalculatorImplBusinessLocal");
 
@@ -64,5 +69,6 @@ public class CalculatorTest extends TestCase {
 		assertEquals(10, calc.sum(4,6));
 		assertEquals(12, calc.multiply(3,4));
     }
+    //END SNIPPET: local
 
 }

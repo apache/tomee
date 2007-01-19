@@ -22,9 +22,11 @@ package org.apache.openejb.examples.calculator;
  * annotation, but it's optional. A business interface which is 
  * not annotated with @Local or @Remote is assumed to be Local
  */
+//START SNIPPET: code
 public interface CalculatorLocal {
 	
 	public int sum(int add1, int add2);
 	
 	public int multiply(int mul1, int mul2);
 }
+//END SNIPPET: code

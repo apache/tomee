@@ -23,6 +23,7 @@ import javax.ejb.Remote;
  * A remote business interface must be annotated with the @Remote
  * annotation
  */
+//START SNIPPET: code
 @Remote
 public interface CalculatorRemote {
 	
@@ -31,3 +32,4 @@ public interface CalculatorRemote {
 	public int multiply(int mul1, int mul2);
 
 }
+//END SNIPPET: code
