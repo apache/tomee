@@ -18,10 +18,12 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.SimpleLayout;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -37,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Enumeration;
 
 public class Logger {
 
@@ -780,7 +781,14 @@ public class Logger {
             set("Transaction", Level.WARN);
             set("OpenEJB.startup", Level.INFO);
             set("OpenEJB", Level.WARN);
-            return org.apache.log4j.Logger.getLogger("OpenEJB");
+
+            org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB");
+
+            SimpleLayout simpleLayout = new SimpleLayout();
+            ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
+            logger.addAppender(newAppender);
+            return logger;
+
         }
 
         private void set(String category, Level level) {
