@@ -38,9 +38,9 @@ public class StatefulContext extends BaseSessionContext {
     }
 
     static {
-        states[Operation.INJECTION.ordinal()] = INJECTION;
-        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
-        states[Operation.BUSINESS.ordinal()] = BUSINESS;
-        states[Operation.TIMEOUT.ordinal()] = TIMEOUT;
+        states[Operation.INJECTION.ordinal()] = new InjectionStatelessState();
+        states[Operation.LIFECYCLE.ordinal()] = new LifecycleStatelessState();
+        states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
+        states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
     }
 }

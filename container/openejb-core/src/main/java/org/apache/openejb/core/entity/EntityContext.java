@@ -96,7 +96,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         }
     }
 
-    protected final static EntityState CONTEXT = new EntityState() {
+    protected static class ContextEntityState extends EntityState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -161,9 +161,9 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
-    protected final static EntityState CREATE = new EntityState() {
+    protected static class CreateEntityState extends EntityState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -192,9 +192,9 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
-    protected final static EntityState LIFECYCLE_BUSINESS_TIMEOUT = new EntityState() {
+    protected static class LifecycleBusinessTimeoutEntityState extends EntityState {
 
         public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
@@ -207,9 +207,9 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isMessageContextAccessAllowed() {
             return false;
         }
-    };
+    }
 
-    protected final static EntityState FIND = new EntityState() {
+    protected static class FindEntityState extends EntityState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -242,9 +242,9 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
-    protected final static EntityState HOME = new EntityState() {
+    protected static class HomeEntityState extends EntityState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -273,9 +273,9 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
-    protected final static EntityState ACTIVATE_PASSIVATE = new EntityState() {
+    protected static class ActivatePassivateEntityState extends EntityState {
 
         public Principal getCallerPrincipal(SecurityService securityService) {
             throw new IllegalStateException();
@@ -324,21 +324,21 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
     static {
-        states[Operation.SET_CONTEXT.ordinal()] = CONTEXT;
-        states[Operation.UNSET_CONTEXT.ordinal()] = CONTEXT;
-        states[Operation.CREATE.ordinal()] = CREATE;
-        states[Operation.POST_CREATE.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
-        states[Operation.REMOVE.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
-        states[Operation.FIND.ordinal()] = FIND;
-        states[Operation.HOME.ordinal()] = HOME;
-        states[Operation.ACTIVATE.ordinal()] = ACTIVATE_PASSIVATE;
-        states[Operation.PASSIVATE.ordinal()] = ACTIVATE_PASSIVATE;
-        states[Operation.LOAD.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
-        states[Operation.STORE.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
-        states[Operation.BUSINESS.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
-        states[Operation.TIMEOUT.ordinal()] = LIFECYCLE_BUSINESS_TIMEOUT;
+        states[Operation.SET_CONTEXT.ordinal()] = new ContextEntityState();
+        states[Operation.UNSET_CONTEXT.ordinal()] = new ContextEntityState();
+        states[Operation.CREATE.ordinal()] = new CreateEntityState();
+        states[Operation.POST_CREATE.ordinal()] = new LifecycleBusinessTimeoutEntityState();
+        states[Operation.REMOVE.ordinal()] = new LifecycleBusinessTimeoutEntityState();
+        states[Operation.FIND.ordinal()] = new FindEntityState();
+        states[Operation.HOME.ordinal()] = new HomeEntityState();
+        states[Operation.ACTIVATE.ordinal()] = new ActivatePassivateEntityState();
+        states[Operation.PASSIVATE.ordinal()] = new ActivatePassivateEntityState();
+        states[Operation.LOAD.ordinal()] = new LifecycleBusinessTimeoutEntityState();
+        states[Operation.STORE.ordinal()] = new LifecycleBusinessTimeoutEntityState();
+        states[Operation.BUSINESS.ordinal()] = new LifecycleBusinessTimeoutEntityState();
+        states[Operation.TIMEOUT.ordinal()] = new LifecycleBusinessTimeoutEntityState();
     }
 }

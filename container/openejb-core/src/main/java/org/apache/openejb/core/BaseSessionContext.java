@@ -139,7 +139,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * Dependency injection methods (e.g., setSessionContext)
      */
-    protected final static StatelessState INJECTION = new StatelessState() {
+    public static class InjectionStatelessState extends StatelessState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -212,12 +212,12 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    protected final static StatelessState LIFECYCLE = new StatelessState() {
+    public static class LifecycleStatelessState extends StatelessState {
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
@@ -274,13 +274,13 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isTimerAccessAllowed() {
             return false;
         }
-    };
+    }
 
     /**
      * Business method from business interface or component interface; business
      * method interceptor method
      */
-    protected final static StatelessState BUSINESS = new StatelessState() {
+    public static class BusinessStatelessState extends StatelessState {
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
@@ -289,12 +289,12 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isMessageContextAccessAllowed() {
             return false;
         }
-    };
+    }
 
     /**
      * Timeout callback method
      */
-    protected final static StatelessState TIMEOUT = new StatelessState() {
+    public static class TimeoutStatelessState extends StatelessState {
 
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
@@ -307,6 +307,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isMessageContextAccessAllowed() {
             return false;
         }
-    };
+    }
 
 }
