@@ -42,26 +42,9 @@ public class Cmp2Builder {
     private final Set<String> entries = new TreeSet<String>();
     private final AppInfo appInfo;
 
-    public Cmp2Builder(AppInfo appInfo) throws OpenEJBException {
+    public Cmp2Builder(AppInfo appInfo, ClassLoader classLoader) {
         this.appInfo = appInfo;
-
-        // create a tempClassLoader
-        try {
-            List<URL> jars = null;
-            jars = new ArrayList<URL>();
-            for (EjbJarInfo info : appInfo.ejbJars) {
-                jars.add(new File(info.jarPath).toURL());
-            }
-            for (ClientInfo info : appInfo.clients) {
-                jars.add(new File(info.codebase).toURL());
-            }
-            for (String jarPath : appInfo.libs) {
-                jars.add(new File(jarPath).toURL());
-            }
-            tempClassLoader = new TemporaryClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
-        } catch (Exception e) {
-            throw new OpenEJBException("Unable to create temporary class loader", e);
-        }
+        tempClassLoader = new TemporaryClassLoader(classLoader);
     }
 
     public File getJarFile() throws IOException {

@@ -293,6 +293,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+        // Generate the cmp2 concrete subclasses
+        Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo, classLoader);
+        File generatedJar = cmp2Builder.getJarFile();
+        if (generatedJar != null) {
+            classLoader = new URLClassLoader(new URL [] {generatedJar.toURL()}, classLoader);
+        }
+
 
         // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
         // to the class loader which must be added before any classes are loaded
@@ -368,13 +375,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         for (String jarPath : appInfo.libs) {
             jars.add(toUrl(jarPath));
-        }
-
-        // Generate the cmp2 concrete subclasses
-        Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo);
-        File generatedJar = cmp2Builder.getJarFile();
-        if (generatedJar != null) {
-            jars.add(generatedJar.toURL());
         }
 
         // Create the class loader
