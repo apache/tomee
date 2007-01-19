@@ -209,29 +209,6 @@ public class StatefulJndiEncTests extends StatefulTestClient{
         }
     }
 
-    public void test16_lookupExtendedPersistenceContext() {
-        try{
-            ejbObject.lookupExtendedPersistenceContext();
-
-            // call again to assure extended persistence context instance is the same
-            ejbObject.lookupExtendedPersistenceContext();
-        } catch (TestFailureException e){
-            throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-
-    public void test17_lookupPropagatedPersistenceContext() {
-        try{
-            ejbObject.lookupPropagatedPersistenceContext();
-        } catch (TestFailureException e){
-            throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-
     public void test18_lookupSessionContext() {
         try{
             ejbObject.lookupSessionContext();

@@ -1057,7 +1057,7 @@
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-      </resource-env-ref>      
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1065,6 +1065,36 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-unit-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-context-ref>
+      <persistence-context-ref>
+        <description>
+          Persistence context for testing the functionality.
+        </description>
+        <persistence-context-ref-name>persistence/ExtendedTestContext</persistence-context-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <persistence-context-type>Extended</persistence-context-type>
+      </persistence-context-ref>
+    </session>
+
+    <!--
+    ########################################################
+    ID:  client/tests/stateful/EncBean
+    ########################################################
+    -->
+
+    <session>
+      <ejb-name>PersistenceContextStatefulBean</ejb-name>
+      <home>org.apache.openejb.test.stateful.PersistenceContextStatefulHome</home>
+      <remote>org.apache.openejb.test.stateful.PersistenceContextStatefulObject</remote>
+      <ejb-class>org.apache.openejb.test.stateful.PersistenceContextStatefulBean</ejb-class>
+      <session-type>Stateful</session-type>
+      <transaction-type>Bean</transaction-type>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -1176,7 +1206,7 @@
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-      </resource-env-ref>            
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1295,7 +1325,7 @@
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-      </resource-env-ref>            
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1794,7 +1824,7 @@
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-      </resource-env-ref>            
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.
@@ -1919,7 +1949,7 @@
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-      </resource-env-ref>            
+      </resource-env-ref>
       <persistence-unit-ref>
         <description>
           Persistence unit for testing the functionality.

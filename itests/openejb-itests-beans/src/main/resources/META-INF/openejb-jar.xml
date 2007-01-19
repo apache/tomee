@@ -163,6 +163,10 @@
                   container-id="Default Stateful Container">
     <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
   </ejb-deployment>
+  <ejb-deployment ejb-name="PersistenceContextStatefulBean" deployment-id="client/tests/stateful/PersistenceContextStatefulBean"
+                  container-id="Default Stateful Container">
+    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  </ejb-deployment>
   <ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean"
                   container-id="Default Stateful Container">
     <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
