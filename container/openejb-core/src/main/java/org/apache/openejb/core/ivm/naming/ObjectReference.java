@@ -18,7 +18,7 @@ package org.apache.openejb.core.ivm.naming;
 
 import javax.naming.NamingException;
 
-public class ObjectReference implements Reference {
+public class ObjectReference extends Reference {
 
     private Object obj;
 

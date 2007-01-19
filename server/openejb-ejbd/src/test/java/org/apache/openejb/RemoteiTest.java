@@ -19,22 +19,21 @@ package org.apache.openejb;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
-import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.server.ejbd.EjbServer;
 
 import java.util.Properties;
 
 /**
  * To run from intellij or another IDE add
- *
+ * <p/>
  * -Dopenejb.home=/Users/dblevins/work/openejb3/server/openejb-ejbd/target/test-classes
  *
  * @version $Revision$ $Date$
@@ -102,7 +101,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         public Properties getContextEnvironment() {
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "foo://127.0.0.1:"+port);
+            props.put("java.naming.provider.url", "foo://127.0.0.1:" + port);
             props.put("java.naming.security.principal", "testuser");
             props.put("java.naming.security.credentials", "testpassword");
             return props;

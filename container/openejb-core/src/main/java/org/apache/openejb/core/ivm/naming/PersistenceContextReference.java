@@ -26,7 +26,7 @@ import org.apache.openejb.persistence.JtaEntityManager;
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceContextReference implements Reference{
+public class PersistenceContextReference extends Reference{
 
     private EntityManager em;
 

@@ -103,6 +103,7 @@ public class StatelessInstanceManager {
                     sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e1) {
                     sessionContext = createSessionContext();
+                    // TODO: This should work
                     ctx.bind("java:comp/EJBContext", sessionContext);
                 }
                 if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {

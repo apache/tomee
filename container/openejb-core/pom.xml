@@ -242,6 +242,10 @@
       <artifactId>xbean-finder</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-naming</artifactId>
+    </dependency>
+    <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
     </dependency>

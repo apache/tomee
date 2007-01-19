@@ -30,9 +30,9 @@ import org.apache.openejb.core.Operation;
  * This class is subclassed by EncReference in the entity, stateful and stateless packages
  * of org.apache.openejb.core.
  *
- * @version $Rev: 493626 $ $Date: 2007-01-06 17:09:34 -0800 (Sat, 06 Jan 2007) $
+ * @version $Rev$ $Date$
  */
-public abstract class EncReference implements Reference {
+public abstract class EncReference extends Reference {
 
     protected Reference ref = null;
     protected boolean checking = true;

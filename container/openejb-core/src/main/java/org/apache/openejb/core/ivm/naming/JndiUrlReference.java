@@ -23,7 +23,7 @@ import javax.naming.*;
 import javax.naming.NamingException;
 import java.util.Hashtable;
 
-public class JndiUrlReference implements Reference {
+public class JndiUrlReference extends Reference {
     private String jndiName;
 
     public JndiUrlReference(String jndiName) {

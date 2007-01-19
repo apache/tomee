@@ -49,6 +49,7 @@ import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.xbean.naming.context.ContextUtil;
 
 /*
 * This class wrappers a specific NameNode which is the data model for the JNDI
@@ -358,7 +359,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public NameParser getNameParser(String name) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        return ContextUtil.NAME_PARSER;
     }
 
     public NameParser getNameParser(Name name) throws NamingException {

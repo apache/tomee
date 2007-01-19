@@ -25,7 +25,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class JndiReference implements Reference {
+public class JndiReference extends Reference {
 
     private Context context;
     private Hashtable envProperties;

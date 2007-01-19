@@ -21,7 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 /**
  * @version $Rev$ $Date$
  */
-public class BusinessLocalReference implements Reference {
+public class BusinessLocalReference extends Reference {
 
     private final DeploymentInfo.BusinessLocalHome businessHome;
 

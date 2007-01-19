@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-public class IntraVmJndiReference implements Reference {
+public class IntraVmJndiReference extends Reference {
 
     private String jndiName;
 

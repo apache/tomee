@@ -22,7 +22,7 @@ import javax.persistence.EntityManagerFactory;
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitReference implements Reference{
+public class PersistenceUnitReference extends Reference{
 
 	private EntityManagerFactory emf;
 	

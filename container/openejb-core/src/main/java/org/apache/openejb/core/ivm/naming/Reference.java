@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import org.apache.xbean.naming.reference.SimpleReference;
+
 import javax.naming.NamingException;
+import javax.naming.Name;
+import javax.naming.Context;
+import java.util.Hashtable;
 
 
 /**
@@ -29,7 +34,11 @@ import javax.naming.NamingException;
  *
  * @version $Rev$ $Date$
  */
-public interface Reference {
+public abstract class Reference extends SimpleReference {
 
-    public Object getObject() throws NamingException;
+    public Object getContent() throws NamingException {
+        return getObject();
+    }
+
+    public abstract Object getObject() throws NamingException;
 }

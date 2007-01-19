@@ -84,7 +84,7 @@ public class JpaCmpEngine implements CmpEngine {
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
         EntityManager entityManager = null;
         try {
-            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("env/openejb/cmp");
+            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("java:comp/env/openejb/cmp");
         } catch (NamingException ignroed) {
         }
 

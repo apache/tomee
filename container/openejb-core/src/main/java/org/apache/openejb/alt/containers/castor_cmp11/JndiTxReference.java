@@ -28,7 +28,7 @@ import javax.transaction.TransactionManager;
   See the init( ) method of the CastorCMP11_EntityContainer. 
 */
 
-public class JndiTxReference implements Reference {
+public class JndiTxReference extends Reference {
 
     private final TransactionManager transactionManager;
 

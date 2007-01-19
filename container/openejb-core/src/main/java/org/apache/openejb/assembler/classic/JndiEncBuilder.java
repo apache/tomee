@@ -22,19 +22,21 @@ import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
-import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JndiReference;
-import org.apache.openejb.core.ivm.naming.NameNode;
-import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.core.ivm.naming.NameNode;
+import org.apache.openejb.core.ivm.naming.ParsedName;
+import org.apache.xbean.naming.context.WritableContext;
 
 import javax.ejb.EJBContext;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
+import javax.naming.Name;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -42,7 +44,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -275,24 +277,62 @@ public class JndiEncBuilder {
             }
         }
 
-        IvmContext enc = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
-        try {
-            enc.createSubcontext("comp/env");
-            enc.lookup("env");
-        } catch (NamingException e) {
-            throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
+        Context context;
+        if (System.getProperty("openejb.naming","ivm").equals("xbean")) {
+            context = createXBeanWritableContext();
+        } else {
+            context = createIvmContext();
         }
 
-        for (Map.Entry<String, Object> entry : bindings.entrySet()) {
+
+        // bind the bindings
+        for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
             String name = (String) entry.getKey();
             Object value = entry.getValue();
+            if (value == null) continue;
             try {
-                enc.bind(name, value);
+                Name parsedName = context.getNameParser("").parse(name);
+                for (int i = 1; i < parsedName.size(); i++) {
+                    Name contextName = parsedName.getPrefix(i);
+                    if (!bindingExists(context, contextName)) {
+                        context.createSubcontext(contextName);
+                    }
+                }
+                context.bind(name, value);
             } catch (NamingException e) {
                 throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
             }
         }
-        return enc;
+        return context;
+    }
+
+    private WritableContext createXBeanWritableContext() {
+        WritableContext context = null;
+        try {
+            context = new WritableContext();
+        } catch (NamingException e) {
+            throw new IllegalStateException(e);
+        }
+        return context;
+    }
+
+    private IvmContext createIvmContext() {
+        IvmContext context = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
+        try {
+            context.createSubcontext("comp").createSubcontext("env");
+        } catch (NamingException e) {
+            throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
+        }
+        return context;
+    }
+
+    public static boolean bindingExists(Context context, Name contextName) {
+        try {
+            return context.lookup(contextName) != null;
+        } catch (NamingException e) {
+        }
+        return false;
     }
 
     private Reference buildReferenceLocation(ReferenceLocationInfo location) {
@@ -309,9 +349,9 @@ public class JndiEncBuilder {
             name = name.substring(1);
         if (!(name.startsWith("java:comp/env") || name.startsWith("comp/env"))) {
             if (name.startsWith("env/"))
-                name = "comp/" + name;
+                name = "java:comp/" + name;
             else
-                name = "comp/env/" + name;
+                name = "java:comp/env/" + name;
         }
         return name;
     }
