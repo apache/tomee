@@ -25,18 +25,18 @@ import org.apache.openejb.test.TestFailureException;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class StatefulContextLookupTests extends StatefulTestClient{
+public class StatefulFieldInjectionTests extends StatefulTestClient{
 
     protected EncStatefulHome   ejbHome;
     protected EncStatefulObject ejbObject;
 
-    public StatefulContextLookupTests(){
+    public StatefulFieldInjectionTests(){
         super("EJB_CONTEXT_LOOKUP.");
     }
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/ContextLookupStatefulBean");
+        Object obj = initialContext.lookup("client/tests/stateful/FieldInjectionStatefulBean");
         ejbHome = (EncStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, EncStatefulHome.class);
         ejbObject = ejbHome.create("Enc Bean");
 
@@ -188,7 +188,7 @@ public class StatefulContextLookupTests extends StatefulTestClient{
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
-    
+
     public void test14_lookupPersistenceUnit() {
         try{
             ejbObject.lookupPersistenceUnit();
