@@ -37,21 +37,21 @@ public class StatelessContext extends BaseSessionContext {
         super(transactionManager, securityService, userTransaction);
     }
 
-    protected void init() {
+    /**
+     * Business method from web service endpoint
+     */
+    private final static StatelessState BUSINESS_WS = new StatelessState() {
+        public Class getInvokedBusinessInterface() {
+            throw new IllegalStateException();
+        }
+    };
+
+    static {
         states[Operation.INJECTION.ordinal()] = INJECTION;
         states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
         states[Operation.BUSINESS.ordinal()] = BUSINESS;
         states[Operation.BUSINESS_WS.ordinal()] = BUSINESS_WS;
         states[Operation.TIMEOUT.ordinal()] = TIMEOUT;
     }
-
-    /**
-     * Business method from web service endpoint
-     */
-    private final StatelessState BUSINESS_WS = new StatelessState() {
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-    };
 
 }

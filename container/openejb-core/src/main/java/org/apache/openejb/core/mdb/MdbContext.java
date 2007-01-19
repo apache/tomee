@@ -42,17 +42,10 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         super(transactionManager, securityService, userTransaction);
     }
 
-    protected void init() {
-        states[Operation.INJECTION.ordinal()] = INJECTION;
-        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
-        states[Operation.BUSINESS.ordinal()] = BUSINESS_TIMEOUT;
-        states[Operation.TIMEOUT.ordinal()] = BUSINESS_TIMEOUT;
-    }
-
     /**
      * Dependency injection methods (e.g., setMessageDrivenContext)
      */
-    protected final State INJECTION = new State() {
+    protected final static State INJECTION = new State() {
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
@@ -117,7 +110,7 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    protected final State LIFECYCLE = new State() {
+    protected final static State LIFECYCLE = new State() {
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
@@ -175,7 +168,7 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
      * Message listener method, business method interceptor method
      * and imeout callback method
      */
-    protected final State BUSINESS_TIMEOUT = new State() {
+    protected final static State BUSINESS_TIMEOUT = new State() {
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
@@ -196,4 +189,12 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
             return false;
         }
     };
+
+    static {
+        states[Operation.INJECTION.ordinal()] = INJECTION;
+        states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
+        states[Operation.BUSINESS.ordinal()] = BUSINESS_TIMEOUT;
+        states[Operation.TIMEOUT.ordinal()] = BUSINESS_TIMEOUT;
+    }
+
 }

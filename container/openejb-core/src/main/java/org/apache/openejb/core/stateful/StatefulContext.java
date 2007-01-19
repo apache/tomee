@@ -37,7 +37,7 @@ public class StatefulContext extends BaseSessionContext {
         super(transactionManager, securityService, userTransaction);
     }
 
-    protected void init() {
+    static {
         states[Operation.INJECTION.ordinal()] = INJECTION;
         states[Operation.LIFECYCLE.ordinal()] = LIFECYCLE;
         states[Operation.BUSINESS.ordinal()] = BUSINESS;

@@ -45,25 +45,19 @@ public abstract class BaseContext implements EJBContext, Serializable {
     private final SecurityService securityService;
     private final TransactionManager transactionManager;
     private State state;
-    protected final State[] states = new State[Operation.values().length];
+    protected static State[] states = new State[Operation.values().length];
 
     public BaseContext(TransactionManager transactionManager, SecurityService securityService) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.userTransaction = new CoreUserTransaction(transactionManager);
-
-        init();
     }
 
     protected BaseContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.userTransaction = userTransaction;
-
-        init();
     }
-
-    protected abstract void init();
 
     public void setOperation(Operation operation) {
         State state = states[operation.ordinal()];
@@ -98,27 +92,27 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Principal getCallerPrincipal() {
-        return state.getCallerPrincipal();
+        return state.getCallerPrincipal(securityService);
     }
 
     public boolean isCallerInRole(Identity identity) {
         return state.isCallerInRole(identity);
     }
 
-    public boolean isCallerInRole(String transOID) {
-        return state.isCallerInRole(transOID);
+    public boolean isCallerInRole(String roleName) {
+        return state.isCallerInRole(securityService, roleName);
     }
 
     public UserTransaction getUserTransaction() throws IllegalStateException {
-        return state.getUserTransaction();
+        return state.getUserTransaction(userTransaction);
     }
 
     public void setRollbackOnly() throws IllegalStateException {
-        state.setRollbackOnly();
+        state.setRollbackOnly(transactionManager);
     }
 
     public boolean getRollbackOnly() throws IllegalStateException {
-        return state.getRollbackOnly();
+        return state.getRollbackOnly(transactionManager);
     }
 
     public TimerService getTimerService() throws IllegalStateException {
@@ -161,7 +155,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return state.isTimerAccessAllowed();
     }
 
-    protected class State implements EJBContext {
+    protected static class State {
 
         public EJBHome getEJBHome() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
@@ -177,24 +171,24 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return di.getEJBLocalHome();
         }
 
-        public Properties getEnvironment() {
+        public final Properties getEnvironment() {
             throw new UnsupportedOperationException();
         }
 
-        public Identity getCallerIdentity() {
+        public final Identity getCallerIdentity() {
             throw new UnsupportedOperationException();
         }
 
-        public Principal getCallerPrincipal() {
+        public Principal getCallerPrincipal(SecurityService securityService) {
             Object securityIdentity = ThreadContext.getThreadContext().getSecurityIdentity();
             return (Principal) securityService.translateTo(securityIdentity, Principal.class);
         }
 
-        public boolean isCallerInRole(Identity identity) {
+        public final boolean isCallerInRole(Identity identity) {
             throw new UnsupportedOperationException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             CoreDeploymentInfo di = threadContext.getDeploymentInfo();
             List<String> physicalRoles = di.getPhysicalRole(roleName);
@@ -203,7 +197,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return securityService.isCallerAuthorized(caller, physicalRoles);
         }
 
-        public UserTransaction getUserTransaction() throws IllegalStateException {
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
@@ -214,7 +208,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             }
         }
 
-        public void setRollbackOnly() throws IllegalStateException {
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
@@ -229,7 +223,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             }
         }
 
-        public boolean getRollbackOnly() throws IllegalStateException {
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 

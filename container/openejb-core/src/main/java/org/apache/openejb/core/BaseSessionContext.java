@@ -42,7 +42,6 @@ import org.apache.openejb.util.proxy.ProxyManager;
  */
 public abstract class BaseSessionContext extends BaseContext implements SessionContext {
 
-
     public BaseSessionContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
@@ -71,7 +70,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         return ((StatelessState) getState()).getInvokedBusinessInterface();
     }
 
-    protected class StatelessState extends State implements SessionContext {
+    protected static class StatelessState extends State {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
@@ -80,7 +79,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             EjbObjectProxyHandler handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_LOCAL);
             handler.setLocal(true);
             try {
-                Class[] interfaces = new Class[]{di.getLocalInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
+                Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
                 return (EJBLocalObject) ProxyManager.newProxyInstance(interfaces, handler);
             } catch (IllegalAccessException iae) {
                 throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
@@ -93,7 +92,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
             EjbObjectProxyHandler handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_OBJECT);
             try {
-                Class[] interfaces = new Class[]{di.getRemoteInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
+                Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
                 return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
             } catch (IllegalAccessException iae) {
                 throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
@@ -140,7 +139,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * Dependency injection methods (e.g., setSessionContext)
      */
-    protected final StatelessState INJECTION = new StatelessState() {
+    protected final static StatelessState INJECTION = new StatelessState() {
+
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -161,23 +161,23 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException();
         }
 
-        public Principal getCallerPrincipal() {
+        public Principal getCallerPrincipal(SecurityService securityService) {
             throw new IllegalStateException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 
-        public UserTransaction getUserTransaction() throws IllegalStateException {
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly() throws IllegalStateException {
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly() throws IllegalStateException {
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -217,7 +217,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    protected final StatelessState LIFECYCLE = new StatelessState() {
+    protected final static StatelessState LIFECYCLE = new StatelessState() {
+
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -226,19 +227,19 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException();
         }
 
-        public Principal getCallerPrincipal() {
+        public Principal getCallerPrincipal(SecurityService securityService) {
             throw new IllegalStateException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly() throws IllegalStateException {
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly() throws IllegalStateException {
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -279,7 +280,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
      * Business method from business interface or component interface; business
      * method interceptor method
      */
-    protected final StatelessState BUSINESS = new StatelessState() {
+    protected final static StatelessState BUSINESS = new StatelessState() {
+
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -292,7 +294,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * Timeout callback method
      */
-    protected final StatelessState TIMEOUT = new StatelessState() {
+    protected final static StatelessState TIMEOUT = new StatelessState() {
+
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
         }
