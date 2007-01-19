@@ -32,6 +32,7 @@ import javax.ejb.Stateful;
  * annotation while the CounterLocal interface is not annotated relying
  * on the EJB3 default rules to make it a local interface.
  */
+//START SNIPPET: code
 @Stateful
 public class CounterImpl implements CounterLocal, CounterRemote {
 
@@ -46,3 +47,4 @@ public class CounterImpl implements CounterLocal, CounterRemote {
     }
 
 }
+//END SNIPPET: code

@@ -22,6 +22,7 @@ package org.apache.openejb.examples.counter;
  * annotation, but it's optional. A business interface which is
  * not annotated with @Local or @Remote is assumed to be Local
  */
+//START SNIPPET: code
 public interface CounterLocal {
 
     public int increment();
@@ -29,3 +30,4 @@ public interface CounterLocal {
     public int reset();
 
 }
+//END SNIPPET: code

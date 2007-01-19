@@ -23,6 +23,7 @@ import javax.ejb.Remote;
  * A remote business interface must be annotated with the @Remote
  * annotation
  */
+//START SNIPPET: code
 @Remote
 public interface CounterRemote {
 
@@ -31,3 +32,4 @@ public interface CounterRemote {
     public int reset();
 
 }
+//END SNIPPET: code

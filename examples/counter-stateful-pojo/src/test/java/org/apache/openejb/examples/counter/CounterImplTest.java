@@ -24,7 +24,8 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 public class CounterImplTest extends TestCase {
-	
+
+	//START SNIPPET: setup	
 	private InitialContext initialContext;
 
     protected void setUp() throws Exception {
@@ -34,12 +35,14 @@ public class CounterImplTest extends TestCase {
 
         initialContext = new InitialContext(properties);
     }
+    //END SNIPPET: setup	
 
     /**
      * Lookup the Counter bean via its remote home interface
      *
      * @throws Exception
      */
+    //START SNIPPET: remote	
     public void testCounterViaRemoteInterface() throws Exception {
         Object object = initialContext.lookup("CounterImplBusinessRemote");
 
@@ -51,12 +54,14 @@ public class CounterImplTest extends TestCase {
 		assertEquals(2, counter.increment());
 		assertEquals(0, counter.reset());
     }
+    //END SNIPPET: remote	
     
     /**
      * Lookup the Counter bean via its local home interface
      *
      * @throws Exception
      */
+    //START SNIPPET: local	
     public void testCounterViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("CounterImplBusinessLocal");
 
@@ -68,5 +73,6 @@ public class CounterImplTest extends TestCase {
 		assertEquals(2, counter.increment());
 		assertEquals(0, counter.reset());
     }
+    //END SNIPPET: local	
 
 }
