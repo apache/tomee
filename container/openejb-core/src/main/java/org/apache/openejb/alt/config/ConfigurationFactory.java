@@ -233,14 +233,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public EjbJarInfo configureApplication(EjbModule ejbModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), null);
+        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.ejbJars.get(0);
     }
 
     public ClientInfo configureApplication(ClientModule clientModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(clientModule.getClassLoader(), null);
+        AppModule appModule = new AppModule(clientModule.getClassLoader(), clientModule.getJarLocation());
         appModule.getClientModules().add(clientModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.clients.get(0);

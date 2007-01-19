@@ -22,6 +22,7 @@ import org.apache.openejb.EnvProps;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -52,6 +53,7 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.ejb.DuplicateKeyException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -260,7 +262,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         for (AppInfo appInfo : containerSystemInfo.applications) {
 
-            createApplication(appInfo, createAppClassLoader(appInfo));
+            try {
+                createApplication(appInfo, createAppClassLoader(appInfo));
+            } catch (DuplicateDeploymentIdException e) {
+                // already logged.
+            } catch (Throwable e) {
+                logger.error("Application could not be deployed: "+appInfo.jarPath, e);
+            }
         }
     }
 
@@ -293,6 +301,30 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+
+        List<String> used = new ArrayList();
+        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                if (containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId) != null){
+                    used.add(beanInfo.ejbDeploymentId);
+                }
+            }
+        }
+
+        if (used.size() > 0){
+            String message = "Application cannot be deployed as it contains deployment-ids which are already deployed: app: " + appInfo.jarPath;
+            logger.error(message);
+            OpenEJBException openEJBException = new DuplicateDeploymentIdException(message);
+            Exception e = openEJBException;
+            for (String id : used) {
+                logger.debug("DeploymentId already used: "+id);
+                DuplicateDeploymentIdException e2 = new DuplicateDeploymentIdException(id);
+                e.initCause(e2);
+                e = e2;
+            }
+            throw openEJBException;
+        }
+
         // Generate the cmp2 concrete subclasses
         Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo, classLoader);
         File generatedJar = cmp2Builder.getJarFile();

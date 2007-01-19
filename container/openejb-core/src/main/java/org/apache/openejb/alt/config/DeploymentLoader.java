@@ -247,7 +247,7 @@ public class DeploymentLoader {
 
 //            EjbModule ejbModule = deployer.deploy(undeployedModule);
 
-            AppModule appModule = new AppModule(classLoader, null);
+            AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
             appModule.getEjbModules().add(ejbModule);
 
             return appModule;

@@ -92,7 +92,8 @@ public class EjbJarInfoBuilder {
 
 
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
-
+        deploymentIds.clear();
+        securityRoles.clear();
         int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
         int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
 

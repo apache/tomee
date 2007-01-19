@@ -46,4 +46,5 @@ public class OpenEJBException extends Exception {
     public Throwable getRootCause() {
         return super.getCause();
     }
+
 }
