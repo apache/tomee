@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev$ $Date$ -->
+
 <project>
   <parent>
     <artifactId>container</artifactId>
@@ -69,11 +72,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
