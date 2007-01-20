@@ -394,9 +394,9 @@ class EjbRequestHandler {
     private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {
         this.daemon.logger.fatal(message, error);
         RemoteException re = new RemoteException
-                ("The server has encountered a fatal error: " + message + " " + error);
+                ("The server has encountered a fatal error: " + message + " " + error, error);
         EJBResponse res = new EJBResponse();
-        res.setResponse(ResponseCodes.EJB_ERROR, re);
+        res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(re));
         try {
             res.writeExternal(out);
         } catch (java.io.IOException ie) {
