@@ -38,6 +38,10 @@ import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.Property;
 import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
@@ -72,6 +76,8 @@ import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
+import javax.resource.spi.ManagedConnectionFactory;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -659,7 +665,90 @@ public class AnnotationDeployer implements DynamicDeployer {
                     break;
                 }
             }
+            
+            
+            if(reference == null) {
+                String type = null;
+                if(resource.type() != java.lang.Object.class) {
+                    type = resource.type().getName();                
+                } else {
+                    type = member.getType().getName();                
+                }
+                /* TODO message-destination-refs have not been considered . Currently the types that are
+                 *  not in the types in knownConnectionFactoryTypes array are considered resource-env-refs
+                 *  This approach needs to be changed as it is just a hack to get the functionality working.
+                 */
+                
+                 
+                String[] knownConnectionFactoryTypes = {"javax.sql.DataSource","javax.jms.ConnectionFactory","javax.jms.QueueConnectionFactory","javax.jms.TopicConnectionFactory","javax.mail.Session","java.net.URL"};
+                String[] knownEnvironmentEntries = {"java.lang.String", "java.lang.Character", "java.lang.Integer", "java.lang.Boolean", "java.lang.Double", 
+                        "java.lang.Byte", "java.lang.Short", "java.lang.Long", "java.lang.Float","int","char","boolean","double","byte","short","long","float"};
 
+                if(contains(knownConnectionFactoryTypes,type)) {
+                    ResourceRef resourceRef = null;
+                    List<ResourceRef> resourceRefs = consumer.getResourceRef();
+                    for (ResourceRef resRef : resourceRefs) {
+                        if( resRef.getName().equals(refName)) {
+                            resourceRef = resRef;
+                            break;
+                        }                
+                    }
+                            
+                    if (resourceRef == null) {
+                        resourceRef = new ResourceRef();
+                        resourceRef.setName(refName);
+                        resourceRefs.add(resourceRef);             
+                    }
+                
+                    if (resourceRef.getResAuth() == null) {
+                        if (resource.authenticationType() == Resource.AuthenticationType.APPLICATION){
+                            resourceRef.setResAuth(ResAuth.APPLICATION);              
+                        } else {
+                            resourceRef.setResAuth(ResAuth.CONTAINER);
+                        }
+                    }
+                
+                    if (resourceRef.getResType() == null || ("").equals(resourceRef.getResType())) {
+                        if (resource.type() != java.lang.Object.class) { 
+                            resourceRef.setResType(resource.type().getName());
+                        } else {
+                            resourceRef.setResType(member.getType().getName());
+                        }                
+                    }
+                
+                    if (resourceRef.getResSharingScope() == null){
+                        if(resource.shareable() == false) {
+                            resourceRef.setResSharingScope(ResSharingScope.UNSHAREABLE);
+                        } else {
+                            resourceRef.setResSharingScope(ResSharingScope.SHAREABLE);
+                        }               
+                    }
+                    reference = resourceRef;
+                } else if (!contains(knownEnvironmentEntries,type)){             
+                                        
+                    List<ResourceEnvRef> resourceEnvRefs = consumer.getResourceEnvRef();
+                    ResourceEnvRef resourceEnvRef = null;
+                    for (ResourceEnvRef resEnvRef : resourceEnvRefs) {
+                        if(resEnvRef.getName().equals(refName)) {
+                            resourceEnvRef = resEnvRef;
+                            break;
+                        }                    
+                    }
+                    if (resourceEnvRef == null) {
+                        resourceEnvRef = new ResourceEnvRef();
+                        resourceEnvRef.setName(refName);
+                        resourceEnvRefs.add(resourceEnvRef);             
+                    }
+                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
+                        if (resource.type() != java.lang.Object.class) { 
+                            resourceEnvRef.setResourceEnvRefType(resource.type().getName());
+                        } else {
+                            resourceEnvRef.setResourceEnvRefType(member.getType().getName());
+                        }                
+                    }  
+                    reference = resourceEnvRef;
+                }
+            }                        
             if (reference == null) {
                 return;
             }
@@ -853,6 +942,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             return new ArrayList(classes);
         }
 
+        private boolean contains(Object[] types,Object type){
+            int size = types.length;
+            for (int i = 0; i < size; i++) {
+                if (type.equals(types[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         private void addContainerTransaction(TransactionAttribute attribute, String ejbName, Method method, AssemblyDescriptor assemblyDescriptor) {
             ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method.getName(), asStrings(method.getParameterTypes()));
             assemblyDescriptor.getContainerTransaction().add(ctx);

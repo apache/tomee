@@ -159,7 +159,15 @@ class EnterpriseBeanBuilder {
                 deployment.getInjections().add(injection);
             }
         }
-
+        
+        for (ResourceEnvReferenceInfo info : bean.jndiEnc.resourceEnvRefs) {
+            for (InjectionInfo target : info.targets) {
+                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
+                Injection injection = new Injection(info.resourceEnvRefName, target.propertyName, targetClass);
+                deployment.getInjections().add(injection);
+            }
+        }
+        
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
