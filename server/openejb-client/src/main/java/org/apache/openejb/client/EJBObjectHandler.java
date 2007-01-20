@@ -87,8 +87,10 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         EJBObjectProxy ejbObject = null;
 
         try {
-
-            Class[] interfaces = new Class[]{EJBObjectProxy.class, ejb.remoteClass};
+            // Interface class must be listed first otherwise the proxy code will select
+            // the openejb system class loader for proxy creation instead of the
+            // application class loader
+            Class[] interfaces = new Class[]{ejb.remoteClass, EJBObjectProxy.class};
             ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces, this);
 
         } catch (IllegalAccessException e) {

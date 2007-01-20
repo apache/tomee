@@ -67,7 +67,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     public EJBHomeProxy createEJBHomeProxy() {
         try {
-            Class[] interfaces = new Class[]{EJBHomeProxy.class, ejb.homeClass};
+            // Interface class must be listed first otherwise the proxy code will select
+            // the openejb system class loader for proxy creation instead of the
+            // application class loader
+            Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
 
