@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -105,15 +106,15 @@ public class JndiEncBuilder {
         Map<String, Object> bindings = new HashMap<String, Object>();
 
         // bind TransactionManager
-        TransactionManager transactionManager = (TransactionManager) Assembler.getContext().get(TransactionManager.class.getName());
+        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         bindings.put("java:comp/TransactionManager", transactionManager);
 
         // bind TransactionSynchronizationRegistry
-        TransactionSynchronizationRegistry synchronizationRegistry = (TransactionSynchronizationRegistry) Assembler.getContext().get(TransactionSynchronizationRegistry.class.getName());
+        TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
         // get JtaEntityManagerRegistry
-        JtaEntityManagerRegistry jtaEntityManagerRegistry = (JtaEntityManagerRegistry) Assembler.getContext().get(JtaEntityManagerRegistry.class.getName());
+        JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
         // bind UserTransaction if bean managed transactions
         if (beanManagedTransactions) {
