@@ -259,7 +259,7 @@ class EjbRequestHandler {
 
             result = new RemoteException("The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
             this.daemon.logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
-            res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, result);
+            res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact((Throwable) result));
         }
     }
 
@@ -387,7 +387,7 @@ class EjbRequestHandler {
             res.setResponse(ResponseCodes.EJB_OK, null);
         } else {
             this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
-            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new RemoteException("Unauthorized Access by Principal Denied"));
+            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new RemoteException("Unauthorized Access by Principal Denied")));
         }
     }
 

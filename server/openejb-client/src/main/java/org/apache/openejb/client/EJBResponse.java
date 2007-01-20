@@ -94,6 +94,16 @@ public class EJBResponse implements Response {
     public void writeExternal(ObjectOutput out) throws IOException {
 
         out.writeByte(responseCode);
+
+        switch (responseCode) {
+            case ResponseCodes.EJB_APP_EXCEPTION:
+            case ResponseCodes.EJB_ERROR:
+            case ResponseCodes.EJB_SYS_EXCEPTION:
+                if (result instanceof Throwable && !(result instanceof ThrowableArtifact)) {
+                    Throwable throwable = (Throwable) result;
+                    result = new ThrowableArtifact(throwable);
+                }
+        }
         out.writeObject(result);
     }
 }
