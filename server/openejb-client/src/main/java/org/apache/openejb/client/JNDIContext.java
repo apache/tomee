@@ -208,7 +208,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 return createDataSource((DataSourceMetaData) res.getResult());
 
             case ResponseCodes.JNDI_NOT_FOUND:
-                throw new NameNotFoundException(name + " not found");
+                throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
 
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
                 throw (NamingException) res.getResult();
