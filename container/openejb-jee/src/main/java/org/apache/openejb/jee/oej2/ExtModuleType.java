@@ -73,13 +73,13 @@ import org.w3c.dom.Element;
 })
 public class ExtModuleType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="connector", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected PathType connector;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="ejb", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected PathType ejb;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="java", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected PathType java;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="web", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected PathType web;
     @XmlElement(name = "internal-path", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

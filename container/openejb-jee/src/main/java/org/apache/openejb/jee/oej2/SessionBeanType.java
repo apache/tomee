@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "session-beanType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "session-beanType", propOrder = {
     "ejbName",
     "jndiName",
     "localJndiName",
@@ -79,17 +79,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 public class SessionBeanType {
 
-    @XmlElement(name = "ejb-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;
-    @XmlElement(name = "jndi-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "jndi-name")
     protected List<java.lang.String> jndiName;
-    @XmlElement(name = "local-jndi-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "local-jndi-name")
     protected List<java.lang.String> localJndiName;
-    @XmlElement(name = "cache-size", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "cache-size")
     protected Integer cacheSize;
-    @XmlElement(name = "tss-link", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "tss-link")
     protected java.lang.String tssLink;
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name="tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
 
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
@@ -110,13 +110,13 @@ public class SessionBeanType {
     @XmlElement(name = "resource-env-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
 
-    @XmlElement(name = "web-service-address", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "web-service-address")
     protected java.lang.String webServiceAddress;
 
-    @XmlElement(name = "web-service-virtual-host", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "web-service-virtual-host")
     protected List<java.lang.String> webServiceVirtualHost;
 
-    @XmlElement(name = "web-service-security", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "web-service-security")
     protected WebServiceSecurityType webServiceSecurity;
 
     @XmlAttribute

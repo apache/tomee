@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "web-service-securityType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "web-service-securityType", propOrder = {
     "securityRealmName",
     "realmName",
     "transportGuarantee",
@@ -54,13 +54,13 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class WebServiceSecurityType {
 
-    @XmlElement(name = "security-realm-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "security-realm-name", required = true)
     protected java.lang.String securityRealmName;
-    @XmlElement(name = "realm-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "realm-name")
     protected java.lang.String realmName;
-    @XmlElement(name = "transport-guarantee", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "transport-guarantee", required = true)
     protected TransportGuaranteeType transportGuarantee;
-    @XmlElement(name = "auth-method", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "auth-method", required = true)
     protected AuthMethodType authMethod;
 
     /**

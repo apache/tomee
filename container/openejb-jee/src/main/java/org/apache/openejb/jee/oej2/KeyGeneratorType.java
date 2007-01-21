@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class KeyGeneratorType {
 
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name="uuid", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected EmptyType uuid;
     @XmlElement(name = "sequence-table", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected SequenceTableType sequenceTable;

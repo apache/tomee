@@ -44,15 +44,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cmp-field-group-mappingType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "cmp-field-group-mappingType", propOrder = {
     "groupName",
     "cmpFieldName"
 })
 public class CmpFieldGroupMappingType {
 
-    @XmlElement(name = "group-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "group-name", required = true)
     protected java.lang.String groupName;
-    @XmlElement(name = "cmp-field-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "cmp-field-name", required = true)
     protected java.lang.String cmpFieldName;
 
     /**

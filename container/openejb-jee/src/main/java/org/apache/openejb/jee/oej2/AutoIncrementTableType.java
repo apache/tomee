@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class AutoIncrementTableType {
 
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name="sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected java.lang.String sql;
     @XmlElement(name = "return-type", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected java.lang.String returnType;

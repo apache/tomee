@@ -45,12 +45,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "relationshipsType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "relationshipsType", propOrder = {
     "ejbRelation"
 })
 public class RelationshipsType {
 
-    @XmlElement(name = "ejb-relation", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "ejb-relation", required = true)
     protected List<EjbRelationType> ejbRelation;
 
     /**

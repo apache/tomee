@@ -58,9 +58,9 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class EnvironmentType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="moduleId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ArtifactType moduleId;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="dependencies", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected DependenciesType dependencies;
     @XmlElement(name = "hidden-classes", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ClassFilterType hiddenClasses;

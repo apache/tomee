@@ -70,7 +70,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "queryType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "queryType", propOrder = {
     "queryMethod",
     "resultTypeMapping",
     "ejbQl",
@@ -79,15 +79,15 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class QueryType {
 
-    @XmlElement(name = "query-method", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "query-method", required = true)
     protected QueryType.QueryMethod queryMethod;
-    @XmlElement(name = "result-type-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "result-type-mapping")
     protected java.lang.String resultTypeMapping;
-    @XmlElement(name = "ejb-ql", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "ejb-ql")
     protected java.lang.String ejbQl;
-    @XmlElement(name = "no-cache-flush", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "no-cache-flush")
     protected Object noCacheFlush;
-    @XmlElement(name = "group-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "group-name")
     protected java.lang.String groupName;
 
     /**
@@ -248,9 +248,9 @@ public class QueryType {
     })
     public static class QueryMethod {
 
-        @XmlElement(name = "method-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "method-name", required = true)
         protected java.lang.String methodName;
-        @XmlElement(name = "method-params", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "method-params", required = true)
         protected QueryType.QueryMethod.MethodParams methodParams;
 
         /**
@@ -327,7 +327,7 @@ public class QueryType {
         })
         public static class MethodParams {
 
-            @XmlElement(name = "method-param", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+            @XmlElement(name = "method-param")
             protected List<java.lang.String> methodParam;
 
             /**

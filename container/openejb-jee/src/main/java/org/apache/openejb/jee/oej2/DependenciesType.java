@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class DependenciesType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="dependency", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected List<DependencyType> dependency;
 
     /**

@@ -47,18 +47,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ejb-relationType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "ejb-relationType", propOrder = {
     "ejbRelationName",
     "manyToManyTableName",
     "ejbRelationshipRole"
 })
 public class EjbRelationType {
 
-    @XmlElement(name = "ejb-relation-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "ejb-relation-name")
     protected java.lang.String ejbRelationName;
-    @XmlElement(name = "many-to-many-table-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "many-to-many-table-name")
     protected java.lang.String manyToManyTableName;
-    @XmlElement(name = "ejb-relationship-role", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "ejb-relationship-role", required = true)
     protected List<EjbRelationshipRoleType> ejbRelationshipRole;
 
     /**

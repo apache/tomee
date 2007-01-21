@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "message-driven-beanType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "message-driven-beanType", propOrder = {
     "ejbName",
     "resourceAdapter",
     "activationConfig",
@@ -68,24 +68,33 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 public class MessageDrivenBeanType {
 
-    @XmlElement(name = "ejb-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;
+
     @XmlElement(name = "resource-adapter", required = true)
     protected ResourceLocatorType resourceAdapter;
-    @XmlElement(name = "activation-config", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "activation-config")
     protected ActivationConfigType activationConfig;
+
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
-    @XmlElement(name = "ejb-ref")
+
+    @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbRefType> ejbRef;
-    @XmlElement(name = "ejb-local-ref")
+
+    @XmlElement(name = "ejb-local-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbLocalRefType> ejbLocalRef;
-    @XmlElement(name = "service-ref")
+
+    @XmlElement(name = "service-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ServiceRefType> serviceRef;
-    @XmlElement(name = "resource-ref")
+
+    @XmlElement(name = "resource-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceRefType> resourceRef;
-    @XmlElement(name = "resource-env-ref")
+
+    @XmlElement(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID

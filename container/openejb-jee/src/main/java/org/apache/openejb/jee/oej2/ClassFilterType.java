@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ClassFilterType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="filter", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected List<java.lang.String> filter;
 
     /**

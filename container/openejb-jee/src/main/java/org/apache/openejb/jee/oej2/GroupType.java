@@ -58,18 +58,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "groupType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "groupType", propOrder = {
     "groupName",
     "cmpFieldName",
     "cmrField"
 })
 public class GroupType {
 
-    @XmlElement(name = "group-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "group-name", required = true)
     protected java.lang.String groupName;
-    @XmlElement(name = "cmp-field-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "cmp-field-name")
     protected List<java.lang.String> cmpFieldName;
-    @XmlElement(name = "cmr-field", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "cmr-field")
     protected List<GroupType.CmrField> cmrField;
 
     /**
@@ -182,9 +182,9 @@ public class GroupType {
     })
     public static class CmrField {
 
-        @XmlElement(name = "cmr-field-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "cmr-field-name", required = true)
         protected java.lang.String cmrFieldName;
-        @XmlElement(name = "group-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "group-name")
         protected java.lang.String groupName;
 
         /**

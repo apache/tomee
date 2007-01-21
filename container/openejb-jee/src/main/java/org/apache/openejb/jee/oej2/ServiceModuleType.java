@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ServiceModuleType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name="environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected EnvironmentType environment;
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;

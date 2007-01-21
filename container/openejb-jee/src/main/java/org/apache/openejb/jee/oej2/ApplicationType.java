@@ -62,13 +62,13 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ApplicationType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name="environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected EnvironmentType environment;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="module", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected List<ModuleType> module;
     @XmlElement(name = "ext-module", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected List<ExtModuleType> extModule;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected AbstractSecurityType security;
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;

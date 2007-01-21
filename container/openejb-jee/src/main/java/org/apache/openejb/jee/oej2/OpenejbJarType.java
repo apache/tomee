@@ -17,8 +17,15 @@
 
 package org.apache.openejb.jee.oej2;
 
+import org.xml.sax.helpers.XMLFilterImpl;
+import org.xml.sax.XMLReader;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.*;
+import java.lang.String;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,7 +76,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "openejb-jarType", propOrder = {
     "environment",
     "cmpConnectionFactory",
     "ejbQlCompilerFactory",
@@ -83,31 +90,31 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class OpenejbJarType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
 
     @XmlElement(name = "cmp-connection-factory")
     protected ResourceLocatorType cmpConnectionFactory;
 
-    @XmlElement(name = "ejb-ql-compiler-factory", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "ejb-ql-compiler-factory")
     protected java.lang.String ejbQlCompilerFactory;
 
-    @XmlElement(name = "db-syntax-factory", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "db-syntax-factory")
     protected java.lang.String dbSyntaxFactory;
 
-    @XmlElement(name = "enforce-foreign-key-constraints", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "enforce-foreign-key-constraints")
     protected EmptyType enforceForeignKeyConstraints;
 
-    @XmlElement(name = "enterprise-beans", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "enterprise-beans", required = true)
     protected OpenejbJarType.EnterpriseBeans enterpriseBeans;
 
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement()
     protected RelationshipsType relationships;
 
-    @XmlElement(name = "message-destination")
+    @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected AbstractSecurityType security;
 
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
@@ -393,9 +400,9 @@ public class OpenejbJarType {
     public static class EnterpriseBeans {
 
         @XmlElements({
-            @XmlElement(name = "entity", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", type = EntityBeanType.class),
-            @XmlElement(name = "session", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", type = SessionBeanType.class),
-            @XmlElement(name = "message-driven", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", type = MessageDrivenBeanType.class)
+            @XmlElement(name = "entity", type = EntityBeanType.class),
+            @XmlElement(name = "session", type = SessionBeanType.class),
+            @XmlElement(name = "message-driven", type = MessageDrivenBeanType.class)
         })
         protected List<Object> sessionOrEntityOrMessageDriven;
 

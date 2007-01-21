@@ -46,15 +46,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "activation-configType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "activation-configType", propOrder = {
     "description",
     "activationConfigProperty"
 })
 public class ActivationConfigType {
 
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement()
     protected List<java.lang.String> description;
-    @XmlElement(name = "activation-config-property", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "activation-config-property", required = true)
     protected List<ActivationConfigPropertyType> activationConfigProperty;
 
     /**

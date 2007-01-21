@@ -87,13 +87,13 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ArtifactType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="groupId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected java.lang.String groupId;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name="artifactId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected java.lang.String artifactId;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="version", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected java.lang.String version;
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name="type", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected java.lang.String type;
 
     /**

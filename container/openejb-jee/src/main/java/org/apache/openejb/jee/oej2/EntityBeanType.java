@@ -113,7 +113,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entity-beanType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "entity-beanType", propOrder = {
     "ejbName",
     "jndiName",
     "localJndiName",
@@ -137,46 +137,66 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 public class EntityBeanType {
 
-    @XmlElement(name = "ejb-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;
-    @XmlElement(name = "jndi-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "jndi-name")
     protected List<java.lang.String> jndiName;
-    @XmlElement(name = "local-jndi-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "local-jndi-name")
     protected List<java.lang.String> localJndiName;
-    @XmlElement(name = "tss-link", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "tss-link")
     protected java.lang.String tssLink;
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement()
     protected PatternType tss;
-    @XmlElement(name = "table-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "table-name")
     protected java.lang.String tableName;
-    @XmlElement(name = "static-sql", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "static-sql")
     protected EmptyType staticSql;
-    @XmlElement(name = "cmp-field-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "cmp-field-mapping")
     protected List<EntityBeanType.CmpFieldMapping> cmpFieldMapping;
-    @XmlElement(name = "primkey-field", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "primkey-field")
     protected java.lang.String primkeyField;
+
     @XmlElement(name = "key-generator", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected KeyGeneratorType keyGenerator;
-    @XmlElement(name = "prefetch-group", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "prefetch-group")
     protected EntityBeanType.PrefetchGroup prefetchGroup;
-    @XmlElement(name = "select-for-update", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement(name = "select-for-update")
     protected EmptyType selectForUpdate;
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement()
     protected EntityBeanType.Cache cache;
+
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
-    @XmlElement(name = "ejb-ref")
+
+    @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbRefType> ejbRef;
-    @XmlElement(name = "ejb-local-ref")
+
+    @XmlElement(name = "ejb-local-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbLocalRefType> ejbLocalRef;
-    @XmlElement(name = "service-ref")
+
+    @XmlElement(name = "service-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ServiceRefType> serviceRef;
-    @XmlElement(name = "resource-ref")
+
+    @XmlElement(name = "resource-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceRefType> resourceRef;
-    @XmlElement(name = "resource-env-ref")
+
+    @XmlElement(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
-    @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+
+    @XmlElement()
     protected List<QueryType> query;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -775,9 +795,9 @@ public class EntityBeanType {
     })
     public static class Cache {
 
-        @XmlElement(name = "isolation-level", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "isolation-level", required = true)
         protected java.lang.String isolationLevel;
-        @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement()
         protected int size;
 
         /**
@@ -856,15 +876,15 @@ public class EntityBeanType {
     })
     public static class CmpFieldMapping {
 
-        @XmlElement(name = "cmp-field-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "cmp-field-name", required = true)
         protected java.lang.String cmpFieldName;
-        @XmlElement(name = "cmp-field-class", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "cmp-field-class")
         protected java.lang.String cmpFieldClass;
-        @XmlElement(name = "table-column", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "table-column", required = true)
         protected java.lang.String tableColumn;
-        @XmlElement(name = "sql-type", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "sql-type")
         protected java.lang.String sqlType;
-        @XmlElement(name = "type-converter", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "type-converter")
         protected java.lang.String typeConverter;
 
         /**
@@ -1021,13 +1041,13 @@ public class EntityBeanType {
     })
     public static class PrefetchGroup {
 
-        @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement()
         protected List<GroupType> group;
-        @XmlElement(name = "entity-group-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "entity-group-mapping")
         protected EntityGroupMappingType entityGroupMapping;
-        @XmlElement(name = "cmp-field-group-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "cmp-field-group-mapping")
         protected List<CmpFieldGroupMappingType> cmpFieldGroupMapping;
-        @XmlElement(name = "cmr-field-group-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+        @XmlElement(name = "cmr-field-group-mapping")
         protected List<CmrFieldGroupMappingType> cmrFieldGroupMapping;
 
         /**

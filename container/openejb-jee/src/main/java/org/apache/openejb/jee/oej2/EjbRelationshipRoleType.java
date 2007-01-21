@@ -90,7 +90,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ejb-relationship-roleType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "ejb-relationship-roleType", propOrder = {
     "ejbRelationshipRoleName",
     "relationshipRoleSource",
     "cmrField",
@@ -99,15 +99,15 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class EjbRelationshipRoleType {
 
-    @XmlElement(name = "ejb-relationship-role-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "ejb-relationship-role-name")
     protected java.lang.String ejbRelationshipRoleName;
-    @XmlElement(name = "relationship-role-source", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "relationship-role-source", required = true)
     protected EjbRelationshipRoleType.RelationshipRoleSource relationshipRoleSource;
-    @XmlElement(name = "cmr-field", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "cmr-field")
     protected EjbRelationshipRoleType.CmrField cmrField;
-    @XmlElement(name = "foreign-key-column-on-source", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "foreign-key-column-on-source")
     protected Object foreignKeyColumnOnSource;
-    @XmlElement(name = "role-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "role-mapping", required = true)
     protected EjbRelationshipRoleType.RoleMapping roleMapping;
 
     /**
@@ -256,7 +256,7 @@ public class EjbRelationshipRoleType {
     })
     public static class CmrField {
 
-        @XmlElement(name = "cmr-field-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "cmr-field-name", required = true)
         protected java.lang.String cmrFieldName;
 
         /**
@@ -311,7 +311,7 @@ public class EjbRelationshipRoleType {
     })
     public static class RelationshipRoleSource {
 
-        @XmlElement(name = "ejb-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "ejb-name", required = true)
         protected java.lang.String ejbName;
 
         /**
@@ -377,7 +377,7 @@ public class EjbRelationshipRoleType {
     })
     public static class RoleMapping {
 
-        @XmlElement(name = "cmr-field-mapping", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+        @XmlElement(name = "cmr-field-mapping", required = true)
         protected List<EjbRelationshipRoleType.RoleMapping.CmrFieldMapping> cmrFieldMapping;
 
         /**
@@ -437,9 +437,9 @@ public class EjbRelationshipRoleType {
         })
         public static class CmrFieldMapping {
 
-            @XmlElement(name = "key-column", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+            @XmlElement(name = "key-column", required = true)
             protected java.lang.String keyColumn;
-            @XmlElement(name = "foreign-key-column", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+            @XmlElement(name = "foreign-key-column", required = true)
             protected java.lang.String foreignKeyColumn;
 
             /**

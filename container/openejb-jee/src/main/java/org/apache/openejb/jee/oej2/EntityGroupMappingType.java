@@ -43,12 +43,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entity-group-mappingType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "entity-group-mappingType", propOrder = {
     "groupName"
 })
 public class EntityGroupMappingType {
 
-    @XmlElement(name = "group-name", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
+    @XmlElement(name = "group-name", required = true)
     protected java.lang.String groupName;
 
     /**

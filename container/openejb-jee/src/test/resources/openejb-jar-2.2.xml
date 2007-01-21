@@ -1,21 +1,4 @@
 <?xml version="1.0"?>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    (the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
-
 <openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2"
   xmlns:pkgen="http://openejb.apache.org/xml/ns/pkgen-2.1"
   xmlns:naming="http://geronimo.apache.org/xml/ns/naming-1.2"
@@ -55,11 +38,6 @@
     </cmp-connection-factory>
 
     <enterprise-beans>
-        <!--
-        ########################################################
-        Stateless
-        ########################################################
-        -->
         <session>
             <ejb-name>BasicStatelessBean</ejb-name>
             <jndi-name>client/tests/stateless/BasicStatelessHome</jndi-name>
@@ -146,12 +124,6 @@
             <ejb-name>SessionFacadeBean</ejb-name>
             <jndi-name>client/tests/entity/cmp/SessionFacadeBean</jndi-name>
         </session>
-
-        <!--
-        ########################################################
-        Stateless
-        ########################################################
-        -->
         <session>
             <ejb-name>BasicStatefulBean</ejb-name>
             <jndi-name>client/tests/stateful/BasicStatefulHome</jndi-name>
@@ -208,12 +180,6 @@
             <ejb-name>StatefulRMIIIOPBean</ejb-name>
             <jndi-name>client/tests/stateful/RMI-over-IIOP/EJBHome</jndi-name>
         </session>
-
-        <!--
-        ########################################################
-        BMP
-        ########################################################
-        -->
         <entity>
             <ejb-name>BasicBmpBean</ejb-name>
             <jndi-name>client/tests/entity/bmp/BasicBmpHome</jndi-name>
@@ -275,13 +241,6 @@
             <ejb-name>BmpRMIIIOPBean</ejb-name>
             <jndi-name>client/tests/entity/bmp/RMI-over-IIOP/EJBHome</jndi-name>
         </entity>
-
-        <!--
-        ########################################################
-        CMP 2
-        ########################################################
-        -->
-
         <entity>
             <ejb-name>BasicCmp2Bean</ejb-name>
             <jndi-name>client/tests/entity/cmp2/BasicCmpHome</jndi-name>
@@ -437,13 +396,6 @@
                 </ejb-ql>
             </query>
         </entity>
-
-        <!--
-        ########################################################
-        CMP
-        ########################################################
-        -->
-
         <entity>
             <ejb-name>BasicCmpBean</ejb-name>
             <jndi-name>client/tests/entity/cmp/BasicCmpHome</jndi-name>
@@ -687,13 +639,6 @@
                 </ejb-ql>
             </query>
         </entity>
-
-        <!--
-        ########################################################
-        CMP2 - CMRMapping
-        ########################################################
-        -->
-
         <entity>
             <ejb-name>OneOwningSideBean</ejb-name>
             <table-name>OneOwning</table-name>
@@ -822,11 +767,6 @@
             </ejb-relationship-role>
         </ejb-relation>
     </relationships>
-
-    <!--
-      ########################################################
-      ########################################################
-      -->
 
     <gbean name="ORBConfigAdapter" class="org.apache.openejb.yoko.ORBConfigAdapterGBean"/>
 

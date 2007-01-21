@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ReferencesType {
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name="pattern", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected List<PatternType> pattern;
     @XmlAttribute
     protected java.lang.String name;
