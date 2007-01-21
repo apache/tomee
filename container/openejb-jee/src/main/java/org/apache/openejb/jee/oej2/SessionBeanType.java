@@ -91,24 +91,34 @@ public class SessionBeanType {
     protected java.lang.String tssLink;
     @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
+
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
-    @XmlElement(name = "ejb-ref")
+
+    @XmlElement(name = "ejb-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbRefType> ejbRef;
-    @XmlElement(name = "ejb-local-ref")
+
+    @XmlElement(name = "ejb-local-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbLocalRefType> ejbLocalRef;
-    @XmlElement(name = "service-ref")
+
+    @XmlElement(name = "service-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ServiceRefType> serviceRef;
-    @XmlElement(name = "resource-ref")
+
+    @XmlElement(name = "resource-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceRefType> resourceRef;
-    @XmlElement(name = "resource-env-ref")
+
+    @XmlElement(name = "resource-env-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
+
     @XmlElement(name = "web-service-address", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected java.lang.String webServiceAddress;
+
     @XmlElement(name = "web-service-virtual-host", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected List<java.lang.String> webServiceVirtualHost;
+
     @XmlElement(name = "web-service-security", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected WebServiceSecurityType webServiceSecurity;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID

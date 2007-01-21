@@ -85,22 +85,31 @@ public class OpenejbJarType {
 
     @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
+
     @XmlElement(name = "cmp-connection-factory")
     protected ResourceLocatorType cmpConnectionFactory;
+
     @XmlElement(name = "ejb-ql-compiler-factory", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected java.lang.String ejbQlCompilerFactory;
+
     @XmlElement(name = "db-syntax-factory", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected java.lang.String dbSyntaxFactory;
+
     @XmlElement(name = "enforce-foreign-key-constraints", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected EmptyType enforceForeignKeyConstraints;
+
     @XmlElement(name = "enterprise-beans", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", required = true)
     protected OpenejbJarType.EnterpriseBeans enterpriseBeans;
+
     @XmlElement(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected RelationshipsType relationships;
+
     @XmlElement(name = "message-destination")
     protected List<MessageDestinationType> messageDestination;
+
     @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected AbstractSecurityType security;
+
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
 
