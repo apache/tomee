@@ -45,7 +45,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     private final SecurityService securityService;
     private final TransactionManager transactionManager;
     private State state;
-    protected static State[] states = new State[Operation.values().length];
+    protected final static State[] states = new State[Operation.values().length];
 
     public BaseContext(TransactionManager transactionManager, SecurityService securityService) {
         this.transactionManager = transactionManager;
