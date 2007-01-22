@@ -17,31 +17,20 @@
 package org.apache.openejb.jee.oej2;
 
 import junit.framework.TestCase;
-import org.xml.sax.InputSource;
-import org.apache.openejb.jee.oej2.GeronimoEjbJarType;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
-import javax.xml.transform.sax.SAXSource;
-import java.lang.*;
-import java.lang.String;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.BufferedInputStream;
-import java.io.StringReader;
+import java.lang.String;
 
 /**
  * @version $Revision: 471447 $ $Date: 2006-11-05 07:42:50 -0800 (Sun, 05 Nov 2006) $
  */
 public class OpenejbJarTest extends TestCase {
 
-    public void testNothing(){}
+    public void testNothing() {
+    }
+
     /**
      * @throws Exception
      */
@@ -62,52 +51,22 @@ public class OpenejbJarTest extends TestCase {
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
-        JAXBContext ctx = JAXBContext.newInstance(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        String sourceXml = readContent(xmlFileName);
+        Object object = JaxbUtil.unmarshal(type, getInputStream(xmlFileName));
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        String actual = JaxbUtil.marshal(type, object);
 
-        // Create a filter to intercept events
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
-
-        // Be sure the filter has the JAXB content handler set (or it wont
-        // work)
-        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
-
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(new StringReader(sourceXml)));
-
-        Object object = unmarshaller.unmarshal(source);
-//        JAXBElement element =  (JAXBElement) object;
-        unmarshaller.setEventHandler(new OpenejbJarTest.TestValidationEventHandler());
-//        T app = (T) element.getValue();
-//        System.out.println("unmarshalled");
-
-        Marshaller marshaller = ctx.createMarshaller();
-
-        marshaller.setProperty("jaxb.formatted.output", true);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(object, baos);
-
-        String actual = new String(baos.toByteArray());
-
-        if (xmlFileName.equals(expectedFile)){
+        if (xmlFileName.equals(expectedFile)) {
+            String sourceXml = readContent(getInputStream(xmlFileName));
             assertEquals(sourceXml, actual);
         } else {
-            String expected = readContent(expectedFile);
+            String expected = readContent(getInputStream(expectedFile));
             assertEquals(expected, actual);
         }
     }
 
-    private <T>String readContent(String xmlFileName) throws IOException {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
-        String sourceXml = readContent(in);
-        return sourceXml;
+    private <T>InputStream getInputStream(String xmlFileName) {
+        return getClass().getClassLoader().getResourceAsStream(xmlFileName);
     }
 
     private String readContent(InputStream in) throws IOException {
@@ -118,14 +77,6 @@ public class OpenejbJarTest extends TestCase {
             sb.append((char) i);
             i = in.read();
         }
-        String content = sb.toString();
-        return content;
-    }
-
-    private static class TestValidationEventHandler implements ValidationEventHandler {
-        public boolean handleEvent(ValidationEvent validationEvent) {
-            System.out.println(validationEvent.getMessage());
-            return true;
-        }
+        return sb.toString();
     }
 }

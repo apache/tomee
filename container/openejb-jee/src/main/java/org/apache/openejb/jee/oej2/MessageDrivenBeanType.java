@@ -19,6 +19,8 @@ package org.apache.openejb.jee.oej2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.*;
+import java.lang.String;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -66,7 +69,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "resourceRef",
     "resourceEnvRef"
 })
-public class MessageDrivenBeanType {
+public class MessageDrivenBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;
@@ -99,6 +102,16 @@ public class MessageDrivenBeanType {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected java.lang.String id;
+
+    @XmlTransient
+    public List<String> getJndiName() {
+        return null;
+    }
+
+    @XmlTransient
+    public List<String> getLocalJndiName() {
+        return null;
+    }
 
     /**
      * Gets the value of the ejbName property.

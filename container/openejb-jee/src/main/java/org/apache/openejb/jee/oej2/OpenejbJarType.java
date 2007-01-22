@@ -17,14 +17,10 @@
 
 package org.apache.openejb.jee.oej2;
 
-import org.xml.sax.helpers.XMLFilterImpl;
-import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.*;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.lang.String;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 
 /**
@@ -105,8 +103,12 @@ public class OpenejbJarType {
     @XmlElement(name = "enforce-foreign-key-constraints")
     protected EmptyType enforceForeignKeyConstraints;
 
-    @XmlElement(name = "enterprise-beans", required = true)
-    protected OpenejbJarType.EnterpriseBeans enterpriseBeans;
+    @XmlElementWrapper(name = "enterprise-beans")
+    @XmlElements({
+    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
+    @XmlElement(name = "session", required = true, type = SessionBeanType.class),
+    @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
+    protected List<EnterpriseBean> enterpriseBeans = new ArrayList<EnterpriseBean>();
 
     @XmlElement()
     protected RelationshipsType relationships;
@@ -240,28 +242,8 @@ public class OpenejbJarType {
         this.enforceForeignKeyConstraints = value;
     }
 
-    /**
-     * Gets the value of the enterpriseBeans property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OpenejbJarType.EnterpriseBeans }
-     *     
-     */
-    public OpenejbJarType.EnterpriseBeans getEnterpriseBeans() {
+    public List<EnterpriseBean> getEnterpriseBeans() {
         return enterpriseBeans;
-    }
-
-    /**
-     * Sets the value of the enterpriseBeans property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OpenejbJarType.EnterpriseBeans }
-     *     
-     */
-    public void setEnterpriseBeans(OpenejbJarType.EnterpriseBeans value) {
-        this.enterpriseBeans = value;
     }
 
     /**
@@ -369,74 +351,6 @@ public class OpenejbJarType {
             service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
         }
         return this.service;
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;choice maxOccurs="unbounded" minOccurs="0">
-     *         &lt;element name="session" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}session-beanType"/>
-     *         &lt;element name="entity" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}entity-beanType"/>
-     *         &lt;element name="message-driven" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}message-driven-beanType"/>
-     *       &lt;/choice>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "sessionOrEntityOrMessageDriven"
-    })
-    public static class EnterpriseBeans {
-
-        @XmlElements({
-            @XmlElement(name = "entity", type = EntityBeanType.class),
-            @XmlElement(name = "session", type = SessionBeanType.class),
-            @XmlElement(name = "message-driven", type = MessageDrivenBeanType.class)
-        })
-        protected List<Object> sessionOrEntityOrMessageDriven;
-
-        /**
-         * Gets the value of the sessionOrEntityOrMessageDriven property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the sessionOrEntityOrMessageDriven property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getSessionOrEntityOrMessageDriven().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link EntityBeanType }
-         * {@link SessionBeanType }
-         * {@link MessageDrivenBeanType }
-         * 
-         * 
-         */
-        public List<Object> getSessionOrEntityOrMessageDriven() {
-            if (sessionOrEntityOrMessageDriven == null) {
-                sessionOrEntityOrMessageDriven = new ArrayList<Object>();
-            }
-            return this.sessionOrEntityOrMessageDriven;
-        }
-
     }
 
 }

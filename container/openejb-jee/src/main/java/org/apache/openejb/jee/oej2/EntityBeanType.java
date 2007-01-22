@@ -135,7 +135,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "resourceEnvRef",
     "query"
 })
-public class EntityBeanType {
+public class EntityBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
     protected java.lang.String ejbName;

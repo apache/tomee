@@ -16,9 +16,66 @@
  */
 package org.apache.openejb.jee.oej2;
 
+import junit.framework.TestCase;
+
+import javax.xml.bind.JAXBElement;
+import java.lang.*;
+import java.lang.String;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
-public class ConversionTest {
-    
+public class ConversionTest extends TestCase {
+
+    public void testConversion() throws Exception {
+        JAXBElement element = (JAXBElement) JaxbUtil.unmarshal(OpenejbJarType.class, getInputStream("openejb-jar-2-full.xml"));
+        OpenejbJarType o2 = (OpenejbJarType) element.getValue();
+
+        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
+
+        g2.setEnvironment(o2.getEnvironment());
+        g2.setSecurity(o2.getSecurity());
+        g2.getService().addAll(o2.getService());
+        g2.getMessageDestination().addAll(o2.getMessageDestination());
+
+        for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
+            //
+        }
+
+    }
+
+    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
+
+        Object object = JaxbUtil.unmarshal(type, getInputStream(xmlFileName));
+
+        java.lang.String actual = JaxbUtil.marshal(type, object);
+
+        if (xmlFileName.equals(expectedFile)) {
+            String sourceXml = readContent(getInputStream(xmlFileName));
+            assertEquals(sourceXml, actual);
+        } else {
+            String expected = readContent(getInputStream(expectedFile));
+            assertEquals(expected, actual);
+        }
+    }
+
+    private <T>InputStream getInputStream(String xmlFileName) {
+        return getClass().getClassLoader().getResourceAsStream(xmlFileName);
+    }
+
+    private String readContent(InputStream in) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        in = new BufferedInputStream(in);
+        int i = in.read();
+        while (i != -1) {
+            sb.append((char) i);
+            i = in.read();
+        }
+        return sb.toString();
+    }
+
 }
