@@ -17,13 +17,8 @@
 package org.apache.openejb.jee.oej2;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.JeeTest;
 import org.xml.sax.InputSource;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.Marshaller;
@@ -32,12 +27,10 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.validation.Schema;
 import java.lang.*;
 import java.lang.String;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedInputStream;
 import java.io.StringReader;
@@ -51,36 +44,23 @@ public class OpenejbJarTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testEjbJar() throws Exception {
-        marshalAndUnmarshal(OpenejbJarType.class, "openejb-jar-2-full.xml");
+    public void testValidOpenejbJar() throws Exception {
+        unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-full.xml");
     }
 
-    private <T> void marshalAndUnmarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
+    public void testInvalidOpenejbJar() throws Exception {
+        unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-invalid.xml", "openejb-jar-2-full.xml");
+    }
+
+    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
+        unmarshalAndMarshal(type, xmlFileName, xmlFileName);
+    }
+    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        ValidationEventHandler o = new ValidationEventHandler(){
-            public boolean handleEvent(ValidationEvent validationEvent) {
-                System.out.println(validationEvent);
-                return false;
-            }
-        };
-        unmarshaller.setEventHandler(o);
-        unmarshaller.setListener(new Unmarshaller.Listener(){
-            public void afterUnmarshal(Object object, Object object1) {
-                System.out.println("object = " + object);
-                System.out.println("object1 = " + object1);
-                super.afterUnmarshal(object, object1);
-            }
 
-            public void beforeUnmarshal(Object object, Object object1) {
-                System.out.println("object = " + object);
-                System.out.println("object1 = " + object1);
-                super.beforeUnmarshal(object, object1);
-            }
-        });
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
+        String sourceXml = readContent(xmlFileName);
 
-        String expected = readContent(in);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
@@ -93,7 +73,7 @@ public class OpenejbJarTest extends TestCase {
         // work)
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(new StringReader(expected)));
+        SAXSource source = new SAXSource(xmlFilter, new InputSource(new StringReader(sourceXml)));
 
         Object object = unmarshaller.unmarshal(source);
 //        JAXBElement element =  (JAXBElement) object;
@@ -102,7 +82,7 @@ public class OpenejbJarTest extends TestCase {
 //        System.out.println("unmarshalled");
 
         Marshaller marshaller = ctx.createMarshaller();
-        
+
         marshaller.setProperty("jaxb.formatted.output", true);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -110,7 +90,18 @@ public class OpenejbJarTest extends TestCase {
 
         String actual = new String(baos.toByteArray());
 
-        assertEquals(expected, actual);
+        if (xmlFileName.equals(expectedFile)){
+            assertEquals(sourceXml, actual);
+        } else {
+            String expected = readContent(expectedFile);
+            assertEquals(expected, actual);
+        }
+    }
+
+    private <T>String readContent(String xmlFileName) throws IOException {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
+        String sourceXml = readContent(in);
+        return sourceXml;
     }
 
     private String readContent(InputStream in) throws IOException {
