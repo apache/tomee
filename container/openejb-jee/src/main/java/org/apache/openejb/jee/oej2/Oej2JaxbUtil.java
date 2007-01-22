@@ -24,6 +24,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -35,7 +37,7 @@ import java.io.InputStream;
 /**
  * @version $Rev$ $Date$
  */
-public class JaxbUtil {
+public class Oej2JaxbUtil {
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
         JAXBContext ctx2 = JAXBContext.newInstance(type);
@@ -59,6 +61,13 @@ public class JaxbUtil {
 
         JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        unmarshaller.setEventHandler(new ValidationEventHandler(){
+            public boolean handleEvent(ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
+        });
+
 
         NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());

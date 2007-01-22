@@ -1,0 +1,1329 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+    <description>String</description>
+    <persistence-unit-metadata>
+        <xml-mapping-metadata-complete/>
+        <persistence-unit-defaults>
+            <schema>String</schema>
+            <catalog>String</catalog>
+            <access>PROPERTY</access>
+            <cascade-persist/>
+            <entity-listeners>
+                <entity-listener class="String">
+                    <pre-persist method-name="String"/>
+                    <post-persist method-name="String"/>
+                    <pre-remove method-name="String"/>
+                    <post-remove method-name="String"/>
+                    <pre-update method-name="String"/>
+                    <post-update method-name="String"/>
+                    <post-load method-name="String"/>
+                </entity-listener>
+                <entity-listener class="String">
+                    <pre-persist method-name="String"/>
+                    <post-persist method-name="String"/>
+                    <pre-remove method-name="String"/>
+                    <post-remove method-name="String"/>
+                    <pre-update method-name="String"/>
+                    <post-update method-name="String"/>
+                    <post-load method-name="String"/>
+                </entity-listener>
+            </entity-listeners>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>String</package>
+    <schema>String</schema>
+    <catalog>String</catalog>
+    <access>PROPERTY</access>
+    <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+    <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+    <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+        <unique-constraint>
+            <column-name>String</column-name>
+            <column-name>String</column-name>
+        </unique-constraint>
+        <unique-constraint>
+            <column-name>String</column-name>
+            <column-name>String</column-name>
+        </unique-constraint>
+    </table-generator>
+    <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+        <unique-constraint>
+            <column-name>String</column-name>
+            <column-name>String</column-name>
+        </unique-constraint>
+        <unique-constraint>
+            <column-name>String</column-name>
+            <column-name>String</column-name>
+        </unique-constraint>
+    </table-generator>
+    <named-query name="String">
+        <query>String</query>
+        <hint value="String" name="String"/>
+        <hint value="String" name="String"/>
+    </named-query>
+    <named-query name="String">
+        <query>String</query>
+        <hint value="String" name="String"/>
+        <hint value="String" name="String"/>
+    </named-query>
+    <named-native-query result-set-mapping="String" result-class="String" name="String">
+        <query>String</query>
+        <hint value="String" name="String"/>
+        <hint value="String" name="String"/>
+    </named-native-query>
+    <named-native-query result-set-mapping="String" result-class="String" name="String">
+        <query>String</query>
+        <hint value="String" name="String"/>
+        <hint value="String" name="String"/>
+    </named-native-query>
+    <sql-result-set-mapping name="String">
+        <entity-result entity-class="String" discriminator-column="String">
+            <field-result name="String" column="String"/>
+            <field-result name="String" column="String"/>
+        </entity-result>
+        <entity-result entity-class="String" discriminator-column="String">
+            <field-result name="String" column="String"/>
+            <field-result name="String" column="String"/>
+        </entity-result>
+        <column-result name="String"/>
+        <column-result name="String"/>
+    </sql-result-set-mapping>
+    <sql-result-set-mapping name="String">
+        <entity-result entity-class="String" discriminator-column="String">
+            <field-result name="String" column="String"/>
+            <field-result name="String" column="String"/>
+        </entity-result>
+        <entity-result entity-class="String" discriminator-column="String">
+            <field-result name="String" column="String"/>
+            <field-result name="String" column="String"/>
+        </entity-result>
+        <column-result name="String"/>
+        <column-result name="String"/>
+    </sql-result-set-mapping>
+    <mapped-superclass metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <id-class class="String"/>
+        <exclude-default-listeners/>
+        <exclude-superclass-listeners/>
+        <entity-listeners>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+        </entity-listeners>
+        <pre-persist method-name="String"/>
+        <post-persist method-name="String"/>
+        <pre-remove method-name="String"/>
+        <post-remove method-name="String"/>
+        <pre-update method-name="String"/>
+        <post-update method-name="String"/>
+        <post-load method-name="String"/>
+        <attributes>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <id-class class="String"/>
+        <exclude-default-listeners/>
+        <exclude-superclass-listeners/>
+        <entity-listeners>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+        </entity-listeners>
+        <pre-persist method-name="String"/>
+        <post-persist method-name="String"/>
+        <pre-remove method-name="String"/>
+        <post-remove method-name="String"/>
+        <pre-update method-name="String"/>
+        <post-update method-name="String"/>
+        <post-load method-name="String"/>
+        <attributes>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </mapped-superclass>
+    <entity name="String" metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <table schema="String" name="String" catalog="String">
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </table>
+        <secondary-table schema="String" name="String" catalog="String">
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </secondary-table>
+        <secondary-table schema="String" name="String" catalog="String">
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </secondary-table>
+        <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+        <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+        <id-class class="String"/>
+        <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-value>String</discriminator-value>
+        <discriminator-column name="String" length="0" discriminator-type="STRING" column-definition="String"/>
+        <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+        <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </table-generator>
+        <named-query name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-query>
+        <named-query name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-query>
+        <named-native-query result-set-mapping="String" result-class="String" name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-native-query>
+        <named-native-query result-set-mapping="String" result-class="String" name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-native-query>
+        <sql-result-set-mapping name="String">
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <column-result name="String"/>
+            <column-result name="String"/>
+        </sql-result-set-mapping>
+        <sql-result-set-mapping name="String">
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <column-result name="String"/>
+            <column-result name="String"/>
+        </sql-result-set-mapping>
+        <exclude-default-listeners/>
+        <exclude-superclass-listeners/>
+        <entity-listeners>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+        </entity-listeners>
+        <pre-persist method-name="String"/>
+        <post-persist method-name="String"/>
+        <pre-remove method-name="String"/>
+        <post-remove method-name="String"/>
+        <pre-update method-name="String"/>
+        <post-update method-name="String"/>
+        <post-load method-name="String"/>
+        <attribute-override name="String">
+            <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+        </attribute-override>
+        <attribute-override name="String">
+            <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+        </attribute-override>
+        <association-override name="String">
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+        </association-override>
+        <association-override name="String">
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+        </association-override>
+        <attributes>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </entity>
+    <entity name="String" metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <table schema="String" name="String" catalog="String">
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </table>
+        <secondary-table schema="String" name="String" catalog="String">
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </secondary-table>
+        <secondary-table schema="String" name="String" catalog="String">
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </secondary-table>
+        <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+        <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+        <id-class class="String"/>
+        <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-value>String</discriminator-value>
+        <discriminator-column name="String" length="0" discriminator-type="STRING" column-definition="String"/>
+        <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+        <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+            <unique-constraint>
+                <column-name>String</column-name>
+                <column-name>String</column-name>
+            </unique-constraint>
+        </table-generator>
+        <named-query name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-query>
+        <named-query name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-query>
+        <named-native-query result-set-mapping="String" result-class="String" name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-native-query>
+        <named-native-query result-set-mapping="String" result-class="String" name="String">
+            <query>String</query>
+            <hint value="String" name="String"/>
+            <hint value="String" name="String"/>
+        </named-native-query>
+        <sql-result-set-mapping name="String">
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <column-result name="String"/>
+            <column-result name="String"/>
+        </sql-result-set-mapping>
+        <sql-result-set-mapping name="String">
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <entity-result entity-class="String" discriminator-column="String">
+                <field-result name="String" column="String"/>
+                <field-result name="String" column="String"/>
+            </entity-result>
+            <column-result name="String"/>
+            <column-result name="String"/>
+        </sql-result-set-mapping>
+        <exclude-default-listeners/>
+        <exclude-superclass-listeners/>
+        <entity-listeners>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+            <entity-listener class="String">
+                <pre-persist method-name="String"/>
+                <post-persist method-name="String"/>
+                <pre-remove method-name="String"/>
+                <post-remove method-name="String"/>
+                <pre-update method-name="String"/>
+                <post-update method-name="String"/>
+                <post-load method-name="String"/>
+            </entity-listener>
+        </entity-listeners>
+        <pre-persist method-name="String"/>
+        <post-persist method-name="String"/>
+        <pre-remove method-name="String"/>
+        <post-remove method-name="String"/>
+        <pre-update method-name="String"/>
+        <post-update method-name="String"/>
+        <post-load method-name="String"/>
+        <attribute-override name="String">
+            <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+        </attribute-override>
+        <attribute-override name="String">
+            <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+        </attribute-override>
+        <association-override name="String">
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+        </association-override>
+        <association-override name="String">
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+            <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+        </association-override>
+        <attributes>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <id name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <generated-value strategy="TABLE" generator="String"/>
+                <temporal>DATE</temporal>
+                <table-generator value-column-name="String" table="String" schema="String" pk-column-value="String" pk-column-name="String" name="String" initial-value="0" catalog="String" allocation-size="0">
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </table-generator>
+                <sequence-generator sequence-name="String" name="String" initial-value="0" allocation-size="0"/>
+            </id>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <version name="String">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <temporal>DATE</temporal>
+            </version>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <many-to-one target-entity="String" optional="true" name="String" fetch="LAZY">
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-one>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-many>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <one-to-one target-entity="String" optional="true" name="String" mapped-by="String" fetch="LAZY">
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <primary-key-join-column referenced-column-name="String" name="String" column-definition="String"/>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </one-to-one>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <many-to-many target-entity="String" name="String" mapped-by="String" fetch="LAZY">
+                <order-by>String</order-by>
+                <map-key name="String"/>
+                <join-table schema="String" name="String" catalog="String">
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <inverse-join-column updatable="true" unique="true" table="String" referenced-column-name="String" nullable="true" name="String" insertable="true" column-definition="String"/>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                    <unique-constraint>
+                        <column-name>String</column-name>
+                        <column-name>String</column-name>
+                    </unique-constraint>
+                </join-table>
+                <cascade>
+                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                    <cascade-remove/>
+                    <cascade-refresh/>
+                </cascade>
+            </many-to-many>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="String">
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+                <attribute-override name="String">
+                    <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                </attribute-override>
+            </embedded>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </entity>
+    <embeddable metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <attributes>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </embeddable>
+    <embeddable metadata-complete="true" class="String" access="PROPERTY">
+        <description>String</description>
+        <attributes>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <basic optional="true" name="String" fetch="LAZY">
+                <column updatable="true" unique="true" table="String" scale="0" precision="0" nullable="true" name="String" length="0" insertable="true" column-definition="String"/>
+                <lob/>
+            </basic>
+            <transient name="String"/>
+            <transient name="String"/>
+        </attributes>
+    </embeddable>
+</entity-mappings>

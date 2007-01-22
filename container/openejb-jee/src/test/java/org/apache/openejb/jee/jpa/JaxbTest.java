@@ -14,30 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee.oej2;
+package org.apache.openejb.jee.jpa;
 
 import junit.framework.TestCase;
+import org.apache.openejb.jee.oej2.Oej2JaxbUtil;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.String;
+import java.io.IOException;
+import java.io.BufferedInputStream;
 
 /**
- * @version $Revision: 471447 $ $Date: 2006-11-05 07:42:50 -0800 (Sun, 05 Nov 2006) $
+ * @version $Rev$ $Date$
  */
-public class OpenejbJarTest extends TestCase {
+public class JaxbTest extends TestCase {
 
-    public void testValidOpenejbJar() throws Exception {
-        unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-full.xml");
-    }
-
-    public void testInvalidOpenejbJar() throws Exception {
-        unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-invalid.xml", "openejb-jar-2-full.xml");
-    }
-
-    public void testGeronimoOpenejbXml() throws Exception {
-        unmarshalAndMarshal(GeronimoEjbJarType.class, "geronimo-openejb-full.xml");
+    public void testEntityMappings() throws Exception {
+        unmarshalAndMarshal(EntityMappings.class, "jpa-mapping-full.xml");
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
@@ -46,9 +38,9 @@ public class OpenejbJarTest extends TestCase {
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
 
-        Object object = Oej2JaxbUtil.unmarshal(type, getInputStream(xmlFileName));
+        Object object = JpaJaxbUtil.unmarshal(type, getInputStream(xmlFileName));
 
-        String actual = Oej2JaxbUtil.marshal(type, object);
+        String actual = JpaJaxbUtil.marshal(type, object);
 
         if (xmlFileName.equals(expectedFile)) {
             String sourceXml = readContent(getInputStream(xmlFileName));
@@ -73,4 +65,5 @@ public class OpenejbJarTest extends TestCase {
         }
         return sb.toString();
     }
+
 }

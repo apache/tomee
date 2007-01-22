@@ -31,7 +31,7 @@ import java.util.List;
 public class ConversionTest extends TestCase {
 
     public void testConversion() throws Exception {
-        JAXBElement element = (JAXBElement) JaxbUtil.unmarshal(OpenejbJarType.class, getInputStream("openejb-jar-2-full.xml"));
+        JAXBElement element = (JAXBElement) Oej2JaxbUtil.unmarshal(OpenejbJarType.class, getInputStream("openejb-jar-2-full.xml"));
         OpenejbJarType o2 = (OpenejbJarType) element.getValue();
 
         GeronimoEjbJarType g2 = new GeronimoEjbJarType();
@@ -48,16 +48,16 @@ public class ConversionTest extends TestCase {
         }
 
         JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
-        String result = JaxbUtil.marshal(GeronimoEjbJarType.class, root);
+        String result = Oej2JaxbUtil.marshal(GeronimoEjbJarType.class, root);
         assertEquals(readContent(getInputStream("geronimo-openejb-converted.xml")), result);
 
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
 
-        Object object = JaxbUtil.unmarshal(type, getInputStream(xmlFileName));
+        Object object = Oej2JaxbUtil.unmarshal(type, getInputStream(xmlFileName));
 
-        java.lang.String actual = JaxbUtil.marshal(type, object);
+        java.lang.String actual = Oej2JaxbUtil.marshal(type, object);
 
         if (xmlFileName.equals(expectedFile)) {
             String sourceXml = readContent(getInputStream(xmlFileName));
