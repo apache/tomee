@@ -18,6 +18,7 @@ package org.apache.openejb.jee.oej2;
 
 import junit.framework.TestCase;
 import org.xml.sax.InputSource;
+import org.apache.openejb.jee.g2.GeronimoEjbJar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -52,9 +53,14 @@ public class OpenejbJarTest extends TestCase {
         unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-invalid.xml", "openejb-jar-2-full.xml");
     }
 
+    public void _testGeronimoOpenejbXml() throws Exception {
+        unmarshalAndMarshal(GeronimoEjbJar.class, "geronimo-openejb-full.xml");
+    }
+
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
         unmarshalAndMarshal(type, xmlFileName, xmlFileName);
     }
+
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
