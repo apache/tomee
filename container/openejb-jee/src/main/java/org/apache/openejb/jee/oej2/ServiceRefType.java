@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ServiceRefType {
 
     @XmlElement(name = "service-ref-name", required = true)
-    protected java.lang.String serviceRefName;
+    protected String serviceRefName;
     @XmlElement(name = "service-completion")
     protected ServiceCompletionType serviceCompletion;
     @XmlElement(name = "port")
@@ -68,10 +68,10 @@ public class ServiceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getServiceRefName() {
+    public String getServiceRefName() {
         return serviceRefName;
     }
 
@@ -80,10 +80,10 @@ public class ServiceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setServiceRefName(java.lang.String value) {
+    public void setServiceRefName(String value) {
         this.serviceRefName = value;
     }
 

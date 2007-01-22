@@ -55,21 +55,21 @@ import javax.xml.bind.annotation.XmlType;
 public class EjbLocalRefType {
 
     @XmlElement(name = "ref-name", required = true)
-    protected java.lang.String refName;
+    protected String refName;
     @XmlElement(name = "pattern")
     protected PatternType pattern;
     @XmlElement(name = "ejb-link")
-    protected java.lang.String ejbLink;
+    protected String ejbLink;
 
     /**
      * Gets the value of the refName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRefName() {
+    public String getRefName() {
         return refName;
     }
 
@@ -78,10 +78,10 @@ public class EjbLocalRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRefName(java.lang.String value) {
+    public void setRefName(String value) {
         this.refName = value;
     }
 
@@ -114,10 +114,10 @@ public class EjbLocalRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbLink() {
+    public String getEjbLink() {
         return ejbLink;
     }
 
@@ -126,10 +126,10 @@ public class EjbLocalRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbLink(java.lang.String value) {
+    public void setEjbLink(String value) {
         this.ejbLink = value;
     }
 

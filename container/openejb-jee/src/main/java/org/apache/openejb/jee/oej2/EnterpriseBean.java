@@ -24,13 +24,13 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public interface EnterpriseBean {
-    java.lang.String getEjbName();
+    String getEjbName();
 
-    void setEjbName(java.lang.String value);
+    void setEjbName(String value);
 
-    List<java.lang.String> getJndiName();
+    List<String> getJndiName();
 
-    List<java.lang.String> getLocalJndiName();
+    List<String> getLocalJndiName();
 
     List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry();
 

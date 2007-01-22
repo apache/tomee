@@ -138,22 +138,22 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class EntityBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
-    protected java.lang.String ejbName;
+    protected String ejbName;
 
     @XmlElement(name = "jndi-name")
-    protected List<java.lang.String> jndiName;
+    protected List<String> jndiName;
 
     @XmlElement(name = "local-jndi-name")
-    protected List<java.lang.String> localJndiName;
+    protected List<String> localJndiName;
 
     @XmlElement(name = "tss-link")
-    protected java.lang.String tssLink;
+    protected String tssLink;
 
     @XmlElement()
     protected PatternType tss;
 
     @XmlElement(name = "table-name")
-    protected java.lang.String tableName;
+    protected String tableName;
 
     @XmlElement(name = "static-sql")
     protected EmptyType staticSql;
@@ -162,7 +162,7 @@ public class EntityBeanType implements EnterpriseBean {
     protected List<EntityBeanType.CmpFieldMapping> cmpFieldMapping;
 
     @XmlElement(name = "primkey-field")
-    protected java.lang.String primkeyField;
+    protected String primkeyField;
 
     @XmlElement(name = "key-generator", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected KeyGeneratorType keyGenerator;
@@ -200,17 +200,17 @@ public class EntityBeanType implements EnterpriseBean {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the ejbName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbName() {
+    public String getEjbName() {
         return ejbName;
     }
 
@@ -219,10 +219,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbName(java.lang.String value) {
+    public void setEjbName(String value) {
         this.ejbName = value;
     }
 
@@ -244,13 +244,13 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getJndiName() {
+    public List<String> getJndiName() {
         if (jndiName == null) {
-            jndiName = new ArrayList<java.lang.String>();
+            jndiName = new ArrayList<String>();
         }
         return this.jndiName;
     }
@@ -273,13 +273,13 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getLocalJndiName() {
+    public List<String> getLocalJndiName() {
         if (localJndiName == null) {
-            localJndiName = new ArrayList<java.lang.String>();
+            localJndiName = new ArrayList<String>();
         }
         return this.localJndiName;
     }
@@ -289,10 +289,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getTssLink() {
+    public String getTssLink() {
         return tssLink;
     }
 
@@ -301,10 +301,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setTssLink(java.lang.String value) {
+    public void setTssLink(String value) {
         this.tssLink = value;
     }
 
@@ -337,10 +337,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getTableName() {
+    public String getTableName() {
         return tableName;
     }
 
@@ -349,10 +349,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setTableName(java.lang.String value) {
+    public void setTableName(String value) {
         this.tableName = value;
     }
 
@@ -414,10 +414,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPrimkeyField() {
+    public String getPrimkeyField() {
         return primkeyField;
     }
 
@@ -426,10 +426,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPrimkeyField(java.lang.String value) {
+    public void setPrimkeyField(String value) {
         this.primkeyField = value;
     }
 
@@ -740,10 +740,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -752,10 +752,10 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -796,7 +796,7 @@ public class EntityBeanType implements EnterpriseBean {
     public static class Cache {
 
         @XmlElement(name = "isolation-level", required = true)
-        protected java.lang.String isolationLevel;
+        protected String isolationLevel;
         @XmlElement()
         protected int size;
 
@@ -805,10 +805,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getIsolationLevel() {
+        public String getIsolationLevel() {
             return isolationLevel;
         }
 
@@ -817,10 +817,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setIsolationLevel(java.lang.String value) {
+        public void setIsolationLevel(String value) {
             this.isolationLevel = value;
         }
 
@@ -877,25 +877,25 @@ public class EntityBeanType implements EnterpriseBean {
     public static class CmpFieldMapping {
 
         @XmlElement(name = "cmp-field-name", required = true)
-        protected java.lang.String cmpFieldName;
+        protected String cmpFieldName;
         @XmlElement(name = "cmp-field-class")
-        protected java.lang.String cmpFieldClass;
+        protected String cmpFieldClass;
         @XmlElement(name = "table-column", required = true)
-        protected java.lang.String tableColumn;
+        protected String tableColumn;
         @XmlElement(name = "sql-type")
-        protected java.lang.String sqlType;
+        protected String sqlType;
         @XmlElement(name = "type-converter")
-        protected java.lang.String typeConverter;
+        protected String typeConverter;
 
         /**
          * Gets the value of the cmpFieldName property.
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getCmpFieldName() {
+        public String getCmpFieldName() {
             return cmpFieldName;
         }
 
@@ -904,10 +904,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setCmpFieldName(java.lang.String value) {
+        public void setCmpFieldName(String value) {
             this.cmpFieldName = value;
         }
 
@@ -916,10 +916,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getCmpFieldClass() {
+        public String getCmpFieldClass() {
             return cmpFieldClass;
         }
 
@@ -928,10 +928,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setCmpFieldClass(java.lang.String value) {
+        public void setCmpFieldClass(String value) {
             this.cmpFieldClass = value;
         }
 
@@ -940,10 +940,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getTableColumn() {
+        public String getTableColumn() {
             return tableColumn;
         }
 
@@ -952,10 +952,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setTableColumn(java.lang.String value) {
+        public void setTableColumn(String value) {
             this.tableColumn = value;
         }
 
@@ -964,10 +964,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getSqlType() {
+        public String getSqlType() {
             return sqlType;
         }
 
@@ -976,10 +976,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setSqlType(java.lang.String value) {
+        public void setSqlType(String value) {
             this.sqlType = value;
         }
 
@@ -988,10 +988,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getTypeConverter() {
+        public String getTypeConverter() {
             return typeConverter;
         }
 
@@ -1000,10 +1000,10 @@ public class EntityBeanType implements EnterpriseBean {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setTypeConverter(java.lang.String value) {
+        public void setTypeConverter(String value) {
             this.typeConverter = value;
         }
 

@@ -55,7 +55,7 @@ public class ReferencesType {
     @XmlElement(name="pattern", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected List<PatternType> pattern;
     @XmlAttribute
-    protected java.lang.String name;
+    protected String name;
 
     /**
      * Gets the value of the pattern property.
@@ -91,10 +91,10 @@ public class ReferencesType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -103,10 +103,10 @@ public class ReferencesType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

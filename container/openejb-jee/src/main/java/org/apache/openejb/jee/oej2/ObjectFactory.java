@@ -344,13 +344,6 @@ public class ObjectFactory {
         return new ServiceModuleType();
     }
 
-    /**
-     * Create an instance of {@link PathType }
-     * 
-     */
-    public PathType createPathType() {
-        return new PathType();
-    }
 
     /**
      * Create an instance of {@link ServiceCompletionType }
@@ -518,14 +511,6 @@ public class ObjectFactory {
      */
     public ModuleType createModuleType() {
         return new ModuleType();
-    }
-
-    /**
-     * Create an instance of {@link String }
-     * 
-     */
-    public String createString() {
-        return new String();
     }
 
     /**

@@ -43,17 +43,17 @@ public enum PersistenceContextTypeType {
     TRANSACTION_SCOPED("transaction-scoped"),
     @XmlEnumValue("extended")
     EXTENDED("extended");
-    private final java.lang.String value;
+    private final String value;
 
-    PersistenceContextTypeType(java.lang.String v) {
+    PersistenceContextTypeType(String v) {
         value = v;
     }
 
-    public java.lang.String value() {
+    public String value() {
         return value;
     }
 
-    public static PersistenceContextTypeType fromValue(java.lang.String v) {
+    public static PersistenceContextTypeType fromValue(String v) {
         for (PersistenceContextTypeType c: PersistenceContextTypeType.values()) {
             if (c.value.equals(v)) {
                 return c;

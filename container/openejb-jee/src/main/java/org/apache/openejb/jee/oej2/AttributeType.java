@@ -49,21 +49,21 @@ import javax.xml.bind.annotation.XmlValue;
 public class AttributeType {
 
     @XmlValue
-    protected java.lang.String value;
+    protected String value;
     @XmlAttribute
-    protected java.lang.String name;
+    protected String name;
     @XmlAttribute
-    protected java.lang.String type;
+    protected String type;
 
     /**
      * Gets the value of the value property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -72,10 +72,10 @@ public class AttributeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -84,10 +84,10 @@ public class AttributeType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -96,10 +96,10 @@ public class AttributeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 
@@ -108,10 +108,10 @@ public class AttributeType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getType() {
+    public String getType() {
         return type;
     }
 
@@ -120,10 +120,10 @@ public class AttributeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setType(java.lang.String value) {
+    public void setType(String value) {
         this.type = value;
     }
 

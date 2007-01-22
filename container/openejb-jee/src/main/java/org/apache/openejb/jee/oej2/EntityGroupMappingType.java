@@ -49,17 +49,17 @@ import javax.xml.bind.annotation.XmlType;
 public class EntityGroupMappingType {
 
     @XmlElement(name = "group-name", required = true)
-    protected java.lang.String groupName;
+    protected String groupName;
 
     /**
      * Gets the value of the groupName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
@@ -68,10 +68,10 @@ public class EntityGroupMappingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupName(java.lang.String value) {
+    public void setGroupName(String value) {
         this.groupName = value;
     }
 

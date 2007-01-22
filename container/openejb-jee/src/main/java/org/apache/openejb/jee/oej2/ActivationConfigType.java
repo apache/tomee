@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ActivationConfigType {
 
     @XmlElement()
-    protected List<java.lang.String> description;
+    protected List<String> description;
     @XmlElement(name = "activation-config-property", required = true)
     protected List<ActivationConfigPropertyType> activationConfigProperty;
 
@@ -75,13 +75,13 @@ public class ActivationConfigType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getDescription() {
+    public List<String> getDescription() {
         if (description == null) {
-            description = new ArrayList<java.lang.String>();
+            description = new ArrayList<String>();
         }
         return this.description;
     }

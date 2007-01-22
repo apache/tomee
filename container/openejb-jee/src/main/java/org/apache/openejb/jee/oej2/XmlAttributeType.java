@@ -54,7 +54,7 @@ public class XmlAttributeType {
     @XmlAnyElement(lax = true)
     protected Object any;
     @XmlAttribute
-    protected java.lang.String name;
+    protected String name;
 
     /**
      * Gets the value of the any property.
@@ -87,10 +87,10 @@ public class XmlAttributeType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -99,10 +99,10 @@ public class XmlAttributeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

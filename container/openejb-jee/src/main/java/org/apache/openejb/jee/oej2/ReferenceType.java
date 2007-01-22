@@ -47,17 +47,17 @@ public class ReferenceType
 {
 
     @XmlAttribute
-    protected java.lang.String nameAttribute;
+    protected String nameAttribute;
 
     /**
      * Gets the value of the nameAttribute property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getNameAttribute() {
+    public String getNameAttribute() {
         return nameAttribute;
     }
 
@@ -66,10 +66,10 @@ public class ReferenceType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setNameAttribute(java.lang.String value) {
+    public void setNameAttribute(String value) {
         this.nameAttribute = value;
     }
 

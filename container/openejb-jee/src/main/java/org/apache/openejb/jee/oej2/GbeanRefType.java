@@ -59,9 +59,9 @@ public class GbeanRefType
 {
 
     @XmlElement(name = "ref-name", required = true)
-    protected java.lang.String refName;
+    protected String refName;
     @XmlElement(name = "ref-type")
-    protected List<java.lang.String> refType;
+    protected List<String> refType;
     protected List<PatternType> pattern;
 
     /**
@@ -69,10 +69,10 @@ public class GbeanRefType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRefName() {
+    public String getRefName() {
         return refName;
     }
 
@@ -81,10 +81,10 @@ public class GbeanRefType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRefName(java.lang.String value) {
+    public void setRefName(String value) {
         this.refName = value;
     }
 
@@ -106,13 +106,13 @@ public class GbeanRefType
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getRefType() {
+    public List<String> getRefType() {
         if (refType == null) {
-            refType = new ArrayList<java.lang.String>();
+            refType = new ArrayList<String>();
         }
         return this.refType;
     }

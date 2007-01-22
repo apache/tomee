@@ -80,15 +80,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class SessionBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
-    protected java.lang.String ejbName;
+    protected String ejbName;
     @XmlElement(name = "jndi-name")
-    protected List<java.lang.String> jndiName;
+    protected List<String> jndiName;
     @XmlElement(name = "local-jndi-name")
-    protected List<java.lang.String> localJndiName;
+    protected List<String> localJndiName;
     @XmlElement(name = "cache-size")
     protected Integer cacheSize;
     @XmlElement(name = "tss-link")
-    protected java.lang.String tssLink;
+    protected String tssLink;
     @XmlElement(name="tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
 
@@ -111,10 +111,10 @@ public class SessionBeanType implements EnterpriseBean {
     protected List<ResourceEnvRefType> resourceEnvRef;
 
     @XmlElement(name = "web-service-address")
-    protected java.lang.String webServiceAddress;
+    protected String webServiceAddress;
 
     @XmlElement(name = "web-service-virtual-host")
-    protected List<java.lang.String> webServiceVirtualHost;
+    protected List<String> webServiceVirtualHost;
 
     @XmlElement(name = "web-service-security")
     protected WebServiceSecurityType webServiceSecurity;
@@ -122,17 +122,17 @@ public class SessionBeanType implements EnterpriseBean {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     /**
      * Gets the value of the ejbName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbName() {
+    public String getEjbName() {
         return ejbName;
     }
 
@@ -141,10 +141,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbName(java.lang.String value) {
+    public void setEjbName(String value) {
         this.ejbName = value;
     }
 
@@ -166,13 +166,13 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getJndiName() {
+    public List<String> getJndiName() {
         if (jndiName == null) {
-            jndiName = new ArrayList<java.lang.String>();
+            jndiName = new ArrayList<String>();
         }
         return this.jndiName;
     }
@@ -195,13 +195,13 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getLocalJndiName() {
+    public List<String> getLocalJndiName() {
         if (localJndiName == null) {
-            localJndiName = new ArrayList<java.lang.String>();
+            localJndiName = new ArrayList<String>();
         }
         return this.localJndiName;
     }
@@ -235,10 +235,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getTssLink() {
+    public String getTssLink() {
         return tssLink;
     }
 
@@ -247,10 +247,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setTssLink(java.lang.String value) {
+    public void setTssLink(String value) {
         this.tssLink = value;
     }
 
@@ -460,10 +460,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getWebServiceAddress() {
+    public String getWebServiceAddress() {
         return webServiceAddress;
     }
 
@@ -472,10 +472,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setWebServiceAddress(java.lang.String value) {
+    public void setWebServiceAddress(String value) {
         this.webServiceAddress = value;
     }
 
@@ -497,13 +497,13 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getWebServiceVirtualHost() {
+    public List<String> getWebServiceVirtualHost() {
         if (webServiceVirtualHost == null) {
-            webServiceVirtualHost = new ArrayList<java.lang.String>();
+            webServiceVirtualHost = new ArrayList<String>();
         }
         return this.webServiceVirtualHost;
     }
@@ -537,10 +537,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -549,10 +549,10 @@ public class SessionBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

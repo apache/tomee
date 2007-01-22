@@ -21,7 +21,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;

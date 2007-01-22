@@ -59,22 +59,22 @@ import javax.xml.bind.annotation.XmlType;
 public class MessageDestinationType {
 
     @XmlElement(name = "message-destination-name", required = true)
-    protected java.lang.String messageDestinationName;
+    protected String messageDestinationName;
     protected PatternType pattern;
     @XmlElement(name = "admin-object-module")
-    protected java.lang.String adminObjectModule;
+    protected String adminObjectModule;
     @XmlElement(name = "admin-object-link")
-    protected java.lang.String adminObjectLink;
+    protected String adminObjectLink;
 
     /**
      * Gets the value of the messageDestinationName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMessageDestinationName() {
+    public String getMessageDestinationName() {
         return messageDestinationName;
     }
 
@@ -83,10 +83,10 @@ public class MessageDestinationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationName(java.lang.String value) {
+    public void setMessageDestinationName(String value) {
         this.messageDestinationName = value;
     }
 
@@ -119,10 +119,10 @@ public class MessageDestinationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getAdminObjectModule() {
+    public String getAdminObjectModule() {
         return adminObjectModule;
     }
 
@@ -131,10 +131,10 @@ public class MessageDestinationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setAdminObjectModule(java.lang.String value) {
+    public void setAdminObjectModule(String value) {
         this.adminObjectModule = value;
     }
 
@@ -143,10 +143,10 @@ public class MessageDestinationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getAdminObjectLink() {
+    public String getAdminObjectLink() {
         return adminObjectLink;
     }
 
@@ -155,10 +155,10 @@ public class MessageDestinationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setAdminObjectLink(java.lang.String value) {
+    public void setAdminObjectLink(String value) {
         this.adminObjectLink = value;
     }
 

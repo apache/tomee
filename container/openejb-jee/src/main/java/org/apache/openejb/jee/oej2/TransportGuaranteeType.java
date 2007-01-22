@@ -43,11 +43,11 @@ public enum TransportGuaranteeType {
     INTEGRAL,
     CONFIDENTIAL;
 
-    public java.lang.String value() {
+    public String value() {
         return name();
     }
 
-    public static TransportGuaranteeType fromValue(java.lang.String v) {
+    public static TransportGuaranteeType fromValue(String v) {
         return valueOf(v);
     }
 

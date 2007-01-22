@@ -55,9 +55,9 @@ import javax.xml.bind.annotation.XmlType;
 public class WebServiceSecurityType {
 
     @XmlElement(name = "security-realm-name", required = true)
-    protected java.lang.String securityRealmName;
+    protected String securityRealmName;
     @XmlElement(name = "realm-name")
-    protected java.lang.String realmName;
+    protected String realmName;
     @XmlElement(name = "transport-guarantee", required = true)
     protected TransportGuaranteeType transportGuarantee;
     @XmlElement(name = "auth-method", required = true)
@@ -68,10 +68,10 @@ public class WebServiceSecurityType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getSecurityRealmName() {
+    public String getSecurityRealmName() {
         return securityRealmName;
     }
 
@@ -80,10 +80,10 @@ public class WebServiceSecurityType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setSecurityRealmName(java.lang.String value) {
+    public void setSecurityRealmName(String value) {
         this.securityRealmName = value;
     }
 
@@ -92,10 +92,10 @@ public class WebServiceSecurityType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRealmName() {
+    public String getRealmName() {
         return realmName;
     }
 
@@ -104,10 +104,10 @@ public class WebServiceSecurityType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRealmName(java.lang.String value) {
+    public void setRealmName(String value) {
         this.realmName = value;
     }
 

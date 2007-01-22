@@ -51,19 +51,19 @@ import javax.xml.bind.annotation.XmlType;
 public class CmpFieldGroupMappingType {
 
     @XmlElement(name = "group-name", required = true)
-    protected java.lang.String groupName;
+    protected String groupName;
     @XmlElement(name = "cmp-field-name", required = true)
-    protected java.lang.String cmpFieldName;
+    protected String cmpFieldName;
 
     /**
      * Gets the value of the groupName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
@@ -72,10 +72,10 @@ public class CmpFieldGroupMappingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupName(java.lang.String value) {
+    public void setGroupName(String value) {
         this.groupName = value;
     }
 
@@ -84,10 +84,10 @@ public class CmpFieldGroupMappingType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getCmpFieldName() {
+    public String getCmpFieldName() {
         return cmpFieldName;
     }
 
@@ -96,10 +96,10 @@ public class CmpFieldGroupMappingType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setCmpFieldName(java.lang.String value) {
+    public void setCmpFieldName(String value) {
         this.cmpFieldName = value;
     }
 

@@ -57,9 +57,9 @@ public class ResourceLocatorType {
     @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
     @XmlElement(name = "resource-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String resourceLink;
+    protected String resourceLink;
     @XmlElement(name = "url", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String url;
+    protected String url;
 
     /**
      * Gets the value of the pattern property.
@@ -90,10 +90,10 @@ public class ResourceLocatorType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getResourceLink() {
+    public String getResourceLink() {
         return resourceLink;
     }
 
@@ -102,10 +102,10 @@ public class ResourceLocatorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setResourceLink(java.lang.String value) {
+    public void setResourceLink(String value) {
         this.resourceLink = value;
     }
 
@@ -114,10 +114,10 @@ public class ResourceLocatorType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -126,10 +126,10 @@ public class ResourceLocatorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setUrl(java.lang.String value) {
+    public void setUrl(String value) {
         this.url = value;
     }
 

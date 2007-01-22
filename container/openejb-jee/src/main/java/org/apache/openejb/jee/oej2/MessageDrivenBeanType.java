@@ -20,7 +20,6 @@ package org.apache.openejb.jee.oej2;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.*;
-import java.lang.String;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -72,7 +71,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class MessageDrivenBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
-    protected java.lang.String ejbName;
+    protected String ejbName;
 
     @XmlElement(name = "resource-adapter", required = true)
     protected ResourceLocatorType resourceAdapter;
@@ -101,7 +100,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected java.lang.String id;
+    protected String id;
 
     @XmlTransient
     public List<String> getJndiName() {
@@ -118,10 +117,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbName() {
+    public String getEjbName() {
         return ejbName;
     }
 
@@ -130,10 +129,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbName(java.lang.String value) {
+    public void setEjbName(String value) {
         this.ejbName = value;
     }
 
@@ -367,10 +366,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
@@ -379,10 +378,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setId(java.lang.String value) {
+    public void setId(String value) {
         this.id = value;
     }
 

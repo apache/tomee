@@ -70,15 +70,15 @@ import org.w3c.dom.Element;
 public class ModuleType {
 
     @XmlElement(name="connector", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType connector;
+    protected String connector;
     @XmlElement(name="ejb", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType ejb;
+    protected String ejb;
     @XmlElement(name="java", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType java;
+    protected String java;
     @XmlElement(name="web", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType web;
+    protected String web;
     @XmlElement(name = "alt-dd", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType altDd;
+    protected String altDd;
     @XmlAnyElement(lax = true)
     protected Object any;
 
@@ -87,10 +87,10 @@ public class ModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getConnector() {
+    public String getConnector() {
         return connector;
     }
 
@@ -99,10 +99,10 @@ public class ModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setConnector(PathType value) {
+    public void setConnector(String value) {
         this.connector = value;
     }
 
@@ -111,10 +111,10 @@ public class ModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getEjb() {
+    public String getEjb() {
         return ejb;
     }
 
@@ -123,10 +123,10 @@ public class ModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setEjb(PathType value) {
+    public void setEjb(String value) {
         this.ejb = value;
     }
 
@@ -135,10 +135,10 @@ public class ModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getJava() {
+    public String getJava() {
         return java;
     }
 
@@ -147,10 +147,10 @@ public class ModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setJava(PathType value) {
+    public void setJava(String value) {
         this.java = value;
     }
 
@@ -159,10 +159,10 @@ public class ModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getWeb() {
+    public String getWeb() {
         return web;
     }
 
@@ -171,10 +171,10 @@ public class ModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setWeb(PathType value) {
+    public void setWeb(String value) {
         this.web = value;
     }
 
@@ -183,10 +183,10 @@ public class ModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getAltDd() {
+    public String getAltDd() {
         return altDd;
     }
 
@@ -195,10 +195,10 @@ public class ModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setAltDd(PathType value) {
+    public void setAltDd(String value) {
         this.altDd = value;
     }
 

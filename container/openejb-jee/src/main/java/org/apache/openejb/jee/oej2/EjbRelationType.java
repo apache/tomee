@@ -55,9 +55,9 @@ import javax.xml.bind.annotation.XmlType;
 public class EjbRelationType {
 
     @XmlElement(name = "ejb-relation-name")
-    protected java.lang.String ejbRelationName;
+    protected String ejbRelationName;
     @XmlElement(name = "many-to-many-table-name")
-    protected java.lang.String manyToManyTableName;
+    protected String manyToManyTableName;
     @XmlElement(name = "ejb-relationship-role", required = true)
     protected List<EjbRelationshipRoleType> ejbRelationshipRole;
 
@@ -66,10 +66,10 @@ public class EjbRelationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbRelationName() {
+    public String getEjbRelationName() {
         return ejbRelationName;
     }
 
@@ -78,10 +78,10 @@ public class EjbRelationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbRelationName(java.lang.String value) {
+    public void setEjbRelationName(String value) {
         this.ejbRelationName = value;
     }
 
@@ -90,10 +90,10 @@ public class EjbRelationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getManyToManyTableName() {
+    public String getManyToManyTableName() {
         return manyToManyTableName;
     }
 
@@ -102,10 +102,10 @@ public class EjbRelationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setManyToManyTableName(java.lang.String value) {
+    public void setManyToManyTableName(String value) {
         this.manyToManyTableName = value;
     }
 

@@ -56,19 +56,19 @@ import javax.xml.bind.annotation.XmlType;
 public class SqlGeneratorType {
 
     @XmlElement(name="sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String sql;
+    protected String sql;
     @XmlElement(name = "return-type", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String returnType;
+    protected String returnType;
 
     /**
      * Gets the value of the sql property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getSql() {
+    public String getSql() {
         return sql;
     }
 
@@ -77,10 +77,10 @@ public class SqlGeneratorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setSql(java.lang.String value) {
+    public void setSql(String value) {
         this.sql = value;
     }
 
@@ -89,10 +89,10 @@ public class SqlGeneratorType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getReturnType() {
+    public String getReturnType() {
         return returnType;
     }
 
@@ -101,10 +101,10 @@ public class SqlGeneratorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setReturnType(java.lang.String value) {
+    public void setReturnType(String value) {
         this.returnType = value;
     }
 

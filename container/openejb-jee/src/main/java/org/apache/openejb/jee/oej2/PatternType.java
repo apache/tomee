@@ -56,22 +56,22 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class PatternType {
 
-    protected java.lang.String groupId;
-    protected java.lang.String artifactId;
-    protected java.lang.String version;
-    protected java.lang.String module;
+    protected String groupId;
+    protected String artifactId;
+    protected String version;
+    protected String module;
     @XmlElement(required = true)
-    protected java.lang.String name;
+    protected String name;
 
     /**
      * Gets the value of the groupId property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
@@ -80,10 +80,10 @@ public class PatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupId(java.lang.String value) {
+    public void setGroupId(String value) {
         this.groupId = value;
     }
 
@@ -92,10 +92,10 @@ public class PatternType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getArtifactId() {
+    public String getArtifactId() {
         return artifactId;
     }
 
@@ -104,10 +104,10 @@ public class PatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setArtifactId(java.lang.String value) {
+    public void setArtifactId(String value) {
         this.artifactId = value;
     }
 
@@ -116,10 +116,10 @@ public class PatternType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getVersion() {
+    public String getVersion() {
         return version;
     }
 
@@ -128,10 +128,10 @@ public class PatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setVersion(java.lang.String value) {
+    public void setVersion(String value) {
         this.version = value;
     }
 
@@ -140,10 +140,10 @@ public class PatternType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getModule() {
+    public String getModule() {
         return module;
     }
 
@@ -152,10 +152,10 @@ public class PatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setModule(java.lang.String value) {
+    public void setModule(String value) {
         this.module = value;
     }
 
@@ -164,10 +164,10 @@ public class PatternType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -176,10 +176,10 @@ public class PatternType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

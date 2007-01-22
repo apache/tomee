@@ -63,9 +63,9 @@ public class PersistenceContextRefType
 {
 
     @XmlElement(name = "persistence-context-ref-name", required = true)
-    protected java.lang.String persistenceContextRefName;
+    protected String persistenceContextRefName;
     @XmlElement(name = "persistence-unit-name")
-    protected java.lang.String persistenceUnitName;
+    protected String persistenceUnitName;
     protected PatternType pattern;
     @XmlElement(name = "persistence-context-type")
     protected PersistenceContextTypeType persistenceContextType;
@@ -76,10 +76,10 @@ public class PersistenceContextRefType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPersistenceContextRefName() {
+    public String getPersistenceContextRefName() {
         return persistenceContextRefName;
     }
 
@@ -88,10 +88,10 @@ public class PersistenceContextRefType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPersistenceContextRefName(java.lang.String value) {
+    public void setPersistenceContextRefName(String value) {
         this.persistenceContextRefName = value;
     }
 
@@ -100,10 +100,10 @@ public class PersistenceContextRefType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPersistenceUnitName() {
+    public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
@@ -112,10 +112,10 @@ public class PersistenceContextRefType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPersistenceUnitName(java.lang.String value) {
+    public void setPersistenceUnitName(String value) {
         this.persistenceUnitName = value;
     }
 

@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DatabaseGeneratedType {
 
     @XmlElement(name = "identity-column", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected List<java.lang.String> identityColumn;
+    protected List<String> identityColumn;
 
     /**
      * Gets the value of the identityColumn property.
@@ -81,13 +81,13 @@ public class DatabaseGeneratedType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getIdentityColumn() {
+    public List<String> getIdentityColumn() {
         if (identityColumn == null) {
-            identityColumn = new ArrayList<java.lang.String>();
+            identityColumn = new ArrayList<String>();
         }
         return this.identityColumn;
     }

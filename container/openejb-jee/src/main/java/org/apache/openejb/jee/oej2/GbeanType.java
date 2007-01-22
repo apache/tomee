@@ -72,9 +72,9 @@ public class GbeanType
     })
     protected List<JAXBElement<?>> attributeOrXmlAttributeOrReference;
     @XmlAttribute(name = "class", required = true)
-    protected java.lang.String clazz;
+    protected String clazz;
     @XmlAttribute(required = true)
-    protected java.lang.String name;
+    protected String name;
 
     /**
      * Gets the value of the attributeOrXmlAttributeOrReference property.
@@ -115,10 +115,10 @@ public class GbeanType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getClazz() {
+    public String getClazz() {
         return clazz;
     }
 
@@ -127,10 +127,10 @@ public class GbeanType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setClazz(java.lang.String value) {
+    public void setClazz(String value) {
         this.clazz = value;
     }
 
@@ -139,10 +139,10 @@ public class GbeanType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -151,10 +151,10 @@ public class GbeanType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

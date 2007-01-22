@@ -54,7 +54,7 @@ public class GbeanLocatorType {
 
     protected PatternType pattern;
     @XmlElement(name = "gbean-link")
-    protected java.lang.String gbeanLink;
+    protected String gbeanLink;
 
     /**
      * Gets the value of the pattern property.
@@ -85,10 +85,10 @@ public class GbeanLocatorType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGbeanLink() {
+    public String getGbeanLink() {
         return gbeanLink;
     }
 
@@ -97,10 +97,10 @@ public class GbeanLocatorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGbeanLink(java.lang.String value) {
+    public void setGbeanLink(String value) {
         this.gbeanLink = value;
     }
 

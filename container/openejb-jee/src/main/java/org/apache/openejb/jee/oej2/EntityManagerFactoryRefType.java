@@ -57,9 +57,9 @@ public class EntityManagerFactoryRefType
 {
 
     @XmlElement(name = "entity-manager-factory-ref-name", required = true)
-    protected java.lang.String entityManagerFactoryRefName;
+    protected String entityManagerFactoryRefName;
     @XmlElement(name = "persistence-unit-name")
-    protected java.lang.String persistenceUnitName;
+    protected String persistenceUnitName;
     protected PatternType pattern;
 
     /**
@@ -67,10 +67,10 @@ public class EntityManagerFactoryRefType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEntityManagerFactoryRefName() {
+    public String getEntityManagerFactoryRefName() {
         return entityManagerFactoryRefName;
     }
 
@@ -79,10 +79,10 @@ public class EntityManagerFactoryRefType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEntityManagerFactoryRefName(java.lang.String value) {
+    public void setEntityManagerFactoryRefName(String value) {
         this.entityManagerFactoryRefName = value;
     }
 
@@ -91,10 +91,10 @@ public class EntityManagerFactoryRefType
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPersistenceUnitName() {
+    public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
@@ -103,10 +103,10 @@ public class EntityManagerFactoryRefType
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPersistenceUnitName(java.lang.String value) {
+    public void setPersistenceUnitName(String value) {
         this.persistenceUnitName = value;
     }
 

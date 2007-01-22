@@ -43,17 +43,17 @@ public enum ImportType {
     CLASSES("classes"),
     @XmlEnumValue("services")
     SERVICES("services");
-    private final java.lang.String value;
+    private final String value;
 
-    ImportType(java.lang.String v) {
+    ImportType(String v) {
         value = v;
     }
 
-    public java.lang.String value() {
+    public String value() {
         return value;
     }
 
-    public static ImportType fromValue(java.lang.String v) {
+    public static ImportType fromValue(String v) {
         for (ImportType c: ImportType.values()) {
             if (c.value.equals(v)) {
                 return c;

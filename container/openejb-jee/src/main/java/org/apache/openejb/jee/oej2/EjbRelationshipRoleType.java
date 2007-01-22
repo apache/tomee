@@ -100,7 +100,7 @@ import javax.xml.bind.annotation.XmlType;
 public class EjbRelationshipRoleType {
 
     @XmlElement(name = "ejb-relationship-role-name")
-    protected java.lang.String ejbRelationshipRoleName;
+    protected String ejbRelationshipRoleName;
     @XmlElement(name = "relationship-role-source", required = true)
     protected EjbRelationshipRoleType.RelationshipRoleSource relationshipRoleSource;
     @XmlElement(name = "cmr-field")
@@ -115,10 +115,10 @@ public class EjbRelationshipRoleType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbRelationshipRoleName() {
+    public String getEjbRelationshipRoleName() {
         return ejbRelationshipRoleName;
     }
 
@@ -127,10 +127,10 @@ public class EjbRelationshipRoleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbRelationshipRoleName(java.lang.String value) {
+    public void setEjbRelationshipRoleName(String value) {
         this.ejbRelationshipRoleName = value;
     }
 
@@ -257,17 +257,17 @@ public class EjbRelationshipRoleType {
     public static class CmrField {
 
         @XmlElement(name = "cmr-field-name", required = true)
-        protected java.lang.String cmrFieldName;
+        protected String cmrFieldName;
 
         /**
          * Gets the value of the cmrFieldName property.
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getCmrFieldName() {
+        public String getCmrFieldName() {
             return cmrFieldName;
         }
 
@@ -276,10 +276,10 @@ public class EjbRelationshipRoleType {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setCmrFieldName(java.lang.String value) {
+        public void setCmrFieldName(String value) {
             this.cmrFieldName = value;
         }
 
@@ -312,17 +312,17 @@ public class EjbRelationshipRoleType {
     public static class RelationshipRoleSource {
 
         @XmlElement(name = "ejb-name", required = true)
-        protected java.lang.String ejbName;
+        protected String ejbName;
 
         /**
          * Gets the value of the ejbName property.
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getEjbName() {
+        public String getEjbName() {
             return ejbName;
         }
 
@@ -331,10 +331,10 @@ public class EjbRelationshipRoleType {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setEjbName(java.lang.String value) {
+        public void setEjbName(String value) {
             this.ejbName = value;
         }
 
@@ -438,19 +438,19 @@ public class EjbRelationshipRoleType {
         public static class CmrFieldMapping {
 
             @XmlElement(name = "key-column", required = true)
-            protected java.lang.String keyColumn;
+            protected String keyColumn;
             @XmlElement(name = "foreign-key-column", required = true)
-            protected java.lang.String foreignKeyColumn;
+            protected String foreignKeyColumn;
 
             /**
              * Gets the value of the keyColumn property.
              * 
              * @return
              *     possible object is
-             *     {@link java.lang.String }
+             *     {@link String }
              *     
              */
-            public java.lang.String getKeyColumn() {
+            public String getKeyColumn() {
                 return keyColumn;
             }
 
@@ -459,10 +459,10 @@ public class EjbRelationshipRoleType {
              * 
              * @param value
              *     allowed object is
-             *     {@link java.lang.String }
+             *     {@link String }
              *     
              */
-            public void setKeyColumn(java.lang.String value) {
+            public void setKeyColumn(String value) {
                 this.keyColumn = value;
             }
 
@@ -471,10 +471,10 @@ public class EjbRelationshipRoleType {
              * 
              * @return
              *     possible object is
-             *     {@link java.lang.String }
+             *     {@link String }
              *     
              */
-            public java.lang.String getForeignKeyColumn() {
+            public String getForeignKeyColumn() {
                 return foreignKeyColumn;
             }
 
@@ -483,10 +483,10 @@ public class EjbRelationshipRoleType {
              * 
              * @param value
              *     allowed object is
-             *     {@link java.lang.String }
+             *     {@link String }
              *     
              */
-            public void setForeignKeyColumn(java.lang.String value) {
+            public void setForeignKeyColumn(String value) {
                 this.foreignKeyColumn = value;
             }
 

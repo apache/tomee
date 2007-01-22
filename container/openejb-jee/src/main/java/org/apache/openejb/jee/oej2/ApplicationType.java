@@ -73,7 +73,7 @@ public class ApplicationType {
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
     @XmlAttribute(name = "application-name")
-    protected java.lang.String applicationName;
+    protected String applicationName;
 
     /**
      * Gets the value of the environment property.
@@ -216,10 +216,10 @@ public class ApplicationType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getApplicationName() {
+    public String getApplicationName() {
         return applicationName;
     }
 
@@ -228,10 +228,10 @@ public class ApplicationType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setApplicationName(java.lang.String value) {
+    public void setApplicationName(String value) {
         this.applicationName = value;
     }
 

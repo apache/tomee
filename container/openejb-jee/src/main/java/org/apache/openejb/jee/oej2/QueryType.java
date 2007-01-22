@@ -82,13 +82,13 @@ public class QueryType {
     @XmlElement(name = "query-method", required = true)
     protected QueryType.QueryMethod queryMethod;
     @XmlElement(name = "result-type-mapping")
-    protected java.lang.String resultTypeMapping;
+    protected String resultTypeMapping;
     @XmlElement(name = "ejb-ql")
-    protected java.lang.String ejbQl;
+    protected String ejbQl;
     @XmlElement(name = "no-cache-flush")
     protected Object noCacheFlush;
     @XmlElement(name = "group-name")
-    protected java.lang.String groupName;
+    protected String groupName;
 
     /**
      * Gets the value of the queryMethod property.
@@ -119,10 +119,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getResultTypeMapping() {
+    public String getResultTypeMapping() {
         return resultTypeMapping;
     }
 
@@ -131,10 +131,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setResultTypeMapping(java.lang.String value) {
+    public void setResultTypeMapping(String value) {
         this.resultTypeMapping = value;
     }
 
@@ -143,10 +143,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbQl() {
+    public String getEjbQl() {
         return ejbQl;
     }
 
@@ -155,10 +155,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbQl(java.lang.String value) {
+    public void setEjbQl(String value) {
         this.ejbQl = value;
     }
 
@@ -191,10 +191,10 @@ public class QueryType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
@@ -203,10 +203,10 @@ public class QueryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupName(java.lang.String value) {
+    public void setGroupName(String value) {
         this.groupName = value;
     }
 
@@ -249,7 +249,7 @@ public class QueryType {
     public static class QueryMethod {
 
         @XmlElement(name = "method-name", required = true)
-        protected java.lang.String methodName;
+        protected String methodName;
         @XmlElement(name = "method-params", required = true)
         protected QueryType.QueryMethod.MethodParams methodParams;
 
@@ -258,10 +258,10 @@ public class QueryType {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getMethodName() {
+        public String getMethodName() {
             return methodName;
         }
 
@@ -270,10 +270,10 @@ public class QueryType {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setMethodName(java.lang.String value) {
+        public void setMethodName(String value) {
             this.methodName = value;
         }
 
@@ -328,7 +328,7 @@ public class QueryType {
         public static class MethodParams {
 
             @XmlElement(name = "method-param")
-            protected List<java.lang.String> methodParam;
+            protected List<String> methodParam;
 
             /**
              * Gets the value of the methodParam property.
@@ -348,13 +348,13 @@ public class QueryType {
              * 
              * <p>
              * Objects of the following type(s) are allowed in the list
-             * {@link java.lang.String }
+             * {@link String }
              * 
              * 
              */
-            public List<java.lang.String> getMethodParam() {
+            public List<String> getMethodParam() {
                 if (methodParam == null) {
-                    methodParam = new ArrayList<java.lang.String>();
+                    methodParam = new ArrayList<String>();
                 }
                 return this.methodParam;
             }

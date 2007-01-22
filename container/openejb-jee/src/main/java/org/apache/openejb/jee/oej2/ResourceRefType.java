@@ -57,23 +57,23 @@ import javax.xml.bind.annotation.XmlType;
 public class ResourceRefType {
 
     @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
-    protected java.lang.String refName;
+    protected String refName;
     @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
     @XmlElement(name = "resource-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String resourceLink;
+    protected String resourceLink;
     @XmlElement(name = "url", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String url;
+    protected String url;
 
     /**
      * Gets the value of the refName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRefName() {
+    public String getRefName() {
         return refName;
     }
 
@@ -82,10 +82,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRefName(java.lang.String value) {
+    public void setRefName(String value) {
         this.refName = value;
     }
 
@@ -118,10 +118,10 @@ public class ResourceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getResourceLink() {
+    public String getResourceLink() {
         return resourceLink;
     }
 
@@ -130,10 +130,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setResourceLink(java.lang.String value) {
+    public void setResourceLink(String value) {
         this.resourceLink = value;
     }
 
@@ -142,10 +142,10 @@ public class ResourceRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -154,10 +154,10 @@ public class ResourceRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setUrl(java.lang.String value) {
+    public void setUrl(String value) {
         this.url = value;
     }
 

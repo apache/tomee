@@ -88,23 +88,23 @@ import javax.xml.bind.annotation.XmlType;
 public class ArtifactType {
 
     @XmlElement(name="groupId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
-    protected java.lang.String groupId;
+    protected String groupId;
     @XmlElement(name="artifactId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
-    protected java.lang.String artifactId;
+    protected String artifactId;
     @XmlElement(name="version", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
-    protected java.lang.String version;
+    protected String version;
     @XmlElement(name="type", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
-    protected java.lang.String type;
+    protected String type;
 
     /**
      * Gets the value of the groupId property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
@@ -113,10 +113,10 @@ public class ArtifactType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupId(java.lang.String value) {
+    public void setGroupId(String value) {
         this.groupId = value;
     }
 
@@ -125,10 +125,10 @@ public class ArtifactType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getArtifactId() {
+    public String getArtifactId() {
         return artifactId;
     }
 
@@ -137,10 +137,10 @@ public class ArtifactType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setArtifactId(java.lang.String value) {
+    public void setArtifactId(String value) {
         this.artifactId = value;
     }
 
@@ -149,10 +149,10 @@ public class ArtifactType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getVersion() {
+    public String getVersion() {
         return version;
     }
 
@@ -161,10 +161,10 @@ public class ArtifactType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setVersion(java.lang.String value) {
+    public void setVersion(String value) {
         this.version = value;
     }
 
@@ -173,10 +173,10 @@ public class ArtifactType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getType() {
+    public String getType() {
         return type;
     }
 
@@ -185,10 +185,10 @@ public class ArtifactType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setType(java.lang.String value) {
+    public void setType(String value) {
         this.type = value;
     }
 

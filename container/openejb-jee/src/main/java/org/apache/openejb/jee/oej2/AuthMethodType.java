@@ -46,17 +46,17 @@ public enum AuthMethodType {
     @XmlEnumValue("CLIENT-CERT")
     CLIENT_CERT("CLIENT-CERT"),
     NONE("NONE");
-    private final java.lang.String value;
+    private final String value;
 
-    AuthMethodType(java.lang.String v) {
+    AuthMethodType(String v) {
         value = v;
     }
 
-    public java.lang.String value() {
+    public String value() {
         return value;
     }
 
-    public static AuthMethodType fromValue(java.lang.String v) {
+    public static AuthMethodType fromValue(String v) {
         for (AuthMethodType c: AuthMethodType.values()) {
             if (c.value.equals(v)) {
                 return c;

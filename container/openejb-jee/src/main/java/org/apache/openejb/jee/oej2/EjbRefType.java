@@ -60,29 +60,29 @@ import javax.xml.bind.annotation.XmlType;
 public class EjbRefType {
 
     @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
-    protected java.lang.String refName;
+    protected String refName;
     @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
     @XmlElement(name = "ns-corbaloc", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String nsCorbaloc;
+    protected String nsCorbaloc;
     @XmlElement(name = "name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String name;
+    protected String name;
     @XmlElement(name = "css", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType css;
     @XmlElement(name = "css-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String cssLink;
+    protected String cssLink;
     @XmlElement(name = "ejb-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String ejbLink;
+    protected String ejbLink;
 
     /**
      * Gets the value of the refName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRefName() {
+    public String getRefName() {
         return refName;
     }
 
@@ -91,10 +91,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRefName(java.lang.String value) {
+    public void setRefName(String value) {
         this.refName = value;
     }
 
@@ -127,10 +127,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getNsCorbaloc() {
+    public String getNsCorbaloc() {
         return nsCorbaloc;
     }
 
@@ -139,10 +139,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setNsCorbaloc(java.lang.String value) {
+    public void setNsCorbaloc(String value) {
         this.nsCorbaloc = value;
     }
 
@@ -151,10 +151,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -163,10 +163,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setName(java.lang.String value) {
+    public void setName(String value) {
         this.name = value;
     }
 
@@ -199,10 +199,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getCssLink() {
+    public String getCssLink() {
         return cssLink;
     }
 
@@ -211,10 +211,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setCssLink(java.lang.String value) {
+    public void setCssLink(String value) {
         this.cssLink = value;
     }
 
@@ -223,10 +223,10 @@ public class EjbRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbLink() {
+    public String getEjbLink() {
         return ejbLink;
     }
 
@@ -235,10 +235,10 @@ public class EjbRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbLink(java.lang.String value) {
+    public void setEjbLink(String value) {
         this.ejbLink = value;
     }
 

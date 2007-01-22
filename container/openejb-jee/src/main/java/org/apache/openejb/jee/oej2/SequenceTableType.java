@@ -58,9 +58,9 @@ import javax.xml.bind.annotation.XmlType;
 public class SequenceTableType {
 
     @XmlElement(name = "table-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String tableName;
+    protected String tableName;
     @XmlElement(name = "sequence-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String sequenceName;
+    protected String sequenceName;
     @XmlElement(name = "batch-size", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected int batchSize;
 
@@ -69,10 +69,10 @@ public class SequenceTableType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getTableName() {
+    public String getTableName() {
         return tableName;
     }
 
@@ -81,10 +81,10 @@ public class SequenceTableType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setTableName(java.lang.String value) {
+    public void setTableName(String value) {
         this.tableName = value;
     }
 
@@ -93,10 +93,10 @@ public class SequenceTableType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getSequenceName() {
+    public String getSequenceName() {
         return sequenceName;
     }
 
@@ -105,10 +105,10 @@ public class SequenceTableType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setSequenceName(java.lang.String value) {
+    public void setSequenceName(String value) {
         this.sequenceName = value;
     }
 

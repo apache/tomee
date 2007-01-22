@@ -57,19 +57,19 @@ import javax.xml.bind.annotation.XmlType;
 public class CustomGeneratorType {
 
     @XmlElement(name = "generator-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String generatorName;
+    protected String generatorName;
     @XmlElement(name = "primary-key-class", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
-    protected java.lang.String primaryKeyClass;
+    protected String primaryKeyClass;
 
     /**
      * Gets the value of the generatorName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGeneratorName() {
+    public String getGeneratorName() {
         return generatorName;
     }
 
@@ -78,10 +78,10 @@ public class CustomGeneratorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGeneratorName(java.lang.String value) {
+    public void setGeneratorName(String value) {
         this.generatorName = value;
     }
 
@@ -90,10 +90,10 @@ public class CustomGeneratorType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPrimaryKeyClass() {
+    public String getPrimaryKeyClass() {
         return primaryKeyClass;
     }
 
@@ -102,10 +102,10 @@ public class CustomGeneratorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPrimaryKeyClass(java.lang.String value) {
+    public void setPrimaryKeyClass(String value) {
         this.primaryKeyClass = value;
     }
 

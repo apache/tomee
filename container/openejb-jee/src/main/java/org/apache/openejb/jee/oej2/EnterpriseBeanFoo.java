@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.oej2;
 
-import java.lang.String;
 
 /**
  * @version $Rev$ $Date$

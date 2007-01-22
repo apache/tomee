@@ -19,12 +19,10 @@ package org.apache.openejb.jee.oej2;
 import junit.framework.TestCase;
 
 import javax.xml.bind.JAXBElement;
-import java.lang.*;
 import java.lang.String;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$

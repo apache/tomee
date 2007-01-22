@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ServiceCompletionType {
 
     @XmlElement(name = "service-name", required = true)
-    protected java.lang.String serviceName;
+    protected String serviceName;
     @XmlElement(name = "port-completion", required = true)
     protected List<PortCompletionType> portCompletion;
 
@@ -62,10 +62,10 @@ public class ServiceCompletionType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getServiceName() {
+    public String getServiceName() {
         return serviceName;
     }
 
@@ -74,10 +74,10 @@ public class ServiceCompletionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setServiceName(java.lang.String value) {
+    public void setServiceName(String value) {
         this.serviceName = value;
     }
 

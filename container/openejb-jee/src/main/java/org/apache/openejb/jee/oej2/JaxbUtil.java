@@ -29,7 +29,6 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.transform.sax.SAXSource;
 import java.lang.*;
-import java.lang.String;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -38,7 +37,7 @@ import java.io.InputStream;
  */
 public class JaxbUtil {
 
-    public static <T>java.lang.String marshal(Class<T> type, Object object) throws JAXBException {
+    public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
         JAXBContext ctx2 = JAXBContext.newInstance(type);
         Marshaller marshaller = ctx2.createMarshaller();
 

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.lang.String;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -95,10 +94,10 @@ public class OpenejbJarType {
     protected ResourceLocatorType cmpConnectionFactory;
 
     @XmlElement(name = "ejb-ql-compiler-factory")
-    protected java.lang.String ejbQlCompilerFactory;
+    protected String ejbQlCompilerFactory;
 
     @XmlElement(name = "db-syntax-factory")
-    protected java.lang.String dbSyntaxFactory;
+    protected String dbSyntaxFactory;
 
     @XmlElement(name = "enforce-foreign-key-constraints")
     protected EmptyType enforceForeignKeyConstraints;
@@ -175,10 +174,10 @@ public class OpenejbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getEjbQlCompilerFactory() {
+    public String getEjbQlCompilerFactory() {
         return ejbQlCompilerFactory;
     }
 
@@ -187,10 +186,10 @@ public class OpenejbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setEjbQlCompilerFactory(java.lang.String value) {
+    public void setEjbQlCompilerFactory(String value) {
         this.ejbQlCompilerFactory = value;
     }
 
@@ -199,10 +198,10 @@ public class OpenejbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getDbSyntaxFactory() {
+    public String getDbSyntaxFactory() {
         return dbSyntaxFactory;
     }
 
@@ -211,10 +210,10 @@ public class OpenejbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setDbSyntaxFactory(java.lang.String value) {
+    public void setDbSyntaxFactory(String value) {
         this.dbSyntaxFactory = value;
     }
 

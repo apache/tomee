@@ -57,24 +57,24 @@ import javax.xml.bind.annotation.XmlType;
 public class PortType {
 
     @XmlElement(name = "port-name", required = true)
-    protected java.lang.String portName;
-    protected java.lang.String protocol;
-    protected java.lang.String host;
+    protected String portName;
+    protected String protocol;
+    protected String host;
     protected Integer port;
     @XmlElement(required = true)
-    protected java.lang.String uri;
+    protected String uri;
     @XmlElement(name = "credentials-name")
-    protected java.lang.String credentialsName;
+    protected String credentialsName;
 
     /**
      * Gets the value of the portName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getPortName() {
+    public String getPortName() {
         return portName;
     }
 
@@ -83,10 +83,10 @@ public class PortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setPortName(java.lang.String value) {
+    public void setPortName(String value) {
         this.portName = value;
     }
 
@@ -95,10 +95,10 @@ public class PortType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getProtocol() {
+    public String getProtocol() {
         return protocol;
     }
 
@@ -107,10 +107,10 @@ public class PortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setProtocol(java.lang.String value) {
+    public void setProtocol(String value) {
         this.protocol = value;
     }
 
@@ -119,10 +119,10 @@ public class PortType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getHost() {
+    public String getHost() {
         return host;
     }
 
@@ -131,10 +131,10 @@ public class PortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setHost(java.lang.String value) {
+    public void setHost(String value) {
         this.host = value;
     }
 
@@ -167,10 +167,10 @@ public class PortType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getUri() {
+    public String getUri() {
         return uri;
     }
 
@@ -179,10 +179,10 @@ public class PortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setUri(java.lang.String value) {
+    public void setUri(String value) {
         this.uri = value;
     }
 
@@ -191,10 +191,10 @@ public class PortType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getCredentialsName() {
+    public String getCredentialsName() {
         return credentialsName;
     }
 
@@ -203,10 +203,10 @@ public class PortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setCredentialsName(java.lang.String value) {
+    public void setCredentialsName(String value) {
         this.credentialsName = value;
     }
 

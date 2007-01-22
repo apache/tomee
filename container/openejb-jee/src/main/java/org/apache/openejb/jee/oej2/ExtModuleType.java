@@ -74,19 +74,19 @@ import org.w3c.dom.Element;
 public class ExtModuleType {
 
     @XmlElement(name="connector", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType connector;
+    protected String connector;
     @XmlElement(name="ejb", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType ejb;
+    protected String ejb;
     @XmlElement(name="java", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType java;
+    protected String java;
     @XmlElement(name="web", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected PathType web;
+    protected String web;
     @XmlElement(name = "internal-path", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String internalPath;
+    protected String internalPath;
     @XmlElement(name = "external-path", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String externalPath;
+    protected String externalPath;
     @XmlAnyElement(lax = true)
     protected Object any;
 
@@ -95,10 +95,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getConnector() {
+    public String getConnector() {
         return connector;
     }
 
@@ -107,10 +107,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setConnector(PathType value) {
+    public void setConnector(String value) {
         this.connector = value;
     }
 
@@ -119,10 +119,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getEjb() {
+    public String getEjb() {
         return ejb;
     }
 
@@ -131,10 +131,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setEjb(PathType value) {
+    public void setEjb(String value) {
         this.ejb = value;
     }
 
@@ -143,10 +143,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getJava() {
+    public String getJava() {
         return java;
     }
 
@@ -155,10 +155,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setJava(PathType value) {
+    public void setJava(String value) {
         this.java = value;
     }
 
@@ -167,10 +167,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public PathType getWeb() {
+    public String getWeb() {
         return web;
     }
 
@@ -179,10 +179,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link PathType }
+     *     {@link String }
      *     
      */
-    public void setWeb(PathType value) {
+    public void setWeb(String value) {
         this.web = value;
     }
 
@@ -191,10 +191,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getInternalPath() {
+    public String getInternalPath() {
         return internalPath;
     }
 
@@ -203,10 +203,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setInternalPath(java.lang.String value) {
+    public void setInternalPath(String value) {
         this.internalPath = value;
     }
 
@@ -215,10 +215,10 @@ public class ExtModuleType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getExternalPath() {
+    public String getExternalPath() {
         return externalPath;
     }
 
@@ -227,10 +227,10 @@ public class ExtModuleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setExternalPath(java.lang.String value) {
+    public void setExternalPath(String value) {
         this.externalPath = value;
     }
 

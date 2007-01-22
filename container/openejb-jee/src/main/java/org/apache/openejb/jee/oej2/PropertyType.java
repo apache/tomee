@@ -51,19 +51,19 @@ import javax.xml.bind.annotation.XmlType;
 public class PropertyType {
 
     @XmlElement(required = true)
-    protected java.lang.String key;
+    protected String key;
     @XmlElement(required = true)
-    protected java.lang.String value;
+    protected String value;
 
     /**
      * Gets the value of the key property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getKey() {
+    public String getKey() {
         return key;
     }
 
@@ -72,10 +72,10 @@ public class PropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setKey(java.lang.String value) {
+    public void setKey(String value) {
         this.key = value;
     }
 
@@ -84,10 +84,10 @@ public class PropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -96,10 +96,10 @@ public class PropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

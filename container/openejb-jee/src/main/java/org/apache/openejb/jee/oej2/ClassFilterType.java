@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ClassFilterType {
 
     @XmlElement(name="filter", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
-    protected List<java.lang.String> filter;
+    protected List<String> filter;
 
     /**
      * Gets the value of the filter property.
@@ -71,13 +71,13 @@ public class ClassFilterType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getFilter() {
+    public List<String> getFilter() {
         if (filter == null) {
-            filter = new ArrayList<java.lang.String>();
+            filter = new ArrayList<String>();
         }
         return this.filter;
     }

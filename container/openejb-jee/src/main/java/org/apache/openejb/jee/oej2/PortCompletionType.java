@@ -53,7 +53,7 @@ public class PortCompletionType {
     @XmlElement(required = true)
     protected PortType port;
     @XmlElement(name = "binding-name", required = true)
-    protected java.lang.String bindingName;
+    protected String bindingName;
 
     /**
      * Gets the value of the port property.
@@ -84,10 +84,10 @@ public class PortCompletionType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getBindingName() {
+    public String getBindingName() {
         return bindingName;
     }
 
@@ -96,10 +96,10 @@ public class PortCompletionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setBindingName(java.lang.String value) {
+    public void setBindingName(String value) {
         this.bindingName = value;
     }
 

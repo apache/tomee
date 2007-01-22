@@ -66,9 +66,9 @@ import javax.xml.bind.annotation.XmlType;
 public class GroupType {
 
     @XmlElement(name = "group-name", required = true)
-    protected java.lang.String groupName;
+    protected String groupName;
     @XmlElement(name = "cmp-field-name")
-    protected List<java.lang.String> cmpFieldName;
+    protected List<String> cmpFieldName;
     @XmlElement(name = "cmr-field")
     protected List<GroupType.CmrField> cmrField;
 
@@ -77,10 +77,10 @@ public class GroupType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
@@ -89,10 +89,10 @@ public class GroupType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setGroupName(java.lang.String value) {
+    public void setGroupName(String value) {
         this.groupName = value;
     }
 
@@ -114,13 +114,13 @@ public class GroupType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link java.lang.String }
+     * {@link String }
      * 
      * 
      */
-    public List<java.lang.String> getCmpFieldName() {
+    public List<String> getCmpFieldName() {
         if (cmpFieldName == null) {
-            cmpFieldName = new ArrayList<java.lang.String>();
+            cmpFieldName = new ArrayList<String>();
         }
         return this.cmpFieldName;
     }
@@ -183,19 +183,19 @@ public class GroupType {
     public static class CmrField {
 
         @XmlElement(name = "cmr-field-name", required = true)
-        protected java.lang.String cmrFieldName;
+        protected String cmrFieldName;
         @XmlElement(name = "group-name")
-        protected java.lang.String groupName;
+        protected String groupName;
 
         /**
          * Gets the value of the cmrFieldName property.
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getCmrFieldName() {
+        public String getCmrFieldName() {
             return cmrFieldName;
         }
 
@@ -204,10 +204,10 @@ public class GroupType {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setCmrFieldName(java.lang.String value) {
+        public void setCmrFieldName(String value) {
             this.cmrFieldName = value;
         }
 
@@ -216,10 +216,10 @@ public class GroupType {
          * 
          * @return
          *     possible object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public java.lang.String getGroupName() {
+        public String getGroupName() {
             return groupName;
         }
 
@@ -228,10 +228,10 @@ public class GroupType {
          * 
          * @param value
          *     allowed object is
-         *     {@link java.lang.String }
+         *     {@link String }
          *     
          */
-        public void setGroupName(java.lang.String value) {
+        public void setGroupName(String value) {
             this.groupName = value;
         }
 

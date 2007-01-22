@@ -61,25 +61,25 @@ import javax.xml.bind.annotation.XmlType;
 public class ResourceEnvRefType {
 
     @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
-    protected java.lang.String refName;
+    protected String refName;
     @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
     @XmlElement(name = "message-destination-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String messageDestinationLink;
+    protected String messageDestinationLink;
     @XmlElement(name = "admin-object-module", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String adminObjectModule;
+    protected String adminObjectModule;
     @XmlElement(name = "admin-object-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
-    protected java.lang.String adminObjectLink;
+    protected String adminObjectLink;
 
     /**
      * Gets the value of the refName property.
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getRefName() {
+    public String getRefName() {
         return refName;
     }
 
@@ -88,10 +88,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setRefName(java.lang.String value) {
+    public void setRefName(String value) {
         this.refName = value;
     }
 
@@ -124,10 +124,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getMessageDestinationLink() {
+    public String getMessageDestinationLink() {
         return messageDestinationLink;
     }
 
@@ -136,10 +136,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setMessageDestinationLink(java.lang.String value) {
+    public void setMessageDestinationLink(String value) {
         this.messageDestinationLink = value;
     }
 
@@ -148,10 +148,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getAdminObjectModule() {
+    public String getAdminObjectModule() {
         return adminObjectModule;
     }
 
@@ -160,10 +160,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setAdminObjectModule(java.lang.String value) {
+    public void setAdminObjectModule(String value) {
         this.adminObjectModule = value;
     }
 
@@ -172,10 +172,10 @@ public class ResourceEnvRefType {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public java.lang.String getAdminObjectLink() {
+    public String getAdminObjectLink() {
         return adminObjectLink;
     }
 
@@ -184,10 +184,10 @@ public class ResourceEnvRefType {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link String }
      *     
      */
-    public void setAdminObjectLink(java.lang.String value) {
+    public void setAdminObjectLink(String value) {
         this.adminObjectLink = value;
     }
 
