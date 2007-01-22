@@ -888,4 +888,10 @@ public class ObjectFactory {
         return new JAXBElement<GbeanLocatorType>(_WebContainer_QNAME, GbeanLocatorType.class, null, value);
     }
 
+    private final static QName _EjbJar_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", "ejb-jar");
+    @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", name = "ejb-jar")
+    public JAXBElement<GeronimoEjbJarType> createEjbJar(GeronimoEjbJarType value) {
+        return new JAXBElement<GeronimoEjbJarType>(_EjbJar_QNAME, GeronimoEjbJarType.class, null, value);
+    }
+
 }
