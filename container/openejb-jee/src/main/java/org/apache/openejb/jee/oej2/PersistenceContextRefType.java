@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "persistence-context-refType", propOrder = {
+@XmlType(name = "persistence-context-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "persistenceContextRefName",
     "persistenceUnitName",
     "pattern",

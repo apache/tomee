@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "service-refType", propOrder = {
+@XmlType(name = "service-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "serviceRefName",
     "serviceCompletion",
     "port"
@@ -60,6 +60,7 @@ public class ServiceRefType {
     protected java.lang.String serviceRefName;
     @XmlElement(name = "service-completion")
     protected ServiceCompletionType serviceCompletion;
+    @XmlElement(name = "port")
     protected List<PortType> port;
 
     /**

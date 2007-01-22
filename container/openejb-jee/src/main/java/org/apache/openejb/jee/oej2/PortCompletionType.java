@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "port-completionType", propOrder = {
+@XmlType(name = "port-completionType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "port",
     "bindingName"
 })

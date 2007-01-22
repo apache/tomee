@@ -47,16 +47,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "resource-locatorType", propOrder = {
+@XmlType(name = "resource-locatorType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "pattern",
     "resourceLink",
     "url"
 })
 public class ResourceLocatorType {
 
+    @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
-    @XmlElement(name = "resource-link")
+    @XmlElement(name = "resource-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String resourceLink;
+    @XmlElement(name = "url", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String url;
 
     /**

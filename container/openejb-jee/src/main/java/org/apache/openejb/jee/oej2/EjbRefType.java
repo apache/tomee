@@ -59,16 +59,19 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class EjbRefType {
 
-    @XmlElement(name = "ref-name", required = true)
+    @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected java.lang.String refName;
+    @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
-    @XmlElement(name = "ns-corbaloc")
+    @XmlElement(name = "ns-corbaloc", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String nsCorbaloc;
+    @XmlElement(name = "name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String name;
+    @XmlElement(name = "css", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType css;
-    @XmlElement(name = "css-link")
+    @XmlElement(name = "css-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String cssLink;
-    @XmlElement(name = "ejb-link")
+    @XmlElement(name = "ejb-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String ejbLink;
 
     /**

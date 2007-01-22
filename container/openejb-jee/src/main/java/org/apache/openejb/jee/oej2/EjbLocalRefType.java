@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ejb-local-refType", propOrder = {
+@XmlType(name = "ejb-local-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "refName",
     "pattern",
     "ejbLink"
@@ -56,6 +56,7 @@ public class EjbLocalRefType {
 
     @XmlElement(name = "ref-name", required = true)
     protected java.lang.String refName;
+    @XmlElement(name = "pattern")
     protected PatternType pattern;
     @XmlElement(name = "ejb-link")
     protected java.lang.String ejbLink;

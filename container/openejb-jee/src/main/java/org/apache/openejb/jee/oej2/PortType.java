@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "portType", propOrder = {
+@XmlType(name = "portType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "portName",
     "protocol",
     "host",

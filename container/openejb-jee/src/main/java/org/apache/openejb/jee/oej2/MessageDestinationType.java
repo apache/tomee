@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "message-destinationType", propOrder = {
+@XmlType(name = "message-destinationType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "messageDestinationName",
     "pattern",
     "adminObjectModule",

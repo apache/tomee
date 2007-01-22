@@ -93,7 +93,7 @@ public class OpenejbJarType {
     @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
 
-    @XmlElement(name = "cmp-connection-factory")
+    @XmlElement(name = "cmp-connection-factory", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected ResourceLocatorType cmpConnectionFactory;
 
     @XmlElement(name = "ejb-ql-compiler-factory")

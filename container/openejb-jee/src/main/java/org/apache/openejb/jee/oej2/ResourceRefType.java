@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "resource-refType", propOrder = {
+@XmlType(name = "resource-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "refName",
     "pattern",
     "resourceLink",
@@ -56,11 +56,13 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ResourceRefType {
 
-    @XmlElement(name = "ref-name", required = true)
+    @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected java.lang.String refName;
+    @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
-    @XmlElement(name = "resource-link")
+    @XmlElement(name = "resource-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String resourceLink;
+    @XmlElement(name = "url", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String url;
 
     /**

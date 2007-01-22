@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "resource-env-refType", propOrder = {
+@XmlType(name = "resource-env-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "refName",
     "pattern",
     "messageDestinationLink",
@@ -60,14 +60,15 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ResourceEnvRefType {
 
-    @XmlElement(name = "ref-name", required = true)
+    @XmlElement(name = "ref-name", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected java.lang.String refName;
+    @XmlElement(name = "pattern", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected PatternType pattern;
-    @XmlElement(name = "message-destination-link")
+    @XmlElement(name = "message-destination-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String messageDestinationLink;
-    @XmlElement(name = "admin-object-module")
+    @XmlElement(name = "admin-object-module", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String adminObjectModule;
-    @XmlElement(name = "admin-object-link")
+    @XmlElement(name = "admin-object-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected java.lang.String adminObjectLink;
 
     /**

@@ -32,6 +32,7 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
 import java.lang.*;
 import java.lang.String;
 import java.io.IOException;
@@ -50,8 +51,8 @@ public class OpenejbJarTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void _testEjbJar() throws Exception {
-        marshalAndUnmarshal(OpenejbJarType.class, "openejb-jar-2.2.xml");
+    public void testEjbJar() throws Exception {
+        marshalAndUnmarshal(OpenejbJarType.class, "openejb-jar-2-full.xml");
     }
 
     private <T> void marshalAndUnmarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
@@ -82,7 +83,7 @@ public class OpenejbJarTest extends TestCase {
         String expected = readContent(in);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
-        factory.setValidating(true);
+        factory.setValidating(false);
         SAXParser parser = factory.newSAXParser();
 
         // Create a filter to intercept events
@@ -101,6 +102,7 @@ public class OpenejbJarTest extends TestCase {
 //        System.out.println("unmarshalled");
 
         Marshaller marshaller = ctx.createMarshaller();
+        
         marshaller.setProperty("jaxb.formatted.output", true);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
