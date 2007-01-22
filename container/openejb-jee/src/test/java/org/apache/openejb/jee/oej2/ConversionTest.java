@@ -19,10 +19,11 @@ package org.apache.openejb.jee.oej2;
 import junit.framework.TestCase;
 
 import javax.xml.bind.JAXBElement;
-import java.lang.String;
-import java.io.InputStream;
-import java.io.IOException;
+import javax.xml.namespace.QName;
 import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -40,9 +41,15 @@ public class ConversionTest extends TestCase {
         g2.getService().addAll(o2.getService());
         g2.getMessageDestination().addAll(o2.getMessageDestination());
 
+        List<JAXBElement<?>> jndi = g2.getJndiEnvironmentRefsGroup();
         for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
+            jndi.addAll(bean.getAbstractNamingEntry());
             //
         }
+
+        JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
+        String result = JaxbUtil.marshal(GeronimoEjbJarType.class, root);
+        assertEquals(readContent(getInputStream("geronimo-openejb-converted.xml")), result);
 
     }
 
