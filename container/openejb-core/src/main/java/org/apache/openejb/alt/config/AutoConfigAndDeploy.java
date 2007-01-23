@@ -40,9 +40,27 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final ConfigurationFactory configFactory;
+    private boolean autoCreateContainers = true;
+    private boolean autoCreateConnectors = true;
 
     public AutoConfigAndDeploy(ConfigurationFactory configFactory) {
         this.configFactory = configFactory;
+    }
+
+    public boolean autoCreateConnectors() {
+        return autoCreateConnectors;
+    }
+
+    public void autoCreateConnectors(boolean autoCreateConnectors) {
+        this.autoCreateConnectors = autoCreateConnectors;
+    }
+
+    public boolean autoCreateContainers() {
+        return autoCreateContainers;
+    }
+
+    public void autoCreateContainers(boolean autoCreateContainers) {
+        this.autoCreateContainers = autoCreateContainers;
     }
 
     public void init() throws OpenEJBException {
@@ -76,8 +94,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
 
         Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
 
-        for (int i = 0; i < beans.length; i++) {
-            final Bean bean = beans[i];
+        for (Bean bean : beans) {
 
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
             if (ejbDeployment == null) {
@@ -92,10 +109,14 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 String containerId = getUsableContainer(containerInfoType);
 
                 if (containerId == null){
-                    ContainerInfo containerInfo = configFactory.configureService(containerInfoType);
-                    logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
-                    configFactory.install(containerInfo);
-                    containerId = containerInfo.id;
+                    if (autoCreateContainers) {
+                        ContainerInfo containerInfo = configFactory.configureService(containerInfoType);
+                        logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
+                        configFactory.install(containerInfo);
+                        containerId = containerInfo.id;
+                    } else {
+                        throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file for bean: "+bean.getEjbName());
+                    }
                 }
 
                 ejbDeployment.setContainerId(containerId);
@@ -107,9 +128,13 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
             // create the container if it doesn't exist
             if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId())) {
 
-                ContainerInfo containerInfo = configFactory.configureService(ConfigurationFactory.getContainerInfoType(bean.getType()));
-                logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
-                configFactory.install(containerInfo);
+                if (autoCreateContainers){
+                    ContainerInfo containerInfo = configFactory.configureService(ConfigurationFactory.getContainerInfoType(bean.getType()));
+                    logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
+                    configFactory.install(containerInfo);
+                } else {
+                    throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file for bean: "+bean.getEjbName());
+                }
 
             }
 
@@ -129,10 +154,15 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     if (!connectorMap.contains(resRefName)) {
                         String name = resRefName.replaceFirst(".*/", "");
                         if (!connectorMap.contains(name)) {
-                            ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
-                            id = connectorInfo.id = name;
-                            logger.warning("Auto-creating a connector for res-ref-name '" + resRefName + "' in bean '" + ejbDeployment.getDeploymentId() + "': Connector(id=" + id + ").  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                            configFactory.install(connectorInfo);
+
+                            if (autoCreateConnectors) {
+                                ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
+                                id = connectorInfo.id = name;
+                                logger.warning("Auto-creating a connector for res-ref-name '" + resRefName + "' in bean '" + ejbDeployment.getDeploymentId() + "': Connector(id=" + id + ").  THERE IS LITTLE CHANCE THIS WILL WORK!");
+                                configFactory.install(connectorInfo);
+                            } else {
+                                throw new OpenEJBException("Cannot find a connector named '"+resRefName+"' or '"+name+"' to auto-link for bean: "+bean.getEjbName()+" resource-ref "+resRefName);
+                            }
                         }
                     }
                     logger.warning("Auto-linking res-ref-name '" + resRefName + "' in bean " + ejbDeployment.getDeploymentId() + " to Connector(id=" + id + ")");
@@ -143,7 +173,12 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
 
                     List<String> connectorMap = configFactory.getConnectorIds();
                     if (!connectorMap.contains(link.getResId())) {
-                        logger.error("Bad resource-link in bean '" + ejbDeployment.getDeploymentId() + "': No such connector with specified res-id: ResourceLink(res-ref-name=" + link.getResRefName() + ", res-id" + link.getResId() + ")");
+                        String message = "Bad resource-link in bean '" + ejbDeployment.getDeploymentId() + "': No such connector with specified res-id: ResourceLink(res-ref-name=" + link.getResRefName() + ", res-id" + link.getResId() + ")";
+                        if (!autoCreateConnectors){
+                            throw new OpenEJBException(message);
+                        }
+
+                        logger.error(message);
 
                         String id = null;
                         if (connectorMap.size() > 0) {

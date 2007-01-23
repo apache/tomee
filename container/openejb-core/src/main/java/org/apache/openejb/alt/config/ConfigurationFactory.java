@@ -96,13 +96,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         DynamicDeployer deployer;
         if (offline) {
-            deployer = new AutoDeployer(this);
-
+            AutoConfigAndDeploy autoConfigAndDeploy = new AutoConfigAndDeploy(this);
+            autoConfigAndDeploy.autoCreateConnectors(false);
+            autoConfigAndDeploy.autoCreateContainers(false);
+            deployer = autoConfigAndDeploy;
         } else {
             deployer = new AutoConfigAndDeploy(this);
         }
 
         deployer = new AnnotationDeployer(deployer);
+
+        if (System.getProperty("duct tape") != null){
+            deployer = new GeronimoMappedName(deployer);
+        }
 
         boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
         if (shouldValidate) {
