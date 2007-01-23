@@ -42,7 +42,12 @@ import java.util.ArrayList;
 @XmlType(name = "geronimo-ejb-jarType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", propOrder = {
     "environment",
     "openejbJar",
-    "jndiEnvironmentRefsGroup",
+    "abstractNamingEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
     "messageDestination",
     "security",
     "service"
@@ -55,15 +60,19 @@ public class GeronimoEjbJarType {
     @XmlAnyElement(lax = true)
     protected Object openejbJar;
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class),
-        @XmlElementRef(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class),
-        @XmlElementRef(name = "ejb-local-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class),
-        @XmlElementRef(name = "resource-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class),
-        @XmlElementRef(name = "service-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class),
-        @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
-    })
-    protected List<JAXBElement<?>> jndiEnvironmentRefsGroup;
+    @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
+    protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
+    @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<EjbRefType> ejbRef;
+    @XmlElement(name = "ejb-local-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<EjbLocalRefType> ejbLocalRef;
+    @XmlElement(name = "service-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<ServiceRefType> serviceRef;
+    @XmlElement(name = "resource-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<ResourceRefType> resourceRef;
+    @XmlElement(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<ResourceEnvRefType> resourceEnvRef;
+
 
     @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
@@ -129,12 +138,56 @@ public class GeronimoEjbJarType {
      *
      *
      */
-    public List<JAXBElement<?>> getJndiEnvironmentRefsGroup() {
-        if (jndiEnvironmentRefsGroup == null) {
-            jndiEnvironmentRefsGroup = new ArrayList<JAXBElement<?>>();
+//    public List<Object> getJndiEnvironmentRefsGroup() {
+//        if (jndiEnvironmentRefsGroup == null) {
+//            jndiEnvironmentRefsGroup = new ArrayList<Object>();
+//        }
+//        return this.jndiEnvironmentRefsGroup;
+//    }
+
+    public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
+        if (abstractNamingEntry == null) {
+            abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
         }
-        return this.jndiEnvironmentRefsGroup;
+        return this.abstractNamingEntry;
     }
+
+    public List<EjbRefType> getEjbRef() {
+        if (ejbRef == null) {
+            ejbRef = new ArrayList<EjbRefType>();
+        }
+        return this.ejbRef;
+    }
+
+    public List<EjbLocalRefType> getEjbLocalRef() {
+        if (ejbLocalRef == null) {
+            ejbLocalRef = new ArrayList<EjbLocalRefType>();
+        }
+        return this.ejbLocalRef;
+    }
+
+    public List<ServiceRefType> getServiceRef() {
+        if (serviceRef == null) {
+            serviceRef = new ArrayList<ServiceRefType>();
+        }
+        return this.serviceRef;
+    }
+
+    public List<ResourceRefType> getResourceRef() {
+        if (resourceRef == null) {
+            resourceRef = new ArrayList<ResourceRefType>();
+        }
+        return this.resourceRef;
+    }
+
+    public List<ResourceEnvRefType> getResourceEnvRef() {
+        if (resourceEnvRef == null) {
+            resourceEnvRef = new ArrayList<ResourceEnvRefType>();
+        }
+        return this.resourceEnvRef;
+    }
+
+
 
     /**
      * Gets the value of the messageDestination property.

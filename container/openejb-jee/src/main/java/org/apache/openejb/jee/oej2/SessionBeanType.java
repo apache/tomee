@@ -278,31 +278,6 @@ public class SessionBeanType implements EnterpriseBean {
         this.tss = value;
     }
 
-    /**
-     * Gets the value of the abstractNamingEntry property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractNamingEntry property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractNamingEntry().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link AbstractNamingEntryType }{@code >}
-     * {@link JAXBElement }{@code <}{@link PersistenceContextRefType }{@code >}
-     * {@link JAXBElement }{@code <}{@link EntityManagerFactoryRefType }{@code >}
-     * {@link JAXBElement }{@code <}{@link GbeanRefType }{@code >}
-     * 
-     * 
-     */
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
             abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
@@ -310,28 +285,6 @@ public class SessionBeanType implements EnterpriseBean {
         return this.abstractNamingEntry;
     }
 
-    /**
-     * Gets the value of the ejbRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEjbRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EjbRefType }
-     * 
-     * 
-     */
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
             ejbRef = new ArrayList<EjbRefType>();
@@ -339,28 +292,6 @@ public class SessionBeanType implements EnterpriseBean {
         return this.ejbRef;
     }
 
-    /**
-     * Gets the value of the ejbLocalRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ejbLocalRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEjbLocalRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EjbLocalRefType }
-     * 
-     * 
-     */
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
             ejbLocalRef = new ArrayList<EjbLocalRefType>();
@@ -368,28 +299,6 @@ public class SessionBeanType implements EnterpriseBean {
         return this.ejbLocalRef;
     }
 
-    /**
-     * Gets the value of the serviceRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getServiceRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ServiceRefType }
-     * 
-     * 
-     */
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
             serviceRef = new ArrayList<ServiceRefType>();
@@ -397,28 +306,6 @@ public class SessionBeanType implements EnterpriseBean {
         return this.serviceRef;
     }
 
-    /**
-     * Gets the value of the resourceRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceRefType }
-     * 
-     * 
-     */
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
             resourceRef = new ArrayList<ResourceRefType>();
@@ -426,28 +313,6 @@ public class SessionBeanType implements EnterpriseBean {
         return this.resourceRef;
     }
 
-    /**
-     * Gets the value of the resourceEnvRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceEnvRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceEnvRefType }
-     * 
-     * 
-     */
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
             resourceEnvRef = new ArrayList<ResourceEnvRefType>();
