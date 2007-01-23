@@ -115,7 +115,6 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("sql", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("sql-generator", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("suppress-default-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
-        ns.put("table-name", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("type", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("uri", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("url", "http://geronimo.apache.org/xml/ns/naming-1.2");
@@ -137,6 +136,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("pattern", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("version", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
+        duplicates.put("table-name", Arrays.asList("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "http://openejb.apache.org/xml/ns/pkgen-2.1"));
     }
 
     public NamespaceFilter(XMLReader xmlReader) {
