@@ -103,6 +103,38 @@ public class JndiEncBuilder {
     }
 
     public Context build() throws OpenEJBException {
+        Map<String, Object> bindings = buildMap();
+
+        Context context;
+        if (System.getProperty("openejb.naming","ivm").equals("xbean")) {
+            context = createXBeanWritableContext(bindings);
+        } else {
+            context = createIvmContext();
+
+            // bind the bindings
+            for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String name = (String) entry.getKey();
+                Object value = entry.getValue();
+                if (value == null) continue;
+                try {
+                    Name parsedName = context.getNameParser("").parse(name);
+                    for (int i = 1; i < parsedName.size(); i++) {
+                        Name contextName = parsedName.getPrefix(i);
+                        if (!bindingExists(context, contextName)) {
+                            context.createSubcontext(contextName);
+                        }
+                    }
+                    context.bind(name, value);
+                } catch (NamingException e) {
+                    throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
+                }
+            }
+        }
+        return context;
+    }
+
+    public Map<String, Object> buildMap() throws OpenEJBException {
         Map<String, Object> bindings = new HashMap<String, Object>();
 
         // bind TransactionManager
@@ -277,34 +309,7 @@ public class JndiEncBuilder {
                 bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
             }
         }
-
-        Context context;
-        if (System.getProperty("openejb.naming","ivm").equals("xbean")) {
-            context = createXBeanWritableContext(bindings);
-        } else {
-            context = createIvmContext();
-
-            // bind the bindings
-            for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String name = (String) entry.getKey();
-                Object value = entry.getValue();
-                if (value == null) continue;
-                try {
-                    Name parsedName = context.getNameParser("").parse(name);
-                    for (int i = 1; i < parsedName.size(); i++) {
-                        Name contextName = parsedName.getPrefix(i);
-                        if (!bindingExists(context, contextName)) {
-                            context.createSubcontext(contextName);
-                        }
-                    }
-                    context.bind(name, value);
-                } catch (NamingException e) {
-                    throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
-                }
-            }
-        }
-        return context;
+        return bindings;
     }
 
     private WritableContext createXBeanWritableContext(Map bindings) {

@@ -29,6 +29,10 @@ public class IntraVmJndiReference extends Reference {
         this.jndiName = jndiName;
     }
 
+    public String getJndiName() {
+        return jndiName;
+    }
+
     public Object getObject() throws NamingException {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         return containerSystem.getJNDIContext().lookup(jndiName);
