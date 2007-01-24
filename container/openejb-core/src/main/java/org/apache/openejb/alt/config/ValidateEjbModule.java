@@ -23,14 +23,11 @@ import org.apache.openejb.util.Logger;
  * @version $Rev$ $Date$
  */
 public class ValidateEjbModule implements DynamicDeployer {
-    private final DynamicDeployer deployer;
 
-    public ValidateEjbModule(DynamicDeployer deployer) {
-        this.deployer = deployer;
+    public ValidateEjbModule() {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        appModule = deployer.deploy(appModule);
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             deploy(ejbModule);
         }

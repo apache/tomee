@@ -81,7 +81,7 @@ public class EjbDeployment {
 
     public Map<String,ResourceLink> getResourceLinksMap(){
         Map<String,ResourceLink> map = new LinkedHashMap();
-        for (ResourceLink link : resourceLink) {
+        for (ResourceLink link : getResourceLink()) {
             map.put(link.getResRefName(), link);
         }
         return map;

@@ -771,6 +771,7 @@ public class Logger {
         }
 
         private org.apache.log4j.Logger doFallbackConfiguration() {
+            set("openjpa", Level.ERROR);
             set("CastorCMP", Level.ERROR);
             set("org.exolab.castor", Level.ERROR);
             java.util.logging.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(java.util.logging.Level.SEVERE);

@@ -94,20 +94,16 @@ import java.util.Map;
 public class AnnotationDeployer implements DynamicDeployer {
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", AnnotationDeployer.class.getPackage().getName());
-    private final DynamicDeployer deployer;
     private final DiscoverBeansInClassLoader discoverBeansInClassLoader;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
 
-    public AnnotationDeployer(DynamicDeployer deployer) {
-        this.deployer = deployer;
-
+    public AnnotationDeployer() {
         discoverBeansInClassLoader = new DiscoverBeansInClassLoader();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         appModule = discoverBeansInClassLoader.deploy(appModule);
-        appModule = deployer.deploy(appModule);
         appModule = processAnnotatedBeans.deploy(appModule);
         return appModule;
     }

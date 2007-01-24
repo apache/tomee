@@ -90,33 +90,50 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this(false);
     }
 
+    public static class Chain implements DynamicDeployer{
+        private final List<DynamicDeployer> chain = new ArrayList();
+
+        public boolean add(DynamicDeployer o) {
+            return chain.add(o);
+        }
+
+        public AppModule deploy(AppModule appModule) throws OpenEJBException {
+            for (DynamicDeployer deployer : chain) {
+                appModule = deployer.deploy(appModule);
+            }
+            return appModule;
+        }
+    }
+
     public ConfigurationFactory(boolean offline) {
         this.offline = offline;
         deploymentLoader = new DeploymentLoader();
 
-        DynamicDeployer deployer;
+        Chain chain = new Chain();
+
+        chain.add(new AnnotationDeployer());
+
+        if (System.getProperty("duct tape") != null){
+            chain.add(new GeronimoMappedName());
+        }
+
         if (offline) {
             AutoConfigAndDeploy autoConfigAndDeploy = new AutoConfigAndDeploy(this);
             autoConfigAndDeploy.autoCreateConnectors(false);
             autoConfigAndDeploy.autoCreateContainers(false);
-            deployer = autoConfigAndDeploy;
+            chain.add(autoConfigAndDeploy);
         } else {
-            deployer = new AutoConfigAndDeploy(this);
-        }
-
-        deployer = new AnnotationDeployer(deployer);
-
-        if (System.getProperty("duct tape") != null){
-            deployer = new GeronimoMappedName(deployer);
+            chain.add(new AutoConfigAndDeploy(this));
         }
 
         boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
         if (shouldValidate) {
-            deployer = new ValidateEjbModule(deployer);
+            chain.add(new ValidateEjbModule());
         } else {
             DeploymentLoader.logger.info("Validation is disabled.");
         }
-        this.deployer = deployer;
+
+        this.deployer = chain;
     }
 
     public void init(Properties props) throws OpenEJBException {

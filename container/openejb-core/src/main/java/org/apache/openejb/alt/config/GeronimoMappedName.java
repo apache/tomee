@@ -35,15 +35,10 @@ public class GeronimoMappedName implements DynamicDeployer {
 
     private static final String MAPPED_NAME_PREFIX = "jndi:java:comp/geronimo/env/";
 
-    private final DynamicDeployer deployer;
-
-    public GeronimoMappedName(DynamicDeployer deployer) {
-        this.deployer = deployer;
+    public GeronimoMappedName() {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        mapReferences(appModule);
-        appModule = deployer.deploy(appModule);
         mapReferences(appModule);
         return appModule;
     }

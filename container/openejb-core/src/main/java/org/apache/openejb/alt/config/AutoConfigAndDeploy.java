@@ -154,14 +154,20 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     if (!connectorMap.contains(resRefName)) {
                         String name = resRefName.replaceFirst(".*/", "");
                         if (!connectorMap.contains(name)) {
+                            String message = "No existing Connector found while attempting to Auto-link unmapped res-ref-name '"+resRefName+"' for bean '" + ejbDeployment.getDeploymentId() + "'.  Looked for Connector(id=" + resRefName + ") and Connector(id=" + name + ")";
+                            if (!autoCreateConnectors){
+                                throw new OpenEJBException(message);
+                            }
 
-                            if (autoCreateConnectors) {
-                                ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
-                                id = connectorInfo.id = name;
-                                logger.warning("Auto-creating a connector for res-ref-name '" + resRefName + "' in bean '" + ejbDeployment.getDeploymentId() + "': Connector(id=" + id + ").  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                                configFactory.install(connectorInfo);
+                            logger.error(message);
+
+                            if (connectorMap.size() > 0) {
+                                id = connectorMap.get(0);
                             } else {
-                                throw new OpenEJBException("Cannot find a connector named '"+resRefName+"' or '"+name+"' to auto-link for bean: "+bean.getEjbName()+" resource-ref "+resRefName);
+                                ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
+                                id = connectorInfo.id;
+                                logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
+                                configFactory.install(connectorInfo);
                             }
                         }
                     }
@@ -189,6 +195,11 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                             logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
                             configFactory.install(connectorInfo);
                         }
+                        String resRefName = ref.getResRefName();
+                        String badResId = link.getResId();
+                        logger.warning("Auto-linking res-ref-name '" + resRefName + "' in bean " + ejbDeployment.getDeploymentId() + " to Connector(id=" + id + ").  Ignoring configured link to non-existent Connector(id="+badResId +")");
+                        link.setResId(id);
+                        link.setResRefName(resRefName);
                     }
                 }
             }
