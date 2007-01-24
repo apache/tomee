@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.alt.config.ejb.EjbDeployment;
+import org.apache.openejb.alt.config.ejb.ResourceLink;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
@@ -311,9 +312,9 @@ public class EjbJarInfoBuilder {
             // Link all the resource refs
             List<ResourceRef> resourceRefs = jndiConsumer.getResourceRef();
             for (ResourceRef res : resourceRefs) {
-                String resId = ejbDeployment.getResourceLink(res.getResRefName()).getResId();
-                if (resId != null /* don't overwrite with null */) {
-                    res.setResLink(resId);
+                ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
+                if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
+                    res.setResLink(resourceLink.getResId());
                 }
             }
 
