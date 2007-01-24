@@ -21,6 +21,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
 import javax.ejb.CreateException;
 import javax.ejb.SessionContext;
@@ -29,6 +31,7 @@ import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 
 /**
@@ -57,6 +60,10 @@ public class FieldInjectionStatefulBean implements SessionBean {
     private EntityManager em;
     private EntityManager eem;
     private EntityManager pem;
+    private BasicStatelessBusinessLocal statelessBusinessLocal;
+    private BasicStatelessBusinessRemote statelessBusinessRemote;
+    private BasicStatefulBusinessLocal statefulBusinessLocal;
+    private BasicStatefulBusinessRemote statefulBusinessRemote;
 
     //=============================
     // Home interface methods
@@ -100,6 +107,38 @@ public class FieldInjectionStatefulBean implements SessionBean {
         try {
             Assert.assertNotNull("The EJBObject is null", statelessHome);
         } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote );
+        } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }
     }

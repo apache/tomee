@@ -21,16 +21,21 @@ import java.rmi.RemoteException;
 import org.apache.openejb.test.TestFailureException;
 
 /**
- * 
+ *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public interface EncStatelessObject extends javax.ejb.EJBObject{
-    
+
     public void lookupEntityBean()    throws TestFailureException, RemoteException;
     public void lookupStatefulBean()  throws TestFailureException, RemoteException;
     public void lookupStatelessBean() throws TestFailureException, RemoteException;
 
+    public void lookupStatelessBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatelessBusinessRemote() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessRemote() throws TestFailureException, RemoteException;
+ 
     public void lookupResource() throws TestFailureException, RemoteException;
     public void lookupPersistenceUnit() throws TestFailureException, RemoteException;
     public void lookupPersistenceContext() throws TestFailureException, RemoteException;

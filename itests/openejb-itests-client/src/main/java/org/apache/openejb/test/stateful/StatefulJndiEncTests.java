@@ -219,4 +219,43 @@ public class StatefulJndiEncTests extends StatefulTestClient{
         }
     }
     
+    public void test19_lookupStatelessBusinessLocal() {
+        try{
+            ejbObject.lookupStatelessBusinessLocal();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test20_lookupStatelessBusinessRemote() {
+        try{
+            ejbObject.lookupStatelessBusinessRemote();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test21_lookupStatefulBusinessLocal() {
+        try{
+            ejbObject.lookupStatefulBusinessLocal();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test22_lookupStatefulBusinessRemote() {
+        try{
+            ejbObject.lookupStatefulBusinessRemote();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
 }

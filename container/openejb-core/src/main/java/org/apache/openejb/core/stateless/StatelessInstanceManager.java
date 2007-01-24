@@ -38,6 +38,7 @@ import javax.naming.NamingException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class StatelessInstanceManager {
 
@@ -106,7 +107,7 @@ public class StatelessInstanceManager {
                     // TODO: This should work
                     ctx.bind("java:comp/EJBContext", sessionContext);
                 }
-                if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
+                if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.SET_CONTEXT);
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
                 }
@@ -120,6 +121,12 @@ public class StatelessInstanceManager {
                     }
                 }
                 bean = objectRecipe.create(beanClass.getClassLoader());
+                Map unsetProperties = objectRecipe.getUnsetProperties();
+                if (unsetProperties.size() > 0){
+                    for (Object property : unsetProperties.keySet()) {
+                        logger.warn("Injection: No such property '"+property+"' in class "+beanClass.getName());
+                    }
+                }
                 callContext.setCurrentOperation(Operation.CREATE);
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
@@ -138,6 +145,15 @@ public class StatelessInstanceManager {
             }
         }
         return bean;
+    }
+
+    private boolean hasSetSessionContext(Class beanClass) {
+        try {
+            beanClass.getMethod("setSessionContext", SessionContext.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     private SessionContext createSessionContext() {

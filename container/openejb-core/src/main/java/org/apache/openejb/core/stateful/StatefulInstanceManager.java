@@ -130,8 +130,8 @@ public class StatefulInstanceManager {
                 sessionContext = createSessionContext();
                 ctx.bind("java:comp/EJBContext", sessionContext);
             }
-            if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
-                threadContext.setCurrentOperation(Operation.SET_CONTEXT);
+            if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
+                callContext.setCurrentOperation(Operation.SET_CONTEXT);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
             }
             for (Injection injection : deploymentInfo.getInjections()) {
@@ -169,6 +169,15 @@ public class StatefulInstanceManager {
         beanIndex.put(primaryKey, entry);
 
         return bean;
+    }
+
+    private boolean hasSetSessionContext(Class beanClass) {
+        try {
+            beanClass.getMethod("setSessionContext", SessionContext.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     private SessionContext createSessionContext() {

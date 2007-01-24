@@ -272,6 +272,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -390,6 +414,30 @@
         <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
@@ -1045,6 +1093,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-ref>
       <security-role-ref>
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
@@ -1421,7 +1493,7 @@
 
     <!--
     ########################################################
-    ID:  client/tests/stateful/EncBean
+    ID:  client/tests/stateful/PersistenceContextStatefulBean
     ########################################################
     -->
 
@@ -2023,6 +2095,30 @@
         <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
       <security-role-ref>
         <role-name>TheMan</role-name>
@@ -2840,6 +2936,30 @@
         <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateless-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateful-business-remote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>

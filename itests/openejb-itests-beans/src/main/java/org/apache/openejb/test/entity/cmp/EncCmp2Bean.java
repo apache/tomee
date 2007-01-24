@@ -29,8 +29,12 @@ import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateful.BasicStatefulObject;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
 public abstract class EncCmp2Bean implements EntityBean {
     public EntityContext ejbContext;
@@ -128,6 +132,72 @@ public abstract class EncCmp2Bean implements EntityBean {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
         } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+                Object o = ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-local");
+                BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class );
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class );
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }
     }
@@ -324,12 +394,12 @@ public abstract class EncCmp2Bean implements EntityBean {
             throw new TestFailureException(afe);
         }
     }
-    
+
     public void lookupPersistenceUnit() throws TestFailureException{
         try{
             try{
                 InitialContext ctx = new InitialContext();
-                Assert.assertNotNull("The InitialContext is null", ctx);                
+                Assert.assertNotNull("The InitialContext is null", ctx);
                 EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
@@ -340,7 +410,7 @@ public abstract class EncCmp2Bean implements EntityBean {
             throw new TestFailureException(afe);
         }
     }
-    
+
     public void lookupPersistenceContext() throws TestFailureException{
         try{
             try{

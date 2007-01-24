@@ -19,6 +19,8 @@ package org.apache.openejb.test.stateful;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
@@ -39,11 +41,11 @@ import junit.framework.AssertionFailedError;
  */
 public class ContextLookupStatefulPojoBean {
 
-    private EntityManager extendedEntityManager;
     private SessionContext ejbContext;
 
-    // Used for testing propigation
-    private static EntityManager inheritedDelegate;
+    public void setSessionContext(SessionContext ejbContext) {
+        this.ejbContext = ejbContext;
+    }
 
     public void lookupEntityBean() throws TestFailureException {
         try {
@@ -93,11 +95,61 @@ public class ContextLookupStatefulPojoBean {
         }
     }
 
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) ejbContext.lookup("stateful/beanReferences/stateless-business-local");
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) ejbContext.lookup("stateful/beanReferences/stateless-business-remote");
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ejbContext.lookup("stateful/beanReferences/stateful-business-local");
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ejbContext.lookup("stateful/beanReferences/stateful-business-remote");
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
-                ejbContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
                 String expected = new String("1");
                 String actual = (String) ejbContext.lookup("stateful/references/String");
 

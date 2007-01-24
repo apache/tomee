@@ -18,6 +18,8 @@ package org.apache.openejb.test.stateless;
 
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.TestFailureException;
 
 import javax.ejb.SessionBean;
@@ -57,7 +59,42 @@ public class SetterInjectionStatelessBean implements SessionBean {
     private EntityManager emField;
     private EntityManager eemField;
     private EntityManager pemField;
+    private BasicStatelessBusinessLocal statelessBusinessLocalField;
+    private BasicStatelessBusinessRemote statelessBusinessRemoteField;
+    private BasicStatefulBusinessLocal statefulBusinessLocalField;
+    private BasicStatefulBusinessRemote statefulBusinessRemoteField;
 
+    public BasicStatefulBusinessLocal getStatefulBusinessLocal() {
+        return statefulBusinessLocalField;
+    }
+
+    public void setStatefulBusinessLocal(BasicStatefulBusinessLocal statefulBusinessLocal) {
+        this.statefulBusinessLocalField = statefulBusinessLocal;
+    }
+
+    public BasicStatefulBusinessRemote getStatefulBusinessRemote() {
+        return statefulBusinessRemoteField;
+    }
+
+    public void setStatefulBusinessRemote(BasicStatefulBusinessRemote statefulBusinessRemote) {
+        this.statefulBusinessRemoteField = statefulBusinessRemote;
+    }
+
+    public BasicStatelessBusinessLocal getStatelessBusinessLocal() {
+        return statelessBusinessLocalField;
+    }
+
+    public void setStatelessBusinessLocal(BasicStatelessBusinessLocal statelessBusinessLocal) {
+        this.statelessBusinessLocalField = statelessBusinessLocal;
+    }
+
+    public BasicStatelessBusinessRemote getStatelessBusinessRemote() {
+        return statelessBusinessRemoteField;
+    }
+
+    public void setStatelessBusinessRemote(BasicStatelessBusinessRemote statelessBusinessRemote) {
+        this.statelessBusinessRemoteField = statelessBusinessRemote;
+    }
 
     public BasicBmpHome getBmpHome() {
         return bmpHomeField;
@@ -229,6 +266,39 @@ public class SetterInjectionStatelessBean implements SessionBean {
             throw new TestFailureException(afe);
         }
     }
+
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocalField );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemoteField );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemoteField );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
 
     public void lookupStringEntry() throws TestFailureException {
         try {

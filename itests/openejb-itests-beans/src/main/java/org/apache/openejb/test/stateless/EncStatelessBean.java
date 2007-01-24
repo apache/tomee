@@ -35,6 +35,8 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateful.BasicStatefulObject;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 
 /**
  *
@@ -107,6 +109,72 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
 
             BasicStatelessObject object = home.createObject();
             Assert.assertNotNull("The EJBObject is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+                Object o = ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-local");
+                BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class );
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class );
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
@@ -302,7 +370,7 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
                 Assert.assertNotNull("The InitialContext is null", ctx);
                 Object obj = ctx.lookup("java:comp/env/datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
-                Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);                
+                Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
@@ -315,7 +383,7 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
         try{
             try{
                 InitialContext ctx = new InitialContext();
-                Assert.assertNotNull("The InitialContext is null", ctx);                
+                Assert.assertNotNull("The InitialContext is null", ctx);
                 EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
@@ -326,7 +394,7 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
             throw new TestFailureException(afe);
         }
     }
-    
+
     public void lookupPersistenceContext() throws TestFailureException{
         try{
             try{
@@ -344,12 +412,12 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
             throw new TestFailureException(afe);
         }
     }
-    
+
     public void lookupSessionContext() throws TestFailureException{
         try{
             try{
                 InitialContext ctx = new InitialContext();
-                Assert.assertNotNull("The InitialContext is null", ctx);                
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
                 // lookup in enc
                 SessionContext sctx = (SessionContext)ctx.lookup("java:comp/env/sessioncontext");
@@ -367,10 +435,10 @@ public class EncStatelessBean implements javax.ejb.SessionBean{
         } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }
-        
+
     }
-    
-    
+
+
     //    
     // Remote interface methods
     //=============================

@@ -31,6 +31,11 @@ public interface EncCmpObject extends javax.ejb.EJBObject{
     public void lookupStatefulBean()  throws TestFailureException, RemoteException;
     public void lookupStatelessBean() throws TestFailureException, RemoteException;
 
+    public void lookupStatelessBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatelessBusinessRemote() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessRemote() throws TestFailureException, RemoteException;
+
     public void lookupResource() throws TestFailureException, RemoteException;
     public void lookupPersistenceUnit() throws TestFailureException, RemoteException;
     public void lookupPersistenceContext() throws TestFailureException, RemoteException;

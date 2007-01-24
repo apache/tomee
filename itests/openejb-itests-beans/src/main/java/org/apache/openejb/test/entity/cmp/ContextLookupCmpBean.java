@@ -21,8 +21,12 @@ import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateful.BasicStatefulObject;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
@@ -119,6 +123,58 @@ public class ContextLookupCmpBean implements javax.ejb.EntityBean {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
         } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) ejbContext.lookup("entity/cmp/beanReferences/stateless-business-local");
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatelessBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) ejbContext.lookup("entity/cmp/beanReferences/stateless-business-remote");
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocal() throws TestFailureException{
+        try{
+            try{
+            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ejbContext.lookup("entity/cmp/beanReferences/stateful-business-local");
+            Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessRemote() throws TestFailureException{
+        try{
+            try{
+            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ejbContext.lookup("entity/cmp/beanReferences/stateful-business-remote");
+            Assert.assertNotNull("The EJB BusinessRemote is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }
     }
