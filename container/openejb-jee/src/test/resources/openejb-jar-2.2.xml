@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2"
-  xmlns:pkgen="http://openejb.apache.org/xml/ns/pkgen-2.1"
   xmlns:naming="http://geronimo.apache.org/xml/ns/naming-1.2"
  xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+    <!--xmlns:pkgen="http://openejb.apache.org/xml/ns/pkgen-2.1"-->
 
     <environment>
         <moduleId>
@@ -690,12 +690,12 @@
                 <table-column>city</table-column>
             </cmp-field-mapping>
             <primkey-field>id</primkey-field>
-            <key-generator xmlns="http://openejb.apache.org/xml/ns/pkgen-2.1">
-                <auto-increment-table>
-                    <sql>insert into sequence_table (dummy) values (1)</sql>
-                    <return-type>java.lang.Integer</return-type>
-                </auto-increment-table>
-            </key-generator>
+            <!--<key-generator xmlns="http://openejb.apache.org/xml/ns/pkgen-2.1">-->
+                <!--<auto-increment-table>-->
+                    <!--<sql>insert into sequence_table (dummy) values (1)</sql>-->
+                    <!--<return-type>java.lang.Integer</return-type>-->
+                <!--</auto-increment-table>-->
+            <!--</key-generator>-->
         </entity>
 
         <entity>
