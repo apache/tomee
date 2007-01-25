@@ -160,11 +160,11 @@ public class PersistenceUnitDefaults {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadePersist() {
-        return cascadePersist;
+    public boolean isCascadePersist() {
+        return cascadePersist != null;
     }
 
     /**
@@ -172,11 +172,11 @@ public class PersistenceUnitDefaults {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadePersist(EmptyType value) {
-        this.cascadePersist = value;
+    public void setCascadePersist(boolean value) {
+        this.cascadePersist = value ? new EmptyType() : null;
     }
 
     /**

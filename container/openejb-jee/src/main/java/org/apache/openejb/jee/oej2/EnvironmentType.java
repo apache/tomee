@@ -172,11 +172,11 @@ public class EnvironmentType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getInverseClassloading() {
-        return inverseClassloading;
+    public boolean isInverseClassloading() {
+        return inverseClassloading != null;
     }
 
     /**
@@ -184,11 +184,11 @@ public class EnvironmentType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setInverseClassloading(EmptyType value) {
-        this.inverseClassloading = value;
+    public void setInverseClassloading(boolean value) {
+        this.inverseClassloading = value ? new EmptyType() : null;
     }
 
     /**
@@ -196,11 +196,11 @@ public class EnvironmentType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getSuppressDefaultEnvironment() {
-        return suppressDefaultEnvironment;
+    public boolean isSuppressDefaultEnvironment() {
+        return suppressDefaultEnvironment != null;
     }
 
     /**
@@ -208,11 +208,11 @@ public class EnvironmentType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setSuppressDefaultEnvironment(EmptyType value) {
-        this.suppressDefaultEnvironment = value;
+    public void setSuppressDefaultEnvironment(boolean value) {
+        this.suppressDefaultEnvironment = value ? new EmptyType() : null;
     }
 
 }

@@ -71,11 +71,11 @@ public class PersistenceUnitMetadata {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getXmlMappingMetadataComplete() {
-        return xmlMappingMetadataComplete;
+    public boolean isXmlMappingMetadataComplete() {
+        return xmlMappingMetadataComplete != null;
     }
 
     /**
@@ -83,11 +83,11 @@ public class PersistenceUnitMetadata {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setXmlMappingMetadataComplete(EmptyType value) {
-        this.xmlMappingMetadataComplete = value;
+    public void setXmlMappingMetadataComplete(boolean value) {
+        this.xmlMappingMetadataComplete = value ? new EmptyType() : null;
     }
 
     /**

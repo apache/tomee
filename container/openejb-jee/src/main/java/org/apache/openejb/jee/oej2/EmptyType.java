@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "emptyType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+@XmlType(name = "emptyType")
 public class EmptyType {
 
 

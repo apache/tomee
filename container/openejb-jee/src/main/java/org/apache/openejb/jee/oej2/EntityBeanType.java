@@ -361,11 +361,11 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getStaticSql() {
-        return staticSql;
+    public boolean isStaticSql() {
+        return staticSql != null;
     }
 
     /**
@@ -373,11 +373,11 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setStaticSql(EmptyType value) {
-        this.staticSql = value;
+    public void setStaticSql(boolean value) {
+        this.staticSql = value ? new EmptyType() : null;
     }
 
     /**
@@ -486,11 +486,11 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getSelectForUpdate() {
-        return selectForUpdate;
+    public boolean isSelectForUpdate() {
+        return selectForUpdate != null;
     }
 
     /**
@@ -498,11 +498,11 @@ public class EntityBeanType implements EnterpriseBean {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setSelectForUpdate(EmptyType value) {
-        this.selectForUpdate = value;
+    public void setSelectForUpdate(boolean value) {
+        this.selectForUpdate = value ? new EmptyType() : null;
     }
 
     /**

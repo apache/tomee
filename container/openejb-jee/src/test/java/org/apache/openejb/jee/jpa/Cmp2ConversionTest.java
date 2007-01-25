@@ -31,12 +31,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
-import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.oej2.Oej2JaxbUtil;
 import org.apache.openejb.jee.oej2.OpenejbJarType;
-import org.apache.openejb.jee.oej2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oej2.EnterpriseBean;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Relationships;
@@ -57,7 +54,7 @@ public class Cmp2ConversionTest extends TestCase {
         marshalAndUnmarshal(EjbJar.class, "ejb-jar-cmp-example1.xml");
     }
 
-    public void XtestConversion() throws Exception {
+    public void testConversion() throws Exception {
 //        InputStream in = this.getClass().getClassLoader().getResourceAsStream("ejb-jar-cmp-example1.xml");
 
         EntityMappings entityMappings = generateEntityMappings("itest-ejb-jar-2.2.xml");
@@ -68,14 +65,15 @@ public class Cmp2ConversionTest extends TestCase {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("openejb-jar-2.2.xml");
         String expected = readContent(in);
 
-//        Object value = Oej2JaxbUtil.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(expected.getBytes()));
-        Object value = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
-        OpenejbJarType openejbJarType = (OpenejbJarType) value;
+        JAXBElement element = (JAXBElement) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        OpenejbJarType openejbJarType = (OpenejbJarType) element.getValue();
 
-
+        OpenEjb2CmpConversion openEjb2CmpConversion = new OpenEjb2CmpConversion();
+        openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
         String actual = toString(entityMappings);
         System.out.println(actual);
     }
+
 
     private String toString(EntityMappings entityMappings) throws JAXBException {
         JAXBContext entityMappingsContext = JAXBContext.newInstance(EntityMappings.class);
@@ -130,14 +128,6 @@ public class Cmp2ConversionTest extends TestCase {
             // todo complex primary key
             // todo unknown primary key
             id.setName(bean.getPrimkeyField());
-
-            // todo detect generated
-            boolean generatedPk = true;
-            if (generatedPk) {
-                GeneratedValue generatedValue = new GeneratedValue();
-                generatedValue.setGenerator("IDENTITY");
-                id.setGeneratedValue(generatedValue);
-            }
             attributes.getId().add(id);
 
             //
@@ -195,7 +185,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (leftCascade) {
                             // todo simplify cmrType in jaxb tree
                             CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(new EmptyType());
+                            cascadeType.setCascadeAll(true);
                             leftOneToOne.setCascade(cascadeType);
                         }
                         leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
@@ -213,7 +203,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (rightCascade) {
                             // todo simplify cmrType in jaxb tree
                             CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(new EmptyType());
+                            cascadeType.setCascadeAll(true);
                             rightOneToOne.setCascade(cascadeType);
                         }
                         rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
@@ -234,7 +224,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (leftCascade) {
                             // todo simplify cmrType in jaxb tree
                             CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(new EmptyType());
+                            cascadeType.setCascadeAll(true);
                             leftOneToMany.setCascade(cascadeType);
                         }
                         leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
@@ -264,7 +254,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (rightCascade) {
                         // todo simplify cmrType in jaxb tree
                         CascadeType cascadeType = new CascadeType();
-                        cascadeType.setCascadeAll(new EmptyType());
+                        cascadeType.setCascadeAll(true);
                         rightOneToMany.setCascade(cascadeType);
                     }
                     rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
@@ -280,7 +270,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (leftCascade) {
                         // todo simplify cmrType in jaxb tree
                         CascadeType cascadeType = new CascadeType();
-                        cascadeType.setCascadeAll(new EmptyType());
+                        cascadeType.setCascadeAll(true);
                         leftManyToMany.setCascade(cascadeType);
                     }
                     leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
@@ -296,7 +286,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (rightCascade) {
                         // todo simplify cmrType in jaxb tree
                         CascadeType cascadeType = new CascadeType();
-                        cascadeType.setCascadeAll(new EmptyType());
+                        cascadeType.setCascadeAll(true);
                         rightManyToMany.setCascade(cascadeType);
                     }
                     rightEntity.getAttributes().getManyToMany().add(rightManyToMany);

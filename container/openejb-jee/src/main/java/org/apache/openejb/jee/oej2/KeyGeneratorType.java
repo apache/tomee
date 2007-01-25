@@ -79,11 +79,11 @@ public class KeyGeneratorType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getUuid() {
-        return uuid;
+    public boolean isUuid() {
+        return uuid != null;
     }
 
     /**
@@ -91,11 +91,11 @@ public class KeyGeneratorType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setUuid(EmptyType value) {
-        this.uuid = value;
+    public void setUuid(boolean value) {
+        this.uuid = value ? new EmptyType() : null;
     }
 
     /**

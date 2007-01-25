@@ -222,11 +222,11 @@ public class OpenejbJarType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getEnforceForeignKeyConstraints() {
-        return enforceForeignKeyConstraints;
+    public boolean isEnforceForeignKeyConstraints() {
+        return enforceForeignKeyConstraints != null;
     }
 
     /**
@@ -234,11 +234,11 @@ public class OpenejbJarType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setEnforceForeignKeyConstraints(EmptyType value) {
-        this.enforceForeignKeyConstraints = value;
+    public void setEnforceForeignKeyConstraints(boolean value) {
+        this.enforceForeignKeyConstraints = value ? new EmptyType() : null;
     }
 
     public List<EnterpriseBean> getEnterpriseBeans() {

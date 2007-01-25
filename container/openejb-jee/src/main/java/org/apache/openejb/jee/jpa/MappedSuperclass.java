@@ -174,11 +174,11 @@ public class MappedSuperclass {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getExcludeDefaultListeners() {
-        return excludeDefaultListeners;
+    public boolean isExcludeDefaultListeners() {
+        return excludeDefaultListeners != null;
     }
 
     /**
@@ -186,11 +186,11 @@ public class MappedSuperclass {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setExcludeDefaultListeners(EmptyType value) {
-        this.excludeDefaultListeners = value;
+    public void setExcludeDefaultListeners(boolean value) {
+        this.excludeDefaultListeners = value ? new EmptyType() : null;
     }
 
     /**
@@ -198,11 +198,11 @@ public class MappedSuperclass {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getExcludeSuperclassListeners() {
-        return excludeSuperclassListeners;
+    public boolean isExcludeSuperclassListeners() {
+        return excludeSuperclassListeners != null;
     }
 
     /**
@@ -210,11 +210,11 @@ public class MappedSuperclass {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setExcludeSuperclassListeners(EmptyType value) {
-        this.excludeSuperclassListeners = value;
+    public void setExcludeSuperclassListeners(boolean value) {
+        this.excludeSuperclassListeners = value ? new EmptyType() : null;
     }
 
     /**

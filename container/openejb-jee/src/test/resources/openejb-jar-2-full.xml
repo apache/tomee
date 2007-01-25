@@ -420,7 +420,7 @@
                 <ns3:cmr-field>
                     <ns3:cmr-field-name>String</ns3:cmr-field-name>
                 </ns3:cmr-field>
-                <ns3:foreign-key-column-on-source xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">text</ns3:foreign-key-column-on-source>
+                <ns3:foreign-key-column-on-source/>
                 <ns3:role-mapping>
                     <ns3:cmr-field-mapping>
                         <ns3:key-column>String</ns3:key-column>
@@ -440,7 +440,7 @@
                 <ns3:cmr-field>
                     <ns3:cmr-field-name>String</ns3:cmr-field-name>
                 </ns3:cmr-field>
-                <ns3:foreign-key-column-on-source xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">text</ns3:foreign-key-column-on-source>
+                <ns3:foreign-key-column-on-source/>
                 <ns3:role-mapping>
                     <ns3:cmr-field-mapping>
                         <ns3:key-column>String</ns3:key-column>
@@ -464,7 +464,7 @@
                 <ns3:cmr-field>
                     <ns3:cmr-field-name>String</ns3:cmr-field-name>
                 </ns3:cmr-field>
-                <ns3:foreign-key-column-on-source xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">text</ns3:foreign-key-column-on-source>
+                <ns3:foreign-key-column-on-source/>
                 <ns3:role-mapping>
                     <ns3:cmr-field-mapping>
                         <ns3:key-column>String</ns3:key-column>
@@ -484,7 +484,7 @@
                 <ns3:cmr-field>
                     <ns3:cmr-field-name>String</ns3:cmr-field-name>
                 </ns3:cmr-field>
-                <ns3:foreign-key-column-on-source xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">text</ns3:foreign-key-column-on-source>
+                <ns3:foreign-key-column-on-source/>
                 <ns3:role-mapping>
                     <ns3:cmr-field-mapping>
                         <ns3:key-column>String</ns3:key-column>

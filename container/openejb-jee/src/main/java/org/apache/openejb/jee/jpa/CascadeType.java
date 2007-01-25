@@ -78,11 +78,11 @@ public class CascadeType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadeAll() {
-        return cascadeAll;
+    public boolean isCascadeAll() {
+        return cascadeAll != null;
     }
 
     /**
@@ -90,11 +90,11 @@ public class CascadeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadeAll(EmptyType value) {
-        this.cascadeAll = value;
+    public void setCascadeAll(boolean value) {
+        this.cascadeAll = value ? new EmptyType() : null;
     }
 
     /**
@@ -102,11 +102,11 @@ public class CascadeType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadePersist() {
-        return cascadePersist;
+    public boolean isCascadePersist() {
+        return cascadePersist != null;
     }
 
     /**
@@ -114,11 +114,11 @@ public class CascadeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadePersist(EmptyType value) {
-        this.cascadePersist = value;
+    public void setCascadePersist(boolean value) {
+        this.cascadePersist = value ? new EmptyType() : null;
     }
 
     /**
@@ -126,11 +126,11 @@ public class CascadeType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadeMerge() {
-        return cascadeMerge;
+    public boolean isCascadeMerge() {
+        return cascadeMerge != null;
     }
 
     /**
@@ -138,11 +138,11 @@ public class CascadeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadeMerge(EmptyType value) {
-        this.cascadeMerge = value;
+    public void setCascadeMerge(boolean value) {
+        this.cascadeMerge = value ? new EmptyType() : null;
     }
 
     /**
@@ -150,11 +150,11 @@ public class CascadeType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadeRemove() {
-        return cascadeRemove;
+    public boolean isCascadeRemove() {
+        return cascadeRemove != null;
     }
 
     /**
@@ -162,11 +162,11 @@ public class CascadeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadeRemove(EmptyType value) {
-        this.cascadeRemove = value;
+    public void setCascadeRemove(boolean value) {
+        this.cascadeRemove = value ? new EmptyType() : null;
     }
 
     /**
@@ -174,11 +174,11 @@ public class CascadeType {
      * 
      * @return
      *     possible object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public EmptyType getCascadeRefresh() {
-        return cascadeRefresh;
+    public boolean isCascadeRefresh() {
+        return cascadeRefresh != null;
     }
 
     /**
@@ -186,11 +186,11 @@ public class CascadeType {
      * 
      * @param value
      *     allowed object is
-     *     {@link EmptyType }
+     *     {@link boolean }
      *     
      */
-    public void setCascadeRefresh(EmptyType value) {
-        this.cascadeRefresh = value;
+    public void setCascadeRefresh(boolean value) {
+        this.cascadeRefresh = value ? new EmptyType() : null;
     }
 
 }

@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * <p>Java class for ejb-relationship-roleType complex type.
  * 
@@ -106,7 +105,7 @@ public class EjbRelationshipRoleType {
     @XmlElement(name = "cmr-field")
     protected EjbRelationshipRoleType.CmrField cmrField;
     @XmlElement(name = "foreign-key-column-on-source")
-    protected Object foreignKeyColumnOnSource;
+    protected EmptyType foreignKeyColumnOnSource;
     @XmlElement(name = "role-mapping", required = true)
     protected EjbRelationshipRoleType.RoleMapping roleMapping;
 
@@ -187,11 +186,11 @@ public class EjbRelationshipRoleType {
      * 
      * @return
      *     possible object is
-     *     {@link Object }
+     *     {@link boolean }
      *     
      */
-    public Object getForeignKeyColumnOnSource() {
-        return foreignKeyColumnOnSource;
+    public boolean isForeignKeyColumnOnSource() {
+        return foreignKeyColumnOnSource != null;
     }
 
     /**
@@ -199,11 +198,11 @@ public class EjbRelationshipRoleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link Object }
+     *     {@link boolean }
      *     
      */
-    public void setForeignKeyColumnOnSource(Object value) {
-        this.foreignKeyColumnOnSource = value;
+    public void setForeignKeyColumnOnSource(boolean value) {
+        this.foreignKeyColumnOnSource = value ? new EmptyType() : null;
     }
 
     /**
