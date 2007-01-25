@@ -204,7 +204,6 @@ public class Cmp2ConversionTest extends TestCase {
                     if (rightFieldName != null) {
                         rightOneToOne = new OneToOne();
                         rightOneToOne.setName(rightFieldName);
-                        // todo only non-owning (non-fk) side gets mapped-by
                         // mapped by only required for bi-directional
                         if (leftFieldName != null) {
                             rightOneToOne.setMappedBy(leftFieldName);
