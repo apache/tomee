@@ -24,9 +24,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,11 +156,11 @@ public class PersistenceDeployer {
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 }
 
-                String rootUrlPath = url.toExternalForm().replaceFirst("!?META-INF/persistence.xml$","");
+                String rootUrlPath = url.toExternalForm().replaceFirst("!?META-INF/persistence.xml$", "");
                 unitInfo.setPersistenceUnitRootUrl(new URL(rootUrlPath));
 
                 String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
-                if (persistenceProviderClassName == null){
+                if (persistenceProviderClassName == null) {
                     continue;
                 }
                 Class clazz = cl.loadClass(persistenceProviderClassName);
@@ -181,33 +179,14 @@ public class PersistenceDeployer {
 
     }
 
-    public Map<String, EntityManagerFactory> deploy(ClassLoader cl) throws PersistenceDeployerException {
-
-        Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
-        // Read the persistence.xml files
-        try {
-            Enumeration<URL> urls = cl.getResources("../../../../../../../../openejb-core/src/test/resources/META-INF/persistence.xml");
-
-            while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
-                factoryList.putAll(loadPersistence(cl, url));
-            }
-
-        } catch (IOException e) {
-            throw new PersistenceDeployerException(e);
-        }
-
-        return factoryList;
-    }
-    
-    public Map<String, EntityManagerFactory> deploy(List<URL> urls,ClassLoader cl) throws PersistenceDeployerException {
+    public Map<String, EntityManagerFactory> deploy(List<URL> urls, ClassLoader cl) throws PersistenceDeployerException {
 
         Map<String, EntityManagerFactory> factories = new HashMap<String, EntityManagerFactory>();
         // Read the persistence.xml files      
 
         for (URL url : urls) {
             factories.putAll(loadPersistence(cl, url));
-        }        
+        }
         return factories;
     }
 

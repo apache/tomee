@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.persistence;
+package org.apache.openejb.jee.jpa;
 
 
 import junit.framework.TestCase;
