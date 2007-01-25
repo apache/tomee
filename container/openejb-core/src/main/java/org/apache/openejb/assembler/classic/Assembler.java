@@ -126,7 +126,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         /* Get Configuration ////////////////////////////*/
         String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
         if (className == null) {
-            className = props.getProperty("openejb.configurator", "org.apache.openejb.alt.config.ConfigurationFactory");
+            className = props.getProperty("openejb.configurator", "org.apache.openejb.config.ConfigurationFactory");
         }
 
         configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);

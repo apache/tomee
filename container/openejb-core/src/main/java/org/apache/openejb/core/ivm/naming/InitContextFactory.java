@@ -49,7 +49,7 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             *      probably just be deleted.
             */
             props.put(EnvProps.ASSEMBLER, "org.apache.openejb.assembler.classic.Assembler");
-            props.put(EnvProps.CONFIGURATION_FACTORY, "org.apache.openejb.alt.config.ConfigurationFactory");
+            props.put(EnvProps.CONFIGURATION_FACTORY, "org.apache.openejb.config.ConfigurationFactory");
             props.put(EnvProps.CONFIGURATION, "conf/default.openejb.conf");
 
             props.putAll(SystemInstance.get().getProperties());

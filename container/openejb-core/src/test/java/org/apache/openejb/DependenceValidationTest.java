@@ -58,7 +58,7 @@ public class DependenceValidationTest extends TestCase {
         // Nothing may depend on the Assembler except the config code or spring assembler
         String springAssembler = "org.apache.openejb.assembler.spring";
         String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.alt.config", springAssembler, "org.apache.openejb.assembler.dynamic");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.config", springAssembler, "org.apache.openejb.assembler.dynamic");
 
         // Nothing may depend on the Spring Assembler
         assertNotDependentOn("org.apache.openejb", springAssembler);
@@ -67,13 +67,13 @@ public class DependenceValidationTest extends TestCase {
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);
 
         // Nothing may depend on the JAXB Tree except the Config code
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.alt.config");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config");
 
         // Nothing may depend on the Config code except it's subpackages and the Spring Assembler
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.alt.config", "org.apache.openejb.alt.config.rules", "org.apache.openejb.alt.config.sys", springAssembler, dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", springAssembler, dynamicAssembler);
 
         // The assembler may not be dependent on the config factory Implementation
-        assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.alt.config");
+        assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");
 
         // Nothing should be dependent on any one particular container implementation   (except the Spring and Dynamic Assembler)
         // TODO: This needs fixing... containers are supposed to be pluggable

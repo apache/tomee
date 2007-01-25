@@ -119,7 +119,7 @@
             </manifest>
             <manifestEntries>
               <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-2.8.jar</Class-Path>
-              <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.alt.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
+              <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
         </configuration>
