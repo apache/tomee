@@ -186,7 +186,7 @@ public class PersistenceDeployer {
         Map<String, EntityManagerFactory> factoryList = new HashMap<String, EntityManagerFactory>();
         // Read the persistence.xml files
         try {
-            Enumeration<URL> urls = cl.getResources("META-INF/persistence.xml");
+            Enumeration<URL> urls = cl.getResources("../../../../../../../../openejb-core/src/test/resources/META-INF/persistence.xml");
 
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();

@@ -73,7 +73,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "openejb-jarType", propOrder = {
+@XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
     "environment",
     "cmpConnectionFactory",
     "ejbQlCompilerFactory",

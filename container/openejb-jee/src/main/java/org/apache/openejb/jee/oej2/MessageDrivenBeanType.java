@@ -73,7 +73,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
 
-    @XmlElement(name = "resource-adapter", required = true)
+    @XmlElement(name = "resource-adapter",  namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected ResourceLocatorType resourceAdapter;
 
     @XmlElement(name = "activation-config")
