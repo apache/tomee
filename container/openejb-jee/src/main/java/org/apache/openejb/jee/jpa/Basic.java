@@ -67,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
     "temporal",
     "enumerated"
 })
-public class Basic {
+public class Basic implements Field {
 
     protected Column column;
     protected Lob lob;

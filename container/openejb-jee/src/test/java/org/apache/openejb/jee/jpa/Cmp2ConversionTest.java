@@ -179,61 +179,63 @@ public class Cmp2ConversionTest extends TestCase {
                     //
 
                     // left
-                    if (leftEntity != null) {
-                        OneToOne leftOneToOne = new OneToOne();
-                        leftOneToOne.setName(leftFieldName);
-                        if (leftCascade) {
-                            // todo simplify cmrType in jaxb tree
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            leftOneToOne.setCascade(cascadeType);
-                        }
-                        leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
+                    OneToOne leftOneToOne = new OneToOne();
+                    leftOneToOne.setName(leftFieldName);
+                    if (leftCascade) {
+                        // todo simplify cmrType in jaxb tree
+                        CascadeType cascadeType = new CascadeType();
+                        cascadeType.setCascadeAll(true);
+                        leftOneToOne.setCascade(cascadeType);
                     }
+                    leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
 
                     // right
-                    if (rightEntity != null) {
-                        OneToOne rightOneToOne = new OneToOne();
-                        rightOneToOne.setName(rightFieldName);
-                        // todo only non-owning (non-fk) side gets mapped-by
-                        // mapped by only required for bi-directional
-                        if (leftFieldName != null) {
-                            rightOneToOne.setMappedBy(leftFieldName);
-                        }
-                        if (rightCascade) {
-                            // todo simplify cmrType in jaxb tree
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            rightOneToOne.setCascade(cascadeType);
-                        }
-                        rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
+                    OneToOne rightOneToOne = new OneToOne();
+                    rightOneToOne.setName(rightFieldName);
+                    // todo only non-owning (non-fk) side gets mapped-by
+                    // mapped by only required for bi-directional
+                    if (leftFieldName != null) {
+                        rightOneToOne.setMappedBy(leftFieldName);
                     }
+                    if (rightCascade) {
+                        // todo simplify cmrType in jaxb tree
+                        CascadeType cascadeType = new CascadeType();
+                        cascadeType.setCascadeAll(true);
+                        rightOneToOne.setCascade(cascadeType);
+                    }
+                    rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
+
+                    // link
+                    leftOneToOne.setRelatedField(rightOneToOne);
+                    rightOneToOne.setRelatedField(leftOneToOne);
                 } else if (leftIsOne && !rightIsOne) {
                     //
                     // one-to-many
                     //
 
                     // left
-                    if (leftEntity != null) {
-                        OneToMany leftOneToMany = new OneToMany();
-                        leftOneToMany.setName(leftFieldName);
-                        // mapped by only required for bi-directional
-                        if (rightFieldName != null) {
-                            leftOneToMany.setMappedBy(rightFieldName);
-                        }
-                        if (leftCascade) {
-                            // todo simplify cmrType in jaxb tree
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            leftOneToMany.setCascade(cascadeType);
-                        }
-                        leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
+                    OneToMany leftOneToMany = new OneToMany();
+                    leftOneToMany.setName(leftFieldName);
+                    // mapped by only required for bi-directional
+                    if (rightFieldName != null) {
+                        leftOneToMany.setMappedBy(rightFieldName);
                     }
+                    if (leftCascade) {
+                        // todo simplify cmrType in jaxb tree
+                        CascadeType cascadeType = new CascadeType();
+                        cascadeType.setCascadeAll(true);
+                        leftOneToMany.setCascade(cascadeType);
+                    }
+                    leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
 
                     // right
                     ManyToOne rightManyToOne = new ManyToOne();
                     rightManyToOne.setName(rightFieldName);
                     rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
+
+                    // link
+                    leftOneToMany.setRelatedField(rightManyToOne);
+                    rightManyToOne.setRelatedField(leftOneToMany);
                 } else if (!leftIsOne && rightIsOne) {
                     //
                     // many-to-one
@@ -259,6 +261,9 @@ public class Cmp2ConversionTest extends TestCase {
                     }
                     rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
 
+                    // link
+                    leftManyToOne.setRelatedField(rightOneToMany);
+                    rightOneToMany.setRelatedField(leftManyToOne);
                 } else if (!leftIsOne && !rightIsOne) {
                     //
                     // many-to-many
@@ -290,6 +295,10 @@ public class Cmp2ConversionTest extends TestCase {
                         rightManyToMany.setCascade(cascadeType);
                     }
                     rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
+
+                    // link
+                    leftManyToMany.setRelatedField(rightManyToMany);
+                    rightManyToMany.setRelatedField(leftManyToMany);
                 }
             }
         }

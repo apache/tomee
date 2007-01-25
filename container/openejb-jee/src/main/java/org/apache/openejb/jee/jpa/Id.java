@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
     "tableGenerator",
     "sequenceGenerator"
 })
-public class Id {
+public class Id implements Field {
 
     protected Column column;
     @XmlElement(name = "generated-value")

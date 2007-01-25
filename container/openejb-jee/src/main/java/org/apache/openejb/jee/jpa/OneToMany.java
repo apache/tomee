@@ -24,11 +24,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
- * 
- * 
+ *
+ *
  *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
  *         public @interface OneToMany {
  *           Class targetEntity() default void.class;
@@ -36,13 +37,13 @@ import javax.xml.bind.annotation.XmlType;
  *           FetchType fetch() default LAZY;
  *           String mappedBy() default "";
  *         }
- * 
- *       
- * 
+ *
+ *
+ *
  * <p>Java class for one-to-many complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="one-to-many">
  *   &lt;complexContent>
@@ -64,8 +65,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "one-to-many", propOrder = {
@@ -75,7 +76,7 @@ import javax.xml.bind.annotation.XmlType;
     "joinColumn",
     "cascade"
 })
-public class OneToMany {
+public class OneToMany implements RelationField {
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -94,14 +95,16 @@ public class OneToMany {
     protected String name;
     @XmlAttribute(name = "target-entity")
     protected String targetEntity;
+    @XmlTransient
+    protected RelationField relatedField;
 
     /**
      * Gets the value of the orderBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrderBy() {
         return orderBy;
@@ -109,11 +112,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the orderBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrderBy(String value) {
         this.orderBy = value;
@@ -121,11 +124,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the mapKey property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MapKey }
-     *     
+     *
      */
     public MapKey getMapKey() {
         return mapKey;
@@ -133,11 +136,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the mapKey property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MapKey }
-     *     
+     *
      */
     public void setMapKey(MapKey value) {
         this.mapKey = value;
@@ -145,11 +148,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the joinTable property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JoinTable }
-     *     
+     *
      */
     public JoinTable getJoinTable() {
         return joinTable;
@@ -157,11 +160,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the joinTable property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JoinTable }
-     *     
+     *
      */
     public void setJoinTable(JoinTable value) {
         this.joinTable = value;
@@ -169,25 +172,25 @@ public class OneToMany {
 
     /**
      * Gets the value of the joinColumn property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the joinColumn property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJoinColumn().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JoinColumn }
-     * 
-     * 
+     *
+     *
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
@@ -198,11 +201,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the cascade property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CascadeType }
-     *     
+     *
      */
     public CascadeType getCascade() {
         return cascade;
@@ -210,11 +213,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the cascade property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CascadeType }
-     *     
+     *
      */
     public void setCascade(CascadeType value) {
         this.cascade = value;
@@ -222,11 +225,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the fetch property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FetchType }
-     *     
+     *
      */
     public FetchType getFetch() {
         return fetch;
@@ -234,11 +237,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the fetch property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FetchType }
-     *     
+     *
      */
     public void setFetch(FetchType value) {
         this.fetch = value;
@@ -246,11 +249,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the mappedBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMappedBy() {
         return mappedBy;
@@ -258,11 +261,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the mappedBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMappedBy(String value) {
         this.mappedBy = value;
@@ -270,11 +273,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -282,11 +285,11 @@ public class OneToMany {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -294,11 +297,11 @@ public class OneToMany {
 
     /**
      * Gets the value of the targetEntity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetEntity() {
         return targetEntity;
@@ -306,14 +309,30 @@ public class OneToMany {
 
     /**
      * Sets the value of the targetEntity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetEntity(String value) {
         this.targetEntity = value;
     }
 
+    /**
+     * This is only used for xml converters and will normally return null.
+     * Gets the field on the target entity for this relationship.
+     * @return the field on the target entity for this relationship.
+     */
+    public RelationField getRelatedField() {
+        return relatedField;
+    }
+
+    /**
+     * Gets the field on the target entity for this relationship.
+     * @param value field on the target entity for this relationship.
+     */
+    public void setRelatedField(RelationField value) {
+        this.relatedField = value;
+    }
 }

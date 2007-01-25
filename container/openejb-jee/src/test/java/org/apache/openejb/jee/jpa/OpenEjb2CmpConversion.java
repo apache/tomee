@@ -30,22 +30,34 @@ import org.apache.openejb.jee.oej2.EjbRelationshipRoleType;
 public class OpenEjb2CmpConversion {
 
     public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJarType openejbJarType) {
-        Map<String, Entity> entities = createEntityMappings(entityMappings);
+        Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
+        for (Entity entity : entityMappings.getEntity()) {
+            entities.put(entity.getDescription(), new EntityData(entity));
+        }
         for (EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof EntityBeanType)) {
                 continue;
             }
             EntityBeanType bean = (EntityBeanType) enterpriseBean;
-            Entity entity = entities.get(bean.getEjbName());
-            if (entity == null) {
+            EntityData entityData = entities.get(bean.getEjbName());
+            if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
 
-            Map<String, Basic> fields = createFieldMappings(entity);
+            Table table = new Table();
+            table.setName(bean.getTableName());
+            entityData.entity.setTable(table);
+
             for (EntityBeanType.CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
                 String cmpFieldName = cmpFieldMapping.getCmpFieldName();
-                Basic field = fields.get(cmpFieldName);
+                Field field;
+                if (cmpFieldName.equals(entityData.id.getName())) {
+                    field = entityData.id;
+                } else {
+                    field = entityData.fields.get(cmpFieldName);
+                }
+
                 if (field == null) {
                     // todo warn no such cmp-field in the ejb-jar.xml
                     continue;
@@ -57,7 +69,7 @@ public class OpenEjb2CmpConversion {
 
             // todo this doesn't seem to parse?
             if (bean.getKeyGenerator() != null) {
-                Id id = entity.getAttributes().getId().get(0);
+                Id id = entityData.entity.getAttributes().getId().get(0);
 
                 // todo detect specific generation strategy
                 GeneratedValue generatedValue = new GeneratedValue();
@@ -78,53 +90,80 @@ public class OpenEjb2CmpConversion {
                 EjbRelationshipRoleType leftRole = roles.get(0);
                 EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
                 String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
-                Entity leftEntity = entities.get(leftEjbName);
-                EjbRelationshipRoleType.CmrField leftCmrField = leftRole.getCmrField();
-                String leftFieldName = leftCmrField.getCmrFieldName();
+                EntityData leftEntityData = entities.get(leftEjbName);
+                String leftFieldName = leftRole.getCmrField().getCmrFieldName();
 
+                RelationField field;
                 if (leftRole.isForeignKeyColumnOnSource()) {
-                    EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
-                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                        JoinColumn joinColumn = new JoinColumn();
-                        String keyColumn = cmrFieldMapping.getKeyColumn();
-                        String foreignKeyColumn = cmrFieldMapping.getForeignKeyColumn();
-                    }
+                    field = leftEntityData.relations.get(leftFieldName);
+                } else {
+                    field = leftEntityData.relations.get(leftFieldName).getRelatedField();
                 }
 
-                if (roles.size() > 1) {
-                    EjbRelationshipRoleType rightRole = roles.get(1);
-                    EjbRelationshipRoleType.RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
-                    String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
-                    Entity rightEntity = entities.get(rightEjbName);
-                    EjbRelationshipRoleType.CmrField  rightCmrField = rightRole.getCmrField();
-                    String rightFieldName = rightCmrField.getCmrFieldName();
-
-//                    boolean rightCascade = rightRole.getCascadeDelete() != null;
-//                    boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
+                EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
+                for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                    JoinColumn joinColumn = new JoinColumn();
+                    joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
+                    joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
+                    field.getJoinColumn().add(joinColumn);
                 }
+
+//                if (roles.size() > 1) {
+//                    EjbRelationshipRoleType rightRole = roles.get(1);
+//                    EjbRelationshipRoleType.RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
+//                    String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
+//                    Entity rightEntity = entities.get(rightEjbName);
+//                    EjbRelationshipRoleType.CmrField  rightCmrField = rightRole.getCmrField();
+//                    String rightFieldName = rightCmrField.getCmrFieldName();
+//
+////                    boolean rightCascade = rightRole.getCascadeDelete() != null;
+////                    boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
+//                }
 
             }
         }
     }
 
-    private Map<String, Entity> createEntityMappings(EntityMappings entityMappings) {
-        Map<String, Entity> entities = new TreeMap<String, Entity>();
-        for (Entity entity : entityMappings.getEntity()) {
-            // raw ejb name is stored in the description field
-            String ejbName = entity.getDescription();
-            entities.put(ejbName, entity);
-        }
-        return entities;
-    }
+    private class EntityData {
+        public final Entity entity;
+        private final Id id;
+        public final Map<String, Basic> fields = new TreeMap<String, Basic>();
+        public final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
-    private Map<String, Basic> createFieldMappings(Entity entity) {
-        Map<String, Basic> fields = new TreeMap<String, Basic>();
-        if (entity.getAttributes() != null) {
-            for (Basic basic : entity.getAttributes().getBasic()) {
+        public EntityData(Entity entity) {
+            this.entity = entity;
+
+            id = entity.getAttributes().getId().get(0);
+
+            Attributes attributes = entity.getAttributes();
+            if (attributes == null) {
+                return;
+            }
+
+            for (Basic basic : attributes.getBasic()) {
                 String name = basic.getName();
                 fields.put(name, basic);
             }
+
+            for (RelationField relationField : attributes.getOneToOne()) {
+                String name = relationField.getName();
+                relations.put(name, relationField);
+            }
+
+            for (RelationField relationField : attributes.getOneToMany()) {
+                String name = relationField.getName();
+                relations.put(name, relationField);
+            }
+
+            for (RelationField relationField : attributes.getManyToOne()) {
+                String name = relationField.getName();
+                relations.put(name, relationField);
+            }
+
+            for (RelationField relationField : attributes.getManyToMany()) {
+                String name = relationField.getName();
+                relations.put(name, relationField);
+            }
         }
-        return fields;
     }
 }
