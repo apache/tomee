@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2">
-
-
-  <!--
-  ##
-  ##  C o n n e c t i o n  F a c t o r y  D e f i n i t i o n
-  ##
-  ##
-  ##
-  -->
+<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
   <cmp-connection-factory>
     <resource-link>jdbc/TradeDataSource</resource-link>
   </cmp-connection-factory>
-  <!--            <ejb-ql-compiler-factory>com.tranql.sql.ejbcompiler.DB2EJBQLCompilerFactory</ejb-ql-compiler-factory>  -->
-  <!--            <db-syntax-factory>com.tranql.sql.db2.DB2DBSyntaxFactory</db-syntax-factory>  -->
-
   <enterprise-beans>
     <session>
       <ejb-name>TradeEJB</ejb-name>
@@ -33,15 +21,6 @@
       <jndi-name>ejb/KeySequenceEJB</jndi-name>
       <cache-size>100</cache-size>
     </session>
-
-
-    <!--
-    ##
-    ##  H o l d i n g E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>HoldingEJB</ejb-name>
       <table-name>HOLDINGEJB</table-name>
@@ -62,15 +41,6 @@
         <table-column>purchaseDate</table-column>
       </cmp-field-mapping>
     </entity>
-
-
-    <!--
-    ##
-    ##  A c c o u n t P r o f i l e E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>AccountProfileEJB</ejb-name>
       <table-name>AccountProfileEJB</table-name>
@@ -99,15 +69,6 @@
         <table-column>fullName</table-column>
       </cmp-field-mapping>
     </entity>
-
-
-    <!--
-    ##
-    ##  Q u o t e E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>QuoteEJB</ejb-name>
       <table-name>QuoteEJB</table-name>
@@ -144,15 +105,6 @@
         <table-column>change1</table-column>
       </cmp-field-mapping>
     </entity>
-
-
-    <!--
-    ##
-    ##  K e y G e n E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>KeyGenEJB</ejb-name>
       <table-name>KeyGenEJB</table-name>
@@ -165,15 +117,6 @@
         <table-column>keyName</table-column>
       </cmp-field-mapping>
     </entity>
-
-
-    <!--
-    ##
-    ##  A c c o u n t E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>AccountEJB</ejb-name>
       <table-name>AccountEJB</table-name>
@@ -206,15 +149,6 @@
         <table-column>loginCount</table-column>
       </cmp-field-mapping>
     </entity>
-
-
-    <!--
-    ##
-    ##  O r d e r E J B
-    ##
-    ##
-    ##
-    -->
     <entity>
       <ejb-name>OrderEJB</ejb-name>
       <table-name>OrderEJB</table-name>
@@ -251,12 +185,9 @@
         <table-column>orderID</table-column>
       </cmp-field-mapping>
     </entity>
-
-
     <message-driven>
       <ejb-name>TradeStreamerMDB</ejb-name>
       <resource-adapter>
-        <!--<resource-link>TradeJMS</resource-link>-->
         <resource-link>TradeJMSResources</resource-link>
       </resource-adapter>
       <activation-config>
@@ -278,11 +209,9 @@
         </activation-config-property>
       </activation-config>
     </message-driven>
-
     <message-driven>
       <ejb-name>TradeBrokerMDB</ejb-name>
       <resource-adapter>
-        <!--<resource-link>TradeJMS</resource-link>-->
         <resource-link>TradeJMSResources</resource-link>
       </resource-adapter>
       <activation-config>
@@ -305,14 +234,6 @@
       </activation-config>
     </message-driven>
   </enterprise-beans>
-
-  <!--
-  **
-  ** R e l a t i o n s h i p s   D e f i n i t i o n s
-  **
-  **
-  ** The following section defines the relationshoips for the entity beans in the application.
-  -->
   <relationships>
     <ejb-relation>
       <ejb-relation-name>Account-Orders</ejb-relation-name>
@@ -332,15 +253,6 @@
         </role-mapping>
       </ejb-relationship-role>
     </ejb-relation>
-
-
-    <!--
-    **
-    ** A c c o u n t   -   A c c o u n t P r o f i l e
-    **
-    **
-    ** The following section defines the relationships for the entity beans in the application.
-    -->
     <ejb-relation>
       <ejb-relation-name>Account-AccountProfile</ejb-relation-name>
       <ejb-relationship-role>
@@ -360,15 +272,6 @@
         </role-mapping>
       </ejb-relationship-role>
     </ejb-relation>
-
-
-    <!--
-    **
-    ** A c c o u n t   -   H o l d i n g s
-    **
-    **
-    **
-    -->
     <ejb-relation>
       <ejb-relation-name>Account-Holdings</ejb-relation-name>
       <ejb-relationship-role>
@@ -387,15 +290,6 @@
         </role-mapping>
       </ejb-relationship-role>
     </ejb-relation>
-
-
-    <!--
-    **
-    ** Q u o t e  -  H o l d i n g s
-    **
-    **
-    ** The following section defines the relationships for the entity beans in the application.
-    -->
     <ejb-relation>
       <ejb-relation-name>Quote-Holdings</ejb-relation-name>
       <ejb-relationship-role>
@@ -415,15 +309,6 @@
         </role-mapping>
       </ejb-relationship-role>
     </ejb-relation>
-
-
-    <!--
-    **
-    ** Q u o t e   -   O r d e r s
-    **
-    **
-    ** The following section defines the relationships for the entity beans in the application.
-    -->
     <ejb-relation>
       <ejb-relation-name>Quote-Orders</ejb-relation-name>
       <ejb-relationship-role>
@@ -443,15 +328,6 @@
         </role-mapping>
       </ejb-relationship-role>
     </ejb-relation>
-
-
-    <!--
-    **
-    ** O r d e r  -   H o l d i n g
-    **
-    **
-    ** The following section defines the relationships for the entity beans in the application.
-    -->
     <ejb-relation>
       <ejb-relation-name>Order-Holding</ejb-relation-name>
       <ejb-relationship-role>
@@ -473,10 +349,7 @@
     </ejb-relation>
   </relationships>
   <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
-
     <persistence-unit transaction-type="JTA" name="daytrader">
-
-
       <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
       <jta-data-source>?name=jdbc/TradeDataSource</jta-data-source>
       <non-jta-data-source>?name=jdbc/NoTxTradeDataSource</non-jta-data-source>
@@ -488,10 +361,8 @@
       <exclude-unlisted-classes/>
       <properties>
         <property name="openjpa.jdbc.DBDictionary" value="org.apache.openjpa.jdbc.sql.DerbyDictionary"/>
-        <!--<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>-->
         <property name="openjpa.Sequence" value="table(Table=OPENJPASEQ, Increment=100)"/>
       </properties>
     </persistence-unit>
   </persistence>
-
 </openejb-jar>

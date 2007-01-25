@@ -17,6 +17,8 @@
 
 package org.apache.openejb.jee.oej2;
 
+import org.apache.openejb.jee.jpa.unit.Persistence;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +85,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
     "relationships",
     "messageDestination",
     "security",
-    "service"
+    "service",
+    "persistence"
 })
 public class OpenejbJarType {
 
@@ -120,6 +123,9 @@ public class OpenejbJarType {
 
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
+
+    @XmlElementRef(name="persistence", namespace = "http://java.sun.com/xml/ns/persistence", type = Persistence.class)
+    protected List<Persistence> persistence;
 
     /**
      * Gets the value of the environment property.
@@ -205,38 +211,14 @@ public class OpenejbJarType {
         return dbSyntaxFactory;
     }
 
-    /**
-     * Sets the value of the dbSyntaxFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setDbSyntaxFactory(String value) {
         this.dbSyntaxFactory = value;
     }
 
-    /**
-     * Gets the value of the enforceForeignKeyConstraints property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
-     */
     public boolean isEnforceForeignKeyConstraints() {
         return enforceForeignKeyConstraints != null;
     }
 
-    /**
-     * Sets the value of the enforceForeignKeyConstraints property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
-     */
     public void setEnforceForeignKeyConstraints(boolean value) {
         this.enforceForeignKeyConstraints = value ? new EmptyType() : null;
     }
@@ -245,52 +227,14 @@ public class OpenejbJarType {
         return enterpriseBeans;
     }
 
-    /**
-     * Gets the value of the relationships property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RelationshipsType }
-     *     
-     */
     public RelationshipsType getRelationships() {
         return relationships;
     }
 
-    /**
-     * Sets the value of the relationships property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RelationshipsType }
-     *     
-     */
     public void setRelationships(RelationshipsType value) {
         this.relationships = value;
     }
 
-    /**
-     * Gets the value of the messageDestination property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messageDestination property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMessageDestination().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MessageDestinationType }
-     * 
-     * 
-     */
     public List<MessageDestinationType> getMessageDestination() {
         if (messageDestination == null) {
             messageDestination = new ArrayList<MessageDestinationType>();
@@ -298,53 +242,14 @@ public class OpenejbJarType {
         return this.messageDestination;
     }
 
-    /**
-     * Gets the value of the security property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AbstractSecurityType }
-     *     
-     */
     public AbstractSecurityType getSecurity() {
         return security;
     }
 
-    /**
-     * Sets the value of the security property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AbstractSecurityType }
-     *     
-     */
     public void setSecurity(AbstractSecurityType value) {
         this.security = value;
     }
 
-    /**
-     * Gets the value of the service property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the service property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getService().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link GbeanType }{@code >}
-     * {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}
-     * 
-     * 
-     */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
             service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
