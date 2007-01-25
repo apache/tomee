@@ -129,7 +129,65 @@ public class OpenEjb2CmpConversion {
                     field.getJoinColumn().add(joinColumn);
                 }
             } else {
-                // todo support many-to-many
+                JoinTable joinTable = new JoinTable();
+                joinTable.setName(relation.getManyToManyTableName());
+
+                //
+                // left
+                EjbRelationshipRoleType leftRole = roles.get(0);
+                RelationField left = null;
+                if (leftRole.getRelationshipRoleSource() != null) {
+                    String leftEjbName = leftRole.getRelationshipRoleSource().getEjbName();
+                    EntityData leftEntityData = entities.get(leftEjbName);
+                    if (leftEntityData == null) {
+                        // todo warn no such entity in ejb-jar.xml
+                        continue;
+                    }
+                    left = leftEntityData.relations.get(leftRole.getCmrField().getCmrFieldName());
+                }
+
+                if (left != null) {
+                    left.setJoinTable(joinTable);
+
+                    EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
+                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                        JoinColumn joinColumn = new JoinColumn();
+                        joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
+                        joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
+                        joinTable.getJoinColumn().add(joinColumn);
+                    }
+                }
+
+                //
+                // right
+                if (roles.size() > 1) {
+                    EjbRelationshipRoleType rightRole = roles.get(1);
+
+                    RelationField right = left.getRelatedField();
+                    if (right == null) {
+                        if (rightRole.getRelationshipRoleSource() != null) {
+                            String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
+                            EntityData rightEntityData = entities.get(rightEjbName);
+                            if (rightEntityData == null) {
+                                // todo warn no such entity in ejb-jar.xml
+                                continue;
+                            }
+                            right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
+                        }
+                    }
+                    if (right != null) {
+                        if (left == null) {
+                            right.setJoinTable(joinTable);
+                        }
+                        EjbRelationshipRoleType.RoleMapping roleMapping = rightRole.getRoleMapping();
+                        for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                            JoinColumn joinColumn = new JoinColumn();
+                            joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
+                            joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
+                            joinTable.getInverseJoinColumn().add(joinColumn);
+                        }
+                    }
+                }
             }
         }
     }
