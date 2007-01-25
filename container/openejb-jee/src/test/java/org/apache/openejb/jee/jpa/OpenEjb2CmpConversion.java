@@ -24,7 +24,6 @@ import org.apache.openejb.jee.oej2.EjbRelationType;
 import org.apache.openejb.jee.oej2.EnterpriseBean;
 import org.apache.openejb.jee.oej2.EntityBeanType;
 import org.apache.openejb.jee.oej2.OpenejbJarType;
-import org.apache.openejb.jee.oej2.RelationshipsType;
 import org.apache.openejb.jee.oej2.EjbRelationshipRoleType;
 
 public class OpenEjb2CmpConversion {
@@ -78,57 +77,59 @@ public class OpenEjb2CmpConversion {
             }
         }
 
-        RelationshipsType relationships = openejbJarType.getRelationships();
-        if (relationships != null) {
-            // todo simplify
-            for (EjbRelationType relation : relationships.getEjbRelation()) {
-                List<EjbRelationshipRoleType> roles = relation.getEjbRelationshipRole();
-                if (roles.isEmpty()) {
-                    continue;
-                }
+        for (EjbRelationType relation : openejbJarType.getEjbRelation()) {
+            List<EjbRelationshipRoleType> roles = relation.getEjbRelationshipRole();
+            if (roles.isEmpty()) {
+                continue;
+            }
 
-                if (relation.getManyToManyTableName() == null) {
-                    EjbRelationshipRoleType leftRole = roles.get(0);
-                    EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
-                    String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
-                    EntityData leftEntityData = entities.get(leftEjbName);
-                    String leftFieldName = leftRole.getCmrField().getCmrFieldName();
+            if (relation.getManyToManyTableName() == null) {
+                EjbRelationshipRoleType leftRole = roles.get(0);
+                EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
+                String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
+                EntityData leftEntityData = entities.get(leftEjbName);
+                String leftFieldName = leftRole.getCmrField().getCmrFieldName();
 
-                    RelationField field;
-                    if (leftRole.isForeignKeyColumnOnSource()) {
-                        field = leftEntityData.relations.get(leftFieldName);
-                        // todo warn field not found
-                        if (field == null) continue;
-                    } else {
-                        RelationField other = leftEntityData.relations.get(leftFieldName);
-                        // todo warn field not found
-                        if (other == null) continue;
-                        field = other.getRelatedField();
-                        // todo warn field not found
-                        if (field == null) continue;
-                    }
-
-                    // For one-to-one, make sure that the field to recieve the FK
-                    // is marked as the owning field
-                    if (field instanceof OneToOne) {
-                        OneToOne left = (OneToOne) field;
-                        OneToOne right = (OneToOne) left.getRelatedField();
-                        if (right != null) {
-                            left.setMappedBy(null);
-                            right.setMappedBy(left.getName());
-                        }
-
-                    }
-                    EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
-                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                        JoinColumn joinColumn = new JoinColumn();
-                        joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
-                        joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
-                        field.getJoinColumn().add(joinColumn);
+                RelationField field;
+                if (leftRole.isForeignKeyColumnOnSource()) {
+                    field = leftEntityData.relations.get(leftFieldName);
+                    // todo warn field not found
+                    if (field == null) {
+                        continue;
                     }
                 } else {
-                    // todo support many-to-many
+                    RelationField other = leftEntityData.relations.get(leftFieldName);
+                    // todo warn field not found
+                    if (other == null) {
+                        continue;
+                    }
+                    field = other.getRelatedField();
+                    // todo warn field not found
+                    if (field == null) {
+                        continue;
+                    }
                 }
+
+                // For one-to-one, make sure that the field to recieve the FK
+                // is marked as the owning field
+                if (field instanceof OneToOne) {
+                    OneToOne left = (OneToOne) field;
+                    OneToOne right = (OneToOne) left.getRelatedField();
+                    if (right != null) {
+                        left.setMappedBy(null);
+                        right.setMappedBy(left.getName());
+                    }
+
+                }
+                EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
+                for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                    JoinColumn joinColumn = new JoinColumn();
+                    joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
+                    joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
+                    field.getJoinColumn().add(joinColumn);
+                }
+            } else {
+                // todo support many-to-many
             }
         }
     }

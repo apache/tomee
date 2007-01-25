@@ -370,22 +370,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RelationshipsType }
-     * 
-     */
-    public RelationshipsType createRelationshipsType() {
-        return new RelationshipsType();
-    }
-
-//    /**
-//     * Create an instance of {@link OpenejbJarType.EnterpriseBeans }
-//     *
-//     */
-//    public OpenejbJarType.EnterpriseBeans createOpenejbJarTypeEnterpriseBeans() {
-//        return new OpenejbJarType.EnterpriseBeans();
-//    }
-
-    /**
      * Create an instance of {@link OpenejbJarType }
      * 
      */

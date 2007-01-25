@@ -17,28 +17,25 @@
 
 package org.apache.openejb.jee.oej2;
 
-import org.apache.openejb.jee.jpa.unit.Persistence;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.apache.openejb.jee.jpa.unit.Persistence;
 
 
 /**
  * <p>Java class for openejb-jarType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="openejb-jarType">
  *   &lt;complexContent>
@@ -71,8 +68,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
@@ -82,7 +79,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
     "dbSyntaxFactory",
     "enforceForeignKeyConstraints",
     "enterpriseBeans",
-    "relationships",
+    "ejbRelation",
     "messageDestination",
     "security",
     "service",
@@ -112,8 +109,9 @@ public class OpenejbJarType {
     @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
     protected List<EnterpriseBean> enterpriseBeans = new ArrayList<EnterpriseBean>();
 
-    @XmlElement()
-    protected RelationshipsType relationships;
+    @XmlElementWrapper(name = "relationships")
+    @XmlElement(name = "ejb-relation", required = true)
+    protected List<EjbRelationType> ejbRelation;
 
     @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
@@ -129,11 +127,11 @@ public class OpenejbJarType {
 
     /**
      * Gets the value of the environment property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvironmentType }
-     *     
+     *
      */
     public EnvironmentType getEnvironment() {
         return environment;
@@ -141,11 +139,11 @@ public class OpenejbJarType {
 
     /**
      * Sets the value of the environment property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvironmentType }
-     *     
+     *
      */
     public void setEnvironment(EnvironmentType value) {
         this.environment = value;
@@ -153,11 +151,11 @@ public class OpenejbJarType {
 
     /**
      * Gets the value of the cmpConnectionFactory property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResourceLocatorType }
-     *     
+     *
      */
     public ResourceLocatorType getCmpConnectionFactory() {
         return cmpConnectionFactory;
@@ -165,11 +163,11 @@ public class OpenejbJarType {
 
     /**
      * Sets the value of the cmpConnectionFactory property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResourceLocatorType }
-     *     
+     *
      */
     public void setCmpConnectionFactory(ResourceLocatorType value) {
         this.cmpConnectionFactory = value;
@@ -177,11 +175,11 @@ public class OpenejbJarType {
 
     /**
      * Gets the value of the ejbQlCompilerFactory property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEjbQlCompilerFactory() {
         return ejbQlCompilerFactory;
@@ -189,11 +187,11 @@ public class OpenejbJarType {
 
     /**
      * Sets the value of the ejbQlCompilerFactory property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEjbQlCompilerFactory(String value) {
         this.ejbQlCompilerFactory = value;
@@ -201,11 +199,11 @@ public class OpenejbJarType {
 
     /**
      * Gets the value of the dbSyntaxFactory property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDbSyntaxFactory() {
         return dbSyntaxFactory;
@@ -227,12 +225,15 @@ public class OpenejbJarType {
         return enterpriseBeans;
     }
 
-    public RelationshipsType getRelationships() {
-        return relationships;
+    public List<EjbRelationType> getEjbRelation() {
+        if (ejbRelation == null) {
+            ejbRelation = new ArrayList<EjbRelationType>();
+        }
+        return ejbRelation;
     }
 
-    public void setRelationships(RelationshipsType value) {
-        this.relationships = value;
+    public void setEjbRelation(List<EjbRelationType> ejbRelation) {
+        this.ejbRelation = ejbRelation;
     }
 
     public List<MessageDestinationType> getMessageDestination() {
