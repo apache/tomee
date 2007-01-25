@@ -33,7 +33,7 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.oej2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Relationships;
 import org.apache.openejb.jee.EjbRelation;

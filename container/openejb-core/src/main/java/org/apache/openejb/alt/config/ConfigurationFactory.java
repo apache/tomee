@@ -17,7 +17,7 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.alt.config.ejb.EjbDeployment;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.alt.config.sys.ConnectionManager;
 import org.apache.openejb.alt.config.sys.Connector;
 import org.apache.openejb.alt.config.sys.Container;

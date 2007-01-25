@@ -17,7 +17,6 @@
 package org.apache.openejb.jee.jpa;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.oej2.Oej2JaxbUtil;
 
 import java.io.InputStream;
 import java.io.IOException;

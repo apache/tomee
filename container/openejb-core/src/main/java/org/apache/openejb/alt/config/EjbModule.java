@@ -18,7 +18,7 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.io.File;
 

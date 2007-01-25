@@ -18,7 +18,6 @@ package org.apache.openejb.jee.jpa;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
-import org.apache.openejb.jee.oej2.NamespaceFilter;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
@@ -29,7 +28,6 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
-import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 

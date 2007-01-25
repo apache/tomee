@@ -17,9 +17,9 @@
 package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
-import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ResourceRef;

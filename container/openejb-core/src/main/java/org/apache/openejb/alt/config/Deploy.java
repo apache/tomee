@@ -26,16 +26,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.ejb.Stateless;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.ejb.MethodParams;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
-import org.apache.openejb.alt.config.ejb.QueryMethod;
-import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.MethodParams;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.QueryMethod;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.alt.config.sys.Connector;
 import org.apache.openejb.alt.config.sys.Container;
 import org.apache.openejb.alt.config.sys.Openejb;
@@ -347,7 +346,7 @@ public class Deploy {
 
     private void promptForOQLForEntityBeans(Class bean, EjbDeployment deployment)
             throws OpenEJBException {
-        org.apache.openejb.alt.config.ejb.Query query;
+        org.apache.openejb.jee.oejb3.Query query;
         QueryMethod queryMethod;
         MethodParams methodParams;
         boolean instructionsPrinted = false;
@@ -418,7 +417,7 @@ public class Deploy {
                 }
 
                 if (answer != null && !answer.equals("")) {
-                    query = new org.apache.openejb.alt.config.ejb.Query();
+                    query = new org.apache.openejb.jee.oejb3.Query();
                     methodParams = new MethodParams();
                     queryMethod = new QueryMethod();
 

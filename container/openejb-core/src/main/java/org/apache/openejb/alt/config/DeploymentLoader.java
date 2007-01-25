@@ -19,7 +19,7 @@ package org.apache.openejb.alt.config;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.alt.config.ejb.OpenejbJar;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 

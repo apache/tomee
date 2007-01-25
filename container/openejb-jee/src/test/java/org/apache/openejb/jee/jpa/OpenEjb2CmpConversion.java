@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
 
-import org.apache.openejb.jee.oej2.EjbRelationType;
-import org.apache.openejb.jee.oej2.EnterpriseBean;
-import org.apache.openejb.jee.oej2.EntityBeanType;
-import org.apache.openejb.jee.oej2.OpenejbJarType;
-import org.apache.openejb.jee.oej2.EjbRelationshipRoleType;
+import org.apache.openejb.jee.oejb2.EjbRelationType;
+import org.apache.openejb.jee.oejb2.EnterpriseBean;
+import org.apache.openejb.jee.oejb2.EntityBeanType;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
 
 public class OpenEjb2CmpConversion {
 

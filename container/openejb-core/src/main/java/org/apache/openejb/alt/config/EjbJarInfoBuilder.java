@@ -20,8 +20,8 @@ package org.apache.openejb.alt.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.alt.config.ejb.EjbDeployment;
-import org.apache.openejb.alt.config.ejb.ResourceLink;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
@@ -563,13 +563,13 @@ public class EjbJarInfoBuilder {
         }
 
         if (bean.persistenceType.equalsIgnoreCase("Container")) {
-            for (org.apache.openejb.alt.config.ejb.Query q : d.getQuery()) {
+            for (org.apache.openejb.jee.oejb3.Query q : d.getQuery()) {
                 QueryInfo query = new QueryInfo();
                 query.description = q.getDescription();
                 query.queryStatement = q.getObjectQl().trim();
 
                 MethodInfo method = new MethodInfo();
-                org.apache.openejb.alt.config.ejb.QueryMethod qm = q.getQueryMethod();
+                org.apache.openejb.jee.oejb3.QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
                 method.methodParams = qm.getMethodParams().getMethodParam();
                 query.method = method;
