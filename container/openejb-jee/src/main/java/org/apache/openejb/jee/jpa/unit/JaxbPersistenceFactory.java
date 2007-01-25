@@ -15,9 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.persistence.dd;
+package org.apache.openejb.jee.jpa.unit;
 
-import org.apache.openejb.persistence.PersistenceDeployer;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,6 +36,7 @@ import java.net.URL;
  * @version $Revision$ $Date$
  */
 public class JaxbPersistenceFactory {
+    public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
     public static Persistence getPersistence(URL url) throws Exception {
         InputStream persistenceDescriptor = null;
 
@@ -80,7 +80,7 @@ public class JaxbPersistenceFactory {
 
         @Override
         public void startElement(String arg0, String arg1, String arg2, Attributes arg3) throws SAXException {
-            super.startElement(PersistenceDeployer.PERSISTENCE_SCHEMA, arg1, arg2, arg3);
+            super.startElement(PERSISTENCE_SCHEMA, arg1, arg2, arg3);
         }
     }
 }

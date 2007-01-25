@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.persistence.dd.JaxbPersistenceFactory;
-import org.apache.openejb.persistence.dd.PersistenceUnit;
-import org.apache.openejb.persistence.dd.TransactionType;
+import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
@@ -90,7 +90,7 @@ public class PersistenceDeployer {
         try {
             Map<String, EntityManagerFactory> factories = new HashMap<String, EntityManagerFactory>();
 
-            org.apache.openejb.persistence.dd.Persistence persistence = JaxbPersistenceFactory.getPersistence(url);
+            org.apache.openejb.jee.jpa.unit.Persistence persistence = JaxbPersistenceFactory.getPersistence(url);
 
             List<PersistenceUnit> persistenceUnits = persistence.getPersistenceUnit();
 
@@ -125,10 +125,10 @@ public class PersistenceDeployer {
                 unitInfo.setMappingFileNames(pu.getMappingFile());
 
                 // Handle Properties
-                org.apache.openejb.persistence.dd.Properties puiProperties = pu.getProperties();
+                org.apache.openejb.jee.jpa.unit.Properties puiProperties = pu.getProperties();
                 if (puiProperties != null) {
                     Properties properties = new Properties();
-                    for (org.apache.openejb.persistence.dd.Property property : puiProperties.getProperty()) {
+                    for (org.apache.openejb.jee.jpa.unit.Property property : puiProperties.getProperty()) {
                         properties.put(property.getName(), property.getValue());
                     }
                     unitInfo.setProperties(properties);

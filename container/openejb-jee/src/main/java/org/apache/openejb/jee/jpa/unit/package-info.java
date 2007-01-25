@@ -23,4 +23,4 @@
 
 @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value=javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class,type=String.class)
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://java.sun.com/xml/ns/persistence", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.apache.openejb.persistence.dd;
+package org.apache.openejb.jee.jpa.unit;

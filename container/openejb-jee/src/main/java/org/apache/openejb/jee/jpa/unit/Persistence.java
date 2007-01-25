@@ -22,7 +22,7 @@
 //
 
 
-package org.apache.openejb.persistence.dd;
+package org.apache.openejb.jee.jpa.unit;
 
 import java.util.ArrayList;
 import java.util.List;

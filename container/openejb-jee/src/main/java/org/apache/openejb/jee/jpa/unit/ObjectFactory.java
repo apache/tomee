@@ -22,9 +22,8 @@
 //
 
 
-package org.apache.openejb.persistence.dd;
+package org.apache.openejb.jee.jpa.unit;
 
-import org.apache.openejb.persistence.dd.Persistence;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

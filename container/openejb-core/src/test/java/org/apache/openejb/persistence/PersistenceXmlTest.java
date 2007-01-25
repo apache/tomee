@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 
-import org.apache.openejb.persistence.dd.Persistence;
+import org.apache.openejb.jee.jpa.unit.Persistence;
 
 /**
  * @version $Revision$ $Date$
