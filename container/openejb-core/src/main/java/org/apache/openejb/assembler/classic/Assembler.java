@@ -285,24 +285,28 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = ejbJar.jarPath;
         appInfo.ejbJars.add(ejbJar);
         createApplication(appInfo);
     }
 
     public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = ejbJar.jarPath;
         appInfo.ejbJars.add(ejbJar);
         createApplication(appInfo, classLoader);
     }
 
     public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         createApplication(appInfo);
     }
 
     public void createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         createApplication(appInfo, classLoader);
     }
@@ -412,7 +416,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public void destroyApplication(String filePath) throws Exception {
+    public void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
         AssemblyUnit unit = assemblyUnits.get(filePath);
         if (unit == null) {
             throw new NoSuchApplicationException(filePath);
@@ -695,7 +699,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             this.appId = appId;
         }
 
-        private void destroy() throws Exception {
+        private void destroy() throws UndeployException {
             Context globalContext = containerSystem.getJNDIContext();
             UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appId);
             // Clear out naming for all components first
@@ -718,7 +722,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         } catch (NamingException goodAndExpected) {
                         }
                     } catch (Throwable t) {
-                        undeployException.getCauses().add(new Exception("bean: " + deploymentID, t));
+                        undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                     }
                 }
             }
@@ -729,7 +733,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     container.undeploy(deployment);
                     deployment.setContainer(null);
                 } catch (Throwable t) {
-                    undeployException.getCauses().add(new Exception("bean: " + deploymentID, t));
+                    undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 } finally {
                     deployment.setDestroyed(true);
                 }
@@ -740,7 +744,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     globalContext.unbind("/openejb/client/" + clientId);
                 } catch (Throwable t) {
-                    undeployException.getCauses().add(new Exception("client: " + clientId, t));
+                    undeployException.getCauses().add(new Exception("client: " + clientId + ": " + t.getMessage(), t));
                 }
             }
             if (undeployException.getCauses().size() > 0) {
