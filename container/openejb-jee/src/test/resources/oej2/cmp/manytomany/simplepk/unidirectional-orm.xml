@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
+    <entity name="manytomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.ABean">
+        <description>A</description>
+        <table name="A"/>
+        <attributes>
+            <id name="field1">
+                <column name="a1"/>
+            </id>
+            <basic name="field2">
+                <column name="a2"/>
+            </basic>
+            <many-to-many name="b">
+                <join-table name="MTM">
+                    <join-column referenced-column-name="a1" name="fka1"/>
+                    <inverse-join-column referenced-column-name="b1" name="fkb1"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="manytomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.BBean">
+        <description>B</description>
+        <table name="B"/>
+        <attributes>
+            <id name="field1">
+                <column name="b1"/>
+            </id>
+            <basic name="field2">
+                <column name="b2"/>
+            </basic>
+            <basic name="field3">
+                <column name="fka1"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

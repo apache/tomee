@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+		  http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"
+	      version="2.1">
+
+    <enterprise-beans>
+        <entity>
+            <ejb-name>A</ejb-name>
+            <local-home>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.ALocalHome</local-home>
+            <local>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.ALocal</local>
+            <ejb-class>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.ABean</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>OneToOneA</abstract-schema-name>
+            <cmp-field>
+                <field-name>field1</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field2</field-name>
+            </cmp-field>
+            <primkey-field>field1</primkey-field>
+            <query>
+                <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+                <query-method>
+                    <method-name>findByPrimaryKey</method-name>
+                    <method-params>
+                        <method-param>org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>SELECT OBJECT(A) FROM OneToOneA A</ejb-ql>
+            </query>
+        </entity>
+        <entity>
+            <ejb-name>B</ejb-name>
+            <local-home>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.BLocalHome</local-home>
+            <local>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.BLocal</local>
+            <ejb-class>org.apache.openejb.deployment.entity.cmp.cmr.onetoone.BBean</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>OneToOneB</abstract-schema-name>
+            <cmp-field>
+                <field-name>field1</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field2</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field3</field-name>
+            </cmp-field>
+            <primkey-field>field1</primkey-field>
+            <query>
+                <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+                <query-method>
+                    <method-name>findByPrimaryKey</method-name>
+                    <method-params>
+                        <method-param>org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>SELECT OBJECT(B) FROM OneToOneB B</ejb-ql>
+            </query>
+        </entity>
+    </enterprise-beans>
+    <relationships>
+        <ejb-relation>
+            <ejb-relation-name>relation</ejb-relation-name>
+            <ejb-relationship-role>
+                <ejb-relationship-role-name>ASide</ejb-relationship-role-name>
+                <multiplicity>One</multiplicity>
+                <cascade-delete/>
+                <relationship-role-source>
+                    <ejb-name>A</ejb-name>
+                </relationship-role-source>
+            </ejb-relationship-role>
+            <ejb-relationship-role>
+                <ejb-relationship-role-name>BSide</ejb-relationship-role-name>
+                <multiplicity>One</multiplicity>
+                <relationship-role-source>
+                    <ejb-name>B</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>a</cmr-field-name>
+                </cmr-field>
+            </ejb-relationship-role>
+        </ejb-relation>
+    </relationships>
+    <assembly-descriptor>
+        <container-transaction>
+            <method>
+                <ejb-name>A</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+        <container-transaction>
+            <method>
+                <ejb-name>B</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+    </assembly-descriptor>
+
+</ejb-jar>

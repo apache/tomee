@@ -106,7 +106,13 @@ public class OpenEjb2CmpConversion {
                     field = other.getRelatedField();
                     // todo warn field not found
                     if (field == null) {
-                        continue;
+                        if (other instanceof OneToMany) {
+                            // for a unidirectional oneToMany, the join column declaration
+                            // is placed on the oneToMany element instead of manyToOne 
+                            field = other;
+                        } else {
+                            continue;
+                        }
                     }
                 }
 
@@ -163,29 +169,33 @@ public class OpenEjb2CmpConversion {
                 if (roles.size() > 1) {
                     EjbRelationshipRoleType rightRole = roles.get(1);
 
-                    RelationField right = left.getRelatedField();
-                    if (right == null) {
-                        if (rightRole.getRelationshipRoleSource() != null) {
-                            String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
-                            EntityData rightEntityData = entities.get(rightEjbName);
-                            if (rightEntityData == null) {
-                                // todo warn no such entity in ejb-jar.xml
+                    // if there wasn't a left cmr field, find the field for the right, so we can add the join table to it
+                    if (left == null) {
+                        RelationField right = left.getRelatedField();
+                        if (right == null) {
+                            if (rightRole.getCmrField() == null) {
+                                // todo warn no cmr field declared for either role
                                 continue;
                             }
-                            right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
+                            if (rightRole.getRelationshipRoleSource() != null) {
+                                String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
+                                EntityData rightEntityData = entities.get(rightEjbName);
+                                if (rightEntityData == null) {
+                                    // todo warn no such entity in ejb-jar.xml
+                                    continue;
+                                }
+                                right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
+                            }
                         }
+                        right.setJoinTable(joinTable);
                     }
-                    if (right != null) {
-                        if (left == null) {
-                            right.setJoinTable(joinTable);
-                        }
-                        EjbRelationshipRoleType.RoleMapping roleMapping = rightRole.getRoleMapping();
-                        for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                            JoinColumn joinColumn = new JoinColumn();
-                            joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
-                            joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
-                            joinTable.getInverseJoinColumn().add(joinColumn);
-                        }
+
+                    EjbRelationshipRoleType.RoleMapping roleMapping = rightRole.getRoleMapping();
+                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                        JoinColumn joinColumn = new JoinColumn();
+                        joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
+                        joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
+                        joinTable.getInverseJoinColumn().add(joinColumn);
                     }
                 }
             }
@@ -193,10 +203,10 @@ public class OpenEjb2CmpConversion {
     }
 
     private class EntityData {
-        public final Entity entity;
+        private final Entity entity;
         private final Id id;
-        public final Map<String, Basic> fields = new TreeMap<String, Basic>();
-        public final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
+        private final Map<String, Basic> fields = new TreeMap<String, Basic>();
+        private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
         public EntityData(Entity entity) {
             this.entity = entity;

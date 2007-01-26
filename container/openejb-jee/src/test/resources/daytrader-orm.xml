@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
+    <entity name="Holding" class="org.apache.geronimo.samples.daytrader.ejb.HoldingBean">
+        <description>HoldingEJB</description>
+        <table name="HOLDINGEJB"/>
+        <attributes>
+            <id name="holdingID">
+                <column name="holdingID"/>
+            </id>
+            <basic name="purchasePrice">
+                <column name="purchasePrice"/>
+            </basic>
+            <basic name="quantity">
+                <column name="quantity"/>
+            </basic>
+            <basic name="purchaseDate">
+                <column name="purchaseDate"/>
+            </basic>
+            <many-to-one name="account">
+                <join-column referenced-column-name="accountID" name="account_accountID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </many-to-one>
+            <many-to-one name="quote">
+                <join-column referenced-column-name="symbol" name="quote_symbol"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity name="AccountProfile" class="org.apache.geronimo.samples.daytrader.ejb.AccountProfileBean">
+        <description>AccountProfileEJB</description>
+        <table name="AccountProfileEJB"/>
+        <attributes>
+            <id name="userID">
+                <column name="userID"/>
+            </id>
+            <basic name="address">
+                <column name="address"/>
+            </basic>
+            <basic name="passwd">
+                <column name="passwd"/>
+            </basic>
+            <basic name="email">
+                <column name="email"/>
+            </basic>
+            <basic name="creditCard">
+                <column name="creditCard"/>
+            </basic>
+            <basic name="fullName">
+                <column name="fullName"/>
+            </basic>
+            <one-to-one name="account" mapped-by="profile">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity name="Quote" class="org.apache.geronimo.samples.daytrader.ejb.QuoteBean">
+        <description>QuoteEJB</description>
+        <table name="QuoteEJB"/>
+        <attributes>
+            <id name="symbol">
+                <column name="symbol"/>
+            </id>
+            <basic name="low">
+                <column name="low"/>
+            </basic>
+            <basic name="open">
+                <column name="open1"/>
+            </basic>
+            <basic name="volume">
+                <column name="volume"/>
+            </basic>
+            <basic name="price">
+                <column name="price"/>
+            </basic>
+            <basic name="high">
+                <column name="high"/>
+            </basic>
+            <basic name="companyName">
+                <column name="companyName"/>
+            </basic>
+            <basic name="change">
+                <column name="change1"/>
+            </basic>
+            <one-to-many name="orders" mapped-by="quote"/>
+        </attributes>
+    </entity>
+    <entity name="KeyGen" class="org.apache.geronimo.samples.daytrader.ejb.KeyGenBean">
+        <description>KeyGenEJB</description>
+        <table name="KeyGenEJB"/>
+        <attributes>
+            <id name="keyName">
+                <column name="keyName"/>
+            </id>
+            <basic name="keyVal">
+                <column name="keyVal"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Account" class="org.apache.geronimo.samples.daytrader.ejb.AccountBean">
+        <description>AccountEJB</description>
+        <table name="AccountEJB"/>
+        <attributes>
+            <id name="accountID">
+                <column name="accountID"/>
+            </id>
+            <basic name="creationDate">
+                <column name="creationDate"/>
+            </basic>
+            <basic name="openBalance">
+                <column name="openBalance"/>
+            </basic>
+            <basic name="logoutCount">
+                <column name="logoutCount"/>
+            </basic>
+            <basic name="balance">
+                <column name="balance"/>
+            </basic>
+            <basic name="lastLogin">
+                <column name="lastLogin"/>
+            </basic>
+            <basic name="loginCount">
+                <column name="loginCount"/>
+            </basic>
+            <one-to-many name="orders" mapped-by="account"/>
+            <one-to-many name="holdings" mapped-by="account"/>
+            <one-to-one name="profile">
+                <join-column referenced-column-name="userID" name="profile_userID"/>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity name="Orders" class="org.apache.geronimo.samples.daytrader.ejb.OrderBean">
+        <description>OrderEJB</description>
+        <table name="OrderEJB"/>
+        <attributes>
+            <id name="orderID">
+                <column name="orderID"/>
+            </id>
+            <basic name="orderFee">
+                <column name="orderFee"/>
+            </basic>
+            <basic name="completionDate">
+                <column name="completionDate"/>
+            </basic>
+            <basic name="orderType">
+                <column name="orderType"/>
+            </basic>
+            <basic name="orderStatus">
+                <column name="orderStatus"/>
+            </basic>
+            <basic name="price">
+                <column name="price"/>
+            </basic>
+            <basic name="quantity">
+                <column name="quantity"/>
+            </basic>
+            <basic name="openDate">
+                <column name="openDate"/>
+            </basic>
+            <many-to-one name="account">
+                <join-column referenced-column-name="accountID" name="account_accountID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </many-to-one>
+            <many-to-one name="quote">
+                <join-column referenced-column-name="symbol" name="quote_symbol"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </many-to-one>
+            <one-to-one name="holding">
+                <join-column referenced-column-name="holdingID" name="holding_holdingID"/>
+            </one-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

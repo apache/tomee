@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
+    <entity name="onetomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.ABean">
+        <description>A</description>
+        <table name="A"/>
+        <attributes>
+            <id name="field1">
+                <column name="a1"/>
+            </id>
+            <basic name="field2"/>
+            <one-to-many name="b">
+                <join-column referenced-column-name="a1" name="fka1"/>
+            </one-to-many>
+        </attributes>
+    </entity>
+    <entity name="onetomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.BBean">
+        <description>B</description>
+        <table name="B"/>
+        <attributes>
+            <id name="field1"/>
+            <basic name="field2">
+                <column name="b2"/>
+            </basic>
+            <basic name="field3"/>
+        </attributes>
+    </entity>
+</entity-mappings>

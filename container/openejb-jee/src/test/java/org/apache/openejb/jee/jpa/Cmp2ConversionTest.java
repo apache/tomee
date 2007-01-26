@@ -16,59 +16,94 @@
  */
 package org.apache.openejb.jee.jpa;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Relationships;
 import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
-import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.CmpField;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.RelationshipRoleSource;
+import org.apache.openejb.jee.Relationships;
+import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Cmp2ConversionTest extends TestCase {
-
-    public void testEjbJarDoc() throws Exception {
-        marshalAndUnmarshal(EjbJar.class, "ejb-jar-cmp-example1.xml");
+    public void testItests22() throws Exception {
+        convert("itest-2.2-ejb-jar.xml", "openejb-jar-2.2.xml", "itest-2.2-orm.xml");
     }
 
-    public void testConversion() throws Exception {
-        EntityMappings entityMappings = generateEntityMappings("daytrader-ejb-jar.xml");
+    public void testDaytrader() throws Exception {
+        convert("daytrader-ejb-jar.xml", "daytrader-corrected.xml", "daytrader-orm.xml");
+    }
 
-        JAXBContext ctx = JAXBContext.newInstance(OpenejbJarType.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+    public void testOneToOne() throws Exception {
+        convert("oej2/cmp/onetoone/simplepk/");
+    }
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("daytrader-corrected.xml");
-        String expected = readContent(in);
+    public void testOneToOneUni() throws Exception {
+        convert("oej2/cmp/onetoone/simplepk/unidirectional-");
+    }
 
-        JAXBElement element = (JAXBElement) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+    public void testOneToMany() throws Exception {
+        convert("oej2/cmp/onetomany/simplepk/ejb-jar.xml", "oej2/cmp/onetomany/simplepk/openejb-jar.xml", null);
+    }
+
+    public void testOneToManyUni() throws Exception {
+        convert("oej2/cmp/onetomany/simplepk/one-unidirectional-");
+    }
+
+    public void testManyToOneUni() throws Exception {
+        convert("oej2/cmp/onetomany/simplepk/many-unidirectional-");
+    }
+
+    public void testManyToMany() throws Exception {
+        convert("oej2/cmp/manytomany/simplepk/");
+    }
+
+    public void testManyToManyUni() throws Exception {
+        convert("oej2/cmp/manytomany/simplepk/unidirectional-");
+    }
+
+    private EntityMappings convert(String prefix) throws Exception {
+        return convert(prefix + "ejb-jar.xml", prefix + "openejb-jar.xml", prefix + "orm.xml");
+    }
+
+    private EntityMappings convert(String ejbJarFileName, String openejbJarFileName, String expectedFileName) throws Exception {
+        EntityMappings entityMappings = generateEntityMappings(ejbJarFileName);
+
+        String openejbJarXml = readContent(getClass().getClassLoader().getResourceAsStream(openejbJarFileName));
+        JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(openejbJarXml.getBytes()));
         OpenejbJarType openejbJarType = (OpenejbJarType) element.getValue();
 
         OpenEjb2CmpConversion openEjb2CmpConversion = new OpenEjb2CmpConversion();
         openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
-        String actual = toString(entityMappings);
-        System.out.println(actual);
+
+        if (expectedFileName != null) {
+            InputStream in = getClass().getClassLoader().getResourceAsStream(expectedFileName);
+            String expected = readContent(in);
+            String actual = toString(entityMappings);
+            assertEquals(expected, actual);
+        }
+        return entityMappings;
     }
 
 
@@ -82,16 +117,14 @@ public class Cmp2ConversionTest extends TestCase {
         marshaller.marshal(entityMappings, baos);
 
         String actual = new String(baos.toByteArray());
-        return actual;
+        return actual.trim();
     }
 
-    private EntityMappings generateEntityMappings(String fileName) throws IOException, JAXBException {
-        JAXBContext ctx = JAXBContext.newInstance(EjbJar.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-
+    private EntityMappings generateEntityMappings(String fileName) throws Exception {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
         String expected = readContent(in);
-        EjbJar ejbJar = (EjbJar) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+
+        EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, new ByteArrayInputStream(expected.getBytes()));
 
         EntityMappings entityMappings = new EntityMappings();
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
@@ -167,7 +200,6 @@ public class Cmp2ConversionTest extends TestCase {
                 if (leftRole.getCmrField() != null) {
                     leftFieldName = leftRole.getCmrField().getCmrFieldName();
                 }
-                boolean leftCascade = leftRole.getCascadeDelete() != null;
                 boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
 
                 EjbRelationshipRole rightRole = roles.get(1);
@@ -178,7 +210,6 @@ public class Cmp2ConversionTest extends TestCase {
                 if (rightRole.getCmrField() != null) {
                     rightFieldName = rightRole.getCmrField().getCmrFieldName();
                 }
-                boolean rightCascade = rightRole.getCascadeDelete() != null;
                 boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
 
                 if (leftIsOne && rightIsOne) {
@@ -191,11 +222,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (leftFieldName != null) {
                         leftOneToOne = new OneToOne();
                         leftOneToOne.setName(leftFieldName);
-                        if (leftCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            leftOneToOne.setCascade(cascadeType);
-                        }
+                        setCascade(leftRole, leftOneToOne);
                         leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
                     }
 
@@ -208,11 +235,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (leftFieldName != null) {
                             rightOneToOne.setMappedBy(leftFieldName);
                         }
-                        if (rightCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            rightOneToOne.setCascade(cascadeType);
-                        }
+                        setCascade(rightRole, rightOneToOne);
                         rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
                     }
 
@@ -235,11 +258,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (rightFieldName != null) {
                             leftOneToMany.setMappedBy(rightFieldName);
                         }
-                        if (leftCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            leftOneToMany.setCascade(cascadeType);
-                        }
+                        setCascade(leftRole, leftOneToMany);
                         leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
                     }
 
@@ -248,6 +267,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (rightFieldName != null) {
                         rightManyToOne = new ManyToOne();
                         rightManyToOne.setName(rightFieldName);
+                        setCascade(rightRole, rightManyToOne);
                         rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
                     }
 
@@ -266,6 +286,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (leftFieldName != null) {
                         leftManyToOne = new ManyToOne();
                         leftManyToOne.setName(leftFieldName);
+                        setCascade(leftRole, leftManyToOne);
                         leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
                     }
 
@@ -278,11 +299,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (leftFieldName != null) {
                             rightOneToMany.setMappedBy(leftFieldName);
                         }
-                        if (rightCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            rightOneToMany.setCascade(cascadeType);
-                        }
+                        setCascade(rightRole, rightOneToMany);
                         rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
                     }
 
@@ -301,11 +318,7 @@ public class Cmp2ConversionTest extends TestCase {
                     if (leftFieldName != null) {
                         leftManyToMany = new ManyToMany();
                         leftManyToMany.setName(leftFieldName);
-                        if (leftCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            leftManyToMany.setCascade(cascadeType);
-                        }
+                        setCascade(leftRole, leftManyToMany);
                         leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
                     }
 
@@ -318,11 +331,7 @@ public class Cmp2ConversionTest extends TestCase {
                         if (leftFieldName != null) {
                             rightManyToMany.setMappedBy(leftFieldName);
                         }
-                        if (rightCascade) {
-                            CascadeType cascadeType = new CascadeType();
-                            cascadeType.setCascadeAll(true);
-                            rightManyToMany.setCascade(cascadeType);
-                        }
+                        setCascade(rightRole, rightManyToMany);
                         rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
                     }
 
@@ -342,36 +351,14 @@ public class Cmp2ConversionTest extends TestCase {
         return entityMappings;
     }
 
-    private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws JAXBException, IOException {
-        JAXBContext ctx = JAXBContext.newInstance(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
-        String expected = readContent(in);
-
-        Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
-//        JAXBElement element =  (JAXBElement) object;
-        unmarshaller.setEventHandler(new TestValidationEventHandler());
-//        T app = (T) element.getValue();
-//        System.out.println("unmarshalled");
-
-        Marshaller marshaller = ctx.createMarshaller();
-        marshaller.setProperty("jaxb.formatted.output", true);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(object, baos);
-
-        String actual = new String(baos.toByteArray());
-
-        assertEquals(expected, actual);
-    }
-
-    private static class TestValidationEventHandler implements ValidationEventHandler {
-        public boolean handleEvent(ValidationEvent validationEvent) {
-            System.out.println(validationEvent.getMessage());
-            return true;
+    private void setCascade(EjbRelationshipRole role, RelationField field) {
+        if (role.getCascadeDelete()) {
+            CascadeType cascadeType = new CascadeType();
+            cascadeType.setCascadeAll(true);
+            field.setCascade(cascadeType);
         }
     }
+
     private String readContent(InputStream in) throws IOException {
         StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
@@ -380,7 +367,7 @@ public class Cmp2ConversionTest extends TestCase {
             sb.append((char) i);
             i = in.read();
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
 }

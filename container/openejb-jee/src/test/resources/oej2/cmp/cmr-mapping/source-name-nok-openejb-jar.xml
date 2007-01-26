@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
+
+    <environment>
+        <moduleId>
+            <groupId>foo</groupId>
+            <artifactId>bar</artifactId>
+            <version>1</version>
+            <type>car</type>
+        </moduleId>
+    </environment>
+
+    <cmp-connection-factory>
+        <resource-link>DefaultDatasource</resource-link>
+    </cmp-connection-factory>
+
+    <enterprise-beans>
+        <entity>
+            <ejb-name>A</ejb-name>
+            <table-name>A</table-name>
+            <cmp-field-mapping>
+                <cmp-field-name>field1</cmp-field-name>
+                <table-column>a1</table-column>
+            </cmp-field-mapping>
+            <cmp-field-mapping>
+                <cmp-field-name>field2</cmp-field-name>
+                <table-column>a2</table-column>
+            </cmp-field-mapping>
+        </entity>
+        <entity>
+            <ejb-name>B</ejb-name>
+            <table-name>B</table-name>
+            <cmp-field-mapping>
+                <cmp-field-name>field1</cmp-field-name>
+                <table-column>b1</table-column>
+            </cmp-field-mapping>
+            <cmp-field-mapping>
+                <cmp-field-name>field2</cmp-field-name>
+                <table-column>b2</table-column>
+            </cmp-field-mapping>
+            <cmp-field-mapping>
+                <cmp-field-name>field3</cmp-field-name>
+                <table-column>fka1</table-column>
+            </cmp-field-mapping>
+        </entity>
+    </enterprise-beans>
+
+    <relationships>
+        <ejb-relation>
+            <ejb-relation-name>relation</ejb-relation-name>
+            <ejb-relationship-role>
+                <ejb-relationship-role-name>BSide</ejb-relationship-role-name>
+                <relationship-role-source>
+                    <ejb-name>B</ejb-name>
+                </relationship-role-source>
+                <cmr-field>
+                    <cmr-field-name>b</cmr-field-name>
+                </cmr-field>
+                <foreign-key-column-on-source/>
+                <role-mapping>
+                    <cmr-field-mapping>
+                        <key-column>a1</key-column>
+                        <foreign-key-column>fka1</foreign-key-column>
+                    </cmr-field-mapping>
+                </role-mapping>
+            </ejb-relationship-role>
+        </ejb-relation>
+    </relationships>
+
+</openejb-jar>

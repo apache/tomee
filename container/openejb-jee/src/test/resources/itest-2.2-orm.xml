@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
+    <entity name="BasicCmpBean" class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <description>BasicCmpBean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="BasicCmpBeanExplicitPK" class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <description>BasicCmpBeanExplicitPK</description>
+        <table name="entity_explicit_pk"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="AOBasicCmpBean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
+        <description>AOBasicCmpBean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="EncCmpBean" class="org.apache.openejb.test.entity.cmp.EncCmpBean">
+        <description>EncCmpBean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="CmpRMIIIOPBean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
+        <description>CmpRMIIIOPBean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="BasicCmp2" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean">
+        <description>BasicCmp2Bean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="AOBasicCmp2" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean">
+        <description>AOBasicCmp2Bean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="EncCmp2" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean">
+        <description>EncCmp2Bean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Cmp2RmiIiop" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean">
+        <description>Cmp2RMIIIOPBean</description>
+        <table name="entity"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value generator="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="first_name"/>
+            </basic>
+            <basic name="lastName">
+                <column name="last_name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean">
+        <description>OneOwningSideBean</description>
+        <table name="OneOwning"/>
+        <attributes>
+            <id/>
+            <basic name="id">
+                <column name="col_id"/>
+            </basic>
+            <basic name="field1">
+                <column name="col_field1"/>
+            </basic>
+            <one-to-one name="oneInverseSide">
+                <join-column referenced-column-name="col_id" name="col_field1"/>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean">
+        <description>OneInverseSideBean</description>
+        <table name="OneInverse"/>
+        <attributes>
+            <id name="id">
+                <column name="col_id"/>
+            </id>
+            <one-to-many name="manyOwningSide" mapped-by="oneInverseSide"/>
+            <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
+        </attributes>
+    </entity>
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean">
+        <description>ManyOwningSideBean</description>
+        <table name="ManyOwning"/>
+        <attributes>
+            <id/>
+            <basic name="id">
+                <column name="col_id"/>
+            </basic>
+            <basic name="field1">
+                <column name="col_field1"/>
+            </basic>
+            <many-to-one name="oneInverseSide">
+                <join-column referenced-column-name="col_id" name="col_field1"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity name="Address" class="org.apache.openejb.test.entity.cmp2.petstore.AddressEJB">
+        <description>AddressEJB</description>
+        <table name="address"/>
+        <attributes>
+            <id/>
+            <basic name="street">
+                <column name="street"/>
+            </basic>
+            <basic name="city">
+                <column name="city"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Storage" class="org.apache.openejb.test.entity.cmp2.model.StorageBean">
+        <description>StorageBean</description>
+        <table name="storage"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="blob">
+                <column name="blob_column"/>
+            </basic>
+            <basic name="char">
+                <column name="char_column"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

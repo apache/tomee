@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+		  http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"
+	      version="2.1">
+
+    <enterprise-beans>
+        <entity>
+            <ejb-name>A</ejb-name>
+            <home>org.apache.openejb.deployment.entity.cmp.ejbql.AHome</home>
+            <remote>org.apache.openejb.deployment.entity.cmp.ejbql.ARemote</remote>
+            <local-home>org.apache.openejb.deployment.entity.cmp.ejbql.ALocalHome</local-home>
+            <local>org.apache.openejb.deployment.entity.cmp.ejbql.ALocal</local>
+            <ejb-class>org.apache.openejb.deployment.entity.cmp.ejbql.ABean</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>AASN</abstract-schema-name>
+            <cmp-field>
+                <field-name>field1</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>field2</field-name>
+            </cmp-field>
+            <primkey-field>field1</primkey-field>
+            <query>
+                <query-method>
+                    <method-name>findTest</method-name>
+                    <method-params>
+                        <method-param>java.lang.String</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
+            </query>
+            <query>
+                <query-method>
+                    <method-name>ejbSelectTest</method-name>
+                    <method-params>
+                        <method-param>java.lang.String</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
+            </query>
+        </entity>
+    </enterprise-beans>
+    <assembly-descriptor>
+        <container-transaction>
+            <method>
+                <ejb-name>A</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+    </assembly-descriptor>
+
+</ejb-jar>

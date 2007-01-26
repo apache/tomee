@@ -119,12 +119,12 @@ public class EjbRelationshipRole {
         this.multiplicity = value;
     }
 
-    public EmptyType getCascadeDelete() {
-        return cascadeDelete;
+    public boolean getCascadeDelete() {
+        return cascadeDelete != null;
     }
 
-    public void setCascadeDelete(EmptyType value) {
-        this.cascadeDelete = value;
+    public void setCascadeDelete(boolean value) {
+        this.cascadeDelete = value ? new EmptyType() : null;
     }
 
     public RelationshipRoleSource getRelationshipRoleSource() {

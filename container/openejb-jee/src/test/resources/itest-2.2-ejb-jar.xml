@@ -16,12 +16,11 @@
     limitations under the License.
 -->
 
-<!--<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"-->
-    <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-    <!--xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee-->
-    <!--http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"-->
-    <!--version="2.1">-->
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
+<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+    http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"
+    version="2.1">
 
     <description>
         This ejb-jar file contains assembled enterprise beans that are
