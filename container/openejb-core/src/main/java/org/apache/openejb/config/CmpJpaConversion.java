@@ -14,118 +14,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee.jpa;
+package org.apache.openejb.config;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import junit.framework.TestCase;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
 import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
-import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.OneToMany;
+import org.apache.openejb.jee.jpa.ManyToOne;
+import org.apache.openejb.jee.jpa.ManyToMany;
+import org.apache.openejb.jee.jpa.RelationField;
+import org.apache.openejb.jee.jpa.CascadeType;
 
-/**
- * @version $Rev$ $Date$
- */
-public class Cmp2ConversionTest extends TestCase {
-    public void testItests22() throws Exception {
-        convert("itest-2.2-ejb-jar.xml", "openejb-jar-2.2.xml", "itest-2.2-orm.xml");
-    }
-
-    public void testDaytrader() throws Exception {
-        convert("daytrader-ejb-jar.xml", "daytrader-corrected.xml", "daytrader-orm.xml");
-    }
-
-    public void testOneToOne() throws Exception {
-        convert("oej2/cmp/onetoone/simplepk/");
-    }
-
-    public void testOneToOneUni() throws Exception {
-        convert("oej2/cmp/onetoone/simplepk/unidirectional-");
-    }
-
-    public void testOneToMany() throws Exception {
-        convert("oej2/cmp/onetomany/simplepk/ejb-jar.xml", "oej2/cmp/onetomany/simplepk/openejb-jar.xml", null);
-    }
-
-    public void testOneToManyUni() throws Exception {
-        convert("oej2/cmp/onetomany/simplepk/one-unidirectional-");
-    }
-
-    public void testManyToOneUni() throws Exception {
-        convert("oej2/cmp/onetomany/simplepk/many-unidirectional-");
-    }
-
-    public void testManyToMany() throws Exception {
-        convert("oej2/cmp/manytomany/simplepk/");
-    }
-
-    public void testManyToManyUni() throws Exception {
-        convert("oej2/cmp/manytomany/simplepk/unidirectional-");
-    }
-
-    private EntityMappings convert(String prefix) throws Exception {
-        return convert(prefix + "ejb-jar.xml", prefix + "openejb-jar.xml", prefix + "orm.xml");
-    }
-
-    private EntityMappings convert(String ejbJarFileName, String openejbJarFileName, String expectedFileName) throws Exception {
-        EntityMappings entityMappings = generateEntityMappings(ejbJarFileName);
-
-        String openejbJarXml = readContent(getClass().getClassLoader().getResourceAsStream(openejbJarFileName));
-        JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(openejbJarXml.getBytes()));
-        OpenejbJarType openejbJarType = (OpenejbJarType) element.getValue();
-
-        OpenEjb2CmpConversion openEjb2CmpConversion = new OpenEjb2CmpConversion();
-        openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
-
-        if (expectedFileName != null) {
-            InputStream in = getClass().getClassLoader().getResourceAsStream(expectedFileName);
-            String expected = readContent(in);
-            String actual = toString(entityMappings);
-            assertEquals(expected, actual);
-        }
-        return entityMappings;
-    }
-
-
-    private String toString(EntityMappings entityMappings) throws JAXBException {
-        JAXBContext entityMappingsContext = JAXBContext.newInstance(EntityMappings.class);
-
-        Marshaller marshaller = entityMappingsContext.createMarshaller();
-        marshaller.setProperty("jaxb.formatted.output", true);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(entityMappings, baos);
-
-        String actual = new String(baos.toByteArray());
-        return actual.trim();
-    }
-
-    private EntityMappings generateEntityMappings(String fileName) throws Exception {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
-        String expected = readContent(in);
-
-        EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, new ByteArrayInputStream(expected.getBytes()));
-
+public class CmpJpaConversion {
+    public EntityMappings generateEntityMappings(EjbJar ejbJar) {
         EntityMappings entityMappings = new EntityMappings();
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
@@ -358,16 +275,4 @@ public class Cmp2ConversionTest extends TestCase {
             field.setCascade(cascadeType);
         }
     }
-
-    private String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        in = new BufferedInputStream(in);
-        int i = in.read();
-        while (i != -1) {
-            sb.append((char) i);
-            i = in.read();
-        }
-        return sb.toString().trim();
-    }
-
 }

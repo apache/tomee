@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee.jpa;
+package org.apache.openejb.config;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,6 +25,20 @@ import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.Table;
+import org.apache.openejb.jee.jpa.Field;
+import org.apache.openejb.jee.jpa.Column;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.GeneratedValue;
+import org.apache.openejb.jee.jpa.RelationField;
+import org.apache.openejb.jee.jpa.OneToMany;
+import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.JoinColumn;
+import org.apache.openejb.jee.jpa.JoinTable;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.Attributes;
 
 public class OpenEjb2CmpConversion {
 
@@ -108,7 +122,7 @@ public class OpenEjb2CmpConversion {
                     if (field == null) {
                         if (other instanceof OneToMany) {
                             // for a unidirectional oneToMany, the join column declaration
-                            // is placed on the oneToMany element instead of manyToOne 
+                            // is placed on the oneToMany element instead of manyToOne
                             field = other;
                         } else {
                             continue;
