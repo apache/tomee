@@ -566,8 +566,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         List<String> containerIds = new ArrayList();
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
-        for (ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
-            containerIds.add(containerInfo.id);
+        if (runningConfig != null){
+            for (ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
+                containerIds.add(containerInfo.id);
+            }
         }
 
         if (sys != null) {
