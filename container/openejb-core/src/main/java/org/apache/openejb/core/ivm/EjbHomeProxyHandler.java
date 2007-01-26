@@ -30,7 +30,6 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
@@ -226,7 +225,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object getEJBMetaData(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        IntraVmMetaData metaData = new IntraVmMetaData(deploymentInfo.getHomeInterface(), deploymentInfo.getRemoteInterface(), deploymentInfo.getPrimaryKeyClass(), deploymentInfo.getComponentType());
+        IntraVmMetaData metaData = new IntraVmMetaData(getDeploymentInfo().getHomeInterface(), getDeploymentInfo().getRemoteInterface(), getDeploymentInfo().getPrimaryKeyClass(), getDeploymentInfo().getComponentType());
         metaData.setEJBHome((EJBHome) proxy);
         return metaData;
     }
@@ -237,7 +236,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(deploymentInfo, null, deploymentInfo.getHomeInterface(), container, interfaceType);
+        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), null, getDeploymentInfo().getHomeInterface(), container, interfaceType);
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {

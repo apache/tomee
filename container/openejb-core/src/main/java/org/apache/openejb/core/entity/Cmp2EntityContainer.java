@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.entity;
 
-import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ContainerType;
@@ -46,12 +45,16 @@ public class Cmp2EntityContainer implements org.apache.openejb.RpcContainer, Tra
         return null;
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+    public void deploy(DeploymentInfo info) throws OpenEJBException {
         Map registry = new HashMap(deploymentRegistry);
-        registry.put(deploymentID, info);
+        registry.put(info.getDeploymentID(), info);
         deploymentRegistry = registry;
         org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
+    }
+
+    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+        deploymentRegistry.remove(info.getDeploymentID());
     }
 
     public DeploymentInfo [] deployments() {

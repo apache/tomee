@@ -198,20 +198,31 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         return deploymentsById.get(deploymentID);
     }
 
-    public void deploy(Object deploymentId, DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploy(deploymentId, (CoreDeploymentInfo)deploymentInfo);
+    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploy((CoreDeploymentInfo)deploymentInfo);
     }
 
-    private synchronized void deploy(Object deploymentId, CoreDeploymentInfo deploymentInfo) {
+    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+        undeploy((CoreDeploymentInfo)info);
+    }
+
+    private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) {
+        deploymentsById.remove(deploymentInfo.getDeploymentID());
+        deploymentInfo.setContainer(null);
+        deploymentInfo.setContainerData(null);
+    }
+    
+    private synchronized void deploy(CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
         deploymentInfo.setContainerData(new Data(new Index<Method,MethodType>(methods)));
 
-        deploymentsById.put(deploymentId, deploymentInfo);
+        deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
 
         Data data = (Data) deployInfo.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);

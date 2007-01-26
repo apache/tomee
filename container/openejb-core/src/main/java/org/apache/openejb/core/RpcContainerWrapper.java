@@ -51,8 +51,12 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         return container.deployments();
     }
 
-    public void deploy(Object deploymentID, org.apache.openejb.DeploymentInfo info) throws OpenEJBException {
-        container.deploy(deploymentID, info);
+    public void deploy(org.apache.openejb.DeploymentInfo info) throws OpenEJBException {
+        container.deploy(info);
+    }
+
+    public void undeploy(org.apache.openejb.DeploymentInfo info) throws OpenEJBException {
+        container.undeploy(info);
     }
 
     public void discardInstance(Object instance, ThreadContext context) {

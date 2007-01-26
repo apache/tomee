@@ -18,11 +18,13 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.Injection;
+import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DuplicateDeploymentIdException;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -35,6 +37,8 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceDeployer;
 import org.apache.openejb.persistence.PersistenceDeployerException;
+import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEJBErrorHandler;
@@ -53,7 +57,6 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.ejb.DuplicateKeyException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -99,13 +102,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         installNaming();
 
+        SystemInstance system = SystemInstance.get();
+
         containerSystem = new CoreContainerSystem();
+        system.setComponent(ContainerSystem.class, containerSystem);
 
         jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
         setConfiguration(new OpenEjbConfiguration());
 
-        SystemInstance.get().setComponent(Assembler.class, this);
+        ApplicationServer appServer = system.getComponent(ApplicationServer.class);
+        if (appServer == null) {
+            system.setComponent(ApplicationServer.class, new org.apache.openejb.core.ServerFederation());
+        }
+
+
     }
 
     private void setConfiguration(OpenEjbConfiguration config) {
@@ -267,7 +278,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (Throwable e) {
-                logger.error("Application could not be deployed: "+appInfo.jarPath, e);
+                logger.error("Application could not be deployed: " + appInfo.jarPath, e);
             }
         }
     }
@@ -305,19 +316,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         List<String> used = new ArrayList();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                if (containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId) != null){
+                if (containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId) != null) {
                     used.add(beanInfo.ejbDeploymentId);
                 }
             }
         }
 
-        if (used.size() > 0){
+        if (used.size() > 0) {
             String message = "Application cannot be deployed as it contains deployment-ids which are already deployed: app: " + appInfo.jarPath;
             logger.error(message);
             OpenEJBException openEJBException = new DuplicateDeploymentIdException(message);
             Exception e = openEJBException;
             for (String id : used) {
-                logger.debug("DeploymentId already used: "+id);
+                logger.debug("DeploymentId already used: " + id);
                 DuplicateDeploymentIdException e2 = new DuplicateDeploymentIdException(id);
                 e.initCause(e2);
                 e = e2;
@@ -329,9 +340,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Cmp2Builder cmp2Builder = new Cmp2Builder(appInfo, classLoader);
         File generatedJar = cmp2Builder.getJarFile();
         if (generatedJar != null) {
-            classLoader = new URLClassLoader(new URL [] {generatedJar.toURL()}, classLoader);
+            classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
         }
 
+        AssemblyUnit unit = new AssemblyUnit(appInfo.jarPath);
+        assemblyUnits.put(appInfo.jarPath, unit);
 
         // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
         // to the class loader which must be added before any classes are loaded
@@ -361,6 +374,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
                 containerSystem.addDeployment(deploymentInfo);
                 jndiBuilder.bind(deploymentInfo);
+                unit.deployments.add((CoreDeploymentInfo) deploymentInfo);
             }
 
             for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
@@ -371,6 +385,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // App Client
         for (ClientInfo clientInfo : appInfo.clients) {
+            unit.clientIds.add(clientInfo.moduleId);
             JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc);
             Context context = (Context) jndiEncBuilder.build().lookup("env");
             containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
@@ -395,6 +410,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
         }
+    }
+
+    public void destroyApplication(String filePath) throws Exception {
+        AssemblyUnit unit = assemblyUnits.get(filePath);
+        if (unit == null) {
+            throw new NoSuchApplicationException(filePath);
+        }
+        unit.destroy();
+        assemblyUnits.remove(filePath);
     }
 
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
@@ -657,6 +681,71 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
             return new TemporaryClassLoader(classLoader);
+        }
+    }
+
+    private final Map<String, AssemblyUnit> assemblyUnits = new HashMap<String, AssemblyUnit>();
+
+    private final class AssemblyUnit {
+        private final List<CoreDeploymentInfo> deployments = new ArrayList<CoreDeploymentInfo>();
+        private final List<String> clientIds = new ArrayList<String>();
+        private final String appId;
+
+        public AssemblyUnit(String appId) {
+            this.appId = appId;
+        }
+
+        private void destroy() throws Exception {
+            Context globalContext = containerSystem.getJNDIContext();
+            UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appId);
+            // Clear out naming for all components first
+            for (CoreDeploymentInfo deployment : deployments) {
+                String deploymentID = deployment.getDeploymentID() + "";
+                try {
+                    containerSystem.removeDeploymentInfo(deployment);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception(deploymentID, t));
+                }
+
+                JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
+                for (String name : bindings.getBindings()) {
+                    try {
+                        globalContext.lookup("openejb/ejb/" + name);
+                        globalContext.unbind("/openejb/ejb/" + name);
+                        try {
+                            globalContext.lookup("openejb/ejb/" + name);
+                            throw new OpenEJBException("Unbind failed: " + name);
+                        } catch (NamingException goodAndExpected) {
+                        }
+                    } catch (Throwable t) {
+                        undeployException.getCauses().add(new Exception("bean: " + deploymentID, t));
+                    }
+                }
+            }
+            for (CoreDeploymentInfo deployment : deployments) {
+                String deploymentID = deployment.getDeploymentID() + "";
+                try {
+                    Container container = deployment.getContainer();
+                    container.undeploy(deployment);
+                    deployment.setContainer(null);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("bean: " + deploymentID, t));
+                } finally {
+                    deployment.setDestroyed(true);
+                }
+            }
+            deployments.clear();
+
+            for (String clientId : clientIds) {
+                try {
+                    globalContext.unbind("/openejb/client/" + clientId);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("client: " + clientId, t));
+                }
+            }
+            if (undeployException.getCauses().size() > 0) {
+                throw undeployException;
+            }
         }
     }
 }

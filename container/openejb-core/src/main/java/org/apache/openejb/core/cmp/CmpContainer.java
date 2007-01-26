@@ -119,8 +119,34 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return deploymentsByClass.get(beanType);
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo deploymentInfo) throws OpenEJBException {
+    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
         deploy((CoreDeploymentInfo) deploymentInfo);
+    }
+
+    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        undeploy((CoreDeploymentInfo)deploymentInfo);
+    }
+
+    public synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploymentsById.remove(deploymentInfo.getDeploymentID());
+        deploymentsByClass.remove(deploymentInfo.getCmpBeanImpl());
+
+        try {
+            Field field = deploymentInfo.getCmpBeanImpl().getField("deploymentInfo");
+            field.set(null, null);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        CmpEngine cmpEngine = (CmpEngine) deploymentInfo.getContainerData();
+        cmpEngine.undeploy(deploymentInfo);
+
+        if (cmpEngine.isEmpty()){
+            cmpEngines.remove(deploymentInfo.getJarPath());
+            cmpEngines.remove(deploymentInfo.getClassLoader());
+        }
+        deploymentInfo.setContainer(null);
+        deploymentInfo.setContainerData(null);
     }
 
     public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -195,6 +221,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
         ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);

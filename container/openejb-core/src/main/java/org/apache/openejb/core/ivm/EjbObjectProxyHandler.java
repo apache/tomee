@@ -133,12 +133,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return deploymentInfo.getEJBHome();
+        return getDeploymentInfo().getEJBHome();
     }
 
     protected Object getEJBLocalHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return deploymentInfo.getEJBLocalHome();
+        return getDeploymentInfo().getEJBLocalHome();
     }
 
     protected Object getHandle(Method method, Object[] args, Object proxy) throws Throwable {
@@ -147,7 +147,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(deploymentInfo, primaryKey, deploymentInfo.getInterface(interfaceType), container, interfaceType);
+        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getDeploymentInfo().getInterface(interfaceType), container, interfaceType);
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {

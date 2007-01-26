@@ -50,9 +50,9 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
 
     public void init(Properties properties) throws Exception {
         if (openejb != null) return;
-        SystemInstance.init(properties);
         openejb = new OpenEJBInstance();
         if (openejb.isInitialized()) return;
+        SystemInstance.init(properties);
         openejb.init(properties);
         if (properties.getProperty(OPENEJB_EMBEDDED_REMOTABLE, "false").equalsIgnoreCase("true")){
             bootServerServices();

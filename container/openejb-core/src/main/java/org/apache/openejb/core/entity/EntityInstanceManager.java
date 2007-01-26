@@ -80,6 +80,10 @@ public class EntityInstanceManager {
         poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
     }
 
+    public void undeploy(org.apache.openejb.DeploymentInfo deploymentInfo) {
+        poolMap.remove(deploymentInfo.getDeploymentID());
+    }
+
     public EntityBean obtainInstance(ThreadContext callContext)
             throws OpenEJBException {
         Transaction currentTx = null;

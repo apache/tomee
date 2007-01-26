@@ -74,6 +74,10 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
 
     }
 
+    public void removeDeploymentInfo(DeploymentInfo info){
+        this.deployments.remove(info.getDeploymentID());
+    }
+
 
     public javax.naming.Context getJNDIContext() {
         return jndiRootContext;

@@ -56,8 +56,8 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
     public void init(Object containerId, HashMap deployments, Properties properties) throws OpenEJBException {
     }
 
-    public void deploy(Object deploymentID, org.apache.openejb.DeploymentInfo info) throws OpenEJBException {
-        super.deploy(deploymentID, info);
+    public void deploy(org.apache.openejb.DeploymentInfo info) throws OpenEJBException {
+        super.deploy(info);
         setupDeployment((org.apache.openejb.core.CoreDeploymentInfo) info);
     }
 

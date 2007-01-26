@@ -24,11 +24,11 @@ import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
+import java.lang.ref.WeakReference;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Properties;
 
 import javax.ejb.EJBException;
@@ -40,7 +40,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -53,7 +52,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public boolean inProxyMap = false;
 
-    public transient CoreDeploymentInfo deploymentInfo;
+    private transient WeakReference<CoreDeploymentInfo> deploymentInfo;
 
     public transient RpcContainer container;
 
@@ -81,7 +80,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.container = container;
         this.primaryKey = pk;
         this.deploymentID = depID;
-        this.deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) container.getDeploymentInfo(depID);
+        this.setDeploymentInfo((CoreDeploymentInfo) container.getDeploymentInfo(depID));
 
         Properties properties = SystemInstance.get().getProperties();
         String value = properties.getProperty("openejb.localcopy");
@@ -96,13 +95,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         in.defaultReadObject();
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID);
-        container = (RpcContainer) deploymentInfo.getContainer();
+        setDeploymentInfo((CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID));
+        container = (RpcContainer) getDeploymentInfo().getContainer();
     }
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {
         Object caller = getThreadSpecificSecurityIdentity();
-        boolean authorized = getSecurityService().isCallerAuthorized(caller, deploymentInfo.getAuthorizedRoles(method));
+        boolean authorized = getSecurityService().isCallerAuthorized(caller, getDeploymentInfo().getAuthorizedRoles(method));
         if (!authorized)
             throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
     }
@@ -126,6 +125,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (isInvalidReference) throw new NoSuchObjectException("reference is invalid");
+        getDeploymentInfo(); // will throw an exception if app has been undeployed.
 
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
@@ -305,7 +305,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public void invalidateReference() {
         this.container = null;
-        this.deploymentInfo = null;
+        this.setDeploymentInfo(null);
         this.isInvalidReference = true;
     }
 
@@ -343,5 +343,18 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     public void setLocal(boolean isLocal) {
         this.isLocal = isLocal;
         this.doIntraVmCopy = !isLocal;
+    }
+
+    public CoreDeploymentInfo getDeploymentInfo() {
+        CoreDeploymentInfo info = deploymentInfo.get();
+        if (info == null|| info.isDestroyed()){
+            invalidateReference();
+            throw new IllegalStateException("Bean '"+deploymentID+"' has been undeployed.");
+        }
+        return info;
+    }
+
+    public void setDeploymentInfo(CoreDeploymentInfo deploymentInfo) {
+        this.deploymentInfo = new WeakReference<CoreDeploymentInfo>(deploymentInfo);
     }
 }

@@ -30,6 +30,9 @@ import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.stateful.StatefulEncReference;
 import org.apache.openejb.core.stateless.StatelessEncReference;
 
+import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * @version $Rev$ $Date$
@@ -129,13 +132,17 @@ public class JndiBuilder {
     }
 
     public void bind(DeploymentInfo deploymentInfo) {
-
         CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentInfo;
+
+        Bindings bindings = new Bindings();
+        deployment.set(Bindings.class, bindings);
+
         Object id = deployment.getDeploymentID();
         try {
             Class homeInterface = deployment.getHomeInterface();
             if (homeInterface != null) {
                 String name = strategy.getName(deployment, homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
+                bindings.add(name);
                 context.bind("openejb/ejb/" + name, getReference(deployment.getEJBHome(), deployment));
             }
         } catch (NamingException e) {
@@ -146,6 +153,7 @@ public class JndiBuilder {
             Class localHomeInterface = deployment.getLocalHomeInterface();
             if (localHomeInterface != null) {
                 String name = strategy.getName(deployment, localHomeInterface, JndiNameStrategy.Interface.LOCAL_HOME);
+                bindings.add(name);
                 context.bind("openejb/ejb/" + name, getReference(deployment.getEJBLocalHome(), deployment));
             }
         } catch (NamingException e) {
@@ -157,6 +165,7 @@ public class JndiBuilder {
             if (businessLocalInterface != null) {
                 String name = strategy.getName(deployment, businessLocalInterface, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 DeploymentInfo.BusinessLocalHome businessLocalHome = deployment.getBusinessLocalHome();
+                bindings.add(name);
                 context.bind("openejb/ejb/" + name, new BusinessLocalReference(businessLocalHome));
             }
         } catch (NamingException e) {
@@ -168,6 +177,7 @@ public class JndiBuilder {
             if (businessRemoteInterface != null) {
                 String name = strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 DeploymentInfo.BusinessRemoteHome businessRemoteHome = deployment.getBusinessRemoteHome();
+                bindings.add(name);
                 context.bind("openejb/ejb/" + name, new BusinessRemoteReference(businessRemoteHome));
             }
         } catch (NamingException e) {
@@ -186,5 +196,17 @@ public class JndiBuilder {
             ref = new EntityEncReference(ref);
         }
         return ref;
+    }
+
+    protected static final class Bindings {
+        private final List<String> bindings = new ArrayList<String>();
+
+        public List<String> getBindings() {
+            return bindings;
+        }
+
+        public boolean add(String o) {
+            return bindings.add(o);
+        }
     }
 }

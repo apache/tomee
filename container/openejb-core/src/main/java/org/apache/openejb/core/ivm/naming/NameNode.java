@@ -25,7 +25,7 @@ public class NameNode implements java.io.Serializable {
     public NameNode parent;
     public Object myObject;
     public transient IvmContext myContext;
-
+    boolean unbound;
     public NameNode(NameNode parent, ParsedName name, Object obj) {
         atomicName = name.getComponent();
         atomicHash = name.getComponentHashCode();
@@ -53,8 +53,11 @@ public class NameNode implements java.io.Serializable {
             if (name.next()) {
                 if (subTree == null) throw new javax.naming.NameNotFoundException("Can not resolve " + name);
                 return subTree.resolve(name);
-            } else
+            } else if (unbound){
+                throw new javax.naming.NameNotFoundException("Can not resolve " + name);
+            } else {
                 return getBinding();
+            }
         } else if (compareResult == ParsedName.IS_LESS) {// parsed hash is less than
             if (lessTree == null) throw new javax.naming.NameNotFoundException("Can not resolve " + name);
             return lessTree.resolve(name);
@@ -81,6 +84,7 @@ public class NameNode implements java.io.Serializable {
                 if (subTree != null) {
                     throw new javax.naming.NameAlreadyBoundException();
                 }
+                unbound = false;
                 myObject = obj;// bind the object to this node
             }
         } else if (compareResult == ParsedName.IS_LESS) {
@@ -94,6 +98,42 @@ public class NameNode implements java.io.Serializable {
                 grtrTree = new NameNode(this.parent, name, obj);
             else
                 grtrTree.bind(name, obj);
+        }
+    }
+
+    public void unbind(ParsedName name) throws javax.naming.NameAlreadyBoundException {
+        int compareResult = name.compareTo(atomicHash);
+        if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
+            if (name.next()) {
+                if (subTree != null)
+                    subTree.unbind(name);
+            } else {
+                unbound = true;
+                myObject = null;
+            }
+        } else if (compareResult == ParsedName.IS_LESS) {
+            if (lessTree != null) {
+                lessTree.unbind(name);
+            }
+        } else {//ParsedName.IS_GREATER ...
+
+            if (grtrTree != null)
+                grtrTree.unbind(name);
+        }
+    }
+
+    protected void clearCache() {
+        if (myContext != null) {
+            myContext.fastCache.clear();
+        }
+        if (grtrTree != null) {
+            grtrTree.clearCache();
+        }
+        if (lessTree != null){
+            lessTree.clearCache();
+        }
+        if (subTree != null){
+            subTree.clearCache();
         }
     }
 

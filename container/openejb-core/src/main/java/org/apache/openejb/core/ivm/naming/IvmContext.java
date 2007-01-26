@@ -281,7 +281,19 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void unbind(String name) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        checkReadOnly();
+        int indx = name.indexOf(":");
+        if (indx > -1) {
+            /*
+             The ':' character will be in the path if its an absolute path name starting with the schema
+             'java:'.  We strip the schema off the path before passing it to the node.resolve method.
+            */
+            name = name.substring(indx + 1);
+        }
+        fastCache.clear();
+        mynode.clearCache();
+
+        mynode.unbind(new ParsedName(name));
     }
 
     public void unbind(Name name) throws NamingException {

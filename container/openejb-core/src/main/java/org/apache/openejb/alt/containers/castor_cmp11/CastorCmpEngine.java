@@ -66,6 +66,7 @@ public class CastorCmpEngine implements CmpEngine {
     private final JDOManager globalJdoManager;
     private final CmpCallback cmpCallback;
     private final JndiTxReference txReference;
+    private final Map<Object, CoreDeploymentInfo> deployments = new HashMap<Object, CoreDeploymentInfo>();
 
     private final Map<String,String> abstractSchemaMap = new HashMap<String,String>();
 
@@ -132,11 +133,24 @@ public class CastorCmpEngine implements CmpEngine {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws SystemException {
+        deployments.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         bindTransactionManagerReference(deploymentInfo);
         configureKeyGenerator(deploymentInfo);
         String beanClassName = deploymentInfo.getBeanClass().getName();
         String abstractSchemaName = beanClassName.substring(beanClassName.lastIndexOf('.') + 1);
         abstractSchemaMap.put(abstractSchemaName, beanClassName);
+    }
+
+    public void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploymentInfo.setKeyGenerator(null);
+        deployments.remove(deploymentInfo.getDeploymentID());
+        if (deployments.size() == 0){
+            abstractSchemaMap.clear();
+        }
+    }
+
+    public boolean isEmpty() {
+        return deployments.size() == 0;
     }
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {

@@ -26,5 +26,7 @@ public interface Container {
 
     public DeploymentInfo [] deployments();
 
-    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException;
+    public void deploy(DeploymentInfo info) throws OpenEJBException;
+
+    public void undeploy(DeploymentInfo info) throws OpenEJBException;
 }

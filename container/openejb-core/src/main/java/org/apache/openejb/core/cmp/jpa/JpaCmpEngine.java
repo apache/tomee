@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.Map;
+import java.util.HashMap;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBObject;
@@ -53,6 +55,7 @@ public class JpaCmpEngine implements CmpEngine {
     private final CmpCallback cmpCallback;
     private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
+    private final Map<Object, CoreDeploymentInfo> deployments = new HashMap<Object, CoreDeploymentInfo>();
     private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
         protected Set<EntityBean> initialValue() {
             return new HashSet<EntityBean>();
@@ -64,6 +67,7 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        deployments.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         Class beanClass = deploymentInfo.getBeanClass();
         if (deploymentInfo.isCmp2()) {
             String beanClassName = beanClass.getName();
@@ -79,6 +83,18 @@ public class JpaCmpEngine implements CmpEngine {
             deploymentInfo.setCmpBeanImpl(beanClass);
         }
         configureKeyGenerator(deploymentInfo);
+    }
+
+    public void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        deploymentInfo.setKeyGenerator(null);
+        deployments.remove(deploymentInfo.getDeploymentID());
+        if (deployments.size() == 0){
+            entityManagerListeners.clear();
+        }
+    }
+
+    public boolean isEmpty() {
+        return deployments.size() == 0;
     }
 
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {

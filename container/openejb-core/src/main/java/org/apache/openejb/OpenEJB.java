@@ -284,6 +284,6 @@ public final class OpenEJB {
      * 1 usages
      */
     public static boolean isInitialized() {
-        return instance != null;
+        return instance != null || SystemInstance.get().getComponent(ContainerSystem.class) != null;
     }
 }

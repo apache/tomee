@@ -55,7 +55,7 @@ public class EjbJarBuilder {
 
                 Container container = (Container) props.get(ejbInfo.containerId);
                 if (container == null) throw new IllegalStateException("Container does not exist: "+ejbInfo.containerId +".  Referenced by deployment: "+deployment.getDeploymentID());
-                container.deploy(deployment.getDeploymentID(), deployment);
+                container.deploy(deployment);
                 deployment.setContainer(container);
             } catch (Throwable e) {
                 throw new OpenEJBException("Error building bean '"+ejbInfo.ejbName+"'.  Exception: "+e.getClass()+": "+e.getMessage(), e);

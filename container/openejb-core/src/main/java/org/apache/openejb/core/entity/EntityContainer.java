@@ -82,17 +82,25 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         return containerID;
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+    public void deploy(DeploymentInfo info) throws OpenEJBException {
         Map registry = new HashMap(deploymentRegistry);
-        registry.put(deploymentID, info);
+        registry.put(info.getDeploymentID(), info);
         deploymentRegistry = registry;
         org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
         instanceManager.deploy(info);
     }
 
+    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+        deploymentRegistry.remove(info.getDeploymentID());
+        instanceManager.undeploy(info);
+        info.setContainer(null);
+    }
+
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        
         ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {

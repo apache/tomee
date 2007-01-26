@@ -79,16 +79,28 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return containerID;
     }
 
-    public void deploy(Object deploymentID, DeploymentInfo info) throws OpenEJBException {
+    public void deploy(DeploymentInfo info) throws OpenEJBException {
         HashMap registry = (HashMap) deploymentRegistry.clone();
-        registry.put(deploymentID, info);
+        registry.put(info.getDeploymentID(), info);
         deploymentRegistry = registry;
         org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
         di.setContainer(this);
     }
 
+    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+        undeploy((CoreDeploymentInfo)info);
+    }
+
+    private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) {
+        deploymentRegistry.remove(deploymentInfo.getDeploymentID());
+        deploymentInfo.setContainer(null);
+        deploymentInfo.setContainerData(null);
+    }
+
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        
         ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {

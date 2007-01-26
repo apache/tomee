@@ -51,7 +51,7 @@ public class Cmp2Util {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
         CmpContainer container = (CmpContainer) handler.container;
-        Bean entity = (Bean) container.getEjbInstance(handler.deploymentInfo, handler.primaryKey);
+        Bean entity = (Bean) container.getEjbInstance(handler.getDeploymentInfo(), handler.primaryKey);
         return entity;
     }
 

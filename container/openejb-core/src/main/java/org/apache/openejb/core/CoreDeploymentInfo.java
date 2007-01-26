@@ -71,6 +71,7 @@ import org.apache.openejb.util.Index;
  */
 public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
+    private boolean destroyed;
     private Class homeInterface;
     private Class remoteInterface;
     private Class localHomeInterface;
@@ -212,6 +213,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
         createMethodMap();
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 
     @SuppressWarnings({"unchecked"})
