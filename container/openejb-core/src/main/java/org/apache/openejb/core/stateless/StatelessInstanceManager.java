@@ -115,7 +115,14 @@ public class StatelessInstanceManager {
                     try {
                         String jndiName = injection.getJndiName();
                         Object object = ctx.lookup("java:comp/env/" + jndiName);
-                        objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
+                        if (object instanceof String) {
+                            String string = (String) object;
+                            // Pass it in raw so it could be potentially converted to
+                            // another data type by an xbean-reflect property editor
+                            objectRecipe.setProperty(injection.getName(), string);
+                        } else {
+                            objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
+                        }
                     } catch (NamingException e) {
                         logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
                     }
