@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.MethodParams;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
@@ -30,10 +31,13 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.codehaus.swizzle.stream.StringTemplate;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class AutoConfigAndDeploy implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -42,9 +46,13 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     private final ConfigurationFactory configFactory;
     private boolean autoCreateContainers = true;
     private boolean autoCreateConnectors = true;
+    private final StringTemplate deploymentIdTemplate;
+    private final Map<String,String> contextData = new HashMap<String,String>();
 
     public AutoConfigAndDeploy(ConfigurationFactory configFactory) {
         this.configFactory = configFactory;
+        String format = SystemInstance.get().getProperty("openejb.deploymentId.format", "{ejbName}");
+        this.deploymentIdTemplate = new StringTemplate(format);
     }
 
     public boolean autoCreateConnectors() {
@@ -66,13 +74,16 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     public void init() throws OpenEJBException {
     }
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
+        contextData.clear();
+        contextData.put("appId", appModule.getJarLocation());
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             deploy(ejbModule);
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
             deploy(clientModule);
         }
+        contextData.clear();
         return appModule;
     }
 
@@ -81,6 +92,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     }
 
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+        contextData.put("moduleId", ejbModule.getModuleId());
         String jarLocation = ejbModule.getJarURI();
         ClassLoader classLoader = ejbModule.getClassLoader();
 
@@ -143,7 +155,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 if ((ref.getMappedName() + "").startsWith("jndi:")){
                     continue;
                 }
-                
+
                 ResourceLink link = ejbDeployment.getResourceLink(ref.getResRefName());
                 if (link == null) {
                     link = new ResourceLink();
@@ -286,7 +298,11 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     }
 
     private String autoAssignDeploymentId(Bean bean) {
-        return bean.getEjbName();
+        contextData.put("ejbType", bean.getClass().getSimpleName());
+        contextData.put("ejbClass", bean.getClass().getName());
+        contextData.put("ejbClass.simpleName", bean.getClass().getSimpleName());
+        contextData.put("ejbName", bean.getEjbName());
+        return deploymentIdTemplate.apply(contextData);
     }
 
     private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {

@@ -1017,6 +1017,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.codehaus.swizzle</groupId>
+        <artifactId>swizzle-stream</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
         <groupId>org.tranql</groupId>
         <artifactId>tranql</artifactId>
         <version>1.4.1</version>
