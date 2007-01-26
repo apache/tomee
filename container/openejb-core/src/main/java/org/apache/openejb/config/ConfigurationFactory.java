@@ -49,7 +49,11 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.Property;
+import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -312,6 +316,39 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
             clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
             appInfo.clients.add(clientInfo);
+        }
+
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            String rootUrl = persistenceModule.getRootUrl();
+            Persistence persistence = persistenceModule.getPersistence();
+            for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+                PersistenceUnitInfo info = new PersistenceUnitInfo();
+                info.name = persistenceUnit.getName();
+                info.persistenceUnitRootUrl = rootUrl;
+                info.provider = persistenceUnit.getProvider();
+                info.transactionType = persistenceUnit.getTransactionType().toString();
+
+                Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
+                info.excludeUnlistedClasses = excludeUnlistedClasses != null && excludeUnlistedClasses;
+
+                info.jtaDataSource = persistenceUnit.getJtaDataSource();
+                info.nonJtaDataSource = persistenceUnit.getNonJtaDataSource();
+
+                info.jarFiles.addAll(persistenceUnit.getJarFile());
+                info.classes.addAll(persistenceUnit.getClazz());
+                info.mappingFiles.addAll(persistenceUnit.getMappingFile());
+
+                // Handle Properties
+                org.apache.openejb.jee.jpa.unit.Properties puiProperties = persistenceUnit.getProperties();
+                if (puiProperties != null) {
+                    for (Property property : puiProperties.getProperty()) {
+                        info.properties.put(property.getName(), property.getValue());
+                    }
+                }
+
+                // Persistence Unit Root Url
+                appInfo.persistenceUnits.add(info);
+            }
         }
 
         appInfo.jarPath = appModule.getJarLocation();

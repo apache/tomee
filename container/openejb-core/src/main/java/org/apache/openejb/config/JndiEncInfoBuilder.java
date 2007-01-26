@@ -24,8 +24,8 @@ import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
-import org.apache.openejb.assembler.classic.PersistenceContextInfo;
-import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
@@ -155,10 +155,10 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private List<PersistenceUnitInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
-        ArrayList<PersistenceUnitInfo> infos = new ArrayList<PersistenceUnitInfo>();
+    private List<PersistenceUnitReferenceInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
+        ArrayList<PersistenceUnitReferenceInfo> infos = new ArrayList<PersistenceUnitReferenceInfo>();
         for (PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
-            PersistenceUnitInfo info = new PersistenceUnitInfo();
+            PersistenceUnitReferenceInfo info = new PersistenceUnitReferenceInfo();
             info.referenceName = puRef.getPersistenceUnitRefName();
             info.persistenceUnitName = puRef.getPersistenceUnitName();
             info.location = buildLocationInfo(puRef);
@@ -168,11 +168,11 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private List<PersistenceContextInfo> buildPersistenceContextRefInfos(JndiConsumer jndiConsumer) {
-        ArrayList<PersistenceContextInfo> infos = new ArrayList<PersistenceContextInfo>();
+    private List<PersistenceContextReferenceInfo> buildPersistenceContextRefInfos(JndiConsumer jndiConsumer) {
+        ArrayList<PersistenceContextReferenceInfo> infos = new ArrayList<PersistenceContextReferenceInfo>();
 
         for (PersistenceContextRef contextRef : jndiConsumer.getPersistenceContextRef()) {
-            PersistenceContextInfo info = new PersistenceContextInfo();
+            PersistenceContextReferenceInfo info = new PersistenceContextReferenceInfo();
             info.referenceName = contextRef.getPersistenceContextRefName();
             info.persistenceUnitName = contextRef.getPersistenceUnitName();
             info.location = buildLocationInfo(contextRef);

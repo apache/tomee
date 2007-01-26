@@ -26,5 +26,6 @@ public class AppInfo extends InfoObject {
     public String jarPath;
     public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
     public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
+    public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
     public final List<String> libs = new ArrayList<String>();
 }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,13 +14,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.persistence;
+package org.apache.openejb.config;
 
-import javax.sql.DataSource;
+import org.apache.openejb.jee.jpa.unit.Persistence;
 
-/**
- * @version $Revision$ $Date$
- */
-public interface DataSourceResolver {
-    DataSource getDataSource(String name) throws Exception;
+public class PersistenceModule {
+    private String rootUrl;
+    private Persistence persistence;
+
+    public PersistenceModule(String rootUrl, Persistence persistence) {
+        this.rootUrl = rootUrl;
+        this.persistence = persistence;
+    }
+
+    public String getRootUrl() {
+        return rootUrl;
+    }
+
+    public void setRootUrl(String rootUrl) {
+        this.rootUrl = rootUrl;
+    }
+
+    public Persistence getPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(Persistence persistence) {
+        this.persistence = persistence;
+    }
 }

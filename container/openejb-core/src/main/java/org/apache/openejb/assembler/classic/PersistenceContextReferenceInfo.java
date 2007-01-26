@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,21 +17,16 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
 import java.util.Properties;
-import java.util.ArrayList;
 
-public class PersistenceUnitInfo extends InfoObject {
-    public String name;
-    public String provider;
-    public String transactionType;
-    public String jtaDataSource;
-    public String nonJtaDataSource;
-    public final List<String> mappingFiles = new ArrayList<String>();
-    public final List<String> jarFiles = new ArrayList<String>();
-    public final List<String> classes = new ArrayList<String>();
-    public boolean excludeUnlistedClasses;
+/**
+ * @version $Rev$ $Date$
+ */
+public class PersistenceContextReferenceInfo extends InjectableInfo {
+    public String referenceName;
+    public String persistenceUnitName;
+    public boolean extended;
     public final Properties properties = new Properties();
-    public String persistenceUnitRootUrl;
 
+    public ReferenceLocationInfo location;
 }

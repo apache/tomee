@@ -136,7 +136,7 @@ class EnterpriseBeanBuilder {
             }
         }
 
-        for (PersistenceUnitInfo info : bean.jndiEnc.persistenceUnitRefs) {
+        for (PersistenceUnitReferenceInfo info : bean.jndiEnc.persistenceUnitRefs) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
                 Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
@@ -144,7 +144,7 @@ class EnterpriseBeanBuilder {
             }
         }
 
-        for (PersistenceContextInfo info : bean.jndiEnc.persistenceContextRefs) {
+        for (PersistenceContextReferenceInfo info : bean.jndiEnc.persistenceContextRefs) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
                 Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
@@ -185,7 +185,7 @@ class EnterpriseBeanBuilder {
             deployment.setPostActivate(getCallback(ejbClass, statefulBeanInfo.postActivate));
 
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
-            for (PersistenceContextInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
+            for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
                     EntityManagerFactory entityManagerFactory = jndiEncBuilder.findEntityManagerFactory(info.persistenceUnitName);
                     extendedEntityManagerFactories.put(entityManagerFactory, info.properties);

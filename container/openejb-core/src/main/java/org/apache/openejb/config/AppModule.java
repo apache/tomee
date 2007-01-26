@@ -16,17 +16,18 @@
  */
 package org.apache.openejb.config;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
 public class AppModule implements DeploymentModule {
-    private final List<URL> additionalLibraries = new ArrayList();
-    private final List<ClientModule> clientModules = new ArrayList();
-    private final List<EjbModule> ejbModules = new ArrayList();
+    private final List<URL> additionalLibraries = new ArrayList<URL>();
+    private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
+    private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
+    private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();;
     private final String jarLocation;
     private final ClassLoader classLoader;
 
@@ -45,6 +46,10 @@ public class AppModule implements DeploymentModule {
 
     public List<EjbModule> getEjbModules() {
         return ejbModules;
+    }
+
+    public List<PersistenceModule> getPersistenceModules() {
+        return persistenceModules;
     }
 
     public String getJarLocation() {

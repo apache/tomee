@@ -85,21 +85,20 @@ public class JndiEncBuilder {
 
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
+        this.jarPath = path;
         this.jndiEnc = jndiEnc;
 
-        if(allFactories != null){
-            this.allFactories = allFactories;
-        } else {
-            this.allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
+        if (allFactories == null) {
+            allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
         }
+        this.allFactories = allFactories;
 
-        this.jarPath = path;
 
-        if(this.allFactories.get(jarPath) != null){
-            entityManagerFactories = this.allFactories.get(jarPath);
-        } else {
-            entityManagerFactories = new HashMap<String, EntityManagerFactory>();
+        Map<String, EntityManagerFactory> factories = allFactories.get(jarPath);
+        if (factories == null) {
+            factories = new HashMap<String, EntityManagerFactory>();
         }
+        entityManagerFactories = factories;
     }
 
     public Context build() throws OpenEJBException {
@@ -269,7 +268,7 @@ public class JndiEncBuilder {
             //TODO code for handling other resource-env-refs need to be added here.
         }
 
-        for (PersistenceUnitInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
+        for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
             if (referenceInfo.location != null){
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
@@ -282,7 +281,7 @@ public class JndiEncBuilder {
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
         }
 
-        for (PersistenceContextInfo contextInfo : jndiEnc.persistenceContextRefs) {
+        for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
             if (contextInfo.location != null){
                 Reference reference = buildReferenceLocation(contextInfo.location);
                 bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));

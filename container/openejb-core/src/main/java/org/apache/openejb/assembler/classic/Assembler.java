@@ -32,11 +32,8 @@ import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.persistence.GlobalJndiDataSourceResolver;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
-import org.apache.openejb.persistence.PersistenceDeployer;
-import org.apache.openejb.persistence.PersistenceDeployerException;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -45,7 +42,6 @@ import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 
@@ -69,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -353,17 +350,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
         // to the class loader which must be added before any classes are loaded
         HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+        PersistenceBuilder persistenceBuilder = new PersistenceBuilder(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
+        for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
             try {
-                URL url = new File(ejbJar.jarPath).toURL();
-                ResourceFinder resourceFinder = new ResourceFinder("", classLoader, url);
-
-                PersistenceDeployer persistenceDeployer = new PersistenceDeployer(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
-                Map<String, EntityManagerFactory> factories = persistenceDeployer.deploy(resourceFinder.findAll("META-INF/persistence.xml"), classLoader);
-                allFactories.put(ejbJar.jarPath, factories);
-            } catch (PersistenceDeployerException e1) {
-                throw new OpenEJBException(e1);
-            } catch (IOException e) {
+                EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                Map<String, EntityManagerFactory> factories = allFactories.get(info.persistenceUnitRootUrl);
+                if (factories == null) {
+                    factories = new TreeMap<String, EntityManagerFactory>();
+                    allFactories.put(info.persistenceUnitRootUrl, factories);
+                }
+                factories.put(info.name, factory);
+            } catch (Exception e) {
                 throw new OpenEJBException(e);
             }
         }
