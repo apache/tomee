@@ -150,11 +150,6 @@
       <artifactId>openejb-jee</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-persistence</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
     <!-- ActiveMQ -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
