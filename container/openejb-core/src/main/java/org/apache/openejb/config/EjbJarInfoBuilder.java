@@ -218,7 +218,7 @@ public class EjbJarInfoBuilder {
         }
 
         // CascadeDelete
-        cmrFieldInfo.cascadeDelete = role.getCascadeDelete() != null;
+        cmrFieldInfo.cascadeDelete = role.getCascadeDelete();
         // Multiplicity: one or many
         cmrFieldInfo.many = role.getMultiplicity() == Multiplicity.MANY;
 
