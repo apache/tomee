@@ -80,6 +80,15 @@ public class EnvEntry implements JndiReference {
     @XmlID
     protected String id;
 
+    public EnvEntry() {
+    }
+
+    public EnvEntry(String envEntryName, String envEntryType, String envEntryValue) {
+        this.envEntryName = envEntryName;
+        this.envEntryType = envEntryType;
+        this.envEntryValue = envEntryValue;
+    }
+
     @XmlTransient
     public String getName() {
         return getEnvEntryName();

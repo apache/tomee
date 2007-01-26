@@ -55,6 +55,14 @@ public class InjectionTarget {
     @XmlElement(name = "injection-target-name", required = true)
     protected String injectionTargetName;
 
+    public InjectionTarget() {
+    }
+
+    public InjectionTarget(String injectionTargetClass, String injectionTargetName) {
+        this.injectionTargetClass = injectionTargetClass;
+        this.injectionTargetName = injectionTargetName;
+    }
+
     public String getInjectionTargetClass() {
         return injectionTargetClass;
     }
