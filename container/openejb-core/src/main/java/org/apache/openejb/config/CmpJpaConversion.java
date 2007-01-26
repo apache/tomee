@@ -19,6 +19,9 @@ package org.apache.openejb.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.lang.reflect.Field;
 
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
@@ -29,6 +32,7 @@ import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
+import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.Entity;
 import org.apache.openejb.jee.jpa.Attributes;
@@ -40,9 +44,10 @@ import org.apache.openejb.jee.jpa.ManyToOne;
 import org.apache.openejb.jee.jpa.ManyToMany;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.CascadeType;
+import org.apache.openejb.jee.jpa.Transient;
 
 public class CmpJpaConversion {
-    public EntityMappings generateEntityMappings(EjbJar ejbJar) {
+    public EntityMappings generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader) {
         EntityMappings entityMappings = new EntityMappings();
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
@@ -76,13 +81,22 @@ public class CmpJpaConversion {
             entity.setAttributes(attributes);
 
             //
+            // Map fields remembering the names of the mapped fields
+            //
+            Set<String> persistantFields = new TreeSet<String>();
+
+            //
             // id: the primary key
             //
-            Id id = new Id();
-            // todo complex primary key
-            // todo unknown primary key
-            id.setName(bean.getPrimkeyField());
-            attributes.getId().add(id);
+            if (bean.getPrimkeyField() != null) {
+                Id id = new Id();
+                id.setName(bean.getPrimkeyField());
+                attributes.getId().add(id);
+                persistantFields.add(bean.getPrimkeyField());
+            } else {
+                // todo complex primary key
+                // todo unknown primary key                
+            }
 
             //
             // basic: cmp-fields
@@ -92,12 +106,35 @@ public class CmpJpaConversion {
                 if (!cmpField.getFieldName().equals(bean.getPrimkeyField())) {
                     basic.setName(cmpField.getFieldName());
                     attributes.getBasic().add(basic);
+                    persistantFields.add(cmpField.getFieldName());
                 }
             }
 
             // add the entity
             entityMappings.getEntity().add(entity);
             entitiesByName.put(bean.getEjbName(), entity);
+
+            // add the persistence-context-ref
+            addPersistenceContextRef(bean);
+
+            //
+            // transient: non-persistent fields
+            //
+            if (classLoader != null) {
+                String ejbClassName = bean.getEjbClass();
+                try {
+                    Class ejbClass = classLoader.loadClass(ejbClassName);
+                    for (Field field : ejbClass.getDeclaredFields()) {
+                        if (!persistantFields.contains(field.getName())) {
+                            Transient transientField = new Transient();
+                            transientField.setName(field.getName());
+                            attributes.getTransient().add(transientField);
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    // todo warn
+                }
+            }
         }
 
         Relationships relationships = ejbJar.getRelationships();
@@ -261,11 +298,19 @@ public class CmpJpaConversion {
             }
         }
 
-        //
-        // transient: non-persistent fields
-        //
-        // todo scan class file for fields that are not cmp-fields or cmr-fields and mark them transient
+
         return entityMappings;
+    }
+
+    private void addPersistenceContextRef(EntityBean bean) {
+        for (PersistenceContextRef ref : bean.getPersistenceContextRef()) {
+            // if a ref is already defined, skip this bean
+            if (ref.getName().equals("openejb/cmp")) return;
+        }
+        PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
+        persistenceContextRef.setName("openejb/cmp");
+        persistenceContextRef.setPersistenceUnitName("cmp");
+        bean.getPersistenceContextRef().add(persistenceContextRef);
     }
 
     private void setCascade(EjbRelationshipRole role, RelationField field) {

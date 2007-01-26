@@ -14,6 +14,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
     <entity name="BasicCmpBeanExplicitPK" class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
@@ -29,6 +32,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
     <entity name="AOBasicCmpBean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
@@ -45,6 +51,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
     <entity name="EncCmpBean" class="org.apache.openejb.test.entity.cmp.EncCmpBean">
@@ -61,6 +70,8 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
         </attributes>
     </entity>
     <entity name="CmpRMIIIOPBean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
@@ -77,6 +88,8 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
         </attributes>
     </entity>
     <entity name="BasicCmp2" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean">
@@ -93,6 +106,8 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
     <entity name="AOBasicCmp2" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean">
@@ -109,6 +124,8 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
     <entity name="EncCmp2" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean">
@@ -125,6 +142,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="ejbContext"/>
         </attributes>
     </entity>
     <entity name="Cmp2RmiIiop" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean">
@@ -141,13 +159,13 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="ejbContext"/>
         </attributes>
     </entity>
     <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean">
         <description>OneOwningSideBean</description>
         <table name="OneOwning"/>
         <attributes>
-            <id/>
             <basic name="id">
                 <column name="col_id"/>
             </basic>
@@ -174,7 +192,6 @@
         <description>ManyOwningSideBean</description>
         <table name="ManyOwning"/>
         <attributes>
-            <id/>
             <basic name="id">
                 <column name="col_id"/>
             </basic>
@@ -190,7 +207,6 @@
         <description>AddressEJB</description>
         <table name="address"/>
         <attributes>
-            <id/>
             <basic name="street">
                 <column name="street"/>
             </basic>

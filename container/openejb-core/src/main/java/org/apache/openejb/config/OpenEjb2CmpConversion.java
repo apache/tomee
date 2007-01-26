@@ -64,10 +64,8 @@ public class OpenEjb2CmpConversion {
 
             for (EntityBeanType.CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
                 String cmpFieldName = cmpFieldMapping.getCmpFieldName();
-                Field field;
-                if (cmpFieldName.equals(entityData.id.getName())) {
-                    field = entityData.id;
-                } else {
+                Field field = entityData.ids.get(cmpFieldName);
+                if (field == null) {
                     field = entityData.fields.get(cmpFieldName);
                 }
 
@@ -218,14 +216,16 @@ public class OpenEjb2CmpConversion {
 
     private class EntityData {
         private final Entity entity;
-        private final Id id;
+        private final Map<String, Id> ids = new TreeMap<String, Id>();
         private final Map<String, Basic> fields = new TreeMap<String, Basic>();
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
         public EntityData(Entity entity) {
             this.entity = entity;
 
-            id = entity.getAttributes().getId().get(0);
+            for (Id id : entity.getAttributes().getId()) {
+                ids.put(id.getName(), id);
+            }
 
             Attributes attributes = entity.getAttributes();
             if (attributes == null) {

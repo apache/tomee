@@ -81,7 +81,7 @@ public class Cmp2ConversionTest extends TestCase {
         InputStream in = getClass().getClassLoader().getResourceAsStream(ejbJarFileName);
         EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, new ByteArrayInputStream(readContent(in).getBytes()));
         CmpJpaConversion cmpJpaConversion = new CmpJpaConversion();
-        EntityMappings entityMappings = cmpJpaConversion.generateEntityMappings(ejbJar);
+        EntityMappings entityMappings = cmpJpaConversion.generateEntityMappings(ejbJar, getClass().getClassLoader());
 
         String openejbJarXml = readContent(getClass().getClassLoader().getResourceAsStream(openejbJarFileName));
         JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(openejbJarXml.getBytes()));
