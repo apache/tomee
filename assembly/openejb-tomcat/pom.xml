@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.modules</groupId>
@@ -90,27 +90,27 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -128,13 +128,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-client</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

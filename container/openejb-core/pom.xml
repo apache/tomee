@@ -59,7 +59,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>${pom.version}</version>
+                  <version>${version}</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -75,8 +75,8 @@
           <forkMode>pertest</forkMode>
 
           <!-- DEBUG: Uncomment this line and comment out the next -->
-          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${pom.version}.jar</argLine>-->
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${pom.version}.jar</argLine>
+          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar</argLine>-->
+          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar</argLine>
           <systemProperties>
             <property>
               <name>openejb.home</name>
@@ -118,7 +118,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${pom.version}.jar xbean-finder-2.8.jar</Class-Path>
+              <Class-Path>openejb-loader-${version}.jar xbean-finder-2.8.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
@@ -138,17 +138,17 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-javaagent</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jee</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
     </dependency>
     <!-- ActiveMQ -->
     <dependency>
@@ -306,19 +306,19 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-app</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-client</artifactId>
-      <version>${pom.version}</version>
+      <version>${version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
