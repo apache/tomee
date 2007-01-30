@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
-    <entity name="onetomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.ABean">
+    <entity name="onetomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.ABean_JPA">
         <description>A</description>
         <table name="A"/>
         <attributes>
@@ -12,7 +12,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="onetomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.BBean">
+    <entity name="onetomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.BBean_JPA">
         <description>B</description>
         <table name="B"/>
         <attributes>

@@ -183,8 +183,8 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     protected String primKeyClass;
     @XmlElement(required = true)
     protected boolean reentrant;
-    @XmlElement(name = "cmp-version")
-    protected CmpVersion cmpVersion;
+    @XmlElement(name = "cmp-version", defaultValue = "2.x")
+    protected CmpVersion cmpVersion = CmpVersion.CMP2;
     @XmlElement(name = "abstract-schema-name")
     protected String abstractSchemaName;
     @XmlElement(name = "cmp-field", required = true)

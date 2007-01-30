@@ -251,6 +251,10 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         }
 
         public byte[] transform(ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            if ("org/apache/openejb/test/entity/cmp/BasicCmpBean".equals(className) ||
+                    "org/apache/openejb/test/entity/cmp/BasicCmp2Bean_JPA".equals(className)) {
+                System.err.println("Loading " + className);
+            }
             byte[] bytes = classTransformer.transform(classLoader, className.replace('/', '.'), classBeingRedefined, protectionDomain, classfileBuffer);
             return bytes;
         }

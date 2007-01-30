@@ -18,22 +18,17 @@
 package org.apache.openejb.assembler.classic;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileOutputStream;
-import java.util.jar.JarOutputStream;
-import java.util.jar.JarEntry;
+import java.io.IOException;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.List;
 import java.util.StringTokenizer;
-import java.util.ArrayList;
-import java.net.URL;
+import java.util.TreeSet;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
 
 public class Cmp2Builder {
     private final ClassLoader tempClassLoader;
@@ -66,6 +61,9 @@ public class Cmp2Builder {
                         generateClass(jarOutputStream, entityBeanInfo);
                     }
                 }
+            }
+            if (appInfo.cmpMappingsXml != null) {
+                addJarEntry(jarOutputStream, "META-INF/openejb-cmp-generated-orm.xml", appInfo.cmpMappingsXml.getBytes());
             }
         } catch (IOException e) {
             threwException = true;

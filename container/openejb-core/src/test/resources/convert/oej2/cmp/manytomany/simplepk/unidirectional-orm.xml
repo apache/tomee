@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
-    <entity name="manytomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.ABean">
+    <entity name="manytomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.ABean_JPA">
         <description>A</description>
         <table name="A"/>
         <attributes>
@@ -18,7 +18,7 @@
             </many-to-many>
         </attributes>
     </entity>
-    <entity name="manytomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.BBean">
+    <entity name="manytomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.BBean_JPA">
         <description>B</description>
         <table name="B"/>
         <attributes>

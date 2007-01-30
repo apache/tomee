@@ -121,6 +121,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new GeronimoMappedName());
         }
 
+        chain.add(new CmpJpaConversion());
+        
         if (offline) {
             AutoConfigAndDeploy autoConfigAndDeploy = new AutoConfigAndDeploy(this);
             autoConfigAndDeploy.autoCreateConnectors(false);
@@ -357,6 +359,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             File file = new File(url.getPath());
             appInfo.libs.add(file.getAbsolutePath());
         }
+
+        appInfo.cmpMappingsXml = appModule.getCmpMappingsXml();
+
         return appInfo;
     }
 

@@ -28,6 +28,8 @@ import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
@@ -82,6 +84,9 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
             deploy(clientModule);
+        }
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            deploy(persistenceModule);
         }
         contextData.clear();
         return appModule;
@@ -244,6 +249,56 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
         return ejbModule;
     }
 
+    public PersistenceModule deploy(PersistenceModule persistenceModule) throws OpenEJBException {
+        if (!autoCreateConnectors) {
+            return persistenceModule;
+        }
+
+        Persistence persistence = persistenceModule.getPersistence();
+        for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+            String jtaDataSourceId = getDataSourceId(persistenceUnit.getJtaDataSource(), persistenceUnit);
+            if (jtaDataSourceId != null) {
+                persistenceUnit.setJtaDataSource("java:openejb/Connector/" + jtaDataSourceId);
+            }
+            String nonJtaDataSourceId = getDataSourceId(persistenceUnit.getNonJtaDataSource(), persistenceUnit);
+            if (nonJtaDataSourceId != null) {
+                persistenceUnit.setNonJtaDataSource("java:openejb/Connector/" + nonJtaDataSourceId);
+            }
+        }
+
+        return persistenceModule;
+    }
+
+    private String getDataSourceId(String dataSource, PersistenceUnit persistenceUnit) throws OpenEJBException {
+        if (dataSource.startsWith("java:comp/env")) {
+            dataSource = dataSource.substring("java:comp/env".length());
+        }
+
+        String id = null;
+        List<String> connectorMap = configFactory.getConnectorIds();
+        if (!connectorMap.contains(dataSource)) {
+            String name = dataSource.replaceFirst(".*/", "");
+            if (!connectorMap.contains(name)) {
+                String message = "No existing datasource found while attempting to Auto-link unmapped datasource '" + dataSource + "' for persistence-unit '" + persistenceUnit.getName() + "'.  Looked for Datasource(id=" + dataSource + ") and Datasource(id=" + name + ")";
+                if (!autoCreateConnectors){
+                    throw new OpenEJBException(message);
+                }
+
+                logger.error(message);
+
+                if (connectorMap.size() > 0) {
+                    id = connectorMap.get(0);
+                } else {
+                    ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
+                    id = connectorInfo.id;
+                    logger.warning("Auto-creating a datasource with res-id " + id + " for persistence-unit '" + persistenceUnit.getName() + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
+                    configFactory.install(connectorInfo);
+                }
+            }
+        }
+        return id;
+    }
+
     private static class Key {
         private final Query query;
 
@@ -288,7 +343,7 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     private List<Method> getFinderMethods(Class bean) {
 
         Method[] methods = bean.getMethods();
-        List<Method> finderMethods = new ArrayList();
+        List<Method> finderMethods = new ArrayList<Method>();
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().startsWith("find") && !methods[i].getName().equals("findByPrimaryKey")) {
                 finderMethods.add(methods[i]);

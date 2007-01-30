@@ -20,18 +20,18 @@
   <persistence-unit transaction-type="JTA" name="cmp">
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
-    <non-jta-data-source>java:openejb/Connector/Default JDBC Database</non-jta-data-source>
+    <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
     <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
-    <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <!--<properties>-->
-    <!--<property name="openjpa.Log" value="DefaultLevel=TRACE"/>-->
-    <!--</properties>-->
+    <properties>
+        <!--<property name="openjpa.Log" value="DefaultLevel=TRACE"/>-->
+        <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
   </persistence-unit>
   <persistence-unit name="openjpa-test-unit">
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
-    <non-jta-data-source>java:openejb/Connector/Default JDBC Database</non-jta-data-source>
+    <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
     <class>org.apache.openejb.test.entity.Customer</class>
   </persistence-unit>
 </persistence>

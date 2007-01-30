@@ -38,6 +38,8 @@ import javax.transaction.TransactionManager;
 import javax.transaction.SystemException;
 import javax.transaction.RollbackException;
 
+import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
+
 /**
  * @org.apache.xbean.XBean element="sharedLocalConnectionManager"
  */
@@ -61,8 +63,12 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
     }
 
     public Object allocateConnection(ManagedConnectionFactory factory, ConnectionRequestInfo cxRequestInfo) throws ResourceException {
-        ConnectionCache connectionCache = threadConnectionCache.get();
-        ManagedConnection conn = connectionCache.getConnection(factory);
+        ConnectionCache connectionCache = null;
+        ManagedConnection conn = null;
+        if (!(factory instanceof JdbcManagedConnectionFactory) || !((JdbcManagedConnectionFactory) factory).isUnmanaged()) {
+            connectionCache = threadConnectionCache.get();
+            conn = connectionCache.getConnection(factory);
+        }
         if (conn == null) {
             conn = factory.matchManagedConnections(connSet, null, cxRequestInfo);
             if (conn != null) {
@@ -91,7 +97,9 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
                 throw new ApplicationServerInternalException("Can not register org.apache.openejb.resource.LocalTransacton with transaciton manager. Transaction has already been rolled back" + re.getMessage());
             }
 
-            connectionCache.putConnection(factory, conn);
+            if (connectionCache != null) {
+                connectionCache.putConnection(factory, conn);
+            }
         }
 
         Object handle = conn.getConnection(null, cxRequestInfo);

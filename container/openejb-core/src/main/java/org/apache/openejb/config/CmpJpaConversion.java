@@ -21,7 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.ArrayList;
 import java.lang.reflect.Field;
+import java.net.URL;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
@@ -33,6 +37,7 @@ import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
 import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.Entity;
 import org.apache.openejb.jee.jpa.Attributes;
@@ -45,10 +50,78 @@ import org.apache.openejb.jee.jpa.ManyToMany;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.CascadeType;
 import org.apache.openejb.jee.jpa.Transient;
+import org.apache.openejb.jee.jpa.JpaJaxbUtil;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
 
-public class CmpJpaConversion {
-    public EntityMappings generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader) {
+public class CmpJpaConversion implements DynamicDeployer {
+    private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
+
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        // search for the cmp persistence unit
+        PersistenceUnit persistenceUnit = null;
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            Persistence persistence = persistenceModule.getPersistence();
+            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+                if (CMP_PERSISTENCE_UNIT_NAME.equals(unit.getName())) {
+                    persistenceUnit = unit;
+                    break;
+                }
+
+            }
+        }
+
+        // todo scan existing persistence module for all entity mappings and don't generate mappings for them
+
+        // create mappings
+        EntityMappings cmpMappings = new EntityMappings();
+        cmpMappings.setVersion("1.0");
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            EjbJar ejbJar = ejbModule.getEjbJar();
+            generateEntityMappings(ejbJar, appModule.getClassLoader(), cmpMappings);
+        }
+
+        if (!cmpMappings.getEntity().isEmpty()) {
+            // if not found create one
+            if (persistenceUnit == null) {
+                persistenceUnit = new PersistenceUnit();
+                persistenceUnit.setName(CMP_PERSISTENCE_UNIT_NAME);
+                persistenceUnit.setTransactionType(TransactionType.JTA);
+                persistenceUnit.setJtaDataSource("java:openejb/Connector/Default JDBC Database");
+                persistenceUnit.setNonJtaDataSource("java:openejb/Connector/Default JDBC Database");
+
+                Persistence persistence = new Persistence();
+                persistence.setVersion("1.0");
+                persistence.getPersistenceUnit().add(persistenceUnit);
+
+                PersistenceModule persistenceModule = new PersistenceModule(appModule.getJarLocation(), persistence);
+                appModule.getPersistenceModules().add(persistenceModule);
+            }
+            persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
+            for (Entity entity : cmpMappings.getEntity()) {
+                persistenceUnit.getClazz().add(entity.getClazz());
+            }
+            try {
+                String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, cmpMappings);
+                appModule.setCmpMappingsXml(cmpMappingsXml);
+            } catch (JAXBException e) {
+                throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
+            }
+        }
+
+        return appModule;
+    }
+
+    public EntityMappings generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader) throws OpenEJBException {
         EntityMappings entityMappings = new EntityMappings();
+        generateEntityMappings(ejbJar, classLoader, entityMappings);
+        return entityMappings;
+    }
+
+    public void generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader, EntityMappings entityMappings) throws OpenEJBException{
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
@@ -58,13 +131,24 @@ public class CmpJpaConversion {
             }
             EntityBean bean = (EntityBean) enterpriseBean;
 
+            // try to add a new persistence-context-ref for cmp
+            if (!addPersistenceContextRef(bean)) {
+                // Bean already has a persistence-context-ref for cmp
+                // which means it has a mapping, so skip this bean
+                continue;
+            }
+
             Entity entity = new Entity();
 
             // description: contains the name of the entity bean
             entity.setDescription(bean.getEjbName());
 
             // class: the java class for the entity
-            entity.setClazz(bean.getEjbClass());
+            if (bean.getCmpVersion() == CmpVersion.CMP2) {
+                entity.setClazz(bean.getEjbClass() + "_JPA");
+            } else {
+                entity.setClazz(bean.getEjbClass());
+            }
 
             // name: the name of the entity in queries
             if (bean.getAbstractSchemaName() != null) {
@@ -114,13 +198,10 @@ public class CmpJpaConversion {
             entityMappings.getEntity().add(entity);
             entitiesByName.put(bean.getEjbName(), entity);
 
-            // add the persistence-context-ref
-            addPersistenceContextRef(bean);
-
             //
             // transient: non-persistent fields
             //
-            if (classLoader != null) {
+            if (classLoader != null && bean.getCmpVersion() == CmpVersion.CMP1) {
                 String ejbClassName = bean.getEjbClass();
                 try {
                     Class ejbClass = classLoader.loadClass(ejbClassName);
@@ -146,20 +227,40 @@ public class CmpJpaConversion {
                     continue;
                 }
 
+                // get left entity
                 EjbRelationshipRole leftRole = roles.get(0);
                 RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
+                // todo simplify role source using a wrapper
                 String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
                 Entity leftEntity = entitiesByName.get(leftEjbName);
+
+                // get right entity
+                EjbRelationshipRole rightRole = roles.get(1);
+                RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
+                String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
+                Entity rightEntity = entitiesByName.get(rightEjbName);
+
+                // neither left or right have a mapping which is fine
+                if (leftEntity == null && rightEntity == null) {
+                    continue;
+                }
+                // left not found?
+                if (leftEntity == null) {
+                    throw new OpenEJBException("Role source " + leftEjbName + " defined in relationship role " +
+                            relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
+                }
+                // right not found?
+                if (rightEntity == null) {
+                    throw new OpenEJBException("Role source " + rightEjbName + " defined in relationship role " +
+                            relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
+                }
+
                 String leftFieldName = null;
                 if (leftRole.getCmrField() != null) {
                     leftFieldName = leftRole.getCmrField().getCmrFieldName();
                 }
                 boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
 
-                EjbRelationshipRole rightRole = roles.get(1);
-                RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
-                String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
-                Entity rightEntity = entitiesByName.get(rightEjbName);
                 String rightFieldName = null;
                 if (rightRole.getCmrField() != null) {
                     rightFieldName = rightRole.getCmrField().getCmrFieldName();
@@ -297,20 +398,20 @@ public class CmpJpaConversion {
                 }
             }
         }
-
-
-        return entityMappings;
     }
 
-    private void addPersistenceContextRef(EntityBean bean) {
+    private boolean addPersistenceContextRef(EntityBean bean) {
         for (PersistenceContextRef ref : bean.getPersistenceContextRef()) {
             // if a ref is already defined, skip this bean
-            if (ref.getName().equals("openejb/cmp")) return;
+            if (ref.getName().equals(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) {
+                return false;
+            }
         }
         PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
-        persistenceContextRef.setName("openejb/cmp");
-        persistenceContextRef.setPersistenceUnitName("cmp");
+        persistenceContextRef.setName(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME);
+        persistenceContextRef.setPersistenceUnitName(CMP_PERSISTENCE_UNIT_NAME);
         bean.getPersistenceContextRef().add(persistenceContextRef);
+        return true;
     }
 
     private void setCascade(EjbRelationshipRole role, RelationField field) {

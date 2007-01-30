@@ -63,6 +63,15 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
+      <cmp-field>
+        <field-name>primaryKey</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
       <resource-ref>
         <description>This is a reference to a JDBC database.</description>
         <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
@@ -485,6 +494,7 @@
       <ejb-class>org.apache.openejb.test.entity.cmp.ContextLookupCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
+      <cmp-version>1.x</cmp-version>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
       <env-entry>

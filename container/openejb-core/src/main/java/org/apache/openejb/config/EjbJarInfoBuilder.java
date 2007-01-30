@@ -549,12 +549,12 @@ public class EjbJarInfoBuilder {
         bean.reentrant = e.getReentrant() + "";
 
         CmpVersion cmpVersion = e.getCmpVersion();
-        if (cmpVersion != null && cmpVersion == CmpVersion.CMP2){
-            bean.cmpVersion = 2;
-        } else if (cmpVersion != null && cmpVersion == CmpVersion.CMP1){
-            bean.cmpVersion = 1;
-        } else if (e.getPersistenceType() == PersistenceType.CONTAINER) {
-            bean.cmpVersion = 1;
+        if (e.getPersistenceType() == PersistenceType.CONTAINER) {
+            if (cmpVersion != null && cmpVersion == CmpVersion.CMP1){
+                bean.cmpVersion = 1;
+            } else {
+                bean.cmpVersion = 2;
+            }
         }
 
         List<CmpField> cmpFields = e.getCmpField();

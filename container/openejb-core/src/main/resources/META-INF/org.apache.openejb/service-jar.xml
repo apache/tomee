@@ -277,6 +277,35 @@
     Unmanaged false
   </ServiceProvider>
 
+  <ServiceProvider
+          id="Default Unmanaged JDBC Database"
+          provider-type="Connector"
+          constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
+          class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
+
+    # Driver class name
+
+    #JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    JdbcDriver org.hsqldb.jdbcDriver
+
+    # Url for creating connections
+
+    #JdbcUrl jdbc:derby:derbyDB;create=true
+    JdbcUrl jdbc:hsqldb:file:hsqldb
+
+    # Default user name
+
+    #UserName admin
+    UserName sa
+
+    # Default password
+
+    #Password pass
+    Password
+
+    Unmanaged true
+  </ServiceProvider>
+
   <!--
   # ================================================
   # Default JCA ConnectionManager

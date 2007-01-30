@@ -79,20 +79,20 @@
         <n:persistence-unit-name>openjpa-test-unit</n:persistence-unit-name>
     </n:persistence-unit-ref>
 
-    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
-        <persistence-unit transaction-type="JTA" name="cmp">
-            <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-            <jta-data-source>?name=SystemDatasource</jta-data-source>
-            <non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>
-            <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
-            <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
-            <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        </persistence-unit>
-        <persistence-unit transaction-type="JTA" name="openjpa-test-unit">
-            <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-            <jta-data-source>?name=SystemDatasource</jta-data-source>
-            <non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>
-            <class>org.apache.openejb.test.entity.Customer</class>
-        </persistence-unit>
-    </persistence>
+    <!--<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">-->
+        <!--<persistence-unit transaction-type="JTA" name="cmp">-->
+            <!--<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>-->
+            <!--<jta-data-source>?name=SystemDatasource</jta-data-source>-->
+            <!--<non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>-->
+            <!--<mapping-file>META-INF/jpa.mapping.xml</mapping-file>-->
+            <!--<class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>-->
+            <!--<exclude-unlisted-classes>false</exclude-unlisted-classes>-->
+        <!--</persistence-unit>-->
+        <!--<persistence-unit transaction-type="JTA" name="openjpa-test-unit">-->
+            <!--<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>-->
+            <!--<jta-data-source>?name=SystemDatasource</jta-data-source>-->
+            <!--<non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>-->
+            <!--<class>org.apache.openejb.test.entity.Customer</class>-->
+        <!--</persistence-unit>-->
+    <!--</persistence>-->
 </ejb-jar>

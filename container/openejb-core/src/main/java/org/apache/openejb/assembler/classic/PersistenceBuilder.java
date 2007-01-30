@@ -137,7 +137,7 @@ public class PersistenceBuilder {
         String nonJta = info.nonJtaDataSource;
         if (nonJtaDataSourceEnv != null) nonJta = nonJtaDataSourceEnv;
         if (nonJta != null) {
-            DataSource nonJtaDataSource = dataSourceResolver.getDataSource(dataSource);
+            DataSource nonJtaDataSource = dataSourceResolver.getDataSource(nonJta);
             unitInfo.setNonJtaDataSource(nonJtaDataSource);
         }
 

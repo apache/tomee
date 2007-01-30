@@ -52,6 +52,8 @@ public class JpaCmpEngine implements CmpEngine {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
     private static final Object[] NO_ARGS = new Object[0];
 
+    public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
+
     private final CmpCallback cmpCallback;
     private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
@@ -100,7 +102,7 @@ public class JpaCmpEngine implements CmpEngine {
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
         EntityManager entityManager = null;
         try {
-            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("java:comp/env/openejb/cmp");
+            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("java:comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
         } catch (NamingException ignroed) {
         }
 

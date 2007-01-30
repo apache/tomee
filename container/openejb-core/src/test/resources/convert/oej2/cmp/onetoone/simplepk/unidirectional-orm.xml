@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
-    <entity name="OneToOneA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetoone.ABean">
+    <entity name="OneToOneA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetoone.ABean_JPA">
         <description>A</description>
         <table name="A"/>
         <attributes>
@@ -12,7 +12,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="OneToOneB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetoone.BBean">
+    <entity name="OneToOneB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetoone.BBean_JPA">
         <description>B</description>
         <table name="B"/>
         <attributes>

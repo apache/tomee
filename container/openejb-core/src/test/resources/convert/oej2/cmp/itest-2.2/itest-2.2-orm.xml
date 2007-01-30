@@ -92,7 +92,7 @@
             <transient name="ejbContext"/>
         </attributes>
     </entity>
-    <entity name="BasicCmp2" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean">
+    <entity name="BasicCmp2" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA">
         <description>BasicCmp2Bean</description>
         <table name="entity"/>
         <attributes>
@@ -106,11 +106,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
-    <entity name="AOBasicCmp2" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean">
+    <entity name="AOBasicCmp2" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA">
         <description>AOBasicCmp2Bean</description>
         <table name="entity"/>
         <attributes>
@@ -124,11 +122,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
         </attributes>
     </entity>
-    <entity name="EncCmp2" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean">
+    <entity name="EncCmp2" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA">
         <description>EncCmp2Bean</description>
         <table name="entity"/>
         <attributes>
@@ -142,10 +138,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
-            <transient name="ejbContext"/>
         </attributes>
     </entity>
-    <entity name="Cmp2RmiIiop" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean">
+    <entity name="Cmp2RmiIiop" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA">
         <description>Cmp2RMIIIOPBean</description>
         <table name="entity"/>
         <attributes>
@@ -159,10 +154,9 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
-            <transient name="ejbContext"/>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean">
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean_JPA">
         <description>OneOwningSideBean</description>
         <table name="OneOwning"/>
         <attributes>
@@ -177,7 +171,7 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean">
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean_JPA">
         <description>OneInverseSideBean</description>
         <table name="OneInverse"/>
         <attributes>
@@ -188,7 +182,7 @@
             <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean">
+    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean_JPA">
         <description>ManyOwningSideBean</description>
         <table name="ManyOwning"/>
         <attributes>
@@ -203,7 +197,7 @@
             </many-to-one>
         </attributes>
     </entity>
-    <entity name="Address" class="org.apache.openejb.test.entity.cmp2.petstore.AddressEJB">
+    <entity name="Address" class="org.apache.openejb.test.entity.cmp2.petstore.AddressEJB_JPA">
         <description>AddressEJB</description>
         <table name="address"/>
         <attributes>
@@ -215,7 +209,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Storage" class="org.apache.openejb.test.entity.cmp2.model.StorageBean">
+    <entity name="Storage" class="org.apache.openejb.test.entity.cmp2.model.StorageBean_JPA">
         <description>StorageBean</description>
         <table name="storage"/>
         <attributes>

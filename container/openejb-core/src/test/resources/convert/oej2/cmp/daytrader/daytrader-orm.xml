@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm">
-    <entity name="Holding" class="org.apache.geronimo.samples.daytrader.ejb.HoldingBean">
+    <entity name="Holding" class="org.apache.geronimo.samples.daytrader.ejb.HoldingBean_JPA">
         <description>HoldingEJB</description>
         <table name="HOLDINGEJB"/>
         <attributes>
@@ -27,7 +27,7 @@
             </many-to-one>
         </attributes>
     </entity>
-    <entity name="AccountProfile" class="org.apache.geronimo.samples.daytrader.ejb.AccountProfileBean">
+    <entity name="AccountProfile" class="org.apache.geronimo.samples.daytrader.ejb.AccountProfileBean_JPA">
         <description>AccountProfileEJB</description>
         <table name="AccountProfileEJB"/>
         <attributes>
@@ -56,7 +56,7 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Quote" class="org.apache.geronimo.samples.daytrader.ejb.QuoteBean">
+    <entity name="Quote" class="org.apache.geronimo.samples.daytrader.ejb.QuoteBean_JPA">
         <description>QuoteEJB</description>
         <table name="QuoteEJB"/>
         <attributes>
@@ -87,7 +87,7 @@
             <one-to-many name="orders" mapped-by="quote"/>
         </attributes>
     </entity>
-    <entity name="KeyGen" class="org.apache.geronimo.samples.daytrader.ejb.KeyGenBean">
+    <entity name="KeyGen" class="org.apache.geronimo.samples.daytrader.ejb.KeyGenBean_JPA">
         <description>KeyGenEJB</description>
         <table name="KeyGenEJB"/>
         <attributes>
@@ -99,7 +99,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Account" class="org.apache.geronimo.samples.daytrader.ejb.AccountBean">
+    <entity name="Account" class="org.apache.geronimo.samples.daytrader.ejb.AccountBean_JPA">
         <description>AccountEJB</description>
         <table name="AccountEJB"/>
         <attributes>
@@ -131,7 +131,7 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Orders" class="org.apache.geronimo.samples.daytrader.ejb.OrderBean">
+    <entity name="Orders" class="org.apache.geronimo.samples.daytrader.ejb.OrderBean_JPA">
         <description>OrderEJB</description>
         <table name="OrderEJB"/>
         <attributes>

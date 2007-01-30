@@ -30,6 +30,7 @@ public class AppModule implements DeploymentModule {
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();;
     private final String jarLocation;
     private final ClassLoader classLoader;
+    public String cmpMappingsXml;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
@@ -58,5 +59,13 @@ public class AppModule implements DeploymentModule {
 
     public List<URL> getAdditionalLibraries() {
         return additionalLibraries;
+    }
+
+    public String getCmpMappingsXml() {
+        return cmpMappingsXml;
+    }
+
+    public void setCmpMappingsXml(String cmpMappingsXml) {
+        this.cmpMappingsXml = cmpMappingsXml;
     }
 }

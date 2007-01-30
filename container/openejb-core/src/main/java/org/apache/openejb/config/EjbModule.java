@@ -36,7 +36,9 @@ public class EjbModule implements DeploymentModule {
     private String moduleId;
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
-        if (classLoader == null) throw new NullPointerException("classLoader is null");
+        if (classLoader == null) {
+            throw new NullPointerException("classLoader is null");
+        }
         this.classLoader = classLoader;
         this.ejbJar = ejbJar;
         this.jarURI = jarURI;

@@ -22,14 +22,13 @@ import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateless.EncStatelessHome;
 import org.apache.openejb.test.stateless.EncStatelessObject;
-import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
-import java.rmi.RemoteException;
 
 /**
  * @version $Rev$ $Date$
@@ -39,6 +38,8 @@ public class RedeployTest extends TestCase {
         // create reference to openejb itests
         File file = new File(System.getProperty("user.home") + "/.m2/repository/org/apache/openejb/openejb-itests-beans/3.0-incubating-SNAPSHOT/openejb-itests-beans-3.0-incubating-SNAPSHOT.jar");
         if (!file.canRead()) return;
+
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
