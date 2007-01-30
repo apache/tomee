@@ -113,7 +113,7 @@ public class Main {
             }
         }
 
-        props.setProperty("org/openejb/configuration_factory", "org.apache.openejb.alt.config.ConfigurationFactory");
+        props.setProperty("org/openejb/configuration_factory", "org.apache.openejb.config.ConfigurationFactory");
 
         return props;
     }

@@ -51,12 +51,15 @@ public class Server implements org.apache.openejb.spi.Service {
     public void init(java.util.Properties props) throws Exception {
         this.props = props;
 
-        OpenEJB.init(propertiesService.getProperties(), new ServerFederation());
+        OpenEJB.init(props, new ServerFederation());
 
         if (System.getProperty("openejb.nobanner") == null) {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
+        if (manager == null){
+            manager = ServiceManager.getManager();
+        }
         manager.init();
     }
 
