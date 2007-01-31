@@ -156,9 +156,12 @@ public class JpaTest extends TestCase {
         unitInfo.setJtaDataSource(jtaDs);
         unitInfo.setNonJtaDataSource(nonJtaDs);
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Employee");
+        unitInfo.getMappingFileNames().add("META-INF/jpa-test-mappings.xml");
 
         // Handle Properties
         Properties properties = new Properties();
+        properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+        properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);
@@ -200,7 +203,7 @@ public class JpaTest extends TestCase {
     }
 
     private void initializeDatabase(DataSource dataSource) throws SQLException {
-        createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY, first_name VARCHAR(20), last_name VARCHAR(20))");
+        createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY PRIMARY KEY, first_name VARCHAR(20), last_name VARCHAR(20))");
         execute(dataSource, "INSERT INTO employee (first_name, last_name) VALUES ('David', 'Blevins')");
 
         createTable(dataSource, "OneToOneA", "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(50))");

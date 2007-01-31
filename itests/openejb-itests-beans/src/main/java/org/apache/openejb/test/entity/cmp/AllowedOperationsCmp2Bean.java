@@ -31,6 +31,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  *
  */
 public abstract class AllowedOperationsCmp2Bean implements EntityBean {
+    private static int nextId;
     public EntityContext ejbContext;
     public static final Hashtable allowedOperationsTable = new Hashtable();
 
@@ -65,6 +66,7 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
      * Maps to BasicCmpHome.create
      */
     public Integer ejbCreateObject(String name) throws CreateException {
+        setId(nextId++);
         testAllowedOperations("ejbCreate");
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());

@@ -29,24 +29,24 @@ public class HsqldbTestDatabase implements TestDatabase {
     protected Database database;
     protected InitialContext initialContext;
 
-    private static String _createAccount = "CREATE TABLE account ( ssn VARCHAR(25), first_name VARCHAR(256), last_name VARCHAR(256), balance integer)";
+    private static String _createAccount = "CREATE TABLE account ( ssn VARCHAR(255), first_name VARCHAR(255), last_name VARCHAR(255), balance integer)";
 
     private static String _dropAccount = "DROP TABLE account";
 
-    private static String _createEntity = "CREATE TABLE entity ( id IDENTITY, first_name VARCHAR(256), last_name VARCHAR(256) )";
+    private static String _createEntity = "CREATE TABLE entity ( id IDENTITY, first_name VARCHAR(255), last_name VARCHAR(255) )";
 
     private static String _dropEntity = "DROP TABLE entity";
 
     // OneToOne
-    private static final String CREATE_ONE_TO_ONE_A = "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(50))";
+    private static final String CREATE_ONE_TO_ONE_A = "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(255))";
     private static final String DROP_ONE_TO_ONE_A = "DROP TABLE OneToOneA";
-    private static final String CREATE_ONE_TO_ONE_B = "CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER)";
+    private static final String CREATE_ONE_TO_ONE_B = "CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER)";
     private static final String DROP_ONE_TO_ONE_B = "DROP TABLE OneToOneB";
 
     // OneToMany
-    private static final String CREATE_ONE_TO_MANY_A = "CREATE TABLE OneToManyA(A1 INTEGER, A2 VARCHAR(50))";
+    private static final String CREATE_ONE_TO_MANY_A = "CREATE TABLE OneToManyA(A1 INTEGER, A2 VARCHAR(255))";
     private static final String DROP_ONE_TO_MANY_A = "DROP TABLE OneToManyA";
-    private static final String CREATE_ONE_TO_MANY_B = "CREATE TABLE OneToManyB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER, FKA_NonCascade INTEGER)";
+    private static final String CREATE_ONE_TO_MANY_B = "CREATE TABLE OneToManyB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER, FKA_NonCascade INTEGER)";
     private static final String DROP_ONE_TO_MANY_B = "DROP TABLE OneToManyB";
 
     // CmrMapping
@@ -56,6 +56,19 @@ public class HsqldbTestDatabase implements TestDatabase {
     private static final String DROP_ONE_INVERSE = "DROP TABLE oneinverse";
     private static final String CREATE_MANY_OWNING = "CREATE TABLE manyowning (col_id INTEGER, col_field1 INTEGER)";
     private static final String DROP_MANY_OWNING = "DROP TABLE manyowning";
+
+    // Automatically created tables - these must be dropped before the tests run or you will get a duplicate key exception
+    private static final String[] AUTO_CREATED_TABLES = new String[] {
+            "BasicCmpBean",
+            "BasicCmp2Bean_JPA",
+            "AllowedOperationsCmpBean",
+            "AllowedOperationsCmp2Bean_JPA",
+            "EncCmpBean",
+            "EncCmp2Bean_JPA",
+            "ContextLookupCmpBean",
+            "RmiIiopCmpBean",
+            "RmiIiopCmp2Bean_JPA",
+    };
 
     static {
         System.setProperty("noBanner", "true");
@@ -71,6 +84,7 @@ public class HsqldbTestDatabase implements TestDatabase {
         createTable(CREATE_ONE_OWNING, DROP_ONE_OWNING);
         createTable(CREATE_ONE_INVERSE, DROP_ONE_INVERSE);
         createTable(CREATE_MANY_OWNING, DROP_MANY_OWNING);
+        clearTables(AUTO_CREATED_TABLES);
     }
 
     public void dropEntityTable() throws java.sql.SQLException {
@@ -82,6 +96,7 @@ public class HsqldbTestDatabase implements TestDatabase {
         dropTable(DROP_ONE_OWNING);
         dropTable(DROP_ONE_INVERSE);
         dropTable(DROP_MANY_OWNING);
+        clearTables(AUTO_CREATED_TABLES);
     }
 
     private void createTable(String create, String drop) throws java.sql.SQLException {
@@ -97,6 +112,16 @@ public class HsqldbTestDatabase implements TestDatabase {
                 throw (java.sql.SQLException) re.detail;
             } else {
                 throw new java.sql.SQLException("Cannot create table: " + re.getMessage(), create);
+            }
+        }
+    }
+
+    private void clearTables(String... autoCreatedTables) {
+        for (String tableName : autoCreatedTables) {
+            try {
+                database.execute("DELETE FROM " + tableName);
+            } catch (Exception e) {
+                // not concerned
             }
         }
     }

@@ -30,6 +30,8 @@ import javax.naming.InitialContext;
 import org.apache.openejb.test.object.ObjectGraph;
 
 public abstract class RmiIiopCmp2Bean implements EntityBean {
+    private static int nextId;
+
     public EntityContext ejbContext;
 
     public abstract Integer getId();
@@ -52,6 +54,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
      * Maps to RmiIiopCmpHome.create
      */
     public Integer ejbCreate(String name) throws CreateException {
+        setId(nextId++);
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());

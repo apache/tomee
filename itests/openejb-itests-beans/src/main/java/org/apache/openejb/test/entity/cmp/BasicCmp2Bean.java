@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 public abstract class BasicCmp2Bean implements EntityBean {
+    private static int nextId;
     public EntityContext ejbContext;
     public Hashtable allowedOperationsTable = new Hashtable();
 
@@ -61,6 +62,7 @@ public abstract class BasicCmp2Bean implements EntityBean {
      * Maps to BasicCmpHome.create(String name)
      */
     public Integer ejbCreateObject(String name) throws CreateException {
+        setId(nextId++);
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());

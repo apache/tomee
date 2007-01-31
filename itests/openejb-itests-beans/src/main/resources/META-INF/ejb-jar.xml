@@ -78,10 +78,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -115,10 +111,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -140,6 +132,15 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
+      <cmp-field>
+        <field-name>primaryKey</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
       <resource-ref>
         <description>
           This is a reference to a JDBC database.
@@ -148,10 +149,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -190,10 +187,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -215,6 +208,15 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
+      <cmp-field>
+        <field-name>primaryKey</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
       <env-entry>
         <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -328,10 +330,6 @@
         </description>
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-context-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
       </persistence-context-ref>
     </entity>
 
@@ -472,10 +470,6 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -497,6 +491,15 @@
       <cmp-version>1.x</cmp-version>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
+      <cmp-field>
+        <field-name>primaryKey</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
       <env-entry>
         <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -587,10 +590,6 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -612,6 +611,15 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
+      <cmp-field>
+        <field-name>primaryKey</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
       <ejb-ref>
         <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
         <ejb-ref-type>Entity</ejb-ref-type>
@@ -623,10 +631,6 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--
@@ -668,10 +672,6 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <!--

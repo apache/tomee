@@ -14,6 +14,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="nextId"/>
             <transient name="primaryKey"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
@@ -32,6 +33,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="nextId"/>
             <transient name="primaryKey"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
@@ -51,6 +53,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="nextId"/>
             <transient name="primaryKey"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
@@ -70,6 +73,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="nextId"/>
             <transient name="primaryKey"/>
             <transient name="ejbContext"/>
         </attributes>
@@ -88,6 +92,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <transient name="nextId"/>
             <transient name="primaryKey"/>
             <transient name="ejbContext"/>
         </attributes>

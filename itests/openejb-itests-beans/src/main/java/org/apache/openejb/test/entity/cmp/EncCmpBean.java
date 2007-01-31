@@ -46,6 +46,7 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class EncCmpBean implements javax.ejb.EntityBean{
+    private static int nextId;
     public int primaryKey;
     public String firstName;
     public String lastName;
@@ -65,6 +66,7 @@ public class EncCmpBean implements javax.ejb.EntityBean{
      */
     public Integer ejbCreate(String name)
     throws javax.ejb.CreateException{
+        primaryKey = nextId++;
         StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
         lastName = st.nextToken();

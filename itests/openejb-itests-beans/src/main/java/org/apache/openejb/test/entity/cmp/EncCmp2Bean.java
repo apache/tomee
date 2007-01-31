@@ -37,6 +37,8 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
 public abstract class EncCmp2Bean implements EntityBean {
+    private static int nextId;
+
     public EntityContext ejbContext;
 
     public abstract Integer getId();
@@ -59,6 +61,7 @@ public abstract class EncCmp2Bean implements EntityBean {
      * Maps to EncCmpHome.create
      */
     public Integer ejbCreate(String name) throws CreateException {
+        setId(nextId++);
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());

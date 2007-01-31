@@ -20,6 +20,7 @@ package org.apache.openejb.core.cmp.jpa;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
+import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -193,7 +194,59 @@ public class JpaTestObject extends junit.framework.Assert {
         assertEquals(dain.getId(), dainId);
         assertEquals(dain.getFirstName(), "Dain");
         assertEquals(dain.getLastName(), "Sundstrom");
+
         commitTx();
+        beginTx();
+
+        BasicCmpBean basicCmpBean = new BasicCmpBean();
+        basicCmpBean.ejbCreateObject("Joe Blow");
+        assertFalse(entityManager.contains(basicCmpBean));
+
+        entityManager.persist(basicCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        basicCmpBean = entityManager.merge(basicCmpBean);
+        int joeId = basicCmpBean.getPrimaryKey();
+
+        assertTrue(entityManager.contains(basicCmpBean));
+
+        commitTx();
+        beginTx();
+
+        basicCmpBean = new BasicCmpBean();
+        basicCmpBean.ejbCreateObject("Lloyd Dobler");
+        assertFalse(entityManager.contains(basicCmpBean));
+
+        entityManager.persist(basicCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        basicCmpBean = entityManager.merge(basicCmpBean);
+        int lloydId = basicCmpBean.getPrimaryKey();
+
+        assertTrue(entityManager.contains(basicCmpBean));
+        commitTx();
+
+
+        beginTx();
+
+        BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean e where e.primaryKey=" + joeId).getSingleResult();
+        assertTrue(entityManager.contains(joe));
+
+        assertEquals(joe.getPrimaryKey(), joeId);
+        assertEquals(joe.getFirstName(), "Joe");
+        assertEquals(joe.getLastName(), "Blow");
+
+        BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean e where e.primaryKey=" + lloydId).getSingleResult();
+        assertTrue(entityManager.contains(lloyd));
+
+        assertEquals(lloyd.getPrimaryKey(), lloydId);
+        assertEquals(lloyd.getFirstName(), "Lloyd");
+        assertEquals(lloyd.getLastName(), "Dobler");
+
+        commitTx();
+
 
 //        beginTx();
 //        ABean_JPA a = new ABean_JPA();

@@ -34,6 +34,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class BasicCmpBean implements javax.ejb.EntityBean{
+    private static int nextId;
     public int primaryKey;
     public String firstName;
     public String lastName;
@@ -70,6 +71,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      */
     public Integer ejbCreateObject(String name)
     throws javax.ejb.CreateException{
+        primaryKey = nextId++;
         StringTokenizer st = new StringTokenizer(name, " ");    
         firstName = st.nextToken();
         lastName = st.nextToken();
@@ -79,7 +81,18 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
     public void ejbPostCreateObject(String name)
     throws javax.ejb.CreateException{
     }
-    
+
+    public int getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
     //    
     // Home interface methods
     //=============================
