@@ -161,7 +161,7 @@ public class JpaTest extends TestCase {
         // Handle Properties
         Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
-        properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+        // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);
@@ -203,11 +203,11 @@ public class JpaTest extends TestCase {
     }
 
     private void initializeDatabase(DataSource dataSource) throws SQLException {
-        createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY PRIMARY KEY, first_name VARCHAR(20), last_name VARCHAR(20))");
+        createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY PRIMARY KEY, first_name VARCHAR(255), last_name VARCHAR(255))");
         execute(dataSource, "INSERT INTO employee (first_name, last_name) VALUES ('David', 'Blevins')");
 
-        createTable(dataSource, "OneToOneA", "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(50))");
-        createTable(dataSource, "OneToOneB", " CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(50), B3 INTEGER, B4 VARCHAR(50), FKA1 INTEGER)");
+        createTable(dataSource, "OneToOneA", "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(255))");
+        createTable(dataSource, "OneToOneB", " CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER)");
         execute(dataSource, "INSERT INTO OneToOneA(A1, A2) VALUES(1, 'value1')");
         execute(dataSource, "INSERT INTO OneToOneA(A1, A2) VALUES(2, 'value2')");
         execute(dataSource, "INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");

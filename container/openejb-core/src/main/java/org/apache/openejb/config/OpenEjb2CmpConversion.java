@@ -16,31 +16,61 @@
  */
 package org.apache.openejb.config;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.List;
+import javax.xml.bind.JAXBElement;
 
-import org.apache.openejb.jee.oejb2.EjbRelationType;
-import org.apache.openejb.jee.oejb2.EnterpriseBean;
-import org.apache.openejb.jee.oejb2.EntityBeanType;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.jpa.Entity;
-import org.apache.openejb.jee.jpa.Table;
-import org.apache.openejb.jee.jpa.Field;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
-import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Field;
 import org.apache.openejb.jee.jpa.GeneratedValue;
-import org.apache.openejb.jee.jpa.RelationField;
-import org.apache.openejb.jee.jpa.OneToMany;
-import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.Id;
 import org.apache.openejb.jee.jpa.JoinColumn;
 import org.apache.openejb.jee.jpa.JoinTable;
-import org.apache.openejb.jee.jpa.Basic;
-import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.OneToMany;
+import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.RelationField;
+import org.apache.openejb.jee.jpa.Table;
+import org.apache.openejb.jee.oejb2.EjbRelationType;
+import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
+import org.apache.openejb.jee.oejb2.EnterpriseBean;
+import org.apache.openejb.jee.oejb2.EntityBeanType;
+import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
 
-public class OpenEjb2CmpConversion {
+public class OpenEjb2CmpConversion implements DynamicDeployer {
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            ClassLoader classLoader = ejbModule.getClassLoader();
+            OpenejbJarType openejbJarType = loadOpenEjbJar(classLoader);
+            if (openejbJarType != null) {
+                mergeEntityMappings(appModule.getCmpMappings(), openejbJarType);
+            }
+        }
+        return appModule;
+    }
+
+    public OpenejbJarType loadOpenEjbJar(ClassLoader classLoader) {
+        InputStream in = classLoader.getResourceAsStream("META-INF/openejb-jar.xml");
+        if (in == null) {
+            return null;
+        }
+
+        JAXBElement element;
+        try {
+            element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, in, false);
+        } catch (Exception e) {
+            return null;
+        }
+        return (OpenejbJarType) element.getValue();
+    }
+
 
     public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJarType openejbJarType) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();

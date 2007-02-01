@@ -174,7 +174,7 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
-        logger.error("Executing query " + queryString);
+//        logger.error("Executing query " + queryString);
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         EntityManager entityManager = getEntityManager(deploymentInfo);
         Query query = entityManager.createQuery(queryString);

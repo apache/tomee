@@ -54,6 +54,8 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.Property;
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.JpaJaxbUtil;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -70,6 +72,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Iterator;
+import javax.xml.bind.JAXBException;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -122,7 +125,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         chain.add(new CmpJpaConversion());
-        
+        chain.add(new OpenEjb2CmpConversion());
+
         if (offline) {
             AutoConfigAndDeploy autoConfigAndDeploy = new AutoConfigAndDeploy(this);
             autoConfigAndDeploy.autoCreateConnectors(false);
@@ -360,7 +364,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             appInfo.libs.add(file.getAbsolutePath());
         }
 
-        appInfo.cmpMappingsXml = appModule.getCmpMappingsXml();
+        if (appModule.getCmpMappings() != null) {
+            try {
+                String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
+                appInfo.cmpMappingsXml = cmpMappingsXml;
+            } catch (JAXBException e) {
+                throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
+            }
+        }
 
         return appInfo;
     }

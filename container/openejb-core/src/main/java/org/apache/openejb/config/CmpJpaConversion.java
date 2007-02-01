@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.ArrayList;
 import java.lang.reflect.Field;
-import java.net.URL;
 
 import javax.xml.bind.JAXBException;
 
@@ -77,8 +75,12 @@ public class CmpJpaConversion implements DynamicDeployer {
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
         // create mappings
-        EntityMappings cmpMappings = new EntityMappings();
-        cmpMappings.setVersion("1.0");
+        EntityMappings cmpMappings = appModule.getCmpMappings();
+        if (cmpMappings == null) {
+            cmpMappings = new EntityMappings();
+            cmpMappings.setVersion("1.0");
+            appModule.setCmpMappings(cmpMappings);
+        }
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             EjbJar ejbJar = ejbModule.getEjbJar();
             generateEntityMappings(ejbJar, appModule.getClassLoader(), cmpMappings);
@@ -103,12 +105,6 @@ public class CmpJpaConversion implements DynamicDeployer {
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
             for (Entity entity : cmpMappings.getEntity()) {
                 persistenceUnit.getClazz().add(entity.getClazz());
-            }
-            try {
-                String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, cmpMappings);
-                appModule.setCmpMappingsXml(cmpMappingsXml);
-            } catch (JAXBException e) {
-                throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
             }
         }
 

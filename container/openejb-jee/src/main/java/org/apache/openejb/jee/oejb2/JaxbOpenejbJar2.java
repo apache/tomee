@@ -16,22 +16,21 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
-import javax.xml.transform.sax.SAXSource;
-import java.lang.*;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * @version $Rev$ $Date$
@@ -51,6 +50,10 @@ public class JaxbOpenejbJar2 {
     }
 
     public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        return unmarshal(type, in, true);
+    }
+
+    public static <T>Object unmarshal(Class<T> type, InputStream in, final boolean logErrors) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -62,7 +65,9 @@ public class JaxbOpenejbJar2 {
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler(){
             public boolean handleEvent(ValidationEvent validationEvent) {
-                System.out.println(validationEvent);
+                if (logErrors) {
+                    System.out.println(validationEvent);
+                }
                 return false;
             }
         });

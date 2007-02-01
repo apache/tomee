@@ -106,7 +106,7 @@ public class Persistence {
     protected List<PersistenceUnit> persistenceUnit;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String version;
+    protected String version = "1.0";
 
     /**
      * Gets the value of the persistenceUnit property.

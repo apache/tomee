@@ -135,7 +135,7 @@ public class EntityMappings {
     protected List<Embeddable> embeddable;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String version;
+    protected String version = "1.0";
 
     /**
      * Gets the value of the description property.

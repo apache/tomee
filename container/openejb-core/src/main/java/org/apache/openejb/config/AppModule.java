@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.openejb.jee.jpa.EntityMappings;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -30,7 +32,7 @@ public class AppModule implements DeploymentModule {
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();;
     private final String jarLocation;
     private final ClassLoader classLoader;
-    public String cmpMappingsXml;
+    private EntityMappings cmpMappings;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
@@ -61,11 +63,11 @@ public class AppModule implements DeploymentModule {
         return additionalLibraries;
     }
 
-    public String getCmpMappingsXml() {
-        return cmpMappingsXml;
+    public EntityMappings getCmpMappings() {
+        return cmpMappings;
     }
 
-    public void setCmpMappingsXml(String cmpMappingsXml) {
-        this.cmpMappingsXml = cmpMappingsXml;
+    public void setCmpMappings(EntityMappings cmpMappings) {
+        this.cmpMappings = cmpMappings;
     }
 }
