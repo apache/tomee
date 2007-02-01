@@ -36,7 +36,7 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 /**
  * @version $Rev$ $Date$
  */
-public class Cmp2ConversionTest extends TestCase {
+public class CmpConversionTest extends TestCase {
     public void testItests22() throws Exception {
         convert("convert/oej2/cmp/itest-2.2/itest-2.2-");
     }

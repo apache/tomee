@@ -574,7 +574,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         containerTypes.put(Bean.STATEFUL, StatefulSessionContainerInfo.class);
         containerTypes.put(Bean.BMP_ENTITY, BmpEntityContainerInfo.class);
         containerTypes.put(Bean.CMP_ENTITY, CmpEntityContainerInfo.class);
-        containerTypes.put(Bean.CMP2_ENTITY, CmpEntityContainerInfo.class);
         containerTypes.put(Bean.MESSAGE, MdbContainerInfo.class);
     }
 

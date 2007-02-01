@@ -64,17 +64,6 @@
 
   <!--
   # ==========================================================
-  # Default Container-Managed Persistence EntityBean Container
-  # ==========================================================
-  -->
-  <ServiceProvider id="Default CMP2 Container"
-                   provider-type="Container"
-                   constructor="id, transactionManager, securityService"
-                   class-name="org.apache.openejb.core.entity.Cmp2EntityContainer">
-  </ServiceProvider>
-
-  <!--
-  # ==========================================================
   # Default Bean-Managed Persistence EntityBean Container
   # ==========================================================
   -->

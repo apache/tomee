@@ -36,7 +36,6 @@ public class EntityBean implements Bean {
                         break;
                     case CMP2:
                         cmpVersion = 2;
-                        type = CMP2_ENTITY;
                         break;
                     default:
                         cmpVersion = 0;

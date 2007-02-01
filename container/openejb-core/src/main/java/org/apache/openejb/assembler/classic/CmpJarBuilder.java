@@ -30,14 +30,17 @@ import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
 
-public class Cmp2Builder {
+/**
+ * Creates a jar file which contains the CMP2 implementation classes and the cmp entity mappings xml file.
+ */
+public class CmpJarBuilder {
     private final ClassLoader tempClassLoader;
 
     private File jarFile;
     private final Set<String> entries = new TreeSet<String>();
     private final AppInfo appInfo;
 
-    public Cmp2Builder(AppInfo appInfo, ClassLoader classLoader) {
+    public CmpJarBuilder(AppInfo appInfo, ClassLoader classLoader) {
         this.appInfo = appInfo;
         tempClassLoader = new TemporaryClassLoader(classLoader);
     }
