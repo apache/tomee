@@ -118,6 +118,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         Chain chain = new Chain();
 
+        chain.add(new ReadDescriptors());
+        
         chain.add(new AnnotationDeployer());
 
         if (System.getProperty("duct tape") != null){

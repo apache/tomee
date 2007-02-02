@@ -19,14 +19,9 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ClassFinder;
@@ -63,63 +58,6 @@ public class DeploymentLoader {
 
 
     public AppModule load(File jarFile) throws OpenEJBException {
-        AppModule appModule = load1(jarFile);
-
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-
-            Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
-            if (data instanceof URL) {
-                URL url = (URL) data;
-                EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", url);
-                ejbModule.setEjbJar(ejbJar);
-            } else {
-                logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
-                ejbModule.setEjbJar(new EjbJar());
-            }
-
-            data = ejbModule.getAltDDs().get("openejb-jar.xml");
-            if (data instanceof URL) {
-                URL url = (URL) data;
-                OpenejbJar openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", url);
-                ejbModule.setOpenejbJar(openejbJar);
-            }
-
-        }
-
-        for (ClientModule clientModule : appModule.getClientModules()) {
-
-            Object data = clientModule.getAltDDs().get("ejb-jar.xml");
-            if (data instanceof URL) {
-                URL url = (URL) data;
-                ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", url);
-                clientModule.setApplicationClient(applicationClient);
-            } else {
-                logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
-                clientModule.setApplicationClient(new ApplicationClient());
-            }
-
-        }
-
-        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
-        for (URL url1 : persistenceUrls) {
-            String moduleName1 = url1.toExternalForm().replaceFirst("!?/?META-INF/persistence.xml$", "");
-            if (moduleName1.startsWith("jar:")) moduleName1 = moduleName1.substring("jar:".length());
-            if (moduleName1.startsWith("file:")) moduleName1 = moduleName1.substring("file:".length());
-            if (moduleName1.endsWith("/")) moduleName1 = moduleName1.substring(0, moduleName1.length() -1);
-            try {
-                Persistence persistence = JaxbPersistenceFactory.getPersistence(url1);
-                PersistenceModule persistenceModule = new PersistenceModule(moduleName1, persistence);
-                appModule.getPersistenceModules().add(persistenceModule);
-
-            } catch (Exception e1) {
-                logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName1 + ". Exception: " + e1.getMessage(), e1);
-            }
-        }
-
-        return appModule;
-    }
-
-    private AppModule load1(File jarFile) throws OpenEJBException {
         ClassLoader classLoader = getClassLoader(jarFile);
 
         URL baseUrl = getFileUrl(jarFile);
@@ -321,6 +259,16 @@ public class DeploymentLoader {
         }
     }
 
+    @SuppressWarnings({"unchecked"})
+    public static <T>T unmarshal(Class<T> type, String descriptor, URL descriptorUrl) throws OpenEJBException {
+        JaxbUnmarshaller unmarshaller = unmarshallers.get(type);
+        if (unmarshaller == null) {
+            unmarshaller = new JaxbUnmarshaller(type, descriptor);
+            unmarshallers.put(type, unmarshaller);
+        }
+        return (T) unmarshaller.unmarshal(descriptorUrl);
+    }
+
     public static void scanDir(File dir, Map<String, URL> files, String path) {
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
@@ -378,16 +326,6 @@ public class DeploymentLoader {
         }
 
         throw new UnsupportedOperationException("Unknown module type");
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private <T>T unmarshal(Class<T> type, String descriptor, URL descriptorUrl) throws OpenEJBException {
-        JaxbUnmarshaller unmarshaller = unmarshallers.get(type);
-        if (unmarshaller == null) {
-            unmarshaller = new JaxbUnmarshaller(type, descriptor);
-            unmarshallers.put(type, unmarshaller);
-        }
-        return (T) unmarshaller.unmarshal(descriptorUrl);
     }
 
     private File unpack(File jarFile) throws OpenEJBException {
