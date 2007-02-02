@@ -63,6 +63,63 @@ public class DeploymentLoader {
 
 
     public AppModule load(File jarFile) throws OpenEJBException {
+        AppModule appModule = load1(jarFile);
+
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+
+            Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
+            if (data instanceof URL) {
+                URL url = (URL) data;
+                EjbJar ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", url);
+                ejbModule.setEjbJar(ejbJar);
+            } else {
+                logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
+                ejbModule.setEjbJar(new EjbJar());
+            }
+
+            data = ejbModule.getAltDDs().get("openejb-jar.xml");
+            if (data instanceof URL) {
+                URL url = (URL) data;
+                OpenejbJar openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", url);
+                ejbModule.setOpenejbJar(openejbJar);
+            }
+
+        }
+
+        for (ClientModule clientModule : appModule.getClientModules()) {
+
+            Object data = clientModule.getAltDDs().get("ejb-jar.xml");
+            if (data instanceof URL) {
+                URL url = (URL) data;
+                ApplicationClient applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", url);
+                clientModule.setApplicationClient(applicationClient);
+            } else {
+                logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
+                clientModule.setApplicationClient(new ApplicationClient());
+            }
+
+        }
+
+        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+        for (URL url1 : persistenceUrls) {
+            String moduleName1 = url1.toExternalForm().replaceFirst("!?/?META-INF/persistence.xml$", "");
+            if (moduleName1.startsWith("jar:")) moduleName1 = moduleName1.substring("jar:".length());
+            if (moduleName1.startsWith("file:")) moduleName1 = moduleName1.substring("file:".length());
+            if (moduleName1.endsWith("/")) moduleName1 = moduleName1.substring(0, moduleName1.length() -1);
+            try {
+                Persistence persistence = JaxbPersistenceFactory.getPersistence(url1);
+                PersistenceModule persistenceModule = new PersistenceModule(moduleName1, persistence);
+                appModule.getPersistenceModules().add(persistenceModule);
+
+            } catch (Exception e1) {
+                logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName1 + ". Exception: " + e1.getMessage(), e1);
+            }
+        }
+
+        return appModule;
+    }
+
+    private AppModule load1(File jarFile) throws OpenEJBException {
         ClassLoader classLoader = getClassLoader(jarFile);
 
         URL baseUrl = getFileUrl(jarFile);
@@ -84,41 +141,19 @@ public class DeploymentLoader {
 
             ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
-            Map<String, URL> descriptors = null;
+            Map<String, URL> appDescriptors = null;
             try {
-                descriptors = finder.getResourcesMap("META-INF");
+                appDescriptors = finder.getResourcesMap("META-INF");
             } catch (IOException e) {
                 throw new OpenEJBException("Unable to determine descriptors in jar: " + appUrl.toExternalForm(), e);
             }
 
             try {
-                List<URL> extraLibs = new ArrayList<URL>();
-
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap("lib/");
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from 'lib/' : " + e.getMessage(), e);
-                }
-
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
-                }
-
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
-                }
 
                 Map<String, URL> ejbModules = new HashMap<String, URL>();
                 Map<String, URL> clientModules = new HashMap<String, URL>();
 
-                URL applicationXmlUrl = descriptors.get("application.xml");
+                URL applicationXmlUrl = appDescriptors.get("application.xml");
 
                 Application application;
                 if (applicationXmlUrl != null) {
@@ -160,6 +195,35 @@ public class DeploymentLoader {
                     }
                 }
 
+                if (application.getLibraryDirectory() == null) {
+                    application.setLibraryDirectory("lib/");
+                } else {
+                    String dir = application.getLibraryDirectory();
+                    if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
+                }
+
+                List<URL> extraLibs = new ArrayList<URL>();
+                try {
+                    Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
+                    extraLibs.addAll(libs.values());
+                } catch (IOException e) {
+                    logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
+                }
+
+                try {
+                    Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
+                    extraLibs.addAll(libs.values());
+                } catch (IOException e) {
+                    logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
+                }
+
+                try {
+                    Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
+                    extraLibs.addAll(libs.values());
+                } catch (IOException e) {
+                    logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
+                }
+
                 List<URL> classPath = new ArrayList<URL>();
                 classPath.addAll(ejbModules.values());
                 classPath.addAll(clientModules.values());
@@ -169,36 +233,15 @@ public class DeploymentLoader {
 
                 AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
                 appModule.getAdditionalLibraries().addAll(extraLibs);
+                appModule.getAltDDs().putAll(appDescriptors);
 
                 for (String moduleName : ejbModules.keySet()) {
-                    URL ejbUrl = ejbModules.get(moduleName);
-                    File ejbFile = new File(ejbUrl.getPath());
                     try {
-                        ResourceFinder ejbFinder = new ResourceFinder(ejbUrl);
+                        URL ejbUrl = ejbModules.get(moduleName);
+                        File ejbFile = new File(ejbUrl.getPath());
+                        EjbModule ejbModule = new EjbModule(appClassLoader, moduleName, ejbFile.getAbsolutePath(), null, null);
 
-                        Map<String, URL> ejbDescriptors = null;
-                        try {
-                            ejbDescriptors = ejbFinder.getResourcesMap("META-INF/");
-                        } catch (IOException e) {
-                            throw new OpenEJBException("Unable to determine descriptors in jar.", e);
-                        }
-
-                        EjbJar ejbJar;
-                        if (ejbDescriptors.containsKey("ejb-jar.xml")) {
-                            ejbJar = unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", ejbDescriptors.get("ejb-jar.xml"));
-                        } else {
-                            logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appDir.getAbsolutePath() + ", module: " + moduleName);
-                            ejbJar = new EjbJar();
-                        }
-
-
-                        OpenejbJar openejbJar = null;
-
-                        if (ejbDescriptors.containsKey("openejb-jar.xml")) {
-                            openejbJar = unmarshal(OpenejbJar.class, "META-INF/openejb-jar.xml", ejbDescriptors.get("openejb-jar.xml"));
-                        }
-
-                        EjbModule ejbModule = new EjbModule(appClassLoader, ejbFile.getAbsolutePath(), ejbJar, openejbJar);
+                        fillDescriptors(ejbUrl, ejbModule);
 
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
@@ -206,26 +249,19 @@ public class DeploymentLoader {
                     }
                 }
                 for (String moduleName : clientModules.keySet()) {
-                    URL clientUrl = clientModules.get(moduleName);
-                    File clientFile = new File(clientUrl.getPath());
                     try {
+                        URL clientUrl = clientModules.get(moduleName);
+                        File clientFile = new File(clientUrl.getPath());
                         ResourceFinder clientFinder = new ResourceFinder(clientUrl);
-
-                        ApplicationClient applicationClient;
-                        try {
-                            URL appClientXmlUrl = clientFinder.find("META-INF/application-client.xml");
-                            applicationClient = unmarshal(ApplicationClient.class, "META-INF/application-client.xml", appClientXmlUrl);
-                        } catch (IOException e) {
-                            logger.warning("No application-client.xml found assuming annotations present: " + appDir.getAbsolutePath() + ", module: " + moduleName);
-                            applicationClient = new ApplicationClient();
-                        }
 
                         URL manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
                         InputStream is = manifestUrl.openStream();
                         Manifest manifest = new Manifest(is);
                         String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
 
-                        ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass);
+                        ClientModule clientModule = new ClientModule(null, appClassLoader, clientFile.getAbsolutePath(), mainClass, moduleName);
+
+                        fillDescriptors(clientUrl, clientModule);
 
                         appModule.getClientModules().add(clientModule);
                     } catch (Exception e) {
@@ -235,7 +271,13 @@ public class DeploymentLoader {
 
                 //
                 // Persistence Units
-                addPersistenceUnits(appModule, appClassLoader, appDir, urls);
+                try {
+                    ResourceFinder finder1 = new ResourceFinder("", appClassLoader, urls);
+                    List<URL> persistenceUrls = finder1.findAll("META-INF/persistence.xml");
+                    appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+                } catch (IOException e1) {
+                    logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e1.getMessage(), e1);
+                }
 
                 return appModule;
 
@@ -246,44 +288,36 @@ public class DeploymentLoader {
 
         } else {
 
-            EjbJarUtils ejbJarUtils = new EjbJarUtils(jarFile.getAbsolutePath());
-            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
+            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), null, null);
 
-//            EjbModule ejbModule = deployer.deploy(undeployedModule);
+            fillDescriptors(baseUrl, ejbModule);
 
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
             appModule.getEjbModules().add(ejbModule);
 
             //
             // Persistence Units
-            ClassLoader tmpClassLoader = new TemporaryClassLoader(new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
-            addPersistenceUnits(appModule, tmpClassLoader, jarFile, baseUrl);
+            try {
+                ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
+                List<URL> persistenceUrls = finder.findAll("META-INF/persistence.xml");
+                appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+            } catch (IOException e) {
+                logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
+            }
 
             return appModule;
         }
     }
 
-    private void addPersistenceUnits(AppModule appModule, ClassLoader tmpClassLoader, File jarFile, URL... urls) {
-        List<URL> persistenceUrls = null;
+    private void fillDescriptors(URL moduleUrl, DeploymentModule module) throws OpenEJBException {
         try {
-            ResourceFinder finder = new ResourceFinder("", tmpClassLoader, urls);
-            persistenceUrls = finder.findAll("META-INF/persistence.xml");
-        } catch (IOException e) {
-            logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
-        }
-        for (URL url : persistenceUrls) {
-            String moduleName = url.toExternalForm().replaceFirst("!?/?META-INF/persistence.xml$", "");
-            if (moduleName.startsWith("jar:")) moduleName = moduleName.substring("jar:".length());
-            if (moduleName.startsWith("file:")) moduleName = moduleName.substring("file:".length());
-            if (moduleName.endsWith("/")) moduleName = moduleName.substring(0, moduleName.length() -1);
-            try {
-                Persistence persistence = JaxbPersistenceFactory.getPersistence(url);
-                PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
-                appModule.getPersistenceModules().add(persistenceModule);
+            ResourceFinder finder = new ResourceFinder(moduleUrl);
 
-            } catch (Exception e) {
-                logger.error("Unable to load Persistence Unit from EAR: " + jarFile.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
-            }
+            Map<String, URL> descriptors = finder.getResourcesMap("META-INF/");
+
+            module.getAltDDs().putAll(descriptors);
+        } catch (IOException e) {
+            throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }
     }
 

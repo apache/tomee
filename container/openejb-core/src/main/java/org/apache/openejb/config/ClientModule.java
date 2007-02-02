@@ -20,6 +20,7 @@ import org.apache.openejb.jee.ApplicationClient;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.io.File;
 
 /**
  * @version $Rev$ $Date$
@@ -30,12 +31,28 @@ public class ClientModule implements DeploymentModule {
     private ClassLoader classLoader;
     private String mainClass;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
+    private final String moduleId;
 
-    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
+    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass, String moduleId) {
         this.applicationClient = applicationClient;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
         this.mainClass = mainClass;
+
+        if (moduleId == null){
+            File file = new File(jarLocation);
+            moduleId = file.getName();
+        }
+
+        this.moduleId = moduleId;
+    }
+
+    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
+        this(applicationClient, classLoader, jarLocation, mainClass, null);
+    }
+
+    public String getModuleId() {
+        return moduleId;
     }
 
     public Map<String, Object> getAltDDs() {

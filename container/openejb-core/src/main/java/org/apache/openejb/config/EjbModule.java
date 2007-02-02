@@ -38,7 +38,7 @@ public class EjbModule implements DeploymentModule {
     private String moduleId;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
-    public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(ClassLoader classLoader, String moduleName, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");
         }
@@ -46,8 +46,15 @@ public class EjbModule implements DeploymentModule {
         this.ejbJar = ejbJar;
         this.jarURI = jarURI;
         this.openejbJar = openejbJar;
-        File file = new File(jarURI);
-        moduleId = file.getName().replaceFirst(".jar$","");
+
+        if (moduleName == null){
+            File file = new File(jarURI);
+            moduleId = file.getName();
+        }
+    }
+
+    public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+        this(classLoader, null, jarURI, ejbJar, openejbJar);
     }
 
     public Map<String, Object> getAltDDs() {
