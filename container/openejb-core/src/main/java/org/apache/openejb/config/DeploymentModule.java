@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.config;
 
+import java.util.Map;
+
 /**
  * @version $Rev$ $Date$
  */
 public interface DeploymentModule {
     public ClassLoader getClassLoader();
     public String getJarLocation();
+    public Map<String,Object> getAltDDs();
 }

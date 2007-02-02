@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.jpa.Attributes;
@@ -43,6 +45,7 @@ import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 
 public class OpenEjb2CmpConversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -51,9 +54,33 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
             OpenejbJarType openejbJarType = loadOpenEjbJar(classLoader);
             if (openejbJarType != null) {
                 mergeEntityMappings(appModule.getCmpMappings(), openejbJarType);
+                OpenejbJarType o2 = (OpenejbJarType) openejbJarType;
+
+//                String result = createGeronimoOpenejb(o2);
             }
         }
         return appModule;
+    }
+
+    private String createGeronimoOpenejb(OpenejbJarType o2) throws JAXBException {
+        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
+
+        g2.setEnvironment(o2.getEnvironment());
+        g2.setSecurity(o2.getSecurity());
+        g2.getService().addAll(o2.getService());
+        g2.getMessageDestination().addAll(o2.getMessageDestination());
+
+        for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
+            g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
+            g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
+            g2.getEjbRef().addAll(bean.getEjbRef());
+            g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
+            g2.getResourceRef().addAll(bean.getResourceRef());
+            g2.getServiceRef().addAll(bean.getServiceRef());
+        }
+
+        JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
+        return JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
     }
 
     public OpenejbJarType loadOpenEjbJar(ClassLoader classLoader) {
@@ -70,6 +97,7 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         }
         return (OpenejbJarType) element.getValue();
     }
+
 
 
     public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJarType openejbJarType) {

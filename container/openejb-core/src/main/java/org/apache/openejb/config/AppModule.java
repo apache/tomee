@@ -19,6 +19,8 @@ package org.apache.openejb.config;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.openejb.jee.jpa.EntityMappings;
 
@@ -27,16 +29,23 @@ import org.apache.openejb.jee.jpa.EntityMappings;
  */
 public class AppModule implements DeploymentModule {
     private final List<URL> additionalLibraries = new ArrayList<URL>();
+    private final List<ResourceModule> resourceModules = new ArrayList<ResourceModule>();
+    private final List<WebModule> webModules = new ArrayList<WebModule>();
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();;
     private final String jarLocation;
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
+    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
+    }
+
+    public Map<String, Object> getAltDDs() {
+        return altDDs;
     }
 
     public ClassLoader getClassLoader() {
@@ -69,5 +78,13 @@ public class AppModule implements DeploymentModule {
 
     public void setCmpMappings(EntityMappings cmpMappings) {
         this.cmpMappings = cmpMappings;
+    }
+
+    public List<ResourceModule> getResourceModules() {
+        return resourceModules;
+    }
+
+    public List<WebModule> getWebModules() {
+        return webModules;
     }
 }

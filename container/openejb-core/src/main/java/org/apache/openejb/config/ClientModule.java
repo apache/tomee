@@ -18,6 +18,9 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -26,12 +29,17 @@ public class ClientModule implements DeploymentModule {
     private String jarLocation;
     private ClassLoader classLoader;
     private String mainClass;
+    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
         this.applicationClient = applicationClient;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
         this.mainClass = mainClass;
+    }
+
+    public Map<String, Object> getAltDDs() {
+        return altDDs;
     }
 
     public ApplicationClient getApplicationClient() {

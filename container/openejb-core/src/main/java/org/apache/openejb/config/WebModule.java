@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @version $Rev$ $Date$
  */
-public class ResourceModule implements DeploymentModule {
+public class WebModule implements DeploymentModule {
 
     public Map<String, Object> getAltDDs() {
         throw new UnsupportedOperationException();
@@ -34,5 +34,4 @@ public class ResourceModule implements DeploymentModule {
     public String getJarLocation() {
         throw new UnsupportedOperationException();
     }
-
 }

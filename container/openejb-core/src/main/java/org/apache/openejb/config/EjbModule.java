@@ -21,6 +21,8 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.io.File;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Class is to remain "dumb" and should not have deployment logic added to it.
@@ -34,6 +36,7 @@ public class EjbModule implements DeploymentModule {
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
     private String moduleId;
+    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) {
@@ -45,6 +48,10 @@ public class EjbModule implements DeploymentModule {
         this.openejbJar = openejbJar;
         File file = new File(jarURI);
         moduleId = file.getName().replaceFirst(".jar$","");
+    }
+
+    public Map<String, Object> getAltDDs() {
+        return altDDs;
     }
 
     public ClassLoader getClassLoader() {
@@ -74,7 +81,7 @@ public class EjbModule implements DeploymentModule {
     public String getJarLocation() {
         return getJarURI();
     }
-    
+
     public String getModuleId() {
         return moduleId;
     }

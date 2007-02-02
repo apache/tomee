@@ -335,16 +335,16 @@ public class VmDeploymentManager implements DeploymentManager {
             return;
         }
         
-        for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<TargetModuleID, Properties> entry = iterator.next();
-            TargetModuleID module = entry.getKey();
-            Properties properties =  entry.getValue();
-            String fileName = new File(properties.getProperty(FILENAME)).getName();
-            File destination = new File(beansDir, fileName);
-            destination.delete();
-            File unpackedDir = new File(appsDir, fileName.substring(0, fileName.lastIndexOf('.')));
-            recursiveDelete(unpackedDir);
-        }
+//        for (Iterator<Map.Entry<TargetModuleID, Properties>> iterator = moduleIdList.entrySet().iterator(); iterator.hasNext();) {
+//            Map.Entry<TargetModuleID, Properties> entry = iterator.next();
+//            TargetModuleID module = entry.getKey();
+//            Properties properties =  entry.getValue();
+//            String fileName = new File(properties.getProperty(FILENAME)).getName();
+//            File destination = new File(beansDir, fileName);
+//            destination.delete();
+//            File unpackedDir = new File(appsDir, fileName.substring(0, fileName.lastIndexOf('.')));
+//            recursiveDelete(unpackedDir);
+//        }
     }
 
     public boolean isRedeploySupported() {
