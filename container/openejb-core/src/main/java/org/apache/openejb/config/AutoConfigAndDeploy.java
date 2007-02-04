@@ -270,6 +270,9 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
     }
 
     private String getDataSourceId(String dataSource, PersistenceUnit persistenceUnit) throws OpenEJBException {
+        if(dataSource == null){
+            return null;
+        }
         if (dataSource.startsWith("java:comp/env")) {
             dataSource = dataSource.substring("java:comp/env".length());
         }
@@ -294,7 +297,11 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                     logger.warning("Auto-creating a datasource with res-id " + id + " for persistence-unit '" + persistenceUnit.getName() + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
                     configFactory.install(connectorInfo);
                 }
+            } else {
+                return name;
             }
+        } else {
+            return dataSource;
         }
         return id;
     }

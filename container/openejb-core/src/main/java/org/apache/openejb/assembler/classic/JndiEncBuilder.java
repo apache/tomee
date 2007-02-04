@@ -43,6 +43,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -84,7 +85,11 @@ public class JndiEncBuilder {
         }
 
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
-
+        try {
+            path = new File(path).toURL().getPath();
+        } catch (MalformedURLException e) {
+            throw new org.apache.openejb.OpenEJBException("The module path is invalid " + path , e);
+        }
         this.jarPath = path;
         this.jndiEnc = jndiEnc;
 
@@ -447,18 +452,17 @@ public class JndiEncBuilder {
         String relativePath = puName.substring(0,index);
         String unitName = puName.substring(index+1,puName.length());
         if(new File(path).isFile()){
-            path=path.substring(0,path.lastIndexOf(File.separator));
+            path=path.substring(0,path.lastIndexOf('/'));
         }
         while(relativePath.startsWith("../")){
             relativePath = relativePath.substring(3,relativePath.length());
-            path = path.substring(0,path.lastIndexOf(File.separator));
+            path = path.substring(0,path.lastIndexOf('/'));
         }
 
         while(relativePath.startsWith("./")){
             relativePath = relativePath.substring(2,relativePath.length());
         }
-        path = path + File.separator + relativePath;
-        path = new File(path).getPath();
+        path = path + "/" + relativePath;
         Map factories = allFactories.get(path);
         if (factories != null){
             EntityManagerFactory factory = (EntityManagerFactory)factories.get(unitName);
