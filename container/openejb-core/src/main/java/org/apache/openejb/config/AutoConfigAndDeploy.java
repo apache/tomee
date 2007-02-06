@@ -221,7 +221,8 @@ public class AutoConfigAndDeploy implements DynamicDeployer {
                 }
             }
 
-            if (bean.getType().equals("CMP_ENTITY") && ((EntityBean) bean).getCmpVersion() == 1) {
+            // DMB: Disabling this temporarily
+            if (false && bean.getType().equals("CMP_ENTITY") && ((EntityBean) bean).getCmpVersion() == 1) {
                 List<Query> queries = ejbDeployment.getQuery();
                 if (bean.getHome() != null) {
                     Class interfce = loadClass(bean.getHome(), classLoader, jarLocation);
