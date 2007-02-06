@@ -250,31 +250,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-interceptor</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
       <artifactId>geronimo-transaction</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-kernel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-timer</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-naming</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.modules</groupId>
-      <artifactId>geronimo-webservices</artifactId>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
