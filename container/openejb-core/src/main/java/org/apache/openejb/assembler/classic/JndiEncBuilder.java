@@ -69,7 +69,7 @@ public class JndiEncBuilder {
         this(jndiEnc, null, null, null,null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories,String path) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories, String path) throws OpenEJBException {
         if (ejbType == null){
             referenceWrapper = new DefaultReferenceWrapper();
         } else if (ejbType.isEntity()) {
@@ -85,11 +85,15 @@ public class JndiEncBuilder {
         }
 
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
-        try {
-            path = new File(path).toURL().getPath();
-        } catch (MalformedURLException e) {
-            throw new org.apache.openejb.OpenEJBException("The module path is invalid " + path , e);
+
+        if (path != null){
+            try {
+                path = new File(path).toURL().getPath();
+            } catch (MalformedURLException e) {
+                throw new org.apache.openejb.OpenEJBException("The module path is invalid " + path , e);
+            }
         }
+        
         this.jarPath = path;
         this.jndiEnc = jndiEnc;
 
