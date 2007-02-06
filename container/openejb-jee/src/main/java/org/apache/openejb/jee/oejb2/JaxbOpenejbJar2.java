@@ -71,6 +71,15 @@ public class JaxbOpenejbJar2 {
                 return false;
             }
         });
+        unmarshaller.setListener(new Unmarshaller.Listener(){
+            public void afterUnmarshal(Object object, Object object1) {
+                super.afterUnmarshal(object, object1);
+            }
+
+            public void beforeUnmarshal(Object object, Object object1) {
+                super.beforeUnmarshal(object, object1);
+            }
+        });
 
 
         NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());

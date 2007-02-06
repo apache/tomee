@@ -28,6 +28,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -60,7 +61,7 @@ public class JaxbOpenejbJar3 {
         return jaxbContext;
     }
 
-    public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    public static <T> T unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -83,7 +84,12 @@ public class JaxbOpenejbJar3 {
 
         SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        return unmarshaller.unmarshal(source);
+        Object o = unmarshaller.unmarshal(source);
+        if (o instanceof JAXBElement) {
+            JAXBElement element = (JAXBElement) o;
+            return (T) element.getValue();
+        }
+        return (T) o;
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
@@ -93,7 +99,7 @@ public class JaxbOpenejbJar3 {
         }
 
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
-            super.startElement(uri, localName, qname, atts);
+            super.startElement("http://www.openejb.org/openejb-jar/1.1", localName, qname, atts);
         }
     }
 }

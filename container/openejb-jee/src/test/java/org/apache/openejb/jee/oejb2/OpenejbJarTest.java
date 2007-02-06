@@ -40,6 +40,10 @@ public class OpenejbJarTest extends TestCase {
         unmarshalAndMarshal(GeronimoEjbJarType.class, "geronimo-openejb-full.xml");
     }
 
+    public void testGeronimoOpenejbInvalidXml() throws Exception {
+        unmarshalAndMarshal(GeronimoEjbJarType.class, "geronimo-openejb-invalid.xml", "geronimo-openejb-corrected.xml");
+    }
+
     public void testOpenejbJarMoreInvalid() throws Exception {
         unmarshalAndMarshal(OpenejbJarType.class, "daytrader-original.xml", "daytrader-corrected.xml");
     }

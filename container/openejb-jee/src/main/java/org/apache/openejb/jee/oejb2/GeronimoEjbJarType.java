@@ -186,6 +186,13 @@ public class GeronimoEjbJarType {
         return this.resourceEnvRef;
     }
 
+    public Object getOpenejbJar() {
+        return openejbJar;
+    }
+
+    public void setOpenejbJar(Object openejbJar) {
+        this.openejbJar = openejbJar;
+    }
 
 
     /**

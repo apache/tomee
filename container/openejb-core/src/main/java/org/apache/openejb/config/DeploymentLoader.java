@@ -224,7 +224,7 @@ public class DeploymentLoader {
                 throw e;
             }
 
-        } else {
+        } else if (EjbModule.class.equals(moduleClass)) {
 
             EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), null, null);
 
@@ -244,6 +244,8 @@ public class DeploymentLoader {
             }
 
             return appModule;
+        } else {
+            throw new OpenEJBException("Unsupported module type: "+moduleClass.getSimpleName());
         }
     }
 
@@ -316,12 +318,11 @@ public class DeploymentLoader {
             }
         }
 
-        ClassFinder classFinder = new ClassFinder(new TemporaryClassLoader(new URL[]{baseUrl}, classLoader), baseUrl);
-        List<Class> beans = classFinder.findAnnotatedClasses(Stateless.class);
-        beans.addAll(classFinder.findAnnotatedClasses(Stateful.class));
-        beans.addAll(classFinder.findAnnotatedClasses(javax.ejb.MessageDriven.class));
+        ClassFinder classFinder = new ClassFinder(classLoader, baseUrl);
 
-        if (beans.size() > 0) {
+        if (classFinder.isAnnotationPresent(Stateless.class) ||
+                classFinder.isAnnotationPresent(Stateful.class) ||
+                classFinder.isAnnotationPresent(javax.ejb.MessageDriven.class)) {
             return EjbModule.class;
         }
 

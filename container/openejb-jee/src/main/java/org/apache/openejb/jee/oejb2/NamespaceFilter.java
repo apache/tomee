@@ -149,7 +149,8 @@ public class NamespaceFilter extends XMLFilterImpl {
         }
         
         String correctNamespace = ns.get(localName);
-        if (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") && correctNamespace != null) {
+        boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
+        if (correctable && correctNamespace != null) {
             uri = correctNamespace;
         } else if (duplicates.containsKey(localName)){
             List<String> possibleNamespaces = duplicates.get(localName);

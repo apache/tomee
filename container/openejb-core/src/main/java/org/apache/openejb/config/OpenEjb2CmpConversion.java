@@ -62,27 +62,6 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         return appModule;
     }
 
-    private String createGeronimoOpenejb(OpenejbJarType o2) throws JAXBException {
-        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
-
-        g2.setEnvironment(o2.getEnvironment());
-        g2.setSecurity(o2.getSecurity());
-        g2.getService().addAll(o2.getService());
-        g2.getMessageDestination().addAll(o2.getMessageDestination());
-
-        for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
-            g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
-            g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
-            g2.getEjbRef().addAll(bean.getEjbRef());
-            g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
-            g2.getResourceRef().addAll(bean.getResourceRef());
-            g2.getServiceRef().addAll(bean.getServiceRef());
-        }
-
-        JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
-        return JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
-    }
-
     public OpenejbJarType loadOpenEjbJar(ClassLoader classLoader) {
         InputStream in = classLoader.getResourceAsStream("META-INF/openejb-jar.xml");
         if (in == null) {

@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
 <ejb-jar xmlns="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"
     xmlns:n="http://geronimo.apache.org/xml/ns/naming-1.2"
 >
@@ -59,6 +77,22 @@
             <n:name>SystemDatasource</n:name>
         </n:pattern>
     </n:resource-ref>
+    <n:resource-ref>
+        <n:ref-name>org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/daataSource</n:ref-name>
+        <n:pattern>
+            <n:groupId>org.apache.geronimo.configs</n:groupId>
+            <n:artifactId>system-database</n:artifactId>
+            <n:name>SystemDatasource</n:name>
+        </n:pattern>
+    </n:resource-ref>
+    <n:resource-ref>
+        <n:ref-name>org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/daataSource</n:ref-name>
+        <n:pattern>
+            <n:groupId>org.apache.geronimo.configs</n:groupId>
+            <n:artifactId>system-database</n:artifactId>
+            <n:name>SystemDatasource</n:name>
+        </n:pattern>
+    </n:resource-ref>
     <n:persistence-context-ref>
         <n:persistence-context-ref-name>persistence/TestContext</n:persistence-context-ref-name>
         <n:persistence-unit-name>openjpa-test-unit</n:persistence-unit-name>
@@ -79,20 +113,20 @@
         <n:persistence-unit-name>openjpa-test-unit</n:persistence-unit-name>
     </n:persistence-unit-ref>
 
-    <!--<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">-->
-        <!--<persistence-unit transaction-type="JTA" name="cmp">-->
-            <!--<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>-->
-            <!--<jta-data-source>?name=SystemDatasource</jta-data-source>-->
-            <!--<non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>-->
-            <!--<mapping-file>META-INF/jpa.mapping.xml</mapping-file>-->
-            <!--<class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>-->
-            <!--<exclude-unlisted-classes>false</exclude-unlisted-classes>-->
-        <!--</persistence-unit>-->
-        <!--<persistence-unit transaction-type="JTA" name="openjpa-test-unit">-->
-            <!--<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>-->
-            <!--<jta-data-source>?name=SystemDatasource</jta-data-source>-->
-            <!--<non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>-->
-            <!--<class>org.apache.openejb.test.entity.Customer</class>-->
-        <!--</persistence-unit>-->
-    <!--</persistence>-->
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+        <persistence-unit transaction-type="JTA" name="cmp">
+            <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+            <jta-data-source>?name=SystemDatasource</jta-data-source>
+            <non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>
+            <mapping-file>META-INF/jpa.mapping.xml</mapping-file>
+            <class>org.apache.openejb.test.entity.cmp.BasicCmpBean</class>
+            <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        </persistence-unit>
+        <persistence-unit transaction-type="JTA" name="openjpa-test-unit">
+            <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+            <jta-data-source>?name=SystemDatasource</jta-data-source>
+            <non-jta-data-source>?name=NoTxDatasource</non-jta-data-source>
+            <class>org.apache.openejb.test.entity.Customer</class>
+        </persistence-unit>
+    </persistence>
 </ejb-jar>
