@@ -258,4 +258,10 @@ public class OpenejbJarType {
         return this.service;
     }
 
+    public List<Persistence> getPersistence() {
+        if (persistence == null){
+            persistence = new ArrayList<Persistence>();
+        }
+        return persistence;
+    }
 }

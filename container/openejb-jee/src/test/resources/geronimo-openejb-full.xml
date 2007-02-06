@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns7:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns5="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns6="http://java.sun.com/xml/ns/persistence" xmlns:ns7="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
+<ns7:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns5="http://java.sun.com/xml/ns/persistence" xmlns:ns6="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns7="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
     <environment>
         <moduleId>
             <groupId>String</groupId>

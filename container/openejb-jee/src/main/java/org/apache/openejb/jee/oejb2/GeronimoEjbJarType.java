@@ -26,6 +26,7 @@ import org.apache.openejb.jee.oejb2.EjbLocalRefType;
 import org.apache.openejb.jee.oejb2.ServiceRefType;
 import org.apache.openejb.jee.oejb2.ResourceRefType;
 import org.apache.openejb.jee.oejb2.ResourceEnvRefType;
+import org.apache.openejb.jee.jpa.unit.Persistence;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -49,7 +50,8 @@ import java.util.ArrayList;
     "resourceEnvRef",
     "messageDestination",
     "security",
-    "service"
+    "service",
+    "persistence"
 })
 public class GeronimoEjbJarType {
 
@@ -81,6 +83,9 @@ public class GeronimoEjbJarType {
 
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
+
+    @XmlElementRef(name="persistence", namespace = "http://java.sun.com/xml/ns/persistence", type = Persistence.class)
+    protected List<Persistence> persistence;
 
     /**
      * Gets the value of the environment property.
@@ -276,5 +281,12 @@ public class GeronimoEjbJarType {
             service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
         }
         return this.service;
+    }
+
+    public List<Persistence> getPersistence() {
+        if (persistence == null){
+            persistence = new ArrayList<Persistence>();
+        }
+        return persistence;
     }
 }
