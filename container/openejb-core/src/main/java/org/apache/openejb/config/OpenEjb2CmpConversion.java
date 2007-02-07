@@ -16,13 +16,9 @@
  */
 package org.apache.openejb.config;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.jpa.Attributes;
@@ -43,41 +39,18 @@ import org.apache.openejb.jee.oejb2.EjbRelationType;
 import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
-import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 
 public class OpenEjb2CmpConversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            ClassLoader classLoader = ejbModule.getClassLoader();
-            OpenejbJarType openejbJarType = loadOpenEjbJar(classLoader);
-            if (openejbJarType != null) {
-                mergeEntityMappings(appModule.getCmpMappings(), openejbJarType);
-                OpenejbJarType o2 = (OpenejbJarType) openejbJarType;
-
-//                String result = createGeronimoOpenejb(o2);
+            Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
+            if (altDD instanceof OpenejbJarType) {
+                mergeEntityMappings(appModule.getCmpMappings(), (OpenejbJarType) altDD);
             }
         }
         return appModule;
     }
-
-    public OpenejbJarType loadOpenEjbJar(ClassLoader classLoader) {
-        InputStream in = classLoader.getResourceAsStream("META-INF/openejb-jar.xml");
-        if (in == null) {
-            return null;
-        }
-
-        JAXBElement element;
-        try {
-            element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, in, false);
-        } catch (Exception e) {
-            return null;
-        }
-        return (OpenejbJarType) element.getValue();
-    }
-
-
 
     public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJarType openejbJarType) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
@@ -117,12 +90,15 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
 
             // todo this doesn't seem to parse?
             if (bean.getKeyGenerator() != null) {
-                Id id = entityData.entity.getAttributes().getId().get(0);
+                // todo support complex primary keys
+                if (entityData.entity.getAttributes().getId().size() == 1) {
+                    Id id = entityData.entity.getAttributes().getId().get(0);
 
-                // todo detect specific generation strategy
-                GeneratedValue generatedValue = new GeneratedValue();
-                generatedValue.setGenerator("IDENTITY");
-                id.setGeneratedValue(generatedValue);
+                    // todo detect specific generation strategy
+                    GeneratedValue generatedValue = new GeneratedValue();
+                    generatedValue.setGenerator("IDENTITY");
+                    id.setGeneratedValue(generatedValue);
+                }
             }
         }
 

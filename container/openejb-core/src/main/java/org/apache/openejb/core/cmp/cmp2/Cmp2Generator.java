@@ -53,10 +53,10 @@ public class Cmp2Generator implements Opcodes {
         }
 
         this.pkField = cmpFields.get(pkField);
-        if (this.pkField == null) {
+        // todo warn about unsupported complex primary key
+        if (pkField != null && this.pkField == null) {
             throw new IllegalArgumentException("No such property " + pkField + " defined on bean class " + beanClassName);
         }
-
         cw = new ClassWriter(true);
     }
 
@@ -306,6 +306,9 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createSimplePrimaryKeyGetter(CmpField pkField) {
+        // todo complex pk
+        if (pkField == null) return;
+
         String descriptor = pkField.getType().getDescriptor();
 
         String methodName = "OpenEJB_getPrimaryKey";

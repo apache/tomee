@@ -16,44 +16,41 @@
  */
 package org.apache.openejb.config;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.lang.reflect.Field;
-
-import javax.xml.bind.JAXBException;
-
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
 import org.apache.openejb.jee.CmpField;
+import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.Multiplicity;
+import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.CmpVersion;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.jpa.Entity;
 import org.apache.openejb.jee.jpa.Attributes;
-import org.apache.openejb.jee.jpa.Id;
 import org.apache.openejb.jee.jpa.Basic;
-import org.apache.openejb.jee.jpa.OneToOne;
-import org.apache.openejb.jee.jpa.OneToMany;
-import org.apache.openejb.jee.jpa.ManyToOne;
-import org.apache.openejb.jee.jpa.ManyToMany;
-import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.CascadeType;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.ManyToMany;
+import org.apache.openejb.jee.jpa.ManyToOne;
+import org.apache.openejb.jee.jpa.OneToMany;
+import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.Transient;
-import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";

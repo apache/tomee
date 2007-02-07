@@ -227,6 +227,9 @@ public class AssemblerTool {
          At the very least, log a warning or two.
          */
 
+        // todo local permissions cause exception
+        if (intrface == null) return;
+
         if (mi.methodName.equals("*")) {
             Method[] mthds = intrface.getMethods();
             for (int i = 0; i < mthds.length; i++)

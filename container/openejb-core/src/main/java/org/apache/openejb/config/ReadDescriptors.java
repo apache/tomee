@@ -96,12 +96,12 @@ public class ReadDescriptors implements DynamicDeployer {
                 ejbModule.setOpenejbJar(openejbJar);
             } catch (Exception e) {
                 OpenejbJar openejbJar = new OpenejbJar();
-                ejbModule.getAltDDs().put("openejb-jar.xml", openejbJar);
                 ejbModule.setOpenejbJar(openejbJar);
 
                 try {
                     JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, source.get());
                     OpenejbJarType o2 = (OpenejbJarType) element.getValue();
+                    ejbModule.getAltDDs().put("openejb-jar.xml", o2);
 
                     GeronimoEjbJarType g2 = new GeronimoEjbJarType();
 
