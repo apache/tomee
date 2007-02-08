@@ -250,9 +250,6 @@ public final class OpenEJB {
             if (nobanner == null && (loader == null || (loader != null && loader.startsWith("tomcat")))) {
                 System.out.println(messages.message("startup.ready"));
             }
-
-            // todo hack
-
         }
     }
 
