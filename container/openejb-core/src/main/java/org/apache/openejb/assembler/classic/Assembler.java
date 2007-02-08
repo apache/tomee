@@ -148,6 +148,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static void installNaming() {
+        if (System.getProperty("duct tape") != null) return;
+        
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
