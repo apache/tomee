@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.File;
 
 import org.apache.openejb.jee.jpa.EntityMappings;
 
@@ -33,15 +34,22 @@ public class AppModule implements DeploymentModule {
     private final List<WebModule> webModules = new ArrayList<WebModule>();
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
-    private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();;
+    private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
     private final String jarLocation;
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
+    private final String moduleId;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
+        File file = new File(jarLocation);
+        moduleId = file.getName();
+    }
+
+    public String getModuleId() {
+        return moduleId;
     }
 
     public Map<String, Object> getAltDDs() {

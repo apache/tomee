@@ -130,6 +130,8 @@ public final class OpenEJB {
                 throw new OpenEJBException(msg, t);
             }
 
+            SystemInstance.get().setComponent(Assembler.class, assembler);
+
             try {
                 assembler.init(props);
             } catch (OpenEJBException oe) {
@@ -248,6 +250,8 @@ public final class OpenEJB {
             if (nobanner == null && (loader == null || (loader != null && loader.startsWith("tomcat")))) {
                 System.out.println(messages.message("startup.ready"));
             }
+
+            // todo hack
 
         }
     }

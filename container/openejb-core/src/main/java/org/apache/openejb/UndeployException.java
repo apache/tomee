@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.PrintStream;
 
 /**
  * @version $Rev$ $Date$
@@ -43,5 +44,14 @@ public class UndeployException extends OpenEJBException {
 
     public List<Throwable> getCauses() {
         return causes;
+    }
+
+    public void printStackTrace(PrintStream s) {
+        super.printStackTrace(s);
+
+        for (Throwable throwable : causes) {
+            s.print("Nested caused by: ");
+            throwable.printStackTrace(s);
+        }
     }
 }

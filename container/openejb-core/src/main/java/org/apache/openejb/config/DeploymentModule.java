@@ -22,7 +22,8 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public interface DeploymentModule {
-    public ClassLoader getClassLoader();
-    public String getJarLocation();
-    public Map<String,Object> getAltDDs();
+    String getModuleId();
+    ClassLoader getClassLoader();
+    String getJarLocation();
+    Map<String,Object> getAltDDs();
 }

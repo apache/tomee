@@ -47,10 +47,6 @@ public class ClientModule implements DeploymentModule {
         this.moduleId = moduleId;
     }
 
-    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass) {
-        this(applicationClient, classLoader, jarLocation, mainClass, null);
-    }
-
     public String getModuleId() {
         return moduleId;
     }

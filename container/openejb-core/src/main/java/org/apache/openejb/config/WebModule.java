@@ -22,6 +22,9 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class WebModule implements DeploymentModule {
+    public String getModuleId() {
+        throw new UnsupportedOperationException();
+    }
 
     public Map<String, Object> getAltDDs() {
         throw new UnsupportedOperationException();

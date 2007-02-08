@@ -14,28 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.assembler;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.Properties;
 
-/**
- * @version $Rev$ $Date$
- */
-public class ResourceModule implements DeploymentModule {
-    public String getModuleId() {
-        throw new UnsupportedOperationException();
-    }
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.AppInfo;
 
-    public Map<String, Object> getAltDDs() {
-        throw new UnsupportedOperationException();
-    }
+public interface Deployer {
+    String FILENAME = "filename";
+    String ALT_DD = "altDD";
 
-    public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException();
-    }
+    String getUniqueFile();
 
-    public String getJarLocation() {
-        throw new UnsupportedOperationException();
-    }
+    Collection<AppInfo> getDeployedApps();
 
+    AppInfo deploy(String location) throws OpenEJBException;
+
+    AppInfo deploy(Properties properties) throws OpenEJBException;
+
+    AppInfo deploy(String location, Properties properties) throws OpenEJBException;
+
+    void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException;
 }

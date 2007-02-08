@@ -30,7 +30,6 @@ import java.util.HashMap;
  * @version $Revision$ $Date$
  */
 public class EjbModule implements DeploymentModule {
-
     private ClassLoader classLoader;
     private String jarURI;
     private EjbJar ejbJar;
@@ -38,7 +37,7 @@ public class EjbModule implements DeploymentModule {
     private String moduleId;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
-    public EjbModule(ClassLoader classLoader, String moduleName, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(ClassLoader classLoader, String moduleId, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");
         }
@@ -47,10 +46,11 @@ public class EjbModule implements DeploymentModule {
         this.jarURI = jarURI;
         this.openejbJar = openejbJar;
 
-        if (moduleName == null){
+        if (moduleId == null){
             File file = new File(jarURI);
             moduleId = file.getName();
         }
+        this.moduleId = moduleId;
     }
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {

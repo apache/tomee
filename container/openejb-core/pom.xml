@@ -118,7 +118,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${version}.jar xbean-finder-2.8.jar</Class-Path>
+              <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar xbean-finder-2.8.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>

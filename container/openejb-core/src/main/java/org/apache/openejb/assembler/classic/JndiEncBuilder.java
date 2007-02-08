@@ -65,8 +65,8 @@ public class JndiEncBuilder {
     private final JndiEncInfo jndiEnc;
 
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc) throws OpenEJBException {
-        this(jndiEnc, null, null, null,null);
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String moduleId) throws OpenEJBException {
+        this(jndiEnc, null, null, null, moduleId);
     }
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories, String path) throws OpenEJBException {

@@ -26,6 +26,8 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class RemoteServer {
+    private static final boolean DEBUG = System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE");
+
     /**
      * Has the remote server's instance been already running ?
      */
@@ -96,7 +98,7 @@ public class RemoteServer {
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 String[] args;
-                if (System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE")) {
+                if (DEBUG) {
                     args = new String[]{"java",
                             "-Xdebug",
                             "-Xnoagent",
@@ -124,7 +126,11 @@ public class RemoteServer {
             } catch (Exception e) {
                 throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
-            connect(10);
+            if (DEBUG) {
+                connect(Integer.MAX_VALUE);
+            } else {
+                connect(10);
+            }
         } else {
             //System.out.println("[] SERVER STARTED");
         }
