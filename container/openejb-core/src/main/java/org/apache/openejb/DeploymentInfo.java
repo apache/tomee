@@ -36,6 +36,8 @@ public interface DeploymentInfo {
 
     final public static byte TX_REQUIRES_NEW = (byte) 5;
 
+    final public static byte TX_MAX = (byte) 5;
+
     final public static String AC_CREATE_EJBHOME = "create.ejbhome";
 
     public BeanType getComponentType();
