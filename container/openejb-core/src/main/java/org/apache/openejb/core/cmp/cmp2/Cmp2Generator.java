@@ -365,7 +365,11 @@ public class Cmp2Generator implements Opcodes {
         mv.visitLdcInsn(cmrField.getType());
 
         // arg3: String relatedProperty
-        mv.visitLdcInsn(cmrField.getRelatedName());
+        if (cmrField.getRelatedName() != null) {
+            mv.visitLdcInsn(cmrField.getRelatedName());
+        } else {
+            mv.visitInsn(ACONST_NULL);
+        }
 
         // invoke
         mv.visitMethodInsn(INVOKESPECIAL,
