@@ -70,6 +70,8 @@ public interface DeploymentInfo {
 
     public Class getBusinessRemoteInterface();
 
+    public Class getServiceEndpointInterface();
+
     public String getPrimaryKeyField();
 
     public Context getJndiEnc();

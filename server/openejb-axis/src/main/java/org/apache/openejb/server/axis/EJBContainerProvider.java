@@ -42,11 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class EJBContainerProvider extends RPCProvider {
+public class EjbContainerProvider extends RPCProvider {
 
     private final DeploymentInfo ejbDeployment;
 
-    public EJBContainerProvider(DeploymentInfo ejbDeployment) {
+    public EjbContainerProvider(DeploymentInfo ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
     }
 

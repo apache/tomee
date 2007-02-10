@@ -81,6 +81,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Class businessLocal;
     private Class businessRemote;
     private Class mdbInterface;
+    private Class serviceEndpointInterface;
 
     private Method postConstruct;
     private Method preDestroy;
@@ -128,6 +129,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             case BUSINESS_REMOTE: return getBusinessRemoteInterface();
             case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
             case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
+            case SERVICE_ENDPOINT: return getServiceEndpointInterface();
             default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
         }
     }
@@ -355,6 +357,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Class getMdbInterface() {
         return mdbInterface;
+    }
+
+    public Class getServiceEndpointInterface() {
+        return serviceEndpointInterface;
     }
 
     public Map<String, String> getActivationProperties() {
