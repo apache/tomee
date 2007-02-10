@@ -49,6 +49,8 @@ public class JtaEntityManager implements EntityManager {
 
     }
     public JtaEntityManager(JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, boolean extended) {
+        if (registry == null) throw new NullPointerException("registry is null");
+        if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
         this.registry = registry;
         this.entityManagerFactory = entityManagerFactory;
         this.properties = properties;

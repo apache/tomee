@@ -72,6 +72,7 @@ public class JtaEntityManagerRegistry {
      * instance already registered
      */
     public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended) throws IllegalStateException {
+        if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
         EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
         boolean transactionActive = isTransactionActive();
 

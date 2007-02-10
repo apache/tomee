@@ -48,7 +48,7 @@ public class EjbJarBuilder {
 
         for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.defaultInterceptors,allFactories);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, ejbJar.defaultInterceptors,allFactories);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);

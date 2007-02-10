@@ -96,7 +96,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 persistence.setVersion("1.0");
                 persistence.getPersistenceUnit().add(persistenceUnit);
 
-                PersistenceModule persistenceModule = new PersistenceModule(appModule.getJarLocation(), persistence);
+                PersistenceModule persistenceModule = new PersistenceModule(appModule.getModuleId(), persistence);
                 appModule.getPersistenceModules().add(persistenceModule);
             }
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");

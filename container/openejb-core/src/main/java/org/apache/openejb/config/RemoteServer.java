@@ -80,17 +80,24 @@ public class RemoteServer {
                 serverHasAlreadyBeenStarted = false;
 
                 File openejbJar = null;
+                File javaagentJar = null;
                 File lib = new File(home, "lib");
                 File[] files = lib.listFiles();
-                for (int i = 0; i < files.length && openejbJar == null; i++) {
+                for (int i = 0; i < files.length; i++) {
                     File file = files[i];
                     if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
                         openejbJar = file;
+                    }
+                    if (file.getName().startsWith("openejb-javaagent") && file.getName().endsWith("jar")){
+                        javaagentJar = file;
                     }
                 }
 
                 if (openejbJar == null){
                     throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
+                }
+                if (javaagentJar == null){
+                    throw new IllegalStateException("Cannot find the openejb-javaagent jar in "+lib.getAbsolutePath());
                 }
 
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
@@ -104,9 +111,16 @@ public class RemoteServer {
                             "-Xnoagent",
                             "-Djava.compiler=NONE",
                             "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
-                            "-jar", openejbJar.getAbsolutePath(), "start"};
+                            "-javaagent:" + javaagentJar.getAbsolutePath(),
+                            "-jar",
+                            openejbJar.getAbsolutePath(),
+                            "start"};
                 } else {
-                    args = new String[]{"java", "-jar", openejbJar.getAbsolutePath(), "start"};
+                    args = new String[]{"java",
+                            "-javaagent:" + javaagentJar.getAbsolutePath(),
+                            "-jar",
+                            openejbJar.getAbsolutePath(),
+                            "start"};
                 }
                 server = Runtime.getRuntime().exec(args);
 

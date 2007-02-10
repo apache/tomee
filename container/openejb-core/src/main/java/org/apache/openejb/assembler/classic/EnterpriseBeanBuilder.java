@@ -28,7 +28,6 @@ import org.apache.openejb.util.SafeToolkit;
 
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,14 +37,16 @@ import java.util.Map;
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
+    private final String moduleId;
     private final List<InterceptorInfo> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
     private final Map<String, Map<String, EntityManagerFactory>> factories;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, List<InterceptorInfo> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<InterceptorInfo> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
         this.bean = bean;
+        this.moduleId = moduleId;
         this.defaultInterceptors = defaultInterceptors;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
@@ -99,8 +100,8 @@ class EnterpriseBeanBuilder {
 
         final String transactionType = bean.transactionType;
 
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, new File(bean.codebase).getPath());
-        Context root = (Context) jndiEncBuilder.build();
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, moduleId);
+        Context root = jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
         CoreDeploymentInfo deployment;

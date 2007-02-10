@@ -89,7 +89,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
 
     private boolean add(Bean newEntity) {
         boolean changed = getRelatedBeans(true).add(newEntity);
-        if (changed) {
+        if (changed && relatedProperty != null) {
             // set the back reference in the new related bean
             Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
 
@@ -109,7 +109,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
 
         Bean entity = getEntityBean((EJBLocalObject) o);
         boolean changed = entity != null && getRelatedBeans(false).remove(entity);
-        if (changed) {
+        if (changed && relatedProperty != null) {
             toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
         }
         return changed;
@@ -123,7 +123,9 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
             Bean entity = iterator.next();
             if (!entityBeans.contains(entity)) {
                 iterator.remove();
-                toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
+                if (relatedProperty != null) {
+                    toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
+                }
                 changed = true;
             }
         }
@@ -146,7 +148,9 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
 
             public void remove() {
                 iterator.remove();
-                toCmp2Entity(currentEntity).OpenEJB_removeCmr(relatedProperty, source);
+                if (relatedProperty != null) {
+                    toCmp2Entity(currentEntity).OpenEJB_removeCmr(relatedProperty, source);
+                }
             }
         };
     }

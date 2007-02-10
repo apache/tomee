@@ -34,18 +34,10 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     private final CollectionRef<Bean> collectionRef = new CollectionRef<Bean>();
 
     public SetValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
-        if (source == null) {
-            throw new NullPointerException("source is null");
-        }
-        if (sourceProperty == null) {
-            throw new NullPointerException("sourceProperty is null");
-        }
-        if (relatedType == null) {
-            throw new NullPointerException("relatedType is null");
-        }
-        if (relatedProperty == null) {
-            throw new NullPointerException("relatedProperty is null");
-        }
+        if (source == null) throw new NullPointerException("source is null");
+        if (sourceProperty == null) throw new NullPointerException("sourceProperty is null");
+        if (relatedType == null) throw new NullPointerException("relatedType is null");
+
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedProperty = relatedProperty;
@@ -64,9 +56,11 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
 
     public void set(Set<Bean> relatedBeans, Set<Proxy> newProxies) {
         // clear back reference in the old related beans
-        for (Bean oldBean : relatedBeans) {
-            if (oldBean != null) {
-                toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
+        if (relatedProperty != null) {
+            for (Bean oldBean : relatedBeans) {
+                if (oldBean != null) {
+                    toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
+                }
             }
         }
         relatedBeans.clear();
@@ -76,14 +70,17 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
 
             if (newProxy != null) {
                 // set the back reference in the new related bean
-                Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
+                Object oldBackRef = null;
+                if (relatedProperty != null) {
+                    oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
+                }
 
                 // add the bean to our value map
                 relatedBeans.add(newBean);
 
                 // if the new related beas was related to another bean, we need
                 // to clear the back reference in that old bean
-                if (oldBackRef != null) {
+                if (relatedProperty != null && oldBackRef != null) {
                     toCmp2Entity(oldBackRef).OpenEJB_removeCmr(sourceProperty, newBean);
                 }
             }
@@ -94,9 +91,11 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         collectionRef.set(null);
 
         // clear back reference in the old related beans
-        for (Bean oldBean : relatedBeans) {
-            if (oldBean != null) {
-                toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
+        if (relatedProperty != null) {
+            for (Bean oldBean : relatedBeans) {
+                if (oldBean != null) {
+                    toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
+                }
             }
         }
     }

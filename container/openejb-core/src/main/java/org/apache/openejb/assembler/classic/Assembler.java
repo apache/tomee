@@ -66,7 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.Collections;
 import java.util.Collection;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
@@ -359,7 +358,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
         // to the class loader which must be added before any classes are loaded
         HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-        PersistenceBuilder persistenceBuilder = new PersistenceBuilder(new GlobalJndiDataSourceResolver(null), persistenceClassLoaderHandler);
+        PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
         for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
             try {
                 EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);

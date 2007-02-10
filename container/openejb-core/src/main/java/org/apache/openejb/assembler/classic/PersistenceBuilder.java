@@ -22,9 +22,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
+import javax.naming.Context;
 
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.loader.SystemInstance;
 
 public class PersistenceBuilder {
     public static final String PROVIDER_PROP = "javax.persistence.provider";
@@ -36,11 +39,6 @@ public class PersistenceBuilder {
     public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
 
     private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
-
-    /**
-     * Used to resolve jta and non-jta data cource names for actual DataSource objects.
-     */
-    private final DataSourceResolver dataSourceResolver;
 
     /**
      * External handler which handles adding a runtime ClassTransformer to the classloader.
@@ -67,9 +65,8 @@ public class PersistenceBuilder {
      */
     private String nonJtaDataSourceEnv;
 
-    public PersistenceBuilder(DataSourceResolver dataSourceResolver, PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
+    public PersistenceBuilder(PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
         loadSystemProps();
-        this.dataSourceResolver = dataSourceResolver;
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
@@ -106,8 +103,11 @@ public class PersistenceBuilder {
         String dataSource = info.jtaDataSource;
         if (jtaDataSourceEnv != null) dataSource = jtaDataSourceEnv;
         if (dataSource != null) {
-            DataSource jtaDataSource = dataSourceResolver.getDataSource(dataSource);
-            unitInfo.setJtaDataSource(jtaDataSource);
+            if (System.getProperty("duct tape") == null){
+                Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                DataSource jtaDataSource = (DataSource) context.lookup(dataSource);
+                unitInfo.setJtaDataSource(jtaDataSource);
+            }
         }
 
         // Managed Class Names
@@ -137,8 +137,11 @@ public class PersistenceBuilder {
         String nonJta = info.nonJtaDataSource;
         if (nonJtaDataSourceEnv != null) nonJta = nonJtaDataSourceEnv;
         if (nonJta != null) {
-            DataSource nonJtaDataSource = dataSourceResolver.getDataSource(nonJta);
-            unitInfo.setNonJtaDataSource(nonJtaDataSource);
+            if (System.getProperty("duct tape") == null){
+                Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                DataSource nonJtaDataSource = (DataSource) context.lookup(nonJta);
+                unitInfo.setNonJtaDataSource(nonJtaDataSource);
+            }
         }
 
         // Persistence Unit Root Url

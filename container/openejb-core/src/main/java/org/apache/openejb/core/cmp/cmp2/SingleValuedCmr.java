@@ -36,7 +36,6 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
         if (source == null) throw new NullPointerException("source is null");
         if (sourceProperty == null) throw new NullPointerException("sourceProperty is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
-        if (relatedProperty == null) throw new NullPointerException("relatedProperty is null");
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedProperty = relatedProperty;
@@ -58,19 +57,21 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
         Bean newBean = Cmp2Util.<Bean>getEntityBean(newValue);
 
-        // clear back reference in the old related bean
-        if (oldBean != null) {
-            toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
-        }
+        if (relatedProperty != null) {
+            // clear back reference in the old related bean
+            if (oldBean != null) {
+                toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
+            }
 
-        if (newValue != null) {
-            // set the back reference in the new related bean
-            Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
+            if (newValue != null) {
+                // set the back reference in the new related bean
+                Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
 
-            // if the new related beas was related to another bean, we need
-            // to clear the back reference in that old bean
-            if (oldBackRef != null) {
-                toCmp2Entity(oldBackRef).OpenEJB_removeCmr(sourceProperty, newBean);
+                // if the new related beas was related to another bean, we need
+                // to clear the back reference in that old bean
+                if (oldBackRef != null) {
+                    toCmp2Entity(oldBackRef).OpenEJB_removeCmr(sourceProperty, newBean);
+                }
             }
         }
         return newBean;
