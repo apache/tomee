@@ -100,7 +100,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 return;
             }
 
-            ois = new EJBObjectInputStream(in);
+            ois = new EjbObjectInputStream(in);
             oos = new ObjectOutputStream(out);
 
             switch (requestType) {

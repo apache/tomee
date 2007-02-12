@@ -25,9 +25,9 @@ import java.lang.reflect.Proxy;
 /**
  * @version $Rev: 450758 $ $Date: 2006-09-28 01:40:18 -0700 (Thu, 28 Sep 2006) $
  */
-public class EJBObjectInputStream extends ObjectInputStream {
+public class EjbObjectInputStream extends ObjectInputStream {
 
-    public EJBObjectInputStream(InputStream in) throws IOException {
+    public EjbObjectInputStream(InputStream in) throws IOException {
         super(in);
     }
 
