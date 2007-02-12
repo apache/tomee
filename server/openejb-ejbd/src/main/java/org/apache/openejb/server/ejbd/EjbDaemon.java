@@ -27,12 +27,11 @@ import java.util.Properties;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.RequestMethodConstants;
-import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.client.EjbObjectInputStream;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 

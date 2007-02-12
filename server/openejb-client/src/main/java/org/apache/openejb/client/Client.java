@@ -132,7 +132,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
-                objectIn = new ObjectInputStream(conn.getInputStream());
+                objectIn = new EjbObjectInputStream(conn.getInputStream());
             } catch (IOException e) {
                 throw new RemoteException("Cannot open object input stream to server: ", e);
 
