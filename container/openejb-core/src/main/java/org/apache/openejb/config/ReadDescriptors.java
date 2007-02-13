@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
@@ -27,8 +28,11 @@ import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,8 +60,18 @@ public class ReadDescriptors implements DynamicDeployer {
             Object data = clientModule.getAltDDs().get("application-client.xml");
             if (data instanceof URL) {
                 URL url = (URL) data;
-                ApplicationClient applicationClient = DeploymentLoader.unmarshal(ApplicationClient.class, "META-INF/application-client.xml", url);
-                clientModule.setApplicationClient(applicationClient);
+                try {
+                    ApplicationClient applicationClient = (ApplicationClient) JaxbJavaee.unmarshal(ApplicationClient.class, url.openStream());
+                    clientModule.setApplicationClient(applicationClient);
+                } catch (SAXException e) {
+                    throw new OpenEJBException("Cannot parse the application-client.xml file: "+ url.toExternalForm(), e);
+                } catch (JAXBException e) {
+                    throw new OpenEJBException("Cannot unmarshall the application-client.xml file: "+ url.toExternalForm(), e);
+                } catch (IOException e) {
+                    throw new OpenEJBException("Cannot read the application-client.xml file: "+ url.toExternalForm(), e);
+                } catch (Exception e) {
+                    throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: "+ url.toExternalForm(), e);
+                }
             } else {
                 DeploymentLoader.logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
                 clientModule.setApplicationClient(new ApplicationClient());
@@ -160,8 +174,18 @@ public class ReadDescriptors implements DynamicDeployer {
         Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
         if (data instanceof URL) {
             URL url = (URL) data;
-            EjbJar ejbJar = DeploymentLoader.unmarshal(EjbJar.class, "META-INF/ejb-jar.xml", url);
-            ejbModule.setEjbJar(ejbJar);
+            try {
+                EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, url.openStream());
+                ejbModule.setEjbJar(ejbJar);
+            } catch (SAXException e) {
+                throw new OpenEJBException("Cannot parse the ejb-jar.xml file: "+ url.toExternalForm(), e);
+            } catch (JAXBException e) {
+                throw new OpenEJBException("Cannot unmarshall the ejb-jar.xml file: "+ url.toExternalForm(), e);
+            } catch (IOException e) {
+                throw new OpenEJBException("Cannot read the ejb-jar.xml file: "+ url.toExternalForm(), e);
+            } catch (Exception e) {
+                throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: "+ url.toExternalForm(), e);
+            }
         } else {
             DeploymentLoader.logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
             ejbModule.setEjbJar(new EjbJar());

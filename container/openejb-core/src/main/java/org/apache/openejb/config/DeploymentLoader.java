@@ -22,13 +22,16 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.ResourceFinder;
+import org.xml.sax.SAXException;
 
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +98,7 @@ public class DeploymentLoader {
 
                 Application application;
                 if (applicationXmlUrl != null) {
-                    application = unmarshal(Application.class, "META-INF/application.xml", applicationXmlUrl);
+                    application = unmarshal(Application.class, "application.xml", applicationXmlUrl);
                     for (Module module : application.getModule()) {
                         try {
                             if (module.getEjb() != null) {
@@ -262,13 +265,18 @@ public class DeploymentLoader {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T>T unmarshal(Class<T> type, String descriptor, URL descriptorUrl) throws OpenEJBException {
-        JaxbUnmarshaller unmarshaller = unmarshallers.get(type);
-        if (unmarshaller == null) {
-            unmarshaller = new JaxbUnmarshaller(type, descriptor);
-            unmarshallers.put(type, unmarshaller);
+    public static <T>T unmarshal(Class<T> type, String descriptor, URL url) throws OpenEJBException {
+        try {
+            return (T) JaxbJavaee.unmarshal(type, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the " + descriptor + " file: "+ url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the " + descriptor + " file: "+ url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the " + descriptor + " file: "+ url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the " + descriptor + " file: "+ url.toExternalForm(), e);
         }
-        return (T) unmarshaller.unmarshal(descriptorUrl);
     }
 
     public static void scanDir(File dir, Map<String, URL> files, String path) {
