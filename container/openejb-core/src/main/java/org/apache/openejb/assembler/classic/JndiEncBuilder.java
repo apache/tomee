@@ -462,7 +462,7 @@ public class JndiEncBuilder {
 
                 // search for a unique match in allFactories;
                 SortedSet<String> absolutePaths = factoryPaths.get(persistenceName);
-                if (absolutePaths.size() != 1) {
+                if (absolutePaths == null || absolutePaths.size() != 1) {
                     // todo warn with valid names
                     return null;
                 }
