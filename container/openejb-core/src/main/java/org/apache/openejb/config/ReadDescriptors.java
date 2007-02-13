@@ -29,10 +29,16 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.xml.sax.SAXException;
+import org.xml.sax.HandlerBase;
+import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,9 +112,11 @@ public class ReadDescriptors implements DynamicDeployer {
 
         if (source != null) {
             try {
+                // Attempt to parse it first as a v3 descriptor
                 OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, source.get());
                 ejbModule.setOpenejbJar(openejbJar);
-            } catch (Exception e) {
+            } catch (final Exception v3ParsingException) {
+                // Attempt to parse it second as a v2 descriptor
                 OpenejbJar openejbJar = new OpenejbJar();
                 ejbModule.setOpenejbJar(openejbJar);
 
@@ -134,8 +142,36 @@ public class ReadDescriptors implements DynamicDeployer {
                     }
 
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", g2);
-                } catch (Exception e1) {
-                    throw new OpenEJBException(e);
+                } catch (final Exception v2ParsingException) {
+                    // Now we have to determine which error to throw; the v3 file exception or the fallback v2 file exception.
+                    final Exception[] realIssue = {v3ParsingException};
+
+                    try {
+                        SAXParserFactory factory = SAXParserFactory.newInstance();
+                        factory.setNamespaceAware(true);
+                        factory.setValidating(false);
+                        SAXParser parser = factory.newSAXParser();
+                        parser.parse(source.get(), new DefaultHandler() {
+                            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                                if (uri != null && uri.contains("openejb-jar-2.")) {
+                                    realIssue[0] = v2ParsingException;
+                                    throw new SAXException("Throw exception to stop parsing");
+                                }
+                            }
+                        });
+                    } catch (Exception dontCare) {
+                    }
+
+                    Exception e = realIssue[0];
+                    if (e instanceof SAXException) {
+                        throw new OpenEJBException("Cannot parse the openejb-jar.xml.", e);
+                    } else if (e instanceof JAXBException) {
+                        throw new OpenEJBException("Cannot unmarshall the openejb-jar.xml.", e);
+                    } else if (e instanceof IOException) {
+                        throw new OpenEJBException("Cannot read the openejb-jar.xml.", e);
+                    } else {
+                        throw new OpenEJBException("Encountered unknown error parsing the openejb-jar.xml.", e);
+                    }
                 }
             }
         }
