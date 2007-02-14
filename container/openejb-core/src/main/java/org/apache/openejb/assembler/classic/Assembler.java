@@ -346,76 +346,85 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw openEJBException;
         }
 
-        // Generate the cmp2 concrete subclasses
-        CmpJarBuilder cmp2Builder = new CmpJarBuilder(appInfo, classLoader);
-        File generatedJar = cmp2Builder.getJarFile();
-        if (generatedJar != null) {
-            classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
-        }
+        try {
+            // Generate the cmp2 concrete subclasses
+            CmpJarBuilder cmp2Builder = new CmpJarBuilder(appInfo, classLoader);
+            File generatedJar = cmp2Builder.getJarFile();
+            if (generatedJar != null) {
+                classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
+            }
 
-        deployedApplications.put(appInfo.jarPath, appInfo);
-
-        // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
-        // to the class loader which must be added before any classes are loaded
-        HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-        PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
-        for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
-            try {
-                EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
-                Map<String, EntityManagerFactory> factories = allFactories.get(info.persistenceUnitRootUrl);
-                if (factories == null) {
-                    factories = new TreeMap<String, EntityManagerFactory>();
-                    allFactories.put(info.persistenceUnitRootUrl, factories);
+            // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
+            // to the class loader which must be added before any classes are loaded
+            HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
+            PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
+            for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
+                try {
+                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                    Map<String, EntityManagerFactory> factories = allFactories.get(info.persistenceUnitRootUrl);
+                    if (factories == null) {
+                        factories = new TreeMap<String, EntityManagerFactory>();
+                        allFactories.put(info.persistenceUnitRootUrl, factories);
+                    }
+                    factories.put(info.name, factory);
+                } catch (Exception e) {
+                    throw new OpenEJBException(e);
                 }
-                factories.put(info.name, factory);
-            } catch (Exception e) {
-                throw new OpenEJBException(e);
-            }
-        }
-
-        // EJB
-        EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
-            RoleMapping roleMapping = new RoleMapping(new ArrayList<RoleMappingInfo>());
-            for (DeploymentInfo deploymentInfo : deployments.values()) {
-                applyMethodPermissions((CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
-                applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
-                containerSystem.addDeployment(deploymentInfo);
-                jndiBuilder.bind(deploymentInfo);
             }
 
-            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
-                applySecurityRoleReference(deployment, beanInfo, roleMapping);
-            }
-        }
+            // EJB
+            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
+            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
+                RoleMapping roleMapping = new RoleMapping(new ArrayList<RoleMappingInfo>());
+                for (DeploymentInfo deploymentInfo : deployments.values()) {
+                    applyMethodPermissions((CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
+                    applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
+                    containerSystem.addDeployment(deploymentInfo);
+                    jndiBuilder.bind(deploymentInfo);
+                }
 
-        // App Client
-        for (ClientInfo clientInfo : appInfo.clients) {
-            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInfo.moduleId);
-            Context context = (Context) jndiEncBuilder.build().lookup("env");
-            containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
-            if (clientInfo.codebase != null) {
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
+                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                    CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
+                    applySecurityRoleReference(deployment, beanInfo, roleMapping);
+                }
             }
-            if (clientInfo.mainClass != null) {
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
-            }
-            ArrayList<Injection> injections = new ArrayList<Injection>();
-            JndiEncInfo jndiEnc = clientInfo.jndiEnc;
-            for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
-                for (InjectionInfo target : info.targets) {
-                    try {
-                        Class targetClass = classLoader.loadClass(target.className);
-                        Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                        injections.add(injection);
-                    } catch (ClassNotFoundException e) {
-                        logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
+
+            // App Client
+            for (ClientInfo clientInfo : appInfo.clients) {
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInfo.moduleId);
+                Context context = (Context) jndiEncBuilder.build().lookup("env");
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
+                if (clientInfo.codebase != null) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
+                }
+                if (clientInfo.mainClass != null) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
+                }
+                ArrayList<Injection> injections = new ArrayList<Injection>();
+                JndiEncInfo jndiEnc = clientInfo.jndiEnc;
+                for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
+                    for (InjectionInfo target : info.targets) {
+                        try {
+                            Class targetClass = classLoader.loadClass(target.className);
+                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                            injections.add(injection);
+                        } catch (ClassNotFoundException e) {
+                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
+                        }
                     }
                 }
+                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
             }
-            containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
+
+            deployedApplications.put(appInfo.jarPath, appInfo);
+        } catch (Throwable t) {
+            try {
+                destroyApplication(appInfo);
+            } catch (UndeployException e1) {
+                logger.debug("App failing deployment may not have undeployed cleanly: "+appInfo.jarPath, e1);
+            }
+            throw new OpenEJBException("Creating application failed: "+appInfo.jarPath, t);
         }
     }
 
