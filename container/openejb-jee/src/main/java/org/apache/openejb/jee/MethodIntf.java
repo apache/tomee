@@ -42,9 +42,20 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * ServiceEndpoint
  */
 public enum MethodIntf {
-    @XmlEnumValue("Home") HOME,
-    @XmlEnumValue("Remote") REMOTE,
-    @XmlEnumValue("LocalHome") LOCALHOME,
-    @XmlEnumValue("Local") LOCAL,
-    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT;
+    @XmlEnumValue("Home") HOME("Home"),
+    @XmlEnumValue("Remote") REMOTE("Remote"),
+    @XmlEnumValue("LocalHome") LOCALHOME("LocalHome"),
+    @XmlEnumValue("Local") LOCAL("Local"),
+    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT("ServiceEndpoint");
+
+    private final String name;
+
+    private MethodIntf(String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return name;
+    }
+    
 }
