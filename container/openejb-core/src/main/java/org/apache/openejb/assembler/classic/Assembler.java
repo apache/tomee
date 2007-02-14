@@ -448,8 +448,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentId);
                 if (deployment == null) {
                     undeployException.getCauses().add(new Exception("deployment not found: " + deploymentId));
+                } else {
+                    deployments.add(deployment);
                 }
-                deployments.add(deployment);
             }
         }
 
@@ -483,6 +484,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
         }
+
         for (CoreDeploymentInfo deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {
