@@ -92,6 +92,13 @@ public class Column {
     @XmlAttribute
     protected Boolean updatable;
 
+    public Column() {
+    }
+
+    public Column(String name) {
+        this.name = name;
+    }
+
     /**
      * Gets the value of the columnDefinition property.
      * 

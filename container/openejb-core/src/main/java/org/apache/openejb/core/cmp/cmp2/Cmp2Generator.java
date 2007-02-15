@@ -36,9 +36,9 @@ public class Cmp2Generator implements Opcodes {
     private final Map<String, CmrField> cmrFields = new LinkedHashMap<String, CmrField>();
     private CmpField pkField;
 
-    public Cmp2Generator(Class beanClass, String pkField, String[] cmrFields) {
+    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, String[] cmrFields) {
         beanClassName = Type.getInternalName(beanClass);
-        implClassName = beanClassName + "_JPA";
+        implClassName = cmpImplClass.replace('.', '/');
 
         for (String cmpFieldName : cmrFields) {
             String getterName = getterName(cmpFieldName);
@@ -361,7 +361,7 @@ public class Cmp2Generator implements Opcodes {
         // arg1: String sourceProperty - "b"
         mv.visitLdcInsn(cmrField.getName());
 
-        // arg2: Class<Bean> relatedType = BBean_JPA
+        // arg2: Class<Bean> relatedType = BBean_BBean
         mv.visitLdcInsn(cmrField.getType());
 
         // arg3: String relatedProperty

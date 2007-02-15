@@ -1,109 +1,163 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-    <entity name="BasicCmpBean" class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <attributes>
+            <id name="id"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <attributes>
+            <id name="id"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
+        <attributes>
+            <id name="id"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.EncCmpBean">
+        <attributes>
+            <id name="id"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
+        <attributes>
+            <id name="id"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="primaryKey"/>
+            <transient name="ejbContext"/>
+        </attributes>
+    </mapped-superclass>
+    <entity name="BasicCmpBean" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmpBean">
         <description>BasicCmpBean</description>
         <table name="entity"/>
-        <attributes>
-            <id name="id">
-                <column name="id"/>
-                <generated-value generator="IDENTITY"/>
-            </id>
-            <basic name="firstName">
-                <column name="first_name"/>
-            </basic>
-            <basic name="lastName">
-                <column name="last_name"/>
-            </basic>
-            <transient name="nextId"/>
-            <transient name="primaryKey"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
+        <named-query name="BasicCmpBean.findByLastName(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM BasicCmpBean AS o WHERE o.lastName = ?1</query>
+        </named-query>
+        <named-query name="BasicCmpBean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM BasicCmpBean AS o WHERE 1 = 0</query>
+        </named-query>
+        <attribute-override name="id">
+            <column name="id"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
     </entity>
-    <entity name="BasicCmpBeanExplicitPK" class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+    <entity name="BasicCmpBeanExplicitPK" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmpBeanExplicitPK">
         <description>BasicCmpBeanExplicitPK</description>
         <table name="entity_explicit_pk"/>
-        <attributes>
-            <id name="id">
-                <column name="id"/>
-            </id>
-            <basic name="firstName">
-                <column name="first_name"/>
-            </basic>
-            <basic name="lastName">
-                <column name="last_name"/>
-            </basic>
-            <transient name="nextId"/>
-            <transient name="primaryKey"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
+        <named-query name="BasicCmpBeanExplicitPK.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o WHERE 1 = 0</query>
+        </named-query>
+        <named-query name="BasicCmpBeanExplicitPK.findByPrimaryKey(java.lang.Integer)">
+            <query>SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o</query>
+        </named-query>
+        <named-query name="BasicCmpBeanExplicitPK.findByLastName(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o WHERE o.lastName = ?1</query>
+        </named-query>
+        <attribute-override name="id">
+            <column name="id"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
     </entity>
-    <entity name="AOBasicCmpBean" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
+    <entity name="AOBasicCmpBean" class="openejb.org.apache.openejb.test.entity.cmp.AOBasicCmpBean">
         <description>AOBasicCmpBean</description>
         <table name="entity"/>
-        <attributes>
-            <id name="id">
-                <column name="id"/>
-                <generated-value generator="IDENTITY"/>
-            </id>
-            <basic name="firstName">
-                <column name="first_name"/>
-            </basic>
-            <basic name="lastName">
-                <column name="last_name"/>
-            </basic>
-            <transient name="nextId"/>
-            <transient name="primaryKey"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
+        <named-query name="AOBasicCmpBean.findByLastName(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM AOBasicCmpBean AS o WHERE o.lastName = ?1</query>
+        </named-query>
+        <named-query name="AOBasicCmpBean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM AOBasicCmpBean AS o WHERE 1 = 0</query>
+        </named-query>
+        <attribute-override name="id">
+            <column name="id"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
     </entity>
-    <entity name="EncCmpBean" class="org.apache.openejb.test.entity.cmp.EncCmpBean">
+    <entity name="EncCmpBean" class="openejb.org.apache.openejb.test.entity.cmp.EncCmpBean">
         <description>EncCmpBean</description>
         <table name="entity"/>
-        <attributes>
-            <id name="id">
-                <column name="id"/>
-                <generated-value generator="IDENTITY"/>
-            </id>
-            <basic name="firstName">
-                <column name="first_name"/>
-            </basic>
-            <basic name="lastName">
-                <column name="last_name"/>
-            </basic>
-            <transient name="nextId"/>
-            <transient name="primaryKey"/>
-            <transient name="ejbContext"/>
-        </attributes>
+        <named-query name="EncCmpBean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM EncCmpBean AS o WHERE 1 = 0</query>
+        </named-query>
+        <attribute-override name="id">
+            <column name="id"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
     </entity>
-    <entity name="CmpRMIIIOPBean" class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
+    <entity name="CmpRMIIIOPBean" class="openejb.org.apache.openejb.test.entity.cmp.CmpRMIIIOPBean">
         <description>CmpRMIIIOPBean</description>
         <table name="entity"/>
-        <attributes>
-            <id name="id">
-                <column name="id"/>
-                <generated-value generator="IDENTITY"/>
-            </id>
-            <basic name="firstName">
-                <column name="first_name"/>
-            </basic>
-            <basic name="lastName">
-                <column name="last_name"/>
-            </basic>
-            <transient name="nextId"/>
-            <transient name="primaryKey"/>
-            <transient name="ejbContext"/>
-        </attributes>
+        <named-query name="CmpRMIIIOPBean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM CmpRMIIIOPBean AS o WHERE 1 = 0</query>
+        </named-query>
+        <attribute-override name="id">
+            <column name="id"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
     </entity>
-    <entity name="BasicCmp2" class="org.apache.openejb.test.entity.cmp.BasicCmp2Bean_JPA">
+    <entity name="BasicCmp2" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmp2">
         <description>BasicCmp2Bean</description>
         <table name="entity"/>
+        <named-query name="BasicCmp2Bean.findByLastName(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE o.lastName = ?1</query>
+        </named-query>
+        <named-query name="BasicCmp2Bean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE 1 = 0</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value generator="IDENTITY"/>
+                <generated-value strategy="IDENTITY"/>
             </id>
             <basic name="firstName">
                 <column name="first_name"/>
@@ -113,13 +167,19 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="AOBasicCmp2" class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean_JPA">
+    <entity name="AOBasicCmp2" class="openejb.org.apache.openejb.test.entity.cmp.AOBasicCmp2">
         <description>AOBasicCmp2Bean</description>
         <table name="entity"/>
+        <named-query name="AOBasicCmp2Bean.findByLastName(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE o.lastName = ?1</query>
+        </named-query>
+        <named-query name="AOBasicCmp2Bean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE 1 = 0</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value generator="IDENTITY"/>
+                <generated-value strategy="IDENTITY"/>
             </id>
             <basic name="firstName">
                 <column name="first_name"/>
@@ -129,13 +189,16 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="EncCmp2" class="org.apache.openejb.test.entity.cmp.EncCmp2Bean_JPA">
+    <entity name="EncCmp2" class="openejb.org.apache.openejb.test.entity.cmp.EncCmp2">
         <description>EncCmp2Bean</description>
         <table name="entity"/>
+        <named-query name="EncCmp2Bean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM EncCmp2 AS o WHERE 1 = 0</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value generator="IDENTITY"/>
+                <generated-value strategy="IDENTITY"/>
             </id>
             <basic name="firstName">
                 <column name="first_name"/>
@@ -145,13 +208,16 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Cmp2RmiIiop" class="org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean_JPA">
+    <entity name="Cmp2RmiIiop" class="openejb.org.apache.openejb.test.entity.cmp.Cmp2RmiIiop">
         <description>Cmp2RMIIIOPBean</description>
         <table name="entity"/>
+        <named-query name="Cmp2RMIIIOPBean.findEmptyCollection">
+            <query>SELECT OBJECT(o) FROM Cmp2RmiIiop AS o WHERE 1 = 0</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value generator="IDENTITY"/>
+                <generated-value strategy="IDENTITY"/>
             </id>
             <basic name="firstName">
                 <column name="first_name"/>
@@ -161,7 +227,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean_JPA">
+    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
         <description>OneOwningSideBean</description>
         <table name="OneOwning"/>
         <attributes>
@@ -176,7 +242,7 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean_JPA">
+    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
         <description>OneInverseSideBean</description>
         <table name="OneInverse"/>
         <attributes>
@@ -187,9 +253,12 @@
             <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
         </attributes>
     </entity>
-    <entity name="Order" class="org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean_JPA">
+    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
         <description>ManyOwningSideBean</description>
         <table name="ManyOwning"/>
+        <named-query name="ManyOwningSideBean.ejbSelectSomething(java.lang.Integer)">
+            <query>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</query>
+        </named-query>
         <attributes>
             <basic name="id">
                 <column name="col_id"/>
@@ -202,7 +271,7 @@
             </many-to-one>
         </attributes>
     </entity>
-    <entity name="Address" class="org.apache.openejb.test.entity.cmp2.petstore.AddressEJB_JPA">
+    <entity name="Address" class="openejb.org.apache.openejb.test.entity.cmp2.petstore.Address">
         <description>AddressEJB</description>
         <table name="address"/>
         <attributes>
@@ -214,7 +283,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Storage" class="org.apache.openejb.test.entity.cmp2.model.StorageBean_JPA">
+    <entity name="Storage" class="openejb.org.apache.openejb.test.entity.cmp2.model.Storage">
         <description>StorageBean</description>
         <table name="storage"/>
         <attributes>

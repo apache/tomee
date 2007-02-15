@@ -60,6 +60,18 @@ public class GeneratedValue {
     @XmlAttribute
     protected GenerationType strategy;
 
+    public GeneratedValue() {
+    }
+
+    public GeneratedValue(GenerationType strategy) {
+        this.strategy = strategy;
+    }
+
+    public GeneratedValue(GenerationType strategy, String generator) {
+        this.strategy = strategy;
+        this.generator = generator;
+    }
+
     /**
      * Gets the value of the generator property.
      * 

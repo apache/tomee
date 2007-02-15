@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-    <entity name="Holding" class="org.apache.geronimo.samples.daytrader.ejb.HoldingBean_JPA">
+    <entity name="Holding" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Holding">
         <description>HoldingEJB</description>
         <table name="HOLDINGEJB"/>
+        <named-query name="HoldingEJB.ejbSelectQuoteFromSymbol(java.lang.String)">
+            <query>SELECT OBJECT(q) from Quote q WHERE q.symbol = ?1</query>
+        </named-query>
+        <named-query name="HoldingEJB.findAll">
+            <query>SELECT OBJECT(h) from Holding h</query>
+        </named-query>
+        <named-query name="HoldingEJB.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.account.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="HoldingEJB.findByAccountID(java.lang.Integer)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.account.accountID = ?1</query>
+        </named-query>
+        <named-query name="HoldingEJB.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.holdingID = ?1</query>
+        </named-query>
         <attributes>
             <id name="holdingID">
                 <column name="holdingID"/>
@@ -27,9 +42,15 @@
             </many-to-one>
         </attributes>
     </entity>
-    <entity name="AccountProfile" class="org.apache.geronimo.samples.daytrader.ejb.AccountProfileBean_JPA">
+    <entity name="AccountProfile" class="openejb.org.apache.geronimo.samples.daytrader.ejb.AccountProfile">
         <description>AccountProfileEJB</description>
         <table name="AccountProfileEJB"/>
+        <named-query name="AccountProfileEJB.findAll">
+            <query>SELECT OBJECT(a) FROM AccountProfile a</query>
+        </named-query>
+        <named-query name="AccountProfileEJB.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM AccountProfile a where a.userID = ?1</query>
+        </named-query>
         <attributes>
             <id name="userID">
                 <column name="userID"/>
@@ -56,9 +77,30 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Quote" class="org.apache.geronimo.samples.daytrader.ejb.QuoteBean_JPA">
+    <entity name="Quote" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Quote">
         <description>QuoteEJB</description>
         <table name="QuoteEJB"/>
+        <named-query name="QuoteEJB.findAll">
+            <query>SELECT OBJECT(q) FROM Quote q</query>
+        </named-query>
+        <named-query name="QuoteEJB.findQuotes(java.lang.String)">
+            <query>SELECT OBJECT(q) FROM Quote q</query>
+        </named-query>
+        <named-query name="QuoteEJB.findOne">
+            <query>SELECT OBJECT(q) FROM Quote q where q.symbol = 's:0'</query>
+        </named-query>
+        <named-query name="QuoteEJB.findTSIAQuotesOrderByChange">
+            <query>SELECT OBJECT(q) FROM Quote q WHERE q.symbol LIKE 's:1__' ORDER BY q.change DESC</query>
+        </named-query>
+        <named-query name="QuoteEJB.ejbSelectTotalVolume">
+            <query>SELECT q.volume FROM Quote q</query>
+        </named-query>
+        <named-query name="QuoteEJB.findTSIAQuotes">
+            <query>SELECT OBJECT(q) FROM Quote q WHERE q.symbol LIKE 's:1__'</query>
+        </named-query>
+        <named-query name="QuoteEJB.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(q) FROM Quote q where q.symbol = ?1</query>
+        </named-query>
         <attributes>
             <id name="symbol">
                 <column name="symbol"/>
@@ -87,9 +129,12 @@
             <one-to-many name="orders" mapped-by="quote"/>
         </attributes>
     </entity>
-    <entity name="KeyGen" class="org.apache.geronimo.samples.daytrader.ejb.KeyGenBean_JPA">
+    <entity name="KeyGen" class="openejb.org.apache.geronimo.samples.daytrader.ejb.KeyGen">
         <description>KeyGenEJB</description>
         <table name="KeyGenEJB"/>
+        <named-query name="KeyGenEJB.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(kg) FROM KeyGen kg where kg.keyName = ?1</query>
+        </named-query>
         <attributes>
             <id name="keyName">
                 <column name="keyName"/>
@@ -99,9 +144,24 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Account" class="org.apache.geronimo.samples.daytrader.ejb.AccountBean_JPA">
+    <entity name="Account" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Account">
         <description>AccountEJB</description>
         <table name="AccountEJB"/>
+        <named-query name="AccountEJB.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM Account a WHERE a.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="AccountEJB.findAll">
+            <query>SELECT OBJECT(a) FROM Account a</query>
+        </named-query>
+        <named-query name="AccountEJB.findByUserIDForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM Account a WHERE a.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="AccountEJB.ejbSelectClosedOrders(java.lang.Integer)">
+            <query>SELECT o.orderID FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.accountID = ?1</query>
+        </named-query>
+        <named-query name="AccountEJB.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(a) FROM Account a where a.accountID = ?1</query>
+        </named-query>
         <attributes>
             <id name="accountID">
                 <column name="accountID"/>
@@ -131,9 +191,24 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Orders" class="org.apache.geronimo.samples.daytrader.ejb.OrderBean_JPA">
+    <entity name="Orders" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Orders">
         <description>OrderEJB</description>
         <table name="OrderEJB"/>
+        <named-query name="OrderEJB.findAll">
+            <query>SELECT OBJECT(o) FROM Orders o</query>
+        </named-query>
+        <named-query name="OrderEJB.findClosedOrders(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="OrderEJB.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.account.profile.userID = ?1 ORDER BY o.orderID DESC</query>
+        </named-query>
+        <named-query name="OrderEJB.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderID = ?1</query>
+        </named-query>
+        <named-query name="OrderEJB.findClosedOrdersForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.profile.userID = ?1</query>
+        </named-query>
         <attributes>
             <id name="orderID">
                 <column name="orderID"/>

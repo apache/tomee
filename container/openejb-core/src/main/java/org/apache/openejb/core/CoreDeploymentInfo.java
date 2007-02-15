@@ -848,7 +848,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private KeyGenerator keyGenerator;
     private String primaryKeyField;
     private String[] cmrFields;
-    private Class cmpBeanImpl;
+    private Class cmpImplClass;
 
     private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
 
@@ -892,12 +892,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return queryMethodMap.get(queryMethod);
     }
 
-    public Class getCmpBeanImpl() {
-        return cmpBeanImpl;
+    public Class getCmpImplClass() {
+        return cmpImplClass;
     }
 
-    public void setCmpBeanImpl(Class cmpBeanImpl) {
-        this.cmpBeanImpl = cmpBeanImpl;
+    public void setCmpImplClass(Class cmpImplClass) {
+        this.cmpImplClass = cmpImplClass;
     }
 
     public void setJarPath(String jarPath) {

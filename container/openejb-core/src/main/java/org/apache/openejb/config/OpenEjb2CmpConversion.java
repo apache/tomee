@@ -19,6 +19,10 @@ package org.apache.openejb.config;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+
+import javax.xml.bind.JAXBElement;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.jpa.Attributes;
@@ -35,24 +39,55 @@ import org.apache.openejb.jee.jpa.OneToMany;
 import org.apache.openejb.jee.jpa.OneToOne;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.Table;
+import org.apache.openejb.jee.jpa.NamedQuery;
+import org.apache.openejb.jee.jpa.GenerationType;
 import org.apache.openejb.jee.oejb2.EjbRelationType;
 import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.QueryType;
+import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 public class OpenEjb2CmpConversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
+            Object altDD = getOpenejbJarType(ejbModule);
             if (altDD instanceof OpenejbJarType) {
-                mergeEntityMappings(appModule.getCmpMappings(), (OpenejbJarType) altDD);
+                mergeEntityMappings(appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
             }
         }
         return appModule;
     }
 
-    public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJarType openejbJarType) {
+    private OpenejbJarType getOpenejbJarType(EjbModule ejbModule) {
+        Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
+        if (altDD instanceof String) {
+            try {
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+            } catch (Exception e) {
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof URL) {
+            try {
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, ((URL)altDD).openStream());
+            } catch (Exception e) {
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof JAXBElement) {
+            altDD = ((JAXBElement)altDD).getValue();
+        }
+        if (altDD instanceof OpenejbJarType) {
+            return (OpenejbJarType) altDD;
+        }
+        return null;
+    }
+
+    public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) throws OpenEJBException {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
         for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new EntityData(entity));
@@ -66,6 +101,11 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
+            }
+
+            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+            if (ejbDeployment == null) {
+                throw new OpenEJBException("No deploument info found for ejb " + bean.getEjbName());
             }
 
             Table table = new Table();
@@ -88,17 +128,38 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
                 field.setColumn(column);
             }
 
-            // todo this doesn't seem to parse?
             if (bean.getKeyGenerator() != null) {
                 // todo support complex primary keys
-                if (entityData.entity.getAttributes().getId().size() == 1) {
-                    Id id = entityData.entity.getAttributes().getId().get(0);
+                Attributes attributes = entityData.entity.getAttributes();
+                if (attributes != null && attributes.getId().size() == 1) {
+                    Id id = attributes.getId().get(0);
 
                     // todo detect specific generation strategy
-                    GeneratedValue generatedValue = new GeneratedValue();
-                    generatedValue.setGenerator("IDENTITY");
-                    id.setGeneratedValue(generatedValue);
+                    id.setGeneratedValue(new GeneratedValue(GenerationType.IDENTITY));
                 }
+            }
+
+            for (QueryType query : bean.getQuery()) {
+                NamedQuery namedQuery = new NamedQuery();
+                QueryType.QueryMethod queryMethod = query.getQueryMethod();
+
+                // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+                StringBuilder name = new StringBuilder();
+                name.append(ejbDeployment.getDeploymentId()).append(".").append(queryMethod.getMethodName());
+                if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
+                    name.append('(');
+                    boolean first = true;
+                    for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                        if (!first) name.append(",");
+                        name.append(methodParam);
+                        first = false;
+                    }
+                    name.append(')');
+                }
+                namedQuery.setName(name.toString());
+
+                namedQuery.setQuery(query.getEjbQl());
+                entityData.entity.getNamedQuery().add(namedQuery);
             }
         }
 
@@ -234,15 +295,16 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
         public EntityData(Entity entity) {
+            if (entity == null) throw new NullPointerException("entity is null");
             this.entity = entity;
-
-            for (Id id : entity.getAttributes().getId()) {
-                ids.put(id.getName(), id);
-            }
 
             Attributes attributes = entity.getAttributes();
             if (attributes == null) {
                 return;
+            }
+
+            for (Id id : attributes.getId()) {
+                ids.put(id.getName(), id);
             }
 
             for (Basic basic : attributes.getBasic()) {

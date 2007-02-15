@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,34 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.cmrmapping;
+package org.apache.openejb.core.cmp.jpa;
 
-public class OneOwningSideBean_JPA extends OneOwningSideBean {
-    public Integer id;
-    private Integer field1;
-    private OneInverseSideLocal oneInverseSide;
+import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 
-    public Integer getId() {
-        return id;
-    }
+public class BasicCmpBean_Subclass extends BasicCmpBean {
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getField1() {
-        return field1;
-    }
-
-    public void setField1(Integer field1) {
-        this.field1 = field1;
-    }
-
-    public OneInverseSideLocal getOneInverseSide() {
-        return oneInverseSide;
-    }
-
-    public void setOneInverseSide(OneInverseSideLocal oneInverseSide) {
-        this.oneInverseSide = oneInverseSide;
-    }
 }

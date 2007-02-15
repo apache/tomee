@@ -120,7 +120,7 @@ import javax.xml.bind.annotation.XmlType;
     "associationOverride",
     "attributes"
 })
-public class Entity {
+public class Entity implements Mapping {
 
     protected String description;
     protected Table table;
@@ -934,4 +934,22 @@ public class Entity {
         this.name = value;
     }
 
+
+    public void addField(Field field) {
+        if (field == null) throw new NullPointerException("field is null");
+        if (field instanceof Id) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getId().add((Id) field);
+        } else if (field instanceof Basic) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getBasic().add((Basic) field);
+        } else if (field instanceof Transient) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getTransient().add((Transient) field);
+        } else if (field instanceof AttributeOverride) {
+            getAttributeOverride().add((AttributeOverride) field);
+        } else {
+            throw new IllegalArgumentException("Unknown field type " + field.getClass());
+        }
+    }
 }

@@ -21,10 +21,6 @@ public interface Field {
 
     void setColumn(Column value);
 
-    TemporalType getTemporal();
-
-    void setTemporal(TemporalType value);
-
     String getName();
 
     void setName(String value);

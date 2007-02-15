@@ -360,7 +360,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM EncCmp2 AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM EncCmp2 AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -392,7 +392,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM Cmp2RmiIiop AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM Cmp2RmiIiop AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -435,7 +435,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmpBean AS a WHERE a.lastName = ?1]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmpBean AS o WHERE o.lastName = ?1]]>
                 </ejb-ql>
             </query>
             <query>
@@ -444,7 +444,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmpBean AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmpBean AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -469,7 +469,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmpBeanExplicitPK AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
             <query>
@@ -480,7 +480,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmpBeanExplicitPK AS a]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o]]>
                 </ejb-ql>
                 <no-cache-flush/>
             </query>
@@ -492,7 +492,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmpBeanExplicitPK AS a WHERE a.lastName = ?1]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o WHERE o.lastName = ?1]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -544,7 +544,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM AOBasicCmpBean AS a WHERE a.lastName = ?1]]>
+                    <![CDATA[SELECT OBJECT(o) FROM AOBasicCmpBean AS o WHERE o.lastName = ?1]]>
                 </ejb-ql>
             </query>
             <query>
@@ -553,7 +553,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM AOBasicCmpBean AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM AOBasicCmpBean AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -603,7 +603,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM EncCmpBean AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM EncCmpBean AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -635,7 +635,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM CmpRMIIIOPBean AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM CmpRMIIIOPBean AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>

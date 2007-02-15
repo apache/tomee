@@ -34,7 +34,7 @@ public class CmrField {
         this.relatedName = relatedName;
     }
 
-    public CmrField(String fieldName, String fieldType, String ejbClass, String local, String relatedName) {
+    public CmrField(String fieldName, String fieldType, String cmpImplClass, String local, String relatedName) {
         this.name = fieldName;
         if (fieldType == null) {
             cmrStyle = CmrStyle.SINGLE;
@@ -45,7 +45,7 @@ public class CmrField {
         } else {
             throw new IllegalArgumentException("Unsupported fieldType " + fieldType);
         }
-        type = Type.getType("L" + ejbClass.replace('.', '/') + "_JPA;");
+        type = Type.getType("L" + cmpImplClass.replace('.', '/') + ";");
         proxyType = Type.getType("L" + local.replace('.', '/') + ";");
         this.relatedName = relatedName;
     }

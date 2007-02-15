@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-    <entity name="onetomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.ABean_JPA">
+    <entity name="onetomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyA">
         <description>A</description>
         <table name="A"/>
+        <named-query name="A.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+            <query>SELECT OBJECT(A) FROM onetomanyA A</query>
+        </named-query>
         <attributes>
             <id name="field1">
                 <column name="a1"/>
             </id>
-            <basic name="field2"/>
+            <basic name="field2">
+                <column name="a2"/>
+            </basic>
             <one-to-many name="b">
                 <join-column referenced-column-name="a1" name="fka1"/>
             </one-to-many>
         </attributes>
     </entity>
-    <entity name="onetomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.onetomany.BBean_JPA">
+    <entity name="onetomanyB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyB">
         <description>B</description>
         <table name="B"/>
+        <named-query name="B.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+            <query>SELECT OBJECT(B) FROM onetomanyB B</query>
+        </named-query>
         <attributes>
-            <id name="field1"/>
+            <id name="field1">
+                <column name="b1"/>
+            </id>
             <basic name="field2">
                 <column name="b2"/>
             </basic>
-            <basic name="field3"/>
+            <basic name="field3">
+                <column name="fka1"/>
+            </basic>
         </attributes>
     </entity>
 </entity-mappings>

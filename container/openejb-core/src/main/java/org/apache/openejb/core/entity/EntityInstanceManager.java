@@ -22,6 +22,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
@@ -170,7 +171,7 @@ public class EntityInstanceManager {
                     logger.error("Transaction Manager registerSynchronization() failed.", se);
                     throw new org.apache.openejb.SystemException(se);
                 } catch (javax.transaction.RollbackException re) {
-                    throw new org.apache.openejb.ApplicationException(new javax.transaction.TransactionRolledbackException(re.getMessage()));
+                    throw new org.apache.openejb.ApplicationException(new TransactionRolledbackException(re));
                 }
                 loadingBean(bean, callContext);
                 Operation orginalOperation = callContext.getCurrentOperation();
@@ -278,7 +279,7 @@ public class EntityInstanceManager {
                     Transaction tx = getTransactionManager().getTransaction();
                     if (tx != null) {
                         tx.setRollbackOnly();
-                        throw new ApplicationException(new javax.transaction.TransactionRolledbackException("Reflection exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
+                        throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbActivate() on the instance", e));
                     }
                 } catch (javax.transaction.SystemException se) {
                     logger.error("Transaction Manager getTransaction() failed.", se);
@@ -347,7 +348,7 @@ public class EntityInstanceManager {
                     logger.error("Transaction Manager registerSynchronization() failed.", se);
                     throw new org.apache.openejb.SystemException(se);
                 } catch (javax.transaction.RollbackException re) {
-                    throw new org.apache.openejb.ApplicationException(new javax.transaction.TransactionRolledbackException(re.getMessage()));
+                    throw new org.apache.openejb.ApplicationException(new TransactionRolledbackException(re));
                 }
 
                 txReadyPool.put(key, wrapper);
@@ -382,7 +383,7 @@ public class EntityInstanceManager {
                         Transaction tx = getTransactionManager().getTransaction();
                         if (tx != null) {
                             tx.setRollbackOnly();
-                            throw new ApplicationException(new javax.transaction.TransactionRolledbackException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
+                            throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbPassivate() on the instance", e));
                         }
                     } catch (javax.transaction.SystemException se) {
                         logger.error("Transaction Manager getTransaction() failed.", se);

@@ -29,7 +29,11 @@ import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
-import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Query;
+import org.apache.openejb.jee.QueryMethod;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.CascadeType;
 import org.apache.openejb.jee.jpa.Entity;
@@ -41,16 +45,22 @@ import org.apache.openejb.jee.jpa.OneToMany;
 import org.apache.openejb.jee.jpa.OneToOne;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.Transient;
+import org.apache.openejb.jee.jpa.MappedSuperclass;
+import org.apache.openejb.jee.jpa.Mapping;
+import org.apache.openejb.jee.jpa.AttributeOverride;
+import org.apache.openejb.jee.jpa.Field;
+import org.apache.openejb.jee.jpa.NamedQuery;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.jee.jpa.unit.Properties;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.TreeMap;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
@@ -71,6 +81,8 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
+        Map<String, Map<String, String>> cmpImplClassNames = generateCmpImplClassNames(appModule);
+
         // create mappings
         EntityMappings cmpMappings = appModule.getCmpMappings();
         if (cmpMappings == null) {
@@ -78,9 +90,9 @@ public class CmpJpaConversion implements DynamicDeployer {
             cmpMappings.setVersion("1.0");
             appModule.setCmpMappings(cmpMappings);
         }
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            EjbJar ejbJar = ejbModule.getEjbJar();
-            generateEntityMappings(ejbJar, appModule.getClassLoader(), cmpMappings);
+            generateEntityMappings(ejbModule, cmpMappings, cmpImplClassNames);
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
@@ -90,7 +102,13 @@ public class CmpJpaConversion implements DynamicDeployer {
                 persistenceUnit.setName(CMP_PERSISTENCE_UNIT_NAME);
                 persistenceUnit.setTransactionType(TransactionType.JTA);
                 persistenceUnit.setJtaDataSource("java:openejb/Connector/Default JDBC Database");
-                persistenceUnit.setNonJtaDataSource("java:openejb/Connector/Default JDBC Database");
+                persistenceUnit.setNonJtaDataSource("java:openejb/Connector/Default Unmanaged JDBC Database");
+                // todo paramterize this
+                Properties properties = new Properties();
+                 properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+                // properties.setProperty("openjpa.DataCache", "false");
+                // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+                persistenceUnit.setProperties(properties);
 
                 Persistence persistence = new Persistence();
                 persistence.setVersion("1.0");
@@ -108,13 +126,22 @@ public class CmpJpaConversion implements DynamicDeployer {
         return appModule;
     }
 
-    public EntityMappings generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader) throws OpenEJBException {
+    public EntityMappings generateEntityMappings(EjbModule ejbModule) throws OpenEJBException {
+        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        appModule.getEjbModules().add(ejbModule);
+        Map<String, Map<String, String>> appMappingData = generateCmpImplClassNames(appModule);
+
         EntityMappings entityMappings = new EntityMappings();
-        generateEntityMappings(ejbJar, classLoader, entityMappings);
+        generateEntityMappings(ejbModule, entityMappings, appMappingData);
         return entityMappings;
     }
 
-    public void generateEntityMappings(EjbJar ejbJar, ClassLoader classLoader, EntityMappings entityMappings) throws OpenEJBException{
+    public void generateEntityMappings(EjbModule ejbModule, EntityMappings entityMappings, Map<String, Map<String, String>> cmpImplClassNames) throws OpenEJBException {
+        EjbJar ejbJar = ejbModule.getEjbJar();
+        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+        ClassLoader classLoader = ejbModule.getClassLoader();
+        Map<String, String> implClasses = cmpImplClassNames.get(ejbModule.getModuleId());
+
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
@@ -123,6 +150,15 @@ public class CmpJpaConversion implements DynamicDeployer {
                 continue;
             }
             EntityBean bean = (EntityBean) enterpriseBean;
+            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+            if (ejbDeployment == null) {
+                throw new OpenEJBException("No deploument info found for ejb " + bean.getEjbName());
+            }
+
+            String implClass = implClasses.get(bean.getEjbName());
+
+            // always declare the cmp impl class name
+            ejbDeployment.setCmpImplClass(implClass);
 
             // try to add a new persistence-context-ref for cmp
             if (!addPersistenceContextRef(bean)) {
@@ -136,78 +172,76 @@ public class CmpJpaConversion implements DynamicDeployer {
             // description: contains the name of the entity bean
             entity.setDescription(bean.getEjbName());
 
-            // class: the java class for the entity
-            if (bean.getCmpVersion() == CmpVersion.CMP2) {
-                entity.setClazz(bean.getEjbClass() + "_JPA");
-            } else {
-                entity.setClazz(bean.getEjbClass());
-            }
-
             // name: the name of the entity in queries
-            if (bean.getAbstractSchemaName() != null) {
-                entity.setName(bean.getAbstractSchemaName());
-            } else {
-                String name = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r]+", "_");
-                entity.setName(name);
+            String entityName = bean.getAbstractSchemaName();
+            if (entityName == null) {
+                entityName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
             }
-
-            //
-            // atributes: holds id, basic, oneToMany, manyToOne and manyToMany
-            //
-            Attributes attributes = new Attributes();
-            entity.setAttributes(attributes);
-
-            //
-            // Map fields remembering the names of the mapped fields
-            //
-            Set<String> persistantFields = new TreeSet<String>();
-
-            //
-            // id: the primary key
-            //
-            if (bean.getPrimkeyField() != null) {
-                Id id = new Id();
-                id.setName(bean.getPrimkeyField());
-                attributes.getId().add(id);
-                persistantFields.add(bean.getPrimkeyField());
-            } else {
-                // todo complex primary key
-                // todo unknown primary key                
-            }
-
-            //
-            // basic: cmp-fields
-            //
-            for (CmpField cmpField : bean.getCmpField()) {
-                Basic basic = new Basic();
-                if (!cmpField.getFieldName().equals(bean.getPrimkeyField())) {
-                    basic.setName(cmpField.getFieldName());
-                    attributes.getBasic().add(basic);
-                    persistantFields.add(cmpField.getFieldName());
-                }
-            }
+            entity.setName(entityName);
 
             // add the entity
             entityMappings.getEntity().add(entity);
             entitiesByName.put(bean.getEjbName(), entity);
 
-            //
-            // transient: non-persistent fields
-            //
-            if (classLoader != null && bean.getCmpVersion() == CmpVersion.CMP1) {
-                String ejbClassName = bean.getEjbClass();
-                try {
-                    Class ejbClass = classLoader.loadClass(ejbClassName);
-                    for (Field field : ejbClass.getDeclaredFields()) {
-                        if (!persistantFields.contains(field.getName())) {
-                            Transient transientField = new Transient();
-                            transientField.setName(field.getName());
-                            attributes.getTransient().add(transientField);
-                        }
+            // for CMP 1 we also need apply the mappings to a super-mappings
+            // declaration since fields are on the super-class
+            boolean generateMappedSuperclass = bean.getCmpVersion() == CmpVersion.CMP1 && !bean.getEjbClass().equals(ejbDeployment.getCmpImplClass());
+
+            // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
+            mapClass(implClass, entity, bean, classLoader, generateMappedSuperclass);
+
+            if (generateMappedSuperclass) {
+                // finally declare the mapped super class, if needed
+                MappedSuperclass mappedSuperclass = new MappedSuperclass();
+                mapClass(bean.getEjbClass(), mappedSuperclass, bean, classLoader, false);
+                entityMappings.getMappedSuperclass().add(mappedSuperclass);
+            }
+
+            // process queries
+            for (Query query : bean.getQuery()) {
+                NamedQuery namedQuery = new NamedQuery();
+                QueryMethod queryMethod = query.getQueryMethod();
+
+                // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+                StringBuilder name = new StringBuilder();
+                name.append(ejbDeployment.getDeploymentId()).append(".").append(queryMethod.getMethodName());
+                if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
+                    name.append('(');
+                    boolean first = true;
+                    for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                        if (!first) name.append(",");
+                        name.append(methodParam);
+                        first = false;
                     }
-                } catch (ClassNotFoundException e) {
-                    // todo warn
+                    name.append(')');
                 }
+                namedQuery.setName(name.toString());
+
+                namedQuery.setQuery(query.getEjbQl());
+                entity.getNamedQuery().add(namedQuery);
+            }
+            // todo: there should be a common interface between ejb query object and openejb query object
+            for (org.apache.openejb.jee.oejb3.Query query : ejbDeployment.getQuery()) {
+                NamedQuery namedQuery = new NamedQuery();
+                org.apache.openejb.jee.oejb3.QueryMethod queryMethod = query.getQueryMethod();
+
+                // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+                StringBuilder name = new StringBuilder();
+                name.append(ejbDeployment.getDeploymentId()).append(".").append(queryMethod.getMethodName());
+                if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
+                    name.append('(');
+                    boolean first = true;
+                    for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                        if (!first) name.append(",");
+                        name.append(methodParam);
+                        first = false;
+                    }
+                    name.append(')');
+                }
+                namedQuery.setName(name.toString());
+
+                namedQuery.setQuery(query.getObjectQl());
+                entity.getNamedQuery().add(namedQuery);
             }
         }
 
@@ -391,6 +425,101 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
             }
         }
+    }
+
+    private void mapClass(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader, boolean createOverrides) {
+        // class: the java class for the entity
+        mapping.setClazz(className);
+
+        //
+        // Map fields remembering the names of the mapped fields
+        //
+        Set<String> persistantFields = new TreeSet<String>();
+
+        //
+        // id: the primary key
+        //
+        if (bean.getPrimkeyField() != null) {
+            Field field;
+            if (!createOverrides) {
+                field = new Id(bean.getPrimkeyField());
+            } else {
+                field = new AttributeOverride(bean.getPrimkeyField());
+            }
+            mapping.addField(field);
+            persistantFields.add(bean.getPrimkeyField());
+        } else {
+            // todo complex primary key
+            // todo unknown primary key
+        }
+
+        //
+        // basic: cmp-fields
+        //
+        for (CmpField cmpField : bean.getCmpField()) {
+            if (!cmpField.getFieldName().equals(bean.getPrimkeyField())) {
+                Field field;
+                if (!createOverrides) {
+                    field = new Basic(cmpField.getFieldName());
+                } else {
+                    field = new AttributeOverride(cmpField.getFieldName());
+                }
+                mapping.addField(field);
+                persistantFields.add(cmpField.getFieldName());
+            }
+        }
+
+        //
+        // transient: non-persistent fields
+        //
+        if (classLoader != null && bean.getCmpVersion() == CmpVersion.CMP1) {
+            try {
+                Class ejbClass = classLoader.loadClass(className);
+                for (java.lang.reflect.Field field : ejbClass.getDeclaredFields()) {
+                    if (!persistantFields.contains(field.getName())) {
+                        Transient transientField = new Transient(field.getName());
+                        mapping.addField(transientField);
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                // todo warn
+            }
+        }
+    }
+
+    public Map<String,Map<String,String>> generateCmpImplClassNames(AppModule appModule) {
+        Map<String, Map<String,String>> appMappingData = new TreeMap<String, Map<String,String>>();
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            TreeMap<String, String> moduleMappingData = new TreeMap<String, String>();
+            appMappingData.put(ejbModule.getModuleId(), moduleMappingData);
+
+            for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                // skip all non-CMP beans
+                if (!(enterpriseBean instanceof EntityBean) ||
+                        ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
+                    continue;
+                }
+
+                EntityBean bean = (EntityBean) enterpriseBean;
+
+                // name: the name of the entity in queries
+                String abstractSchemaName = bean.getAbstractSchemaName();
+                if (abstractSchemaName == null) {
+                    abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
+                    bean.setAbstractSchemaName(abstractSchemaName);
+                }
+                String cmpImplClass = bean.getEjbClass().substring(0, bean.getEjbClass().lastIndexOf('.'));
+                if (cmpImplClass.length() > 0) {
+                    cmpImplClass = "openejb." + cmpImplClass;
+                } else {
+                    cmpImplClass = "openejb";
+                }
+                cmpImplClass += "." + abstractSchemaName;
+
+                moduleMappingData.put(bean.getEjbName(), cmpImplClass);
+            }
+        }
+        return appMappingData;
     }
 
     private boolean addPersistenceContextRef(EntityBean bean) {

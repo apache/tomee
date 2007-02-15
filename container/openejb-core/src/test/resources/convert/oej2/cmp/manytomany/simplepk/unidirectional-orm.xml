@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-    <entity name="manytomanyA" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.ABean_JPA">
+    <entity name="manytomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.manytomany.manytomanyA">
         <description>A</description>
         <table name="A"/>
+        <named-query name="A.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+            <query>SELECT OBJECT(A) FROM manytomanyA A</query>
+        </named-query>
         <attributes>
             <id name="field1">
                 <column name="a1"/>
@@ -18,7 +21,7 @@
             </many-to-many>
         </attributes>
     </entity>
-    <entity name="manytomanyB" class="org.apache.openejb.deployment.entity.cmp.cmr.manytomany.BBean_JPA">
+    <entity name="manytomanyB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.manytomany.manytomanyB">
         <description>B</description>
         <table name="B"/>
         <attributes>

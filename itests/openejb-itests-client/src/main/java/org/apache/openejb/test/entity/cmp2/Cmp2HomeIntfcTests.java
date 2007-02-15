@@ -38,18 +38,18 @@ public class Cmp2HomeIntfcTests extends BasicCmp2TestClient {
     //===============================
     // Test home interface methods
     //
-    public void Xtest01_create() throws Exception {
+    public void test01_create() throws Exception {
         ejbObject = ejbHome.createObject("First Bean");
         assertNotNull("The EJBObject is null", ejbObject);
     }
 
-    public void Xtest02_findByPrimaryKey() throws Exception {
+    public void test02_findByPrimaryKey() throws Exception {
         ejbPrimaryKey = ejbObject.getPrimaryKey();
         ejbObject = ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
         assertNotNull("The EJBObject is null", ejbObject);
     }
 
-    public void Xtest03_findByLastName() throws Exception {
+    public void test03_findByLastName() throws Exception {
         Integer[] keys = new Integer[3];
         ejbObject = ejbHome.createObject("David Blevins");
         keys[0] = (Integer) ejbObject.getPrimaryKey();
@@ -71,7 +71,7 @@ public class Cmp2HomeIntfcTests extends BasicCmp2TestClient {
         }
     }
 
-    public void Xtest04_homeMethod() {
+    public void test04_homeMethod() {
         try {
             int expected = 8;
             int actual = ejbHome.sum(5, 3);

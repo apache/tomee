@@ -69,6 +69,8 @@ import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
 import org.apache.openejb.jee.Multiplicity;
+import org.apache.openejb.jee.Query;
+import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.ArrayList;
@@ -327,7 +329,6 @@ public class EjbJarInfoBuilder {
     private void initMethodTransactions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
 
         List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
-        List<MethodTransactionInfo> infos = new ArrayList<MethodTransactionInfo>();
         for (ContainerTransaction cTx : containerTransactions) {
             MethodTransactionInfo info = new MethodTransactionInfo();
 
@@ -536,6 +537,7 @@ public class EjbJarInfoBuilder {
         bean.description = e.getDescription();
         bean.displayName = e.getDisplayName();
         bean.ejbClass = e.getEjbClass();
+        bean.cmpImplClass = d.getCmpImplClass();
         bean.ejbName = e.getEjbName();
         bean.home = e.getHome();
         bean.remote = e.getRemote();
@@ -563,6 +565,18 @@ public class EjbJarInfoBuilder {
         }
 
         if (bean.persistenceType.equalsIgnoreCase("Container")) {
+            for (Query q : e.getQuery()) {
+                QueryInfo query = new QueryInfo();
+                query.queryStatement = q.getEjbQl().trim();
+
+                MethodInfo method = new MethodInfo();
+                QueryMethod qm = q.getQueryMethod();
+                method.methodName = qm.getMethodName();
+                method.methodParams = qm.getMethodParams().getMethodParam();
+                query.method = method;
+                bean.queries.add(query);
+            }
+
             for (org.apache.openejb.jee.oejb3.Query q : d.getQuery()) {
                 QueryInfo query = new QueryInfo();
                 query.description = q.getDescription();

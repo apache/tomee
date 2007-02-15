@@ -161,7 +161,7 @@ public class JpaTest extends TestCase {
         // Handle Properties
         Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
-        // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+        properties.setProperty("openjpa.Log", "DefaultLevel=WARN");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);

@@ -195,7 +195,7 @@ public abstract class TransactionPolicy {
         /* Throw javax.transaction.TransactionRolledbackException to remote client */
 
         String message = "The transaction was rolled back because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
-        javax.transaction.TransactionRolledbackException txException = new javax.transaction.TransactionRolledbackException(message);
+        TransactionRolledbackException txException = new TransactionRolledbackException(message, sysException);
 
         throw new InvalidateReferenceException(txException);
 

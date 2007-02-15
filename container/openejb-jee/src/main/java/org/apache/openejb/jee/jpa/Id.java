@@ -76,6 +76,18 @@ public class Id implements Field {
     @XmlAttribute(required = true)
     protected String name;
 
+    public Id() {
+    }
+
+    public Id(String name) {
+        this.name = name;
+    }
+
+    public Id(String name, String columnName) {
+        this.name = name;
+        this.column = new Column(columnName);
+    }
+
     /**
      * Gets the value of the column property.
      * 

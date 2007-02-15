@@ -28,7 +28,7 @@
         </method-params>
       </query-method>
       <object-ql>
-        SELECT o FROM BasicCmpBean o WHERE o.lastName = ?1
+        SELECT o FROM BasicCmpBeanX o WHERE o.lastName = ?1
       </object-ql>
     </query>
     <query>

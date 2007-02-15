@@ -60,14 +60,15 @@ public class HsqldbTestDatabase implements TestDatabase {
     // Automatically created tables - these must be dropped before the tests run or you will get a duplicate key exception
     private static final String[] AUTO_CREATED_TABLES = new String[] {
             "BasicCmpBean",
-            "BasicCmp2Bean_JPA",
+            "BasicCmpBeanX",
+            "BasicCmp2Bean",
             "AllowedOperationsCmpBean",
-            "AllowedOperationsCmp2Bean_JPA",
+            "AllowedOperationsCmp2Bean",
             "EncCmpBean",
-            "EncCmp2Bean_JPA",
+            "EncCmp2Bean",
             "ContextLookupCmpBean",
-            "RmiIiopCmpBean",
-            "RmiIiopCmp2Bean_JPA",
+            "Cmp_RMI_IIOP_Bean",
+            "RmiIiopCmp2Bean",
     };
 
     static {

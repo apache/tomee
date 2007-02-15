@@ -7,6 +7,50 @@
         <large-icon>token</large-icon>
     </icon>
     <enterprise-beans>
+        <entity>
+            <display-name>displayName</display-name>
+            <ejb-name>entityEjbName</ejb-name>
+            <home>Home</home>
+            <remote>Remote</remote>
+            <ejb-class>EjbClass</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>AbstractName</abstract-schema-name>
+            <cmp-field>
+                <field-name>field</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>otherField</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>pk</field-name>
+            </cmp-field>
+            <primkey-field>pk</primkey-field>
+            <security-identity>
+                <description>identity</description>
+                <use-caller-identity/>
+            </security-identity>
+            <query>
+                <description>queryWithParam</description>
+                <query-method>
+                    <method-name>findStuff</method-name>
+                    <method-params>
+                        <method-param>java.lang.String</method-param>
+                        <method-param>java.lang.Integer</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>select some stuff</ejb-ql>
+            </query>
+            <query>
+                <description>queryNoParams</description>
+                <query-method>
+                    <method-name>findNoParams</method-name>
+                </query-method>
+                <ejb-ql>SELECT DISTINCT OBJECT(t) FROM CompatRequiresNew t WHERE t.brandName = ?1</ejb-ql>
+            </query>
+        </entity>
         <session>
             <description>String</description>
             <display-name>token</display-name>

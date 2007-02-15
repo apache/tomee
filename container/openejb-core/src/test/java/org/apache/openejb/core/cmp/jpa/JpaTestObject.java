@@ -20,7 +20,6 @@ package org.apache.openejb.core.cmp.jpa;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
-import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -198,7 +197,7 @@ public class JpaTestObject extends junit.framework.Assert {
         commitTx();
         beginTx();
 
-        BasicCmpBean basicCmpBean = new BasicCmpBean();
+        BasicCmpBean_Subclass basicCmpBean = new BasicCmpBean_Subclass();
         basicCmpBean.ejbCreateObject("Joe Blow");
         assertFalse(entityManager.contains(basicCmpBean));
 
@@ -214,7 +213,7 @@ public class JpaTestObject extends junit.framework.Assert {
         commitTx();
         beginTx();
 
-        basicCmpBean = new BasicCmpBean();
+        basicCmpBean = new BasicCmpBean_Subclass();
         basicCmpBean.ejbCreateObject("Lloyd Dobler");
         assertFalse(entityManager.contains(basicCmpBean));
 
@@ -231,14 +230,14 @@ public class JpaTestObject extends junit.framework.Assert {
 
         beginTx();
 
-        BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean e where e.primaryKey=" + joeId).getSingleResult();
+        BasicCmpBean_Subclass joe = (BasicCmpBean_Subclass) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getPrimaryKey(), joeId);
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean e where e.primaryKey=" + lloydId).getSingleResult();
+        BasicCmpBean_Subclass lloyd = (BasicCmpBean_Subclass) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -249,17 +248,17 @@ public class JpaTestObject extends junit.framework.Assert {
 
 
 //        beginTx();
-//        ABean_JPA a = new ABean_JPA();
+//        ABean_ABean a = new ABean_ABean();
 //        a.setField1(2);
 //        entityManager.persist(a);
-//        BBean_JPA b = new BBean_JPA();
+//        BBean_BBean b = new BBean_BBean();
 //        b.setField1(22);
 //        entityManager.persist(b);
 //        commitTx();
 //
 //        beginTx();
-//        b = entityManager.find(BBean_JPA.class, 22);
-//        a = entityManager.find(ABean_JPA.class, 2);
+//        b = entityManager.find(BBean_BBean.class, 22);
+//        a = entityManager.find(ABean_ABean.class, 2);
 //        a.OpenEJB_addCmr("b", b);
 //        b.OpenEJB_addCmr("a", a);
 //        commitTx();
@@ -267,10 +266,10 @@ public class JpaTestObject extends junit.framework.Assert {
 ////        dump();
 //
 //        beginTx();
-//        b = entityManager.find(BBean_JPA.class, 22);
+//        b = entityManager.find(BBean_BBean.class, 22);
 //        assertNotNull(b);
 //        assertEquals(new Integer(22), b.getField1());
-////        a = (ABean_JPA) b.OpenEJB_getCmr("a");
+////        a = (ABean_ABean) b.OpenEJB_getCmr("a");
 ////        assertNotNull(a);
 ////        assertEquals(new Integer(2), a.getField1());
 //        commitTx();

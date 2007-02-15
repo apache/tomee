@@ -49,10 +49,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "transient")
-public class Transient {
+public class Transient implements Field {
 
     @XmlAttribute(required = true)
     protected String name;
+
+    public Transient() {
+    }
+
+    public Transient(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the value of the name property.
@@ -78,4 +85,11 @@ public class Transient {
         this.name = value;
     }
 
+    public Column getColumn() {
+        throw new UnsupportedOperationException("Transient fields don't have column mappings");
+    }
+
+    public void setColumn(Column value) {
+        throw new UnsupportedOperationException("Transient fields don't have column mappings");
+    }
 }

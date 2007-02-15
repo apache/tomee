@@ -20,17 +20,38 @@
 -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-  <entity class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
-    <description>Simple Entity Bean</description>
-
-    <table name="BasicCmpBean"/>
-
-    <attributes>
-      <id name="primaryKey"/>
-      <basic name="firstName"/>
-      <basic name="lastName"/>
-      <transient name="allowedOperationsTable"/>
-    </attributes>
-  </entity>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <attributes>
+            <id name="primaryKey"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
+    <entity class="org.apache.openejb.core.cmp.jpa.BasicCmpBean_Subclass">
+        <table name="BasicCmpBean"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
+        </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
+    </entity>
+    <!--<entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean">-->
+      <!--<table name="OneOwning"/>-->
+      <!--<attributes>-->
+        <!--<id name="id">-->
+          <!--<column name="col_id"/>-->
+        <!--</id>-->
+        <!--<basic name="field1">-->
+          <!--<column name="col_field1"/>-->
+        <!--</basic>-->
+      <!--</attributes>-->
+    <!--</entity>    -->
 </entity-mappings>
 

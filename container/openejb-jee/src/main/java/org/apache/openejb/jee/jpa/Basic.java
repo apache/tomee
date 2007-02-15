@@ -80,6 +80,18 @@ public class Basic implements Field {
     @XmlAttribute
     protected Boolean optional;
 
+    public Basic() {
+    }
+
+    public Basic(String name) {
+        this.name = name;
+    }
+
+    public Basic(String name, String columnName) {
+        this.name = name;
+        this.column = new Column(columnName);
+    }
+
     /**
      * Gets the value of the column property.
      * 

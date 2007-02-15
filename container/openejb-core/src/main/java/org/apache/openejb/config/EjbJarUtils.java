@@ -21,15 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.Properties;
-import java.util.Vector;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.exolab.castor.util.Configuration;
-import org.exolab.castor.util.LocalConfiguration;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JndiConsumer;
@@ -49,12 +45,7 @@ public class EjbJarUtils {
     private final String jarLocation;
     private OpenejbJar openejbJar;
 
-    static {
-        Properties properties = LocalConfiguration.getInstance().getProperties();
-        properties.setProperty(Configuration.Property.Indent, "true");
-    }
-
-    public EjbJarUtils(String jarLocation) throws OpenEJBException {
+    public EjbJarUtils(String jarLocation) {
         boolean hasEjbJarXml = false;
         /*[1.1]  Get the jar ***************/
         this.jarLocation = jarLocation;
@@ -252,7 +243,7 @@ public class EjbJarUtils {
     }
 
     public static Container[] getUsableContainers(Container[] containers, Bean bean) {
-        Vector c = new Vector();
+        List<Container> c = new ArrayList<Container>();
 
         for (int i = 0; i < containers.length; i++) {
             if (containers[i].getCtype().equals(bean.getType())) {
@@ -260,9 +251,7 @@ public class EjbJarUtils {
             }
         }
 
-        Container[] useableContainers = new Container[c.size()];
-        c.copyInto(useableContainers);
-
+        Container[] useableContainers = c.toArray(new Container[c.size()]);
         return useableContainers;
     }
 
@@ -302,9 +291,7 @@ public class EjbJarUtils {
         /*[1.2]  Find the openejb-jar.xml from the jar ***************/
         JarEntry entry = jar.getJarEntry("META-INF/openejb-jar.xml");
         if (entry == null) entry = jar.getJarEntry("openejb-jar.xml");
-        if (entry == null) return false;
-
-        return true;
+        return entry != null;
     }
 
     public static void writeOpenejbJar(String xmlFile, OpenejbJar openejbJarObject) throws OpenEJBException {

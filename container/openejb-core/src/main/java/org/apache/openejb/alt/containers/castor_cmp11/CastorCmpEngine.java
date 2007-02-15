@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.lang.reflect.Method;
 import javax.ejb.CreateException;
 import javax.ejb.DuplicateKeyException;
 import javax.ejb.EJBException;
@@ -197,7 +198,12 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
-    public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
+    public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
+        String queryString = callContext.getDeploymentInfo().getQuery(queryMethod);
+        if (queryString == null) {
+            throw new FinderException("No query defined for method " + queryMethod.getName());            
+        }
+
         // EJB-QL and OQL are close enough we try to support both for basic queries
         queryString = preprocessQuery(queryString);
         try {

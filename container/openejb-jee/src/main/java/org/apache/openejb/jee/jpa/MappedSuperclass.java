@@ -88,7 +88,7 @@ import javax.xml.bind.annotation.XmlType;
     "postLoad",
     "attributes"
 })
-public class MappedSuperclass {
+public class MappedSuperclass implements Mapping {
 
     protected String description;
     @XmlElement(name = "id-class")
@@ -505,4 +505,22 @@ public class MappedSuperclass {
         this.metadataComplete = value;
     }
 
+
+    public void addField(Field field) {
+        if (field == null) throw new NullPointerException("field is null");
+        if (field instanceof Id) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getId().add((Id) field);
+        } else if (field instanceof Basic) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getBasic().add((Basic) field);
+        } else if (field instanceof Transient) {
+            if (attributes == null) attributes = new Attributes();
+            attributes.getTransient().add((Transient) field);
+        } else if (field instanceof AttributeOverride) {
+            throw new IllegalArgumentException("Mapped super class does not support attribute override");
+        } else {
+            throw new IllegalArgumentException("Unknown field type " + field.getClass());
+        }
+    }
 }

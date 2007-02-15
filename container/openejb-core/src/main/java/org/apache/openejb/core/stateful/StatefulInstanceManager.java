@@ -29,7 +29,6 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionRolledbackException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 
@@ -43,6 +42,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
@@ -431,7 +431,7 @@ public class StatefulInstanceManager {
             } catch (SecurityException lse) {
                 throw new SystemException("Container not authorized to rollback tx", lse);
             }
-            return new InvalidateReferenceException(new TransactionRolledbackException(t.getMessage()));
+            return new InvalidateReferenceException(new TransactionRolledbackException(t));
         } else if (t instanceof RemoteException) {
             return new InvalidateReferenceException(t);
         } else {
@@ -519,7 +519,7 @@ public class StatefulInstanceManager {
         if (transaction == null) {
             throw new InvalidateReferenceException(new RemoteException(remoteMessage, e));
         } else {
-            throw new InvalidateReferenceException(new TransactionRolledbackException(logMessage));
+            throw new InvalidateReferenceException(new TransactionRolledbackException(remoteMessage, e));
         }
 
     }

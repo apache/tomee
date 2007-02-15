@@ -58,12 +58,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "attribute-override", propOrder = {
     "column"
 })
-public class AttributeOverride {
+public class AttributeOverride implements Field {
 
     @XmlElement(required = true)
     protected Column column;
     @XmlAttribute(required = true)
     protected String name;
+
+    public AttributeOverride() {
+    }
+
+    public AttributeOverride(String name) {
+        // column is required for an attribute override so
+        // declare one using the default column name
+        this(name, name);
+    }
+
+    public AttributeOverride(String name, String columnName) {
+        this.name = name;
+        this.column = new Column(columnName);
+    }
 
     /**
      * Gets the value of the column property.

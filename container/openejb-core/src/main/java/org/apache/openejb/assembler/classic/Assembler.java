@@ -348,8 +348,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         try {
             // Generate the cmp2 concrete subclasses
-            CmpJarBuilder cmp2Builder = new CmpJarBuilder(appInfo, classLoader);
-            File generatedJar = cmp2Builder.getJarFile();
+            CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
+            File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
                 classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
             }

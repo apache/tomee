@@ -20,13 +20,15 @@ package org.apache.openejb.test.entity.cmr.onetoone;
 import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 
-public class ExampleABean_JPA extends ABean implements Cmp2Entity {
+public class ExampleBBean_BBean extends BBean implements Cmp2Entity {
     public static Object deploymentInfo;
     private transient boolean deleted;
     private Integer field1;
     private String field2;
-    private ExampleBBean_JPA b;
-    private SingleValuedCmr<ExampleBBean_JPA, BLocal> bCmr = new SingleValuedCmr<ExampleBBean_JPA, BLocal>(this, "b", ExampleBBean_JPA.class, "a");
+    private Integer field3;
+    private String field4;
+    private ExampleABean_ABean a;
+    private SingleValuedCmr<ExampleABean_ABean, ALocal> aCmr = new SingleValuedCmr<ExampleABean_ABean, ALocal>(this, "a", ExampleABean_ABean.class, "b");
 
     public Integer getField1() {
         return field1;
@@ -44,12 +46,28 @@ public class ExampleABean_JPA extends ABean implements Cmp2Entity {
         this.field2 = field2;
     }
 
-    public BLocal getB() {
-        return bCmr.get(b);
+    public Integer getField3() {
+        return field3;
     }
 
-    public void setB(BLocal b) {
-        this.b = bCmr.set(this.b, b);
+    public void setField3(Integer field3) {
+        this.field3 = field3;
+    }
+
+    public String getField4() {
+        return field4;
+    }
+
+    public void setField4(String field4) {
+        this.field4 = field4;
+    }
+
+    public ALocal getA() {
+        return aCmr.get(a);
+    }
+
+    public void setA(ALocal a) {
+        this.a = aCmr.set(this.a, a);
     }
 
     public Object OpenEJB_getPrimaryKey() {
@@ -62,7 +80,7 @@ public class ExampleABean_JPA extends ABean implements Cmp2Entity {
         }
         deleted = true;
 
-        bCmr.set(b, null);
+        aCmr.set(a, null);
     }
 
     public Object OpenEJB_addCmr(String name, Object bean) {
@@ -71,9 +89,9 @@ public class ExampleABean_JPA extends ABean implements Cmp2Entity {
         }
 
         Object oldValue;
-        if ("b".equals(name)) {
-            oldValue = b;
-            b = (ExampleBBean_JPA) bean;
+        if ("a".equals(name)) {
+            oldValue = a;
+            a = (ExampleABean_ABean) bean;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }
@@ -85,8 +103,8 @@ public class ExampleABean_JPA extends ABean implements Cmp2Entity {
             return;
         }
 
-        if ("b".equals(name)) {
-            b = null;
+        if ("a".equals(name)) {
+            a = null;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }

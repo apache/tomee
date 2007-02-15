@@ -17,12 +17,12 @@
  */
 package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import javax.ejb.FinderException;
+import java.util.Set;
 
-public class ManyOwningSideBean_JPA extends ManyOwningSideBean {
+public class OneInverseSideBean_OneInverseSideBean extends OneInverseSideBean {
     public Integer id;
-    private Integer field1;
-    private OneInverseSideLocal oneInverseSide;
+    private OneOwningSideLocal oneOwningSide;
+    private Set manyOwningSide;
 
     public Integer getId() {
         return id;
@@ -32,23 +32,19 @@ public class ManyOwningSideBean_JPA extends ManyOwningSideBean {
         this.id = id;
     }
 
-    public Integer getField1() {
-        return field1;
+    public OneOwningSideLocal getOneOwningSide() {
+        return oneOwningSide;
     }
 
-    public void setField1(Integer field1) {
-        this.field1 = field1;
+    public void setOneOwningSide(OneOwningSideLocal oneOwningSide) {
+        this.oneOwningSide = oneOwningSide;
     }
 
-    public OneInverseSideLocal getOneInverseSide() {
-        return oneInverseSide;
+    public Set getManyOwningSide() {
+        return manyOwningSide;
     }
 
-    public void setOneInverseSide(OneInverseSideLocal oneInverseSide) {
-        this.oneInverseSide = oneInverseSide;
-    }
-
-    public OneInverseSideLocal ejbSelectSomething(Integer id) throws FinderException {
-        return null;
+    public void setManyOwningSide(Set manyOwningSide) {
+        this.manyOwningSide = manyOwningSide;
     }
 }

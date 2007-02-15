@@ -37,7 +37,7 @@ public interface CmpEngine {
 
     void removeBean(ThreadContext callContext);
 
-    List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException;
+    List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException;
 
     void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
 

@@ -88,7 +88,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     protected final Map<Object, CmpEngine> cmpEngines = new HashMap<Object, CmpEngine>();
 
 
-    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) throws OpenEJBException {
+    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.containerID = id;
@@ -129,10 +129,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     public synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         deploymentsById.remove(deploymentInfo.getDeploymentID());
-        deploymentsByClass.remove(deploymentInfo.getCmpBeanImpl());
+        deploymentsByClass.remove(deploymentInfo.getCmpImplClass());
 
         try {
-            Field field = deploymentInfo.getCmpBeanImpl().getField("deploymentInfo");
+            Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
             field.set(null, null);
         } catch (Exception e) {
             // ignore
@@ -167,7 +167,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         // try to set deploymentInfo static field on bean implementation class
         try {
-            Field field = deploymentInfo.getCmpBeanImpl().getField("deploymentInfo");
+            Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
             field.set(null, deploymentInfo);
         } catch (Exception e) {
             // ignore
@@ -175,7 +175,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         // add to indexes
         deploymentsById.put(deploymentId, deploymentInfo);
-        deploymentsByClass.put(deploymentInfo.getCmpBeanImpl(), deploymentInfo);
+        deploymentsByClass.put(deploymentInfo.getCmpImplClass(), deploymentInfo);
         deploymentInfo.setContainer(this);
     }
 
@@ -275,10 +275,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private EntityBean createNewInstance(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         try {
-            EntityBean bean = (EntityBean) deploymentInfo.getCmpBeanImpl().newInstance();
+            EntityBean bean = (EntityBean) deploymentInfo.getCmpImplClass().newInstance();
             return bean;
         } catch (Exception e) {
-            throw new EJBException("Unable to create new entity bean instance " + deploymentInfo.getCmpBeanImpl(), e);
+            throw new EJBException("Unable to create new entity bean instance " + deploymentInfo.getCmpImplClass(), e);
         }
     }
 
@@ -626,9 +626,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
-        // Obtain the query for the called method
-        String queryString = deploymentInfo.getQuery(callMethod);
-
         // Get the transaction policy assigned to this method
         TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
@@ -636,7 +633,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         txPolicy.beforeInvoke(null, txContext);
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
-            List<Object> results = cmpEngine.queryBeans(callContext, queryString, args);
+            List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
 
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
 

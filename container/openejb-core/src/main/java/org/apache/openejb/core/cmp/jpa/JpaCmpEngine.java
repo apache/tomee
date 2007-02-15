@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.reflect.Method;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBObject;
@@ -70,19 +71,8 @@ public class JpaCmpEngine implements CmpEngine {
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         deployments.put(deploymentInfo.getDeploymentID(), deploymentInfo);
-        Class beanClass = deploymentInfo.getBeanClass();
-        if (deploymentInfo.isCmp2()) {
-            String beanClassName = beanClass.getName();
-            String cmpBeanImplName = beanClassName + "_JPA";
-            ClassLoader classLoader = deploymentInfo.getClassLoader();
-            try {
-                Class<?> cmpBeanImpl = classLoader.loadClass(cmpBeanImplName);
-                deploymentInfo.setCmpBeanImpl(cmpBeanImpl);
-            } catch (ClassNotFoundException e) {
-                throw new OpenEJBException("CMP 2.x implementation class not found " + cmpBeanImplName);
-            }
-        } else {
-            deploymentInfo.setCmpBeanImpl(beanClass);
+        if (deploymentInfo.getCmpImplClass() == null) {
+            throw new OpenEJBException("Deployment info does not define a CMP implementation class " + deploymentInfo.getDeploymentID());
         }
         configureKeyGenerator(deploymentInfo);
     }
@@ -158,7 +148,7 @@ public class JpaCmpEngine implements CmpEngine {
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getCmpBeanImpl();
+        Class<?> beanClass = deploymentInfo.getCmpImplClass();
         EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, primaryKey);
         return bean;
@@ -166,18 +156,41 @@ public class JpaCmpEngine implements CmpEngine {
 
     public void removeBean(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getCmpBeanImpl();
+        Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
         EntityManager entityManager = getEntityManager(deploymentInfo);
         Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
         entityManager.remove(bean);
     }
 
-    public List<Object> queryBeans(ThreadContext callContext, String queryString, Object[] args) throws FinderException {
-//        logger.error("Executing query " + queryString);
+    public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
+        logger.error("Executing query " + queryMethod);
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         EntityManager entityManager = getEntityManager(deploymentInfo);
-        Query query = entityManager.createQuery(queryString);
+
+        StringBuilder queryName = new StringBuilder();
+        queryName.append(deploymentInfo.getDeploymentID()).append(".").append(queryMethod.getName());
+        String shortName = queryName.toString();
+        if (queryMethod.getParameterTypes().length > 0) {
+            queryName.append('(');
+            boolean first = true;
+            for (Class<?> parameterType : queryMethod.getParameterTypes()) {
+                if (!first) queryName.append(',');
+                queryName.append(parameterType.getCanonicalName());
+                first = false;
+            }
+            queryName.append(')');
+
+        }
+        String fullName = queryName.toString();
+        Query query = createNamedQuery(entityManager, fullName);
+        if (query == null) {
+            query = createNamedQuery(entityManager, shortName);
+            if (query == null) {
+                throw new FinderException("No query defined for method " + fullName);
+            }
+        }
+
         // process args
         if (args == null) {
             args = NO_ARGS;
@@ -211,12 +224,22 @@ public class JpaCmpEngine implements CmpEngine {
         return results;
     }
 
+    private Query createNamedQuery(EntityManager entityManager, String name) {
+        try {
+            return entityManager.createNamedQuery(name);
+        } catch (IllegalArgumentException ignored) {
+            // soooo lame that jpa throws an exception instead of returning null....
+            ignored.printStackTrace();
+            return null;
+        }
+    }
+
     private void configureKeyGenerator(CoreDeploymentInfo di) throws OpenEJBException {
         if (di.isCmp2()) {
             di.setKeyGenerator(new Cmp2KeyGenerator());
         } else {
             String primaryKeyField = di.getPrimaryKeyField();
-            Class cmpBeanImpl = di.getCmpBeanImpl();
+            Class cmpBeanImpl = di.getCmpImplClass();
             if (primaryKeyField != null) {
                 di.setKeyGenerator(new SimpleKeyGenerator(cmpBeanImpl, primaryKeyField));
             } else {

@@ -60,6 +60,7 @@
       <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <cmp-version>1.x</cmp-version>
+      <abstract-schema-name>BasicCmpBeanX</abstract-schema-name>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>primaryKey</primkey-field>
@@ -93,6 +94,7 @@
       <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
       <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>BasicCmp2Bean</abstract-schema-name>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <primkey-field>id</primkey-field>
@@ -762,7 +764,7 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToOneA</abstract-schema-name>
+      <abstract-schema-name>OneToManyA</abstract-schema-name>
       <cmp-field>
         <field-name>field1</field-name>
       </cmp-field>
@@ -794,7 +796,7 @@
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToOneB</abstract-schema-name>
+      <abstract-schema-name>OneToManyB</abstract-schema-name>
       <cmp-field>
         <field-name>field1</field-name>
       </cmp-field>

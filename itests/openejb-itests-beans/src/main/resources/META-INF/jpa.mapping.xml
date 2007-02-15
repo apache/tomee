@@ -45,38 +45,38 @@
     </attributes>
   </entity>
 
-  <entity name="OneOwningSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean_JPA">
-    <table name="OneOwning"/>
-    <attributes>
-      <id name="id">
-        <column name="col_id"/>
-      </id>
-      <basic name="field1">
-        <column name="col_field1"/>
-      </basic>
-    </attributes>
-  </entity>
-
-  <entity name="OneInverseSideBean" class="org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean_JPA">
-    <table name="OneInverse"/>
-    <attributes>
-      <id name="id">
-        <column name="col_id"/>
-      </id>
-    </attributes>
-  </entity>
-
-  <entity name="ManyOwning" class="org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean_JPA">
-    <table name="ManyOwning"/>
-    <attributes>
-      <id name="id">
-        <column name="col_id"/>
-      </id>
-      <basic name="field1">
-        <column name="col_field1"/>
-      </basic>
-    </attributes>
-  </entity>
+  <!--<entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean">-->
+    <!--<table name="OneOwning"/>-->
+    <!--<attributes>-->
+      <!--<id name="id">-->
+        <!--<column name="col_id"/>-->
+      <!--</id>-->
+      <!--<basic name="field1">-->
+        <!--<column name="col_field1"/>-->
+      <!--</basic>-->
+    <!--</attributes>-->
+  <!--</entity>-->
+<!---->
+  <!--<entity name="OneInverseSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean">-->
+    <!--<table name="OneInverse"/>-->
+    <!--<attributes>-->
+      <!--<id name="id">-->
+        <!--<column name="col_id"/>-->
+      <!--</id>-->
+    <!--</attributes>-->
+  <!--</entity>-->
+<!---->
+  <!--<entity name="ManyOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean">-->
+    <!--<table name="ManyOwning"/>-->
+    <!--<attributes>-->
+      <!--<id name="id">-->
+        <!--<column name="col_id"/>-->
+      <!--</id>-->
+      <!--<basic name="field1">-->
+        <!--<column name="col_field1"/>-->
+      <!--</basic>-->
+    <!--</attributes>-->
+  <!--</entity>-->
 
   <!--
   ########################################################
@@ -86,7 +86,7 @@
   ########################################################
   -->
 
-  <entity name="OneToOneA" class="org.apache.openejb.test.entity.cmr.onetoone.ABean_JPA">
+  <entity name="OneToOneA" class="openejb.org.apache.openejb.test.entity.cmr.onetoone.OneToOneA">
     <table name="OneToOneA"/>
     <attributes>
       <id name="field1">
@@ -99,7 +99,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneToOneB" class="org.apache.openejb.test.entity.cmr.onetoone.BBean_JPA">
+  <entity name="OneToOneB" class="openejb.org.apache.openejb.test.entity.cmr.onetoone.OneToOneB">
     <table name="OneToOneB"/>
     <attributes>
       <id name="field1">
@@ -131,7 +131,7 @@
   ########################################################
   -->
 
-  <entity name="OneToManyA" class="org.apache.openejb.test.entity.cmr.onetomany.ABean_JPA">
+  <entity name="OneToManyA" class="openejb.org.apache.openejb.test.entity.cmr.onetomany.OneToManyA">
     <table name="OneToManyA"/>
     <attributes>
       <id name="field1">
@@ -149,7 +149,7 @@
     </attributes>
   </entity>
 
-  <entity name="OneToManyB" class="org.apache.openejb.test.entity.cmr.onetomany.BBean_JPA">
+  <entity name="OneToManyB" class="openejb.org.apache.openejb.test.entity.cmr.onetomany.OneToManyB">
     <table name="OneToManyB"/>
     <attributes>
       <id name="field1">

@@ -365,7 +365,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmp2 AS a WHERE a.lastName = ?1]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE o.lastName = ?1]]>
                 </ejb-ql>
             </query>
             <query>
@@ -374,7 +374,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM BasicCmp2 AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>
@@ -443,7 +443,7 @@
                     </method-params>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM AOBasicCmp2 AS a WHERE a.lastName = ?1]]>
+                    <![CDATA[SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE o.lastName = ?1]]>
                 </ejb-ql>
             </query>
             <query>
@@ -452,7 +452,7 @@
                     <method-params/>
                 </query-method>
                 <ejb-ql>
-                    <![CDATA[SELECT OBJECT(a) FROM AOBasicCmp2 AS a WHERE 1 = 0]]>
+                    <![CDATA[SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE 1 = 0]]>
                 </ejb-ql>
             </query>
         </entity>

@@ -29,9 +29,10 @@ import java.util.jar.JarOutputStream;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
+import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
 
 /**
- * Creates a jar file which contains the CMP2 implementation classes and the cmp entity mappings xml file.
+ * Creates a jar file which contains the CMP implementation classes and the cmp entity mappings xml file.
  */
 public class CmpJarBuilder {
     private final ClassLoader tempClassLoader;
@@ -56,12 +57,14 @@ public class CmpJarBuilder {
         boolean threwException = false;
         JarOutputStream jarOutputStream = openJarFile();
         try {
-            // Generate CMP2 implementation classes
+            // Generate CMP implementation classes
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     if (beanInfo instanceof EntityBeanInfo) {
                         EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
-                        generateClass(jarOutputStream, entityBeanInfo);
+                        if ("CONTAINER".equalsIgnoreCase(entityBeanInfo.persistenceType)) {
+                            generateClass(jarOutputStream, entityBeanInfo);
+                        }
                     }
                 }
             }
@@ -81,14 +84,9 @@ public class CmpJarBuilder {
     }
 
     private void generateClass(JarOutputStream jarOutputStream, EntityBeanInfo entityBeanInfo) throws IOException {
-        // only generate for cmp2 classes
-        if (entityBeanInfo.cmpVersion != 2) {
-            return;
-        }
-
         // don't generate if there is aleady an implementation class
-        String className = entityBeanInfo.ejbClass + "_JPA";
-        String entryName = className.replace(".", "/") + ".class";
+        String cmpImplClass = entityBeanInfo.cmpImplClass;
+        String entryName = cmpImplClass.replace(".", "/") + ".class";
         if (entries.contains(entryName) || tempClassLoader.getResource(entryName) != null) {
             return;
         }
@@ -101,21 +99,32 @@ public class CmpJarBuilder {
             throw new IOException("Could not find entity bean class " + beanClass);
         }
 
-        // generte the implementation class
-        Cmp2Generator cmp2Generator = new Cmp2Generator(beanClass,
-                entityBeanInfo.primKeyField,
-                entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
-        for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
-            if (cmrFieldInfo.fieldName != null) {
-                CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
-                        cmrFieldInfo.fieldType,
-                        cmrFieldInfo.mappedBy.roleSource.ejbClass,
-                        cmrFieldInfo.mappedBy.roleSource.local,
-                        cmrFieldInfo.mappedBy.fieldName);
-                cmp2Generator.addCmrField(cmrField);
+        byte[] bytes = null;
+        if (entityBeanInfo.cmpVersion != 2) {
+            if (entityBeanInfo.cmpImplClass != null) {
+                Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
+                bytes = cmp1Generator.generate();
             }
+        } else {
+
+            // generte the implementation class
+            Cmp2Generator cmp2Generator = new Cmp2Generator(cmpImplClass,
+                    beanClass,
+                    entityBeanInfo.primKeyField,
+                    entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
+
+            for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
+                if (cmrFieldInfo.fieldName != null) {
+                    CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
+                            cmrFieldInfo.fieldType,
+                            cmrFieldInfo.mappedBy.roleSource.cmpImplClass,
+                            cmrFieldInfo.mappedBy.roleSource.local,
+                            cmrFieldInfo.mappedBy.fieldName);
+                    cmp2Generator.addCmrField(cmrField);
+                }
+            }
+            bytes = cmp2Generator.generate();
         }
-        byte[] bytes = cmp2Generator.generate();
 
         // add the generated class to the jar
         addJarEntry(jarOutputStream, entryName, bytes);
