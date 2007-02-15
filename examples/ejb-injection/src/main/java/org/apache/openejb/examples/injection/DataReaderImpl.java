@@ -34,6 +34,7 @@ import javax.ejb.Stateless;
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreLocal
  */
+//START SNIPPET: code
 @Stateless
 public class DataReaderImpl implements DataReaderLocal, DataReaderRemote {
 	
@@ -48,3 +49,4 @@ public class DataReaderImpl implements DataReaderLocal, DataReaderRemote {
 		return "REMOTE:"+dataStoreRemote.getData();
 	}
 }
+//END SNIPPET: code

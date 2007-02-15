@@ -32,6 +32,7 @@ public class EjbDependencyTest extends TestCase {
 	private static final String REMOTE_STORE_RESULT = "REMOTE:42";
 	private static final String LOCAL_STORE_RESULT = "LOCAL:42";
 	
+	//START SNIPPET: setup
 	private InitialContext initialContext;
 
     protected void setUp() throws Exception {
@@ -41,7 +42,9 @@ public class EjbDependencyTest extends TestCase {
 
         initialContext = new InitialContext(properties);
     }
+    //END SNIPPET: setup
 
+    //START SNIPPET: test
     public void testViaLocalInterface() throws Exception {
     	Object object = initialContext.lookup("DataReaderImplBusinessLocal");
     	
@@ -49,6 +52,7 @@ public class EjbDependencyTest extends TestCase {
     	assertEquals(LOCAL_STORE_RESULT, ((DataReaderLocal)object).readDataFromLocalStore());
     	assertEquals(REMOTE_STORE_RESULT, ((DataReaderLocal)object).readDataFromRemoteStore());
     }
+    //END SNIPPET: test
     
     public void testViaRemoteInterface() throws Exception {
     	Object object = initialContext.lookup("DataReaderImplBusinessRemote");

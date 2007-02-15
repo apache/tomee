@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
  * interface, and DataStoreLocal, a local business interface
  * 
  */
+//START SNIPPET: code
 @Stateless
 public class DataStoreImpl implements DataStoreLocal, DataStoreRemote{
 
@@ -33,5 +34,5 @@ public class DataStoreImpl implements DataStoreLocal, DataStoreRemote{
 		return "42";
 	}
 
-
 }
+//END SNIPPET: code

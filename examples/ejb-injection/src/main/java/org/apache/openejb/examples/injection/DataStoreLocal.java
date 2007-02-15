@@ -24,10 +24,11 @@ import javax.ejb.Local;
  * annotation, but it's optional. A business interface which is 
  * not annotated with @Local or @Remote is assumed to be Local
  */
+//START SNIPPET: code
 @Local
 public interface DataStoreLocal {
 	
 	public String getData();
 	
-
 }
+//END SNIPPET: code
