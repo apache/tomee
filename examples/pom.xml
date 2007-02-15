@@ -34,7 +34,7 @@
     <module>calculator-stateless-pojo</module>
     <module>counter-stateful-pojo</module>
     <module>ejb-injection</module>
-     <module>resource-injection</module>
+    <module>resource-injection</module>
     <module>telephone-stateful</module>
   </modules>
 </project>
