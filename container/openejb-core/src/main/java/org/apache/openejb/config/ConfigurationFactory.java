@@ -76,7 +76,7 @@ import javax.xml.bind.JAXBException;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
-    private static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance("OpenEJB.startup.config", "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private String configLocation = "";
@@ -441,6 +441,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     /**
+     * Resolving the provider for a particular service follows this algorithm:
+     *
+     * 1.  Attempt to load the provider specified by the 'providerId'.
+     * 2.  If this fails, throw NoSuchProviderException
+     * 3.  If providerId is null, attempt to load the specified provider using the 'serviceId' as the 'providerId'
+     * 4.  If this fails, check the hardcoded defaults for a default providerId using the supplied 'type'
+     * 5.  If this fails, throw NoSuchProviderException 
      *
      * @param type required
      * @param serviceId required
@@ -453,15 +460,28 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
         if (type == null) throw new NullPointerException("type");
         if (serviceId == null) throw new NullPointerException("serviceId");
-        if (providerId ==  null){
-            providerId = serviceId;
-        }
+
         if (declaredProperties == null){
             declaredProperties = new Properties();
         }
 
-        ServiceProvider provider = ServiceUtils.getServiceProvider(providerId);
+        ServiceProvider provider = null;
+        if (providerId != null) {
+            provider = ServiceUtils.getServiceProvider(providerId);
+        } else {
+            try {
+                provider = ServiceUtils.getServiceProvider(serviceId);
+            } catch (NoSuchProviderException e) {
+                DefaultService defaultProvider = defaultProviders.get(type);
+                if (defaultProvider == null){
+                    throw new NoSuchProviderException("Cannot determine a default provider for Service("+serviceId +", "+type.getSimpleName()+")");
+                }
+                provider = ServiceUtils.getServiceProvider(defaultProvider.id);
+                providerId = provider.getId();
+            }
+        }
 
+        logger.info("Configuring Service(id=" + serviceId + ", type=" + provider.getProviderType() + ", provider-id=" + provider.getId() + ")");
         Properties props = getDefaultProperties(provider);
 
 

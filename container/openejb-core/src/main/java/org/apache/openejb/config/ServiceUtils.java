@@ -39,23 +39,32 @@ public class ServiceUtils {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
+    public static class ProviderInfo {
+        private final String packageName;
+        private final String serviceName;
+
+        public ProviderInfo(String providerName, String serviceName) {
+            this.packageName = providerName;
+            this.serviceName = serviceName;
+        }
+
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public String getServiceName() {
+            return serviceName;
+        }
+    }
+
     public static ServiceProvider getServiceProvider(String id) throws OpenEJBException {
 
-        String providerName = null;
-        String serviceName = null;
-
-        if (id.indexOf("#") == -1) {
-            providerName = defaultProviderURL;
-            serviceName = id;
-        } else {
-            providerName = id.substring(0, id.indexOf("#"));
-            serviceName = id.substring(id.indexOf("#") + 1);
-        }
+        ProviderInfo info = getProviderInfo(id);
 
         ServiceProvider service = null;
 
-        if (loadedServiceJars.get(providerName) == null) {
-            ServicesJar sj = readServicesJar(providerName);
+        if (loadedServiceJars.get(info.getPackageName()) == null) {
+            ServicesJar sj = readServicesJar(info.getPackageName());
             ServiceProvider[] sp = sj.getServiceProvider();
             HashMap services = new HashMap(sj.getServiceProviderCount());
 
@@ -63,19 +72,37 @@ public class ServiceUtils {
                 services.put(sp[i].getId(), sp[i]);
             }
 
-            loadedServiceJars.put(providerName, services);
+            loadedServiceJars.put(info.getPackageName(), services);
 
-            service = (ServiceProvider) services.get(serviceName);
+            service = (ServiceProvider) services.get(info.getServiceName());
         } else {
-            Map provider = (Map) loadedServiceJars.get(providerName);
-            service = (ServiceProvider) provider.get(serviceName);
+            Map provider = (Map) loadedServiceJars.get(info.getPackageName());
+            service = (ServiceProvider) provider.get(info.getServiceName());
         }
 
         if (service == null) {
-            throw new OpenEJBException(messages.format("conf.4901", serviceName, providerName));
+            throw new NoSuchProviderException(messages.format("conf.4901", info.getServiceName(), info.getPackageName()));
         }
 
         return service;
+    }
+
+    private static ProviderInfo getProviderInfo(String id) {
+        String providerName = null;
+        String serviceName = null;
+
+        if (id.indexOf("#") != -1) {
+            providerName = id.substring(0, id.indexOf("#"));
+            serviceName = id.substring(id.indexOf("#") + 1);
+        } else if (id.indexOf(":") != -1) {
+            providerName = id.substring(0, id.indexOf(":"));
+            serviceName = id.substring(id.indexOf(":") + 1);
+        } else {
+            providerName = defaultProviderURL;
+            serviceName = id;
+        }
+
+        return new ProviderInfo(providerName, serviceName);
     }
 
     public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {

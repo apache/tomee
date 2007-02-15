@@ -781,6 +781,7 @@ public class Logger {
             set("org.apache.openejb", Level.WARN);
             set("Transaction", Level.WARN);
             set("OpenEJB.startup", Level.INFO);
+            set("OpenEJB.startup.config", Level.WARN);
             set("OpenEJB", Level.WARN);
 
             org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB");
