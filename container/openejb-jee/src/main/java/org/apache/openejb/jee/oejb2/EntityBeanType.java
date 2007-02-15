@@ -128,6 +128,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "selectForUpdate",
     "cache",
     "abstractNamingEntry",
+    "persistenceContextRef",
+    "persistenceUnitRef",
     "ejbRef",
     "ejbLocalRef",
     "serviceRef",
@@ -178,6 +180,12 @@ public class EntityBeanType implements EnterpriseBean {
 
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
+
+    @XmlElement(name = "persistence-contenxt-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<PersistenceContextRefType> persistenceContextRef;
+
+    @XmlElement(name = "persistence-unit-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected List<PersistenceUnitRefType> persistenceUnitRef;
 
     @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbRefType> ejbRef;
@@ -549,7 +557,7 @@ public class EntityBeanType implements EnterpriseBean {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractNamingEntryType }{@code >}
      * {@link JAXBElement }{@code <}{@link PersistenceContextRefType }{@code >}
-     * {@link JAXBElement }{@code <}{@link EntityManagerFactoryRefType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PersistenceUnitRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link GbeanRefType }{@code >}
      * 
      * 
@@ -559,6 +567,20 @@ public class EntityBeanType implements EnterpriseBean {
             abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
         }
         return this.abstractNamingEntry;
+    }
+
+    public List<PersistenceContextRefType> getPersistenceContextRef() {
+        if (persistenceContextRef == null){
+            persistenceContextRef = new ArrayList<PersistenceContextRefType>();
+        }
+        return persistenceContextRef;
+    }
+
+    public List<PersistenceUnitRefType> getPersistenceUnitRef() {
+        if (persistenceUnitRef == null){
+            persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
+        }
+        return persistenceUnitRef;
     }
 
     /**

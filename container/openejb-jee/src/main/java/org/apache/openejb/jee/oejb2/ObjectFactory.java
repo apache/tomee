@@ -185,11 +185,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EntityManagerFactoryRefType }
+     * Create an instance of {@link PersistenceUnitRefType }
      * 
      */
-    public EntityManagerFactoryRefType createEntityManagerFactoryRefType() {
-        return new EntityManagerFactoryRefType();
+    public PersistenceUnitRefType createPersistenceUnitRefType() {
+        return new PersistenceUnitRefType();
     }
 
     /**
@@ -651,12 +651,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link EntityManagerFactoryRefType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link PersistenceUnitRefType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "entity-manager-factory-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
-    public JAXBElement<EntityManagerFactoryRefType> createEntityManagerFactoryRef(EntityManagerFactoryRefType value) {
-        return new JAXBElement<EntityManagerFactoryRefType>(_EntityManagerFactoryRef_QNAME, EntityManagerFactoryRefType.class, null, value);
+    public JAXBElement<PersistenceUnitRefType> createEntityManagerFactoryRef(PersistenceUnitRefType value) {
+        return new JAXBElement<PersistenceUnitRefType>(_EntityManagerFactoryRef_QNAME, PersistenceUnitRefType.class, null, value);
     }
 
     /**

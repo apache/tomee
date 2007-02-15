@@ -81,6 +81,14 @@
                     <ns2:value>String</ns2:value>
                 </ns2:property>
             </ns2:persistence-context-ref>
+            <ns2:persistence-unit-ref>
+                <ns2:persistence-unit-ref-name>String</ns2:persistence-unit-ref-name>
+                <ns2:persistence-unit-name>String</ns2:persistence-unit-name>
+            </ns2:persistence-unit-ref>
+            <ns2:persistence-unit-ref>
+                <ns2:persistence-unit-ref-name>String</ns2:persistence-unit-ref-name>
+                <ns2:persistence-unit-name>String</ns2:persistence-unit-name>
+            </ns2:persistence-unit-ref>
             <ns2:ejb-ref>
                 <ns2:ref-name>String</ns2:ref-name>
                 <ns2:pattern>
@@ -261,6 +269,14 @@
                     <ns2:value>String</ns2:value>
                 </ns2:property>
             </ns2:persistence-context-ref>
+            <ns2:persistence-unit-ref>
+                <ns2:persistence-unit-ref-name>String</ns2:persistence-unit-ref-name>
+                <ns2:persistence-unit-name>String</ns2:persistence-unit-name>
+            </ns2:persistence-unit-ref>
+            <ns2:persistence-unit-ref>
+                <ns2:persistence-unit-ref-name>String</ns2:persistence-unit-ref-name>
+                <ns2:persistence-unit-name>String</ns2:persistence-unit-name>
+            </ns2:persistence-unit-ref>
             <ns2:ejb-ref>
                 <ns2:ref-name>String</ns2:ref-name>
                 <ns2:pattern>

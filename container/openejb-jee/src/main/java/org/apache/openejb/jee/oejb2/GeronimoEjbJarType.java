@@ -132,7 +132,7 @@ public class GeronimoEjbJarType {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceEnvRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link EjbRefType }{@code >}
-     * {@link JAXBElement }{@code <}{@link org.apache.openejb.jee.oejb2.EntityManagerFactoryRefType }{@code >}
+     * {@link JAXBElement }{@code <}{@link org.apache.openejb.jee.oejb2.PersistenceUnitRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link org.apache.openejb.jee.oejb2.GbeanRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link EjbLocalRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link ResourceRefType }{@code >}

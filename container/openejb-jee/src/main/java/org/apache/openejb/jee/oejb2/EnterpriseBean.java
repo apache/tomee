@@ -17,8 +17,10 @@
 package org.apache.openejb.jee.oejb2;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElement;
 import java.lang.*;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
@@ -33,6 +35,10 @@ public interface EnterpriseBean {
     List<String> getLocalJndiName();
 
     List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry();
+
+    List<PersistenceContextRefType> getPersistenceContextRef();
+
+    List<PersistenceUnitRefType> getPersistenceUnitRef();
 
     List<EjbRefType> getEjbRef();
 

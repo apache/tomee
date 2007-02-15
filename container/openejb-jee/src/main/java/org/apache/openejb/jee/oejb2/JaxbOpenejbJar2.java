@@ -18,6 +18,8 @@ package org.apache.openejb.jee.oejb2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -37,8 +39,19 @@ import org.xml.sax.SAXException;
  */
 public class JaxbOpenejbJar2 {
 
+    private static final Map<Class,JAXBContext> contexts = new HashMap<Class,JAXBContext>();
+
+    private static JAXBContext getContext(Class type) throws JAXBException {
+        JAXBContext jaxbContext = contexts.get(type);
+        if (jaxbContext == null) {
+            jaxbContext = JAXBContext.newInstance(type);
+            contexts.put(type, jaxbContext);
+        }
+        return jaxbContext;
+    }
+
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
-        JAXBContext ctx2 = JAXBContext.newInstance(type);
+        JAXBContext ctx2 = getContext(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -61,7 +74,7 @@ public class JaxbOpenejbJar2 {
         factory.setValidating(false);
         SAXParser parser = factory.newSAXParser();
 
-        JAXBContext ctx = JAXBContext.newInstance(type);
+        JAXBContext ctx = getContext(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler(){
             public boolean handleEvent(ValidationEvent validationEvent) {
@@ -71,6 +84,7 @@ public class JaxbOpenejbJar2 {
                 return false;
             }
         });
+
         unmarshaller.setListener(new Unmarshaller.Listener(){
             public void afterUnmarshal(Object object, Object object1) {
                 super.afterUnmarshal(object, object1);

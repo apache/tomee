@@ -23,41 +23,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
-/**
- * <p>Java class for entity-manager-factory-refType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="entity-manager-factory-refType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://geronimo.apache.org/xml/ns/naming-1.2}abstract-naming-entryType">
- *       &lt;sequence>
- *         &lt;element name="entity-manager-factory-ref-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;choice>
- *           &lt;element name="persistence-unit-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *           &lt;element name="pattern" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entity-manager-factory-refType", propOrder = {
-    "entityManagerFactoryRefName",
+@XmlType(name = "persistence-unit-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
+    "persistenceUnitRefName",
     "persistenceUnitName",
     "pattern"
 })
-public class EntityManagerFactoryRefType
+public class PersistenceUnitRefType
     extends AbstractNamingEntryType
 {
 
-    @XmlElement(name = "entity-manager-factory-ref-name", required = true)
-    protected String entityManagerFactoryRefName;
+    @XmlElement(name = "persistence-unit-ref-name", required = true)
+    protected String persistenceUnitRefName;
     @XmlElement(name = "persistence-unit-name")
     protected String persistenceUnitName;
     protected PatternType pattern;
@@ -70,8 +47,8 @@ public class EntityManagerFactoryRefType
      *     {@link String }
      *     
      */
-    public String getEntityManagerFactoryRefName() {
-        return entityManagerFactoryRefName;
+    public String getPersistenceUnitRefName() {
+        return persistenceUnitRefName;
     }
 
     /**
@@ -82,8 +59,8 @@ public class EntityManagerFactoryRefType
      *     {@link String }
      *     
      */
-    public void setEntityManagerFactoryRefName(String value) {
-        this.entityManagerFactoryRefName = value;
+    public void setPersistenceUnitRefName(String value) {
+        this.persistenceUnitRefName = value;
     }
 
     /**
