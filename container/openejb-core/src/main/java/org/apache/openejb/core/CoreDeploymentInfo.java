@@ -287,13 +287,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     policy = new MessageDrivenBeanManagedTxPolicy((TransactionContainer) container);
                 }
             } else if (componentType == BeanType.STATEFUL) {
-                policy = new TxNotSupported((TransactionContainer) container);
+                policy = new TxRequired((TransactionContainer) container);
                 policy = new StatefulContainerManagedTxPolicy(policy);
             } else if (componentType == BeanType.CMP_ENTITY) {
                 // default cmp policy is required
                 policy = new TxRequired((TransactionContainer) container);
             } else {
-                policy = new TxNotSupported((TransactionContainer) container);
+                policy = new TxRequired((TransactionContainer) container);
             }
             methodTransactionPolicies.put(method, policy);
         }
