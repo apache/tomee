@@ -67,7 +67,7 @@ public class DeploymentLoader {
 
         Class moduleClass = null;
         try {
-            moduleClass = discoverModuleType(baseUrl, classLoader);
+            moduleClass = discoverModuleType(baseUrl, classLoader, true);
         } catch (Exception e) {
             throw new OpenEJBException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
         }
@@ -122,7 +122,7 @@ public class DeploymentLoader {
                         if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
 
                         try {
-                            Class moduleType = discoverModuleType(entry.getValue(), tmpClassLoader);
+                            Class moduleType = discoverModuleType(entry.getValue(), tmpClassLoader, true);
                             if (EjbModule.class.equals(moduleType)) {
                                 ejbModules.put(entry.getKey(), entry.getValue());
                             } else if (ClientModule.class.equals(moduleType)) {
@@ -295,7 +295,7 @@ public class DeploymentLoader {
     }
 
 
-    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader) throws IOException, UnsupportedOperationException {
+    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnsupportedOperationException {
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
 
         Map<String, URL> descriptors = finder.getResourcesMap("META-INF");
@@ -326,12 +326,14 @@ public class DeploymentLoader {
             }
         }
 
-        ClassFinder classFinder = new ClassFinder(classLoader, baseUrl);
+        if (searchForDescriptorlessApplications) {
+            ClassFinder classFinder = new ClassFinder(classLoader, baseUrl);
 
-        if (classFinder.isAnnotationPresent(Stateless.class) ||
-                classFinder.isAnnotationPresent(Stateful.class) ||
-                classFinder.isAnnotationPresent(javax.ejb.MessageDriven.class)) {
-            return EjbModule.class;
+            if (classFinder.isAnnotationPresent(Stateless.class) ||
+                    classFinder.isAnnotationPresent(Stateful.class) ||
+                    classFinder.isAnnotationPresent(javax.ejb.MessageDriven.class)) {
+                return EjbModule.class;
+            }
         }
 
         throw new UnsupportedOperationException("Unknown module type");

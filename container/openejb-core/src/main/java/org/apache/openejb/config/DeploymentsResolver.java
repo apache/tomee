@@ -37,6 +37,7 @@ public class DeploymentsResolver {
 
     private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
+    private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
 
     private static void loadFrom(Deployments dep, FileUtils path, List jarList) {
 
@@ -168,6 +169,7 @@ public class DeploymentsResolver {
 
         include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
         exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
+        boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
         try {
             UrlSet urlSet = new UrlSet(classLoader);
             UrlSet includes = urlSet.matching(include);
@@ -189,9 +191,9 @@ public class DeploymentsResolver {
                 return;
             } else if (size < 10) {
                 DeploymentLoader.logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
-            } else if (size < 50) {
+            } else if (size < 50 && !requireDescriptors) {
                 DeploymentLoader.logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-            } else {
+            } else if (!requireDescriptors) {
                 DeploymentLoader.logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
                 DeploymentLoader.logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
             }
@@ -199,7 +201,7 @@ public class DeploymentsResolver {
             long begin = System.currentTimeMillis();
             for (URL url : urls) {
                 try {
-                    Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader);
+                    Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, !requireDescriptors);
                     if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
                         deployment = new Deployments();
                         if (url.getProtocol().equals("jar")) {

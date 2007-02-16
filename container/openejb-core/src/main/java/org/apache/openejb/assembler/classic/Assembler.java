@@ -323,6 +323,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
 
+        logger.info("Assembling app: "+appInfo.jarPath);
+        
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -387,6 +389,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
                     applySecurityRoleReference(deployment, beanInfo, roleMapping);
+                }
+
+                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                    logger.info("Created Ejb(deployment-id="+beanInfo.ejbDeploymentId+", ejb-name="+beanInfo.ejbName+", container="+beanInfo.containerId+")");
                 }
             }
 

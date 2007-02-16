@@ -257,7 +257,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             appInfo = configureApplication(appModule);
 
-            logger.info("Loaded Module: " + appModule.getJarLocation());
 
         } catch (OpenEJBException e) {
             String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
@@ -284,6 +283,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
+        logger.info("Configuring app: "+appModule.getJarLocation());
         deployer.deploy(appModule);
 
         AppInfo appInfo = new AppInfo();
@@ -377,6 +377,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        logger.info("Loaded Module: " + appInfo.jarPath);
         return appInfo;
     }
 

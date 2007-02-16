@@ -57,6 +57,7 @@ public class Server implements org.apache.openejb.spi.Service {
         SystemInstance system = SystemInstance.get();
         File home = system.getHome().getDirectory();
         system.setProperty("openejb.deployments.classpath.include", ".*/"+home.getName()+"/lib/.*");
+        system.setProperty("openejb.deployments.classpath.require.descriptor", "true");
 
         OpenEJB.init(props, new ServerFederation());
 
