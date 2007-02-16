@@ -19,13 +19,14 @@ package org.apache.openejb.core.cmp.cmp2;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collection;
 import java.lang.reflect.Method;
 
 import org.objectweb.asm.Type;
 
 public enum CmrStyle {
     SINGLE(SingleValuedCmr.class, null, null),
-    COLLECTION(SetValuedCmr.class, Set.class, HashSet.class),
+    COLLECTION(SetValuedCmr.class, Collection.class, HashSet.class),
     SET(SetValuedCmr.class, Set.class, HashSet.class);
 
     private final Type accessorType;
