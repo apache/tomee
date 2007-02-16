@@ -24,7 +24,22 @@ import java.net.URL;
 
 public class Bootstrap {
 
-    private static void setupHome() {
+    private static void setupHome(String[] args) {
+        for (String arg : args) {
+            if (arg.startsWith("-Dopenejb.home")){
+                addProperty(arg);
+            } else if (arg.startsWith("-Dopenejb.base")){
+                addProperty(arg);
+            }
+        }
+
+        String homeProperty = System.getProperty("openejb.home");
+        if (homeProperty != null){
+            if (new File(homeProperty).exists()){
+                return;
+            }
+        }
+
         try {
             URL classURL = Thread.currentThread().getContextClassLoader().getResource("openejb-version.properties");
 
@@ -49,6 +64,13 @@ public class Bootstrap {
         }
     }
 
+    private static void addProperty(String arg) {
+        String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
+        String val = arg.substring(arg.indexOf("=") + 1);
+
+        System.setProperty(prop, val);
+    }
+
     private static void setupClasspath() {
         try {
             File lib = new File(System.getProperty("openejb.home") + File.separator + "lib");
@@ -63,7 +85,7 @@ public class Bootstrap {
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
      */
     public static void main(String[] args) throws Exception {
-        setupHome();
+        setupHome(args);
         setupClasspath();
 
         Class clazz = Bootstrap.class.getClassLoader().loadClass("org.apache.openejb.cli.MainImpl");

@@ -26,6 +26,10 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -49,7 +53,6 @@ public class MainImpl implements Main {
 
         // get SystemInstance (the only static class in the system)
         // so we'll set up all the props in it
-        // FIXME: The first candidate for XBean'ization - external dependency
         SystemInstance systemInstance = null;
         try {
             SystemInstance.init(System.getProperties());
@@ -57,6 +60,20 @@ public class MainImpl implements Main {
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+
+        try {
+            File conf = systemInstance.getBase().getDirectory("conf");
+            File file = new File(conf, "system.properties");
+            if (file.exists()){
+                Properties systemProperties = new Properties();
+                FileInputStream fin = new FileInputStream(file);
+                InputStream in = new BufferedInputStream(fin);
+                systemProperties.load(in);
+                System.getProperties().putAll(systemProperties);
+            }
+        } catch (IOException e) {
+            System.out.println("Processing conf/system.properties failed: "+e.getMessage());
         }
 
         for (int i = 0; i < args.length; i++) {
@@ -67,7 +84,6 @@ public class MainImpl implements Main {
                 String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
                 String val = arg.substring(arg.indexOf("=") + 1);
 
-                systemInstance.setProperty(prop, val);
                 System.setProperty(prop, val);
             }
         }
