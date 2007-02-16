@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
+import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.EjbJar;
@@ -29,7 +30,6 @@ import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.TreeMap;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
@@ -81,8 +80,6 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
-        Map<String, Map<String, String>> cmpImplClassNames = generateCmpImplClassNames(appModule);
-
         // create mappings
         EntityMappings cmpMappings = appModule.getCmpMappings();
         if (cmpMappings == null) {
@@ -92,7 +89,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            generateEntityMappings(ejbModule, cmpMappings, cmpImplClassNames);
+            generateEntityMappings(ejbModule, cmpMappings);
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
@@ -129,18 +126,16 @@ public class CmpJpaConversion implements DynamicDeployer {
     public EntityMappings generateEntityMappings(EjbModule ejbModule) throws OpenEJBException {
         AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
-        Map<String, Map<String, String>> appMappingData = generateCmpImplClassNames(appModule);
 
         EntityMappings entityMappings = new EntityMappings();
-        generateEntityMappings(ejbModule, entityMappings, appMappingData);
+        generateEntityMappings(ejbModule, entityMappings);
         return entityMappings;
     }
 
-    public void generateEntityMappings(EjbModule ejbModule, EntityMappings entityMappings, Map<String, Map<String, String>> cmpImplClassNames) throws OpenEJBException {
+    public void generateEntityMappings(EjbModule ejbModule, EntityMappings entityMappings) throws OpenEJBException {
         EjbJar ejbJar = ejbModule.getEjbJar();
         OpenejbJar openejbJar = ejbModule.getOpenejbJar();
         ClassLoader classLoader = ejbModule.getClassLoader();
-        Map<String, String> implClasses = cmpImplClassNames.get(ejbModule.getModuleId());
 
         Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
@@ -155,10 +150,11 @@ public class CmpJpaConversion implements DynamicDeployer {
                 throw new OpenEJBException("No deploument info found for ejb " + bean.getEjbName());
             }
 
-            String implClass = implClasses.get(bean.getEjbName());
-
-            // always declare the cmp impl class name
-            ejbDeployment.setCmpImplClass(implClass);
+            // Always set the abstract schema name
+            if (bean.getAbstractSchemaName() == null) {
+                String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
+                bean.setAbstractSchemaName(abstractSchemaName);
+            }
 
             // try to add a new persistence-context-ref for cmp
             if (!addPersistenceContextRef(bean)) {
@@ -185,10 +181,11 @@ public class CmpJpaConversion implements DynamicDeployer {
 
             // for CMP 1 we also need apply the mappings to a super-mappings
             // declaration since fields are on the super-class
-            boolean generateMappedSuperclass = bean.getCmpVersion() == CmpVersion.CMP1 && !bean.getEjbClass().equals(ejbDeployment.getCmpImplClass());
+            String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
+            boolean generateMappedSuperclass = bean.getCmpVersion() == CmpVersion.CMP1 && !bean.getEjbClass().equals(cmpImplClassName);
 
             // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
-            mapClass(implClass, entity, bean, classLoader, generateMappedSuperclass);
+            mapClass(cmpImplClassName, entity, bean, classLoader, generateMappedSuperclass);
 
             if (generateMappedSuperclass) {
                 // finally declare the mapped super class, if needed
@@ -485,41 +482,6 @@ public class CmpJpaConversion implements DynamicDeployer {
                 // todo warn
             }
         }
-    }
-
-    public Map<String,Map<String,String>> generateCmpImplClassNames(AppModule appModule) {
-        Map<String, Map<String,String>> appMappingData = new TreeMap<String, Map<String,String>>();
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            TreeMap<String, String> moduleMappingData = new TreeMap<String, String>();
-            appMappingData.put(ejbModule.getModuleId(), moduleMappingData);
-
-            for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                // skip all non-CMP beans
-                if (!(enterpriseBean instanceof EntityBean) ||
-                        ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
-                    continue;
-                }
-
-                EntityBean bean = (EntityBean) enterpriseBean;
-
-                // name: the name of the entity in queries
-                String abstractSchemaName = bean.getAbstractSchemaName();
-                if (abstractSchemaName == null) {
-                    abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
-                    bean.setAbstractSchemaName(abstractSchemaName);
-                }
-                String cmpImplClass = bean.getEjbClass().substring(0, bean.getEjbClass().lastIndexOf('.'));
-                if (cmpImplClass.length() > 0) {
-                    cmpImplClass = "openejb." + cmpImplClass;
-                } else {
-                    cmpImplClass = "openejb";
-                }
-                cmpImplClass += "." + abstractSchemaName;
-
-                moduleMappingData.put(bean.getEjbName(), cmpImplClass);
-            }
-        }
-        return appMappingData;
     }
 
     private boolean addPersistenceContextRef(EntityBean bean) {

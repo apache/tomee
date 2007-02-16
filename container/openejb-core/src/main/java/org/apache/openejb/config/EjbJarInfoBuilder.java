@@ -537,7 +537,7 @@ public class EjbJarInfoBuilder {
         bean.description = e.getDescription();
         bean.displayName = e.getDisplayName();
         bean.ejbClass = e.getEjbClass();
-        bean.cmpImplClass = d.getCmpImplClass();
+        bean.abstractSchemaName = e.getAbstractSchemaName();
         bean.ejbName = e.getEjbName();
         bean.home = e.getHome();
         bean.remote = e.getRemote();

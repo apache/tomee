@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class EntityBeanInfo extends EnterpriseBeanInfo {
-    public String cmpImplClass;
+    public String abstractSchemaName;
     public String primKeyClass;
     public String primKeyField;
     public String persistenceType;

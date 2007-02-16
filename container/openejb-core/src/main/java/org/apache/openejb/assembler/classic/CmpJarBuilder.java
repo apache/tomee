@@ -30,6 +30,7 @@ import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
 import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
+import org.apache.openejb.core.cmp.CmpUtil;
 
 /**
  * Creates a jar file which contains the CMP implementation classes and the cmp entity mappings xml file.
@@ -85,7 +86,7 @@ public class CmpJarBuilder {
 
     private void generateClass(JarOutputStream jarOutputStream, EntityBeanInfo entityBeanInfo) throws IOException {
         // don't generate if there is aleady an implementation class
-        String cmpImplClass = entityBeanInfo.cmpImplClass;
+        String cmpImplClass = CmpUtil.getCmpImplClassName(entityBeanInfo.abstractSchemaName, entityBeanInfo.ejbClass);
         String entryName = cmpImplClass.replace(".", "/") + ".class";
         if (entries.contains(entryName) || tempClassLoader.getResource(entryName) != null) {
             return;
@@ -101,10 +102,8 @@ public class CmpJarBuilder {
 
         byte[] bytes = null;
         if (entityBeanInfo.cmpVersion != 2) {
-            if (entityBeanInfo.cmpImplClass != null) {
-                Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
-                bytes = cmp1Generator.generate();
-            }
+            Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
+            bytes = cmp1Generator.generate();
         } else {
 
             // generte the implementation class
@@ -115,10 +114,11 @@ public class CmpJarBuilder {
 
             for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
                 if (cmrFieldInfo.fieldName != null) {
+                    EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
                     CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
                             cmrFieldInfo.fieldType,
-                            cmrFieldInfo.mappedBy.roleSource.cmpImplClass,
-                            cmrFieldInfo.mappedBy.roleSource.local,
+                            CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
+                            roleSource.local,
                             cmrFieldInfo.mappedBy.fieldName);
                     cmp2Generator.addCmrField(cmrField);
                 }

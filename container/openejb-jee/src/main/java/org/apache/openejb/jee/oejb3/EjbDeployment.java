@@ -53,10 +53,6 @@ public class EjbDeployment {
     @XmlAttribute(name = "ejb-name")
     protected String ejbName;
 
-    // todo this should not be here
-    @XmlTransient
-    protected String cmpImplClass;
-
     public EjbDeployment() {
     }
 
@@ -115,14 +111,6 @@ public class EjbDeployment {
 
     public void setEjbName(String value) {
         this.ejbName = value;
-    }
-
-    public String getCmpImplClass() {
-        return cmpImplClass;
-    }
-
-    public void setCmpImplClass(String cmpImplClass) {
-        this.cmpImplClass = cmpImplClass;
     }
 
     public void addResourceLink(ResourceLink resourceLink) {

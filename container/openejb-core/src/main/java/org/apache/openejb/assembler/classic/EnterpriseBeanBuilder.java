@@ -21,6 +21,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
+import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
@@ -202,16 +203,15 @@ class EnterpriseBeanBuilder {
         if (ejbType.isEntity()) {
             EntityBeanInfo entity = (EntityBeanInfo) bean;
 
-            Class cmpImplClass = null;
-            if (entity.cmpImplClass != null) {
-                cmpImplClass = loadClass(entity.cmpImplClass, "classNotFound.cmpImplClass");
-            }
-            deployment.setCmpImplClass(cmpImplClass);
-
             deployment.setCmp2(entity.cmpVersion == 2);
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
             if (ejbType == BeanType.CMP_ENTITY) {
+                Class cmpImplClass = null;
+                String cmpImplClassName = CmpUtil.getCmpImplClassName(entity.abstractSchemaName, entity.ejbClass);
+                cmpImplClass = loadClass(cmpImplClassName, "classNotFound.cmpImplClass");
+                deployment.setCmpImplClass(cmpImplClass);
+
                 for (QueryInfo query : entity.queries) {
                     List<Method> finderMethods = new ArrayList<Method>();
 
