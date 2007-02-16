@@ -26,15 +26,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Hashtable;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.Context;
+import javax.naming.spi.InitialContextFactory;
 
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
@@ -42,7 +49,7 @@ import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.resource.SharedLocalConnectionManager;
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
-import org.apache.openjpa.persistence.PersistenceProviderImpl;
+import org.apache.xbean.naming.context.ImmutableContext;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -51,8 +58,11 @@ import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
+//    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
+    private static final String PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+
     private PersistenceUnitTransactionType transactionType;
-    private TransactionManager transactionManager;
+    private GeronimoTransactionManagerJTA11 transactionManager;
     private DataSource jtaDs;
     private DataSource nonJtaDs;
     private EntityManagerFactory entityManagerFactory;
@@ -60,8 +70,13 @@ public class JpaTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
 
+
         // setup tx mgr
-        transactionManager = new GeronimoTransactionManager();
+        transactionManager = new GeronimoTransactionManagerJTA11();
+
+        // setup naming
+        MockInitialContextFactory.install(Collections.singletonMap("java:comp/TransactionSynchronizationRegistry", transactionManager));
+        assertSame(transactionManager, new InitialContext().lookup("java:comp/TransactionSynchronizationRegistry"));
 
         // Put tx mgr into SystemInstance so OpenJPA can find it
         SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
@@ -70,6 +85,20 @@ public class JpaTest extends TestCase {
         jtaDs = createJtaDataSource(transactionManager);
         nonJtaDs = createNonJtaDataSource();
         initializeDatabase(jtaDs);
+    }
+
+    public static class MockInitialContextFactory implements InitialContextFactory {
+        private static ImmutableContext immutableContext;
+
+        public static void install(Map bindings) throws NamingException {
+            immutableContext = new ImmutableContext(bindings);
+            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
+            new InitialContext();
+        }
+
+        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+            return immutableContext;
+        }
     }
 
     public void tearDown() throws Exception {
@@ -126,7 +155,7 @@ public class JpaTest extends TestCase {
         }
     }
 
-    private EntityManagerFactory createEntityManagerFactory() {
+    private EntityManagerFactory createEntityManagerFactory() throws Exception {
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
             public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
                 Instrumentation instrumentation = Agent.getInstrumentation();
@@ -150,7 +179,7 @@ public class JpaTest extends TestCase {
 
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
         unitInfo.setPersistenceUnitName("CMP");
-        unitInfo.setPersistenceProviderClassName(PersistenceProviderImpl.class.getName());
+        unitInfo.setPersistenceProviderClassName(PERSISTENCE_PROVIDER);
         unitInfo.setClassLoader(getClass().getClassLoader());
         unitInfo.setExcludeUnlistedClasses(false);
         unitInfo.setJtaDataSource(jtaDs);
@@ -166,7 +195,9 @@ public class JpaTest extends TestCase {
 
         unitInfo.setTransactionType(transactionType);
 
-        PersistenceProvider persistenceProvider = new PersistenceProviderImpl();
+        unitInfo.getManagedClassNames().add("org.apache.openejb.core.cmp.jpa.Employee");
+
+        PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
         EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
         return emf;

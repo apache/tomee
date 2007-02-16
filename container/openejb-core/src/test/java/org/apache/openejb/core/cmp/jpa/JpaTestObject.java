@@ -17,10 +17,6 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import org.apache.openjpa.event.AbstractLifecycleListener;
-import org.apache.openjpa.event.LifecycleEvent;
-import org.apache.openjpa.persistence.OpenJPAEntityManager;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -278,8 +274,8 @@ public class JpaTestObject extends junit.framework.Assert {
     private void createEntityManager() {
         entityManager = entityManagerFactory.createEntityManager();
 
-        OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
-        openjpaEM.addLifecycleListener(new JpaTestObject.OpenJPALifecycleListener(), (Class[])null);
+//        OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
+//        openjpaEM.addLifecycleListener(new JpaTestObject.OpenJPALifecycleListener(), (Class[])null);
     }
 
     private void beginTx() throws Exception {
@@ -317,95 +313,95 @@ public class JpaTestObject extends junit.framework.Assert {
         }
     }
 
-    private class OpenJPALifecycleListener extends AbstractLifecycleListener {
-        protected void eventOccurred(LifecycleEvent event) {
-            int type = event.getType();
-            switch (type) {
-                case LifecycleEvent.BEFORE_PERSIST:
-                    log("  BEFORE_PERSIST");
-                    break;
-                case LifecycleEvent.AFTER_PERSIST:
-                    log("  AFTER_PERSIST");
-                    break;
-                case LifecycleEvent.AFTER_LOAD:
-                    log("  AFTER_LOAD");
-                    break;
-                case LifecycleEvent.BEFORE_STORE:
-                    log("  BEFORE_STORE");
-                    break;
-                case LifecycleEvent.AFTER_STORE:
-                    log("  AFTER_STORE");
-                    break;
-                case LifecycleEvent.BEFORE_CLEAR:
-                    log("  BEFORE_CLEAR");
-                    break;
-                case LifecycleEvent.AFTER_CLEAR:
-                    log("  AFTER_CLEAR");
-                    break;
-                case LifecycleEvent.BEFORE_DELETE:
-                    log("  BEFORE_DELETE");
-                    break;
-                case LifecycleEvent.AFTER_DELETE:
-                    log("  AFTER_DELETE");
-                    break;
-                case LifecycleEvent.BEFORE_DIRTY:
-                    log("  BEFORE_DIRTY");
-                    break;
-                case LifecycleEvent.AFTER_DIRTY:
-                    log("  AFTER_DIRTY");
-                    break;
-                case LifecycleEvent.BEFORE_DIRTY_FLUSHED:
-                    log("  BEFORE_DIRTY_FLUSHED");
-                    break;
-                case LifecycleEvent.AFTER_DIRTY_FLUSHED:
-                    log("  AFTER_DIRTY_FLUSHED");
-                    break;
-                case LifecycleEvent.BEFORE_DETACH:
-                    log("  BEFORE_DETACH");
-                    break;
-                case LifecycleEvent.AFTER_DETACH:
-                    log("  AFTER_DETACH");
-                    break;
-                case LifecycleEvent.BEFORE_ATTACH:
-                    log("  BEFORE_ATTACH");
-                    break;
-                case LifecycleEvent.AFTER_ATTACH:
-                    log("  AFTER_ATTACH");
-                    break;
-                case LifecycleEvent.AFTER_REFRESH:
-                    log("  AFTER_REFRESH");
-                    break;
-                default:
-                    log("  default");
-                    break;
-            }
-            super.eventOccurred(event);
-        }
-
-        public void beforePersist(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-
-        public void afterRefresh(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-
-        public void beforeDetach(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-
-        public void afterDetach(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-
-        public void beforeAttach(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-
-        public void afterAttach(LifecycleEvent event) {
-            eventOccurred(event);
-        }
-    }
+//    private class OpenJPALifecycleListener extends AbstractLifecycleListener {
+//        protected void eventOccurred(LifecycleEvent event) {
+//            int type = event.getType();
+//            switch (type) {
+//                case LifecycleEvent.BEFORE_PERSIST:
+//                    log("  BEFORE_PERSIST");
+//                    break;
+//                case LifecycleEvent.AFTER_PERSIST:
+//                    log("  AFTER_PERSIST");
+//                    break;
+//                case LifecycleEvent.AFTER_LOAD:
+//                    log("  AFTER_LOAD");
+//                    break;
+//                case LifecycleEvent.BEFORE_STORE:
+//                    log("  BEFORE_STORE");
+//                    break;
+//                case LifecycleEvent.AFTER_STORE:
+//                    log("  AFTER_STORE");
+//                    break;
+//                case LifecycleEvent.BEFORE_CLEAR:
+//                    log("  BEFORE_CLEAR");
+//                    break;
+//                case LifecycleEvent.AFTER_CLEAR:
+//                    log("  AFTER_CLEAR");
+//                    break;
+//                case LifecycleEvent.BEFORE_DELETE:
+//                    log("  BEFORE_DELETE");
+//                    break;
+//                case LifecycleEvent.AFTER_DELETE:
+//                    log("  AFTER_DELETE");
+//                    break;
+//                case LifecycleEvent.BEFORE_DIRTY:
+//                    log("  BEFORE_DIRTY");
+//                    break;
+//                case LifecycleEvent.AFTER_DIRTY:
+//                    log("  AFTER_DIRTY");
+//                    break;
+//                case LifecycleEvent.BEFORE_DIRTY_FLUSHED:
+//                    log("  BEFORE_DIRTY_FLUSHED");
+//                    break;
+//                case LifecycleEvent.AFTER_DIRTY_FLUSHED:
+//                    log("  AFTER_DIRTY_FLUSHED");
+//                    break;
+//                case LifecycleEvent.BEFORE_DETACH:
+//                    log("  BEFORE_DETACH");
+//                    break;
+//                case LifecycleEvent.AFTER_DETACH:
+//                    log("  AFTER_DETACH");
+//                    break;
+//                case LifecycleEvent.BEFORE_ATTACH:
+//                    log("  BEFORE_ATTACH");
+//                    break;
+//                case LifecycleEvent.AFTER_ATTACH:
+//                    log("  AFTER_ATTACH");
+//                    break;
+//                case LifecycleEvent.AFTER_REFRESH:
+//                    log("  AFTER_REFRESH");
+//                    break;
+//                default:
+//                    log("  default");
+//                    break;
+//            }
+//            super.eventOccurred(event);
+//        }
+//
+//        public void beforePersist(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//
+//        public void afterRefresh(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//
+//        public void beforeDetach(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//
+//        public void afterDetach(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//
+//        public void beforeAttach(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//
+//        public void afterAttach(LifecycleEvent event) {
+//            eventOccurred(event);
+//        }
+//    }
 
     protected void dump() throws SQLException {
         JpaTestObject.dumpTable(nonJtaDs, "employee");
