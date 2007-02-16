@@ -25,10 +25,6 @@
             </dependency>
         </dependencies>
     </environment>
-    <ns2:persistence-unit-ref>
-        <ns2:persistence-unit-ref-name>persistence/TestUnit</ns2:persistence-unit-ref-name>
-        <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
-    </ns2:persistence-unit-ref>
     <ns2:persistence-context-ref>
         <ns2:persistence-context-ref-name>persistence/TestContext</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
@@ -41,6 +37,10 @@
         <ns2:persistence-context-ref-name>openejb/cmp</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>cmp</ns2:persistence-unit-name>
     </ns2:persistence-context-ref>
+    <ns2:persistence-unit-ref>
+        <ns2:persistence-unit-ref-name>persistence/TestUnit</ns2:persistence-unit-ref-name>
+        <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+    </ns2:persistence-unit-ref>
     <ns2:resource-ref>
         <ns2:ref-name>database</ns2:ref-name>
         <ns2:pattern>

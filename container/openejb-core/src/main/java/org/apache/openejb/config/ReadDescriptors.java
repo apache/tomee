@@ -135,6 +135,8 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
                         g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
+                        g2.getPersistenceContextRef().addAll(bean.getPersistenceContextRef());
+                        g2.getPersistenceUnitRef().addAll(bean.getPersistenceUnitRef());
                         g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
                         g2.getEjbRef().addAll(bean.getEjbRef());
                         g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
