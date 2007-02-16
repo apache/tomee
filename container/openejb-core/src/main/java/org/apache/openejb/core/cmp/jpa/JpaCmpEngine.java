@@ -169,7 +169,7 @@ public class JpaCmpEngine implements CmpEngine {
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
         StringBuilder queryName = new StringBuilder();
-        queryName.append(deploymentInfo.getDeploymentID()).append(".").append(queryMethod.getName());
+        queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
         String shortName = queryName.toString();
         if (queryMethod.getParameterTypes().length > 0) {
             queryName.append('(');

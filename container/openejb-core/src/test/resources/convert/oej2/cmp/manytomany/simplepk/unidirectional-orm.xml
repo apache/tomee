@@ -3,7 +3,7 @@
     <entity name="manytomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.manytomany.manytomanyA">
         <description>A</description>
         <table name="A"/>
-        <named-query name="A.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+        <named-query name="manytomanyA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(A) FROM manytomanyA A</query>
         </named-query>
         <attributes>

@@ -3,7 +3,7 @@
     <entity name="onetomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyA">
         <description>A</description>
         <table name="A"/>
-        <named-query name="A.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+        <named-query name="onetomanyA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(A) FROM onetomanyA A</query>
         </named-query>
         <attributes>
@@ -21,7 +21,7 @@
     <entity name="onetomanyB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyB">
         <description>B</description>
         <table name="B"/>
-        <named-query name="B.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+        <named-query name="onetomanyB.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(B) FROM onetomanyB B</query>
         </named-query>
         <attributes>

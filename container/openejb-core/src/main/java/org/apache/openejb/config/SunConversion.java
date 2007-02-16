@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -42,6 +41,7 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.Field;
 import org.apache.openejb.jee.jpa.Id;
 import org.apache.openejb.jee.jpa.JoinColumn;
+import org.apache.openejb.jee.jpa.JoinTable;
 import org.apache.openejb.jee.jpa.ManyToOne;
 import org.apache.openejb.jee.jpa.NamedQuery;
 import org.apache.openejb.jee.jpa.OneToMany;
@@ -50,8 +50,6 @@ import org.apache.openejb.jee.jpa.PrimaryKeyJoinColumn;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.SecondaryTable;
 import org.apache.openejb.jee.jpa.Table;
-import org.apache.openejb.jee.jpa.JoinTable;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.sun.Cmp;
 import org.apache.openejb.jee.sun.CmpFieldMapping;
@@ -60,7 +58,6 @@ import org.apache.openejb.jee.sun.ColumnName;
 import org.apache.openejb.jee.sun.ColumnPair;
 import org.apache.openejb.jee.sun.Ejb;
 import org.apache.openejb.jee.sun.EntityMapping;
-import org.apache.openejb.jee.sun.FetchedWith;
 import org.apache.openejb.jee.sun.Finder;
 import org.apache.openejb.jee.sun.JaxbSun;
 import org.apache.openejb.jee.sun.OneOneFinders;
@@ -75,7 +72,7 @@ import org.apache.openejb.jee.sun.SunEjbJar;
 //
 
 public class SunConversion implements DynamicDeployer {
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             convertModule(ejbModule, appModule.getCmpMappings());
         }
@@ -127,7 +124,7 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) throws OpenEJBException {
+    public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
        Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
         for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new SunConversion.EntityData(entity));
@@ -146,7 +143,7 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    private void mergeEntityMappings(Map<String, EntityData> entities, EjbJar ejbJar, OpenejbJar openejbJar, SunEjbJar sunEjbJar) throws OpenEJBException {
+    private void mergeEntityMappings(Map<String, EntityData> entities, EjbJar ejbJar, OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
         if (openejbJar == null) return;
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
@@ -176,13 +173,6 @@ public class SunConversion implements DynamicDeployer {
                 cmpFields.add(cmpField.getFieldName());
             }
 
-
-
-            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
-            if (ejbDeployment == null) {
-                throw new OpenEJBException("No deploument info found for ejb " + ejb.getEjbName());
-            }
-
             OneOneFinders oneOneFinders = cmp.getOneOneFinders();
             if (oneOneFinders != null) {
                 for (Finder finder : oneOneFinders.getFinder()) {
@@ -191,9 +181,9 @@ public class SunConversion implements DynamicDeployer {
                     String ejbQl = convertToEjbQl(entityData.entity.getName(), cmpFields, finder.getQueryParams(), queryFilter);
 
                     NamedQuery namedQuery = new NamedQuery();
-                    // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+
                     StringBuilder name = new StringBuilder();
-                    name.append(ejbDeployment.getDeploymentId()).append(".").append(finder.getMethodName());
+                    name.append(entityData.entity.getName()).append(".").append(finder.getMethodName());
                     if (!params.isEmpty()) {
                         name.append('(');
                         boolean first = true;
@@ -212,7 +202,7 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    public void mergeEntityMappings(Map<String, EntityData> entities, EjbModule ejbModule, EntityMappings entityMappings, SunCmpMapping sunCmpMapping) throws OpenEJBException {
+    public void mergeEntityMappings(Map<String, EntityData> entities, EjbModule ejbModule, EntityMappings entityMappings, SunCmpMapping sunCmpMapping) {
         for (EntityMapping bean : sunCmpMapping.getEntityMapping()) {
             SunConversion.EntityData entityData = entities.get(bean.getEjbName());
             if (entityData == null) {
@@ -273,8 +263,8 @@ public class SunConversion implements DynamicDeployer {
                     }
                     field.setColumn(column);
                 }
-                FetchedWith fetchedWith = cmpFieldMapping.getFetchedWith();
                 // todo set fetch lazy when fetchWith is null
+                // FetchedWith fetchedWith = cmpFieldMapping.getFetchedWith();
             }
 
             for (CmrFieldMapping cmrFieldMapping : bean.getCmrFieldMapping()) {

@@ -148,10 +148,10 @@
     <entity name="BasicCmp2" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmp2">
         <description>BasicCmp2Bean</description>
         <table name="entity"/>
-        <named-query name="BasicCmp2Bean.findByLastName(java.lang.String)">
+        <named-query name="BasicCmp2.findByLastName(java.lang.String)">
             <query>SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE o.lastName = ?1</query>
         </named-query>
-        <named-query name="BasicCmp2Bean.findEmptyCollection">
+        <named-query name="BasicCmp2.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE 1 = 0</query>
         </named-query>
         <attributes>
@@ -170,10 +170,10 @@
     <entity name="AOBasicCmp2" class="openejb.org.apache.openejb.test.entity.cmp.AOBasicCmp2">
         <description>AOBasicCmp2Bean</description>
         <table name="entity"/>
-        <named-query name="AOBasicCmp2Bean.findByLastName(java.lang.String)">
+        <named-query name="AOBasicCmp2.findByLastName(java.lang.String)">
             <query>SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE o.lastName = ?1</query>
         </named-query>
-        <named-query name="AOBasicCmp2Bean.findEmptyCollection">
+        <named-query name="AOBasicCmp2.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM AOBasicCmp2 AS o WHERE 1 = 0</query>
         </named-query>
         <attributes>
@@ -192,7 +192,7 @@
     <entity name="EncCmp2" class="openejb.org.apache.openejb.test.entity.cmp.EncCmp2">
         <description>EncCmp2Bean</description>
         <table name="entity"/>
-        <named-query name="EncCmp2Bean.findEmptyCollection">
+        <named-query name="EncCmp2.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM EncCmp2 AS o WHERE 1 = 0</query>
         </named-query>
         <attributes>
@@ -211,7 +211,7 @@
     <entity name="Cmp2RmiIiop" class="openejb.org.apache.openejb.test.entity.cmp.Cmp2RmiIiop">
         <description>Cmp2RMIIIOPBean</description>
         <table name="entity"/>
-        <named-query name="Cmp2RMIIIOPBean.findEmptyCollection">
+        <named-query name="Cmp2RmiIiop.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM Cmp2RmiIiop AS o WHERE 1 = 0</query>
         </named-query>
         <attributes>
@@ -256,7 +256,7 @@
     <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
         <description>ManyOwningSideBean</description>
         <table name="ManyOwning"/>
-        <named-query name="ManyOwningSideBean.ejbSelectSomething(java.lang.Integer)">
+        <named-query name="Order.ejbSelectSomething(java.lang.Integer)">
             <query>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</query>
         </named-query>
         <attributes>

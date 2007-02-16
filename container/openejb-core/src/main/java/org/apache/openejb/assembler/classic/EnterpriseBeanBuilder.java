@@ -211,6 +211,7 @@ class EnterpriseBeanBuilder {
                 String cmpImplClassName = CmpUtil.getCmpImplClassName(entity.abstractSchemaName, entity.ejbClass);
                 cmpImplClass = loadClass(cmpImplClassName, "classNotFound.cmpImplClass");
                 deployment.setCmpImplClass(cmpImplClass);
+                deployment.setAbstractSchemaName(entity.abstractSchemaName);
 
                 for (QueryInfo query : entity.queries) {
                     List<Method> finderMethods = new ArrayList<Method>();

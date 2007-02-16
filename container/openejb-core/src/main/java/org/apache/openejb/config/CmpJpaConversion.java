@@ -145,10 +145,6 @@ public class CmpJpaConversion implements DynamicDeployer {
                 continue;
             }
             EntityBean bean = (EntityBean) enterpriseBean;
-            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
-            if (ejbDeployment == null) {
-                throw new OpenEJBException("No deploument info found for ejb " + bean.getEjbName());
-            }
 
             // Always set the abstract schema name
             if (bean.getAbstractSchemaName() == null) {
@@ -170,9 +166,6 @@ public class CmpJpaConversion implements DynamicDeployer {
 
             // name: the name of the entity in queries
             String entityName = bean.getAbstractSchemaName();
-            if (entityName == null) {
-                entityName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
-            }
             entity.setName(entityName);
 
             // add the entity
@@ -201,7 +194,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                 // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
                 StringBuilder name = new StringBuilder();
-                name.append(ejbDeployment.getDeploymentId()).append(".").append(queryMethod.getMethodName());
+                name.append(entityName).append(".").append(queryMethod.getMethodName());
                 if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
                     name.append('(');
                     boolean first = true;
@@ -218,27 +211,30 @@ public class CmpJpaConversion implements DynamicDeployer {
                 entity.getNamedQuery().add(namedQuery);
             }
             // todo: there should be a common interface between ejb query object and openejb query object
-            for (org.apache.openejb.jee.oejb3.Query query : ejbDeployment.getQuery()) {
-                NamedQuery namedQuery = new NamedQuery();
-                org.apache.openejb.jee.oejb3.QueryMethod queryMethod = query.getQueryMethod();
+            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+            if (ejbDeployment != null) {
+                for (org.apache.openejb.jee.oejb3.Query query : ejbDeployment.getQuery()) {
+                    NamedQuery namedQuery = new NamedQuery();
+                    org.apache.openejb.jee.oejb3.QueryMethod queryMethod = query.getQueryMethod();
 
-                // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
-                StringBuilder name = new StringBuilder();
-                name.append(ejbDeployment.getDeploymentId()).append(".").append(queryMethod.getMethodName());
-                if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
-                    name.append('(');
-                    boolean first = true;
-                    for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
-                        if (!first) name.append(",");
-                        name.append(methodParam);
-                        first = false;
+                    // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+                    StringBuilder name = new StringBuilder();
+                    name.append(entityName).append(".").append(queryMethod.getMethodName());
+                    if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
+                        name.append('(');
+                        boolean first = true;
+                        for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                            if (!first) name.append(",");
+                            name.append(methodParam);
+                            first = false;
+                        }
+                        name.append(')');
                     }
-                    name.append(')');
-                }
-                namedQuery.setName(name.toString());
+                    namedQuery.setName(name.toString());
 
-                namedQuery.setQuery(query.getObjectQl());
-                entity.getNamedQuery().add(namedQuery);
+                    namedQuery.setQuery(query.getObjectQl());
+                    entity.getNamedQuery().add(namedQuery);
+                }
             }
         }
 

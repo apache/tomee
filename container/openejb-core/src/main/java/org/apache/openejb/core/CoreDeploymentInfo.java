@@ -849,6 +849,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private String primaryKeyField;
     private String[] cmrFields;
     private Class cmpImplClass;
+    private String abstractSchemaName;
 
     private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
 
@@ -898,6 +899,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setCmpImplClass(Class cmpImplClass) {
         this.cmpImplClass = cmpImplClass;
+    }
+
+    public String getAbstractSchemaName() {
+        return abstractSchemaName;
+    }
+
+    public void setAbstractSchemaName(String abstractSchemaName) {
+        this.abstractSchemaName = abstractSchemaName;
     }
 
     public void setJarPath(String jarPath) {

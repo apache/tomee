@@ -3,7 +3,7 @@
     <entity name="OneToOneA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneA">
         <description>A</description>
         <table name="A"/>
-        <named-query name="A.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+        <named-query name="OneToOneA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(A) FROM OneToOneA A</query>
         </named-query>
         <attributes>
@@ -18,7 +18,7 @@
     <entity name="OneToOneB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneB">
         <description>B</description>
         <table name="B"/>
-        <named-query name="B.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+        <named-query name="OneToOneB.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(B) FROM OneToOneB B</query>
         </named-query>
         <attributes>
