@@ -21,6 +21,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
 
@@ -29,12 +30,23 @@ import org.apache.openejb.spi.SecurityService;
  */
 public class StatelessContext extends BaseSessionContext {
 
+    protected final static State[] states = new State[Operation.values().length];
+
     public StatelessContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
 
     public StatelessContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
         super(transactionManager, securityService, userTransaction);
+    }
+
+    protected State getState() {
+        Operation operation = ThreadContext.getCurrentOperation();
+        State state = states[operation.ordinal()];
+
+        if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");
+
+        return state;
     }
 
     /**

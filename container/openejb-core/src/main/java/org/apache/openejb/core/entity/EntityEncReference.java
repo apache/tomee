@@ -18,9 +18,11 @@ package org.apache.openejb.core.entity;
 
 import javax.naming.NameNotFoundException;
 
+import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.Reference;
-import org.apache.openejb.core.Operation;
 
 
 /**
@@ -41,15 +43,9 @@ public class EntityEncReference extends EncReference {
      * method ensures that the entity bean is in the correct state before the super
      * class can return the requested reference object.
      */
-    public void checkOperation(Operation operation) throws NameNotFoundException {
-
-        /*        if( operation == Operations.SET_CONTEXT ||
-            operation == Operations.UNSET_CONTEXT ||
-            operation == Operations.PASSIVATE ||
-            operation == Operations.ACTIVATE ){
-                throw new NameNotFoundException("Operation Not Allowed");
-        }
-*/
+    public void checkOperation(BaseContext context) throws NameNotFoundException {
+        if (!context.isEnterpriseBeanAccessAllowed())
+            throw new NameNotFoundException("Operation Not Allowed");
     }
 
 }

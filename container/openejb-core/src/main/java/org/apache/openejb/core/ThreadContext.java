@@ -26,6 +26,7 @@ public class ThreadContext {
     private static final Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
+    private static final ThreadLocal<Operation> currentOperation = new ThreadLocal<Operation>();
 
     public static ThreadContext getThreadContext() {
         ThreadContext threadContext = threadStorage.get();
@@ -92,9 +93,9 @@ public class ThreadContext {
     private final CoreDeploymentInfo deploymentInfo;
     private final Object primaryKey;
     private final Object securityIdentity;
-    private Operation currentOperation;
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
+    private BaseContext beanContext;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
         if (deploymentInfo == null) {
@@ -103,6 +104,15 @@ public class ThreadContext {
         this.deploymentInfo = deploymentInfo;
         this.primaryKey = primaryKey;
         this.securityIdentity = securityIdentity;
+    }
+
+    public ThreadContext(ThreadContext that) {
+        this.deploymentInfo = that.deploymentInfo;
+        this.primaryKey = that.primaryKey;
+        this.securityIdentity = that.securityIdentity;
+        this.data.putAll(that.data);
+        this.oldClassLoader = that.oldClassLoader;
+        this.beanContext = that.beanContext;
     }
 
     public CoreDeploymentInfo getDeploymentInfo() {
@@ -117,12 +127,20 @@ public class ThreadContext {
         return securityIdentity;
     }
 
-    public Operation getCurrentOperation() {
-        return currentOperation;
+    public BaseContext getBeanContext() {
+        return beanContext;
     }
 
-    public void setCurrentOperation(Operation op) {
-        currentOperation = op;
+    public void setBeanContext(BaseContext beanContext) {
+        this.beanContext = beanContext;
+    }
+
+    public static Operation getCurrentOperation() {
+        return currentOperation.get();
+    }
+
+    public static void setCurrentOperation(Operation operation) {
+        currentOperation.set(operation);
     }
 
     @SuppressWarnings({"unchecked"})

@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateful;
 import javax.naming.NameNotFoundException;
 
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 
@@ -29,10 +30,8 @@ public class StatefulEncReference extends EncReference {
         super(ref);
     }
 
-    public void checkOperation(Operation operation) throws NameNotFoundException {
-
-        if (operation == Operation.AFTER_COMPLETION) {
+    public void checkOperation(BaseContext context) throws NameNotFoundException {
+        if (!context.isEnterpriseBeanAccessAllowed())
             throw new NameNotFoundException("Operation Not Allowed");
-        }
     }
 }

@@ -108,7 +108,7 @@ public class StatelessInstanceManager {
                     ctx.bind("java:comp/EJBContext", sessionContext);
                 }
                 if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
-                    callContext.setCurrentOperation(Operation.SET_CONTEXT);
+                    callContext.setCurrentOperation(Operation.INJECTION);
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
                 }
                 for (Injection injection : deploymentInfo.getInjections()) {
@@ -127,6 +127,7 @@ public class StatelessInstanceManager {
                         logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
                     }
                 }
+
                 bean = objectRecipe.create(beanClass.getClassLoader());
                 Map unsetProperties = objectRecipe.getUnsetProperties();
                 if (unsetProperties.size() > 0){
@@ -134,7 +135,7 @@ public class StatelessInstanceManager {
                         logger.warn("Injection: No such property '"+property+"' in class "+beanClass.getName());
                     }
                 }
-                callContext.setCurrentOperation(Operation.CREATE);
+                callContext.setCurrentOperation(Operation.LIFECYCLE);
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null){
@@ -164,7 +165,7 @@ public class StatelessInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return (SessionContext) new OldStatelessContext(transactionManager, securityService);
+        return new StatelessContext(transactionManager, securityService);
     }
 
     public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {

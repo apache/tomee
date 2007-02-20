@@ -20,6 +20,7 @@ import javax.naming.NameNotFoundException;
 import javax.transaction.UserTransaction;
 
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ivm.naming.EncReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -47,9 +48,8 @@ public class StatefulEncUserTransaction extends EncReference {
      * method ensures that the stateful bean is in the correct state before the super
      * class can return the requested reference object.
      */
-    public void checkOperation(Operation operation) throws NameNotFoundException {
-        if (operation == Operation.SET_CONTEXT || operation == Operation.AFTER_COMPLETION || operation == Operation.BEFORE_COMPLETION) {
+    public void checkOperation(BaseContext context) throws NameNotFoundException {
+        if (!context.isUserTransactionAccessAllowed())
             throw new NameNotFoundException("Operation Not Allowed");
-        }
     }
 }

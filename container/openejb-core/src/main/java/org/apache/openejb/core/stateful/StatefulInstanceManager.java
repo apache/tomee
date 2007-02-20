@@ -131,7 +131,7 @@ public class StatefulInstanceManager {
                 ctx.bind("java:comp/EJBContext", sessionContext);
             }
             if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
-                callContext.setCurrentOperation(Operation.SET_CONTEXT);
+                callContext.setCurrentOperation(Operation.INJECTION);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
             }
             for (Injection injection : deploymentInfo.getInjections()) {
@@ -189,7 +189,7 @@ public class StatefulInstanceManager {
 
     private SessionContext createSessionContext() {
         StatefulUserTransaction userTransaction = new StatefulUserTransaction(new CoreUserTransaction(transactionManager), jtaEntityManagerRegistry);
-        return new OldStatefulContext(transactionManager, securityService, userTransaction);
+        return new StatefulContext(transactionManager, securityService, userTransaction);
     }
 
     public Object obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {

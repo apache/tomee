@@ -18,8 +18,8 @@ package org.apache.openejb.core.ivm.naming;
 
 import javax.naming.NameNotFoundException;
 
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.Operation;
 
 
 /**
@@ -45,16 +45,20 @@ public abstract class EncReference extends Reference {
         checking = value;
     }
 
-    /*
-    * Obtains the referenced object.
-    */
+    /**
+     * Obtains the referenced object.
+     * TODO: I think that once the bean context is properly hooked up
+     * throughout the server, then we can remove the check for a null
+     * bean context.
+     */
     public Object getObject() throws javax.naming.NamingException {
         ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext != null) {
-            checkOperation(callContext.getCurrentOperation());
+            BaseContext beanContext = callContext.getBeanContext();
+            if (beanContext != null) checkOperation(beanContext);
         }
         return ref.getObject();
     }
 
-    public abstract void checkOperation(Operation opertionType) throws NameNotFoundException;
+    public abstract void checkOperation(BaseContext beanContext) throws NameNotFoundException;
 }

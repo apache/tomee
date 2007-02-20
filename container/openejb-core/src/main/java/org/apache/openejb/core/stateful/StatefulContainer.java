@@ -247,7 +247,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
 
         ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
-        createContext.setCurrentOperation(Operation.CREATE);
+        createContext.setCurrentOperation(Operation.LIFECYCLE);
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);

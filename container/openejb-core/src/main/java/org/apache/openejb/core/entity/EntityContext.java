@@ -41,6 +41,8 @@ import org.apache.openejb.util.proxy.ProxyManager;
  */
 public class EntityContext extends BaseContext implements javax.ejb.EntityContext {
 
+    protected final static State[] states = new State[Operation.values().length];
+
     public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
@@ -49,16 +51,25 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         super(transactionManager, securityService, userTransaction);
     }
 
+    protected State getState() {
+        Operation operation = ThreadContext.getCurrentOperation();
+        State state = states[operation.ordinal()];
+
+        if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");
+
+        return state;
+    }
+
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        return ((javax.ejb.EntityContext) getState()).getEJBLocalObject();
+        return ((EntityState) getState()).getEJBLocalObject();
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
-        return ((javax.ejb.EntityContext) getState()).getEJBObject();
+        return ((EntityState) getState()).getEJBObject();
     }
 
     public Object getPrimaryKey() throws IllegalStateException {
-        return ((javax.ejb.EntityContext) getState()).getPrimaryKey();
+        return ((EntityState) getState()).getPrimaryKey();
     }
 
     private static class EntityState extends State {

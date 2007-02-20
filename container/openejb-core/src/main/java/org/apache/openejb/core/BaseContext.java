@@ -44,8 +44,6 @@ public abstract class BaseContext implements EJBContext, Serializable {
     private final UserTransaction userTransaction;
     private final SecurityService securityService;
     private final TransactionManager transactionManager;
-    private State state;
-    protected final static State[] states = new State[Operation.values().length];
 
     public BaseContext(TransactionManager transactionManager, SecurityService securityService) {
         this.transactionManager = transactionManager;
@@ -59,100 +57,86 @@ public abstract class BaseContext implements EJBContext, Serializable {
         this.userTransaction = userTransaction;
     }
 
-    public void setOperation(Operation operation) {
-        State state = states[operation.ordinal()];
-
-        if (state == null) throw new IllegalArgumentException("Invalid operation for this context");
-
-        setState(state);
-    }
-
-    protected State getState() {
-        return state;
-    }
-
-    protected void setState(State state) {
-        this.state = state;
-    }
+    protected abstract State getState();
 
     public EJBHome getEJBHome() {
-        return state.getEJBHome();
+        return getState().getEJBHome();
     }
 
     public EJBLocalHome getEJBLocalHome() {
-        return state.getEJBLocalHome();
+        return getState().getEJBLocalHome();
     }
 
     public Properties getEnvironment() {
-        return state.getEnvironment();
+        return getState().getEnvironment();
     }
 
     public Identity getCallerIdentity() {
-        return state.getCallerIdentity();
+        return getState().getCallerIdentity();
     }
 
     public Principal getCallerPrincipal() {
-        return state.getCallerPrincipal(securityService);
+        return getState().getCallerPrincipal(securityService);
     }
 
     public boolean isCallerInRole(Identity identity) {
-        return state.isCallerInRole(identity);
+        return getState().isCallerInRole(identity);
     }
 
     public boolean isCallerInRole(String roleName) {
-        return state.isCallerInRole(securityService, roleName);
+        return getState().isCallerInRole(securityService, roleName);
     }
 
     public UserTransaction getUserTransaction() throws IllegalStateException {
-        return state.getUserTransaction(userTransaction);
+        return getState().getUserTransaction(userTransaction);
     }
 
     public void setRollbackOnly() throws IllegalStateException {
-        state.setRollbackOnly(transactionManager);
+        getState().setRollbackOnly(transactionManager);
     }
 
     public boolean getRollbackOnly() throws IllegalStateException {
-        return state.getRollbackOnly(transactionManager);
+        return getState().getRollbackOnly(transactionManager);
     }
 
     public TimerService getTimerService() throws IllegalStateException {
-        return state.getTimerService();
+        return getState().getTimerService();
     }
 
     public Object lookup(String name) {
-        return state.lookup(name);
+        return getState().lookup(name);
     }
 
     public boolean isUserTransactionAccessAllowed() {
-        return state.isUserTransactionAccessAllowed();
+        return getState().isUserTransactionAccessAllowed();
     }
 
     public boolean isMessageContextAccessAllowed() {
-        return state.isMessageContextAccessAllowed();
+        return getState().isMessageContextAccessAllowed();
     }
 
     public boolean isJNDIAccessAllowed() {
-        return state.isJNDIAccessAllowed();
+        return getState().isJNDIAccessAllowed();
     }
 
     public boolean isResourceManagerAccessAllowed() {
-        return state.isResourceManagerAccessAllowed();
+        return getState().isResourceManagerAccessAllowed();
     }
 
     public boolean isEnterpriseBeanAccessAllowed() {
-        return state.isEnterpriseBeanAccessAllowed();
+        return getState().isEnterpriseBeanAccessAllowed();
     }
 
     public boolean isEntityManagerFactoryAccessAllowed() {
-        return state.isEntityManagerFactoryAccessAllowed();
+        return getState().isEntityManagerFactoryAccessAllowed();
     }
 
     public boolean isEntityManagerAccessAllowed() {
-        return state.isEntityManagerAccessAllowed();
+        return getState().isEntityManagerAccessAllowed();
     }
 
     public boolean isTimerAccessAllowed() {
-        return state.isTimerAccessAllowed();
+        return getState().isTimerAccessAllowed();
     }
 
     protected static class State {

@@ -48,7 +48,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.entity.OldEntityContext;
+import org.apache.openejb.core.entity.EntityContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -304,7 +304,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            entityBean.setEntityContext(new OldEntityContext(transactionManager, securityService));
+            entityBean.setEntityContext(new EntityContext(transactionManager, securityService));
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
