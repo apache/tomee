@@ -120,14 +120,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         
         chain.add(new AnnotationDeployer());
 
-        if (System.getProperty("duct tape") != null){
-            chain.add(new GeronimoMappedName());
-        }
-
         chain.add(new AutoConfig());
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2CmpConversion());
         chain.add(new SunConversion());
+
+        if (System.getProperty("duct tape") != null){
+            // must be after CmpJpaConversion since it adds new persistence-context-refs
+            chain.add(new GeronimoMappedName());
+        }
 
         if (offline) {
             AutoDeploy autoDeploy = new AutoDeploy(this);

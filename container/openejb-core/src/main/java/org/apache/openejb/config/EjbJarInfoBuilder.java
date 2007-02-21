@@ -494,7 +494,12 @@ public class EjbJarInfoBuilder {
         TransactionType txType = mdb.getTransactionType();
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
 
-        bean.mdbInterface = mdb.getMessagingType();
+        if (mdb.getMessagingType() != null) {
+            bean.mdbInterface = mdb.getMessagingType();
+        } else {
+            bean.mdbInterface = "javax.jms.MessageListener";
+        }
+
         if (mdb.getMessageDestinationType() != null) {
             bean.activationProperties.put("destinationType", mdb.getMessageDestinationType());
         }
