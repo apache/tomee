@@ -194,16 +194,6 @@
 
   <!--
   # ================================================
-  # Default Proxy Factory implementation for JDK 1.2
-  # ================================================
-  -->
-  <ServiceProvider
-          id="Default JDK 1.2 ProxyFactory"
-          provider-type="ProxyFactory"
-          class-name="org.apache.openejb.util.proxy.Jdk12ProxyFactory"/>
-
-  <!--
-  # ================================================
   # Default Proxy Factory implementation for JDK 1.3
   # ================================================
   -->
