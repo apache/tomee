@@ -59,8 +59,7 @@ public class DeploymentLoader {
         logger = EjbJarUtils.logger;
     }
 
-
-    public AppModule load(File jarFile) throws OpenEJBException {
+    public AppModule load(File jarFile) throws OpenEJBException, UnsupportedModuleTypeException, UnknownModuleTypeException {
         ClassLoader classLoader = getClassLoader(jarFile);
 
         URL baseUrl = getFileUrl(jarFile);
@@ -69,7 +68,7 @@ public class DeploymentLoader {
         try {
             moduleClass = discoverModuleType(baseUrl, classLoader, true);
         } catch (Exception e) {
-            throw new OpenEJBException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
+            throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
         }
 
         if (AppModule.class.equals(moduleClass)) {
@@ -248,7 +247,7 @@ public class DeploymentLoader {
 
             return appModule;
         } else {
-            throw new OpenEJBException("Unsupported module type: "+moduleClass.getSimpleName());
+            throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
         }
     }
 
@@ -295,7 +294,7 @@ public class DeploymentLoader {
     }
 
 
-    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnsupportedOperationException {
+    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
 
         Map<String, URL> descriptors = finder.getResourcesMap("META-INF");
@@ -336,7 +335,7 @@ public class DeploymentLoader {
             }
         }
 
-        throw new UnsupportedOperationException("Unknown module type");
+        throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
     }
 
     private File unpack(File jarFile) throws OpenEJBException {

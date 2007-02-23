@@ -222,7 +222,7 @@ public class DeploymentsResolver {
                     }
                 } catch (IOException e) {
                     DeploymentLoader.logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
-                } catch (UnsupportedOperationException ignore) {
+                } catch (UnknownModuleTypeException ignore) {
                 }
             }
             long end = System.currentTimeMillis();
