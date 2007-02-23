@@ -131,6 +131,11 @@ public class IvmContext implements Context, Serializable {
 
             fastCache.put(compoundName, obj);
         }
+
+        if (obj == null){
+            throw new javax.naming.NameNotFoundException("Name \"" + compositName + "\" not found.");
+        }
+
         if (obj.getClass() == IvmContext.class)
             ((IvmContext) obj).myEnv = myEnv;
         else if (obj instanceof Reference) {
