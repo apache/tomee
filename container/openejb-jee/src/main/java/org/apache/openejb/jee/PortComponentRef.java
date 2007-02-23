@@ -46,7 +46,7 @@ public class PortComponentRef {
     @XmlElement(name = "service-endpoint-interface", required = true)
     protected String serviceEndpointInterface;
     @XmlElement(name = "enable-mtom")
-    protected boolean enableMtom;
+    protected Boolean enableMtom;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
     @XmlAttribute
@@ -63,7 +63,7 @@ public class PortComponentRef {
     }
 
     public boolean getEnableMtom() {
-        return enableMtom;
+        return enableMtom != null && enableMtom;
     }
 
     public void setEnableMtom(boolean value) {

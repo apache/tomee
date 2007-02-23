@@ -182,6 +182,47 @@
                     <injection-target-name>$A</injection-target-name>
                 </injection-target>
             </service-ref>
+            <service-ref>
+                <description>String</description>
+                <display-name>token</display-name>
+                <icon>
+                    <small-icon>token</small-icon>
+                    <large-icon>token</large-icon>
+                </icon>
+                <service-ref-name>token</service-ref-name>
+                <service-interface>token</service-interface>
+                <service-ref-type>token</service-ref-type>
+                <wsdl-file>http://www.altova.com</wsdl-file>
+                <jaxrpc-mapping-file>token</jaxrpc-mapping-file>
+                <service-qname>q:name</service-qname>
+                <port-component-ref>
+                    <service-endpoint-interface>token</service-endpoint-interface>
+                    <port-component-link>token</port-component-link>
+                </port-component-ref>
+                <handler>
+                    <description>String</description>
+                    <display-name>token</display-name>
+                    <icon>
+                        <small-icon>token</small-icon>
+                        <large-icon>token</large-icon>
+                    </icon>
+                    <handler-name>token</handler-name>
+                    <handler-class>token</handler-class>
+                    <init-param>
+                        <description>String</description>
+                        <param-name>token</param-name>
+                        <param-value>String</param-value>
+                    </init-param>
+                    <soap-header>q:name</soap-header>
+                    <soap-role>token</soap-role>
+                    <port-name>token</port-name>
+                </handler>
+                <mapped-name>String</mapped-name>
+                <injection-target>
+                    <injection-target-class>token</injection-target-class>
+                    <injection-target-name>$A</injection-target-name>
+                </injection-target>
+            </service-ref>
             <resource-ref>
                 <description>String</description>
                 <res-ref-name>token</res-ref-name>
