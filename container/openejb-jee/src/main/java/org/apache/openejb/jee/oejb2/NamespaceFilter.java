@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Stack;
 
 /**
  * @version $Rev$ $Date$
@@ -102,7 +103,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("resource-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("resource-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("return-type", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("security", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
+        ns.put("security", "http://geronimo.apache.org/xml/ns/security-1.2");
         ns.put("sequence-name", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("sequence-table", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("server-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
@@ -132,7 +133,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         duplicates.put("artifactId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("groupId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("module", Arrays.asList("http://geronimo.apache.org/xml/ns/j2ee/application-1.2", "http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
-        duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
+        duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2", "http://geronimo.apache.org/xml/ns/security-1.2"));
         duplicates.put("pattern", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("version", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("table-name", Arrays.asList("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "http://openejb.apache.org/xml/ns/pkgen-2.1"));
@@ -142,12 +143,21 @@ public class NamespaceFilter extends XMLFilterImpl {
         super(xmlReader);
     }
 
+    private final Stack<String> visibleNamespaces = new Stack<String>();
+
+    public void startDocument() throws SAXException {
+        visibleNamespaces.push("");
+        super.startDocument();
+    }
+
     //String uri, String localName, String qName, Attributes atts
     public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
         if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
         }
-        
+
+        String previousNs = visibleNamespaces.peek();
+
         String correctNamespace = ns.get(localName);
         boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
         if (correctable && correctNamespace != null) {
@@ -161,8 +171,16 @@ public class NamespaceFilter extends XMLFilterImpl {
             } else {
                 uri = possibleNamespaces.get(0);
             }
+        } else if (correctable && !previousNs.equals(uri) && !previousNs.equals("")) {
+            uri = previousNs;
         }
-        previousNs = uri;
+
+        visibleNamespaces.push(uri);
         super.startElement(uri, localName, qname, atts);
+    }
+
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        visibleNamespaces.pop();
+        super.endElement(uri, localName, qName);
     }
 }

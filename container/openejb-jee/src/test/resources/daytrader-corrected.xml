@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns3:openejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://java.sun.com/xml/ns/persistence" xmlns:ns7="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
+<ns3:openejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-1.2" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
     <ns2:cmp-connection-factory>
         <ns2:resource-link>jdbc/TradeDataSource</ns2:resource-link>
     </ns2:cmp-connection-factory>
@@ -348,21 +348,21 @@
             </ns3:ejb-relationship-role>
         </ns3:ejb-relation>
     </ns3:relationships>
-    <ns6:persistence version="1.0">
-        <ns6:persistence-unit transaction-type="JTA" name="daytrader">
-            <ns6:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns6:provider>
-            <ns6:jta-data-source>?name=jdbc/TradeDataSource</ns6:jta-data-source>
-            <ns6:non-jta-data-source>?name=jdbc/NoTxTradeDataSource</ns6:non-jta-data-source>
-            <ns6:class>org.apache.geronimo.samples.daytrader.AccountDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.AccountProfileDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.HoldingDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.OrderDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.QuoteDataBean</ns6:class>
-            <ns6:exclude-unlisted-classes>false</ns6:exclude-unlisted-classes>
-            <ns6:properties>
-                <ns6:property value="org.apache.openjpa.jdbc.sql.DerbyDictionary" name="openjpa.jdbc.DBDictionary"/>
-                <ns6:property value="table(Table=OPENJPASEQ, Increment=100)" name="openjpa.Sequence"/>
-            </ns6:properties>
-        </ns6:persistence-unit>
-    </ns6:persistence>
+    <ns7:persistence version="1.0">
+        <ns7:persistence-unit transaction-type="JTA" name="daytrader">
+            <ns7:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns7:provider>
+            <ns7:jta-data-source>?name=jdbc/TradeDataSource</ns7:jta-data-source>
+            <ns7:non-jta-data-source>?name=jdbc/NoTxTradeDataSource</ns7:non-jta-data-source>
+            <ns7:class>org.apache.geronimo.samples.daytrader.AccountDataBean</ns7:class>
+            <ns7:class>org.apache.geronimo.samples.daytrader.AccountProfileDataBean</ns7:class>
+            <ns7:class>org.apache.geronimo.samples.daytrader.HoldingDataBean</ns7:class>
+            <ns7:class>org.apache.geronimo.samples.daytrader.OrderDataBean</ns7:class>
+            <ns7:class>org.apache.geronimo.samples.daytrader.QuoteDataBean</ns7:class>
+            <ns7:exclude-unlisted-classes>false</ns7:exclude-unlisted-classes>
+            <ns7:properties>
+                <ns7:property value="org.apache.openjpa.jdbc.sql.DerbyDictionary" name="openjpa.jdbc.DBDictionary"/>
+                <ns7:property value="table(Table=OPENJPASEQ, Increment=100)" name="openjpa.Sequence"/>
+            </ns7:properties>
+        </ns7:persistence-unit>
+    </ns7:persistence>
 </ns3:openejb-jar>

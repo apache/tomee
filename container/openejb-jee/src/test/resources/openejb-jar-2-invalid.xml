@@ -537,6 +537,16 @@
             <name>String</name>
         </pattern>
     </message-destination>
+    <security>
+        <default-principal>
+            <principal class="String" name="String"/>
+            <named-username-password-credential>
+                <name>String</name>
+                <username>String</username>
+                <password>String</password>
+            </named-username-password-credential>
+        </default-principal>
+    </security>
     <gbean name="String" class="String">
         <attribute type="String" name="String">String</attribute>
         <attribute type="String" name="String">String</attribute>

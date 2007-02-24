@@ -91,8 +91,8 @@ public class GeronimoEjbJarType {
     @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
 
-    @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-    protected AbstractSecurityType security;
+    @XmlElementRef(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
+    protected JAXBElement<? extends AbstractSecurityType> security;
 
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
@@ -256,28 +256,12 @@ public class GeronimoEjbJarType {
         return this.messageDestination;
     }
 
-    /**
-     * Gets the value of the security property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AbstractSecurityType }
-     *
-     */
-    public AbstractSecurityType getSecurity() {
+    public JAXBElement<? extends AbstractSecurityType> getSecurity() {
         return security;
     }
 
-    /**
-     * Sets the value of the security property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AbstractSecurityType }
-     *
-     */
-    public void setSecurity(AbstractSecurityType value) {
-        this.security = value;
+    public void setSecurity(JAXBElement<? extends AbstractSecurityType> security) {
+        this.security = security;
     }
 
     /**

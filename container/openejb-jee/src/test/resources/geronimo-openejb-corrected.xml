@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns7:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns5="http://java.sun.com/xml/ns/persistence" xmlns:ns6="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns7="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
+<ns8:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns5="http://geronimo.apache.org/xml/ns/security-1.2" xmlns:ns6="http://java.sun.com/xml/ns/persistence" xmlns:ns7="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns8="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
     <environment>
         <moduleId>
             <groupId>itests</groupId>
@@ -89,20 +89,20 @@
             <ns2:name>SystemDatasource</ns2:name>
         </ns2:pattern>
     </ns2:resource-ref>
-    <ns5:persistence version="1.0">
-        <ns5:persistence-unit transaction-type="JTA" name="cmp">
-            <ns5:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns5:provider>
-            <ns5:jta-data-source>?name=SystemDatasource</ns5:jta-data-source>
-            <ns5:non-jta-data-source>?name=NoTxDatasource</ns5:non-jta-data-source>
-            <ns5:mapping-file>META-INF/jpa.mapping.xml</ns5:mapping-file>
-            <ns5:class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ns5:class>
-            <ns5:exclude-unlisted-classes>false</ns5:exclude-unlisted-classes>
-        </ns5:persistence-unit>
-        <ns5:persistence-unit transaction-type="JTA" name="openjpa-test-unit">
-            <ns5:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns5:provider>
-            <ns5:jta-data-source>?name=SystemDatasource</ns5:jta-data-source>
-            <ns5:non-jta-data-source>?name=NoTxDatasource</ns5:non-jta-data-source>
-            <ns5:class>org.apache.openejb.test.entity.Customer</ns5:class>
-        </ns5:persistence-unit>
-    </ns5:persistence>
-</ns7:ejb-jar>
+    <ns6:persistence version="1.0">
+        <ns6:persistence-unit transaction-type="JTA" name="cmp">
+            <ns6:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns6:provider>
+            <ns6:jta-data-source>?name=SystemDatasource</ns6:jta-data-source>
+            <ns6:non-jta-data-source>?name=NoTxDatasource</ns6:non-jta-data-source>
+            <ns6:mapping-file>META-INF/jpa.mapping.xml</ns6:mapping-file>
+            <ns6:class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ns6:class>
+            <ns6:exclude-unlisted-classes>false</ns6:exclude-unlisted-classes>
+        </ns6:persistence-unit>
+        <ns6:persistence-unit transaction-type="JTA" name="openjpa-test-unit">
+            <ns6:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns6:provider>
+            <ns6:jta-data-source>?name=SystemDatasource</ns6:jta-data-source>
+            <ns6:non-jta-data-source>?name=NoTxDatasource</ns6:non-jta-data-source>
+            <ns6:class>org.apache.openejb.test.entity.Customer</ns6:class>
+        </ns6:persistence-unit>
+    </ns6:persistence>
+</ns8:ejb-jar>

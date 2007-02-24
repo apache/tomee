@@ -20,6 +20,7 @@ package org.apache.openejb.jee.oejb2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAnyElement;
 
 
 /**
@@ -43,6 +44,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "abstract-securityType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
 public abstract class AbstractSecurityType {
-
 
 }
