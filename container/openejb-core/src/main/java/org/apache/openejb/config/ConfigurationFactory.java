@@ -511,6 +511,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         info.description = provider.getDescription();
         info.displayName = provider.getDisplayName();
         info.className = provider.getClassName();
+        info.factoryMethod = provider.getFactoryName();
         info.id = serviceId;
         info.properties = props;
         info.constructorArgs.addAll(parseConstructorArgs(provider));

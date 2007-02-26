@@ -41,6 +41,8 @@ public class ServiceProvider implements java.io.Serializable {
 
     private java.lang.String _className;
 
+    private java.lang.String _factoryName;
+
     private java.lang.String _constructor;
 
     private java.lang.String _content = "";
@@ -62,6 +64,10 @@ public class ServiceProvider implements java.io.Serializable {
 
     public java.lang.String getClassName() {
         return this._className;
+    }
+
+    public String getFactoryName() {
+        return _factoryName;
     }
 
     public java.lang.String getContent() {
@@ -120,6 +126,10 @@ public class ServiceProvider implements java.io.Serializable {
 
     public void setClassName(java.lang.String className) {
         this._className = className;
+    }
+
+    public void setFactoryName(String factoryName) {
+        this._factoryName = factoryName;
     }
 
     public void setContent(java.lang.String content) {

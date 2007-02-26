@@ -296,5 +296,11 @@
           constructor="transactionManager"
           class-name="org.apache.openejb.resource.SharedLocalConnectionManager"/>
 
+  <!--<ServiceProvider
+          id="Default Local TX ConnectionManager"
+          provider-type="ConnectionManager"
+          class-name="org.apache.openejb.resource.GeronimoConnectionManagerFactory"
+          factory-name="create"/>-->
+
 
 </ServiceJar>
