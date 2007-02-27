@@ -20,6 +20,7 @@ package org.apache.openejb.config;
 import java.util.List;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.jee.ResourceRef;
@@ -135,61 +136,19 @@ public class AutoDeploy implements DynamicDeployer {
 
                 ResourceLink link = ejbDeployment.getResourceLink(ref.getResRefName());
                 if (link == null) {
-                    link = new ResourceLink();
-                    List<String> connectorMap = configFactory.getConnectorIds();
                     String resRefName = ref.getResRefName();
 
-                    String id = null;
-                    if (!connectorMap.contains(resRefName)) {
-                        String name = resRefName.replaceFirst(".*/", "");
-                        if (!connectorMap.contains(name)) {
-                            String message = "No existing Connector found while attempting to Auto-link unmapped res-ref-name '"+resRefName+"' for bean '" + ejbDeployment.getDeploymentId() + "'.  Looked for Connector(id=" + resRefName + ") and Connector(id=" + name + ")";
-                            if (!autoCreateConnectors){
-                                throw new OpenEJBException(message);
-                            }
-
-                            logger.error(message);
-
-                            if (connectorMap.size() > 0) {
-                                id = connectorMap.get(0);
-                            } else {
-                                ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
-                                id = connectorInfo.id;
-                                logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                                configFactory.install(connectorInfo);
-                            }
-                        }
-                    }
+                    String id = getDataSourceId(ejbDeployment.getDeploymentId(), resRefName);
                     logger.warning("Auto-linking res-ref-name '" + resRefName + "' in bean " + ejbDeployment.getDeploymentId() + " to Connector(id=" + id + ")");
+
+                    link = new ResourceLink();
                     link.setResId(id);
                     link.setResRefName(resRefName);
                     ejbDeployment.addResourceLink(link);
                 } else {
-
-                    List<String> connectorMap = configFactory.getConnectorIds();
-                    if (!connectorMap.contains(link.getResId())) {
-                        String message = "Bad resource-link in bean '" + ejbDeployment.getDeploymentId() + "': No such connector with specified res-id: ResourceLink(res-ref-name=" + link.getResRefName() + ", res-id" + link.getResId() + ")";
-                        if (!autoCreateConnectors){
-                            throw new OpenEJBException(message);
-                        }
-
-                        logger.error(message);
-
-                        String id = null;
-                        if (connectorMap.size() > 0) {
-                            id = connectorMap.get(0);
-                        } else {
-                            ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
-                            id = connectorInfo.id;
-                            logger.warning("Auto-creating a connector with res-id " + link.getResId() + " for bean '"+ejbDeployment.getDeploymentId()+"'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                            configFactory.install(connectorInfo);
-                        }
-                        String resRefName = ref.getResRefName();
-                        String badResId = link.getResId();
-                        logger.warning("Auto-linking res-ref-name '" + resRefName + "' in bean " + ejbDeployment.getDeploymentId() + " to Connector(id=" + id + ").  Ignoring configured link to non-existent Connector(id="+badResId +")");
-                        link.setResId(id);
-                        link.setResRefName(resRefName);
-                    }
+                    String id = getDataSourceId(ejbDeployment.getDeploymentId(), link.getResId());
+                    link.setResId(id);
+                    link.setResRefName(ref.getResRefName());
                 }
             }
         }
@@ -204,11 +163,11 @@ public class AutoDeploy implements DynamicDeployer {
 
         Persistence persistence = persistenceModule.getPersistence();
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
-            String jtaDataSourceId = getDataSourceId(persistenceUnit.getJtaDataSource(), persistenceUnit);
+            String jtaDataSourceId = getDataSourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource());
             if (jtaDataSourceId != null) {
                 persistenceUnit.setJtaDataSource("java:openejb/Connector/" + jtaDataSourceId);
             }
-            String nonJtaDataSourceId = getDataSourceId(persistenceUnit.getNonJtaDataSource(), persistenceUnit);
+            String nonJtaDataSourceId = getDataSourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource());
             if (nonJtaDataSourceId != null) {
                 persistenceUnit.setNonJtaDataSource("java:openejb/Connector/" + nonJtaDataSourceId);
             }
@@ -217,7 +176,7 @@ public class AutoDeploy implements DynamicDeployer {
         return persistenceModule;
     }
 
-    private String getDataSourceId(String dataSource, PersistenceUnit persistenceUnit) throws OpenEJBException {
+    private String getDataSourceId(String beanName, String dataSource) throws OpenEJBException {
         if(dataSource == null){
             return null;
         }
@@ -225,33 +184,42 @@ public class AutoDeploy implements DynamicDeployer {
             dataSource = dataSource.substring("java:comp/env".length());
         }
 
-        String id = null;
         List<String> connectorMap = configFactory.getConnectorIds();
-        if (!connectorMap.contains(dataSource)) {
-            String name = dataSource.replaceFirst(".*/", "");
-            if (!connectorMap.contains(name)) {
-                String message = "No existing datasource found while attempting to Auto-link unmapped datasource '" + dataSource + "' for persistence-unit '" + persistenceUnit.getName() + "'.  Looked for Datasource(id=" + dataSource + ") and Datasource(id=" + name + ")";
-                if (!autoCreateConnectors){
-                    throw new OpenEJBException(message);
-                }
-
-                logger.error(message);
-
-                if (connectorMap.size() > 0) {
-                    id = connectorMap.get(0);
-                } else {
-                    ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
-                    id = connectorInfo.id;
-                    logger.warning("Auto-creating a datasource with res-id " + id + " for persistence-unit '" + persistenceUnit.getName() + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
-                    configFactory.install(connectorInfo);
-                }
-            } else {
-                return name;
-            }
-        } else {
+        if (connectorMap.contains(dataSource)) {
             return dataSource;
         }
-        return id;
+
+        String name = dataSource.replaceFirst(".*/", "");
+        if (connectorMap.contains(name)) {
+            return name;
+        }
+
+        // throw an exception or log an error
+        String message = "No existing datasource found while attempting to Auto-link unmapped datasource '" + dataSource + "' for '" + beanName + "'.  Looked for Datasource(id=" + dataSource + ") and Datasource(id=" + name + ")";
+        if (!autoCreateConnectors){
+            throw new OpenEJBException(message);
+        }
+        logger.error(message);
+
+        // if there is a provider with the specified name. use it
+        if (ServiceUtils.hasServiceProvider(name)) {
+            ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class, name, null, name, null);
+            configFactory.install(connectorInfo);
+            return connectorInfo.id;
+        }
+
+        // if there is only one connector, use it
+        // todo this check needs to be type specific to support JDBC and JMS
+        if (connectorMap.size() > 0) {
+            return connectorMap.get(0);
+        }
+
+        // Just use the default conector
+        // todo again this needs to be type specific
+        ConnectorInfo connectorInfo = configFactory.configureService(ConnectorInfo.class);
+        logger.warning("Auto-creating a datasource with res-id " + connectorInfo.id + " for '" + beanName + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
+        configFactory.install(connectorInfo);
+        return connectorInfo.id;
     }
 
     private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {

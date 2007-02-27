@@ -50,6 +50,9 @@ public class RedeployTest extends TestCase {
 
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
         assembler.createConnector(config.configureService(ConnectorInfo.class));
+        ConnectorInfo connectorInfo = config.configureService(ConnectorInfo.class);
+        connectorInfo.id = "Default Unmanaged JDBC Database";
+        assembler.createConnector(connectorInfo);
 
         assembler.createContainer(config.configureService(BmpEntityContainerInfo.class));
         assembler.createContainer(config.configureService(CmpEntityContainerInfo.class));
