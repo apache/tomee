@@ -171,7 +171,7 @@
     <module>itests</module>
     <module>container</module>
     <module>server</module>
-    <module>examples</module>
+    <module>assembly</module>
   </modules>
 
   <profiles>
