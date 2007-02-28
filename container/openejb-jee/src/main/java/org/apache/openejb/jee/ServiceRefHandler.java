@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class ServiceRefHandler {
     @XmlElement(name = "init-param", required = true)
     protected List<ParamValue> initParam;
     @XmlElement(name = "soap-header", required = true)
-    protected List<String> soapHeader;
+    protected List<QName> soapHeader;
     @XmlElement(name = "soap-role", required = true)
     protected List<String> soapRole;
     @XmlElement(name = "port-name", required = true)
@@ -119,9 +121,9 @@ public class ServiceRefHandler {
         return this.initParam;
     }
 
-    public List<String> getSoapHeader() {
+    public List<QName> getSoapHeader() {
         if (soapHeader == null) {
-            soapHeader = new ArrayList<String>();
+            soapHeader = new ArrayList<QName>();
         }
         return this.soapHeader;
     }

@@ -172,7 +172,7 @@
                         <param-name>token</param-name>
                         <param-value>String</param-value>
                     </init-param>
-                    <soap-header>q:name</soap-header>
+                    <soap-header xmlns:q="http//extra-stuff.org">q:name</soap-header>
                     <soap-role>token</soap-role>
                     <port-name>token</port-name>
                 </handler>
@@ -213,7 +213,7 @@
                         <param-name>token</param-name>
                         <param-value>String</param-value>
                     </init-param>
-                    <soap-header>q:name</soap-header>
+                    <soap-header xmlns:q="http//extra-stuff.org">q:name</soap-header>
                     <soap-role>token</soap-role>
                     <port-name>token</port-name>
                 </handler>
@@ -387,7 +387,7 @@
                         <param-name>token</param-name>
                         <param-value>String</param-value>
                     </init-param>
-                    <soap-header>q:name</soap-header>
+                    <soap-header xmlns:q="http//extra-stuff.org">q:name</soap-header>
                     <soap-role>token</soap-role>
                     <port-name>token</port-name>
                 </handler>
