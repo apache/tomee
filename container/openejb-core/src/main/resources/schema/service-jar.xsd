@@ -86,7 +86,7 @@
     <!-- ProviderTypes -->
     <xsd:simpleType name="ProviderTypes">
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="Container|Proxy|Security|Transaction|Connector|ConnectionManager|JNDI"/>
+            <xsd:pattern value="Container|Proxy|Security|Transaction|Resource|Connector|ConnectionManager|JNDI"/>
         </xsd:restriction>
     </xsd:simpleType> 
     

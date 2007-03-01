@@ -18,6 +18,8 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.sys.Connector;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateless.EncStatelessHome;
@@ -49,11 +51,28 @@ public class RedeployTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
-        assembler.createConnector(config.configureService(ConnectorInfo.class));
-        ConnectorInfo connectorInfo = config.configureService(ConnectorInfo.class);
-        connectorInfo.id = "Default Unmanaged JDBC Database";
-        assembler.createConnector(connectorInfo);
 
+        // managed JDBC
+        assembler.createConnector(config.configureService(ConnectorInfo.class));
+
+        // unmanaged JDBC
+        Connector connector = new Connector();
+        connector.setId("Default Unmanaged JDBC Database");
+        connector.setProvider("Default Unmanaged JDBC Database");
+        assembler.createConnector(config.configureService(connector, ConnectorInfo.class));
+
+        // JMS
+        Resource resource = new Resource();
+        resource.setId("Default JMS Resource Adapter");
+        resource.setProvider("Default JMS Resource Adapter");
+        assembler.createResource(config.configureService(resource, ResourceInfo.class));
+
+        connector = new Connector();
+        connector.setId("Default JMS Connection Factory");
+        connector.setProvider("Default JMS Connection Factory");
+        assembler.createConnector(config.configureService(connector, ConnectorInfo.class));
+
+        // containers
         assembler.createContainer(config.configureService(BmpEntityContainerInfo.class));
         assembler.createContainer(config.configureService(CmpEntityContainerInfo.class));
         assembler.createContainer(config.configureService(StatefulSessionContainerInfo.class));

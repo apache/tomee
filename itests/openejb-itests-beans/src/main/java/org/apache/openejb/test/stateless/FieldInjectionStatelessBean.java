@@ -16,23 +16,28 @@
  */
 package org.apache.openejb.test.stateless;
 
-import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
-import org.apache.openejb.test.TestFailureException;
-
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.sql.DataSource;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.entity.bmp.BasicBmpHome;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.jms.ConnectionFactory;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.JMSException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import java.rmi.RemoteException;
 
 /**
@@ -55,6 +60,9 @@ public class FieldInjectionStatelessBean implements SessionBean {
     private Byte byyte;
     private Character chaaracter;
     private DataSource daataSource;
+    private ConnectionFactory coonnectionFactory;
+    private QueueConnectionFactory queueCoonnectionFactory;
+    private TopicConnectionFactory topicCoonnectionFactory;
     private EntityManagerFactory emf;
     private EntityManager em;
     private EntityManager eem;
@@ -230,6 +238,31 @@ public class FieldInjectionStatelessBean implements SessionBean {
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
+    }
+
+    public void lookupJMSConnectionFactory() throws TestFailureException{
+        try{
+            try{
+                testJmsConnection(coonnectionFactory.createConnection());
+                testJmsConnection(queueCoonnectionFactory.createConnection());
+                testJmsConnection(topicCoonnectionFactory.createConnection());
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
+        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        Topic topic = session.createTopic("test");
+        MessageProducer producer = session.createProducer(topic);
+        producer.send(session.createMessage());
+        producer.close();
+        session.close();
+        connection.close();
     }
 
     public void lookupPersistenceUnit() throws TestFailureException {

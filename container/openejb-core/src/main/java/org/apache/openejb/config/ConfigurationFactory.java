@@ -54,6 +54,7 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Container;
@@ -63,6 +64,7 @@ import org.apache.openejb.config.sys.ProxyFactory;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
@@ -173,6 +175,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
+    protected void install(ResourceInfo serviceInfo) throws OpenEJBException {
+        if (sys != null) {
+            sys.facilities.resources.add(serviceInfo);
+        } else if (!offline) {
+            Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+            assembler.createResource(serviceInfo);
+        }
+    }
+
     protected void install(ConnectorInfo serviceInfo) throws OpenEJBException {
         if (sys != null) {
             sys.facilities.connectors.add(serviceInfo);
@@ -205,8 +216,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.transactionService = configureService(openejb.getTransactionService(), TransactionServiceInfo.class);
 
-        for (Connector connector : openejb.getConnector()) {
+        for (Resource resource : openejb.getResource()) {
+            ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
+            sys.facilities.resources.add(resourceInfo);
+        }
 
+        for (Connector connector : openejb.getConnector()) {
             ConnectorInfo connectorInfo = configureService(connector, ConnectorInfo.class);
             sys.facilities.connectors.add(connectorInfo);
         }
@@ -434,7 +449,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
 
-    private <T extends ServiceInfo>T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
+    public <T extends ServiceInfo>T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
         if (service == null) {
             return configureService(type);
         }
@@ -452,14 +467,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * 3.  If providerId is null, attempt to load the specified provider using the 'serviceId' as the 'providerId'
      * 4.  If this fails, check the hardcoded defaults for a default providerId using the supplied 'type'
      * 5.  If this fails, throw NoSuchProviderException 
-     *
-     * @param type required
-     * @param serviceId required
-     * @param declaredProperties optional
-     * @param providerId optional
-     * @param serviceType optional
-     * @return
-     * @throws OpenEJBException
      */
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
         if (type == null) throw new NullPointerException("type");
@@ -617,28 +624,92 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
 
+    protected List<String> getResourceIds() {
+        List<String> resourceIds = new ArrayList<String>();
+
+        OpenEjbConfiguration runningConfig = getRunningConfig();
+        for (ResourceInfo connectorInfo : runningConfig.facilities.resources) {
+            resourceIds.add(connectorInfo.id);
+        }
+
+        if (sys != null) {
+            for (ResourceInfo connectorInfo : sys.facilities.resources) {
+                resourceIds.add(connectorInfo.id);
+            }
+
+            // The only time we'd have one of these is if we were building
+            // the above sys instance
+            if (openejb != null) {
+                for (Resource connector : openejb.getResource()) {
+                    resourceIds.add(connector.getId());
+                }
+            }
+        }
+        return resourceIds;
+    }
+
     protected List<String> getConnectorIds() {
+        return getConnectorIds(null);
+    }
+
+    protected List<String> getConnectorIds(String type) {
         List<String> connectorIds = new ArrayList<String>();
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         for (ConnectorInfo connectorInfo : runningConfig.facilities.connectors) {
-            connectorIds.add(connectorInfo.id);
+            if (isConnectionType(connectorInfo.properties, type)) {
+                connectorIds.add(connectorInfo.id);
+            }
         }
 
         if (sys != null) {
             for (ConnectorInfo connectorInfo : sys.facilities.connectors) {
-                connectorIds.add(connectorInfo.id);
+                if (isConnectionType(connectorInfo.properties, type)) {
+                    connectorIds.add(connectorInfo.id);
+                }
             }
 
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null) {
                 for (Connector connector : openejb.getConnector()) {
-                    connectorIds.add(connector.getId());
+                    if (isConnectionType(connector, type)) {
+                        connectorIds.add(connector.getId());
+                    }
                 }
             }
         }
         return connectorIds;
+    }
+
+    private static boolean isConnectionType(Properties properties, String type) {
+        if (type == null) return true;
+
+        String connectionInterfaces = properties.getProperty("ConnectionInterface");
+        if (connectionInterfaces == null) return false;
+
+        for (String connectionInterface : connectionInterfaces.split(" *, *")) {
+            if (connectionInterface.equals(type)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isConnectionType(Connector connector, String type) {
+        if (type == null) return true;
+
+        Properties properties = new Properties();
+        if (connector.getContent() != null) {
+            String content = connector.getContent();
+            ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
+
+            try {
+                properties.load(in);
+            } catch (IOException ex) {
+            }
+
+        }
+
+        return isConnectionType(properties, type);
     }
 
     protected List<String> getContainerIds() {

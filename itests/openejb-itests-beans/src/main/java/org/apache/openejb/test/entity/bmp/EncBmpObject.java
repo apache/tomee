@@ -37,6 +37,7 @@ public interface EncBmpObject extends javax.ejb.EJBObject{
     public void lookupStatefulBusinessRemote() throws TestFailureException, RemoteException;
 
     public void lookupResource() throws TestFailureException, RemoteException;
+    public void lookupJMSConnectionFactory() throws TestFailureException, RemoteException;
     public void lookupPersistenceUnit() throws TestFailureException, RemoteException;
     public void lookupPersistenceContext() throws TestFailureException, RemoteException;
 

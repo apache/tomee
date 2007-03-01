@@ -159,7 +159,7 @@ public class ServiceProviderDescriptor extends org.exolab.castor.xml.util.XMLCla
         {
             StringValidator typeValidator = new StringValidator();
             typeValidator.setWhiteSpace("preserve");
-            typeValidator.setPattern("Container|Proxy|Security|Transaction|Connector|ConnectionManager|JNDI");
+            typeValidator.setPattern("Container|Proxy|Security|Transaction|Resource|Connector|ConnectionManager|JNDI");
             fieldValidator.setValidator(typeValidator);
         }
         desc.setValidator(fieldValidator);

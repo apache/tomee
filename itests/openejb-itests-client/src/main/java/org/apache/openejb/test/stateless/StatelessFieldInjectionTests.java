@@ -261,4 +261,14 @@ public class StatelessFieldInjectionTests extends StatefulTestClient {
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+
+    public void test23_lookupJMSConnectionFactory() {
+        try{
+            ejbObject.lookupJMSConnectionFactory();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
 }

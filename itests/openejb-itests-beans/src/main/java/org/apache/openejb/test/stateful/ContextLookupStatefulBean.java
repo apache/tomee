@@ -31,11 +31,18 @@ import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.CreateException;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
+import javax.jms.ConnectionFactory;
+import javax.jms.Connection;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.MessageProducer;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.JMSException;
+import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 
 /**
@@ -341,12 +348,49 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
         }
     }
     
+    public void lookupJMSConnectionFactory() throws TestFailureException{
+        try{
+            try{
+                Object obj = ejbContext.lookup("jms");
+                Assert.assertNotNull("The JMS ConnectionFactory is null", obj);
+                Assert.assertTrue("Not an instance of ConnectionFactory", obj instanceof ConnectionFactory);
+                ConnectionFactory connectionFactory = (ConnectionFactory) obj;
+                testJmsConnection(connectionFactory.createConnection());
+
+                obj = ejbContext.lookup("TopicCF");
+                Assert.assertNotNull("The JMS TopicConnectionFactory is null", obj);
+                Assert.assertTrue("Not an instance of TopicConnectionFactory", obj instanceof TopicConnectionFactory);
+                TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
+                testJmsConnection(topicConnectionFactory.createConnection());
+
+                obj = ejbContext.lookup("QueueCF");
+                Assert.assertNotNull("The JMS QueueConnectionFactory is null", obj);
+                Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
+                QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
+                testJmsConnection(queueConnectionFactory.createConnection());
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    private void testJmsConnection(Connection connection) throws JMSException {
+        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        Topic topic = session.createTopic("test");
+        MessageProducer producer = session.createProducer(topic);
+        producer.send(session.createMessage());
+        producer.close();
+        session.close();
+        connection.close();
+    }
+
     public void lookupPersistenceUnit() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
-                Assert.assertNotNull("The InitialContext is null", ctx);                
-                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
+                EntityManagerFactory emf = (EntityManagerFactory)ejbContext.lookup("persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
             } catch (Exception e){
@@ -360,9 +404,7 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
     public void lookupPersistenceContext() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
-                Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                EntityManager em = (EntityManager)ejbContext.lookup("persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists

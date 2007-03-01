@@ -41,6 +41,7 @@ public class AssemblerTool {
         serviceInterfaces.put("TransactionManager", TransactionManager.class);
         serviceInterfaces.put("ConnectionManager", javax.resource.spi.ConnectionManager.class);
         serviceInterfaces.put("Connector", javax.resource.spi.ManagedConnectionFactory.class);
+        serviceInterfaces.put("Resource", javax.resource.spi.ResourceAdapter.class);
         serviceInterfaces.put("Container", org.apache.openejb.Container.class);
     }
 

@@ -25,6 +25,8 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
+import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -44,6 +46,10 @@ import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
+import org.apache.xbean.recipe.Option;
+import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.connector.GeronimoBootstrapContext;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -51,6 +57,10 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
@@ -67,6 +77,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Collection;
+
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -260,6 +273,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         for (ConnectionManagerInfo connectionManagerInfo : configInfo.facilities.connectionManagers) {
             createConnectionManager(connectionManagerInfo);
+        }
+
+        for (ResourceInfo resourceInfo : configInfo.facilities.resources) {
+            createResource(resourceInfo);
         }
 
         for (ConnectorInfo connectorInfo : configInfo.facilities.connectors) {
@@ -619,24 +636,52 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createConnector(ConnectorInfo serviceInfo) throws OpenEJBException {
-
-
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
+        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+
+        Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
+        if (resourceAdapterId instanceof String)  {
+            Object resourceAdapter = null;
+            try {
+                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/resourceAdapter/" + resourceAdapterId);
+            } catch (NamingException e) {
+                // handled below
+            }
+
+            if (resourceAdapter == null) {
+                throw new OpenEJBException("No existing resource adapter defined with id '" + resourceAdapterId + "'.");
+            }
+            if (!(resourceAdapter instanceof ResourceAdapter)) {
+                throw new OpenEJBException("Resource adapter defined with id '" + resourceAdapterId + "' is not an instance of ResourceAdapter, " +
+                        "but is an instance of " + resourceAdapter.getClass());
+            }
+            serviceRecipe.setProperty("ResourceAdapter", resourceAdapter);
+        }
 
         Object service = serviceRecipe.create();
 
         Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
         checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
 
-        ConnectionManager connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
+        ConnectionManager connectionManager;
+        if ((ManagedConnectionFactory) service instanceof JdbcManagedConnectionFactory) {
+            connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
+        } else {
+            GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
+            connectionManagerFactory.setTransactionManager(transactionManager);
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) classLoader = getClass().getClassLoader();
+            if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+            connectionManagerFactory.setClassLoader(classLoader);
+            connectionManager = connectionManagerFactory.create();
+        }
+
         if (connectionManager == null) {
             throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
         }
 
-        ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
-
-        ConnectorReference reference = new ConnectorReference(connectionManager, managedConnectionFactory);
+        ConnectorReference reference = new ConnectorReference(connectionManager, (ManagedConnectionFactory) service);
 
         try {
             containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, reference);
@@ -646,6 +691,64 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.connectors.add(serviceInfo);
+    }
+
+    public void createResource(ResourceInfo serviceInfo) throws OpenEJBException {
+        // resource adapters only work with a geronimo transaction manager
+        if (!(transactionManager instanceof GeronimoTransactionManager)) {
+            throw new OpenEJBException("The use of a resource adapter requires a Geronimo transaction manager");
+        }
+        GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
+
+        // create the service
+        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.setAllProperties(serviceInfo.properties);
+        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        Object service = serviceRecipe.create();
+
+        // check the interface
+        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
+        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        ResourceAdapter resourceAdapter = (ResourceAdapter) service;
+
+        // create a thead pool
+        int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
+        if (threadPoolSize <= 0) throw new IllegalArgumentException("threadPoolSizes <= 0: " + threadPoolSize);
+        Executor threadPool = Executors.newFixedThreadPool(threadPoolSize);
+
+        // create a work manager which the resource adapter can use to dispatch messages or perform tasks
+        WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
+
+        // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
+        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, geronimoTransactionManager);
+
+        // start the resource adapter
+        try {
+            resourceAdapter.start(bootstrapContext);
+        } catch (ResourceAdapterInternalException e) {
+            throw new OpenEJBException(e);
+        }
+
+        try {
+            containerSystem.getJNDIContext().bind("java:openejb/resourceAdapter/" + serviceInfo.id, resourceAdapter);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
+        }
+
+        // Update the config tree
+        config.facilities.resources.add(serviceInfo);
+    }
+
+    private int getIntProperty(Properties properties, String propertyName, int defaultValue) {
+        String propertyValue = properties.getProperty(propertyName);
+        if (propertyValue == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(propertyValue);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(propertyName + " is not an integer " + propertyValue);
+        }
     }
 
     public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException {

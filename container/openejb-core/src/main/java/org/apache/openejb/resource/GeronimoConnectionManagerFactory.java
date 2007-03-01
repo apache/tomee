@@ -150,6 +150,11 @@ public class GeronimoConnectionManagerFactory   {
 
     public GenericConnectionManager create() {
         PoolingSupport poolingSupport = createPoolingSupport();
+
+        ClassLoader classLoader = this.classLoader;
+        if (classLoader == null) Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) classLoader = getClass().getClassLoader();
+        if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
         GenericConnectionManager connectionManager = new GenericConnectionManager(
                 createTransactionSupport(),
                 poolingSupport,

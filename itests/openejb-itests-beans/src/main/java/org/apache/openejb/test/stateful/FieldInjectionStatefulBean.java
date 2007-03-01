@@ -32,6 +32,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
+import javax.jms.ConnectionFactory;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.JMSException;
 import java.rmi.RemoteException;
 
 /**
@@ -56,6 +63,9 @@ public class FieldInjectionStatefulBean implements SessionBean {
     private Byte byyte;
     private Character chaaracter;
     private DataSource daataSource;
+    private ConnectionFactory coonnectionFactory;
+    private QueueConnectionFactory queueCoonnectionFactory;
+    private TopicConnectionFactory topicCoonnectionFactory;
     private EntityManagerFactory emf;
     private EntityManager em;
     private EntityManager eem;
@@ -249,6 +259,31 @@ public class FieldInjectionStatefulBean implements SessionBean {
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
+    }
+
+    public void lookupJMSConnectionFactory() throws TestFailureException{
+        try{
+            try{
+                testJmsConnection(coonnectionFactory.createConnection());
+                testJmsConnection(queueCoonnectionFactory.createConnection());
+                testJmsConnection(topicCoonnectionFactory.createConnection());
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
+        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        Topic topic = session.createTopic("test");
+        MessageProducer producer = session.createProducer(topic);
+        producer.send(session.createMessage());
+        producer.close();
+        session.close();
+        connection.close();
     }
 
     public void lookupPersistenceUnit() throws TestFailureException {

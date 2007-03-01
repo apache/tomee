@@ -29,6 +29,13 @@ import javax.ejb.EJBException;
 import javax.sql.DataSource;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
+import javax.jms.ConnectionFactory;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.JMSException;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -55,6 +62,9 @@ public class SetterInjectionStatelessBean implements SessionBean {
     private Byte byyteField;
     private Character chaaracterField;
     private DataSource daataSourceField;
+    private ConnectionFactory coonnectionFactory;
+    private QueueConnectionFactory queueCoonnectionFactory;
+    private TopicConnectionFactory topicCoonnectionFactory;
     private EntityManagerFactory emfField;
     private EntityManager emField;
     private EntityManager eemField;
@@ -134,6 +144,30 @@ public class SetterInjectionStatelessBean implements SessionBean {
 
     public void setDaataSource(DataSource daataSource) {
         this.daataSourceField = daataSource;
+    }
+
+    public ConnectionFactory getCoonnectionFactory() {
+        return coonnectionFactory;
+    }
+
+    public void setCoonnectionFactory(ConnectionFactory coonnectionFactory) {
+        this.coonnectionFactory = coonnectionFactory;
+    }
+
+    public QueueConnectionFactory getQueueCoonnectionFactory() {
+        return queueCoonnectionFactory;
+    }
+
+    public void setQueueCoonnectionFactory(QueueConnectionFactory queueCoonnectionFactory) {
+        this.queueCoonnectionFactory = queueCoonnectionFactory;
+    }
+
+    public TopicConnectionFactory getTopicCoonnectionFactory() {
+        return topicCoonnectionFactory;
+    }
+
+    public void setTopicCoonnectionFactory(TopicConnectionFactory topicCoonnectionFactory) {
+        this.topicCoonnectionFactory = topicCoonnectionFactory;
     }
 
     public Double getDoouble() {
@@ -406,6 +440,31 @@ public class SetterInjectionStatelessBean implements SessionBean {
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
+    }
+
+    public void lookupJMSConnectionFactory() throws TestFailureException{
+        try{
+            try{
+                testJmsConnection(coonnectionFactory.createConnection());
+                testJmsConnection(queueCoonnectionFactory.createConnection());
+                testJmsConnection(topicCoonnectionFactory.createConnection());
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
+        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        Topic topic = session.createTopic("test");
+        MessageProducer producer = session.createProducer(topic);
+        producer.send(session.createMessage());
+        producer.close();
+        session.close();
+        connection.close();
     }
 
     public void lookupPersistenceUnit() throws TestFailureException {
