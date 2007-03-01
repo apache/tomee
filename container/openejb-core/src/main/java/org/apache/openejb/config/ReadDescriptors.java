@@ -22,10 +22,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.oejb2.EnterpriseBean;
-import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
-import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.*;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.xml.sax.SAXException;
@@ -142,6 +139,13 @@ public class ReadDescriptors implements DynamicDeployer {
                         g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
                         g2.getResourceRef().addAll(bean.getResourceRef());
                         g2.getServiceRef().addAll(bean.getServiceRef());
+
+                        if (bean instanceof RpcBean) {
+                            RpcBean rpcBean = (RpcBean) bean;
+                            if (rpcBean.getTssLink() != null){
+                                g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
+                            }
+                        }
                     }
 
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", g2);
