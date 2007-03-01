@@ -47,6 +47,13 @@ public class ConversionTest extends TestCase {
             g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
             g2.getResourceRef().addAll(bean.getResourceRef());
             g2.getServiceRef().addAll(bean.getServiceRef());
+
+            if (bean instanceof RpcBean) {
+                RpcBean rpcBean = (RpcBean) bean;
+                if (rpcBean.getTssLink() != null){
+                    g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
+                }
+            }
         }
 
         JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);

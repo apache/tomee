@@ -51,6 +51,7 @@ import java.util.ArrayList;
     "resourceRef",
     "resourceEnvRef",
     "messageDestination",
+    "tssLink",
     "security",
     "service",
     "persistence"
@@ -87,9 +88,11 @@ public class GeronimoEjbJarType {
     @XmlElement(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
 
-
     @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
+
+    @XmlElement(name = "tss-link")
+    protected List<TssLinkType> tssLink;
 
     @XmlElementRef(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractSecurityType> security;
@@ -254,6 +257,13 @@ public class GeronimoEjbJarType {
             messageDestination = new ArrayList<MessageDestinationType>();
         }
         return this.messageDestination;
+    }
+
+    public List<TssLinkType> getTssLink() {
+        if (tssLink == null) {
+            tssLink = new ArrayList<TssLinkType>();
+        }
+        return tssLink;
     }
 
     public JAXBElement<? extends AbstractSecurityType> getSecurity() {

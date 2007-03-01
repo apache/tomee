@@ -79,7 +79,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "webServiceVirtualHost",
     "webServiceSecurity"
 })
-public class SessionBeanType implements EnterpriseBean {
+public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;

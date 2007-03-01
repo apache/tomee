@@ -51,13 +51,13 @@
     <enforce-foreign-key-constraints/>
     <enterprise-beans>
         <session id="ID_1">
-            <ejb-name>String</ejb-name>
-            <jndi-name>String</jndi-name>
-            <jndi-name>String</jndi-name>
+            <ejb-name>ejbNameString</ejb-name>
+            <jndi-name>jndiOneString</jndi-name>
+            <jndi-name>jndiTwoString</jndi-name>
             <local-jndi-name>String</local-jndi-name>
             <local-jndi-name>String</local-jndi-name>
             <cache-size>0</cache-size>
-            <tss-link>String</tss-link>
+            <tss-link>tssLinkString</tss-link>
             <persistence-context-ref>
                 <persistence-context-ref-name>String</persistence-context-ref-name>
                 <persistence-unit-name>String</persistence-unit-name>

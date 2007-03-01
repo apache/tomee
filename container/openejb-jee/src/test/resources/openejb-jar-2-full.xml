@@ -48,13 +48,13 @@
     <ns3:enforce-foreign-key-constraints/>
     <ns3:enterprise-beans>
         <ns3:session id="ID_1">
-            <ns3:ejb-name>String</ns3:ejb-name>
-            <ns3:jndi-name>String</ns3:jndi-name>
-            <ns3:jndi-name>String</ns3:jndi-name>
+            <ns3:ejb-name>ejbNameString</ns3:ejb-name>
+            <ns3:jndi-name>jndiOneString</ns3:jndi-name>
+            <ns3:jndi-name>jndiTwoString</ns3:jndi-name>
             <ns3:local-jndi-name>String</ns3:local-jndi-name>
             <ns3:local-jndi-name>String</ns3:local-jndi-name>
             <ns3:cache-size>0</ns3:cache-size>
-            <ns3:tss-link>String</ns3:tss-link>
+            <ns3:tss-link>tssLinkString</ns3:tss-link>
             <ns2:persistence-context-ref>
                 <ns2:persistence-context-ref-name>String</ns2:persistence-context-ref-name>
                 <ns2:persistence-unit-name>String</ns2:persistence-unit-name>

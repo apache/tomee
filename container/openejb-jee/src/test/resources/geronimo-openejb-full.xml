@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns8:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns5="http://geronimo.apache.org/xml/ns/security-1.2" xmlns:ns6="http://java.sun.com/xml/ns/persistence" xmlns:ns7="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns8="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
+<ns4:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-1.2" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://openejb.apache.org/xml/ns/pkgen-2.1">
     <environment>
         <moduleId>
             <groupId>String</groupId>
@@ -34,8 +34,8 @@
         <inverse-classloading/>
         <suppress-default-environment/>
     </environment>
-    <ns8:openejb-jar xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
-	</ns8:openejb-jar>
+    <ns4:openejb-jar xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+	</ns4:openejb-jar>
     <ns2:persistence-context-ref>
         <ns2:persistence-context-ref-name>String</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>String</ns2:persistence-unit-name>
@@ -388,4 +388,4 @@
         <attribute type="String" name="String">String</attribute>
         <attribute type="String" name="String">String</attribute>
     </gbean>
-</ns8:ejb-jar>
+</ns4:ejb-jar>
