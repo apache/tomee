@@ -17,15 +17,15 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.ApplicationException;
 
-import javax.resource.spi.UnavailableException;
+import javax.ejb.EJBException;
 import javax.resource.spi.ApplicationServerInternalException;
+import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.transaction.xa.XAResource;
-import javax.ejb.EJBException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -78,7 +78,68 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         instance = instanceFactory.createInstance();
     }
 
+//    private static void logTx() {
+//        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+//        Transaction transaction = null;
+//        String status = "ERROR";
+//        try {
+//            transaction = transactionManager.getTransaction();
+//            int txStatus;
+//            if (transaction != null) {
+//                txStatus = transaction.getStatus();
+//            } else {
+//                txStatus = Status.STATUS_NO_TRANSACTION;
+//            }
+//            switch (txStatus) {
+//                case Status.STATUS_ACTIVE:
+//                    status = "STATUS_ACTIVE";
+//                    break;
+//                case Status.STATUS_MARKED_ROLLBACK:
+//                    status = "MARKED_ROLLBACK";
+//                    break;
+//                case Status.STATUS_PREPARED:
+//                    status = "PREPARED";
+//                    break;
+//                case Status.STATUS_COMMITTED:
+//                    status = "COMMITTED";
+//                    break;
+//                case Status.STATUS_ROLLEDBACK:
+//                    status = "ROLLEDBACK";
+//                    break;
+//                case Status.STATUS_UNKNOWN:
+//                    status = "UNKNOWN";
+//                    break;
+//                case Status.STATUS_NO_TRANSACTION:
+//                    status = "NO_TRANSACTION";
+//                    break;
+//                case Status.STATUS_PREPARING:
+//                    status = "PREPARING";
+//                    break;
+//                case Status.STATUS_COMMITTING:
+//                    status = "COMMITTING";
+//                    break;
+//                case Status.STATUS_ROLLING_BACK:
+//                    status = "ROLLING_BACK";
+//                    break;
+//                default:
+//                    status = "UNKNOWN " + txStatus;
+//            }
+//        } catch (javax.transaction.SystemException e) {
+//        }
+//        System.out.println("\n" +
+//                "***************************************\n" +
+//                "transaction " + transaction + "\n" +
+//                "     status " + status + "\n" +
+//                "***************************************\n\n");
+//
+//    }
+
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+//        System.out.println("\n" +
+//                "***************************************\n" +
+//                "Endpoint invoked " + method + "\n" +
+//                "***************************************\n\n");
+
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
 
@@ -94,6 +155,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             }
         }
 
+//        try {
         if ("beforeDelivery".equals(methodName) && Arrays.deepEquals(new Class[] {Method.class}, parameterTypes)) {
             beforeDelivery((Method) args[0]);
             return null;
@@ -107,7 +169,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             Object value = deliverMessage(method, args);
             return value;
         }
-
+//        } finally { logTx(); }
     }
 
     public void beforeDelivery(Method method) throws ApplicationServerInternalException {
@@ -182,6 +244,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
 
         if (throwable != null) {
+            throwable.printStackTrace();
             if (isValidException(method, throwable)) {
                 throw throwable;
             } else {
@@ -211,6 +274,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             exceptionThrown = true;
 
             Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            throwable.printStackTrace();
             throw new ApplicationServerInternalException(throwable);
         } finally {
             if (state == State.SYSTEM_EXCEPTION) {

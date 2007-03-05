@@ -120,8 +120,7 @@ public class AutoDeploy implements DynamicDeployer {
                     if (autoCreateContainers) {
                         ContainerInfo containerInfo = configFactory.configureService(containerInfoType);
                         logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
-                        configFactory.install(containerInfo);
-                        containerId = containerInfo.id;
+                        containerId = installContainer(containerInfo);
                     } else {
                         throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file for bean: "+bean.getEjbName());
                     }
@@ -135,7 +134,7 @@ public class AutoDeploy implements DynamicDeployer {
                 if (autoCreateContainers){
                     ContainerInfo containerInfo = configFactory.configureService(ConfigurationFactory.getContainerInfoType(bean.getType()));
                     logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + bean.getType() + ", id=" + containerInfo.id + ")");
-                    configFactory.install(containerInfo);
+                    installContainer(containerInfo);
                 } else {
                     throw new OpenEJBException("A container of type " + bean.getType() + " must be declared in the configuration file for bean: "+bean.getEjbName());
                 }
@@ -167,6 +166,19 @@ public class AutoDeploy implements DynamicDeployer {
         }
 
         return ejbModule;
+    }
+
+    private String installContainer(ContainerInfo containerInfo) throws OpenEJBException {
+        String resourceAdapterId = containerInfo.properties.getProperty("ResourceAdapter");
+        if (resourceAdapterId != null) {
+            String newResourceId = getResourceId(resourceAdapterId);
+            if (resourceAdapterId != newResourceId) {
+                containerInfo.properties.setProperty("ResourceAdapter", newResourceId);
+            }
+        }
+
+        configFactory.install(containerInfo);
+        return containerInfo.id;
     }
 
     public PersistenceModule deploy(PersistenceModule persistenceModule) throws OpenEJBException {

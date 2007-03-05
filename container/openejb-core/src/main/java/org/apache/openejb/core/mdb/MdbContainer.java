@@ -26,11 +26,13 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.log4j.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.Transaction;
@@ -82,20 +84,13 @@ public class MdbContainer implements Container, TransactionContainer {
         return containerID;
     }
 
-    public void deploy(DeploymentInfo info) throws OpenEJBException {
-    }
-
-    public void undeploy(DeploymentInfo info) throws OpenEJBException {
-    }
-
-    // TODO: DMB: Temporarily commenting out as it locks the VM
-    public void LOCKUP_deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
         Object deploymentId = deploymentInfo.getDeploymentID();
         // create the activation spec
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory((CoreDeploymentInfo) deploymentInfo, transactionManager, securityService, instanceLimit);
         EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory);
 
         // update the data structures
@@ -122,13 +117,21 @@ public class MdbContainer implements Container, TransactionContainer {
 
     }
 
+    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        // todo
+    }
+
+
     private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
         try {
             // initialize the object recipe
             ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
+            objectRecipe.disallow(Option.FIELD_INJECTION);
+
             Map<String, String> activationProperties = deploymentInfo.getActivationProperties();
             for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
+                logger.error("ActivationSpec " + entry.getKey() + "=" + entry.getValue());
             }
 
             // create the activationSpec
@@ -234,6 +237,8 @@ public class MdbContainer implements Container, TransactionContainer {
         // remember the return value or exception so it can be logged
         Object returnValue = null;
         OpenEJBException openEjbException = null;
+        Operation oldOperation = callContext.getCurrentOperation();
+        callContext.setCurrentOperation(Operation.BUSINESS);
         try {
             if (logger.isInfoEnabled()) {
                 logger.info("invoking method " + method.getName() + " on " + deployInfo.getDeploymentID());
@@ -255,6 +260,7 @@ public class MdbContainer implements Container, TransactionContainer {
             openEjbException = e;
             throw e;
         } finally {
+            callContext.setCurrentOperation(oldOperation);
             // Log the invocation results
             if (logger.isDebugEnabled()) {
                 if (openEjbException == null) {

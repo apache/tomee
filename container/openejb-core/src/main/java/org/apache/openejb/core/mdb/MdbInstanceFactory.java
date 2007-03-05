@@ -18,13 +18,13 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.log4j.Logger;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.ejb.MessageDrivenBean;
 import javax.naming.Context;
@@ -47,7 +47,7 @@ import java.lang.reflect.Method;
 public class MdbInstanceFactory {
     private static final Logger logger = Logger.getLogger("OpenEJB");
 
-    private final DeploymentInfo deploymentInfo;
+    private final CoreDeploymentInfo deploymentInfo;
     private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final int instanceLimit;
@@ -60,7 +60,7 @@ public class MdbInstanceFactory {
      * @param securityService the transaction manager for this container system
      * @param instanceLimit the maximal number of instances or <= 0 if unlimited
      */
-    public MdbInstanceFactory(DeploymentInfo deploymentInfo, TransactionManager transactionManager, SecurityService securityService, int instanceLimit) {
+    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, TransactionManager transactionManager, SecurityService securityService, int instanceLimit) {
         this.deploymentInfo = deploymentInfo;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
@@ -161,8 +161,8 @@ public class MdbInstanceFactory {
         objectRecipe.allow(Option.PRIVATE_PROPERTIES);
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        Operation originalOperation = callContext.getCurrentOperation();
+        ThreadContext callContext = new ThreadContext(deploymentInfo, null, null, Operation.INJECTION);
+        ThreadContext.enter(callContext);
         try {
             Context ctx = deploymentInfo.getJndiEnc();
             // construct the bean instance
@@ -174,14 +174,13 @@ public class MdbInstanceFactory {
                 ctx.bind("java:comp/EJBContext",mdbContext);
             }
             // only in this case should the callback be used
+            callContext.setCurrentOperation(Operation.INJECTION);
             if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
-                callContext.setCurrentOperation(Operation.SET_CONTEXT);
                 objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
             }
             Object bean = objectRecipe.create();
 
             // call the post construct method
-            callContext.setCurrentOperation(Operation.CREATE);
             Method postConstruct = deploymentInfo.getPostConstruct();
             if (postConstruct != null){
                 postConstruct.invoke(bean);
@@ -197,7 +196,7 @@ public class MdbInstanceFactory {
             MdbInstanceFactory.logger.error(message, e);
             throw new UnavailableException(message, e);
         } finally {
-            callContext.setCurrentOperation(originalOperation);
+            ThreadContext.exit(callContext);
         }
     }
 

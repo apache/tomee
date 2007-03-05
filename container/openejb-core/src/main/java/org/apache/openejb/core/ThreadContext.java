@@ -26,7 +26,6 @@ public class ThreadContext {
     private static final Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
-    private static final ThreadLocal<Operation> currentOperation = new ThreadLocal<Operation>();
 
     public static ThreadContext getThreadContext() {
         ThreadContext threadContext = threadStorage.get();
@@ -96,14 +95,20 @@ public class ThreadContext {
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
     private BaseContext beanContext;
+    private Operation currentOperation;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
+        this(deploymentInfo, primaryKey, securityIdentity, null);
+    }
+
+    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity, Operation operation) {
         if (deploymentInfo == null) {
             throw new NullPointerException("deploymentInfo is null");
         }
         this.deploymentInfo = deploymentInfo;
         this.primaryKey = primaryKey;
         this.securityIdentity = securityIdentity;
+        this.currentOperation = operation;
     }
 
     public ThreadContext(ThreadContext that) {
@@ -135,12 +140,12 @@ public class ThreadContext {
         this.beanContext = beanContext;
     }
 
-    public static Operation getCurrentOperation() {
-        return currentOperation.get();
+    public Operation getCurrentOperation() {
+        return currentOperation;
     }
 
-    public static void setCurrentOperation(Operation operation) {
-        currentOperation.set(operation);
+    public void setCurrentOperation(Operation operation) {
+        currentOperation = operation;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -152,5 +157,4 @@ public class ThreadContext {
     public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
     }
-
 }

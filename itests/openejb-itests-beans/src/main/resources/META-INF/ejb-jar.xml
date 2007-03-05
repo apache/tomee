@@ -3596,13 +3596,18 @@
       <messaging-type>javax.jms.MessageListener</messaging-type>
       <transaction-type>Container</transaction-type>
       <message-destination-type>javax.jms.Queue</message-destination-type>
-      <message-destination-link>SendReceiveQueue</message-destination-link>
+      <message-destination-link>request</message-destination-link>
       <activation-config>
         <activation-config-property>
           <activation-config-property-name>destination</activation-config-property-name>
-          <activation-config-property-value>SendReceiveQueue</activation-config-property-value>
+          <activation-config-property-value>request</activation-config-property-value>
         </activation-config-property>
       </activation-config>
+      <resource-ref>
+        <res-ref-name>jms</res-ref-name>
+        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
     </message-driven>
   </enterprise-beans>
 

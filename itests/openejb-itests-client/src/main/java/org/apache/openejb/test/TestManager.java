@@ -19,6 +19,8 @@ package org.apache.openejb.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.security.PrivilegedAction;
+import java.security.AccessController;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -29,6 +31,7 @@ public class TestManager {
     
     private static TestServer server;
     private static TestDatabase database;
+    private static TestJms jms;
     private static boolean warn = true;
 
     public static void init(String propertiesFileName) throws Exception{
@@ -59,6 +62,7 @@ public class TestManager {
         }
         initServer(props);
         initDatabase(props);
+        initJms(props);
     }
     
     public static void start() throws Exception{
@@ -108,8 +112,8 @@ public class TestManager {
     }
 
     private static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
@@ -145,6 +149,20 @@ public class TestManager {
         }
     }
 
+    private static void initJms(Properties props){
+        try{
+            String className = props.getProperty("openejb.test.jms");
+            if (className == null) className = "org.apache.openejb.test.ActiveMqTestJms";
+            ClassLoader cl = getContextClassLoader();
+            Class<?> testJmsClass = Class.forName( className , true, cl);
+            jms = (TestJms)testJmsClass.newInstance();
+            jms.init( props );
+        } catch (Exception e){
+            if (warn) System.out.println("Cannot instantiate or initialize the test jms: "+e.getClass().getName()+" "+e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test jms: "+e.getClass().getName()+" "+e.getMessage(),e);
+        }
+    }
+
 
     public static TestServer getServer(){
         return server;
@@ -153,7 +171,11 @@ public class TestManager {
     public static TestDatabase getDatabase(){
         return database;
     }
-    
+
+    public static TestJms getJms() {
+        return jms;
+    }
+
     public static Properties getContextEnvironment(){
         return server.getContextEnvironment();
     }

@@ -42,7 +42,7 @@ public class StatefulContext extends BaseSessionContext {
     }
 
     protected State getState() {
-        Operation operation = ThreadContext.getCurrentOperation();
+        Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
         State state = states[operation.ordinal()];
 
         if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");

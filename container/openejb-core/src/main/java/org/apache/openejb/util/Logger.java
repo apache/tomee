@@ -771,6 +771,7 @@ public class Logger {
         }
 
         private org.apache.log4j.Logger doFallbackConfiguration() {
+            set("org.apache.activemq", Level.INFO);
             set("openjpa", Level.WARN);
             set("CastorCMP", Level.ERROR);
             set("org.exolab.castor", Level.ERROR);

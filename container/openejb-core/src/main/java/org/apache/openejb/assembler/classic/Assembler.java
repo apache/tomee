@@ -581,6 +581,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
         serviceRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())));
 
+        // MDB container has a resource adapter string name that
+        // must be replaced with the real resource adapter instance
+        replaceResourceAdapterProperty(serviceRecipe);
+        
         Object service = serviceRecipe.create();
 
         Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
@@ -640,24 +644,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setAllProperties(serviceInfo.properties);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
-        Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
-        if (resourceAdapterId instanceof String)  {
-            Object resourceAdapter = null;
-            try {
-                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/resourceAdapter/" + resourceAdapterId);
-            } catch (NamingException e) {
-                // handled below
-            }
-
-            if (resourceAdapter == null) {
-                throw new OpenEJBException("No existing resource adapter defined with id '" + resourceAdapterId + "'.");
-            }
-            if (!(resourceAdapter instanceof ResourceAdapter)) {
-                throw new OpenEJBException("Resource adapter defined with id '" + resourceAdapterId + "' is not an instance of ResourceAdapter, " +
-                        "but is an instance of " + resourceAdapter.getClass());
-            }
-            serviceRecipe.setProperty("ResourceAdapter", resourceAdapter);
-        }
+        replaceResourceAdapterProperty(serviceRecipe);
 
         Object service = serviceRecipe.create();
 
@@ -691,6 +678,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.connectors.add(serviceInfo);
+    }
+
+    private void replaceResourceAdapterProperty(ObjectRecipe serviceRecipe) throws OpenEJBException {
+        Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
+        if (resourceAdapterId instanceof String)  {
+            Object resourceAdapter = null;
+            try {
+                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/resourceAdapter/" + resourceAdapterId);
+            } catch (NamingException e) {
+                // handled below
+            }
+
+            if (resourceAdapter == null) {
+                throw new OpenEJBException("No existing resource adapter defined with id '" + resourceAdapterId + "'.");
+            }
+            if (!(resourceAdapter instanceof ResourceAdapter)) {
+                throw new OpenEJBException("Resource adapter defined with id '" + resourceAdapterId + "' is not an instance of ResourceAdapter, " +
+                        "but is an instance of " + resourceAdapter.getClass());
+            }
+            serviceRecipe.setProperty("ResourceAdapter", resourceAdapter);
+        }
     }
 
     public void createResource(ResourceInfo serviceInfo) throws OpenEJBException {

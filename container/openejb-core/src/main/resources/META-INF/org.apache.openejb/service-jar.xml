@@ -174,16 +174,16 @@
   <ServiceProvider
           id="Default MDB Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, ServerUrl, ThreadPoolSize, InstanceLimit"
-          class-name="org.apache.openejb.core.mdb.ActiveMQContainer">
+          constructor="id, transactionManager, securityService, ResourceAdapter, ActivationSpecClass, InstanceLimit"
+          class-name="org.apache.openejb.core.mdb.MdbContainer">
 
-    # Specifies the url used to create the ActiveMQ resource adapter.
+    # The resource adapter delivers messages to the container
 
-    ServerUrl tcp://localhost:51616
+    ResourceAdapter Default JMS Resource Adapter
 
-    # Specifies the size of the thread pool available to AciveMQ.
+    # Specifies the activation spec class
 
-    ThreadPoolSize 10
+    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
 
     # Specifies the maximum number of bean instances that are
     # allowed to exist for each MDB deployment.
@@ -299,9 +299,15 @@
           provider-type="Resource"
           class-name="org.apache.activemq.ra.ActiveMQResourceAdapter">
 
+    # Broker configuration
+    BrokerXmlConfig broker:(tcp://localhost:61616)
+    
     # Broker address
-    #ServerUrl tcp://localhost:61616
-    ServerUrl vm://localhost
+    ServerUrl vm://localhost?async=true
+
+    # Specifies the size of the thread pool available to AciveMQ.
+    ThreadPoolSize 30
+
   </ServiceProvider>
 
   <ServiceProvider
