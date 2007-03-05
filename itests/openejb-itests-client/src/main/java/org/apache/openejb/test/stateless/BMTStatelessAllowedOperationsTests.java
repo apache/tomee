@@ -211,8 +211,6 @@ public class BMTStatelessAllowedOperationsTests extends BasicStatelessTestClient
             policy.allow( policy.Context_getEJBObject );
             policy.allow( policy.Context_getUserTransaction );
             policy.allow( policy.JNDI_access_to_java_comp_env );
-            policy.allow( policy.Resource_manager_access );
-            policy.allow( policy.Enterprise_bean_access );
         
             Object expected = policy;
             Object actual = ejbObject.getAllowedOperationsReport("businessMethod");

@@ -168,9 +168,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-        
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
         
@@ -206,9 +204,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-    
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
     
@@ -244,9 +240,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-        
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
         
@@ -282,9 +276,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-        
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
         
@@ -324,9 +316,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_setRollbackOnly );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-    
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
     
@@ -367,9 +357,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_setRollbackOnly );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-    
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("afterBegin");
     
@@ -410,9 +398,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_setRollbackOnly );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
-    
+
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("beforeCompletion");
     
@@ -448,8 +434,6 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
-        policy.allow( policy.Resource_manager_access );
-        policy.allow( policy.Enterprise_bean_access );
         
         Object expected = policy;
         Object actual = ejbObject.getAllowedOperationsReport("afterCompletion");

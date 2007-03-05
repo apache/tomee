@@ -19,16 +19,11 @@ package org.apache.openejb.assembler.classic;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.apache.openejb.BeanType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.entity.EntityEncReference;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
-import org.apache.openejb.core.ivm.naming.Reference;
-import org.apache.openejb.core.stateful.StatefulEncReference;
-import org.apache.openejb.core.stateless.StatelessEncReference;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -143,7 +138,7 @@ public class JndiBuilder {
             if (homeInterface != null) {
                 String name = strategy.getName(deployment, homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
                 bindings.add(name);
-                context.bind("openejb/ejb/" + name, getReference(deployment.getEJBHome(), deployment));
+                context.bind("openejb/ejb/" + name, new ObjectReference(deployment.getEJBHome()));
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind home interface for deployment " + id, e);
@@ -154,7 +149,7 @@ public class JndiBuilder {
             if (localHomeInterface != null) {
                 String name = strategy.getName(deployment, localHomeInterface, JndiNameStrategy.Interface.LOCAL_HOME);
                 bindings.add(name);
-                context.bind("openejb/ejb/" + name, getReference(deployment.getEJBLocalHome(), deployment));
+                context.bind("openejb/ejb/" + name, new ObjectReference(deployment.getEJBLocalHome()));
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind local interface for deployment " + id, e);
@@ -183,19 +178,6 @@ public class JndiBuilder {
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
         }
-    }
-
-    private Reference getReference(Object proxy, CoreDeploymentInfo deployment) {
-        Reference ref = new ObjectReference(proxy);
-
-        if (deployment.getComponentType() == BeanType.STATEFUL) {
-            ref = new StatefulEncReference(ref);
-        } else if (deployment.getComponentType() == BeanType.STATELESS) {
-            ref = new StatelessEncReference(ref);
-        } else {
-            ref = new EntityEncReference(ref);
-        }
-        return ref;
     }
 
     protected static final class Bindings {

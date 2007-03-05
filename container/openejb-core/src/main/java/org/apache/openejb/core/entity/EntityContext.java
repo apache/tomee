@@ -153,14 +153,6 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             return false;
         }
 
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
-            return false;
-        }
-
         public boolean isEntityManagerFactoryAccessAllowed() {
             return false;
         }
@@ -313,14 +305,6 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         }
 
         public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
             return false;
         }
 

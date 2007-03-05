@@ -332,29 +332,7 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
 		} catch (IllegalStateException ise) {
 		} catch (javax.naming.NamingException ne) {
 		}
-	
-		/*[9] Test Resource_manager_access ///////////////*/
-		try {
-			InitialContext jndiContext = new InitialContext( ); 
-	
-			DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/stateless/references/Resource_manager_access");
-	
-			policy.allow( policy.Resource_manager_access );
-		} catch (IllegalStateException ise) {
-		} catch (javax.naming.NamingException ne) {
-		}
-	
-		/*[10] Test Enterprise_bean_access ///////////////*/
-		try {
-			InitialContext jndiContext = new InitialContext( ); 
-	
-			Object obj = jndiContext.lookup("java:comp/env/stateless/beanReferences/Enterprise_bean_access");
-	
-			policy.allow( policy.Enterprise_bean_access );
-		} catch (IllegalStateException ise) {
-		} catch (javax.naming.NamingException ne) {
-		}
-	
+
 		allowedOperationsTable.put(methodName, policy);
 	}
 

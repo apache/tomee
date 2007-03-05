@@ -119,14 +119,6 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return getState().isJNDIAccessAllowed();
     }
 
-    public boolean isResourceManagerAccessAllowed() {
-        return getState().isResourceManagerAccessAllowed();
-    }
-
-    public boolean isEnterpriseBeanAccessAllowed() {
-        return getState().isEnterpriseBeanAccessAllowed();
-    }
-
     public boolean isEntityManagerFactoryAccessAllowed() {
         return getState().isEntityManagerFactoryAccessAllowed();
     }
@@ -254,14 +246,6 @@ public abstract class BaseContext implements EJBContext, Serializable {
         }
 
         public boolean isJNDIAccessAllowed() {
-            return true;
-        }
-
-        public boolean isResourceManagerAccessAllowed() {
-            return true;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
             return true;
         }
 

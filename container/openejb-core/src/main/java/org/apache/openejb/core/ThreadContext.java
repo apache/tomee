@@ -94,7 +94,6 @@ public class ThreadContext {
     private final Object securityIdentity;
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
-    private BaseContext beanContext;
     private Operation currentOperation;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
@@ -117,7 +116,6 @@ public class ThreadContext {
         this.securityIdentity = that.securityIdentity;
         this.data.putAll(that.data);
         this.oldClassLoader = that.oldClassLoader;
-        this.beanContext = that.beanContext;
     }
 
     public CoreDeploymentInfo getDeploymentInfo() {
@@ -130,14 +128,6 @@ public class ThreadContext {
 
     public Object getSecurityIdentity() {
         return securityIdentity;
-    }
-
-    public BaseContext getBeanContext() {
-        return beanContext;
-    }
-
-    public void setBeanContext(BaseContext beanContext) {
-        this.beanContext = beanContext;
     }
 
     public Operation getCurrentOperation() {

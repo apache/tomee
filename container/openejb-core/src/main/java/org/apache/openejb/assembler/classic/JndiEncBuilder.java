@@ -40,7 +40,6 @@ import javax.naming.NamingException;
 import javax.naming.Name;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +59,6 @@ import java.net.URISyntaxException;
  */
 public class JndiEncBuilder {
 
-    private final ReferenceWrapper referenceWrapper;
     private final boolean beanManagedTransactions;
     private final String moduleId;
     private final JndiEncInfo jndiEnc;
@@ -76,20 +74,6 @@ public class JndiEncBuilder {
     }
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories, String moduleId) throws OpenEJBException {
-        if (ejbType == null){
-            referenceWrapper = new DefaultReferenceWrapper();
-        } else if (ejbType.isEntity()) {
-            referenceWrapper = new EntityRefereceWrapper();
-        } else if (ejbType == BeanType.STATEFUL) {
-            referenceWrapper = new StatefulRefereceWrapper();
-        } else if (ejbType == BeanType.STATELESS) {
-            referenceWrapper = new StatelessRefereceWrapper();
-        } else if (ejbType == BeanType.MESSAGE_DRIVEN) {
-            referenceWrapper = new MessageDrivenRefereceWrapper();
-        } else {
-            throw new org.apache.openejb.OpenEJBException("Unknown component type");
-        }
-
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
         this.moduleId = moduleId;
@@ -174,7 +158,7 @@ public class JndiEncBuilder {
 
         // bind UserTransaction if bean managed transactions
         if (beanManagedTransactions) {
-            Object userTransaction = referenceWrapper.wrap(new CoreUserTransaction(transactionManager));
+            Object userTransaction = new CoreUserTransaction(transactionManager);
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
 
@@ -394,64 +378,7 @@ public class JndiEncBuilder {
     }
 
     private Object wrapReference(Reference reference) {
-        return referenceWrapper.wrap(reference);
-    }
-
-    static abstract class ReferenceWrapper {
-        abstract Object wrap(Reference reference);
-
-        abstract Object wrap(UserTransaction reference);
-    }
-
-    static class EntityRefereceWrapper extends ReferenceWrapper {
-        public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.entity.EntityEncReference(reference);
-        }
-
-        public Object wrap(UserTransaction userTransaction) {
-            throw new IllegalStateException("Entity beans cannot have references to UserTransaction instance");
-        }
-    }
-
-    static class StatelessRefereceWrapper extends ReferenceWrapper {
-        public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateless.StatelessEncReference(reference);
-        }
-
-        public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateless.StatelessEncUserTransaction((CoreUserTransaction) userTransaction);
-        }
-    }
-
-    static class StatefulRefereceWrapper extends ReferenceWrapper {
-        public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.stateful.StatefulEncReference(reference);
-        }
-
-        public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.stateful.StatefulEncUserTransaction(userTransaction);
-        }
-    }
-
-    static class MessageDrivenRefereceWrapper extends ReferenceWrapper {
-        public Object wrap(Reference reference) {
-            return new org.apache.openejb.core.mdb.MdbEncReference(reference);
-        }
-
-        public Object wrap(UserTransaction userTransaction) {
-            return new org.apache.openejb.core.mdb.MdbEncUserTransaction((CoreUserTransaction) userTransaction);
-        }
-    }
-
-
-    private static class DefaultReferenceWrapper extends ReferenceWrapper {
-        Object wrap(Reference reference) {
-            return reference;
-        }
-
-        Object wrap(UserTransaction reference) {
-            return reference;
-        }
+        return reference;
     }
 
     public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {

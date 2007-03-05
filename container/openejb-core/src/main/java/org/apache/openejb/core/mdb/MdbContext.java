@@ -58,63 +58,67 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
      * Dependency injection methods (e.g., setMessageDrivenContext)
      */
     protected static class InjectionMdbState extends State {
-
+        @Override
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
 
+        @Override
         public EJBLocalHome getEJBLocalHome() {
             throw new IllegalStateException();
         }
 
-        public Principal getCallerPrincipal() {
+        @Override
+        public Principal getCallerPrincipal(SecurityService securityService) {
             throw new IllegalStateException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        @Override
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 
-        public UserTransaction getUserTransaction() throws IllegalStateException {
+        @Override
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly() throws IllegalStateException {
+        @Override
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly() throws IllegalStateException {
+        @Override
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
+        @Override
         public TimerService getTimerService() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
+        @Override
         public boolean isUserTransactionAccessAllowed() {
             return false;
         }
 
+        @Override
         public boolean isMessageContextAccessAllowed() {
             return false;
         }
 
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
-            return false;
-        }
-
+        @Override
         public boolean isEntityManagerFactoryAccessAllowed() {
             return false;
         }
 
+        @Override
         public boolean isEntityManagerAccessAllowed() {
             return false;
         }
 
+        @Override
         public boolean isTimerAccessAllowed() {
             return false;
         }
@@ -124,55 +128,57 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
     protected static class LifecycleMdbState extends State {
-
+        @Override
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
 
+        @Override
         public EJBLocalHome getEJBLocalHome() {
             throw new IllegalStateException();
         }
 
-        public Principal getCallerPrincipal() {
+        @Override
+        public Principal getCallerPrincipal(SecurityService securityService) {
             throw new IllegalStateException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        @Override
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 
-        public UserTransaction getUserTransaction() throws IllegalStateException {
+        @Override
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly() throws IllegalStateException {
+        @Override
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly() throws IllegalStateException {
+        @Override
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
+        @Override
         public boolean isUserTransactionAccessAllowed() {
             return false;
         }
 
+        @Override
         public boolean isMessageContextAccessAllowed() {
             return false;
         }
 
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
-            return false;
-        }
-
+        @Override
         public boolean isEntityManagerAccessAllowed() {
             return false;
         }
 
+        @Override
         public boolean isTimerAccessAllowed() {
             return super.isTimerAccessAllowed();    //todo: consider this autogenerated code
         }
@@ -183,23 +189,27 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
      * and imeout callback method
      */
     protected static class BusinessTimeoutMdbState extends State {
-
+        @Override
         public EJBHome getEJBHome() {
             throw new IllegalStateException();
         }
 
+        @Override
         public EJBLocalHome getEJBLocalHome() {
             throw new IllegalStateException();
         }
 
-        public boolean isCallerInRole(String roleName) {
+        @Override
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 
-        public UserTransaction getUserTransaction() throws IllegalStateException {
+        @Override
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
         }
 
+        @Override
         public boolean isUserTransactionAccessAllowed() {
             return false;
         }

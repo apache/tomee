@@ -193,14 +193,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             return false;
         }
 
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
-            return false;
-        }
-
         public boolean isEntityManagerFactoryAccessAllowed() {
             return false;
         }
@@ -252,14 +244,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         }
 
         public boolean isJNDIAccessAllowed() {
-            return false;
-        }
-
-        public boolean isResourceManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEnterpriseBeanAccessAllowed() {
             return false;
         }
 
