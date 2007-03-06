@@ -237,8 +237,7 @@ public class EjbJarInfoBuilder {
         }
 
         Map<String, String> interceptorMethods = new HashMap<String, String>();
-        List<Interceptor> interceptors = jar.getEjbJar().getInterceptors().getInterceptor();
-        for (Interceptor interceptor : interceptors) {
+        for (Interceptor interceptor : jar.getEjbJar().getInterceptors().getInterceptor()) {
             AroundInvoke aroundInvoke = interceptor.getAroundInvoke().iterator().next();
             String clazz = aroundInvoke.getClazz();
             String methodName = aroundInvoke.getMethodName();

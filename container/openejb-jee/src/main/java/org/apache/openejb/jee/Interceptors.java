@@ -18,16 +18,13 @@
 
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 /**
@@ -47,8 +44,10 @@ public class Interceptors {
 
     @XmlElement(required = true)
     protected List<Text> description;
-    @XmlElement(required = true)
-    protected List<Interceptor> interceptor;
+
+    @XmlTransient
+    protected Map<String,Interceptor> interceptors = new LinkedHashMap<String,Interceptor>();
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -61,13 +60,6 @@ public class Interceptors {
         return this.description;
     }
 
-    public List<Interceptor> getInterceptor() {
-        if (interceptor == null) {
-            interceptor = new ArrayList<Interceptor>();
-        }
-        return this.interceptor;
-    }
-
     public String getId() {
         return id;
     }
@@ -76,4 +68,22 @@ public class Interceptors {
         this.id = value;
     }
 
+    @XmlElement(name = "interceptor", required = true)
+    public Interceptor[] getInterceptor() {
+        return interceptors.values().toArray(new Interceptor[]{});
+    }
+
+    public void setInterceptor(Interceptor[] v) {
+        interceptors.clear();
+        for (Interceptor e : v) addInterceptor(e);
+    }
+
+    public Interceptor addInterceptor(Interceptor interceptor){
+        interceptors.put(interceptor.getInterceptorClass(), interceptor);
+        return interceptor;
+    }
+
+    public Interceptor getInterceptor(String className){
+        return interceptors.get(className);
+    }
 }
