@@ -18,31 +18,6 @@
 package org.apache.openejb.test.mdb;
 
 import junit.framework.TestSuite;
-import org.apache.openejb.test.stateless.BMTStatelessAllowedOperationsTests;
-import org.apache.openejb.test.stateless.MiscEjbTests;
-import org.apache.openejb.test.stateless.StatelessAllowedOperationsTests;
-import org.apache.openejb.test.stateless.StatelessAnnotatedFieldInjectionTests;
-import org.apache.openejb.test.stateless.StatelessBeanTxTests;
-import org.apache.openejb.test.stateless.StatelessContextLookupTests;
-import org.apache.openejb.test.stateless.StatelessEjbHomeTests;
-import org.apache.openejb.test.stateless.StatelessEjbMetaDataTests;
-import org.apache.openejb.test.stateless.StatelessEjbObjectTests;
-import org.apache.openejb.test.stateless.StatelessFieldInjectionTests;
-import org.apache.openejb.test.stateless.StatelessHandleTests;
-import org.apache.openejb.test.stateless.StatelessHomeHandleTests;
-import org.apache.openejb.test.stateless.StatelessJndiEncTests;
-import org.apache.openejb.test.stateless.StatelessPojoContextLookupTests;
-import org.apache.openejb.test.stateless.StatelessPojoEjbHomeTests;
-import org.apache.openejb.test.stateless.StatelessPojoEjbMetaDataTests;
-import org.apache.openejb.test.stateless.StatelessPojoEjbObjectTests;
-import org.apache.openejb.test.stateless.StatelessPojoHandleTests;
-import org.apache.openejb.test.stateless.StatelessPojoHomeHandleTests;
-import org.apache.openejb.test.stateless.StatelessPojoHomeIntfcTests;
-import org.apache.openejb.test.stateless.StatelessPojoRemoteIntrfcTests;
-import org.apache.openejb.test.stateless.StatelessRemoteBusinessIntfcTests;
-import org.apache.openejb.test.stateless.StatelessRemoteIntfcTests;
-import org.apache.openejb.test.stateless.StatelessRmiIiopTests;
-import org.apache.openejb.test.stateless.StatelessSetterInjectionTests;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -58,29 +33,27 @@ public class MdbTestSuite extends junit.framework.TestCase {
     public static junit.framework.Test suite() {
         TestSuite suite = new TestSuite();
 
-        // verify the famework is working
+        // Verify the famework is working
         suite.addTest(new MdbConnectionFactoryTests());
         suite.addTest(new BasicMdbTests());
 
-        // allowed operations
+        // Allowed operations
         suite.addTest(new MdbAllowedOperationsTests());
         suite.addTest(new BmtMdbAllowedOperationsTests());
 
+        // Transaction tests
 //        suite.addTest(new StatelessBeanTxTests());
-//        suite.addTest(new StatelessJndiEncTests());
-//        suite.addTest(new StatelessContextLookupTests());
+
+        // Enterprise naming context tests
+        suite.addTest(new MdbJndiEncTests());
+        suite.addTest(new MdbContextLookupTests());
 //        suite.addTest(new StatelessPojoContextLookupTests());
+
+        // Injection tests
 //        suite.addTest(new StatelessFieldInjectionTests());
 //        suite.addTest(new StatelessSetterInjectionTests());
 //        suite.addTest(new StatelessAnnotatedFieldInjectionTests());
-//        suite.addTest(new StatelessRmiIiopTests());
-//        suite.addTest(new MiscEjbTests());
-        /* TO DO
-        suite.addTest(new StatelessEjbContextTests());
-        suite.addTest(new BMTStatelessEjbContextTests());
-        suite.addTest(new BMTStatelessEncTests());
-        suite.addTest(new StatelessContainerManagedTransactionTests());
-        */
+
         return suite;
     }
 }
