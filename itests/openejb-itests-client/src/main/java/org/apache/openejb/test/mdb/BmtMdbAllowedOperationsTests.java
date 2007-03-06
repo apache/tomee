@@ -62,18 +62,19 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class MdbAllowedOperationsTests extends MdbTestClient {
+public class BmtMdbAllowedOperationsTests extends MdbTestClient {
     protected BasicMdbObject basicMdbObject;
 
-    public MdbAllowedOperationsTests(){
+    public BmtMdbAllowedOperationsTests(){
         super("AllowedOperations.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicBmtMdb");
         basicMdbObject.businessMethod("foo");
     }
+
 
     protected void tearDown() throws Exception {
         MdbProxy.destroyProxy(basicMdbObject);
@@ -117,6 +118,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      * ejbCreate             |  SessionContext methods:
      * ejbRemove             |     - getEJBHome
      *                       |     - getEJBObject
+     *                       |     - getUserTransaction,
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
@@ -130,6 +132,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getUserTransaction );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
             Object expected = policy;
@@ -149,6 +152,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      * ejbCreate             |  SessionContext methods:
      * ejbRemove             |     - getEJBHome
      *                       |     - getEJBObject
+     *                       |     - getUserTransaction,
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
@@ -159,6 +163,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getUserTransaction );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
             Object expected = policy;
@@ -177,9 +182,8 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      * ______________________|__________________________________________________
      *                       |
      * business method       |  SessionContext methods:
-     * from remote interface |     - getRollbackOnly
-     *                       |     - setRollbackOnly
-     *                       |     - getCallerPrincipal
+     * from remote interface |     - getCallerPrincipal
+     *                       |     - getUserTransaction,
      *                       |     - getTimerService
      *                       |     - lookup
      *                       |  JNDI access to java:comp/env
@@ -192,8 +196,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
     public void test04_businessMethod(){
         try {
             OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( OperationsPolicy.Context_getRollbackOnly );
-            // policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow( OperationsPolicy.Context_getUserTransaction );
             policy.allow( OperationsPolicy.Context_getCallerPrincipal );
             policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );

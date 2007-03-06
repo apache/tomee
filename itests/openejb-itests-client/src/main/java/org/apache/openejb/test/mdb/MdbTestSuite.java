@@ -57,11 +57,15 @@ public class MdbTestSuite extends junit.framework.TestCase {
 
     public static junit.framework.Test suite() {
         TestSuite suite = new TestSuite();
+
+        // verify the famework is working
         suite.addTest(new MdbConnectionFactoryTests());
         suite.addTest(new BasicMdbTests());
+
+        // allowed operations
         suite.addTest(new MdbAllowedOperationsTests());
-        
-//        suite.addTest(new BMTStatelessAllowedOperationsTests());
+        suite.addTest(new BmtMdbAllowedOperationsTests());
+
 //        suite.addTest(new StatelessBeanTxTests());
 //        suite.addTest(new StatelessJndiEncTests());
 //        suite.addTest(new StatelessContextLookupTests());

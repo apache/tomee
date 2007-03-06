@@ -149,11 +149,6 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         }
 
         @Override
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
         public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -161,11 +156,6 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         @Override
         public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
         }
 
         @Override
@@ -204,15 +194,6 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
             throw new IllegalStateException();
         }
 
-        @Override
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
     }
 
     static {

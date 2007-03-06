@@ -23,10 +23,22 @@ package org.apache.openejb.test.mdb;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class BasicMdbTests extends BasicMdbTestClient {
+public class BasicMdbTests extends MdbTestClient {
+    protected BasicMdbObject basicMdbObject;
 
     public BasicMdbTests(){
         super("BasicMdb.");
+    }
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+    }
+
+
+    protected void tearDown() throws Exception {
+        MdbProxy.destroyProxy(basicMdbObject);
+        super.tearDown();
     }
 
     //=================================
@@ -108,8 +120,4 @@ public class BasicMdbTests extends BasicMdbTestClient {
     //
     // Test remote interface methods
     //=================================
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
 }

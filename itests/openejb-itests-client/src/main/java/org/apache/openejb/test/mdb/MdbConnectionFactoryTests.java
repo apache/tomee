@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MdbConnectionFactoryTests extends BasicMdbTestClient {
+public class MdbConnectionFactoryTests extends MdbTestClient {
     public MdbConnectionFactoryTests() {
         super("ConnectionFactory.");
     }
@@ -56,9 +56,8 @@ public class MdbConnectionFactoryTests extends BasicMdbTestClient {
 
             // initialize session
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination requestQueue = session.createQueue("request");
+            Destination requestQueue = session.createQueue("BasicMdb");
             Destination responseQueue = session.createTemporaryQueue();
-//            Destination responseQueue = session.createQueue("blah");
 
             // Create a request messages
             ObjectMessage requestMessage = session.createObjectMessage();
@@ -107,7 +106,12 @@ public class MdbConnectionFactoryTests extends BasicMdbTestClient {
     }
 
     public void test03_proxy() throws Exception {
-        String returnValue = basicMdbObject.businessMethod("blah");
-        assertEquals("halb", returnValue);
+        BasicMdbObject basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+        try {
+            String returnValue = basicMdbObject.businessMethod("blah");
+            assertEquals("halb", returnValue);
+        } finally {
+            MdbProxy.destroyProxy(basicMdbObject);
+        }
     }
 }
