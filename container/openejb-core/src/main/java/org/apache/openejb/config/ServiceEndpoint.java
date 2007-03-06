@@ -16,11 +16,15 @@
  */
 package org.apache.openejb.config;
 
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Retention;
+
 /**
  * This is a completely fake annotation and is only a placeholder for the real annotation
  * that specifies an interface is a webservice interface
  * @version $Rev$ $Date$
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ServiceEndpoint {
     java.lang.Class[] value() default {};
 }

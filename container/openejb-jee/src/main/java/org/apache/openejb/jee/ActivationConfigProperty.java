@@ -51,6 +51,14 @@ public class ActivationConfigProperty {
     @XmlID
     protected String id;
 
+    public ActivationConfigProperty() {
+    }
+
+    public ActivationConfigProperty(String activationConfigPropertyName, String activationConfigPropertyValue) {
+        this.activationConfigPropertyName = activationConfigPropertyName;
+        this.activationConfigPropertyValue = activationConfigPropertyValue;
+    }
+
     public String getActivationConfigPropertyName() {
         return activationConfigPropertyName;
     }

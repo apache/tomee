@@ -131,7 +131,6 @@ public class MdbContainer implements Container, TransactionContainer {
             Map<String, String> activationProperties = deploymentInfo.getActivationProperties();
             for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
-                logger.error("ActivationSpec " + entry.getKey() + "=" + entry.getValue());
             }
 
             // create the activationSpec
@@ -145,7 +144,7 @@ public class MdbContainer implements Container, TransactionContainer {
 
             return activationSpec;
         } catch (Exception e) {
-            throw new OpenEJBException("Unable to create activation spec");
+            throw new OpenEJBException("Unable to create activation spec", e);
         }
     }
 

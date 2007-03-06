@@ -48,6 +48,8 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
@@ -125,7 +127,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return clientModule;
         }
 
-        @SuppressWarnings("unchecked")
+//        @SuppressWarnings("unchecked")
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             ClassFinder finder;
             if (ejbModule.getJarURI() != null) {
@@ -159,42 +161,50 @@ public class AnnotationDeployer implements DynamicDeployer {
             // TODO: Anyone know how to avoid SuppressWarnings just for the below line
             List<Class> classes = finder.findAnnotatedClasses(Stateless.class);
             for (Class<?> beanClass : classes) {
-                Stateless stateless = (Stateless) beanClass.getAnnotation(Stateless.class);
+                Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = stateless.name().length() == 0 ? beanClass.getSimpleName() : stateless.name();
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    ejbJar.addEnterpriseBean(new StatelessBean(ejbName, beanClass.getName()));
-                } else if (enterpriseBean.getEjbClass() == null) {
+                    enterpriseBean = new StatelessBean(ejbName, beanClass.getName());
+                    ejbJar.addEnterpriseBean(enterpriseBean);
+                }
+                if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
 
             classes = finder.findAnnotatedClasses(Stateful.class);
             for (Class<?> beanClass : classes) {
-                Stateful stateful = (Stateful) beanClass.getAnnotation(Stateful.class);
+                Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 String ejbName = stateful.name().length() == 0 ? beanClass.getSimpleName() : stateful.name();
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    ejbJar.addEnterpriseBean(new StatefulBean(ejbName, beanClass.getName()));
-                } else if (enterpriseBean.getEjbClass() == null) {
+                    enterpriseBean = new StatefulBean(ejbName, beanClass.getName());
+                    ejbJar.addEnterpriseBean(enterpriseBean);
+                }
+                if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
             }
 
             classes = finder.findAnnotatedClasses(MessageDriven.class);
             for (Class<?> beanClass : classes) {
-                MessageDriven mdb = (MessageDriven) beanClass.getAnnotation(MessageDriven.class);
+                MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = mdb.name().length() == 0 ? beanClass.getSimpleName() : mdb.name();
-                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
-                if (enterpriseBean == null) {
-                    MessageDrivenBean messageBean = new MessageDrivenBean(ejbName);
+                MessageDrivenBean messageBean = (MessageDrivenBean) ejbJar.getEnterpriseBean(ejbName);
+                if (messageBean == null) {
+                    messageBean = new MessageDrivenBean(ejbName);
                     Class<?> interfce = mdb.messageListenerInterface();
-                    if (interfce != null) {
+                    if (interfce != null && !interfce.equals(Object.class)) {
+                        if (!interfce.isInterface()) {
+                            throw new OpenEJBException("MessageListenerInterface property of @MessageDriven is not an interface");
+                        }
                         messageBean.setMessagingType(interfce.getName());
                     }
                     ejbJar.addEnterpriseBean(messageBean);
-                } else if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.getName());
+                }
+                if (messageBean.getEjbClass() == null) {
+                    messageBean.setEjbClass(beanClass.getName());
                 }
             }
 
@@ -246,7 +256,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
 
                 if (bean.getTransactionType() == null) {
-                    TransactionManagement tx = (TransactionManagement) clazz.getAnnotation(TransactionManagement.class);
+                    TransactionManagement tx = clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
                     if (tx != null) {
                         transactionType = tx.value();
@@ -272,7 +282,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // SET THE DEFAULT
                     if (!methodTransactions.containsKey("*")) {
-                        TransactionAttribute attribute = (TransactionAttribute) clazz.getAnnotation(TransactionAttribute.class);
+                        TransactionAttribute attribute = clazz.getAnnotation(TransactionAttribute.class);
                         if (attribute != null) {
                             ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, "*");
                             assemblyDescriptor.getContainerTransaction().add(ctx);
@@ -332,7 +342,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     RemoteBean remoteBean = (RemoteBean) bean;
 
                     if (remoteBean.getHome() == null) {
-                        RemoteHome remoteHome = (RemoteHome) clazz.getAnnotation(RemoteHome.class);
+                        RemoteHome remoteHome = clazz.getAnnotation(RemoteHome.class);
                         if (remoteHome != null) {
                             Class<?> homeClass = remoteHome.value();
                             try {
@@ -347,7 +357,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (remoteBean.getLocalHome() == null) {
-                        LocalHome localHome = (LocalHome) clazz.getAnnotation(LocalHome.class);
+                        LocalHome localHome = clazz.getAnnotation(LocalHome.class);
                         if (localHome != null) {
                             Class<?> homeClass = localHome.value();
                             try {
@@ -364,18 +374,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean instanceof SessionBean) {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
-                        List<Class> interfaces = new ArrayList<Class>();
-                        interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
-
-                        // Remove anything not eligable to be a remote or local interface
-                        for (Class<?> interfce : copy(interfaces)) {
-                            String name = interfce.getName();
-                            if (name.equals("java.io.Serializable") || name.equals("java.io.Externalizable") || name.startsWith("javax.ejb."))
-                            {
-                                interfaces.remove(interfce);
-                            }
-                        }
-
                         // Anything declared in the xml is also not eligable
                         List<String> declared = new ArrayList<String>();
                         declared.add(sessionBean.getBusinessLocal());
@@ -386,15 +384,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                         declared.add(sessionBean.getLocal());
                         declared.add(sessionBean.getServiceEndpoint());
 
-                        for (Class<?> interfce : copy(interfaces)) {
-                            if (declared.contains(interfce.getName())) {
-                                // Interface type was declared in xml
-                                interfaces.remove(interfce);
+                        List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                        for (Class<?> interfce : clazz.getInterfaces()) {
+                            String name = interfce.getName();
+                            if (!name.equals("java.io.Serializable") &&
+                                    !name.equals("java.io.Externalizable") &&
+                                    !name.startsWith("javax.ejb.") &&
+                                    !declared.contains(interfce.getName())) {
+                                interfaces.add(interfce);
                             }
                         }
 
                         List<Class> remotes = new ArrayList<Class>();
-                        Remote remote = (Remote) clazz.getAnnotation(Remote.class);
+                        Remote remote = clazz.getAnnotation(Remote.class);
                         if (remote != null) {
                             if (remote.value().length == 0) {
                                 if (interfaces.size() != 1)
@@ -414,7 +416,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         List<Class> locals = new ArrayList<Class>();
-                        Local local = (Local) clazz.getAnnotation(Local.class);
+                        Local local = clazz.getAnnotation(Local.class);
                         if (local != null) {
                             if (local.value().length == 0) {
                                 if (interfaces.size() != 1)
@@ -433,11 +435,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
-                        List<Class> endpoints = new ArrayList<Class>();
-                        ServiceEndpoint endpoint = (ServiceEndpoint) clazz.getAnnotation(ServiceEndpoint.class);
+                        // todo This is not a real JEE annotation
+                        // List<Class<?>> endpoints = new ArrayList<Class<?>>();
+                        ServiceEndpoint endpoint = clazz.getAnnotation(ServiceEndpoint.class);
                         if (endpoint != null) {
-                            for (Class interfce : endpoint.value()) {
-                                endpoints.add(interfce);
+                            for (Class<?> interfce : endpoint.value()) {
+                                // endpoints.add(interfce);
                                 interfaces.remove(interfce);
                             }
                         }
@@ -447,7 +450,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             } else if (interfce.isAnnotationPresent(ServiceEndpoint.class)) {
-                                endpoints.add(interfce);
+                                // endpoints.add(interfce);
                                 interfaces.remove(interfce);
                             } else {
                                 locals.add(interfce);
@@ -467,6 +470,42 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                if (bean instanceof MessageDrivenBean) {
+                    MessageDrivenBean mdb = (MessageDrivenBean) bean;
+                    MessageDriven messageDriven = clazz.getAnnotation(MessageDriven.class);
+                    if (messageDriven != null) {
+                        javax.ejb.ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
+                        if (configProperties != null) {
+                            ActivationConfig activationConfig = mdb.getActivationConfig();
+                            if (activationConfig == null) {
+                                activationConfig = new ActivationConfig();
+                                mdb.setActivationConfig(activationConfig);
+                            }
+                            for (javax.ejb.ActivationConfigProperty property : configProperties) {
+                                ActivationConfigProperty configProperty = new ActivationConfigProperty(property.propertyName(), property.propertyValue());
+                                activationConfig.getActivationConfigProperty().add(configProperty);
+                            }
+                        }
+
+                        if (mdb.getMessagingType() != null) {
+                            List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                            for (Class<?> interfce : clazz.getInterfaces()) {
+                                String name = interfce.getName();
+                                if (!name.equals("java.io.Serializable") &&
+                                        !name.equals("java.io.Externalizable") &&
+                                        !name.startsWith("javax.ejb.")) {
+                                    interfaces.add(interfce);
+                                }
+                            }
+
+                            if (interfaces.size() != 1) {
+                                throw new IllegalStateException("When annotating a bean class as @MessageDriven without declaring messageListenerInterface, the bean must implement exactly one interface, no more and no less.");
+                            }
+                            mdb.setMessagingType(interfaces.get(0).getName());
+                        }
+                    }
+
+                }
                 buildAnnotatedRefs(clazz, bean);
 
             }
@@ -525,13 +564,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) throws OpenEJBException {
+        private void buildAnnotatedRefs(Class<?> clazz, JndiConsumer consumer) throws OpenEJBException {
             List<EJB> ejbList = new ArrayList<EJB>();
-            EJBs ejbs = (EJBs) clazz.getAnnotation(EJBs.class);
+            EJBs ejbs = clazz.getAnnotation(EJBs.class);
             if (ejbs != null) {
                 ejbList.addAll(Arrays.asList(ejbs.value()));
             }
-            EJB e = (EJB) clazz.getAnnotation(EJB.class);
+            EJB e = clazz.getAnnotation(EJB.class);
             if (e != null) {
                 ejbList.add(e);
             }
@@ -560,11 +599,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
 
             List<Resource> resourceList = new ArrayList<Resource>();
-            Resources resources = (Resources) clazz.getAnnotation(Resources.class);
+            Resources resources = clazz.getAnnotation(Resources.class);
             if (resources != null) {
                 resourceList.addAll(Arrays.asList(resources.value()));
             }
-            Resource r = (Resource) clazz.getAnnotation(Resource.class);
+            Resource r = clazz.getAnnotation(Resource.class);
             if (r != null) {
                 resourceList.add(r);
             }
@@ -591,11 +630,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
-            PersistenceUnits persistenceUnits = (PersistenceUnits) clazz.getAnnotation(PersistenceUnits.class);
+            PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
             if (persistenceUnits != null) {
                 persistenceUnitList.addAll(Arrays.asList(persistenceUnits.value()));
             }
-            PersistenceUnit persistenceUnit = (PersistenceUnit) clazz.getAnnotation(PersistenceUnit.class);
+            PersistenceUnit persistenceUnit = clazz.getAnnotation(PersistenceUnit.class);
             if (persistenceUnit != null) {
                 persistenceUnitList.add(persistenceUnit);
             }
@@ -614,11 +653,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
-            PersistenceContexts persistenceContexts = (PersistenceContexts) clazz.getAnnotation(PersistenceContexts.class);
+            PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
             if(persistenceContexts != null){
                 persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
             }
-            PersistenceContext persistenceContext = (PersistenceContext) clazz.getAnnotation(PersistenceContext.class);
+            PersistenceContext persistenceContext = clazz.getAnnotation(PersistenceContext.class);
             if (persistenceContext != null){
                 persistenceContextList.add(persistenceContext);
             }
@@ -745,11 +784,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 
                     if (resourceRef.getResSharingScope() == null){
-                        if(resource.shareable() == false) {
-                            resourceRef.setResSharingScope(ResSharingScope.UNSHAREABLE);
-                        } else {
+                        if (resource.shareable()) {
                             resourceRef.setResSharingScope(ResSharingScope.SHAREABLE);
-                        }               
+                        } else {
+                            resourceRef.setResSharingScope(ResSharingScope.UNSHAREABLE);
+                        }
                     }
                     reference = resourceRef;
                 } else if (!contains(knownEnvironmentEntries,type)){             
@@ -898,7 +937,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 ejbRef.getInjectionTarget().add(target);
             }
 
-            Class interfce = ejb.beanInterface();
+            Class<?> interfce = ejb.beanInterface();
             if (interfce.equals(Object.class)) {
                 interfce = (member == null) ? null : member.getType();
             }
@@ -966,8 +1005,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private List<Class> copy(List<Class> classes) {
-            return new ArrayList(classes);
+        private List<Class<?>> copy(List<Class<?>> classes) {
+            return new ArrayList<Class<?>>(classes);
         }
 
         private boolean contains(Object[] types,Object type){
@@ -986,7 +1025,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private String[] asStrings(Class[] types) {
-            List<String> names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             for (Class clazz : types) {
                 names.add(clazz.getName());
             }
