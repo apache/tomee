@@ -25,6 +25,8 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
+import java.security.Principal;
+
 
 /**
  * @version $Rev$ $Date$
@@ -54,15 +56,17 @@ public class StatefulContext extends BaseSessionContext {
         states[Operation.INJECTION.ordinal()] = new InjectionStatelessState();
         states[Operation.LIFECYCLE.ordinal()] = new LifecycleStatelessState();
         states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
-        states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCommitState();
+        states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
+        states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
+        states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
         states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
     }
 
     /**
      * afterBegin
-     * beforeCompletion State
+     * beforeCompletion
      */
-    public static class BeforeCommitState extends StatelessState {
+    public static class BeforeCompletion extends StatelessState {
 
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
@@ -73,6 +77,59 @@ public class StatefulContext extends BaseSessionContext {
         }
 
         public boolean isMessageContextAccessAllowed() {
+            return false;
+        }
+    }
+
+    /**
+     * afterCompletion
+     */
+    public static class AfterCompletion extends StatelessState {
+        public MessageContext getMessageContext() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public Class getInvokedBusinessInterface() {
+            throw new IllegalStateException();
+        }
+
+        public Principal getCallerPrincipal(SecurityService securityService) {
+            throw new IllegalStateException();
+        }
+
+        public boolean isCallerInRole(SecurityService securityService, String roleName) {
+            throw new IllegalStateException();
+        }
+
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean isUserTransactionAccessAllowed() {
+            return false;
+        }
+
+        public boolean isMessageContextAccessAllowed() {
+            return false;
+        }
+
+        public boolean isJNDIAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEntityManagerFactoryAccessAllowed() {
+            return false;
+        }
+
+        public boolean isEntityManagerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isTimerAccessAllowed() {
             return false;
         }
     }
