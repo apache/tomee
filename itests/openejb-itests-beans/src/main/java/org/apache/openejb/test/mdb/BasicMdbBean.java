@@ -146,12 +146,10 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     // MessageDrivenBean interface methods
     //
 
-    /**
-     * A container invokes this method before it ends the life of the session
-     * object. This happens as a result of a client's invoking a remove
-     * operation, or when a container decides to terminate the session object
-     * after a timeout.
-     */
+    public void ejbCreate() throws javax.ejb.CreateException{
+        testAllowedOperations("ejbCreate");
+    }
+
     public void ejbRemove() throws EJBException {
         testAllowedOperations("ejbRemove");
     }

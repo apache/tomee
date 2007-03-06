@@ -676,9 +676,21 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             mapHomeInterface(localHomeInterface);
         }
 
+        if (componentType == BeanType.MESSAGE_DRIVEN && MessageDrivenBean.class.isAssignableFrom(beanClass)) {
+            try {
+                createMethod = beanClass.getDeclaredMethod("ejbCreate");
+            } catch (NoSuchMethodException e) {
+                // if there isn't an ejbCreate method that is fine
+            }
+            try {
+                preDestroy = MessageDrivenBean.class.getDeclaredMethod("ejbRemove");
+            } catch (NoSuchMethodException e) {
+                // this won't happen
+            }
+        }
 
         try {
-
+            // map the remove methods
             if (componentType == BeanType.STATEFUL || componentType == BeanType.STATELESS) {
                 Method beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);

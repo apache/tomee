@@ -200,6 +200,7 @@ public class MdbInstanceFactory {
             // call the post construct method
             Method postConstruct = deploymentInfo.getPostConstruct();
             if (postConstruct != null){
+                callContext.setCurrentOperation(Operation.LIFECYCLE);
                 postConstruct.invoke(bean);
             }
 

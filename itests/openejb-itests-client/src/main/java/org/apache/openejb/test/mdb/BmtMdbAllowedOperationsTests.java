@@ -116,22 +116,17 @@ public class BmtMdbAllowedOperationsTests extends MdbTestClient {
      * ______________________|__________________________________________________
      *                       |
      * ejbCreate             |  SessionContext methods:
-     * ejbRemove             |     - getEJBHome
-     *                       |     - getEJBObject
+     * ejbRemove             |     - getTimerService
+     *                       |     - lookup
      *                       |     - getUserTransaction,
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    // todo ejbCreate isn't being called because deployment code is not flagging it as the post construct method
-    public void TODO_test02_ejbCreate() {
-	// The stateless session bean has container managed transactions
-	// so, the test Context_getUserTransaction should fail, but,
-	// it does not.  Someone should see why it does not fail.
+    public void test02_ejbCreate() {
         try {
             OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( OperationsPolicy.Context_getEJBHome );
-            policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.Context_getUserTransaction );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
@@ -144,6 +139,7 @@ public class BmtMdbAllowedOperationsTests extends MdbTestClient {
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+    
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
