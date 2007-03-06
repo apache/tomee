@@ -22,6 +22,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.Injection;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
@@ -172,6 +173,22 @@ public class MdbInstanceFactory {
             } catch (NamingException e) {
                 mdbContext = new MdbContext(transactionManager, securityService);
                 ctx.bind("java:comp/EJBContext",mdbContext);
+            }
+            for (Injection injection : deploymentInfo.getInjections()) {
+                try {
+                    String jndiName = injection.getJndiName();
+                    Object object = ctx.lookup("java:comp/env/" + jndiName);
+                    if (object instanceof String) {
+                        String string = (String) object;
+                        // Pass it in raw so it could be potentially converted to
+                        // another data type by an xbean-reflect property editor
+                        objectRecipe.setProperty(injection.getName(), string);
+                    } else {
+                        objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
+                    }
+                } catch (NamingException e) {
+                    logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                }
             }
             // only in this case should the callback be used
             callContext.setCurrentOperation(Operation.INJECTION);
