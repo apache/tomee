@@ -17,25 +17,23 @@
  */
 package org.apache.openejb.test.mdb;
 
-import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.TestManager;
 
 /**
- * [4] Should be run as the fourth test suite of the EncStatelessTestClients
- *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class MdbContextLookupTests extends MdbTestClient {
+public class MdbPojoContextLookupTests extends MdbTestClient {
     protected EncMdbObject ejbObject;
 
-    public MdbContextLookupTests(){
-        super("ContextLookup.");
+    public MdbPojoContextLookupTests(){
+        super("PojoContextLookup.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, "ContextLookupMdbBean");
+        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, "ContextLookupMdbPojoBean");
         TestManager.getDatabase().createEntityTable();
     }
 

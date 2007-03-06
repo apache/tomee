@@ -47,7 +47,7 @@ public class MdbTestSuite extends junit.framework.TestCase {
         // Enterprise naming context tests
         suite.addTest(new MdbJndiEncTests());
         suite.addTest(new MdbContextLookupTests());
-//        suite.addTest(new StatelessPojoContextLookupTests());
+        suite.addTest(new MdbPojoContextLookupTests());
 
         // Injection tests
 //        suite.addTest(new StatelessFieldInjectionTests());

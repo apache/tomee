@@ -28,39 +28,33 @@ import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
-
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.MessageDrivenContext;
-import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.MessageListener;
-import javax.jms.Message;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.naming.InitialContext;
-
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
-public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
-	private MessageDrivenContext mdbContext = null;
+import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.MessageDrivenContext;
+import javax.jms.MessageListener;
+import javax.jms.ConnectionFactory;
+import javax.jms.Message;
+import javax.jms.JMSException;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Connection;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.MessageProducer;
+import java.rmi.RemoteException;
+
+public class ContextLookupMdbPojoBean implements MessageListener {
     private MdbInvoker mdbInvoker;
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
-        this.mdbContext = ctx;
+    public ContextLookupMdbPojoBean() {
         try {
             ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
@@ -86,10 +80,11 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         }
     }
 
+
     public void lookupEntityBean() throws TestFailureException {
         try {
             try {
-                BasicBmpHome home = (BasicBmpHome) mdbContext.lookup("stateless/beanReferences/bmp_entity");
+                BasicBmpHome home = (BasicBmpHome) getMessageDrivenContext().lookup("stateless/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicBmpObject object = home.createObject("Enc Bean");
@@ -105,7 +100,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatefulBean() throws TestFailureException {
         try {
             try {
-                BasicStatefulHome home = (BasicStatefulHome) mdbContext.lookup("stateless/beanReferences/stateful");
+                BasicStatefulHome home = (BasicStatefulHome) getMessageDrivenContext().lookup("stateless/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicStatefulObject object = home.createObject("Enc Bean");
@@ -121,7 +116,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatelessBean() throws TestFailureException {
         try {
             try {
-                BasicStatelessHome home = (BasicStatelessHome) mdbContext.lookup("stateless/beanReferences/stateless");
+                BasicStatelessHome home = (BasicStatelessHome) getMessageDrivenContext().lookup("stateless/beanReferences/stateless");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicStatelessObject object = home.createObject();
@@ -137,7 +132,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatelessBusinessLocal() throws TestFailureException{
         try{
             try{
-            BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) mdbContext.lookup("stateless/beanReferences/stateless-business-local");
+            BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) getMessageDrivenContext().lookup("stateless/beanReferences/stateless-business-local");
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -150,7 +145,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatelessBusinessRemote() throws TestFailureException{
         try{
             try{
-            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) mdbContext.lookup("stateless/beanReferences/stateless-business-remote");
+            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) getMessageDrivenContext().lookup("stateless/beanReferences/stateless-business-remote");
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -163,7 +158,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatefulBusinessLocal() throws TestFailureException{
         try{
             try{
-            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) mdbContext.lookup("stateless/beanReferences/stateful-business-local");
+            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) getMessageDrivenContext().lookup("stateless/beanReferences/stateful-business-local");
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -176,7 +171,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupStatefulBusinessRemote() throws TestFailureException{
         try{
             try{
-            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) mdbContext.lookup("stateless/beanReferences/stateful-business-remote");
+            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) getMessageDrivenContext().lookup("stateless/beanReferences/stateful-business-remote");
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -186,11 +181,12 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         }
     }
 
+
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
                 String expected = new String("1");
-                String actual = (String) mdbContext.lookup("stateless/references/String");
+                String actual = (String) getMessageDrivenContext().lookup("stateless/references/String");
 
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -207,7 +203,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Double expected = new Double(1.0D);
-                Double actual = (Double) mdbContext.lookup("stateless/references/Double");
+                Double actual = (Double) getMessageDrivenContext().lookup("stateless/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -224,7 +220,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Long expected = new Long(1L);
-                Long actual = (Long) mdbContext.lookup("stateless/references/Long");
+                Long actual = (Long) getMessageDrivenContext().lookup("stateless/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -241,7 +237,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Float expected = new Float(1.0F);
-                Float actual = (Float) mdbContext.lookup("stateless/references/Float");
+                Float actual = (Float) getMessageDrivenContext().lookup("stateless/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -258,7 +254,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Integer expected = new Integer(1);
-                Integer actual = (Integer) mdbContext.lookup("stateless/references/Integer");
+                Integer actual = (Integer) getMessageDrivenContext().lookup("stateless/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -275,7 +271,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Short expected = new Short((short) 1);
-                Short actual = (Short) mdbContext.lookup("stateless/references/Short");
+                Short actual = (Short) getMessageDrivenContext().lookup("stateless/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -292,7 +288,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Boolean expected = new Boolean(true);
-                Boolean actual = (Boolean) mdbContext.lookup("stateless/references/Boolean");
+                Boolean actual = (Boolean) getMessageDrivenContext().lookup("stateless/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -309,7 +305,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Byte expected = new Byte((byte) 1);
-                Byte actual = (Byte) mdbContext.lookup("stateless/references/Byte");
+                Byte actual = (Byte) getMessageDrivenContext().lookup("stateless/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -326,7 +322,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
         try {
             try {
                 Character expected = new Character('D');
-                Character actual = (Character) mdbContext.lookup("stateless/references/Character");
+                Character actual = (Character) getMessageDrivenContext().lookup("stateless/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -342,7 +338,7 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupResource() throws TestFailureException {
         try {
             try {
-                Object obj = mdbContext.lookup("datasource");
+                Object obj = getMessageDrivenContext().lookup("datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e) {
@@ -356,19 +352,19 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupJMSConnectionFactory() throws TestFailureException{
         try{
             try{
-                Object obj = mdbContext.lookup("jms");
+                Object obj = getMessageDrivenContext().lookup("jms");
                 Assert.assertNotNull("The JMS ConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of ConnectionFactory", obj instanceof ConnectionFactory);
                 ConnectionFactory connectionFactory = (ConnectionFactory) obj;
                 testJmsConnection(connectionFactory.createConnection());
 
-                obj = mdbContext.lookup("TopicCF");
+                obj = getMessageDrivenContext().lookup("TopicCF");
                 Assert.assertNotNull("The JMS TopicConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of TopicConnectionFactory", obj instanceof TopicConnectionFactory);
                 TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
                 testJmsConnection(topicConnectionFactory.createConnection());
 
-                obj = mdbContext.lookup("QueueCF");
+                obj = getMessageDrivenContext().lookup("QueueCF");
                 Assert.assertNotNull("The JMS QueueConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
                 QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
@@ -395,25 +391,11 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
     public void lookupPersistenceUnit() throws TestFailureException{
         try{
             try{
-                EntityManagerFactory emf = (EntityManagerFactory) mdbContext.lookup("persistence/TestUnit");
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-            }
-        } catch (AssertionFailedError afe){
-            throw new TestFailureException(afe);
-        }
-    }
-
-    public void lookupPersistenceContext() throws TestFailureException{
-        try{
-            try{
-                EntityManager em = (EntityManager) mdbContext.lookup("persistence/TestContext");
-                Assert.assertNotNull("The EntityManager is null", em);
-
-                // call a do nothing method to assure entity manager actually exists
-                em.getFlushMode();
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
@@ -435,9 +417,6 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
                 // lookup using global name
                 EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
                 Assert.assertNotNull("The MessageDrivenContext got from java:comp/EJBContext is null ", ejbCtx );
-
-                // verify context was set via legacy set method
-                Assert.assertNotNull("The MessageDrivenContext is null from setter method", mdbContext);
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
@@ -447,9 +426,36 @@ public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, Me
 
     }
 
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void lookupPersistenceContext() throws TestFailureException{
+        try{
+            try{
+                InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
+                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                Assert.assertNotNull("The EntityManager is null", em);
+
+                // call a do nothing method to assure entity manager actually exists
+                em.getFlushMode();
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
     }
 
-    public void ejbRemove() throws EJBException {
+    /**
+     * Set the associated message driven context. The container calls this method
+     * after the instance creation.
+     */
+    public MessageDrivenContext getMessageDrivenContext() throws EJBException, RemoteException {
+        MessageDrivenContext ejbContext = null;
+        try {
+            ejbContext = (MessageDrivenContext) new InitialContext().lookup("java:comp/EJBContext");
+        } catch (NamingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return ejbContext;
     }
 }

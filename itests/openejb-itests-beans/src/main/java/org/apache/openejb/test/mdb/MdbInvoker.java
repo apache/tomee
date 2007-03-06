@@ -81,7 +81,7 @@ public class MdbInvoker implements MessageListener {
             String signature = (String) request.get("method");
             if (signature == null) throw new NullPointerException("method property is null");
             Method method = signatures.get(signature);
-            if (method == null) throw new IllegalArgumentException("no such method " + method + "; known methods are " + signatures.keySet());
+            if (method == null) throw new IllegalArgumentException("no such method " + signature + "; known methods are " + signatures.keySet());
             Object[] args = (Object[]) request.get("args");
 
             boolean exception = false;
