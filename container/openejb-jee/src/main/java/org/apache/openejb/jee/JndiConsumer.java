@@ -40,11 +40,4 @@ public interface JndiConsumer {
 
     List<PersistenceUnitRef> getPersistenceUnitRef();
 
-    List<LifecycleCallback> getPostConstruct();
-
-    List<LifecycleCallback> getPreDestroy();
-
-    void addPostConstruct(String method);
-
-    void addPreDestroy(String method);
 }

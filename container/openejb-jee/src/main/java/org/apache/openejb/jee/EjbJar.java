@@ -75,7 +75,7 @@ public class EjbJar {
     @XmlTransient
     protected Map<String,EnterpriseBean> enterpriseBeans = new LinkedHashMap<String,EnterpriseBean>();
 
-    protected Interceptors interceptors;
+    private Interceptors interceptors;
     protected Relationships relationships;
     @XmlElement(name = "assembly-descriptor")
     protected AssemblyDescriptor assemblyDescriptor;
@@ -154,12 +154,19 @@ public class EjbJar {
         return enterpriseBeans.get(ejbName);
     }
 
-    public Interceptors getInterceptors() {
-        return interceptors;
+    public Interceptor[] getInterceptors() {
+        if (interceptors == null) return null;
+        return interceptors.getInterceptor();
     }
 
-    public void setInterceptors(Interceptors value) {
-        this.interceptors = value;
+    public Interceptor addInterceptor(Interceptor interceptor) {
+        if (interceptors == null) interceptors = new Interceptors();
+        return interceptors.addInterceptor(interceptor);
+    }
+
+    public Interceptor getInterceptor(String className) {
+        if (interceptors == null) return null;
+        return interceptors.getInterceptor(className);
     }
 
     public Relationships getRelationships() {

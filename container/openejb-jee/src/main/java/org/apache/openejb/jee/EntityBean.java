@@ -525,6 +525,4 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     public void setTransactionType(TransactionType type){
     }
 
-
-
 }

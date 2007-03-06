@@ -29,6 +29,7 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.Lifecycle;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodParams;
@@ -47,6 +48,7 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -76,7 +78,7 @@ import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
-
+import javax.interceptor.Interceptors;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -242,6 +244,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 ClassFinder classFinder = new ClassFinder(clazz);
 
+
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = (TransactionManagement) clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
@@ -313,37 +316,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                LifecycleCallback postConstruct = getFirst(bean.getPostConstruct());
-                if (postConstruct == null) {
-                    Method method = getFirst(classFinder.findAnnotatedMethods(PostConstruct.class));
-                    if (method != null) bean.addPostConstruct(method.getName());
-                }
+                processCallbacks(bean, classFinder);
 
-                LifecycleCallback preDestroy = getFirst(bean.getPreDestroy());
-                if (preDestroy == null) {
-                    Method method = getFirst(classFinder.findAnnotatedMethods(PreDestroy.class));
-                    if (method != null) bean.addPreDestroy(method.getName());
-                }
-
-                AroundInvoke aroundInvoke = getFirst(bean.getAroundInvoke());
-                if (aroundInvoke == null) {
-                    Method method = getFirst(classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class));
-                    if (method != null) bean.addAroundInvoke(method.getName());
-                }
-
-                if (bean instanceof org.apache.openejb.jee.SessionBean) {
-                    org.apache.openejb.jee.SessionBean sessionBean = (org.apache.openejb.jee.SessionBean) bean;
-
-                    LifecycleCallback postActivate = getFirst(sessionBean.getPostActivate());
-                    if (postActivate == null) {
-                        Method method = getFirst(classFinder.findAnnotatedMethods(PostActivate.class));
-                        if (method != null) sessionBean.addPostActivate(method.getName());
-                    }
-
-                    LifecycleCallback prePassivate = getFirst(sessionBean.getPrePassivate());
-                    if (prePassivate == null) {
-                        Method method = getFirst(classFinder.findAnnotatedMethods(PrePassivate.class));
-                        if (method != null) sessionBean.addPrePassivate(method.getName());
+                Interceptors interceptors = clazz.getAnnotation(Interceptors.class);
+                if (interceptors != null){
+                    EjbJar ejbJar = ejbModule.getEjbJar();
+                    for (Class interceptor : interceptors.value()) {
+                        if (ejbJar.getInterceptor(interceptor.getName()) == null){
+                            ejbJar.addInterceptor(new Interceptor(interceptor.getName()));
+                        }
                     }
                 }
 
@@ -489,7 +470,59 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildAnnotatedRefs(clazz, bean);
 
             }
+
+            Interceptor[] interceptors = ejbModule.getEjbJar().getInterceptors();
+            if (interceptors != null) {
+                for (Interceptor interceptor : interceptors) {
+                    Class<?> clazz = null;
+                    try {
+                        clazz = classLoader.loadClass(interceptor.getInterceptorClass());
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass());
+                    }
+                    ClassFinder classFinder = new ClassFinder(clazz);
+
+                    processCallbacks(interceptor, classFinder);    
+                }
+            }
+
             return ejbModule;
+        }
+
+        private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
+            LifecycleCallback postConstruct = getFirst(bean.getPostConstruct());
+            if (postConstruct == null) {
+                Method method = getFirst(classFinder.findAnnotatedMethods(PostConstruct.class));
+                if (method != null) bean.addPostConstruct(method.getName());
+            }
+
+            LifecycleCallback preDestroy = getFirst(bean.getPreDestroy());
+            if (preDestroy == null) {
+                Method method = getFirst(classFinder.findAnnotatedMethods(PreDestroy.class));
+                if (method != null) bean.addPreDestroy(method.getName());
+            }
+
+            AroundInvoke aroundInvoke = getFirst(bean.getAroundInvoke());
+            if (aroundInvoke == null) {
+                Method method = getFirst(classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class));
+                if (method != null) bean.addAroundInvoke(method.getName());
+            }
+
+            if (bean instanceof org.apache.openejb.jee.Session) {
+                org.apache.openejb.jee.Session session = (org.apache.openejb.jee.Session) bean;
+
+                LifecycleCallback postActivate = getFirst(session.getPostActivate());
+                if (postActivate == null) {
+                    Method method = getFirst(classFinder.findAnnotatedMethods(PostActivate.class));
+                    if (method != null) session.addPostActivate(method.getName());
+                }
+
+                LifecycleCallback prePassivate = getFirst(session.getPrePassivate());
+                if (prePassivate == null) {
+                    Method method = getFirst(classFinder.findAnnotatedMethods(PrePassivate.class));
+                    if (method != null) session.addPrePassivate(method.getName());
+                }
+            }
         }
 
         private void buildAnnotatedRefs(Class clazz, JndiConsumer consumer) throws OpenEJBException {

@@ -64,7 +64,7 @@ import java.util.List;
         "postActivate",
         "prePassivate"
         })
-public class Interceptor {
+public class Interceptor implements JndiConsumer, Session {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -103,6 +103,13 @@ public class Interceptor {
     @XmlID
     protected String id;
 
+    public Interceptor() {
+    }
+
+    public Interceptor(String interceptorClass) {
+        this.interceptorClass = interceptorClass;
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -123,6 +130,11 @@ public class Interceptor {
             aroundInvoke = new ArrayList<AroundInvoke>();
         }
         return this.aroundInvoke;
+    }
+
+    public void addAroundInvoke(String method){
+        assert interceptorClass != null: "Set the interceptorClass before calling this method";
+        getAroundInvoke().add(new AroundInvoke(interceptorClass, method));
     }
 
     public List<EnvEntry> getEnvEntry() {
@@ -195,11 +207,21 @@ public class Interceptor {
         return this.postConstruct;
     }
 
+    public void addPostConstruct(String method){
+        assert interceptorClass != null: "Set the interceptorClass before calling this method";
+        getPostConstruct().add(new LifecycleCallback(interceptorClass, method));
+    }
+
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
             preDestroy = new ArrayList<LifecycleCallback>();
         }
         return this.preDestroy;
+    }
+
+    public void addPreDestroy(String method){
+        assert interceptorClass != null: "Set the interceptorClass before calling this method";
+        getPreDestroy().add(new LifecycleCallback(interceptorClass, method));
     }
 
     public List<LifecycleCallback> getPostActivate() {
@@ -209,11 +231,21 @@ public class Interceptor {
         return this.postActivate;
     }
 
+    public void addPostActivate(String method){
+        assert interceptorClass != null: "Set the interceptorClass before calling this method";
+        getPostActivate().add(new LifecycleCallback(interceptorClass, method));
+    }
+
     public List<LifecycleCallback> getPrePassivate() {
         if (prePassivate == null) {
             prePassivate = new ArrayList<LifecycleCallback>();
         }
         return this.prePassivate;
+    }
+
+    public void addPrePassivate(String method){
+        assert interceptorClass != null: "Set the interceptorClass before calling this method";
+        getPrePassivate().add(new LifecycleCallback(interceptorClass, method));
     }
 
     public String getId() {

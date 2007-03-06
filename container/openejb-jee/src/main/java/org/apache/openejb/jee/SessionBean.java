@@ -127,7 +127,7 @@ import java.util.List;
         "securityRoleRef",
         "securityIdentity"
         })
-public class SessionBean implements EnterpriseBean, RemoteBean {
+public class SessionBean implements EnterpriseBean, RemoteBean, Session {
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient

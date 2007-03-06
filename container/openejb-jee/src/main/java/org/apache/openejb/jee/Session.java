@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,37 +19,15 @@ package org.apache.openejb.jee;
 import java.util.List;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
-public interface EnterpriseBean extends JndiConsumer, Lifecycle {
-//    public List<Text> getDescription();
+public interface Session extends Lifecycle {
+    List<LifecycleCallback> getPostActivate();
 
-//    public List<Text> getDisplayName();
+    void addPostActivate(String method);
 
-//    public List<Icon> getIcon();
+    List<LifecycleCallback> getPrePassivate();
 
-    public String getEjbName();
-
-    public void setEjbName(String value);
-
-    public String getMappedName();
-
-    public void setMappedName(String value);
-
-    public String getEjbClass();
-
-    public void setEjbClass(String value);
-
-    public SecurityIdentity getSecurityIdentity();
-
-    public void setSecurityIdentity(SecurityIdentity value);
-
-    public String getId();
-
-    public void setId(String value);
-
-    public TransactionType getTransactionType();
-
-    public void setTransactionType(TransactionType type);
+    void addPrePassivate(String method);
 
 }
