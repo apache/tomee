@@ -77,9 +77,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import edu.emory.mathcs.backport.java.util.concurrent.Executors;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -722,7 +724,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // create a thead pool
         int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
         if (threadPoolSize <= 0) throw new IllegalArgumentException("threadPoolSizes <= 0: " + threadPoolSize);
-        Executor threadPool = Executors.newFixedThreadPool(threadPoolSize);
+        Executor threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
 
         // create a work manager which the resource adapter can use to dispatch messages or perform tasks
         WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
@@ -887,6 +889,33 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
             return new TemporaryClassLoader(classLoader);
+        }
+    }
+
+    // Based on edu.emory.mathcs.backport.java.util.concurrent.Executors.DefaultThreadFactory
+    // Which is freely licensed as follows.
+    // "Use, modify, and redistribute this code in any way without acknowledgement"
+    private static class ResourceAdapterThreadFactory implements ThreadFactory {
+        private final ThreadGroup group;
+        private final String namePrefix;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+        ResourceAdapterThreadFactory(String resourceAdapterName) {
+            SecurityManager securityManager = System.getSecurityManager();
+            if (securityManager != null) {
+                group = securityManager.getThreadGroup();
+            } else {
+                group = Thread.currentThread().getThreadGroup();
+            }
+
+            namePrefix = resourceAdapterName + "-worker-";
+        }
+
+        public Thread newThread(Runnable runnable) {
+            Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (!thread.isDaemon()) thread.setDaemon(true);
+            if (thread.getPriority() != Thread.NORM_PRIORITY) thread.setPriority(Thread.NORM_PRIORITY);
+            return thread;
         }
     }
 }
