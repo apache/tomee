@@ -19,19 +19,25 @@ package org.apache.openejb.javaagent;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.ReflectPermission;
+import java.lang.reflect.Field;
 import java.security.Permission;
 
 public class Agent {
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
     private static String agentArgs;
     private static Instrumentation instrumentation;
+    private static boolean initialized = false;
 
-    public static void premain(String agentArgs, Instrumentation instrumentation) {
+    public static synchronized void premain(String agentArgs, Instrumentation instrumentation) {
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
+        initialized = true;
     }
 
-    public static String getAgentArgs() {
+    public static synchronized String getAgentArgs() {
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) sm.checkPermission(ACCESS_PERMISSION);
+        checkInitialization();
         return agentArgs;
     }
 
@@ -40,9 +46,31 @@ public class Agent {
      * You must have java.lang.ReflectPermission(suppressAccessChecks) to call this method
      * @return the instrumentation instance
      */
-    public static Instrumentation getInstrumentation() {
+    public static synchronized Instrumentation getInstrumentation() {
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) sm.checkPermission(ACCESS_PERMISSION);
+        checkInitialization();
         return instrumentation;
+    }
+
+    private static synchronized void checkInitialization() {
+        if (!initialized) {
+            try {
+                ClassLoader systemCl = ClassLoader.getSystemClassLoader();
+                Class<?> systemAgentClass = systemCl.loadClass(Agent.class.getName());
+
+                Field instrumentationField = systemAgentClass.getDeclaredField("instrumentation");
+                instrumentationField.setAccessible(true);
+                instrumentation = (Instrumentation) instrumentationField.get(null);
+
+                Field agentArgsField = systemAgentClass.getDeclaredField("agentArgs");
+                agentArgsField.setAccessible(true);
+                agentArgs = (String) agentArgsField.get(null);
+
+                initialized = true;
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to initialize agent", e);
+            }
+        }
     }
 }
