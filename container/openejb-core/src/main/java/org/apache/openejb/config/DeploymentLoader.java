@@ -121,7 +121,9 @@ public class DeploymentLoader {
                         if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
 
                         try {
-                            Class moduleType = discoverModuleType(entry.getValue(), tmpClassLoader, true);
+                            ClassLoader moduleClassLoader = new TemporaryClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
+
+                            Class moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
                             if (EjbModule.class.equals(moduleType)) {
                                 ejbModules.put(entry.getKey(), entry.getValue());
                             } else if (ClientModule.class.equals(moduleType)) {

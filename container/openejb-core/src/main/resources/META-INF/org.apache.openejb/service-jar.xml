@@ -300,7 +300,7 @@
           class-name="org.apache.activemq.ra.ActiveMQResourceAdapter">
 
     # Broker configuration
-    BrokerXmlConfig broker:(tcp://localhost:61616)
+    BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
     
     # Broker address
     ServerUrl vm://localhost?async=true

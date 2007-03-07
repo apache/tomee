@@ -20,8 +20,13 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.finder.ResourceFinder;
 
+import javax.naming.NamingException;
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
+import javax.resource.spi.ResourceAdapter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -280,6 +285,24 @@ public class ServiceManager {
     public synchronized void stop() throws ServiceException {
         System.out.println("[] received stop signal");
         stop = true;
+
+        try {
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            NamingEnumeration<Binding> namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/resourceAdapter");
+            while (namingEnumeration.hasMoreElements()) {
+                Binding binding = namingEnumeration.nextElement();
+                Object object = binding.getObject();
+                ResourceAdapter resourceAdapter = (ResourceAdapter) object;
+                try {
+                    resourceAdapter.stop();
+                } catch (Exception e) {
+                    logger.fatal("ResourceAdapter Shutdown Failed: "+binding.getName(), e);
+                }
+            }
+        } catch (Throwable e) {
+            logger.fatal("Unable to get ResourceAdapters from JNDI.  Stop must be called on them for proper vm shutdown.", e);
+        }
+
         for (int i = 0; i < daemons.length; i++) {
             try {
                 daemons[i].stop();

@@ -53,7 +53,7 @@ public class SimpleJmsTest extends TestCase {
 
         // initialize properties
         ra.setServerUrl("vm://localhost?async=true");
-        ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)");
+        ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
 
         // create a thead pool for ActiveMQ
         Executor threadPool = Executors.newFixedThreadPool(30);

@@ -155,10 +155,15 @@
       <artifactId>openejb-hsql</artifactId>
       <version>${version}</version>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>openejb-activemq</artifactId>-->
+      <!--<version>${version}</version>-->
+    <!--</dependency>-->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-activemq</artifactId>
-      <version>${version}</version>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.2.1.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
