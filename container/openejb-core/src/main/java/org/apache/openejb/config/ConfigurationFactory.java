@@ -133,12 +133,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         if (offline) {
-            AutoDeploy autoDeploy = new AutoDeploy(this);
-            autoDeploy.autoCreateConnectors(false);
-            autoDeploy.autoCreateContainers(false);
-            chain.add(autoDeploy);
+            AutoConfig autoConfig = new AutoConfig(this);
+            autoConfig.autoCreateConnectors(false);
+            autoConfig.autoCreateContainers(false);
+            chain.add(autoConfig);
         } else {
-            chain.add(new AutoDeploy(this));
+            chain.add(new AutoConfig(this));
         }
 
         boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");

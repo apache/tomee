@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AutoDeploy implements DynamicDeployer {
+public class AutoConfig implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
@@ -54,7 +54,7 @@ public class AutoDeploy implements DynamicDeployer {
     private boolean autoCreateContainers = true;
     private boolean autoCreateConnectors = true;
 
-    public AutoDeploy(ConfigurationFactory configFactory) {
+    public AutoConfig(ConfigurationFactory configFactory) {
         this.configFactory = configFactory;
     }
 
