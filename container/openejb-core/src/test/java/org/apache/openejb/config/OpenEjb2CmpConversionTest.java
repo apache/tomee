@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -32,8 +31,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
 
 /**
  * @version $Rev$ $Date$
@@ -85,8 +82,8 @@ public class OpenEjb2CmpConversionTest extends TestCase {
 
         // create and configure the module
         EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, ejbJar, new OpenejbJar());
-        AutoConfig autoConfig = new AutoConfig();
-        autoConfig.deploy(ejbModule, new HashMap<String,String>());
+        InitEjbDeployments initEjbDeployments = new InitEjbDeployments();
+        initEjbDeployments.deploy(ejbModule, new HashMap<String,String>());
         AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
         appModule.getEjbModules().add(ejbModule);
 

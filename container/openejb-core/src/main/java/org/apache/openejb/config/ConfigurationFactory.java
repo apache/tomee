@@ -122,7 +122,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         
         chain.add(new AnnotationDeployer());
 
-        chain.add(new AutoConfig());
+        chain.add(new InitEjbDeployments());
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2CmpConversion());
         chain.add(new SunConversion());

@@ -88,8 +88,8 @@ public class SunCmpConversionTest extends TestCase {
 
         // create and configure the module
         EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, ejbJar, new OpenejbJar());
-        AutoConfig autoConfig = new AutoConfig();
-        autoConfig.deploy(ejbModule, new HashMap<String,String>());
+        InitEjbDeployments initEjbDeployments = new InitEjbDeployments();
+        initEjbDeployments.deploy(ejbModule, new HashMap<String,String>());
         AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
         appModule.getEjbModules().add(ejbModule);
 

@@ -27,13 +27,13 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.codehaus.swizzle.stream.StringTemplate;
 
-public class AutoConfig implements DynamicDeployer {
+public class InitEjbDeployments implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final StringTemplate deploymentIdTemplate;
 
-    public AutoConfig() {
+    public InitEjbDeployments() {
         String format = SystemInstance.get().getProperty("openejb.deploymentId.format", "{ejbName}");
         this.deploymentIdTemplate = new StringTemplate(format);
     }
@@ -71,7 +71,7 @@ public class AutoConfig implements DynamicDeployer {
                 ejbDeployment.setEjbName(bean.getEjbName());
                 ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData));
 
-                AutoConfig.logger.warning("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
+                logger.warning("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
                 openejbJar.getEjbDeployment().add(ejbDeployment);
             }
         }
