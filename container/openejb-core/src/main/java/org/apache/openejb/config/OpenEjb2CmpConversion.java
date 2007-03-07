@@ -63,14 +63,14 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String)altDD).getBytes()), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, ((URL)altDD).openStream());
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, ((URL)altDD).openStream(), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
