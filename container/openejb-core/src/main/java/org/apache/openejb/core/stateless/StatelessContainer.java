@@ -23,6 +23,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -63,12 +64,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         }
     }
 
-    public DeploymentInfo [] deployments() {
-        return (DeploymentInfo []) deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
+    public synchronized DeploymentInfo [] deployments() {
+        return deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return (DeploymentInfo) deploymentRegistry.get(deploymentID);
+    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        String id = (String) deploymentID;
+        return deploymentRegistry.get(id);
     }
 
     public ContainerType getContainerType() {
@@ -80,21 +82,35 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
     }
 
     public void deploy(DeploymentInfo info) throws OpenEJBException {
-        HashMap registry = (HashMap) deploymentRegistry.clone();
-        registry.put(info.getDeploymentID(), info);
-        deploymentRegistry = registry;
-        org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
-        di.setContainer(this);
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+        String id = (String) deploymentInfo.getDeploymentID();
+        synchronized (this) {
+            deploymentRegistry.put(id, deploymentInfo);
+            deploymentInfo.setContainer(this);
+        }
+
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
 
-    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+    public void undeploy(DeploymentInfo info) {
         undeploy((CoreDeploymentInfo)info);
     }
 
-    private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) {
-        deploymentRegistry.remove(deploymentInfo.getDeploymentID());
-        deploymentInfo.setContainer(null);
-        deploymentInfo.setContainerData(null);
+    private void undeploy(CoreDeploymentInfo deploymentInfo) {
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService != null) {
+            timerService.stop();
+        }
+
+        synchronized (this) {
+            String id = (String) deploymentInfo.getDeploymentID();
+            deploymentInfo.setContainer(null);
+            deploymentInfo.setContainerData(null);
+            deploymentRegistry.remove(id);
+        }
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
@@ -198,9 +214,5 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
     public void discardInstance(Object instance, ThreadContext context) {
         instanceManager.discardInstance(context, instance);
-    }
-
-    public HashMap getDeploymentRegistry() {
-        return deploymentRegistry;
     }
 }

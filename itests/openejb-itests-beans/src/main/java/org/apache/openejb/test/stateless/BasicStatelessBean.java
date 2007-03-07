@@ -22,10 +22,13 @@ import java.util.Properties;
 
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
+import javax.ejb.SessionBean;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
 import javax.naming.InitialContext;
-import javax.sql.DataSource;
 
 import org.apache.openejb.test.ApplicationException;
+import org.apache.openejb.test.beans.TimerSync;
 import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
@@ -33,7 +36,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class BasicStatelessBean implements javax.ejb.SessionBean{
+public class BasicStatelessBean implements SessionBean, TimedObject {
     
     private String name;
     private SessionContext ejbContext;
@@ -63,6 +66,9 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
         return b.reverse().toString();
     }
     
+    public void scheduleTimer(String name) {
+        ejbContext.getTimerService().createTimer(1, name);
+    }
 
     /**
      * Throws an ApplicationException when invoked
@@ -164,7 +170,18 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
         // Should never called.
     }
 
-    //    
+    public void ejbTimeout(Timer timer) {
+        testAllowedOperations("ejbTimeout");
+        try {
+            String name = (String) timer.getInfo();
+            TimerSync timerSync = (TimerSync) ejbContext.lookup("TimerSyncBeanBusinessRemote");
+            timerSync.countDown(name);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //
     // SessionBean interface methods
     //================================
     
@@ -196,7 +213,7 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
 		try {
 			ejbContext.getRollbackOnly();
 			policy.allow( policy.Context_getRollbackOnly );
-		} catch (IllegalStateException ise) { 
+		} catch (IllegalStateException ise) {
 		}
 	
 		/*[4] Test setRollbackOnly ////////////*/
@@ -236,6 +253,20 @@ public class BasicStatelessBean implements javax.ejb.SessionBean{
 		} catch (javax.naming.NamingException ne) {
 		}
 	
+        /*[11] Test lookup /////////*/
+        try {
+            ejbContext.lookup("stateless/references/JNDI_access_to_java_comp_env");
+            policy.allow( policy.Context_lookup );
+        } catch (IllegalArgumentException ise) {
+        }
+
+        /*[12] Test getTimerService/////////*/
+        try {
+            ejbContext.getTimerService();
+            policy.allow( policy.Context_getTimerService );
+        } catch (IllegalStateException ise) {
+        }
+
 		allowedOperationsTable.put(methodName, policy);
 	}
 

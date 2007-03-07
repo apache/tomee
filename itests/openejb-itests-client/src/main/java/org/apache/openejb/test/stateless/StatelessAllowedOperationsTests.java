@@ -19,6 +19,7 @@ package org.apache.openejb.test.stateless;
 import javax.ejb.EJBObject;
 
 import org.apache.openejb.test.object.OperationsPolicy;
+import org.apache.openejb.test.beans.TimerSync;
 
 /**
  * 
@@ -64,6 +65,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
+    protected TimerSync timerSync;
 
     public StatelessAllowedOperationsTests(){
         super("AllowedOperations.");
@@ -75,7 +77,9 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
-        //setUp_ejbActivate_Passivate();        
+        timerSync = (TimerSync) initialContext.lookup("TimerSyncBeanBusinessRemote");
+
+        //setUp_ejbActivate_Passivate();
         
         /* These tests will only work if the specified
          * method has already been called by the container.
@@ -120,6 +124,7 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
      *                       |
      * setSessionContext     |  SessionContext methods:
      *                       |     - getEJBHome
+     *                       |     - lookup
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
@@ -128,6 +133,7 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
         try {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
+            policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
             
             Object expected = policy;
@@ -147,6 +153,8 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
      * ejbCreate             |  SessionContext methods:
      * ejbRemove             |     - getEJBHome
      *                       |     - getEJBObject
+     *                       |     - getTimerService
+     *                       |     - lookup
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
@@ -159,6 +167,8 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getTimerService );
+            policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
             
             Object expected = policy;
@@ -178,6 +188,8 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
      * ejbCreate             |  SessionContext methods:
      * ejbRemove             |     - getEJBHome
      *                       |     - getEJBObject
+     *                       |     - getTimerService
+     *                       |     - lookup
      *                       |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
@@ -188,6 +200,8 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getTimerService );
+            policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
         
             Object expected = policy;
@@ -212,26 +226,56 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
      *                       |     - isCallerInRole
      *                       |     - setRollbackOnly
      *                       |     - getEJBObject
+     *                       |     - getTimerService
+     *                       |     - lookup
      *                       |  JNDI access to java:comp/env
      *                       |  Resource manager access
      *                       |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void TODO_test04_businessMethod(){
+    public void test04_businessMethod(){
         try {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getCallerPrincipal );
             policy.allow( OperationsPolicy.Context_getRollbackOnly );
-            policy.allow( OperationsPolicy.Context_isCallerInRole );
             policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow( OperationsPolicy.Context_isCallerInRole );
             policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getTimerService );
+            policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
             Object expected = policy;
             Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
         
+            assertNotNull("The OperationsPolicy is null", actual );
+            assertEquals( expected, actual );
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test05_ejbTimeout(){
+        try {
+            ejbObject.scheduleTimer("StatelessAllowedOperationsTests");
+            timerSync.waitFor("StatelessAllowedOperationsTests");
+
+            OperationsPolicy policy = new OperationsPolicy();
+            policy.allow( OperationsPolicy.Context_getEJBHome );
+            policy.allow( OperationsPolicy.Context_getCallerPrincipal );
+            policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow( OperationsPolicy.Context_isCallerInRole );
+            policy.allow( OperationsPolicy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getTimerService );
+            policy.allow( OperationsPolicy.Context_lookup );
+            policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+
+            Object expected = policy;
+            Object actual = ejbObject.getAllowedOperationsReport("ejbTimeout");
+
             assertNotNull("The OperationsPolicy is null", actual );
             assertEquals( expected, actual );
         } catch (Exception e){

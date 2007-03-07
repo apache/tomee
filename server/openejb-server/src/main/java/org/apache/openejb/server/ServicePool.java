@@ -22,8 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.openejb.util.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +31,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class ServicePool implements ServerService {
-    private static final Log log = LogFactory.getLog(ServicePool.class);
+    private static final Logger log = Logger.getInstance("ServicePool", "org.apache.openejb.util.resources");
 
     private final ServerService next;
     private final Executor executor;
@@ -80,7 +79,7 @@ public class ServicePool implements ServerService {
                             socket.close();
                         }
                     } catch (Throwable t) {
-                        log.warn("Error while closing connection with client", t);
+                        log.warning("Error while closing connection with client", t);
                     }
                 }
             }

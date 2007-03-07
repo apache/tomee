@@ -20,6 +20,7 @@ import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBException;
@@ -31,11 +32,12 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.Logger;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
-    protected final static org.apache.log4j.Category logger = org.apache.log4j.Category.getInstance("OpenEJB");
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    private final HashMap<String,MethodType> dispatchTable;
+    private final Map<String,MethodType> dispatchTable;
 
     private static enum MethodType {
         CREATE,
@@ -47,7 +49,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
         super(container, pk, depID, interfaceType);
-        dispatchTable = new HashMap();
+        dispatchTable = new HashMap<String,MethodType>();
         dispatchTable.put("create", MethodType.CREATE);
         dispatchTable.put("getEJBMetaData", MethodType.META_DATA);
         dispatchTable.put("getHomeHandle", MethodType.HOME_HANDLE);

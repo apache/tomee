@@ -22,12 +22,12 @@ import java.rmi.RemoteException;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
-
-    protected final static org.apache.log4j.Category logger = org.apache.log4j.Category.getInstance("OpenEJB");
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
     static final java.util.HashMap dispatchTable;
 
     static {
@@ -112,7 +112,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             throw new RemoteException("Container has suffered a SystemException", exc);
         } catch (org.apache.openejb.OpenEJBException oe) {
             exc = (oe.getRootCause() != null) ? oe.getRootCause() : oe;
-            logger.warn("The container received an unexpected exception: ", exc);
+            logger.warning("The container received an unexpected exception: ", exc);
             throw new RemoteException("Unknown Container Exception", oe.getRootCause());
         } finally {
             if (logger.isDebugEnabled()) {

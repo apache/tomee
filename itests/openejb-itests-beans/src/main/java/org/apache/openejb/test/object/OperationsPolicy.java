@@ -36,8 +36,9 @@ public class OperationsPolicy implements java.io.Externalizable {
     public static final int Context_getPrimaryKey        = 7;  
     public static final int JNDI_access_to_java_comp_env = 8;
     public static final int Context_lookup               = 11;
+    public static final int Context_getTimerService      = 12;
 
-    private boolean[] allowedOperations = new boolean[12];
+    private boolean[] allowedOperations = new boolean[13];
 
     public OperationsPolicy() {
     }

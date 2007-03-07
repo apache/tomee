@@ -33,6 +33,7 @@ import javax.ejb.EnterpriseBean;
 import javax.ejb.SessionBean;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
+import javax.ejb.Timer;
 import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
 
@@ -63,8 +64,10 @@ import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.Logger;
 
 /**
  * @org.apache.xbean.XBean element="deployment"
@@ -87,7 +90,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Method preDestroy;
     private Method prePassivate;
     private Method postActivate;
+
     private Method ejbTimeout;
+    private EjbTimerService ejbTimerService;
 
     private boolean isBeanManagedTransaction;
     private boolean isReentrant;
@@ -186,7 +191,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
-                this.ejbTimeout = beanClass.getMethod("ejbTimeout");
+                this.ejbTimeout = beanClass.getMethod("ejbTimeout", Timer.class);
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }
@@ -275,7 +280,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public TransactionPolicy getTransactionPolicy(Method method) {
         TransactionPolicy policy = methodTransactionPolicies.get(method);
         if (policy == null && !isBeanManagedTransaction) {
-            org.apache.log4j.Logger.getLogger("OpenEJB").info("The following method doesn't have a transaction policy assigned: " + method);
+            Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+            log.info("The following method doesn't have a transaction policy assigned: " + method);
         }
         if (policy == null && container instanceof TransactionContainer) {
             if (isBeanManagedTransaction) {
@@ -935,5 +941,13 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setEjbTimeout(Method ejbTimeout) {
         this.ejbTimeout = ejbTimeout;
+    }
+
+    public EjbTimerService getEjbTimerService() {
+        return ejbTimerService;
+    }
+
+    public void setEjbTimerService(EjbTimerService ejbTimerService) {
+        this.ejbTimerService = ejbTimerService;
     }
 }

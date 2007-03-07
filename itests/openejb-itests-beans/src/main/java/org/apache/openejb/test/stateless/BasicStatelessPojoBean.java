@@ -37,6 +37,10 @@ public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal, Basi
         return b.reverse().toString();
     }
 
+    public void scheduleTimer(String name) {
+        // ejbContext.getTimerService().createTimer(1, name);
+    }
+
     public Object echo(Object object) {
         return object;
     }

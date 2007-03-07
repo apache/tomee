@@ -2048,6 +2048,11 @@
       <ejb-class>org.apache.openejb.test.stateless.BasicStatelessBean</ejb-class>
       <session-type>Stateless</session-type>
       <transaction-type>Container</transaction-type>
+      <ejb-ref>
+        <ejb-ref-name>TimerSyncBeanBusinessRemote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.beans.TimerSync</remote>
+      </ejb-ref>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -2144,6 +2149,11 @@
       <ejb-class>org.apache.openejb.test.stateless.BasicStatelessBean</ejb-class>
       <session-type>Stateless</session-type>
       <transaction-type>Bean</transaction-type>
+      <ejb-ref>
+        <ejb-ref-name>TimerSyncBeanBusinessRemote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.apache.openejb.test.beans.TimerSync</remote>
+      </ejb-ref>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -4800,7 +4810,7 @@
         <ejb-name>BasicStatelessBean</ejb-name>
         <method-name>*</method-name>
       </method>
-      <trans-attribute>Supports</trans-attribute>
+      <trans-attribute>Required</trans-attribute>
     </container-transaction>
     <container-transaction>
       <method>

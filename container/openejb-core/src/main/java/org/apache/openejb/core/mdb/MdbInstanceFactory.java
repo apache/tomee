@@ -17,12 +17,12 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.log4j.Logger;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.Injection;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
@@ -46,7 +46,7 @@ import java.lang.reflect.Method;
  * resource adapter.
  */
 public class MdbInstanceFactory {
-    private static final Logger logger = Logger.getLogger("OpenEJB");
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final CoreDeploymentInfo deploymentInfo;
     private final TransactionManager transactionManager;
@@ -187,7 +187,7 @@ public class MdbInstanceFactory {
                         objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
                     }
                 } catch (NamingException e) {
-                    logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                    logger.warning("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
                 }
             }
             // only in this case should the callback be used

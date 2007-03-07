@@ -21,6 +21,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.Index;
@@ -29,6 +30,8 @@ import org.apache.openejb.util.SafeToolkit;
 
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -172,7 +175,13 @@ class EnterpriseBeanBuilder {
         
         deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
         deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
+
+        // Timer
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
+        if (deployment.getEjbTimeout() != null) {
+            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(deployment);
+            deployment.setEjbTimerService(timerService);
+        }
 
         // interceptors
         InterceptorBuilder interceptorBuilder = new InterceptorBuilder(defaultInterceptors, bean);
@@ -268,7 +277,9 @@ class EnterpriseBeanBuilder {
     private Method getTimeout(Class ejbClass, NamedMethodInfo info) {
         Method timeout = null;
         try {
-            if (info.methodParams != null) {
+            if (TimedObject.class.isAssignableFrom(ejbClass)) {
+                timeout = TimedObject.class.getMethod("ejbTimeout", Timer.class);
+            } else if (info.methodParams != null) {
                 List<Class> parameterTypes = new ArrayList<Class>();
 
                 for (String paramType : info.methodParams) {

@@ -19,10 +19,11 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.Container;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -30,7 +31,6 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.log4j.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -45,8 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
-public class MdbContainer implements Container, TransactionContainer {
-    protected static final Logger logger = Logger.getLogger("OpenEJB");
+public class MdbContainer implements RpcContainer, TransactionContainer {
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;
@@ -211,6 +211,16 @@ public class MdbContainer implements Container, TransactionContainer {
         } catch (Exception e) {
             throw new SystemException("Unable to enlist xa resource in the transaction", e);
         }
+    }
+
+    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
+        // this method can only be used for ejbTimeout
+        DeploymentInfo deploymentInfo = deployments.get(deploymentId);
+        if (!method.equals(deploymentInfo.getEjbTimeout())) {
+            throw new OpenEJBException("RpcContainer invoke method of MdbContainer can only be used to ejbTimeout invocations");
+        }
+        // todo create an instance and invoke the method and destroy instance
+        return null;
     }
 
     public Object invoke(Object instance, Method method, Object... args) throws SystemException, ApplicationException {

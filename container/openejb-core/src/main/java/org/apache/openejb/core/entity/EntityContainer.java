@@ -20,12 +20,16 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.Collection;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
+import javax.ejb.Timer;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -38,6 +42,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -66,12 +71,13 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         instanceManager = new EntityInstanceManager(this, transactionManager, securityService, poolSize);
     }
 
-    public DeploymentInfo [] deployments() {
+    public synchronized DeploymentInfo [] deployments() {
         return deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return deploymentRegistry.get(deploymentID);
+    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        String id = (String) deploymentID;
+        return deploymentRegistry.get(id);
     }
 
     public ContainerType getContainerType() {
@@ -83,18 +89,32 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     }
 
     public void deploy(DeploymentInfo info) throws OpenEJBException {
-        Map registry = new HashMap(deploymentRegistry);
-        registry.put(info.getDeploymentID(), info);
-        deploymentRegistry = registry;
-        org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) info;
-        di.setContainer(this);
+        synchronized (this) {
+            CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+            deploymentRegistry.put((String)deploymentInfo.getDeploymentID(), deploymentInfo);
+            deploymentInfo.setContainer(this);
+        }
         instanceManager.deploy(info);
+
+        EjbTimerService timerService = info.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
 
     public void undeploy(DeploymentInfo info) throws OpenEJBException {
-        deploymentRegistry.remove(info.getDeploymentID());
+        EjbTimerService timerService = info.getEjbTimerService();
+        if (timerService != null) {
+            timerService.stop();
+        }
+
         instanceManager.undeploy(info);
-        info.setContainer(null);
+
+        synchronized (this) {
+            String id = (String) info.getDeploymentID();
+            deploymentRegistry.remove(id);
+            info.setContainer(null);
+        }
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {
@@ -209,8 +229,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         return returnValue;
     }
 
-    public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean)
-            throws org.apache.openejb.SystemException, Exception {
+    public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
         Operation orginalOperation = callContext.getCurrentOperation();
         if (orginalOperation == Operation.BUSINESS || orginalOperation == Operation.REMOVE) {
 
@@ -222,12 +241,12 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             }
 
             if (currentTx == null) {
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.LOAD);
+                callContext.setCurrentOperation(Operation.LOAD);
                 try {
-                    ((javax.ejb.EntityBean) bean).ejbLoad();
+                    bean.ejbLoad();
                 } catch (Exception e) {
 
-                    instanceManager.discardInstance(callContext, (EntityBean) bean);
+                    instanceManager.discardInstance(callContext, bean);
                     throw e;
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
@@ -255,12 +274,12 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             }
 
             if (currentTx == null) {
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.STORE);
+                callContext.setCurrentOperation(Operation.STORE);
                 try {
-                    ((javax.ejb.EntityBean) bean).ejbStore();
+                    bean.ejbStore();
                 } catch (Exception e) {
 
-                    instanceManager.discardInstance(callContext, (EntityBean) bean);
+                    instanceManager.discardInstance(callContext, bean);
                     throw e;
                 } finally {
                     callContext.setCurrentOperation(currentOp);
@@ -381,7 +400,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         * The primary keys are converted to ProxyInfo objects.
         */
         if (returnValue instanceof java.util.Collection) {
-            java.util.Iterator keys = ((java.util.Collection) returnValue).iterator();
+            Iterator keys = ((Collection) returnValue).iterator();
             java.util.Vector proxies = new java.util.Vector();
             while (keys.hasNext()) {
                 Object primaryKey = keys.next();
@@ -389,7 +408,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             }
             returnValue = proxies;
         } else if (returnValue instanceof java.util.Enumeration) {
-            java.util.Enumeration keys = (java.util.Enumeration) returnValue;
+            Enumeration keys = (Enumeration) returnValue;
             java.util.Vector proxies = new java.util.Vector();
             while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
@@ -402,15 +421,27 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         return returnValue;
     }
 
-    protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
-        org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = (org.apache.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
+    protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+        org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.HOME);
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         return invoke(callMethod, runMethod, args, callContext);
     }
 
-    protected void didRemove(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
+    protected void didRemove(EntityBean bean, ThreadContext threadContext) throws OpenEJBException {
+        cancelTimers(threadContext);
+    }
+
+    private void cancelTimers(ThreadContext threadContext) {
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        Object primaryKey = threadContext.getPrimaryKey();
+
+        // stop timers
+        if (primaryKey != null && deploymentInfo.getEjbTimerService() != null) {
+            for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
+                timer.cancel();
+            }
+        }
     }
 
     protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext)

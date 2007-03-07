@@ -37,6 +37,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.ObjectNotFoundException;
 import javax.ejb.RemoveException;
+import javax.ejb.Timer;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ApplicationException;
@@ -48,6 +49,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.entity.EntityContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
@@ -123,60 +125,73 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         deploy((CoreDeploymentInfo) deploymentInfo);
     }
 
+    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        synchronized (this) {
+            Object deploymentId = deploymentInfo.getDeploymentID();
+
+            Object cmpEngineKey = deploymentInfo.getJarPath();
+            if (cmpEngineKey == null) {
+                cmpEngineKey = deploymentInfo.getClassLoader();
+            }
+
+            CmpEngine cmpEngine = cmpEngines.get(cmpEngineKey);
+            if (cmpEngine == null) {
+                cmpEngine = createCmpEngine(deploymentInfo.getJarPath(), deploymentInfo.getClassLoader());
+                cmpEngines.put(cmpEngineKey, cmpEngine);
+            }
+            cmpEngine.deploy(deploymentInfo);
+            deploymentInfo.setContainerData(cmpEngine);
+
+            // try to set deploymentInfo static field on bean implementation class
+            try {
+                Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
+                field.set(null, deploymentInfo);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            // add to indexes
+            deploymentsById.put(deploymentId, deploymentInfo);
+            deploymentsByClass.put(deploymentInfo.getCmpImplClass(), deploymentInfo);
+            deploymentInfo.setContainer(this);
+        }
+
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
+    }
+
     public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService != null) {
+            timerService.stop();
+        }
         undeploy((CoreDeploymentInfo)deploymentInfo);
     }
 
-    public synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploymentsById.remove(deploymentInfo.getDeploymentID());
-        deploymentsByClass.remove(deploymentInfo.getCmpImplClass());
+    public void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        synchronized (this) {
+            deploymentsById.remove(deploymentInfo.getDeploymentID());
+            deploymentsByClass.remove(deploymentInfo.getCmpImplClass());
 
-        try {
-            Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
-            field.set(null, null);
-        } catch (Exception e) {
-            // ignore
+            try {
+                Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
+                field.set(null, null);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            CmpEngine cmpEngine = (CmpEngine) deploymentInfo.getContainerData();
+            cmpEngine.undeploy(deploymentInfo);
+
+            if (cmpEngine.isEmpty()){
+                cmpEngines.remove(deploymentInfo.getJarPath());
+                cmpEngines.remove(deploymentInfo.getClassLoader());
+            }
+            deploymentInfo.setContainer(null);
+            deploymentInfo.setContainerData(null);
         }
-
-        CmpEngine cmpEngine = (CmpEngine) deploymentInfo.getContainerData();
-        cmpEngine.undeploy(deploymentInfo);
-
-        if (cmpEngine.isEmpty()){
-            cmpEngines.remove(deploymentInfo.getJarPath());
-            cmpEngines.remove(deploymentInfo.getClassLoader());
-        }
-        deploymentInfo.setContainer(null);
-        deploymentInfo.setContainerData(null);
-    }
-
-    public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Object deploymentId = deploymentInfo.getDeploymentID();
-
-        Object cmpEngineKey = deploymentInfo.getJarPath();
-        if (cmpEngineKey == null) {
-            cmpEngineKey = deploymentInfo.getClassLoader();
-        }
-
-        CmpEngine cmpEngine = cmpEngines.get(cmpEngineKey);
-        if (cmpEngine == null) {
-            cmpEngine = createCmpEngine(deploymentInfo.getJarPath(), deploymentInfo.getClassLoader());
-            cmpEngines.put(cmpEngineKey, cmpEngine);
-        }
-        cmpEngine.deploy(deploymentInfo);
-        deploymentInfo.setContainerData(cmpEngine);
-
-        // try to set deploymentInfo static field on bean implementation class
-        try {
-            Field field = deploymentInfo.getCmpImplClass().getField("deploymentInfo");
-            field.set(null, deploymentInfo);
-        } catch (Exception e) {
-            // ignore
-        }
-
-        // add to indexes
-        deploymentsById.put(deploymentId, deploymentInfo);
-        deploymentsByClass.put(deploymentInfo.getCmpImplClass(), deploymentInfo);
-        deploymentInfo.setContainer(this);
     }
 
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
@@ -693,10 +708,23 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
+            cancelTimers(callContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {
             txPolicy.afterInvoke(null, txContext);
+        }
+    }
+
+    private void cancelTimers(ThreadContext threadContext) {
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        Object primaryKey = threadContext.getPrimaryKey();
+
+        // stop timers
+        if (primaryKey != null && deploymentInfo.getEjbTimerService() != null) {
+            for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
+                timer.cancel();
+            }
         }
     }
 

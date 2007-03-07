@@ -67,4 +67,10 @@ public interface BasicStatelessLocalObject extends javax.ejb.EJBLocalObject{
      * @return operations policy 
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
+
+    /**
+     * Schedules a timer with the specified name.  This name is used to notify via the TimerSyncBean.
+     * @param name the name used to notify via the TimerSyncBean
+     */
+    public void scheduleTimer(String name);
 }

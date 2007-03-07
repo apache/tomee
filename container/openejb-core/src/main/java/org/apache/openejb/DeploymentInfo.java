@@ -16,6 +16,8 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.core.timer.EjbTimerService;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
@@ -97,6 +99,10 @@ public interface DeploymentInfo {
     List<Injection> getInjections();
 
     void setContainer(Container container);
+
+    Method getEjbTimeout();
+
+    EjbTimerService getEjbTimerService();
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateless;
 
-import org.apache.log4j.Category;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
@@ -30,6 +29,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Stack;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.SessionContext;
 import javax.transaction.TransactionManager;
@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StatelessInstanceManager {
+    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     protected java.util.HashMap poolMap = new HashMap();
     protected int poolLimit = 0;
@@ -50,7 +51,6 @@ public class StatelessInstanceManager {
     protected PoolQueue poolQueue = null;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
-    protected final static Category logger = Category.getInstance("OpenEJB");
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
@@ -124,7 +124,7 @@ public class StatelessInstanceManager {
                             objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
                         }
                     } catch (NamingException e) {
-                        logger.warn("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                        logger.warning("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
                     }
                 }
 
@@ -132,7 +132,7 @@ public class StatelessInstanceManager {
                 Map unsetProperties = objectRecipe.getUnsetProperties();
                 if (unsetProperties.size() > 0){
                     for (Object property : unsetProperties.keySet()) {
-                        logger.warn("Injection: No such property '"+property+"' in class "+beanClass.getName());
+                        logger.warning("Injection: No such property '"+property+"' in class "+beanClass.getName());
                     }
                 }
                 callContext.setCurrentOperation(Operation.LIFECYCLE);
