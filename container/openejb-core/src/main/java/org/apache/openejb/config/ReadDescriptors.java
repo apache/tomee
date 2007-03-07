@@ -160,7 +160,12 @@ public class ReadDescriptors implements DynamicDeployer {
                         SAXParser parser = factory.newSAXParser();
                         parser.parse(source.get(), new DefaultHandler() {
                             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                                if (uri != null && uri.contains("openejb-jar-2.")) {
+                                if (localName.equals("environment")) {
+                                    realIssue[0] = v2ParsingException;
+                                    throw new SAXException("Throw exception to stop parsing");
+                                }
+                                if (uri == null) return;
+                                if (uri.contains("openejb-jar-2.") || uri.contains("geronimo.apache.org/xml/ns")) {
                                     realIssue[0] = v2ParsingException;
                                     throw new SAXException("Throw exception to stop parsing");
                                 }
