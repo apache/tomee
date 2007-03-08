@@ -487,7 +487,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
-                        if (mdb.getMessagingType() != null) {
+                        if (mdb.getMessagingType() == null) {
                             List<Class<?>> interfaces = new ArrayList<Class<?>>();
                             for (Class<?> interfce : clazz.getInterfaces()) {
                                 String name = interfce.getName();

@@ -53,17 +53,19 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final ResourceAdapter resourceAdapter;
+    private final Class messageListenerInterface;
     private final Class activationSpecClass;
     private final int instanceLimit;
 
     private final Map<Object, DeploymentInfo> deployments = new HashMap<Object, DeploymentInfo>();
     private final Map<Object, EndpointFactory> endpointFactories = new HashMap<Object, EndpointFactory>();
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class activationSpecClass, int instanceLimit) {
+    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
+        this.messageListenerInterface = messageListenerInterface;
         this.activationSpecClass = activationSpecClass;
         this.instanceLimit = instanceLimit;
     }
@@ -86,6 +88,12 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
     public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
         Object deploymentId = deploymentInfo.getDeploymentID();
+        if (!deploymentInfo.getMdbInterface().equals(messageListenerInterface)) {
+            throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
+                    deploymentInfo.getMdbInterface().getName() + " but this MDB container only supports " +
+                    messageListenerInterface);
+        }
+
         // create the activation spec
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
@@ -117,11 +125,6 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
     }
 
-    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        // todo
-    }
-
-
     private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
         try {
             // initialize the object recipe
@@ -146,6 +149,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         } catch (Exception e) {
             throw new OpenEJBException("Unable to create activation spec", e);
         }
+    }
+
+    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        Object deploymentId = deploymentInfo.getDeploymentID();
+        undeploy(deploymentId);
     }
 
     public void undeploy(Object deploymentId) throws OpenEJBException {

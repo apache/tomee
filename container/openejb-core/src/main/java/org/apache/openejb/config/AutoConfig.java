@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -114,7 +115,7 @@ public class AutoConfig implements DynamicDeployer {
 
             if (ejbDeployment.getContainerId() == null) {
                 Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(bean.getType());
-                String containerId = getUsableContainer(containerInfoType);
+                String containerId = getUsableContainer(containerInfoType, bean.getBean());
 
                 if (containerId == null){
                     if (autoCreateContainers) {
@@ -298,10 +299,19 @@ public class AutoConfig implements DynamicDeployer {
         return service;
     }
 
-    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType) {
+    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType, Object bean) {
         for (ContainerInfo containerInfo : configFactory.getContainerInfos()) {
             if (containerInfo.getClass().equals(containerInfoType)){
-                return containerInfo.id;
+                // MDBs must match message listener interface type
+                if (bean instanceof MessageDrivenBean) {
+                    MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
+                    String messagingType = messageDrivenBean.getMessagingType();
+                    if (containerInfo.properties.get("MessageListenerInterface").equals(messagingType)) {
+                        return containerInfo.id;
+                    }
+                } else {
+                    return containerInfo.id;
+                }
             }
         }
 

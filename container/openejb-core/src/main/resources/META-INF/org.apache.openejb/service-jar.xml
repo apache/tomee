@@ -174,12 +174,16 @@
   <ServiceProvider
           id="Default MDB Container"
           provider-type="Container"
-          constructor="id, transactionManager, securityService, ResourceAdapter, ActivationSpecClass, InstanceLimit"
+          constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
 
     ResourceAdapter Default JMS Resource Adapter
+
+    # Specifies the message listener interface handled by this container
+
+    MessageListenerInterface javax.jms.MessageListener
 
     # Specifies the activation spec class
 
