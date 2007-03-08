@@ -217,7 +217,7 @@ public class AutoConfig implements DynamicDeployer {
         if (!autoCreateConnectors){
             throw new OpenEJBException(message);
         }
-        logger.error(message);
+        logger.info(message);
 
         // if there is a provider with the specified name. use it
         if (!ServiceUtils.hasServiceProvider(resourceId)) {
@@ -254,7 +254,7 @@ public class AutoConfig implements DynamicDeployer {
         if (!autoCreateConnectors){
             throw new OpenEJBException(message);
         }
-        logger.error(message);
+        logger.info(message);
 
         // if there is a provider with the specified name. use it
         if (ServiceUtils.hasServiceProvider(name)) {

@@ -71,7 +71,7 @@ public class InitEjbDeployments implements DynamicDeployer {
                 ejbDeployment.setEjbName(bean.getEjbName());
                 ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData));
 
-                logger.warning("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
+                logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
                 openejbJar.getEjbDeployment().add(ejbDeployment);
             }
         }

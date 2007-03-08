@@ -34,6 +34,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -45,15 +46,20 @@ public class JaxbJavaee {
     private static Map<Class,JAXBContext> jaxbContexts = new HashMap<Class,JAXBContext>();
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        marshal(type, object, baos);
+
+        return new String(baos.toByteArray());
+    }
+
+    public static <T>void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
         JAXBContext ctx2 = JaxbJavaee.getContext(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(object, baos);
-
-        return new String(baos.toByteArray());
+        marshaller.marshal(object, out);
     }
 
     private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {

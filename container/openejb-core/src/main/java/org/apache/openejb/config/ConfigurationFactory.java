@@ -148,6 +148,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             DeploymentLoader.logger.info("Validation is disabled.");
         }
 
+        // TODO: How do we want this plugged in?
+        //chain.add(new OutputGeneratedDescriptors());
         this.deployer = chain;
     }
 
