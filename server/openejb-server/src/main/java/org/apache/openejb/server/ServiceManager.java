@@ -288,8 +288,13 @@ public class ServiceManager {
 
         try {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            NamingEnumeration<Binding> namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/resourceAdapter");
-            while (namingEnumeration.hasMoreElements()) {
+            NamingEnumeration<Binding> namingEnumeration = null;
+            try {
+                namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/resourceAdapter");
+            } catch (NamingException ignored) {
+                // no resource adapters were created
+            }
+            while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
                 Binding binding = namingEnumeration.nextElement();
                 Object object = binding.getObject();
                 ResourceAdapter resourceAdapter = (ResourceAdapter) object;
