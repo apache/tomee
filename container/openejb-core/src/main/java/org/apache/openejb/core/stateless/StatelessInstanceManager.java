@@ -16,13 +16,9 @@
  */
 package org.apache.openejb.core.stateless;
 
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
-import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.ConstructionException;
+import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -30,22 +26,24 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Stack;
-import org.apache.openejb.util.Logger;
+import org.apache.xbean.recipe.ConstructionException;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.StaticRecipe;
 
-import javax.ejb.SessionContext;
 import javax.ejb.SessionBean;
-import javax.transaction.TransactionManager;
+import javax.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Map;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -67,7 +65,7 @@ public class StatelessInstanceManager {
         this.poolLimit = poolSize;
         this.strictPooling = strictPooling;
 
-        if (strictPooling && poolSize < 1){
+        if (strictPooling && poolSize < 1) {
             throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
         }
 
@@ -108,13 +106,13 @@ public class StatelessInstanceManager {
                 Context ctx = deploymentInfo.getJndiEnc();
                 SessionContext sessionContext = null;
                 try {
-                    sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
+                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e1) {
                     sessionContext = createSessionContext();
                     // TODO: This should work
                     ctx.bind("java:comp/EJBContext", sessionContext);
                 }
-                if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
+                if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
                 }
@@ -131,15 +129,15 @@ public class StatelessInstanceManager {
                             objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
                         }
                     } catch (NamingException e) {
-                        logger.warning("Injection data not found in enc: jndiName='"+injection.getJndiName()+"', target="+injection.getTarget()+"/"+injection.getName());
+                        logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
                     }
                 }
 
                 bean = objectRecipe.create(beanClass.getClassLoader());
                 Map unsetProperties = objectRecipe.getUnsetProperties();
-                if (unsetProperties.size() > 0){
+                if (unsetProperties.size() > 0) {
                     for (Object property : unsetProperties.keySet()) {
-                        logger.warning("Injection: No such property '"+property+"' in class "+beanClass.getName());
+                        logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
                     }
                 }
 
@@ -153,7 +151,7 @@ public class StatelessInstanceManager {
                         Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
                         interceptorInstances.put(clazz.getName(), interceptorInstance);
                     } catch (ConstructionException e) {
-                        throw new Exception("Failed to create interceptor: "+clazz.getName(), e);
+                        throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
                     }
                 }
 
@@ -163,9 +161,9 @@ public class StatelessInstanceManager {
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
 
-                if (postConstruct != null){
+                if (postConstruct != null) {
                     List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postConstruct);
-                    if (!SessionBean.class.isAssignableFrom(beanClass)){
+                    if (!SessionBean.class.isAssignableFrom(beanClass)) {
                         postConstruct = null;
                     }
                     InterceptorStack interceptorStack = new InterceptorStack(bean, postConstruct, Operation.CREATE, interceptors, interceptorInstances);
@@ -178,7 +176,7 @@ public class StatelessInstanceManager {
                 }
                 String t = "The bean instance " + bean + " threw a system exception:" + e;
                 logger.error(t, e);
-                throw new org.apache.openejb.ApplicationException(new RemoteException("Can not obtain a free instance.",e));
+                throw new org.apache.openejb.ApplicationException(new RemoteException("Can not obtain a free instance.", e));
             } finally {
                 callContext.setCurrentOperation(originalOperation);
             }
@@ -212,7 +210,7 @@ public class StatelessInstanceManager {
             pool.push(bean);
             poolQueue.notifyWaitingThreads();
         } else {
-            if (pool.size() >= poolLimit){
+            if (pool.size() >= poolLimit) {
                 freeInstance(callContext, bean);
             } else {
                 pool.push(bean);
@@ -225,12 +223,12 @@ public class StatelessInstanceManager {
             callContext.setCurrentOperation(Operation.REMOVE);
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Method preDestroy = deploymentInfo.getPreDestroy();
-            if (preDestroy != null){
+            if (preDestroy != null) {
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(preDestroy);
-                if (!SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
+                if (!SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())) {
                     preDestroy = null;
                 }
-                InterceptorStack interceptorStack = new InterceptorStack(((Instance)bean).bean, preDestroy, Operation.REMOVE, interceptors, ((Instance)bean).interceptors);
+                InterceptorStack interceptorStack = new InterceptorStack(((Instance) bean).bean, preDestroy, Operation.REMOVE, interceptors, ((Instance) bean).interceptors);
                 interceptorStack.invoke();
                 preDestroy.invoke(bean);
             }

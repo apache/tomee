@@ -16,6 +16,33 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.Injection;
+import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.openejb.core.transaction.TransactionRolledbackException;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Index;
+import org.apache.openejb.util.Logger;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.StaticRecipe;
+
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
@@ -23,33 +50,6 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.Injection;
-import org.apache.openejb.InvalidateReferenceException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
-import org.apache.openejb.persistence.JtaEntityManagerRegistry;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.transaction.TransactionRolledbackException;
-import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Index;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
 
 public class StatefulInstanceManager {
     public static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -125,12 +125,12 @@ public class StatefulInstanceManager {
             Context ctx = deploymentInfo.getJndiEnc();
             SessionContext sessionContext = null;
             try {
-                sessionContext = (SessionContext)ctx.lookup("java:comp/EJBContext");
+                sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
             } catch (NamingException e1) {
                 sessionContext = createSessionContext();
                 ctx.bind("java:comp/EJBContext", sessionContext);
             }
-            if(javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
+            if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                 callContext.setCurrentOperation(Operation.INJECTION);
                 objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
             }
@@ -152,9 +152,9 @@ public class StatefulInstanceManager {
             }
             bean = objectRecipe.create(beanClass.getClassLoader());
             Map unsetProperties = objectRecipe.getUnsetProperties();
-            if (unsetProperties.size() > 0){
+            if (unsetProperties.size() > 0) {
                 for (Object property : unsetProperties.keySet()) {
-                    logger.warning("Injection: No such property '"+property+"' in class "+beanClass.getName());
+                    logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
                 }
             }
         } catch (Throwable callbackException) {

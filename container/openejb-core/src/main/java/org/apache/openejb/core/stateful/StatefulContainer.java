@@ -16,38 +16,38 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.ApplicationException;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.ContainerType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.persistence.JtaEntityManagerRegistry;
-import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.Logger;
 
-import javax.ejb.SessionBean;
 import javax.ejb.EJBException;
+import javax.ejb.SessionBean;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionRequiredException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.dgc.VMID;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
@@ -77,9 +77,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     }
 
     private class Data {
-        private final Index<Method,MethodType> methodIndex;
+        private final Index<Method, MethodType> methodIndex;
 
-        private Data(Index<Method,MethodType> methodIndex) {
+        private Data(Index<Method, MethodType> methodIndex) {
             this.methodIndex = methodIndex;
         }
 
@@ -92,81 +92,85 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
         Method preDestroy = deploymentInfo.getPreDestroy();
-        if (preDestroy != null){
+        if (preDestroy != null) {
             methods.put(preDestroy, MethodType.REMOVE);
 
             Class businessLocal = deploymentInfo.getBusinessLocalInterface();
-            if (businessLocal != null){
+            if (businessLocal != null) {
                 try {
                     Method method = businessLocal.getMethod(preDestroy.getName());
                     methods.put(method, MethodType.REMOVE);
-                } catch (NoSuchMethodException thatsFine) {}
+                } catch (NoSuchMethodException thatsFine) {
+                }
             }
 
             Class businessRemote = deploymentInfo.getBusinessRemoteInterface();
-            if (businessRemote != null){
+            if (businessRemote != null) {
                 try {
                     Method method = businessRemote.getMethod(preDestroy.getName());
                     methods.put(method, MethodType.REMOVE);
-                } catch (NoSuchMethodException thatsFine) {}
+                } catch (NoSuchMethodException thatsFine) {
+                }
             }
         }
 
         Class legacyRemote = deploymentInfo.getRemoteInterface();
-        if (legacyRemote != null){
+        if (legacyRemote != null) {
             try {
                 Method method = legacyRemote.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
-            } catch (NoSuchMethodException thatsFine) {}
+            } catch (NoSuchMethodException thatsFine) {
+            }
         }
 
         Class legacyLocal = deploymentInfo.getLocalInterface();
-        if (legacyLocal != null){
+        if (legacyLocal != null) {
             try {
                 Method method = legacyLocal.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
-            } catch (NoSuchMethodException thatsFine) {}
+            } catch (NoSuchMethodException thatsFine) {
+            }
         }
 
         Class businessLocalHomeInterface = deploymentInfo.getBusinessLocalInterface();
-        if (businessLocalHomeInterface != null){
+        if (businessLocalHomeInterface != null) {
             for (Method method : DeploymentInfo.BusinessLocalHome.class.getMethods()) {
-                if (method.getName().startsWith("create")){
+                if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
-                } else if (method.getName().equals("remove")){
+                } else if (method.getName().equals("remove")) {
                     methods.put(method, MethodType.REMOVE);
                 }
             }
         }
 
         Class businessRemoteHomeInterface = deploymentInfo.getBusinessRemoteInterface();
-        if (businessRemoteHomeInterface != null){
+        if (businessRemoteHomeInterface != null) {
             for (Method method : DeploymentInfo.BusinessRemoteHome.class.getMethods()) {
-                if (method.getName().startsWith("create")){
+                if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
-                } else if (method.getName().equals("remove")){
+                } else if (method.getName().equals("remove")) {
                     methods.put(method, MethodType.REMOVE);
                 }
             }
         }
 
         Class homeInterface = deploymentInfo.getHomeInterface();
-        if (homeInterface != null){
+        if (homeInterface != null) {
             for (Method method : homeInterface.getMethods()) {
-                if (method.getName().startsWith("create")){
+                if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
-                } else if (method.getName().equals("remove")){
+                } else if (method.getName().equals("remove")) {
                     methods.put(method, MethodType.REMOVE);
                 }
             }
         }
 
         Class localHomeInterface = deploymentInfo.getLocalHomeInterface();
-        if (localHomeInterface != null){
+        if (localHomeInterface != null) {
             for (Method method : localHomeInterface.getMethods()) {
-                if (method.getName().startsWith("create")){
+                if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
-                } else if (method.getName().equals("remove")){
+                } else if (method.getName().equals("remove")) {
                     methods.put(method, MethodType.REMOVE);
                 }
             }
@@ -199,11 +203,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     }
 
     public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploy((CoreDeploymentInfo)deploymentInfo);
+        deploy((CoreDeploymentInfo) deploymentInfo);
     }
 
     public void undeploy(DeploymentInfo info) throws OpenEJBException {
-        undeploy((CoreDeploymentInfo)info);
+        undeploy((CoreDeploymentInfo) info);
     }
 
     private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) {
@@ -211,10 +215,10 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         deploymentInfo.setContainer(null);
         deploymentInfo.setContainerData(null);
     }
-    
+
     private synchronized void deploy(CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
-        deploymentInfo.setContainerData(new Data(new Index<Method,MethodType>(methods)));
+        deploymentInfo.setContainerData(new Data(new Index<Method, MethodType>(methods)));
 
         deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
@@ -222,7 +226,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
-        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        if (deployInfo == null)
+            throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
 
         Data data = (Data) deployInfo.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
@@ -265,7 +270,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 _invoke(callMethod, runMethod, args, bean, createContext);
             } else {
                 Method postConstruct = deploymentInfo.getPostConstruct();
-                if (postConstruct != null){
+                if (postConstruct != null) {
                     _invoke(callMethod, postConstruct, args, bean, createContext);
                 }
             }
@@ -390,7 +395,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {
         // create the extended entity managers
         Index<EntityManagerFactory, Map> factories = deploymentInfo.getExtendedEntityManagerFactories();
-        Index<EntityManagerFactory,EntityManager> entityManagers = null;
+        Index<EntityManagerFactory, EntityManager> entityManagers = null;
         if (factories != null && factories.size() > 0) {
             entityManagers = new Index<EntityManagerFactory, EntityManager>(new ArrayList<EntityManagerFactory>(factories.keySet()));
             for (Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
@@ -428,7 +433,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         // register them
         try {
-            entityManagerRegistry.addEntityManagers((String)deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
+            entityManagerRegistry.addEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
         } catch (EntityManagerAlreadyRegisteredException e) {
             throw new EJBException(e);
         }
@@ -443,7 +448,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         Object primaryKey = callContext.getPrimaryKey();
 
         // register them
-        entityManagerRegistry.removeEntityManagers((String)deploymentInfo.getDeploymentID(), primaryKey);
+        entityManagerRegistry.removeEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey);
     }
 
     public void discardInstance(Object bean, ThreadContext threadContext) {
