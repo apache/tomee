@@ -22,55 +22,10 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.EntityBeanInfo;
-import org.apache.openejb.assembler.classic.InterceptorInfo;
-import org.apache.openejb.assembler.classic.JndiEncInfo;
-import org.apache.openejb.assembler.classic.LifecycleCallbackInfo;
-import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
-import org.apache.openejb.assembler.classic.MethodInfo;
-import org.apache.openejb.assembler.classic.MethodInterceptorInfo;
-import org.apache.openejb.assembler.classic.MethodPermissionInfo;
-import org.apache.openejb.assembler.classic.MethodTransactionInfo;
-import org.apache.openejb.assembler.classic.NamedMethodInfo;
-import org.apache.openejb.assembler.classic.QueryInfo;
-import org.apache.openejb.assembler.classic.SecurityRoleInfo;
-import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
-import org.apache.openejb.assembler.classic.StatefulBeanInfo;
-import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.assembler.classic.CmrFieldInfo;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.CmpField;
-import org.apache.openejb.jee.CmpVersion;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.Icon;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.Method;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.PersistenceType;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.SecurityRole;
-import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.ActivationConfigProperty;
-import org.apache.openejb.jee.EjbRelation;
-import org.apache.openejb.jee.EjbRelationshipRole;
-import org.apache.openejb.jee.Multiplicity;
-import org.apache.openejb.jee.Query;
-import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.ArrayList;
@@ -231,72 +186,39 @@ public class EjbJarInfoBuilder {
     }
 
     private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar, Map<String, EnterpriseBeanInfo> beanInfos) throws OpenEJBException {
-        if (jar.getEjbJar().getInterceptors() == null) {
-            // no interceptors to process
-            return;
+        if (jar.getEjbJar().getInterceptors() == null) return;
+        if (jar.getEjbJar().getAssemblyDescriptor() == null) return;
+        if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) return;
+
+        for (Interceptor s : jar.getEjbJar().getInterceptors()) {
+            InterceptorInfo info = new InterceptorInfo();
+
+            info.clazz = s.getInterceptorClass();
+
+            copyCallbacks(s.getAroundInvoke(), info.aroundInvoke);
+
+            copyCallbacks(s.getPostConstruct(), info.postConstruct);
+            copyCallbacks(s.getPreDestroy(), info.preDestroy);
+
+            copyCallbacks(s.getPostActivate(), info.postActivate);
+            copyCallbacks(s.getPrePassivate(), info.prePassivate);
+
+            ejbJar.interceptors.add(info);
         }
 
-        Map<String, String> interceptorMethods = new HashMap<String, String>();
-        for (Interceptor interceptor : jar.getEjbJar().getInterceptors()) {
-            AroundInvoke aroundInvoke = interceptor.getAroundInvoke().iterator().next();
-            String clazz = aroundInvoke.getClazz();
-            String methodName = aroundInvoke.getMethodName();
-            interceptorMethods.put(clazz, methodName);
-        }
-
-        List<InterceptorBinding> bindings = jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding();
-        for (InterceptorBinding binding : bindings) {
+        for (InterceptorBinding binding : jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding()) {
+            InterceptorBindingInfo info = new InterceptorBindingInfo();
+            info.ejbName = binding.getEjbName();
+            info.excludeClassInterceptors = binding.getExcludeClassInterceptors();
+            info.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
+            info.interceptors.addAll(binding.getInterceptorClass());
             if (binding.getInterceptorOrder() != null) {
-                continue;
+                info.interceptorOrder.addAll(binding.getInterceptorOrder().getInterceptorClass());
             }
 
-            String ejbName = binding.getEjbName();
-            List<InterceptorInfo> interceptorInfos = getInterceptorInfos(binding.getInterceptorClass(), interceptorMethods);
-            if ("*".equals(ejbName)) {
-                ejbJar.defaultInterceptors.addAll(interceptorInfos);
-            } else {
-                EnterpriseBeanInfo beanInfo = beanInfos.get(ejbName);
-                if (beanInfo == null) {
-                    throw new OpenEJBException("Interceptor binding defined for a non existant ejb " + ejbName);
-                }
-
-                NamedMethod method = binding.getMethod();
-                if (method == null) {
-                    beanInfo.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
-                    beanInfo.classInterceptors.addAll(interceptorInfos);
-                } else {
-                    MethodInterceptorInfo methodInterceptorInfo = new MethodInterceptorInfo();
-                    methodInterceptorInfo.methodInfo = new MethodInfo();
-                    methodInterceptorInfo.methodInfo.methodName = method.getMethodName();
-                    List<String> methodParam = method.getMethodParams().getMethodParam();
-                    methodInterceptorInfo.methodInfo.methodParams = methodParam;
-
-                    methodInterceptorInfo.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
-                    methodInterceptorInfo.excludeClassInterceptors = binding.getExcludeClassInterceptors();
-                    methodInterceptorInfo.interceptors.addAll(interceptorInfos);
-
-                    beanInfo.methodInterceptors.add(methodInterceptorInfo);
-                }
-            }
+            info.method = toInfo(binding.getMethod());
+            ejbJar.interceptorBindings.add(info);
         }
-
-        // todo add interceptor order
-    }
-
-    private static List<InterceptorInfo> getInterceptorInfos(List<String> interceptorClasses, Map<String, String> interceptorMethods) throws OpenEJBException {
-        ArrayList<InterceptorInfo> interceptorInfos = new ArrayList<InterceptorInfo>(interceptorClasses.size());
-        for (String clazz : interceptorClasses) {
-            String methodName = interceptorMethods.get(clazz);
-            if (methodName == null) {
-                throw new OpenEJBException("Interceptor class is not have an interceptor method defined: " + interceptorClasses);
-            }
-
-            InterceptorInfo interceptorInfo = new InterceptorInfo();
-            interceptorInfo.clazz = clazz;
-            interceptorInfo.methodName = methodName;
-            interceptorInfos.add(interceptorInfo);
-        }
-        return interceptorInfos;
     }
 
     private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> beanInfos, Map<String, EnterpriseBean> beanData) throws OpenEJBException {
@@ -430,6 +352,9 @@ public class EjbJarInfoBuilder {
             bean = new StatelessBeanInfo();
         }
 
+        bean.timeoutMethod = toInfo(s.getTimeoutMethod());
+
+        copyCallbacks(s.getAroundInvoke(), bean.aroundInvoke);
         copyCallbacks(s.getPostConstruct(), bean.postConstruct);
         copyCallbacks(s.getPreDestroy(), bean.preDestroy);
 
@@ -464,17 +389,13 @@ public class EjbJarInfoBuilder {
     private EnterpriseBeanInfo initMessageBean(MessageDrivenBean mdb, Map m) throws OpenEJBException {
         MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
+        bean.timeoutMethod = toInfo(mdb.getTimeoutMethod());
+
+        copyCallbacks(mdb.getAroundInvoke(), bean.aroundInvoke);
         copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
         copyCallbacks(mdb.getPreDestroy(), bean.preDestroy);
-        NamedMethodInfo timeoutMethodInfo = new NamedMethodInfo();
-        if (mdb.getTimeoutMethod() != null) {
-            timeoutMethodInfo.methodName = mdb.getTimeoutMethod().getMethodName();
-            if (mdb.getTimeoutMethod().getMethodParams() != null) {
-                timeoutMethodInfo.methodParams = mdb.getTimeoutMethod().getMethodParams().getMethodParam();
-            }
-        }
+
         EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
-        bean.timeoutMethod = timeoutMethodInfo;
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
                     + mdb.getEjbName()
@@ -514,11 +435,25 @@ public class EjbJarInfoBuilder {
         return bean;
     }
 
-    private void copyCallbacks(List<LifecycleCallback> from, List<LifecycleCallbackInfo> to) {
-        for (LifecycleCallback callback : from) {
-            LifecycleCallbackInfo info = new LifecycleCallbackInfo();
-            info.className = callback.getLifecycleCallbackClass();
-            info.method = callback.getLifecycleCallbackMethod();
+    private NamedMethodInfo toInfo(NamedMethod method) {
+        if (method == null) return null;
+
+        NamedMethodInfo info = new NamedMethodInfo();
+
+        info.methodName = method.getMethodName();
+
+        if (method.getMethodParams() != null) {
+            info.methodParams = method.getMethodParams().getMethodParam();
+        }
+
+        return info;
+    }
+
+    private void copyCallbacks(List<? extends CallbackMethod> from, List<CallbackInfo> to) {
+        for (CallbackMethod callback : from) {
+            CallbackInfo info = new CallbackInfo();
+            info.className = callback.getClassName();
+            info.method = callback.getMethodName();
             to.add(info);
         }
     }

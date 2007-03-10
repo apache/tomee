@@ -17,13 +17,14 @@
  */
 package org.apache.openejb.core.interceptor;
 
+import org.apache.openejb.core.Operation;
+
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Collection;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -31,40 +32,36 @@ import java.util.ArrayList;
 public class InterceptorStack {
     private final Object beanInstance;
     private final List<Interceptor> interceptors;
-    private final Method method;
-    private boolean lifecycleInvocation;
+    private final Method targetMethod;
 
-    public InterceptorStack(Object beanInstance, Method method, boolean lifecycleInvocation, Collection<Object> interceptorInstances, List<InterceptorData> interceptorDatas) {
+    public InterceptorStack(Object beanInstance, Method targetMethod, Operation operation, List<InterceptorData> interceptorDatas, Map<String, Object> interceptorInstances) {
         this.beanInstance = beanInstance;
-        this.method = method;
-        this.lifecycleInvocation = lifecycleInvocation;
-
-        Map<String, Object> interceptorsByClass = new HashMap<String, Object>();
-        for (Object interceptor : interceptorInstances) {
-            interceptorsByClass.put(interceptor.getClass().getName(), interceptor);
-        }
+        this.targetMethod = targetMethod;
 
         interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
         for (InterceptorData interceptorData : interceptorDatas) {
-            String interceptorClass = interceptorData.getInterceptorClass();
-            Object interceptorInstance = interceptorsByClass.get(interceptorClass);
+            Class interceptorClass = interceptorData.getInterceptorClass();
+            Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());
             if (interceptorInstance == null) {
-                throw new IllegalArgumentException("No interceptor of type " + interceptorClass);
+                throw new IllegalArgumentException("No interceptor of type " + interceptorClass.getName());
             }
-            Interceptor interceptor = new Interceptor(interceptorInstance, interceptorData.getInterceptorMethod());
-            interceptors.add(interceptor);
+
+            List<Method> methods = interceptorData.getMethods(operation);
+            for (Method method : methods) {
+                Interceptor interceptor = new Interceptor(interceptorInstance, method);
+                interceptors.add(interceptor);
+            }
         }
     }
 
-    public InterceptorStack(Object beanInstance, Method method, boolean lifecycleInvocation, List<Interceptor> interceptors) {
+    public InterceptorStack(Object beanInstance, Method method, List<Interceptor> interceptors) {
         this.beanInstance = beanInstance;
-        this.method = method;
-        this.lifecycleInvocation = lifecycleInvocation;
+        this.targetMethod = method;
         this.interceptors = interceptors;
     }
 
     public InvocationContext createInvocationContext() {
-        InvocationContext invocationContext = new ReflectionInvocationContext(interceptors, beanInstance, method, lifecycleInvocation);
+        InvocationContext invocationContext = new ReflectionInvocationContext(interceptors, beanInstance, targetMethod);
         return invocationContext;
     }
 

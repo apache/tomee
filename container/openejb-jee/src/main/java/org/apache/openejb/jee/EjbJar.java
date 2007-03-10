@@ -178,6 +178,9 @@ public class EjbJar {
     }
 
     public AssemblyDescriptor getAssemblyDescriptor() {
+        if (assemblyDescriptor == null){
+            assemblyDescriptor = new AssemblyDescriptor();
+        }
         return assemblyDescriptor;
     }
 

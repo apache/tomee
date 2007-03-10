@@ -17,12 +17,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
-import java.util.ArrayList;
-
-public class MethodInterceptorInfo extends InfoObject {
-    public MethodInfo methodInfo;
-    public boolean excludeDefaultInterceptors;
-    public boolean excludeClassInterceptors;
-    public final List<String> interceptors = new ArrayList<String>();
+/**
+ * @version $Revision$ $Date$
+ */
+public class CallbackInfo extends InfoObject {
+    public String className;
+    public String method;
 }

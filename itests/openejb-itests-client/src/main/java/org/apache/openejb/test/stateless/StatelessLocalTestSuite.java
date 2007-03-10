@@ -34,19 +34,24 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase {
         TestSuite suite = new TestSuite();
         suite.addTest(new StatelessJndiTests());
         suite.addTest(new StatelessPojoLocalJndiTests());
+
         suite.addTest(new StatelessHomeIntfcTests());
         suite.addTest(new StatelessPojoLocalHomeIntfcTests());
-        suite.addTest(new StatelessLocalBusinessIntfcTests());
-        // MNour: Why we put this remote test into this suite of local tests ???
-        suite.addTest(new StatelessRemoteBusinessIntfcTests());
+
         suite.addTest(new StatelessEjbHomeTests());
         suite.addTest(new StatelessPojoEjbLocalHomeTests());
-        suite.addTest(new StatelessPojoEjbLocalObjectTests());
+
         suite.addTest(new StatelessEjbObjectTests());
+        suite.addTest(new StatelessPojoEjbLocalObjectTests());
+
         suite.addTest(new StatelessRemoteIntfcTests());
         suite.addTest(new StatelessLocalIntfcTests());
+        suite.addTest(new StatelessLocalBusinessIntfcTests());
+        suite.addTest(new StatelessRemoteBusinessIntfcTests());
+
         suite.addTest(new StatelessHomeHandleTests());
         suite.addTest(new StatelessHandleTests());
+
         suite.addTest(new StatelessEjbMetaDataTests());
         suite.addTest(new StatelessAllowedOperationsTests());
         suite.addTest(new BMTStatelessAllowedOperationsTests());

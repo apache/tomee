@@ -54,6 +54,10 @@ public class InterceptorOrder {
         return this.interceptorClass;
     }
 
+    public void addInterceptorClass(String className) {
+        getInterceptorClass().add(className);
+    }
+
     public String getId() {
         return id;
     }

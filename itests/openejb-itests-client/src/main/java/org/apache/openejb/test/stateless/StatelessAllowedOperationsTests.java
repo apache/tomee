@@ -257,7 +257,7 @@ public class StatelessAllowedOperationsTests extends BasicStatelessTestClient{
         }
     }
 
-    public void test05_ejbTimeout(){
+    public void _test05_ejbTimeout(){
         try {
             ejbObject.scheduleTimer("StatelessAllowedOperationsTests");
             timerSync.waitFor("StatelessAllowedOperationsTests");

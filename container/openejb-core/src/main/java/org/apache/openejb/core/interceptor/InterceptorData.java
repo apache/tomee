@@ -17,46 +17,79 @@
  */
 package org.apache.openejb.core.interceptor;
 
+import org.apache.openejb.core.Operation;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+
 /**
  * @version $Rev$ $Date$
  */
 public class InterceptorData {
-    private final String interceptorClass;
-    private final String interceptorMethod;
 
-    public InterceptorData(String interceptorClass, String interceptorMethod) {
-        if (interceptorClass == null) throw new NullPointerException("interceptorClass is null");
-        if (interceptorMethod == null) throw new NullPointerException("interceptorMethod is null");
-        this.interceptorClass = interceptorClass;
-        this.interceptorMethod = interceptorMethod;
+    private Class clazz;
+
+    private final List<Method> aroundInvoke = new ArrayList<Method>();
+
+    private final List<Method> postConstruct = new ArrayList<Method>();
+    private final List<Method> preDestroy = new ArrayList<Method>();
+
+    private final List<Method> postActivate = new ArrayList<Method>();
+    private final List<Method> prePassivate = new ArrayList<Method>();
+
+    public InterceptorData(Class clazz) {
+        this.clazz = clazz;
     }
 
-    public String getInterceptorClass() {
-        return interceptorClass;
+    public Class getInterceptorClass() {
+        return clazz;
     }
 
-    public String getInterceptorMethod() {
-        return interceptorMethod;
+    public List<Method> getAroundInvoke() {
+        return aroundInvoke;
+    }
+
+    public List<Method> getPostConstruct() {
+        return postConstruct;
+    }
+
+    public List<Method> getPreDestroy() {
+        return preDestroy;
+    }
+
+    public List<Method> getPostActivate() {
+        return postActivate;
+    }
+
+    public List<Method> getPrePassivate() {
+        return prePassivate;
+    }
+
+    public List<Method> getMethods(Operation operation) {
+        switch(operation) {
+            case BUSINESS: return getAroundInvoke();
+            case CREATE: return getPostConstruct();
+            case REMOVE: return getPreDestroy();
+            case ACTIVATE: return getPostActivate();
+            case PASSIVATE: return getPrePassivate();
+        }
+        return Collections.EMPTY_LIST;
     }
 
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        InterceptorData that = (InterceptorData) o;
-        return interceptorClass.equals(that.interceptorClass) &&
-                interceptorMethod.equals(that.interceptorMethod);
+        final InterceptorData that = (InterceptorData) o;
 
+        if (clazz != null ? !clazz.equals(that.clazz) : that.clazz != null) return false;
+
+        return true;
     }
 
     public int hashCode() {
-        int result;
-        result = interceptorClass.hashCode();
-        result = 29 * result + interceptorMethod.hashCode();
-        return result;
-    }
-
-    public String toString() {
-        return interceptorClass + "." + interceptorMethod;
+        return (clazz != null ? clazz.hashCode() : 0);
     }
 }

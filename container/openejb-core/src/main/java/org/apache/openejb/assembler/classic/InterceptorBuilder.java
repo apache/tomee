@@ -34,9 +34,9 @@ public class InterceptorBuilder {
 
     public InterceptorBuilder(List<InterceptorInfo> defaultInterceptors, EnterpriseBeanInfo bean) {
         this.defaultInterceptors = toInterceptorDatas(defaultInterceptors);
-        this.excludeDefaultInterceptors = bean.excludeDefaultInterceptors;
-        this.classInterceptors = toInterceptorDatas(bean.classInterceptors);
-        this.methodInterceptors = new ArrayList<MethodInterceptorInfo>(bean.methodInterceptors);
+        this.excludeDefaultInterceptors = false;//bean.excludeDefaultInterceptors;
+        this.classInterceptors = null; //toInterceptorDatas(bean.classInterceptors);
+        this.methodInterceptors = null;//new ArrayList<MethodInterceptorInfo>(bean.methodInterceptors);
         Collections.sort(methodInterceptors, METHOD_INTERCEPTOR_INFO_COMPARATOR);
     }
 
@@ -58,7 +58,7 @@ public class InterceptorBuilder {
                     }
                 }
 
-                interceptors.addAll(toInterceptorDatas(methodInterceptorInfo.interceptors));
+                //interceptors.addAll(toInterceptorDatas(methodInterceptorInfo.interceptors));
 
                 return interceptors;
             }
@@ -81,9 +81,9 @@ public class InterceptorBuilder {
 
     private static List<InterceptorData> toInterceptorDatas(List<InterceptorInfo> interceptorInfos) {
         ArrayList<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(interceptorInfos.size());
-        for (InterceptorInfo interceptorInfo : interceptorInfos) {
-            interceptorDatas.add(new InterceptorData(interceptorInfo.clazz, interceptorInfo.methodName));
-        }
+//        for (InterceptorInfo interceptorInfo : interceptorInfos) {
+//            interceptorDatas.add(new InterceptorData(interceptorInfo.clazz, interceptorInfo.methodName));
+//        }
         return interceptorDatas;
     }
 

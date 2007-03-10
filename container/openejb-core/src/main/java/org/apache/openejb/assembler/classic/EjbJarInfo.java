@@ -23,9 +23,11 @@ public class EjbJarInfo extends InfoObject {
     public String moduleId;
     public String jarPath;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
-    public final List<InterceptorInfo> defaultInterceptors = new ArrayList<InterceptorInfo>();
-    
+
     public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
     public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
     public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
+    public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
+    public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<InterceptorBindingInfo>();
+
 }

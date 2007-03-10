@@ -27,18 +27,6 @@ public class Interceptor {
     private final Object instance;
     private final Method method;
 
-    public Interceptor(Object instance, String methodName) {
-        if (instance == null) throw new NullPointerException("instance is null");
-        if (methodName == null) throw new NullPointerException("methodName is null");
-        this.instance = instance;
-        Class instanceClass = instance.getClass();
-        try {
-            this.method = instanceClass.getMethod(methodName, InvocationContext.class);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Interceptor method " + methodName + " not found on intercepted class " + instanceClass.getName());
-        }
-    }
-
     public Interceptor(Object instance, Method method) {
         if (instance == null) throw new NullPointerException("instance is null");
         if (method == null) throw new NullPointerException("method is null");

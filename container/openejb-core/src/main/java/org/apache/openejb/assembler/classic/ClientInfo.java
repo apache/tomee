@@ -31,7 +31,7 @@ public class ClientInfo extends InfoObject {
     
     public JndiEncInfo jndiEnc;
 
-    public final List<LifecycleCallbackInfo> postConstruct = new ArrayList<LifecycleCallbackInfo>();
-    public final List<LifecycleCallbackInfo> preDestroy = new ArrayList<LifecycleCallbackInfo>();
+    public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
 
 }

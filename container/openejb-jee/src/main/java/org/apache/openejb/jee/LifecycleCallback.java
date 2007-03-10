@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
         "lifecycleCallbackClass",
         "lifecycleCallbackMethod"
         })
-public class LifecycleCallback {
+public class LifecycleCallback implements CallbackMethod {
 
     @XmlElement(name = "lifecycle-callback-class")
     protected String lifecycleCallbackClass;
@@ -72,4 +72,11 @@ public class LifecycleCallback {
         this.lifecycleCallbackMethod = value;
     }
 
+    public String getClassName() {
+        return getLifecycleCallbackClass();
+    }
+
+    public String getMethodName() {
+        return getLifecycleCallbackMethod();
+    }
 }

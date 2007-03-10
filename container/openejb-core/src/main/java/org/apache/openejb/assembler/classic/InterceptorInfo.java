@@ -17,7 +17,17 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class InterceptorInfo extends InfoObject{
     public String clazz;
-    public String methodName;
+
+    public final List<CallbackInfo> aroundInvoke = new ArrayList<CallbackInfo>();
+
+    public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
+
+    public final List<CallbackInfo> postActivate = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> prePassivate = new ArrayList<CallbackInfo>();
 }

@@ -308,11 +308,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return new ArrayList<AppInfo>(deployedApplications.values());
     }
 
+    public void createApplication(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+        createEjbJar(ejbJar);
+    }
+
     public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = ejbJar.jarPath;
         appInfo.ejbJars.add(ejbJar);
         createApplication(appInfo);
+    }
+
+    public void createApplication(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        createEjbJar(ejbJar, classLoader);    
     }
 
     public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
@@ -918,4 +926,5 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             return thread;
         }
     }
+
 }

@@ -240,7 +240,7 @@ public class BMTStatelessAllowedOperationsTests extends BasicStatelessTestClient
         }
     }
 
-    public void test05_ejbTimeout(){
+    public void _test05_ejbTimeout(){
         try {
             ejbObject.scheduleTimer("BmtStatelessAllowedOperationsTests");
             timerSync.waitFor("BmtStatelessAllowedOperationsTests");

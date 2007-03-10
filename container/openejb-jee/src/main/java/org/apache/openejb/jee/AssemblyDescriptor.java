@@ -130,6 +130,11 @@ public class AssemblyDescriptor {
         return this.interceptorBinding;
     }
 
+    public InterceptorBinding addInterceptorBinding(InterceptorBinding binding){
+        getInterceptorBinding().add(binding);
+        return binding;
+    }
+    
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
             messageDestination = new ArrayList<MessageDestination>();

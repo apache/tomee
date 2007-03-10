@@ -27,6 +27,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$ $Date$
@@ -45,11 +46,15 @@ public class EjbJarBuilder {
     public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, Map<String, Map<String, EntityManagerFactory>> allFactories) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
 
+        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
         for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, ejbJar.defaultInterceptors,allFactories);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList(),allFactories);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
+
+                interceptorBindingBuilder.build(deployment, ejbInfo);
+
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 

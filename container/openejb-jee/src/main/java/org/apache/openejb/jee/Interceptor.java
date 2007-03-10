@@ -106,6 +106,10 @@ public class Interceptor implements JndiConsumer, Session {
     public Interceptor() {
     }
 
+    public Interceptor(Class interceptorClass) {
+        this.interceptorClass = interceptorClass.getName();
+    }
+
     public Interceptor(String interceptorClass) {
         this.interceptorClass = interceptorClass;
     }

@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 
 /**
@@ -65,17 +66,34 @@ import java.util.List;
  * There are four possible styles of the interceptor element syntax :
  * <p/>
  * 1.
+ <interceptor-binding>
+   <ejb-name>*</ejb-name>
+   <interceptor-class>INTERCEPTOR</interceptor-class>
+ </interceptor-binding>
  * <p/>
  * Specifying the ejb-name as the wildcard value "*" designates
  * default interceptors (interceptors that apply to all session and
  * message-driven beans contained in the ejb-jar).
  * <p/>
  * 2.
+ <interceptor-binding>
+   <ejb-name>EJBNAME</ejb-name>
+   <interceptor-class>INTERCEPTOR</interceptor-class>
+ </interceptor-binding>
+
  * <p/>
  * This style is used to refer to interceptors associated with the
  * specified enterprise bean(class-level interceptors).
  * <p/>
  * 3.
+ <interceptor-binding>
+   <ejb-name>EJBNAME</ejb-name>
+   <interceptor-class>INTERCEPTOR</interceptor-class>
+   <method>
+     <method-name>METHOD</method-name>
+   </method>
+ </interceptor-binding>
+
  * <p/>
  * This style is used to associate a method-level interceptor with
  * the specified enterprise bean.  If there are multiple methods
@@ -86,6 +104,19 @@ import java.util.List;
  * to specify method-level interceptors.
  * <p/>
  * 4.
+ <interceptor-binding>
+   <ejb-name>EJBNAME</ejb-name>
+   <interceptor-class>INTERCEPTOR</interceptor-class>
+   <method>
+     <method-name>METHOD</method-name>
+     <method-params>
+       <method-param>PARAM-1</method-param>
+       <method-param>PARAM-2</method-param>
+       ...
+       <method-param>PARAM-N</method-param>
+     </method-params>
+   </method>
+ </interceptor-binding>
  * <p/>
  * ...
  * This style is used to associate a method-level interceptor with
@@ -128,6 +159,27 @@ public class InterceptorBinding {
     @XmlID
     protected String id;
 
+    public InterceptorBinding() {
+    }
+
+    public InterceptorBinding(EnterpriseBean bean, Interceptor... interceptors) {
+        this(bean.getEjbName(), interceptors);
+    }
+
+    public InterceptorBinding(String ejbName, Interceptor... interceptors) {
+        this.ejbName = ejbName;
+        List<String> interceptorClasses = this.getInterceptorClass();
+        for (Interceptor interceptor : interceptors) {
+            interceptorClasses.add(interceptor.getInterceptorClass());
+        }
+    }
+
+    public InterceptorBinding(String ejbName, String... interceptorClasses) {
+        this.ejbName = ejbName;
+
+        this.getInterceptorClass().addAll(Arrays.asList(interceptorClasses));
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
@@ -154,8 +206,9 @@ public class InterceptorBinding {
         return interceptorOrder;
     }
 
-    public void setInterceptorOrder(InterceptorOrder value) {
+    public InterceptorOrder setInterceptorOrder(InterceptorOrder value) {
         this.interceptorOrder = value;
+        return value;
     }
 
     public boolean getExcludeDefaultInterceptors() {

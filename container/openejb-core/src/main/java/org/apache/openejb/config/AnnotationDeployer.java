@@ -17,40 +17,8 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.Lifecycle;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MethodTransaction;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.Property;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.ResAuth;
-import org.apache.openejb.jee.ResSharingScope;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.ActivationConfigProperty;
-import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -335,6 +303,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if (ejbJar.getInterceptor(interceptor.getName()) == null){
                             ejbJar.addInterceptor(new Interceptor(interceptor.getName()));
                         }
+                    }
+
+                    InterceptorBinding binding = new InterceptorBinding();
+                    binding.setEjbName(bean.getEjbName());
+                    InterceptorOrder order = binding.setInterceptorOrder(new InterceptorOrder());
+                    for (Class interceptor : interceptors.value()) {
+                        order.addInterceptorClass(interceptor.getName());
                     }
                 }
 

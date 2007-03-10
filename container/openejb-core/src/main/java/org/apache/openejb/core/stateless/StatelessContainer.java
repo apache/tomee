@@ -23,6 +23,8 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
@@ -37,6 +39,7 @@ import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -116,7 +119,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
-        
+
         ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -163,7 +166,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
     protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext)
             throws org.apache.openejb.OpenEJBException {
 
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
         txContext.callContext = callContext;
 
@@ -171,8 +175,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
         Object returnValue = null;
         try {
-
-            returnValue = runMethod.invoke(bean, args);
+            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+            InterceptorStack interceptorStack = new InterceptorStack(((Instance)bean).bean, runMethod, Operation.BUSINESS, interceptors, ((Instance)bean).interceptors);
+            returnValue = interceptorStack.invoke(args);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
             if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
@@ -185,6 +190,16 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
         } catch (Throwable re) {// handle reflection exception
+            if (re instanceof RuntimeException) {
+                /* System Exception ****************************/
+
+                txPolicy.handleSystemException(re, bean, txContext);
+            } else {
+                /* Application Exception ***********************/
+                instanceManager.poolInstance(callContext, bean);
+
+                txPolicy.handleApplicationException(re, txContext);
+            }
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
@@ -193,7 +208,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
                 NullPointerException - if the specified object is null and the method is an instance method.
                 ExceptionInInitializerError - if the initialization provoked by this method fails.
             */
-            txPolicy.handleSystemException(re, bean, txContext);
+//            txPolicy.handleSystemException(re, bean, txContext);
         } finally {
 
             txPolicy.afterInvoke(bean, txContext);

@@ -29,6 +29,10 @@ public class StatelessBean extends SessionBean {
         prePassivate = Collections.EMPTY_LIST;
     }
 
+    public StatelessBean(Class ejbClass) {
+        this(ejbClass.getSimpleName(), ejbClass.getName());
+    }
+
     public StatelessBean() {
         this(null, null);
     }

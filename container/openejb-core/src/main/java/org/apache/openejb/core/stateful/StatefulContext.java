@@ -54,7 +54,7 @@ public class StatefulContext extends BaseSessionContext {
 
     static {
         states[Operation.INJECTION.ordinal()] = new InjectionStatelessState();
-        states[Operation.LIFECYCLE.ordinal()] = new LifecycleStatelessState();
+        states[Operation.CREATE.ordinal()] = new LifecycleStatelessState();
         states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
         states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
         states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();

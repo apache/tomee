@@ -36,20 +36,18 @@ public class ReflectionInvocationContext implements InvocationContext {
     private final Map<String, Object> contextData = new TreeMap<String, Object>();
     private final Class<?>[] parameterTypes;
 
-    private final boolean lifecycleInvocation;
     private boolean parametersSet;
 
-    public ReflectionInvocationContext(List<Interceptor> interceptors, Object target, Method method, boolean lifecycleInvocation) {
+    public ReflectionInvocationContext(List<Interceptor> interceptors, Object target, Method method) {
         if (interceptors == null) throw new NullPointerException("interceptors is null");
         if (target == null) throw new NullPointerException("target is null");
 
         this.interceptors = interceptors.iterator();
         this.target = target;
         this.method = method;
-        parameterTypes = method.getParameterTypes();
+        parameterTypes = (method == null)? new Class[]{}: method.getParameterTypes();
         parameters = new Object[parameterTypes.length];
 
-        this.lifecycleInvocation = lifecycleInvocation;
         parametersSet = parameters.length == 0;
     }
 
@@ -58,7 +56,6 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Method getMethod() {
-        if (lifecycleInvocation) return null;
         return method;
     }
 
@@ -75,17 +72,18 @@ public class ReflectionInvocationContext implements InvocationContext {
             Object parameter = parameters[i];
             Class<?> parameterType = parameterTypes[i];
 
-            if (parameter == null) {
-                if (parameterType.isPrimitive()) {
-                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
-                        ", but got a parameter that is null");
-                }
-            } else if (!parameterType.isInstance(parameter)) {
-                throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
-                    ", but got a parameter of type " + parameter.getClass().getName());
-            }
+//            if (parameter == null) {
+//                if (parameterType.isPrimitive()) {
+//                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
+//                        ", but got a parameter that is null");
+//                }
+//            } else if (!parameterType.isInstance(parameter)) {
+//                throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
+//                    ", but got a parameter of type " + parameter.getClass().getName());
+//            }
         }
         System.arraycopy(parameters, 0, this.parameters, 0, parameters.length);
+        parametersSet = true;
     }
 
     public Map<String, Object> getContextData() {
@@ -99,9 +97,15 @@ public class ReflectionInvocationContext implements InvocationContext {
             Interceptor interceptor = interceptors.next();
             Object nextInstance = interceptor.getInstance();
             Method nextMethod = interceptor.getMethod();
+
             try {
-                Object value = nextMethod.invoke(nextInstance, this);
-                return value;
+                if (nextMethod.getParameterTypes().length == 0){
+                    Object value = nextMethod.invoke(nextInstance);
+                    return value;
+                } else {
+                    Object value = nextMethod.invoke(nextInstance, this);
+                    return value;
+                }
             } catch (InvocationTargetException e) {
                 throw unwrapInvocationTargetException(e);
             }

@@ -42,13 +42,13 @@ class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
     private final String moduleId;
-    private final List<InterceptorInfo> defaultInterceptors;
+    private final List<String> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
     private final Map<String, Map<String, EntityManagerFactory>> factories;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<InterceptorInfo> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
         this.bean = bean;
         this.moduleId = moduleId;
         this.defaultInterceptors = defaultInterceptors;
@@ -184,11 +184,11 @@ class EnterpriseBeanBuilder {
         }
 
         // interceptors
-        InterceptorBuilder interceptorBuilder = new InterceptorBuilder(defaultInterceptors, bean);
-        for (Method method : ejbClass.getMethods()) {
-            List<InterceptorData> interceptorDatas = interceptorBuilder.build(method);
-            deployment.setMethodInterceptors(method, interceptorDatas);
-        }
+//        InterceptorBuilder interceptorBuilder = new InterceptorBuilder(new ArrayList(), bean);
+//        for (Method method : ejbClass.getMethods()) {
+//            List<InterceptorData> interceptorDatas = interceptorBuilder.build(method);
+//            deployment.setMethodInterceptors(method, interceptorDatas);
+//        }
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
@@ -250,9 +250,9 @@ class EnterpriseBeanBuilder {
         return warnings;
     }
 
-    private Method getCallback(Class ejbClass, List<LifecycleCallbackInfo> callbackInfos) {
+    private Method getCallback(Class ejbClass, List<CallbackInfo> callbackInfos) {
         Method callback = null;
-        for (LifecycleCallbackInfo info : callbackInfos) {
+        for (CallbackInfo info : callbackInfos) {
             try {
                 if (ejbClass.getName().equals(info.className)) {
                     if (callback != null) {

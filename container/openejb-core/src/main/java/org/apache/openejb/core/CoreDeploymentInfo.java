@@ -554,15 +554,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return methodInterceptors.get(method);
     }
 
+
     public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
         methodInterceptors.put(method, interceptors);
+        this.interceptors.addAll(interceptors);
     }
 
+    private final Set<InterceptorData> interceptors = new HashSet<InterceptorData>();
+
     public Set<InterceptorData> getAllInterceptors() {
-        Set<InterceptorData> interceptors = new HashSet<InterceptorData>();
-        for (List<InterceptorData> interceptorDatas : methodInterceptors.values()) {
-            interceptors.addAll(interceptorDatas);
-        }
         return interceptors;
     }
 
@@ -680,6 +680,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         if (localInterface != null) {
             mapObjectInterface(localInterface);
             mapHomeInterface(localHomeInterface);
+        }
+        if (businessLocal != null){
+            mapObjectInterface(businessLocal);
+        }
+        if (businessRemote != null){
+            mapObjectInterface(businessRemote);
         }
 
         if (componentType == BeanType.MESSAGE_DRIVEN && MessageDrivenBean.class.isAssignableFrom(beanClass)) {

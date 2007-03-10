@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,14 +14,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core.stateless;
 
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
-public class MethodInterceptorInfo extends InfoObject {
-    public MethodInfo methodInfo;
-    public boolean excludeDefaultInterceptors;
-    public boolean excludeClassInterceptors;
-    public final List<String> interceptors = new ArrayList<String>();
+/**
+ * @version $Rev$ $Date$
+ */
+public class Instance {
+    public final Object bean;
+    public final Map<String,Object> interceptors;
+
+    public Instance(Object bean, Map<String, Object> interceptors) {
+        this.bean = bean;
+        this.interceptors = interceptors;
+    }
 }

@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
         "clazz",
         "methodName"
         })
-public class AroundInvoke {
+public class AroundInvoke implements CallbackMethod{
 
     @XmlElement(name = "class")
     protected String clazz;
@@ -73,4 +73,7 @@ public class AroundInvoke {
         this.methodName = value;
     }
 
+    public String getClassName() {
+        return getClazz();
+    }
 }

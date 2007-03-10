@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +19,14 @@ package org.apache.openejb.assembler.classic;
 import java.util.List;
 import java.util.ArrayList;
 
-public class MethodInterceptorInfo extends InfoObject {
-    public MethodInfo methodInfo;
+/**
+ * @version $Rev$ $Date$
+ */
+public class InterceptorBindingInfo extends InfoObject {
+    public String ejbName;
+    public final List<String> interceptors = new ArrayList<String>();
+    public final List<String> interceptorOrder = new ArrayList<String>();
     public boolean excludeDefaultInterceptors;
     public boolean excludeClassInterceptors;
-    public final List<String> interceptors = new ArrayList<String>();
+    public NamedMethodInfo method;
 }

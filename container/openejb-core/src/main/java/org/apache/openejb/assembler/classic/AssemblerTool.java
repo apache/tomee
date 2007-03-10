@@ -104,7 +104,7 @@ public class AssemblerTool {
     public void applySecurityRoleReference(CoreDeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
         for (SecurityRoleReferenceInfo roleRef : beanInfo.securityRoleReferences) {
             List<String> physicalRoles = roleMapping.getPhysicalRoles(roleRef.roleLink);
-            deployment.addSecurityRoleReference(roleRef.roleName, physicalRoles);
+//HACK            deployment.addSecurityRoleReference(roleRef.roleName, physicalRoles);
         }
     }
 

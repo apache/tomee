@@ -25,7 +25,7 @@ public class StatefulBeanInfo extends EnterpriseBeanInfo {
         type = STATEFUL;
     }
 
-    public final List<LifecycleCallbackInfo> postActivate = new ArrayList<LifecycleCallbackInfo>();
-    public final List<LifecycleCallbackInfo> prePassivate = new ArrayList<LifecycleCallbackInfo>();
+    public final List<CallbackInfo> postActivate = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> prePassivate = new ArrayList<CallbackInfo>();
 
 }

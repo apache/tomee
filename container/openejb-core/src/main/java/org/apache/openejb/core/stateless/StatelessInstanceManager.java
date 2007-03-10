@@ -19,12 +19,15 @@ package org.apache.openejb.core.stateless;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.ConstructionException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.SafeToolkit;
@@ -32,6 +35,7 @@ import org.apache.openejb.util.Stack;
 import org.apache.openejb.util.Logger;
 
 import javax.ejb.SessionContext;
+import javax.ejb.SessionBean;
 import javax.transaction.TransactionManager;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -39,6 +43,9 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -135,12 +142,36 @@ public class StatelessInstanceManager {
                         logger.warning("Injection: No such property '"+property+"' in class "+beanClass.getName());
                     }
                 }
-                callContext.setCurrentOperation(Operation.LIFECYCLE);
+
+                HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
+                for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+                    if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
+
+                    Class clazz = interceptorData.getInterceptorClass();
+                    ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
+                    try {
+                        Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
+                        interceptorInstances.put(clazz.getName(), interceptorInstance);
+                    } catch (ConstructionException e) {
+                        throw new Exception("Failed to create interceptor: "+clazz.getName(), e);
+                    }
+                }
+
+                interceptorInstances.put(beanClass.getName(), bean);
+
+                callContext.setCurrentOperation(Operation.CREATE);
 
                 Method postConstruct = deploymentInfo.getPostConstruct();
+
                 if (postConstruct != null){
-                    postConstruct.invoke(bean);
+                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postConstruct);
+                    if (!SessionBean.class.isAssignableFrom(beanClass)){
+                        postConstruct = null;
+                    }
+                    InterceptorStack interceptorStack = new InterceptorStack(bean, postConstruct, Operation.CREATE, interceptors, interceptorInstances);
+                    interceptorStack.invoke();
                 }
+                bean = new Instance(bean, interceptorInstances);
             } catch (Throwable e) {
                 if (e instanceof java.lang.reflect.InvocationTargetException) {
                     e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
@@ -192,8 +223,15 @@ public class StatelessInstanceManager {
     public void freeInstance(ThreadContext callContext, Object bean) {
         try {
             callContext.setCurrentOperation(Operation.REMOVE);
-            Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Method preDestroy = deploymentInfo.getPreDestroy();
             if (preDestroy != null){
+                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(preDestroy);
+                if (!SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
+                    preDestroy = null;
+                }
+                InterceptorStack interceptorStack = new InterceptorStack(((Instance)bean).bean, preDestroy, Operation.REMOVE, interceptors, ((Instance)bean).interceptors);
+                interceptorStack.invoke();
                 preDestroy.invoke(bean);
             }
         } catch (Throwable re) {

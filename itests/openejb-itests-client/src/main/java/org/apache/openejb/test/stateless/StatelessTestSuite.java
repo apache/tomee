@@ -35,32 +35,54 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         TestSuite suite = new TestSuite();
         suite.addTest(new StatelessJndiTests());
         suite.addTest(new StatelessPojoRemoteJndiTests());
+
+        // Test home interfaces
         suite.addTest(new StatelessHomeIntfcTests());
         suite.addTest(new StatelessPojoHomeIntfcTests());
-        suite.addTest(new StatelessRemoteBusinessIntfcTests());
+
+        // EJBHome tests
         suite.addTest(new StatelessEjbHomeTests() );
         suite.addTest(new StatelessPojoEjbHomeTests() );
+
+        // EJBObject tests
         suite.addTest(new StatelessEjbObjectTests());
         suite.addTest(new StatelessPojoEjbObjectTests());
+
+        // Remote/business interface tests
         suite.addTest(new StatelessRemoteIntfcTests());
         suite.addTest(new StatelessPojoRemoteIntrfcTests());
+        suite.addTest(new StatelessRemoteBusinessIntfcTests());
+
+        // Home handle tests
         suite.addTest(new StatelessHomeHandleTests());
         suite.addTest(new StatelessPojoHomeHandleTests());
+
+        // Handle tests
         suite.addTest(new StatelessHandleTests());
         suite.addTest(new StatelessPojoHandleTests());
+
+        // EJBMetaData tests
         suite.addTest(new StatelessEjbMetaDataTests());
         suite.addTest(new StatelessPojoEjbMetaDataTests());
+
+        // Allowed operations
         suite.addTest(new StatelessAllowedOperationsTests());
         suite.addTest(new BMTStatelessAllowedOperationsTests());
+
         suite.addTest(new StatelessBeanTxTests());
+
+        // ENC and Injection
         suite.addTest(new StatelessJndiEncTests());
         suite.addTest(new StatelessContextLookupTests());
         suite.addTest(new StatelessPojoContextLookupTests());
         suite.addTest(new StatelessFieldInjectionTests());
         suite.addTest(new StatelessSetterInjectionTests());
         suite.addTest(new StatelessAnnotatedFieldInjectionTests());
+
         suite.addTest(new StatelessRmiIiopTests());
+
         suite.addTest(new MiscEjbTests());
+
         /* TO DO
         suite.addTest(new StatelessEjbContextTests());
         suite.addTest(new BMTStatelessEjbContextTests());

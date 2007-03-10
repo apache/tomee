@@ -30,6 +30,10 @@ public class DatabaseBean implements javax.ejb.SessionBean {
     public SessionContext context;
     public InitialContext jndiContext;
 
+    public DatabaseBean() {
+        this.getClass();        
+    }
+
     public void ejbCreate() throws javax.ejb.CreateException {
         try {
             jndiContext = new InitialContext();

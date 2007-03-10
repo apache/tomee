@@ -46,6 +46,21 @@ public class NamedMethod {
     @XmlID
     protected String id;
 
+    public NamedMethod() {
+    }
+
+    public NamedMethod(String methodName, String... parameters) {
+        this.methodName = methodName;
+
+        if (parameters.length > 0){
+            MethodParams params = new MethodParams();
+            for (String paramName : parameters) {
+                params.getMethodParam().add(paramName);
+            }
+            this.methodParams = params;
+        }
+    }
+
     public String getMethodName() {
         return methodName;
     }
