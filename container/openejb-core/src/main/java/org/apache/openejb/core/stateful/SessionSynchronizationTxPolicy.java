@@ -45,7 +45,8 @@ public class SessionSynchronizationTxPolicy extends org.apache.openejb.core.tran
         if (context.currentTx == null) return;
 
         try {
-            SessionSynchronization session = (SessionSynchronization) instance;
+            StatefulInstanceManager.Instance instance2 = (StatefulInstanceManager.Instance) instance;
+            SessionSynchronization session = (SessionSynchronization) instance2.bean ;
             SessionSynchronizationCoordinator.registerSessionSynchronization(session, context);
         } catch (javax.transaction.RollbackException e) {
             logger.error("Cannot register the SessionSynchronization bean with the transaction, the transaction has been rolled back");

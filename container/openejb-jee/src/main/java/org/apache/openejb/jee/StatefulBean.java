@@ -26,6 +26,10 @@ public class StatefulBean extends SessionBean {
         super(ejbName, ejbClass, SessionType.STATEFUL);
     }
 
+    public StatefulBean(Class ejbClass) {
+        this(ejbClass.getSimpleName(), ejbClass.getName());
+    }
+
     public StatefulBean() {
         this(null, null);
     }

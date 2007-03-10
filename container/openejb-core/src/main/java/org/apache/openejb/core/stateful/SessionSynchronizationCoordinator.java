@@ -109,9 +109,10 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 */
                 callContext.setCurrentOperation(Operation.BEFORE_COMPLETION);
 
-                SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                SessionSynchronization bean = (SessionSynchronization) instance.bean;
                 bean.beforeCompletion();
-                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
+                instanceManager.poolInstance(callContext.getPrimaryKey(), instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {
@@ -171,10 +172,11 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 */
                 callContext.setCurrentOperation(Operation.AFTER_COMPLETION);
 
-                SessionSynchronization bean = (SessionSynchronization) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
+                SessionSynchronization bean = (SessionSynchronization) instance.bean;
 
                 bean.afterCompletion(status == Status.STATUS_COMMITTED);
-                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
+                instanceManager.poolInstance(callContext.getPrimaryKey(), instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {

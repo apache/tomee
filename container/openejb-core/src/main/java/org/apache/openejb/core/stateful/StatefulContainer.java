@@ -25,6 +25,8 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -48,6 +50,7 @@ import java.rmi.dgc.VMID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
@@ -264,14 +267,23 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
             instanceManager.setEntityManagers(primaryKey, entityManagers);
 
+
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
+
             // Invoke postConstructs or create(...)
             if (bean instanceof SessionBean) {
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-                _invoke(callMethod, runMethod, args, bean, createContext);
+
+                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.CREATE, interceptors, instance.interceptors);
+
+                _invoke(callMethod, interceptorStack, args, bean, createContext);
             } else {
                 Method postConstruct = deploymentInfo.getPostConstruct();
                 if (postConstruct != null) {
-                    _invoke(callMethod, postConstruct, args, bean, createContext);
+                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postConstruct);
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.CREATE, interceptors, instance.interceptors);
+                    _invoke(callMethod, interceptorStack, null, bean, createContext);
                 }
             }
 
@@ -300,7 +312,18 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                     callContext.setCurrentOperation(Operation.REMOVE);
                     Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
                     if (preDestroy != null) {
-                        _invoke(callMethod, preDestroy, null, bean, callContext);
+                        StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
+                        List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(preDestroy);
+
+                        InterceptorStack interceptorStack;
+                        if (SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
+                            interceptorStack = new InterceptorStack(instance.bean, preDestroy, Operation.REMOVE, interceptors, instance.interceptors);
+                        } else {
+                            // The preDestroy will already be in the stack
+                            interceptorStack = new InterceptorStack(instance.bean, null, Operation.REMOVE, interceptors, instance.interceptors);
+                        }
+
+                        _invoke(callMethod, interceptorStack, null, bean, callContext);
                     }
                 }
             } finally {
@@ -325,7 +348,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             callContext.set(Method.class, runMethod);
 
-            returnValue = _invoke(callMethod, runMethod, args, bean, callContext);
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
+
+            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+            returnValue = _invoke(callMethod, interceptorStack, args, bean, callContext);
 
             instanceManager.poolInstance(primKey, bean);
 
@@ -342,7 +369,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext) throws OpenEJBException {
+    protected Object _invoke(Method callMethod, InterceptorStack interceptorStack, Object [] args, Object bean, ThreadContext callContext) throws OpenEJBException {
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
@@ -360,7 +387,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         Object returnValue = null;
         try {
             registerEntityManagers(callContext);
-            returnValue = runMethod.invoke(bean, args);
+            if (args == null){
+                returnValue = interceptorStack.invoke();
+            } else {
+                returnValue = interceptorStack.invoke(args);
+            }
         } catch (InvocationTargetException ite) {// handle enterprise bean exception
             if (ite.getTargetException() instanceof RuntimeException) {
                 /* System Exception ****************************/
@@ -373,6 +404,16 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
         } catch (Throwable re) {// handle reflection exception
+            if (re instanceof RuntimeException) {
+                /* System Exception ****************************/
+
+                txPolicy.handleSystemException(re, bean, txContext);
+            } else {
+                /* Application Exception ***********************/
+                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
+
+                txPolicy.handleApplicationException(re, txContext);
+            }
             /*
               Any exception thrown by reflection; not by the enterprise bean. Possible
               Exceptions are:
