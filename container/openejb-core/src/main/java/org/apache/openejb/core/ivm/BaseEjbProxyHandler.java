@@ -211,7 +211,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                         throw e;
                     }
                 } catch (Throwable t) {
-                    t.printStackTrace();
+                    //t.printStackTrace();
                     Class[] etypes = method.getExceptionTypes();
                     for (int i = 0; i < etypes.length; i++) {
 
