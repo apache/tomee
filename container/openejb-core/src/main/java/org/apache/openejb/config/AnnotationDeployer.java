@@ -49,6 +49,8 @@ import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
 import javax.interceptor.Interceptors;
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.WebServiceRefs;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -604,6 +606,36 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildResource(consumer, resource, member);
             }
 
+            List<WebServiceRef> webservicerefList = new ArrayList<WebServiceRef>();
+            WebServiceRefs webservicerefs = clazz.getAnnotation(WebServiceRefs.class);
+            if (webservicerefs != null) {
+                webservicerefList.addAll(Arrays.asList(webservicerefs.value()));
+            }
+            WebServiceRef wsr = clazz.getAnnotation(WebServiceRef.class);
+            if (r != null) {
+                webservicerefList.add(wsr);
+            }
+            for (WebServiceRef webserviceref : webservicerefList) {
+
+                buildWebServiceRef(consumer, webserviceref, null);
+            }
+
+            for (Field field : finder.findAnnotatedFields(WebServiceRef.class)) {
+                WebServiceRef webserviceref = field.getAnnotation(WebServiceRef.class);
+
+                Member member = new FieldMember(field);
+
+                buildWebServiceRef(consumer, webserviceref, member);
+            }
+
+            for (Method method : finder.findAnnotatedMethods(WebServiceRef.class)) {
+                WebServiceRef webserviceref = method.getAnnotation(WebServiceRef.class);
+
+                Member member = new MethodMember(method);
+
+                buildWebServiceRef(consumer, webserviceref, member);
+            }
+
             List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
             PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
             if (persistenceUnits != null) {
@@ -712,7 +744,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if(reference == null) {
                 String type = null;
                 if(resource.type() != java.lang.Object.class) {
-                    type = resource.type().getName();                
+                    type = resource.type().getName();
                 } else {
                     type = member.getType().getName();                
                 }
@@ -739,19 +771,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (resourceRef == null) {
                         resourceRef = new ResourceRef();
                         resourceRef.setName(refName);
-                        resourceRefs.add(resourceRef);             
+                        resourceRefs.add(resourceRef);
                     }
                 
                     if (resourceRef.getResAuth() == null) {
                         if (resource.authenticationType() == Resource.AuthenticationType.APPLICATION){
-                            resourceRef.setResAuth(ResAuth.APPLICATION);              
+                            resourceRef.setResAuth(ResAuth.APPLICATION);
                         } else {
                             resourceRef.setResAuth(ResAuth.CONTAINER);
                         }
                     }
                 
                     if (resourceRef.getResType() == null || ("").equals(resourceRef.getResType())) {
-                        if (resource.type() != java.lang.Object.class) { 
+                        if (resource.type() != java.lang.Object.class) {
                             resourceRef.setResType(resource.type().getName());
                         } else {
                             resourceRef.setResType(member.getType().getName());
@@ -779,10 +811,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (resourceEnvRef == null) {
                         resourceEnvRef = new ResourceEnvRef();
                         resourceEnvRef.setName(refName);
-                        resourceEnvRefs.add(resourceEnvRef);             
+                        resourceEnvRefs.add(resourceEnvRef);
                     }
                     if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
-                        if (resource.type() != java.lang.Object.class) { 
+                        if (resource.type() != java.lang.Object.class) {
                             resourceEnvRef.setResourceEnvRefType(resource.type().getName());
                         } else {
                             resourceEnvRef.setResourceEnvRefType(member.getType().getName());
@@ -809,6 +841,52 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (reference.getMappedName() == null && !resource.mappedName().equals("")) {
                 reference.setMappedName(resource.mappedName());
             }
+
+        }
+
+        private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, Member member) {
+
+            ServiceRef serviceRef = new ServiceRef();
+
+            String refName = webService.name();
+            if (refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+            serviceRef.setServiceRefName(refName);
+
+
+            if (member != null) {
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                serviceRef.getInjectionTarget().add(target);
+            }
+
+            Class<?> interfce = webService.type();
+            if (interfce.equals(Object.class)) {
+                if (member != null) {
+                    interfce = member.getType();
+                } else {
+                    interfce = webService.value();
+                }
+            }
+            serviceRef.setServiceInterface(interfce.getName());
+
+            // Set the mappedName, if any
+            String mappedName = webService.mappedName();
+            if (mappedName.equals("")) {
+                mappedName = null;
+            }
+            serviceRef.setMappedName(mappedName);
+
+
+            String wsdlLocation = webService.wsdlLocation();
+            if (!wsdlLocation.equals("")) {
+                serviceRef.setWsdlFile(wsdlLocation);
+            }
+
+            consumer.getServiceRef().add(serviceRef);
 
         }
 
