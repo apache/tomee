@@ -323,6 +323,11 @@
       <artifactId>swizzle-stream</artifactId>
       <version>1.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-jaxws-api</artifactId>
+      <version>SNAPSHOT</version>
+    </dependency>
 
     <!-- 
      FIXME: Why should it be specified here? Shouldn't xbean download what's necessary?
