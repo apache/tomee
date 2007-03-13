@@ -271,7 +271,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
 
             // Invoke postConstructs or create(...)
-            if (bean instanceof SessionBean) {
+            if (instance.bean instanceof SessionBean) {
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
