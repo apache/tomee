@@ -51,6 +51,8 @@ import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
 import javax.interceptor.Interceptors;
+import javax.interceptor.ExcludeDefaultInterceptors;
+import javax.interceptor.ExcludeClassInterceptors;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
 import java.io.File;
@@ -309,14 +311,59 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
-                    InterceptorBinding binding = new InterceptorBinding();
+                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding());
                     binding.setEjbName(bean.getEjbName());
-                    InterceptorOrder order = binding.setInterceptorOrder(new InterceptorOrder());
+
                     for (Class interceptor : interceptors.value()) {
-                        order.addInterceptorClass(interceptor.getName());
+                        binding.getInterceptorClass().add(interceptor.getName());
                     }
                 }
 
+                for (Method method : classFinder.findAnnotatedMethods(Interceptors.class)) {
+                    interceptors = method.getAnnotation(Interceptors.class);
+                    if (interceptors != null){
+                        EjbJar ejbJar = ejbModule.getEjbJar();
+                        for (Class interceptor : interceptors.value()) {
+                            if (ejbJar.getInterceptor(interceptor.getName()) == null){
+                                ejbJar.addInterceptor(new Interceptor(interceptor.getName()));
+                            }
+                        }
+
+                        InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding());
+                        binding.setEjbName(bean.getEjbName());
+
+                        for (Class interceptor : interceptors.value()) {
+                            binding.getInterceptorClass().add(interceptor.getName());
+                        }
+
+                        binding.setMethod(new NamedMethod(method));
+                    }
+                }
+
+                ExcludeDefaultInterceptors excludeDefaultInterceptors = clazz.getAnnotation(ExcludeDefaultInterceptors.class);
+                if (excludeDefaultInterceptors != null){
+                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
+                    binding.setExcludeDefaultInterceptors(true);
+                }
+
+                for (Method method : classFinder.findAnnotatedMethods(ExcludeDefaultInterceptors.class)) {
+                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
+                    binding.setExcludeDefaultInterceptors(true);
+                    binding.setMethod(new NamedMethod(method));
+                }
+
+                ExcludeClassInterceptors excludeClassInterceptors = clazz.getAnnotation(ExcludeClassInterceptors.class);
+                if (excludeClassInterceptors != null){
+                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
+                    binding.setExcludeClassInterceptors(true);
+                }
+
+                for (Method method : classFinder.findAnnotatedMethods(ExcludeClassInterceptors.class)) {
+                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
+                    binding.setExcludeClassInterceptors(true);
+                    binding.setMethod(new NamedMethod(method));
+                }
+                
                 if (bean instanceof RemoteBean) {
                     RemoteBean remoteBean = (RemoteBean) bean;
 
