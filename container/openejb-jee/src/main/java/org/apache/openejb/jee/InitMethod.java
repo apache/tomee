@@ -46,12 +46,23 @@ public class InitMethod {
     @XmlID
     protected String id;
 
+    public InitMethod() {
+    }
+
+    public InitMethod(java.lang.reflect.Method beanMethod) {
+        this.beanMethod = new NamedMethod(beanMethod);
+    }
+
     public NamedMethod getCreateMethod() {
         return createMethod;
     }
 
     public void setCreateMethod(NamedMethod value) {
         this.createMethod = value;
+    }
+
+    public void setCreateMethod(String methodName) {
+        this.createMethod = new NamedMethod(methodName);
     }
 
     public NamedMethod getBeanMethod() {

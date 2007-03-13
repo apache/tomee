@@ -14,24 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee;
-
-import java.util.List;
+package org.apache.openejb.assembler.classic;
 
 /**
  * @version $Rev$ $Date$
  */
-public interface Session extends Lifecycle {
-    List<LifecycleCallback> getPostActivate();
-
-    void addPostActivate(String method);
-
-    List<LifecycleCallback> getPrePassivate();
-
-    void addPrePassivate(String method);
-
-    List<InitMethod> getInitMethod();
-
-    List<RemoveMethod> getRemoveMethod();
-
+public class RemoveMethodInfo extends InfoObject {
+    public NamedMethodInfo beanMethod;
+    public boolean retainIfException;
 }

@@ -86,10 +86,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Class mdbInterface;
     private Class serviceEndpointInterface;
 
-    private Method postConstruct;
-    private Method preDestroy;
-    private Method prePassivate;
-    private Method postActivate;
+    private final List<Method> aroundInvoke = new ArrayList<Method>();
+
+    private final List<Method> postConstruct = new ArrayList<Method>();
+    private final List<Method> preDestroy = new ArrayList<Method>();
+
+    private final List<Method> postActivate = new ArrayList<Method>();
+    private final List<Method> prePassivate = new ArrayList<Method>();
+
+    private final List<Method> removeMethods = new ArrayList<Method>();
 
     private Method ejbTimeout;
     private EjbTimerService ejbTimerService;
@@ -117,6 +122,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Method, Byte> methodTransactionAttributes = new HashMap<Method, Byte>();
     private final Map<Method, TransactionPolicy> methodTransactionPolicies = new HashMap<Method, TransactionPolicy>();
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
+    private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
     private String jarPath;
@@ -171,24 +177,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 //            this.homeInterface = BusinessRemoteHome.class;
 //        }
 
-        if (SessionBean.class.isAssignableFrom(beanClass)){
-            try {
-                this.preDestroy = SessionBean.class.getMethod("ejbRemove");
-                this.prePassivate = SessionBean.class.getMethod("ejbPassivate");
-                this.postActivate = SessionBean.class.getMethod("ejbActivate");
-            } catch (NoSuchMethodException e) {
-                throw new IllegalStateException(e);
-            }
-        }
         createMethodMap();
 
-        if (EnterpriseBean.class.isAssignableFrom(beanClass)){
-            try {
-                preDestroy = beanClass.getMethod("ejbRemove");
-            } catch (NoSuchMethodException e) {
-                throw new SystemException(e);
-            }
-        }
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
                 this.ejbTimeout = beanClass.getMethod("ejbTimeout", Timer.class);
@@ -205,13 +195,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.activationProperties.putAll(activationProperties);
         this.componentType = BeanType.MESSAGE_DRIVEN;
 
-        if (MessageDrivenBean.class.isAssignableFrom(beanClass)){
-            try {
-                this.preDestroy = beanClass.getMethod("ejbRemove");
-            } catch (NoSuchMethodException e) {
-                throw new IllegalStateException(e);
-            }
-        }
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
                 this.ejbTimeout = beanClass.getMethod("ejbTimeout");
@@ -550,6 +533,30 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         methodTransactionPolicies.put(method, policy);
     }
 
+    public List<Method> getAroundInvoke() {
+        return aroundInvoke;
+    }
+
+    public List<Method> getPostConstruct() {
+        return postConstruct;
+    }
+
+    public List<Method> getPreDestroy() {
+        return preDestroy;
+    }
+
+    public List<Method> getPostActivate() {
+        return postActivate;
+    }
+
+    public List<Method> getPrePassivate() {
+        return prePassivate;
+    }
+
+    public List<Method> getRemoveMethods() {
+        return removeMethods;
+    }
+
     public List<InterceptorData> getMethodInterceptors(Method method) {
         return methodInterceptors.get(method);
     }
@@ -564,6 +571,16 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Set<InterceptorData> getAllInterceptors() {
         return interceptors;
+    }
+
+    public List<InterceptorData> getCallbackInterceptors() {
+        return callbackInterceptors;
+    }
+
+    public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
+        this.callbackInterceptors.clear();
+        this.callbackInterceptors.addAll(callbackInterceptors);
+        this.interceptors.addAll(callbackInterceptors);
     }
 
     private javax.ejb.EJBHome createEJBHomeRef() {
@@ -694,11 +711,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             } catch (NoSuchMethodException e) {
                 // if there isn't an ejbCreate method that is fine
             }
-            try {
-                preDestroy = MessageDrivenBean.class.getDeclaredMethod("ejbRemove");
-            } catch (NoSuchMethodException e) {
-                // this won't happen
-            }
         }
 
         try {
@@ -778,6 +790,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
+    public void mapMethods(Method interfaceMethod, Method beanMethod){
+        methodMap.put(interfaceMethod, beanMethod);
+    }
+
     private void mapObjectInterface(Class intrface) {
         if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class){
             return;
@@ -825,39 +841,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Method getCreateMethod() {
         return createMethod;
-    }
-
-    public Method getPostActivate() {
-        return postActivate;
-    }
-
-    public void setPostActivate(Method postActivate) {
-        this.postActivate = postActivate;
-    }
-
-    public Method getPostConstruct() {
-        // TODO: Need to truly enforce the backwards compatibility rules
-        return (postConstruct == null)? getCreateMethod(): postConstruct;
-    }
-
-    public void setPostConstruct(Method postConstruct) {
-        this.postConstruct = postConstruct;
-    }
-
-    public Method getPreDestroy() {
-        return preDestroy;
-    }
-
-    public void setPreDestroy(Method preDestroy) {
-        this.preDestroy = preDestroy;
-    }
-
-    public Method getPrePassivate() {
-        return prePassivate;
-    }
-
-    public void setPrePassivate(Method prePassivate) {
-        this.prePassivate = prePassivate;
     }
 
     public Method getMatchingPostCreateMethod(Method createMethod) {

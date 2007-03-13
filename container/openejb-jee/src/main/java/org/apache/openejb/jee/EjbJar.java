@@ -145,8 +145,13 @@ public class EjbJar {
         for (EnterpriseBean e : v) enterpriseBeans.put(e.getEjbName(), e);
     }
 
-    public <T extends EnterpriseBean> EnterpriseBean addEnterpriseBean(T bean){
+    public <T extends EnterpriseBean> T addEnterpriseBean(T bean){
         enterpriseBeans.put(bean.getEjbName(), bean);
+        return bean;
+    }
+
+    public EnterpriseBean removeEnterpriseBean(String name){
+        EnterpriseBean bean = enterpriseBeans.remove(name);
         return bean;
     }
 

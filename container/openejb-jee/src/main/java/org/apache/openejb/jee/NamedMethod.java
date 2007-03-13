@@ -49,6 +49,15 @@ public class NamedMethod {
     public NamedMethod() {
     }
 
+    public NamedMethod(java.lang.reflect.Method method) {
+        this.methodName = method.getName();
+        MethodParams methodParams = new MethodParams();
+        for (Class<?> type : method.getParameterTypes()) {
+            methodParams.getMethodParam().add(type.getCanonicalName());
+        }
+        this.methodParams = methodParams;
+    }
+
     public NamedMethod(String methodName, String... parameters) {
         this.methodName = methodName;
 

@@ -69,4 +69,8 @@ public class OpenejbJar {
     public void addEjbDeployment(EjbDeployment ejbDeployment) {
         getEjbDeployment().add(ejbDeployment);
     }
+
+    public void removeEjbDeployment(EjbDeployment ejbDeployment) {
+        getEjbDeployment().remove(ejbDeployment);
+    }
 }

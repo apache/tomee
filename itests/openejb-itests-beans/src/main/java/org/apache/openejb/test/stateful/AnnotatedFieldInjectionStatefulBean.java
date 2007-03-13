@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.ejb.SessionContext;
 import javax.ejb.EJB;
 import javax.ejb.CreateException;
+import javax.ejb.Init;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.persistence.PersistenceUnit;
@@ -44,7 +45,7 @@ import javax.jms.JMSException;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-@RemoteHome(org.apache.openejb.test.stateless.EncStatelessHome.class)
+@RemoteHome(org.apache.openejb.test.stateful.EncStatefulHome.class)
 @Stateless
 public class AnnotatedFieldInjectionStatefulBean {
 
@@ -96,7 +97,8 @@ public class AnnotatedFieldInjectionStatefulBean {
     private BasicStatefulBusinessRemote statefulBusinessRemote;
 
 
-    public void ejbCreate() throws CreateException {
+    @Init
+    public void create(String name) {
     }
 
     public void lookupEntityBean() throws TestFailureException {

@@ -35,6 +35,8 @@ public class InterceptorStack {
     private final Method targetMethod;
 
     public InterceptorStack(Object beanInstance, Method targetMethod, Operation operation, List<InterceptorData> interceptorDatas, Map<String, Object> interceptorInstances) {
+        if (interceptorDatas == null) throw new NullPointerException("interceptorDatas is null");
+        if (interceptorInstances == null) throw new NullPointerException("interceptorInstances is null");
         this.beanInstance = beanInstance;
         this.targetMethod = targetMethod;
 

@@ -14,24 +14,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee;
+package org.apache.openejb.assembler.classic;
 
-import java.util.List;
+import java.security.PrivilegedAction;
+import java.security.AccessController;
+import java.lang.reflect.AccessibleObject;
 
 /**
  * @version $Rev$ $Date$
  */
-public interface Session extends Lifecycle {
-    List<LifecycleCallback> getPostActivate();
+class SetAccessible implements PrivilegedAction {
+    private final java.lang.reflect.AccessibleObject object;
 
-    void addPostActivate(String method);
+    public SetAccessible(AccessibleObject object) {
+        this.object = object;
+    }
 
-    List<LifecycleCallback> getPrePassivate();
+    public Object run() {
+        object.setAccessible(true);
+        return object;
+    }
 
-    void addPrePassivate(String method);
-
-    List<InitMethod> getInitMethod();
-
-    List<RemoveMethod> getRemoveMethod();
-
+    public static <T extends AccessibleObject> T on(T object){
+        return (T) AccessController.doPrivileged(new SetAccessible(object));
+    }
 }

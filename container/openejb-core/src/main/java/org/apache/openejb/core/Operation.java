@@ -18,6 +18,7 @@ package org.apache.openejb.core;
 
 public enum Operation {
     INJECTION,
+    POST_CONSTRUCT,
     BUSINESS,
     BUSINESS_WS,
     TIMEOUT,

@@ -88,13 +88,15 @@ public interface DeploymentInfo {
 
     ClassLoader getClassLoader();
 
-    Method getPostActivate();
+    public List<Method> getAroundInvoke();
 
-    Method getPostConstruct();
+    public List<Method> getPostConstruct();
 
-    Method getPreDestroy();
+    public List<Method> getPreDestroy();
 
-    Method getPrePassivate();
+    public List<Method> getPostActivate();
+
+    public List<Method> getPrePassivate();
 
     List<Injection> getInjections();
 

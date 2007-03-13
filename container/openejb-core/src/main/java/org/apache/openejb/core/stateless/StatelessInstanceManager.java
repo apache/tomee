@@ -44,6 +44,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -157,18 +158,28 @@ public class StatelessInstanceManager {
 
                 interceptorInstances.put(beanClass.getName(), bean);
 
-                callContext.setCurrentOperation(Operation.CREATE);
 
-                Method postConstruct = deploymentInfo.getPostConstruct();
+                try {
+                    callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
 
-                if (postConstruct != null) {
-                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postConstruct);
-                    if (!SessionBean.class.isAssignableFrom(beanClass)) {
-                        postConstruct = null;
-                    }
-                    InterceptorStack interceptorStack = new InterceptorStack(bean, postConstruct, Operation.CREATE, interceptors, interceptorInstances);
+                    List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                    InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
                     interceptorStack.invoke();
+                } catch (Exception e) {
+                    throw e;
                 }
+
+                try {
+                    if (bean instanceof SessionBean){
+                        callContext.setCurrentOperation(Operation.CREATE);
+                        Method create = deploymentInfo.getCreateMethod();
+                        InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
+                        interceptorStack.invoke();
+                    }
+                } catch (Exception e) {
+                    throw e;
+                }
+
                 bean = new Instance(bean, interceptorInstances);
             } catch (Throwable e) {
                 if (e instanceof java.lang.reflect.InvocationTargetException) {
@@ -211,29 +222,26 @@ public class StatelessInstanceManager {
             poolQueue.notifyWaitingThreads();
         } else {
             if (pool.size() >= poolLimit) {
-                freeInstance(callContext, bean);
+                freeInstance(callContext, (Instance)bean);
             } else {
                 pool.push(bean);
             }
         }
     }
 
-    public void freeInstance(ThreadContext callContext, Object bean) {
+    private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.REMOVE);
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-            Method preDestroy = deploymentInfo.getPreDestroy();
-            if (preDestroy != null) {
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(preDestroy);
-                if (!SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())) {
-                    preDestroy = null;
-                }
-                InterceptorStack interceptorStack = new InterceptorStack(((Instance) bean).bean, preDestroy, Operation.REMOVE, interceptors, ((Instance) bean).interceptors);
-                interceptorStack.invoke();
-                preDestroy.invoke(bean);
-            }
+
+            Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
+
+            interceptorStack.invoke();
         } catch (Throwable re) {
-            logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
+            logger.error("The bean instance " + instance + " threw a system exception:" + re, re);
         }
 
     }

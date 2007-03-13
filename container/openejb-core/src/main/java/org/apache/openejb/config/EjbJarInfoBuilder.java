@@ -346,8 +346,25 @@ public class EjbJarInfoBuilder {
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
-            copyCallbacks(s.getPostActivate(), ((StatefulBeanInfo) bean).postActivate);
-            copyCallbacks(s.getPrePassivate(), ((StatefulBeanInfo) bean).prePassivate);
+            StatefulBeanInfo stateful = ((StatefulBeanInfo) bean);
+
+            copyCallbacks(s.getPostActivate(), stateful.postActivate);
+            copyCallbacks(s.getPrePassivate(), stateful.prePassivate);
+
+            for (InitMethod initMethod : s.getInitMethod()) {
+                InitMethodInfo init = new InitMethodInfo();
+                init.beanMethod = toInfo(initMethod.getBeanMethod());
+                init.createMethod = toInfo(initMethod.getCreateMethod());
+                stateful.initMethods.add(init);
+            }
+
+            for (RemoveMethod removeMethod : s.getRemoveMethod()) {
+                RemoveMethodInfo remove = new RemoveMethodInfo();
+                remove.beanMethod = toInfo(removeMethod.getBeanMethod());
+                remove.retainIfException = removeMethod.getRetainIfException();
+                stateful.removeMethods.add(remove);
+            }
+
         } else {
             bean = new StatelessBeanInfo();
         }

@@ -17,17 +17,17 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.client.LocalInitialContextFactory;
-import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
-import org.apache.openejb.test.stateless.EncStatelessHome;
-import org.apache.openejb.test.stateless.EncStatelessObject;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
+import org.apache.openejb.test.stateful.EncStatefulHome;
+import org.apache.openejb.test.stateful.EncStatefulObject;
 
-import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
@@ -90,8 +90,8 @@ public class RedeployTest extends TestCase {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         InitialContext ctx = new InitialContext(properties);
-        EncStatelessHome home = (EncStatelessHome) ctx.lookup(AnnotatedFieldInjectionStatefulBean.class.getSimpleName());
-        EncStatelessObject ejbObject = home.create();
+        EncStatefulHome home = (EncStatefulHome) ctx.lookup(AnnotatedFieldInjectionStatefulBean.class.getSimpleName());
+        EncStatefulObject ejbObject = home.create("foo");
         ejbObject.lookupStringEntry();
 
         assembler.destroyApplication(file.getAbsolutePath());

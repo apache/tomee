@@ -252,6 +252,14 @@ public class Interceptor implements JndiConsumer, Session {
         getPrePassivate().add(new LifecycleCallback(interceptorClass, method));
     }
 
+    public List<InitMethod> getInitMethod() {
+        return new ArrayList();
+    }
+
+    public List<RemoveMethod> getRemoveMethod() {
+        return new ArrayList();
+    }
+
     public String getId() {
         return id;
     }

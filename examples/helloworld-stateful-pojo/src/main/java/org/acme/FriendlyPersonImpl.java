@@ -45,6 +45,8 @@ public class FriendlyPersonImpl implements FriendlyPerson {
         addGreeting("pl", "Witaj {0}!");
     }
 
+    public void create(){}
+
     public String greet(String friend) {
         String language = languagePreferences.getProperty(friend, defaultLanguage);
         return greet(language, friend);

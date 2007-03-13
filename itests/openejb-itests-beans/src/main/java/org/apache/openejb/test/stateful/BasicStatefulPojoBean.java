@@ -34,6 +34,9 @@ import org.apache.openejb.test.object.OperationsPolicy;
  */
 public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicStatefulBusinessRemote {
 
+    public void create(String name) {
+    }
+
     /**
      * Maps to BasicStatelessObject.businessMethod
      *

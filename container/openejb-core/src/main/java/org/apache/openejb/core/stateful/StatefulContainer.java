@@ -94,8 +94,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private Map<Method, MethodType> getLifecycelMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
-        Method preDestroy = deploymentInfo.getPreDestroy();
-        if (preDestroy != null) {
+        List<Method> preDestroys = deploymentInfo.getPreDestroy();
+        for (Method preDestroy : preDestroys) {
             methods.put(preDestroy, MethodType.REMOVE);
 
             Class businessLocal = deploymentInfo.getBusinessLocalInterface();
@@ -264,30 +264,21 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
 
             // allocate a new instance
-            Object bean = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
+            Object o = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) o;
+
             instanceManager.setEntityManagers(primaryKey, entityManagers);
 
+            if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) && !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
 
-            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
+                Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
 
-            // Invoke postConstructs or create(...)
-            if (instance.bean instanceof SessionBean) {
-                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList(), new HashMap());
 
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.CREATE, interceptors, instance.interceptors);
-
-                _invoke(callMethod, interceptorStack, args, bean, createContext);
-            } else {
-                Method postConstruct = deploymentInfo.getPostConstruct();
-                if (postConstruct != null) {
-                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postConstruct);
-                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.CREATE, interceptors, instance.interceptors);
-                    _invoke(callMethod, interceptorStack, null, bean, createContext);
-                }
+                _invoke(callMethod, interceptorStack, args, instance, createContext);
             }
 
-            instanceManager.poolInstance(primaryKey, bean);
+            instanceManager.poolInstance(primaryKey, instance);
 
             Class callingClass = callMethod.getDeclaringClass();
             Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
@@ -307,24 +298,21 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
             try {
-                Object bean = instanceManager.obtainInstance(primKey, callContext);
-                if (bean != null) {
+                StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
+                if (instance != null) {
                     callContext.setCurrentOperation(Operation.REMOVE);
-                    Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
-                    if (preDestroy != null) {
-                        StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
-                        List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(preDestroy);
 
-                        InterceptorStack interceptorStack;
-                        if (SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
-                            interceptorStack = new InterceptorStack(instance.bean, preDestroy, Operation.REMOVE, interceptors, instance.interceptors);
-                        } else {
-                            // The preDestroy will already be in the stack
-                            interceptorStack = new InterceptorStack(instance.bean, null, Operation.REMOVE, interceptors, instance.interceptors);
-                        }
+                    Method remove = null;
 
-                        _invoke(callMethod, interceptorStack, null, bean, callContext);
+                    try {
+                        remove = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbRemove"): null;
+                    } catch (NoSuchMethodException neverHappen) {
                     }
+
+                    List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
+
+                    _invoke(callMethod, interceptorStack, new Object[]{}, instance, callContext);
                 }
             } finally {
                 // todo destroy extended persistence contexts

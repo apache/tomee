@@ -64,6 +64,7 @@ public class StatelessContext extends BaseSessionContext {
         states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
         states[Operation.BUSINESS_WS.ordinal()] = new BusinessWsStatelessState();
         states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
+        states[Operation.REMOVE.ordinal()] = new LifecycleStatelessState();
     }
 
 }

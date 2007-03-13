@@ -26,6 +26,12 @@
             <local>org.acme.FriendlyPersonComponent$Local</local>
             <ejb-class>org.acme.FriendlyPersonImpl</ejb-class>
             <session-type>Stateful</session-type>
+            <init-method>
+              <bean-method>
+                <method-name>create</method-name>
+                <method-params/>
+              </bean-method>
+            </init-method>
             <transaction-type>Container</transaction-type>
         </session>
     </enterprise-beans>

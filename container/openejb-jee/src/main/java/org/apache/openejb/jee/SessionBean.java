@@ -298,6 +298,26 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session {
         this.remote = value;
     }
 
+    public void setHomeAndRemote(String home, String remote) {
+        this.remote = remote;
+        this.home = home;
+    }
+
+    public void setHomeAndRemote(Class home, Class remote) {
+        this.remote = remote.getName();
+        this.home = home.getName();
+    }
+
+    public void setHomeAndLocal(String localHome, String local) {
+        this.local = local;
+        this.localHome = localHome;
+    }
+
+    public void setHomeAndLocal(Class localHome, Class local) {
+        this.local = local.getName();
+        this.localHome = localHome.getName();
+    }
+
     public String getLocalHome() {
         return localHome;
     }

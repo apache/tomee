@@ -47,7 +47,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -180,6 +179,12 @@ public class StatefulInstanceManager {
 
             interceptorInstances.put(beanClass.getName(), bean);
 
+            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+            interceptorStack.invoke();
+            
             bean = new Instance(bean, interceptorInstances);
 
         } catch (Throwable callbackException) {
@@ -279,25 +284,15 @@ public class StatefulInstanceManager {
         callContext.setCurrentOperation(Operation.ACTIVATE);
         try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-            Method postActivate = deploymentInfo.getPostActivate();
-            if (postActivate != null) {
-                try {
-                    StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) entry.bean;
-                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(postActivate);
 
-                    InterceptorStack interceptorStack;
-                    if (SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
-                        interceptorStack = new InterceptorStack(instance.bean, postActivate, Operation.ACTIVATE, interceptors, instance.interceptors);
-                    } else {
-                        // The preDestroy will already be in the stack
-                        interceptorStack = new InterceptorStack(instance.bean, null, Operation.ACTIVATE, interceptors, instance.interceptors);
-                    }
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) entry.bean;
+            Method remove = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbActivate"): null;
 
-                    interceptorStack.invoke();
-                } catch (InvocationTargetException e) {
-                    throw e.getTargetException();
-                }
-            }
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.ACTIVATE, callbackInterceptors, instance.interceptors);
+
+            interceptorStack.invoke();
+
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -320,16 +315,16 @@ public class StatefulInstanceManager {
     protected void handleTimeout(BeanEntry entry, ThreadContext threadContext) {
         Operation currentOperation = threadContext.getCurrentOperation();
         threadContext.setCurrentOperation(Operation.REMOVE);
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        Instance instance = (Instance) entry.bean;
 
         try {
-            Method preDestroy = threadContext.getDeploymentInfo().getPreDestroy();
-            if (preDestroy != null) {
-                try {
-                    preDestroy.invoke(entry.bean);
-                } catch (InvocationTargetException e) {
-                    throw e.getTargetException();
-                }
-            }
+            Method remove = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbRemove"): null;
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
+
+            interceptorStack.invoke();
         } catch (Throwable callbackException) {
             /*
               Exceptions are processed "quietly"; they are not reported to the client since
@@ -401,7 +396,6 @@ public class StatefulInstanceManager {
         BeanEntry currentEntry;
         final Operation currentOperation = threadContext.getCurrentOperation();
         CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-        Method prePassivate = deploymentInfo.getPrePassivate();
         try {
             for (int i = 0; i < bulkPassivationSize; ++i) {
                 currentEntry = lruQueue.first();
@@ -414,25 +408,15 @@ public class StatefulInstanceManager {
                 } else {
                     threadContext.setCurrentOperation(Operation.PASSIVATE);
                     try {
-                        if (prePassivate != null) {
-                            // TODO Are all beans in the stateTable the same type?
-                            try {
-                                StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) currentEntry.bean;
-                                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(prePassivate);
+                        StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) currentEntry.bean;
 
-                                InterceptorStack interceptorStack;
-                                if (SessionBean.class.isAssignableFrom(deploymentInfo.getBeanClass())){
-                                    interceptorStack = new InterceptorStack(instance.bean, prePassivate, Operation.PASSIVATE, interceptors, instance.interceptors);
-                                } else {
-                                    // The preDestroy will already be in the stack
-                                    interceptorStack = new InterceptorStack(instance.bean, null, Operation.PASSIVATE, interceptors, instance.interceptors);
-                                }
+                        Method passivate = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbPassivate"): null;
 
-                                interceptorStack.invoke();
-                            } catch (InvocationTargetException e) {
-                                throw e.getTargetException();
-                            }
-                        }
+                        List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, passivate, Operation.PASSIVATE, callbackInterceptors, instance.interceptors);
+
+                        interceptorStack.invoke();
+
                     } catch (Throwable e) {
 
                         String logMessage = "An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance; " + e.getClass().getName() + " " + e.getMessage();

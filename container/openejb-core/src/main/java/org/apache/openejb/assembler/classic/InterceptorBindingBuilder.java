@@ -38,6 +38,7 @@ import java.lang.reflect.Method;
 public class InterceptorBindingBuilder {
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", InterceptorBindingBuilder.class.getPackage().getName());
+    private final List<InterceptorBindingInfo> packageAndClassBindings;
 
     public static enum Level {
         PACKAGE, CLASS, OVERLOADED_METHOD, EXACT_METHOD;
@@ -56,6 +57,14 @@ public class InterceptorBindingBuilder {
         bindings = new ArrayList<InterceptorBindingInfo>(ejbJarInfo.interceptorBindings);
         Collections.sort(bindings, new IntercpetorBindingComparator());
         Collections.reverse(bindings);
+
+        packageAndClassBindings = new ArrayList<InterceptorBindingInfo>();
+        for (InterceptorBindingInfo binding : bindings) {
+            Level level = level(binding);
+            if (level == Level.PACKAGE || level == Level.CLASS){
+                packageAndClassBindings.add(binding);
+            }
+        }
 
         for (InterceptorInfo info : ejbJarInfo.interceptors) {
             Class clazz = null;
@@ -78,12 +87,26 @@ public class InterceptorBindingBuilder {
     private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
-                Method method = clazz.getMethod(callbackInfo.method, InvocationContext.class);
+                Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
                 methods.add(method);
             } catch (NoSuchMethodException e) {
-                logger.warning("Interceptor method not found (skipping): public void " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
+                logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
             }
         }
+    }
+
+    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+        NoSuchMethodException original = null;
+        while (clazz != null){
+            try {
+                Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
+                return SetAccessible.on(method);
+            } catch (NoSuchMethodException e) {
+                if (original == null) original = e;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        throw original;
     }
 
     private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
@@ -96,6 +119,7 @@ public class InterceptorBindingBuilder {
             }
         }
     }
+
 
     public void build(CoreDeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
         Class clazz = deploymentInfo.getBeanClass();
@@ -113,30 +137,43 @@ public class InterceptorBindingBuilder {
         }
 
         for (Method method : deploymentInfo.getBeanClass().getMethods()) {
-            List<InterceptorBindingInfo> methodBindings = processBindings(method, beanInfo.ejbName);
-            Collections.reverse(methodBindings);
-            List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
-
-            for (InterceptorBindingInfo info : methodBindings) {
-                List<String> classes = (info.interceptorOrder.size() > 0) ? info.interceptorOrder : info.interceptors;
-                for (String interceptorClassName : classes) {
-                    InterceptorData interceptorData = interceptors.get(interceptorClassName);
-                    if (interceptorData == null){
-                        logger.warning("InterceptorBinding references non-existent (undeclared) interceptor: " + interceptorClassName);
-                        continue;
-                    }
-                    methodInterceptors.add(interceptorData);
-                }
-            }
+            List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
 
             // The bean itself gets to intercept too and is always last.
             methodInterceptors.add(beanAsInterceptor);
 
             deploymentInfo.setMethodInterceptors(method, methodInterceptors);
         }
+
+        List<InterceptorData> callbackInterceptorDatas = createInterceptorDatas(null, beanInfo.ejbName, this.packageAndClassBindings);
+
+        // The bean itself gets to intercept too and is always last.
+        callbackInterceptorDatas.add(beanAsInterceptor);
+
+        deploymentInfo.setCallbackInterceptors(callbackInterceptorDatas);
     }
 
-    private List<InterceptorBindingInfo> processBindings(Method method, String ejbName){
+    private List<InterceptorData> createInterceptorDatas(Method method, String ejbName, List<InterceptorBindingInfo> bindings) {
+        List<InterceptorBindingInfo> methodBindings = processBindings(method, ejbName, bindings);
+        Collections.reverse(methodBindings);
+        List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
+
+        for (InterceptorBindingInfo info : methodBindings) {
+            List<String> classes = (info.interceptorOrder.size() > 0) ? info.interceptorOrder : info.interceptors;
+            for (String interceptorClassName : classes) {
+                InterceptorData interceptorData = interceptors.get(interceptorClassName);
+                if (interceptorData == null){
+                    logger.warning("InterceptorBinding references non-existent (undeclared) interceptor: " + interceptorClassName);
+                    continue;
+                }
+                methodInterceptors.add(interceptorData);
+            }
+        }
+        return methodInterceptors;
+    }
+
+
+    private List<InterceptorBindingInfo> processBindings(Method method, String ejbName, List<InterceptorBindingInfo> bindings){
         List<InterceptorBindingInfo> methodBindings = new ArrayList<InterceptorBindingInfo>();
 
         // The only critical thing to understand in this loop as that

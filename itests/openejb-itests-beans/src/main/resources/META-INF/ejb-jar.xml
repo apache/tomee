@@ -998,6 +998,14 @@
       <business-local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</business-local>
       <business-remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</business-remote>
       <session-type>Stateful</session-type>
+      <init-method>
+        <bean-method>
+          <method-name>create</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </bean-method>
+      </init-method>
       <transaction-type>Container</transaction-type>
       <security-role-ref>
         <role-name>TheMan</role-name>
@@ -1877,6 +1885,14 @@
       <ejb-class>org.apache.openejb.test.stateful.ContextLookupStatefulPojoBean</ejb-class>
       <session-type>Stateful</session-type>
       <transaction-type>Bean</transaction-type>
+      <init-method>
+        <bean-method>
+          <method-name>create</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </bean-method>
+      </init-method>
       <env-entry>
         <env-entry-name>stateful/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>

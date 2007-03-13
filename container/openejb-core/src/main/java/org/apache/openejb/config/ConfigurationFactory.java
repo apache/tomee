@@ -65,7 +65,7 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -119,10 +119,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         Chain chain = new Chain();
 
         chain.add(new ReadDescriptors());
-        
+
         chain.add(new AnnotationDeployer());
 
         chain.add(new InitEjbDeployments());
+
+//        chain.add(new DebuggableVmHackery());
+
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2CmpConversion());
         chain.add(new SunConversion());

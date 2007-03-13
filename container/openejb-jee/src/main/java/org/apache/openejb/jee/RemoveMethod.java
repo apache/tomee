@@ -46,6 +46,13 @@ public class RemoveMethod {
     @XmlID
     protected String id;
 
+    public RemoveMethod() {
+    }
+
+    public RemoveMethod(java.lang.reflect.Method beanMethod) {
+        this.beanMethod = new NamedMethod(beanMethod);
+    }
+
     public NamedMethod getBeanMethod() {
         return beanMethod;
     }

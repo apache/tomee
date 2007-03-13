@@ -43,6 +43,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.ejb.Init;
+import javax.ejb.Remove;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceProperty;
@@ -323,7 +325,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if (remoteHome != null) {
                             Class<?> homeClass = remoteHome.value();
                             try {
-                                Method create = homeClass.getMethod("create");
+                                Method create = null;
+                                for (Method method : homeClass.getMethods()) {
+                                    if (method.getName().startsWith("create")){
+                                        create = method;
+                                        break;
+                                    }
+                                }
+                                if (create == null) throw new NoSuchMethodException("create");
+
                                 Class<?> remoteClass = create.getReturnType();
                                 remoteBean.setHome(homeClass.getName());
                                 remoteBean.setRemote(remoteClass.getName());
@@ -338,10 +348,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if (localHome != null) {
                             Class<?> homeClass = localHome.value();
                             try {
-                                Method create = homeClass.getMethod("create");
+                                Method create = null;
+                                for (Method method : homeClass.getMethods()) {
+                                    if (method.getName().startsWith("create")){
+                                        create = method;
+                                        break;
+                                    }
+                                }
+                                if (create == null) throw new NoSuchMethodException("create");
+
                                 Class<?> remoteClass = create.getReturnType();
-                                remoteBean.setHome(homeClass.getName());
-                                remoteBean.setRemote(remoteClass.getName());
+                                remoteBean.setLocalHome(homeClass.getName());
+                                remoteBean.setLocal(remoteClass.getName());
                             } catch (NoSuchMethodException e) {
                                 logger.error("Class annotated as a LocalHome has no 'create()' method.  Unable to determine remote interface type.  Bean class: " + clazz.getName() + ",  Home class: " + homeClass.getName());
                             }
@@ -537,6 +555,23 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (prePassivate == null) {
                     Method method = getFirst(classFinder.findAnnotatedMethods(PrePassivate.class));
                     if (method != null) session.addPrePassivate(method.getName());
+                }
+
+                List<Method> initMethods = classFinder.findAnnotatedMethods(Init.class);
+                for (Method method : initMethods) {
+                    InitMethod initMethod = new InitMethod(method);
+
+                    Init init = method.getAnnotation(Init.class);
+                    if (init.value() != null && !init.value().equals("")){
+                        initMethod.setCreateMethod(init.value());
+                    }
+
+                    session.getInitMethod().add(initMethod);
+                }
+
+                List<Method> removeMethods = classFinder.findAnnotatedMethods(Remove.class);
+                for (Method method : removeMethods) {
+                    session.getRemoveMethod().add(new RemoveMethod(method));
                 }
             }
         }

@@ -23,7 +23,6 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
@@ -37,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Arrays;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -164,7 +165,7 @@ class EnterpriseBeanBuilder {
                 deployment.getInjections().add(injection);
             }
         }
-        
+
         for (ResourceEnvReferenceInfo info : bean.jndiEnc.resourceEnvRefs) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
@@ -172,9 +173,10 @@ class EnterpriseBeanBuilder {
                 deployment.getInjections().add(injection);
             }
         }
-        
-        deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
-        deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
+
+        // TODO
+//        deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
+//        deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
 
         // Timer
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
@@ -192,8 +194,29 @@ class EnterpriseBeanBuilder {
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
-            deployment.setPrePassivate(getCallback(ejbClass, statefulBeanInfo.prePassivate));
-            deployment.setPostActivate(getCallback(ejbClass, statefulBeanInfo.postActivate));
+
+            for (InitMethodInfo init : statefulBeanInfo.initMethods) {
+                Method beanMethod = toMethod(ejbClass, init.beanMethod);
+                List<Method> methods = new ArrayList<Method>();
+
+                if (home != null) methods.addAll(Arrays.asList(home.getMethods()));
+                if (localhome != null) methods.addAll(Arrays.asList(localhome.getMethods()));
+
+                for (Method homeMethod : methods) {
+                    if (init.createMethod != null && !init.createMethod.methodName.equals(homeMethod.getName())) continue;
+
+                    if (!homeMethod.getName().startsWith("create")) continue;
+
+                    if (paramsMatch(beanMethod, homeMethod)){
+                        deployment.mapMethods(homeMethod, beanMethod);
+                    }
+                }
+            }
+
+            for (RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
+                // TODO: Process retainIfException
+                deployment.getRemoveMethods().add(toMethod(ejbClass, removeMethod.beanMethod));
+            }
 
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
             for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
@@ -246,6 +269,19 @@ class EnterpriseBeanBuilder {
         return deployment;
     }
 
+    public static boolean paramsMatch(Method methodA, Method methodB) {
+        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
+            return false;
+        }
+
+        for (int i = 0; i < methodA.getParameterTypes().length; i++) {
+            Class<?> a = methodA.getParameterTypes()[i];
+            Class<?> b = methodB.getParameterTypes()[i];
+            if (!a.equals(b)) return false;
+        }
+        return true;
+    }
+
     public List<Exception> getWarnings() {
         return warnings;
     }
@@ -280,27 +316,33 @@ class EnterpriseBeanBuilder {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
                 timeout = TimedObject.class.getMethod("ejbTimeout", Timer.class);
             } else if (info.methodParams != null) {
-                List<Class> parameterTypes = new ArrayList<Class>();
-
-                for (String paramType : info.methodParams) {
-                    try {
-                        parameterTypes.add(Class.forName(paramType));
-                    } catch (ClassNotFoundException cnfe) {
-                        throw (IllegalStateException) new IllegalStateException("Parameter class could not be loaded for type " + paramType).initCause(cnfe);
-                    }
-                }
-
-                try {
-                    timeout = ejbClass.getMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
-                } catch (NoSuchMethodException e) {
-                    throw (IllegalStateException) new IllegalStateException("Timeout Callback method does not exist: " + ejbClass.getName() + "." + info.methodName).initCause(e);
-                }
+                timeout = toMethod(ejbClass, info);
             }
         } catch (Exception e) {
             warnings.add(e);
         }
 
         return timeout;
+    }
+
+    private Method toMethod(Class clazz, NamedMethodInfo info) {
+        Method method = null;
+        List<Class> parameterTypes = new ArrayList<Class>();
+
+        for (String paramType : info.methodParams) {
+            try {
+                parameterTypes.add(Class.forName(paramType));
+            } catch (ClassNotFoundException cnfe) {
+                throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
+            }
+        }
+
+        try {
+            method = clazz.getMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
+        }
+        return method;
     }
 
 

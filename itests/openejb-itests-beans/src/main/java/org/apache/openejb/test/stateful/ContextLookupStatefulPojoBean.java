@@ -26,6 +26,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
 import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
+import javax.ejb.Init;
 import javax.sql.DataSource;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
@@ -49,6 +50,9 @@ import junit.framework.AssertionFailedError;
 public class ContextLookupStatefulPojoBean {
 
     private SessionContext ejbContext;
+
+    public void create(String name) {
+    }
 
     public void setSessionContext(SessionContext ejbContext) {
         this.ejbContext = ejbContext;

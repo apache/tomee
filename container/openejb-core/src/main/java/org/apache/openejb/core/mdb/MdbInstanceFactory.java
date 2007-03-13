@@ -20,19 +20,26 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.Injection;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
+import org.apache.xbean.recipe.ConstructionException;
 
 import javax.ejb.MessageDrivenBean;
+import javax.ejb.SessionBean;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.resource.spi.UnavailableException;
 import javax.transaction.TransactionManager;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A MdbInstanceFactory creates instances of message driven beans for a single instance. This class differs from other
@@ -132,10 +139,15 @@ public class MdbInstanceFactory {
         try {
             // call post destroy method
             callContext.setCurrentOperation(Operation.REMOVE);
-            Method preDestroy = callContext.getDeploymentInfo().getPreDestroy();
-            if (preDestroy != null){
-                preDestroy.invoke(bean);
-            }
+
+            Method remove = bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            ArrayList interceptorDatas = new ArrayList(); // TODO
+            HashMap interceptorInstances = new HashMap(); // TODO
+            InterceptorStack interceptorStack = new InterceptorStack(bean, remove, Operation.REMOVE, interceptorDatas, interceptorInstances);
+
+            interceptorStack.invoke();
         } catch (Throwable re) {
             MdbInstanceFactory.logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
         } finally {
@@ -197,13 +209,43 @@ public class MdbInstanceFactory {
             }
             Object bean = objectRecipe.create();
 
-            // call the post construct method
-            Method postConstruct = deploymentInfo.getPostConstruct();
-            if (postConstruct != null){
-                callContext.setCurrentOperation(Operation.CREATE);
-                postConstruct.invoke(bean);
+            HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
+            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+                if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
+
+                Class clazz = interceptorData.getInterceptorClass();
+                ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
+                try {
+                    Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
+                    interceptorInstances.put(clazz.getName(), interceptorInstance);
+                } catch (ConstructionException e) {
+                    throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
+                }
             }
 
+            // TODO: We need to keep these somehwere
+            interceptorInstances.put(beanClass.getName(), bean);
+
+            try {
+                callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+
+                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                interceptorStack.invoke();
+            } catch (Exception e) {
+                throw e;
+            }
+
+            try {
+                if (bean instanceof MessageDrivenBean){
+                    callContext.setCurrentOperation(Operation.CREATE);
+                    Method create = deploymentInfo.getCreateMethod();
+                    InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
+                    interceptorStack.invoke();
+                }
+            } catch (Exception e) {
+                throw e;
+            }
 
             return bean;
         } catch (Throwable e) {

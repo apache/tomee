@@ -70,7 +70,7 @@ public class InterceptorData {
     public List<Method> getMethods(Operation operation) {
         switch(operation) {
             case BUSINESS: return getAroundInvoke();
-            case CREATE: return getPostConstruct();
+            case POST_CONSTRUCT: return getPostConstruct();
             case REMOVE: return getPreDestroy();
             case ACTIVATE: return getPostActivate();
             case PASSIVATE: return getPrePassivate();
