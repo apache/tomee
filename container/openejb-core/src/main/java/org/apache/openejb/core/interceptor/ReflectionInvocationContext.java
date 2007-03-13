@@ -90,34 +90,61 @@ public class ReflectionInvocationContext implements InvocationContext {
         return contextData;
     }
 
-    public Object proceed() throws Exception {
-        if (!parametersSet) throw new IllegalStateException("Parameters have not been set");
-
+    private Invocation next() {
         if (interceptors.hasNext()) {
             Interceptor interceptor = interceptors.next();
             Object nextInstance = interceptor.getInstance();
             Method nextMethod = interceptor.getMethod();
 
-            try {
-                if (nextMethod.getParameterTypes().length == 0){
-                    Object value = nextMethod.invoke(nextInstance);
-                    return value;
-                } else {
-                    Object value = nextMethod.invoke(nextInstance, this);
-                    return value;
-                }
-            } catch (InvocationTargetException e) {
-                throw unwrapInvocationTargetException(e);
+            if (nextMethod.getParameterTypes().length == 0){
+                return new Invocation(nextInstance, nextMethod, new Object[]{});
+            } else {
+                return new Invocation(nextInstance, nextMethod, new Object[]{this});
             }
         } else if (method != null) {
-            try {
-                Object value = method.invoke(target, parameters);
-                return value;
-            } catch (InvocationTargetException e) {
-                throw unwrapInvocationTargetException(e);
-            }
+            return new Invocation(target, method, parameters);
+        } else {
+            return new NoOpInvocation();
         }
-        return null;
+    }
+
+    public Object proceed() throws Exception {
+        if (!parametersSet) throw new IllegalStateException("Parameters have not been set");
+        // The bulk of the logic of this method has intentionally been moved
+        // out so stepping through a large stack in a debugger can be done quickly.
+        // Simply put one break point on 'next.invoke()' or one inside that method.
+        try {
+            Invocation next = next();
+            return next.invoke();
+        } catch (InvocationTargetException e) {
+            throw unwrapInvocationTargetException(e);
+        }
+    }
+
+    private static class Invocation {
+        private final Method method;
+        private final Object[] args;
+        private final Object target;
+
+        public Invocation(Object target, Method method, Object[] args) {
+            this.target = target;
+            this.method = method;
+            this.args = args;
+        }
+        public Object invoke() throws IllegalAccessException, InvocationTargetException {
+            Object value = method.invoke(target, args);
+            return value;
+        }
+    }
+
+    private static class NoOpInvocation extends Invocation {
+        public NoOpInvocation() {
+            super(null, null, null);
+        }
+
+        public Object invoke() throws IllegalAccessException, InvocationTargetException {
+            return null;
+        }
     }
 
     // todo verify excpetion types
