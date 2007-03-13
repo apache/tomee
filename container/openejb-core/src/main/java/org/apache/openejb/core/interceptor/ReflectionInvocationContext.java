@@ -135,6 +135,10 @@ public class ReflectionInvocationContext implements InvocationContext {
             Object value = method.invoke(target, args);
             return value;
         }
+
+        public String toString() {
+            return method.getDeclaringClass() + "." + method.getName();
+        }
     }
 
     private static class NoOpInvocation extends Invocation {
