@@ -77,6 +77,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
@@ -616,6 +617,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.containerSystem.containers.add(serviceInfo);
+    }
+
+    public void removeContainer(String containerId) {
+        containerSystem.removeContainer(containerId);
+
+        // Update the config tree
+        for (Iterator<ContainerInfo> iterator = config.containerSystem.containers.iterator(); iterator.hasNext();) {
+            ContainerInfo containerInfo = iterator.next();
+            if (containerInfo.id.equals(containerId)) {
+                iterator.remove();
+            }
+        }
     }
 
     public void createProxyFactory(ProxyFactoryInfo serviceInfo) throws OpenEJBException {

@@ -32,7 +32,7 @@ public abstract class MdbTestClient extends org.apache.openejb.test.NamedTestCas
 
 
     public MdbTestClient(String name) {
-        super("Stateless." + name);
+        super("MDB." + name);
     }
 
     /**

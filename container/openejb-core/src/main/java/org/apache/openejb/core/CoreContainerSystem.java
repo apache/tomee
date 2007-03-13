@@ -69,6 +69,10 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         containers.put(id, c);
     }
 
+    public void removeContainer(Object id) {
+        containers.remove(id);
+    }
+
     public void addDeployment(DeploymentInfo deployment) {
 
         this.deployments.put(deployment.getDeploymentID(), deployment);

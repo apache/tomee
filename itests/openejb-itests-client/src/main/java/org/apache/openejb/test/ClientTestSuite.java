@@ -22,6 +22,7 @@ import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
+import org.apache.openejb.test.mdb.MdbTestSuite;
 
 /**
  * 
@@ -40,6 +41,7 @@ public class ClientTestSuite extends junit.framework.TestCase {
         suite.addTest( StatefulTestSuite.suite() );
         suite.addTest( BmpTestSuite.suite() );
         suite.addTest( CmpTestSuite.suite() );
+        suite.addTest( MdbTestSuite.suite() );
         return suite;
     }
 }
