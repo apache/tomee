@@ -18,6 +18,7 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.CoreDeploymentInfo;
 
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.ActivationSpec;
@@ -30,12 +31,12 @@ import java.lang.reflect.Proxy;
 public class EndpointFactory implements MessageEndpointFactory {
     private final ActivationSpec activationSpec;
     private final MdbContainer container;
-    private final DeploymentInfo deploymentInfo;
+    private final CoreDeploymentInfo deploymentInfo;
     private final MdbInstanceFactory instanceFactory;
     private final ClassLoader classLoader;
     private final Class[] interfaces;
 
-    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, DeploymentInfo deploymentInfo, MdbInstanceFactory instanceFactory) {
+    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, CoreDeploymentInfo deploymentInfo, MdbInstanceFactory instanceFactory) {
         this.activationSpec = activationSpec;
         this.container = container;
         this.deploymentInfo = deploymentInfo;
@@ -46,6 +47,10 @@ public class EndpointFactory implements MessageEndpointFactory {
 
     public ActivationSpec getActivationSpec() {
         return activationSpec;
+    }
+
+    public MdbInstanceFactory getInstanceFactory() {
+        return instanceFactory;
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {

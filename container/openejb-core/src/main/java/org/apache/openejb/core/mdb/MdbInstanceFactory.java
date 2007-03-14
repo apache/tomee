@@ -31,7 +31,6 @@ import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.ConstructionException;
 
 import javax.ejb.MessageDrivenBean;
-import javax.ejb.SessionBean;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.resource.spi.UnavailableException;
@@ -96,15 +95,18 @@ public class MdbInstanceFactory {
      * @return a new message driven bean instance
      * @throws UnavailableException if the instance limit has been exceeded or
      *   if an exception occurs while creating the bean instance
+     * @param ignoreInstanceCount
      */
-    public Object createInstance() throws UnavailableException {
-        synchronized (this) {
-            // check the instance limit
-            if (instanceLimit > 0 && instanceCount >= instanceLimit) {
-                throw new UnavailableException("Only " + instanceLimit + " instances can be created");
+    public Object createInstance(boolean ignoreInstanceCount) throws UnavailableException {
+        if (!ignoreInstanceCount) {
+            synchronized (this) {
+                // check the instance limit
+                if (instanceLimit > 0 && instanceCount >= instanceLimit) {
+                    throw new UnavailableException("Only " + instanceLimit + " instances can be created");
+                }
+                // increment the instance count
+                instanceCount++;
             }
-            // increment the instance count
-            instanceCount++;
         }
 
         try {
@@ -112,8 +114,10 @@ public class MdbInstanceFactory {
             return bean;
         } catch (UnavailableException e) {
             // decrement the instance count
-            synchronized (this) {
-                instanceCount--;
+            if (!ignoreInstanceCount) {
+                synchronized (this) {
+                    instanceCount--;
+                }
             }
 
             throw e;
@@ -125,13 +129,16 @@ public class MdbInstanceFactory {
      * callbacks and decrements the instance count.  This method should not be used to disposed of beans that have
      * thrown a system exception.  Instead the discardInstance method should be called.
      * @param bean the bean instance to free
+     * @param ignoredInstanceCount
      */
-    public void freeInstance(Object bean) {
+    public void freeInstance(Object bean, boolean ignoredInstanceCount) {
         if (bean == null) throw new NullPointerException("bean is null");
 
         // decrement the instance count
-        synchronized (this) {
-            instanceCount--;
+        if (!ignoredInstanceCount) {
+            synchronized (this) {
+                instanceCount--;
+            }
         }
 
         ThreadContext callContext = ThreadContext.getThreadContext();

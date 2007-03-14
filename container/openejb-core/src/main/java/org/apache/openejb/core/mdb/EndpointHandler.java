@@ -18,8 +18,8 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.CoreDeploymentInfo;
 
 import javax.ejb.EJBException;
 import javax.resource.spi.ApplicationServerInternalException;
@@ -63,19 +63,19 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     private final MdbContainer container;
-    private final DeploymentInfo deployment;
+    private final CoreDeploymentInfo deployment;
     private final MdbInstanceFactory instanceFactory;
     private final XAResource xaResource;
 
     private State state = State.NONE;
     private Object instance;
 
-    public EndpointHandler(MdbContainer container, DeploymentInfo deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
+    public EndpointHandler(MdbContainer container, CoreDeploymentInfo deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceFactory = instanceFactory;
         this.xaResource = xaResource;
-        instance = instanceFactory.createInstance();
+        instance = instanceFactory.createInstance(false);
     }
 
 //    private static void logTx() {
@@ -186,7 +186,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
 
         // call beforeDelivery on the container
         try {
-            container.beforeDelivery(deployment.getDeploymentID(), instance, method, xaResource);
+            container.beforeDelivery(deployment, instance, method, xaResource);
         } catch (SystemException se) {
             Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
             throw new ApplicationServerInternalException(throwable);
@@ -306,9 +306,9 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
 
         // notify the container
         try {
-            container.release(instance);
+            container.release(deployment, instance);
         } finally {
-            instanceFactory.freeInstance(instance);
+            instanceFactory.freeInstance(instance, false);
             instance = null;
         }
     }

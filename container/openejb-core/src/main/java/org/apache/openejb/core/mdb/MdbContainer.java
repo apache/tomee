@@ -39,11 +39,13 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.UnavailableException;
 import javax.resource.ResourceException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MdbContainer implements RpcContainer, TransactionContainer {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -57,8 +59,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private final Class activationSpecClass;
     private final int instanceLimit;
 
-    private final Map<Object, DeploymentInfo> deployments = new HashMap<Object, DeploymentInfo>();
-    private final Map<Object, EndpointFactory> endpointFactories = new HashMap<Object, EndpointFactory>();
+    private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
 
     public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
@@ -70,11 +71,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         this.instanceLimit = instanceLimit;
     }
 
-    public synchronized DeploymentInfo [] deployments() {
+    public DeploymentInfo [] deployments() {
         return deployments.values().toArray(new DeploymentInfo[deployments.size()]);
     }
 
-    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
@@ -86,7 +87,8 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         return containerID;
     }
 
-    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+    public void deploy(DeploymentInfo info) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
         Object deploymentId = deploymentInfo.getDeploymentID();
         if (!deploymentInfo.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
@@ -98,31 +100,26 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory((CoreDeploymentInfo) deploymentInfo, transactionManager, securityService, instanceLimit);
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
         EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
-        synchronized (this) {
-            deploymentInfo.setContainer(this);
-            deployments.put(deploymentId, deploymentInfo);
-            endpointFactories.put(deploymentId, endpointFactory);
-        }
+        deploymentInfo.setContainer(this);
+        deploymentInfo.setContainerData(endpointFactory);
+        deployments.put(deploymentId, deploymentInfo);
 
         // activate the endpoint
         try {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
         } catch (ResourceException e) {
             // activation failed... clean up
-            synchronized (this) {
-                deploymentInfo.setContainer(null);
-                deployments.remove(deploymentId);
-                endpointFactories.remove(deploymentId);
-            }
+            deploymentInfo.setContainer(null);
+            deploymentInfo.setContainerData(null);
+            deployments.remove(deploymentId);
 
             throw new OpenEJBException(e);
         }
-
     }
 
     private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
@@ -151,36 +148,67 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        Object deploymentId = deploymentInfo.getDeploymentID();
-        undeploy(deploymentId);
-    }
+    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+        if (!(info instanceof CoreDeploymentInfo)) {
+            return;
+        }
 
-    public void undeploy(Object deploymentId) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
         try {
-            EndpointFactory endpointFactory;
-            synchronized (this) {
-                endpointFactory = endpointFactories.get(deploymentId);
-            }
+            EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
             if (endpointFactory != null) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
             }
         } finally {
-            synchronized (this) {
-                endpointFactories.remove(deploymentId);
-                DeploymentInfo deploymentInfo = deployments.remove(deploymentId);
-                if (deploymentInfo != null) {
-                    deploymentInfo.setContainer(null);
-                }
-            }
+            deploymentInfo.setContainer(null);
+            deploymentInfo.setContainerData(null);
+            deployments.remove(deploymentInfo.getDeploymentID());
         }
     }
 
-    public void beforeDelivery(Object deployId, Object instance, Method method, XAResource xaResource) throws SystemException {
+    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         // get the target deployment (MDB)
-        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deployId);
-        if (deployInfo == null) throw new SystemException("Unknown deployment " + deployId);
+        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
+        if (deployInfo == null) throw new SystemException("Unknown deployment " + deploymentId);
 
+        // create instance
+        Object instance = null;
+        try {
+            EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
+            instance = endpointFactory.getInstanceFactory().createInstance(true);
+        } catch (UnavailableException e) {
+            throw new SystemException("Unable to create new MDB instance: ", e);
+        }
+
+        try {
+            // before
+            beforeDelivery(deployInfo, instance, method, null);
+
+            boolean exceptionThrown = false;
+            try {
+                // deliver the message
+                return invoke(instance, method, args);
+            } catch (OpenEJBException e) {
+                exceptionThrown = true;
+                throw e;
+            } finally {
+                try {
+                    // after
+                    afterDelivery(instance);
+                } catch (SystemException e) {
+                    if (!exceptionThrown) {
+                        //noinspection ThrowFromFinallyBlock
+                        throw e;
+                    }
+                    logger.error("Unexpected exception from afterDelivery");
+                }
+            }
+        } finally {
+            release(deployInfo, instance);
+        }
+    }
+
+    public void beforeDelivery(CoreDeploymentInfo deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
         // intialize call context
         ThreadContext callContext = new ThreadContext(deployInfo, null, null);
         ThreadContext oldContext = ThreadContext.enter(callContext);
@@ -198,37 +226,24 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         // call the tx before method
         try {
             mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
-            enlistResource(xaResource);
+
+            // enrole the xaresource in the transaction
+            if (xaResource != null) {
+                Transaction transaction = transactionManager.getTransaction();
+                if (transaction != null) {
+                    transaction.enlistResource(xaResource);
+                }
+            }
         } catch (ApplicationException e) {
             ThreadContext.exit(oldContext);
             throw new SystemException("Should never get an Application exception", e);
         } catch (SystemException e) {
             ThreadContext.exit(oldContext);
             throw e;
-        }
-    }
-
-    private void enlistResource(XAResource xaResource) throws SystemException {
-        if (xaResource == null) return;
-
-        try {
-            Transaction transaction = transactionManager.getTransaction();
-            if (transaction != null) {
-                transaction.enlistResource(xaResource);
-            }
         } catch (Exception e) {
+            ThreadContext.exit(oldContext);
             throw new SystemException("Unable to enlist xa resource in the transaction", e);
         }
-    }
-
-    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        // this method can only be used for ejbTimeout
-        DeploymentInfo deploymentInfo = deployments.get(deploymentId);
-        if (!method.equals(deploymentInfo.getEjbTimeout())) {
-            throw new OpenEJBException("RpcContainer invoke method of MdbContainer can only be used to ejbTimeout invocations");
-        }
-        // todo create an instance and invoke the method and destroy instance
-        return null;
     }
 
     public Object invoke(Object instance, Method method, Object... args) throws SystemException, ApplicationException {
@@ -332,23 +347,30 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    public void release(Object instance) {
+    public void release(CoreDeploymentInfo deployInfo, Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
-        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
+        if (callContext == null) {
+            callContext = new ThreadContext(deployInfo, null, null);
+            ThreadContext.enter(callContext);
+
+        }
 
         // if we have an mdb call context we need to invoke the after invoke method
+        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
         if (mdbCallContext != null) {
             try {
                 mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
             } catch (Exception e) {
                 logger.error("error while releasing message endpoint", e);
             } finally {
+                EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
+                endpointFactory.getInstanceFactory().freeInstance(instance, false);
                 ThreadContext.exit(mdbCallContext.oldCallContext);
             }
         }
-    }
 
+    }
 
     private static class MdbCallContext {
         private Method deliveryMethod;
@@ -358,6 +380,5 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     }
 
     public void discardInstance(Object instance, ThreadContext context) {
-        // TODO Auto-generated method stub
     }
 }
