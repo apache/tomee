@@ -707,7 +707,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         if (componentType == BeanType.MESSAGE_DRIVEN && MessageDrivenBean.class.isAssignableFrom(beanClass)) {
             try {
-                createMethod = beanClass.getDeclaredMethod("ejbCreate");
+                createMethod = beanClass.getMethod("ejbCreate");
             } catch (NoSuchMethodException e) {
                 // if there isn't an ejbCreate method that is fine
             }

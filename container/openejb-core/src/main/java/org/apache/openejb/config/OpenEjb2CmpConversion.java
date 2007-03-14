@@ -41,18 +41,26 @@ import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.Table;
 import org.apache.openejb.jee.oejb2.EjbRelationType;
 import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
-import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb2.QueryType;
+import org.apache.openejb.jee.oejb2.MessageDrivenBeanType;
+import org.apache.openejb.jee.oejb2.ActivationConfigType;
+import org.apache.openejb.jee.oejb2.ActivationConfigPropertyType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.ActivationConfig;
 
 public class OpenEjb2CmpConversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             Object altDD = getOpenejbJarType(ejbModule);
             if (altDD instanceof OpenejbJarType) {
+                convertMdbConfigs(ejbModule.getEjbJar(), (OpenejbJarType) altDD);
                 mergeEntityMappings(appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
             }
         }
@@ -84,12 +92,47 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         return null;
     }
 
+    public void convertMdbConfigs(EjbJar ejbJar, OpenejbJarType openejbJarType) {
+        Map<String, MessageDrivenBean> mdbs =  new TreeMap<String, MessageDrivenBean>();
+        for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+            if (!(enterpriseBean instanceof MessageDrivenBean)) {
+                continue;
+            }
+            mdbs.put(enterpriseBean.getEjbName(), (MessageDrivenBean) enterpriseBean);
+        }
+        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+            if (!(enterpriseBean instanceof MessageDrivenBeanType)) {
+                continue;
+            }
+            MessageDrivenBeanType bean = (MessageDrivenBeanType) enterpriseBean;
+            MessageDrivenBean mdb = mdbs.get(bean.getEjbName());
+            if (mdb == null) {
+                // todo warn no such ejb in the ejb-jar.xml
+                continue;
+            }
+            ActivationConfigType activationConfigType = bean.getActivationConfig();
+            if (activationConfigType != null) {
+                ActivationConfig activationConfig = mdb.getActivationConfig();
+                if (activationConfig == null) {
+                    activationConfig = new ActivationConfig();
+                    mdb.setActivationConfig(activationConfig);
+                }
+                for (ActivationConfigPropertyType propertyType : activationConfigType.getActivationConfigProperty()) {
+                    ActivationConfigProperty property = new ActivationConfigProperty(
+                            propertyType.getActivationConfigPropertyName(),
+                            propertyType.getActivationConfigPropertyValue());
+                    activationConfig.getActivationConfigProperty().add(property);
+                }
+            }
+        }
+    }
+
     public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
         for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new EntityData(entity));
         }
-        for (EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof EntityBeanType)) {
                 continue;
             }

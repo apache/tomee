@@ -55,6 +55,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Container;
@@ -317,7 +318,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                     EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
 
-                    if (!getContainerIds().contains(d.getContainerId())) {
+                    if (!getContainerIds().contains(d.getContainerId()) && !skipMdb(bean)) {
                         String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
                         logger.fatal(msg);
                         throw new OpenEJBException(msg);
@@ -763,6 +764,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private OpenEjbConfiguration getRunningConfig() {
         return SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+    }
+
+    private static boolean skipMdb(EnterpriseBeanInfo bean) {
+        return bean instanceof MessageDrivenBeanInfo && System.getProperty("duct tape") != null;
     }
 
 }

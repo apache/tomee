@@ -113,7 +113,7 @@ public class AutoConfig implements DynamicDeployer {
                 throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
             }
 
-            if (ejbDeployment.getContainerId() == null) {
+            if (ejbDeployment.getContainerId() == null && !skipMdb(bean.getBean())) {
                 Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(bean.getType());
                 String containerId = getUsableContainer(containerInfoType, bean.getBean());
 
@@ -130,7 +130,7 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             // create the container if it doesn't exist
-            if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId())) {
+            if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId()) && !skipMdb(bean.getBean())) {
 
                 if (autoCreateContainers){
                     ContainerInfo containerInfo = configFactory.configureService(ConfigurationFactory.getContainerInfoType(bean.getType()));
@@ -167,6 +167,10 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         return ejbModule;
+    }
+
+    private static boolean skipMdb(Object bean) {
+        return bean instanceof MessageDrivenBean && System.getProperty("duct tape") != null;
     }
 
     private String installContainer(ContainerInfo containerInfo) throws OpenEJBException {
