@@ -558,7 +558,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public List<InterceptorData> getMethodInterceptors(Method method) {
-        return methodInterceptors.get(method);
+        List<InterceptorData> interceptors = methodInterceptors.get(method);
+        if (interceptors == null) {
+            interceptors = new ArrayList<InterceptorData>();
+        }
+        return interceptors;
     }
 
 
