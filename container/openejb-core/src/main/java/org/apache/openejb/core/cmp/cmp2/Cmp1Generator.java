@@ -25,6 +25,7 @@ public class Cmp1Generator implements Opcodes {
     private String implClassName;
     private String beanClassName;
     private ClassWriter cw;
+    private boolean unknownPk;
 
     public Cmp1Generator(String cmpImplClass, Class beanClass) {
         beanClassName = Type.getInternalName(beanClass);
@@ -35,6 +36,10 @@ public class Cmp1Generator implements Opcodes {
 
     public byte[] generate() {
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[0]);
+
+        if (unknownPk) {
+            cw.visitField(ACC_PUBLIC + ACC_TRANSIENT, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
+        }
 
         createConstructor();
 
@@ -52,5 +57,13 @@ public class Cmp1Generator implements Opcodes {
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+
+    public boolean isUnknownPk() {
+        return unknownPk;
+    }
+
+    public void setUnknownPk(boolean unknownPk) {
+        this.unknownPk = unknownPk;
     }
 }

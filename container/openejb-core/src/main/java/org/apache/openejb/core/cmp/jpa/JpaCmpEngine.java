@@ -242,6 +242,8 @@ public class JpaCmpEngine implements CmpEngine {
             Class cmpBeanImpl = di.getCmpImplClass();
             if (primaryKeyField != null) {
                 di.setKeyGenerator(new SimpleKeyGenerator(cmpBeanImpl, primaryKeyField));
+            } else if (Object.class.equals(di.getPrimaryKeyClass())) {
+                di.setKeyGenerator(new SimpleKeyGenerator(cmpBeanImpl, "OpenEJB_pk"));
             } else {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }

@@ -51,6 +51,8 @@ import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.jpa.Field;
 import org.apache.openejb.jee.jpa.NamedQuery;
 import org.apache.openejb.jee.jpa.IdClass;
+import org.apache.openejb.jee.jpa.GeneratedValue;
+import org.apache.openejb.jee.jpa.GenerationType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
@@ -442,15 +444,25 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         Set<String> primaryKeyFields = new HashSet<String>();
         if (bean.getPrimkeyField() != null) {
+            String fieldName = bean.getPrimkeyField();
             Field field;
             if (!createOverrides) {
-                field = new Id(bean.getPrimkeyField());
+                field = new Id(fieldName);
             } else {
-                field = new AttributeOverride(bean.getPrimkeyField());
+                field = new AttributeOverride(fieldName);
             }
             mapping.addField(field);
-            persistantFields.add(bean.getPrimkeyField());
-            primaryKeyFields.add(bean.getPrimkeyField());
+            persistantFields.add(fieldName);
+            primaryKeyFields.add(fieldName);
+        } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
+            if (createOverrides) {
+                String fieldName = "OpenEJB_pk";
+                Id field = new Id(fieldName);
+                field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
+                mapping.addField(field);
+                persistantFields.add(fieldName);
+                primaryKeyFields.add(fieldName);
+            }
         } else if (bean.getPrimKeyClass() != null) {
             Class<?> pkClass = null;
             try {
@@ -476,8 +488,6 @@ public class CmpJpaConversion implements DynamicDeployer {
             } catch (ClassNotFoundException e) {
                 // todo throw exception
             }
-
-            // todo complex primary key
         }
 
         //

@@ -78,7 +78,7 @@
         </attribute-override>
         <attributes>
             <id name="OpenEJB_pk">
-              <generated-value strategy="IDENTITY"/>
+              <generated-value strategy="AUTO"/>
             </id>
         </attributes>
     </entity>

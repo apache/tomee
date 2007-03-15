@@ -274,7 +274,6 @@
     <entity name="Address" class="openejb.org.apache.openejb.test.entity.cmp2.petstore.Address">
         <description>AddressEJB</description>
         <table name="address"/>
-        <id-class class="java.lang.Object"/>
         <attributes>
             <basic name="street">
                 <column name="street"/>

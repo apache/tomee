@@ -103,6 +103,9 @@ public class CmpJarBuilder {
         byte[] bytes = null;
         if (entityBeanInfo.cmpVersion != 2) {
             Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
+            if ("java.lang.Object".equals(entityBeanInfo.primKeyClass)) {
+                cmp1Generator.setUnknownPk(true);
+            }
             bytes = cmp1Generator.generate();
         } else {
 
