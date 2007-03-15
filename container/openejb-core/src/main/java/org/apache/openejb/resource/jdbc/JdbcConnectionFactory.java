@@ -18,19 +18,23 @@ package org.apache.openejb.resource.jdbc;
 
 import javax.naming.Reference;
 import javax.resource.ResourceException;
+import javax.resource.Referenceable;
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.ResourceAllocationException;
+import javax.resource.spi.SecurityException;
+import javax.sql.DataSource;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resource.Referenceable, java.io.Serializable {
+public class JdbcConnectionFactory implements DataSource, Referenceable, Serializable {
+    private static final long serialVersionUID = 7846198858025323860L;
     private Reference jndiReference;
 
-    private final transient ManagedConnectionFactory managedConnectionFactory;
+    private final transient JdbcManagedConnectionFactory managedConnectionFactory;
     private final transient ConnectionManager connectionManager;
     private final String jdbcUrl;
     private final String jdbcDriver;
@@ -39,7 +43,7 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
     private transient PrintWriter logWriter;
     private int logTimeout = 0;
 
-    public JdbcConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
+    public JdbcConnectionFactory(JdbcManagedConnectionFactory managedConnectionFactory,
                                  ConnectionManager connectionManager, String jdbcUrl,
                                  String jdbcDriver, String defaultPassword, String defaultUserName) throws ResourceException {
         this.managedConnectionFactory = managedConnectionFactory;
@@ -79,8 +83,12 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
         return getConnection(defaultUserName, defaultPassword);
     }
 
-    public Connection getConnection(java.lang.String username, java.lang.String password) throws SQLException {
-        return getConnection(new JdbcConnectionRequestInfo(username, password, jdbcDriver, jdbcUrl));
+    public Connection getConnection(String username, String password) throws SQLException {
+        JdbcConnectionRequestInfo requestInfo = new JdbcConnectionRequestInfo(username, password, jdbcDriver, jdbcUrl);
+        if (managedConnectionFactory.isUnmanaged()) {
+            requestInfo = new JdbcUnmanagedConnection.UnmanagedConnectionRequestInfo(requestInfo);
+        }
+        return getConnection(requestInfo);
     }
 
     protected Connection getConnection(JdbcConnectionRequestInfo connectionRequestInfo) throws SQLException {
@@ -89,7 +97,7 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
             return (Connection) connectionManager.allocateConnection(managedConnectionFactory, connectionRequestInfo);
         } catch (ApplicationServerInternalException e) {
             throw convertToSQLException(e, "Application error in ContainerManager");
-        } catch (javax.resource.spi.SecurityException e) {
+        } catch (SecurityException e) {
             throw convertToSQLException(e, "Authentication error. Invalid credentials");
         } catch (ResourceAdapterInternalException e) {
             throw convertToSQLException(e, "JDBC Connection problem");
@@ -114,7 +122,7 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
         return logTimeout;
     }
 
-    public java.io.PrintWriter getLogWriter() {
+    public PrintWriter getLogWriter() {
         return logWriter;
     }
 
@@ -123,7 +131,7 @@ public class JdbcConnectionFactory implements javax.sql.DataSource, javax.resour
         logTimeout = seconds;
     }
 
-    public void setLogWriter(java.io.PrintWriter out) {
+    public void setLogWriter(PrintWriter out) {
         logWriter = out;
     }
 }

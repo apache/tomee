@@ -19,12 +19,10 @@ package org.apache.openejb.resource.jdbc;
 import javax.resource.spi.ConnectionRequestInfo;
 
 public class JdbcConnectionRequestInfo implements ConnectionRequestInfo {
-
     private String userName;
     private String password;
     private String jdbcDriver;
     private String jdbcUrl;
-    private int hashCode;
 
     public JdbcConnectionRequestInfo(String userName, String password, String jdbcDriver, String jdbcUrl) {
         this.userName = userName;
@@ -49,21 +47,24 @@ public class JdbcConnectionRequestInfo implements ConnectionRequestInfo {
         return jdbcUrl;
     }
 
-    public boolean equals(java.lang.Object other) {
-        if (other instanceof JdbcConnectionRequestInfo &&
-                ((JdbcConnectionRequestInfo) other).getUserName().equals(userName) &&
-                ((JdbcConnectionRequestInfo) other).getPassword().equals(password) &&
-                ((JdbcConnectionRequestInfo) other).getJdbcDriver().equals(jdbcDriver) &&
-                ((JdbcConnectionRequestInfo) other).getJdbcUrl().equals(jdbcUrl))
-            return true;
-        else
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JdbcConnectionRequestInfo that = (JdbcConnectionRequestInfo) o;
+
+        return jdbcDriver.equals(that.jdbcDriver) &&
+                jdbcUrl.equals(that.jdbcUrl) &&
+                password.equals(that.password) &&
+                userName.equals(that.userName);
     }
 
     public int hashCode() {
-        if (hashCode != 0) return hashCode;
-        hashCode = jdbcDriver.hashCode() ^ jdbcUrl.hashCode() ^ userName.hashCode() ^ password.hashCode();
-        return hashCode;
+        int result;
+        result = userName.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + jdbcDriver.hashCode();
+        result = 31 * result + jdbcUrl.hashCode();
+        return result;
     }
-
 }

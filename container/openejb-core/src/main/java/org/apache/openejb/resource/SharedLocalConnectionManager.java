@@ -37,8 +37,11 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.SystemException;
 import javax.transaction.RollbackException;
+import javax.transaction.Synchronization;
+import javax.transaction.Status;
 
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
+import org.apache.openejb.resource.jdbc.JdbcUnmanagedConnection;
 
 /**
  * @org.apache.xbean.XBean element="sharedLocalConnectionManager"
@@ -121,9 +124,9 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
                 conn.getLocalTransaction().commit();
                 this.cleanup(conn);
             }
-        } catch (javax.transaction.SystemException se) {
+        } catch (SystemException se) {
 
-        } catch (javax.resource.ResourceException re) {
+        } catch (ResourceException re) {
 
         }
     }
@@ -135,7 +138,7 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
             conn.destroy();
 
             threadConnectionCache.get().removeConnection(conn);
-        } catch (javax.resource.ResourceException re) {
+        } catch (ResourceException re) {
 
         }
     }
@@ -152,7 +155,9 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
         if (conn != null) {
             try {
                 conn.cleanup();
-                connSet.add(conn);
+                if (!(conn instanceof JdbcUnmanagedConnection)) {
+                    connSet.add(conn);
+                }
             } catch (ResourceException re) {
                 try {
                     conn.destroy();
@@ -167,7 +172,7 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
     public void localTransactionStarted(ConnectionEvent event) {
     }
 
-    static class Synchronizer implements javax.transaction.Synchronization {
+    static class Synchronizer implements Synchronization {
         LocalTransaction localTx;
 
         public Synchronizer(LocalTransaction lt) {
@@ -178,16 +183,16 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
         }
 
         public void afterCompletion(int status) {
-            if (status == javax.transaction.Status.STATUS_COMMITTED) {
+            if (status == Status.STATUS_COMMITTED) {
                 try {
                     localTx.commit();
-                } catch (javax.resource.ResourceException re) {
+                } catch (ResourceException re) {
                     throw new RuntimeException("JDBC driver failed to commit transaction. " + re.getMessage());
                 }
             } else {
                 try {
                     localTx.rollback();
-                } catch (javax.resource.ResourceException re) {
+                } catch (ResourceException re) {
                     throw new RuntimeException("JDBC driver failed to rollback transaction. " + re.getMessage());
                 }
             }

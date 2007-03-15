@@ -21,16 +21,25 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.EISSystemException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.ResourceException;
+import javax.resource.NotSupportedException;
 import javax.security.auth.Subject;
 import java.sql.DriverManager;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Set;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
-public class BasicManagedConnectionFactory implements javax.resource.spi.ManagedConnectionFactory, java.io.Serializable {
+public class BasicManagedConnectionFactory implements ManagedConnectionFactory, Serializable {
+    private static final long serialVersionUID = 4339732142876149245L;
     private final String jdbcDriver;
     private final String jdbcUrl;
     private final String defaultUserName;
     private final String defaultPassword;
-    private java.io.PrintWriter logWriter;
+    private PrintWriter logWriter;
     private final int hashCode;
     private final JdbcManagedConnectionFactory managedConnectionFactory;
 
@@ -43,15 +52,15 @@ public class BasicManagedConnectionFactory implements javax.resource.spi.Managed
         hashCode = jdbcDriver.hashCode() ^ jdbcUrl.hashCode() ^ defaultUserName.hashCode() ^ defaultPassword.hashCode();
     }
 
-    public Object createConnectionFactory() throws javax.resource.ResourceException {
-        throw new javax.resource.NotSupportedException("This connector must be used with an application server connection manager");
+    public Object createConnectionFactory() throws ResourceException {
+        throw new NotSupportedException("This connector must be used with an application server connection manager");
     }
 
-    public Object createConnectionFactory(ConnectionManager cxManager) throws javax.resource.ResourceException {
+    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException {
         return new JdbcConnectionFactory(managedConnectionFactory, cxManager, jdbcUrl, jdbcDriver, defaultPassword, defaultUserName);
     }
 
-    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo connectionRequestInfo) throws javax.resource.ResourceException {
+    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
         try {
             JdbcConnectionRequestInfo request = (JdbcConnectionRequestInfo) connectionRequestInfo;
             Connection connection = DriverManager.getConnection(jdbcUrl, request.getUserName(), request.getPassword());
@@ -59,7 +68,7 @@ public class BasicManagedConnectionFactory implements javax.resource.spi.Managed
                 return new JdbcUnmanagedConnection(managedConnectionFactory, connection, request);
             }
             return new JdbcManagedConnection(managedConnectionFactory, connection, request);
-        } catch (java.sql.SQLException e) {
+        } catch (SQLException e) {
             throw (EISSystemException) new EISSystemException("Could not obtain a physical JDBC connection from the DriverManager").initCause(e);
         }
     }
@@ -72,7 +81,7 @@ public class BasicManagedConnectionFactory implements javax.resource.spi.Managed
         return jdbcDriver.equals(that.jdbcDriver) && jdbcUrl.equals(that.jdbcUrl) && defaultUserName.equals(that.defaultUserName) && defaultPassword.equals(that.defaultPassword);
     }
 
-    public java.io.PrintWriter getLogWriter() {
+    public PrintWriter getLogWriter() {
         return logWriter;
     }
 
@@ -80,19 +89,20 @@ public class BasicManagedConnectionFactory implements javax.resource.spi.Managed
         return hashCode;
     }
 
-    public ManagedConnection matchManagedConnections(java.util.Set connectionSet, javax.security.auth.Subject subject, ConnectionRequestInfo connectionInfo) throws javax.resource.ResourceException {
+    public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject, ConnectionRequestInfo connectionInfo) throws ResourceException {
         if (!(connectionInfo instanceof JdbcConnectionRequestInfo)) {
             return null;
         }
-
-        JdbcManagedConnection[] connections = (JdbcManagedConnection[]) connectionSet.toArray(new JdbcManagedConnection[]{});
-        int i = 0;
-        for (; i < connections.length && !connections[i].getRequestInfo().equals(connectionInfo); i++) {
+        for (Iterator iterator = connectionSet.iterator(); iterator.hasNext();) {
+            JdbcManagedConnection connection = (JdbcManagedConnection) iterator.next();
+            if (connection.getRequestInfo().equals(connectionInfo)) {
+                return connection;
+            }
         }
-        return (i < connections.length) ? connections[i] : null;
+        return null;
     }
 
-    public void setLogWriter(java.io.PrintWriter out) {
+    public void setLogWriter(PrintWriter out) {
         logWriter = out;
     }
 
