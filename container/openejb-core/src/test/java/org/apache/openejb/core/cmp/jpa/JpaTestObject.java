@@ -18,6 +18,8 @@
 package org.apache.openejb.core.cmp.jpa;
 
 import org.apache.openejb.test.entity.cmp.ComplexCmpBean;
+import org.apache.openejb.test.entity.cmp.UnknownCmpBean;
+import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -101,6 +103,7 @@ public class JpaTestObject extends junit.framework.Assert {
         billTest();
         cmpText();
         complexCmpText();
+        unknownCmpText();
 
 
 //        beginTx();
@@ -335,7 +338,7 @@ public class JpaTestObject extends junit.framework.Assert {
     private void cmpText() throws Exception {
         beginTx();
 
-        BasicCmpBean_Subclass basicCmpBean = new BasicCmpBean_Subclass();
+        BasicCmpBean basicCmpBean = new BasicCmpBean_Subclass();
         basicCmpBean.ejbCreateObject("Joe Blow");
         assertFalse(entityManager.contains(basicCmpBean));
 
@@ -368,14 +371,14 @@ public class JpaTestObject extends junit.framework.Assert {
 
         beginTx();
 
-        BasicCmpBean_Subclass joe = (BasicCmpBean_Subclass) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
+        BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getPrimaryKey(), joeId);
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        BasicCmpBean_Subclass lloyd = (BasicCmpBean_Subclass) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
+        BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -419,15 +422,68 @@ public class JpaTestObject extends junit.framework.Assert {
 
         beginTx();
 
-        ComplexCmpBean joe = (ComplexCmpBean_Subclass) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
+        ComplexCmpBean joe = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        ComplexCmpBean lloyd = (ComplexCmpBean_Subclass) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        ComplexCmpBean lloyd = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
+        assertEquals(lloyd.getFirstName(), "Lloyd");
+        assertEquals(lloyd.getLastName(), "Dobler");
+
+        commitTx();
+    }
+
+    private void unknownCmpText() throws Exception {
+        beginTx();
+
+        UnknownCmpBean unknownCmpBean = new UnknownCmpBean_Subclass();
+        unknownCmpBean.ejbCreateObject("Joe Blow");
+        assertFalse(entityManager.contains(unknownCmpBean));
+
+        entityManager.persist(unknownCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        unknownCmpBean = entityManager.merge(unknownCmpBean);
+        Object joeId = unknownCmpBean.getPrimaryKey();
+
+        assertTrue(entityManager.contains(unknownCmpBean));
+
+        commitTx();
+        beginTx();
+
+        unknownCmpBean = new UnknownCmpBean_Subclass();
+        unknownCmpBean.ejbCreateObject("Lloyd Dobler");
+        assertFalse(entityManager.contains(unknownCmpBean));
+
+        entityManager.persist(unknownCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        unknownCmpBean = entityManager.merge(unknownCmpBean);
+        Object lloydId = unknownCmpBean.getPrimaryKey();
+
+        assertTrue(entityManager.contains(unknownCmpBean));
+        commitTx();
+
+
+        beginTx();
+
+        UnknownCmpBean joe = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
+        assertTrue(entityManager.contains(joe));
+
+        assertEquals(joe.getPrimaryKey(), joeId);
+        assertEquals(joe.getFirstName(), "Joe");
+        assertEquals(joe.getLastName(), "Blow");
+
+        UnknownCmpBean lloyd = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        assertTrue(entityManager.contains(lloyd));
+
+        assertEquals(lloyd.getPrimaryKey(), lloydId);
         assertEquals(lloyd.getFirstName(), "Lloyd");
         assertEquals(lloyd.getLastName(), "Dobler");
 

@@ -39,6 +39,14 @@
             <transient name="allowedOperationsTable"/>
         </attributes>
     </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.UnknownCmpBean">
+        <attributes>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
     <entity class="org.apache.openejb.core.cmp.jpa.BasicCmpBean_Subclass">
         <table name="BasicCmpBean"/>
         <attribute-override name="primaryKey">
@@ -59,6 +67,20 @@
         <attribute-override name="lastName">
             <column name="lastName"/>
         </attribute-override>
+    </entity>
+    <entity class="org.apache.openejb.core.cmp.jpa.UnknownCmpBean_Subclass">
+        <table name="UnknownCmpBean"/>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
+        <attributes>
+            <id name="OpenEJB_pk">
+              <generated-value strategy="IDENTITY"/>
+            </id>
+        </attributes>
     </entity>
     <!--<entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean">-->
       <!--<table name="OneOwning"/>-->
