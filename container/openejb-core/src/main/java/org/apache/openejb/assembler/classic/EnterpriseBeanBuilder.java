@@ -26,6 +26,7 @@ import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Classes;
 
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
@@ -331,7 +332,7 @@ class EnterpriseBeanBuilder {
 
         for (String paramType : info.methodParams) {
             try {
-                parameterTypes.add(Class.forName(paramType));
+                parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
             } catch (ClassNotFoundException cnfe) {
                 throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
             }

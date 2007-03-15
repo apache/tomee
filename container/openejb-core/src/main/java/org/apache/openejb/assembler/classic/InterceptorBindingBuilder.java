@@ -20,6 +20,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.OpenEJBException;
 
 import javax.interceptor.InvocationContext;
@@ -261,7 +262,12 @@ public class InterceptorBindingBuilder {
             Class<?> parameterType = parameterTypes[i];
             String methodParam = params.get(i);
 
-            if (methodParam.equals(getName(parameterType))) {
+            try {
+                Class param = Classes.forName(methodParam, parameterType.getClassLoader());
+                if (param.equals(parameterType)) {
+                    return false;
+                }
+            } catch (ClassNotFoundException e) {
                 return false;
             }
         }
