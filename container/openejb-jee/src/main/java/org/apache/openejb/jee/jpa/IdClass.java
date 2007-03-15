@@ -56,6 +56,13 @@ public class IdClass {
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
 
+    public IdClass() {
+    }
+
+    public IdClass(String clazz) {
+        this.clazz = clazz;
+    }
+
     /**
      * Gets the value of the clazz property.
      * 

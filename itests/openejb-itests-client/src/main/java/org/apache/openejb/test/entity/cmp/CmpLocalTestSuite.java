@@ -44,6 +44,13 @@ public class CmpLocalTestSuite extends org.apache.openejb.test.TestSuite{
         this.addTest(new CmpContextLookupTests());
         this.addTest(new CmpRmiIiopTests());
 
+        this.addTest(new ComplexHomeIntfcTests());
+        this.addTest(new ComplexEjbHomeTests());
+        this.addTest(new ComplexEjbObjectTests());
+        this.addTest(new ComplexRemoteIntfcTests());
+        this.addTest(new ComplexHomeHandleTests());
+        this.addTest(new ComplexHandleTests());
+        this.addTest(new ComplexEjbMetaDataTests());
     }
 
     public static junit.framework.Test suite() {

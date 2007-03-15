@@ -30,11 +30,29 @@
             <transient name="allowedOperationsTable"/>
         </attributes>
     </mapped-superclass>
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.ComplexCmpBean">
+        <id-class class="org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk"/>
+        <attributes>
+            <id name="firstName"/>
+            <id name="lastName"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
     <entity class="org.apache.openejb.core.cmp.jpa.BasicCmpBean_Subclass">
         <table name="BasicCmpBean"/>
         <attribute-override name="primaryKey">
             <column name="primaryKey"/>
         </attribute-override>
+        <attribute-override name="firstName">
+            <column name="firstName"/>
+        </attribute-override>
+        <attribute-override name="lastName">
+            <column name="lastName"/>
+        </attribute-override>
+    </entity>
+    <entity class="org.apache.openejb.core.cmp.jpa.ComplexCmpBean_Subclass">
+        <table name="ComplexCmpBean"/>
         <attribute-override name="firstName">
             <column name="firstName"/>
         </attribute-override>

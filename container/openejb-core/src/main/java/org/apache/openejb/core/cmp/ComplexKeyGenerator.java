@@ -34,12 +34,12 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
         this.pkClass = pkClass;
         List<org.apache.openejb.core.cmp.ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
         for (Field pkObjectField : pkClass.getFields()) {
-            if (!isValidPkField(pkObjectField)) {
+            if (isValidPkField(pkObjectField)) {
                 Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());
                 if (!isValidPkField(entityBeanField)) {
-                    throw new OpenEJBException("Invalid primray key field on entity bean class: " + entityBeanClass.getName());
+                    throw new OpenEJBException("Invalid primray key field: " + entityBeanField);
                 }
-                org.apache.openejb.core.cmp.ComplexKeyGenerator.PkField pkField = new org.apache.openejb.core.cmp.ComplexKeyGenerator.PkField(entityBeanField, pkObjectField);
+                PkField pkField = new PkField(entityBeanField, pkObjectField);
                 fields.add(pkField);
             }
         }
@@ -53,7 +53,8 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
         } catch (Exception e) {
             throw new EJBException("Unable to create complex primary key instance: " + pkClass.getName(), e);
         }
-        for (org.apache.openejb.core.cmp.ComplexKeyGenerator.PkField pkField : fields) {
+
+        for (PkField pkField : fields) {
             pkField.copyToPkObject(bean, pkObject);
         }
         return pkObject;
@@ -64,13 +65,16 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
         private final Field pkObjectField;
 
         public PkField(Field entityBeanField, Field pkObjectField) {
+            entityBeanField.setAccessible(true);
+            pkObjectField.setAccessible(true);
+            
             this.entityBeanField = entityBeanField;
             this.pkObjectField = pkObjectField;
         }
 
         public void copyToPkObject(EntityBean bean, Object pkObject) {
             Object value = getFieldValue(entityBeanField, bean);
-            setFieldValue(pkObjectField, bean, value);
+            setFieldValue(pkObjectField, pkObject, value);
         }
 
         public Object getPkFieldValue(Object pkObject) {

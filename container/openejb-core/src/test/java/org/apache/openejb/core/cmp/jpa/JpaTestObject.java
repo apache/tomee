@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
+import org.apache.openejb.test.entity.cmp.ComplexCmpBean;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -95,6 +97,41 @@ public class JpaTestObject extends junit.framework.Assert {
     }
 
     public void jpaLifecycle() throws Exception {
+        employeeTest();
+        billTest();
+        cmpText();
+        complexCmpText();
+
+
+//        beginTx();
+//        ABean_ABean a = new ABean_ABean();
+//        a.setField1(2);
+//        entityManager.persist(a);
+//        BBean_BBean b = new BBean_BBean();
+//        b.setField1(22);
+//        entityManager.persist(b);
+//        commitTx();
+//
+//        beginTx();
+//        b = entityManager.find(BBean_BBean.class, 22);
+//        a = entityManager.find(ABean_ABean.class, 2);
+//        a.OpenEJB_addCmr("b", b);
+//        b.OpenEJB_addCmr("a", a);
+//        commitTx();
+//
+////        dump();
+//
+//        beginTx();
+//        b = entityManager.find(BBean_BBean.class, 22);
+//        assertNotNull(b);
+//        assertEquals(new Integer(22), b.getField1());
+////        a = (ABean_ABean) b.OpenEJB_getCmr("a");
+////        assertNotNull(a);
+////        assertEquals(new Integer(2), a.getField1());
+//        commitTx();
+    }
+
+    private void employeeTest() throws Exception {
         // get the pk for the inserted row
         int davidPk = -1;
         {
@@ -191,6 +228,111 @@ public class JpaTestObject extends junit.framework.Assert {
         assertEquals(dain.getLastName(), "Sundstrom");
 
         commitTx();
+    }
+
+    public void billTest() throws Exception {
+        // get the pk for the inserted row
+        BillPk basicPk;
+
+        {
+            Connection connection = null;
+            Statement statement = null;
+            try {
+                connection = nonJtaDs.getConnection();
+                statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select * from bill");
+                resultSet.next();
+
+                basicPk = new BillPk(resultSet.getLong("billNumber"), resultSet.getLong("billVersion"), resultSet.getLong("billRevision"));
+            } finally {
+                close(statement);
+                close(connection);
+            }
+        }
+
+        beginTx();
+        assertTrue(entityManager.isOpen());
+
+        Bill basic = entityManager.find(Bill.class, basicPk);
+        assertTrue(entityManager.contains(basic));
+
+        assertTrue(basicPk.equals(new BillPk(1, 0, 0)));
+
+        assertEquals(basic.getBillNumber(), 1);
+        assertEquals(basic.getBillVersion(), 0);
+        assertEquals(basic.getBillRevision(), 0);
+        assertEquals(basic.getBillDescription(), "Basic Model");
+
+        commitTx();
+        beginTx();
+
+        basic = (Bill) entityManager.createQuery("select e from Bill e where e.billDescription='Basic Model'").getSingleResult();
+        assertTrue(entityManager.contains(basic));
+
+        assertTrue(basicPk.equals(new BillPk(1, 0, 0)));
+
+        assertEquals(basic.getBillNumber(), 1);
+        assertEquals(basic.getBillVersion(), 0);
+        assertEquals(basic.getBillRevision(), 0);
+        assertEquals(basic.getBillDescription(), "Basic Model");
+
+        commitTx();
+        beginTx();
+
+        basic = entityManager.find(Bill.class, basicPk);
+        entityManager.remove(basic);
+        assertFalse(entityManager.contains(basic));
+        basic = entityManager.find(Bill.class, basicPk);
+        assertNull(basic);
+
+        commitTx();
+        beginTx();
+
+        Bill advanced = new Bill();
+        advanced.setBillNumber(1000);
+        advanced.setBillVersion(2000);
+        advanced.setBillRevision(3000);
+        advanced.setBillDescription("This is so advanced!!");
+        assertFalse(entityManager.contains(advanced));
+
+        entityManager.persist(advanced);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        advanced = entityManager.merge(advanced);
+
+        BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
+
+        assertTrue(entityManager.contains(advanced));
+
+        commitTx();
+        beginTx();
+
+        advanced = entityManager.find(Bill.class, advancedPk);
+        assertTrue(entityManager.contains(advanced));
+
+        assertTrue(advancedPk.equals(new BillPk(1000, 2000, 3000)));
+        assertEquals(advanced.getBillNumber(), 1000);
+        assertEquals(advanced.getBillVersion(), 2000);
+        assertEquals(advanced.getBillRevision(), 3000);
+        assertEquals(advanced.getBillDescription(), "This is so advanced!!");
+
+        commitTx();
+        beginTx();
+
+        advanced = (Bill) entityManager.createQuery("select e from Bill e").getSingleResult();
+        assertTrue(entityManager.contains(advanced));
+
+        assertTrue(advancedPk.equals(new BillPk(1000, 2000, 3000)));
+        assertEquals(advanced.getBillNumber(), 1000);
+        assertEquals(advanced.getBillVersion(), 2000);
+        assertEquals(advanced.getBillRevision(), 3000);
+        assertEquals(advanced.getBillDescription(), "This is so advanced!!");
+
+        commitTx();
+    }
+
+    private void cmpText() throws Exception {
         beginTx();
 
         BasicCmpBean_Subclass basicCmpBean = new BasicCmpBean_Subclass();
@@ -241,34 +383,55 @@ public class JpaTestObject extends junit.framework.Assert {
         assertEquals(lloyd.getLastName(), "Dobler");
 
         commitTx();
+    }
+
+    private void complexCmpText() throws Exception {
+        beginTx();
+
+        ComplexCmpBean complexCmpBean = new ComplexCmpBean_Subclass();
+        complexCmpBean.ejbCreateObject("Joe Blow");
+        assertFalse(entityManager.contains(complexCmpBean));
+
+        entityManager.persist(complexCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        complexCmpBean = entityManager.merge(complexCmpBean);
+
+        assertTrue(entityManager.contains(complexCmpBean));
+
+        commitTx();
+        beginTx();
+
+        complexCmpBean = new ComplexCmpBean_Subclass();
+        complexCmpBean.ejbCreateObject("Lloyd Dobler");
+        assertFalse(entityManager.contains(complexCmpBean));
+
+        entityManager.persist(complexCmpBean);
+
+        // extract primary key seems to require a flush followed by a merge
+        entityManager.flush();
+        complexCmpBean = entityManager.merge(complexCmpBean);
+
+        assertTrue(entityManager.contains(complexCmpBean));
+        commitTx();
 
 
-//        beginTx();
-//        ABean_ABean a = new ABean_ABean();
-//        a.setField1(2);
-//        entityManager.persist(a);
-//        BBean_BBean b = new BBean_BBean();
-//        b.setField1(22);
-//        entityManager.persist(b);
-//        commitTx();
-//
-//        beginTx();
-//        b = entityManager.find(BBean_BBean.class, 22);
-//        a = entityManager.find(ABean_ABean.class, 2);
-//        a.OpenEJB_addCmr("b", b);
-//        b.OpenEJB_addCmr("a", a);
-//        commitTx();
-//
-////        dump();
-//
-//        beginTx();
-//        b = entityManager.find(BBean_BBean.class, 22);
-//        assertNotNull(b);
-//        assertEquals(new Integer(22), b.getField1());
-////        a = (ABean_ABean) b.OpenEJB_getCmr("a");
-////        assertNotNull(a);
-////        assertEquals(new Integer(2), a.getField1());
-//        commitTx();
+        beginTx();
+
+        ComplexCmpBean joe = (ComplexCmpBean_Subclass) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
+        assertTrue(entityManager.contains(joe));
+
+        assertEquals(joe.getFirstName(), "Joe");
+        assertEquals(joe.getLastName(), "Blow");
+
+        ComplexCmpBean lloyd = (ComplexCmpBean_Subclass) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        assertTrue(entityManager.contains(lloyd));
+
+        assertEquals(lloyd.getFirstName(), "Lloyd");
+        assertEquals(lloyd.getLastName(), "Dobler");
+
+        commitTx();
     }
 
     private void createEntityManager() {

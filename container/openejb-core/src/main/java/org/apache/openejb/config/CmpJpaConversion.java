@@ -50,6 +50,7 @@ import org.apache.openejb.jee.jpa.Mapping;
 import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.jpa.Field;
 import org.apache.openejb.jee.jpa.NamedQuery;
+import org.apache.openejb.jee.jpa.IdClass;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
@@ -60,6 +61,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.HashSet;
+import java.lang.reflect.Modifier;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
@@ -424,6 +427,11 @@ public class CmpJpaConversion implements DynamicDeployer {
         // class: the java class for the entity
         mapping.setClazz(className);
 
+        Set<String> allFields = new TreeSet<String>();
+        for (CmpField cmpField : bean.getCmpField()) {
+            allFields.add(cmpField.getFieldName());
+        }
+
         //
         // Map fields remembering the names of the mapped fields
         //
@@ -432,6 +440,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         // id: the primary key
         //
+        Set<String> primaryKeyFields = new HashSet<String>();
         if (bean.getPrimkeyField() != null) {
             Field field;
             if (!createOverrides) {
@@ -441,16 +450,41 @@ public class CmpJpaConversion implements DynamicDeployer {
             }
             mapping.addField(field);
             persistantFields.add(bean.getPrimkeyField());
-        } else {
+            primaryKeyFields.add(bean.getPrimkeyField());
+        } else if (bean.getPrimKeyClass() != null) {
+            Class<?> pkClass = null;
+            try {
+                pkClass = classLoader.loadClass(bean.getPrimKeyClass());
+                if (!createOverrides) {
+                    mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                }
+                for (java.lang.reflect.Field pkField : pkClass.getFields()) {
+                    String pkFieldName = pkField.getName();
+                    int modifiers = pkField.getModifiers();
+                    if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(pkFieldName)) {
+                        Field field;
+                        if (!createOverrides) {
+                            field = new Id(pkFieldName);
+                        } else {
+                            field = new AttributeOverride(pkFieldName);
+                        }
+                        mapping.addField(field);
+                        persistantFields.add(pkFieldName);
+                        primaryKeyFields.add(pkFieldName);
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                // todo throw exception
+            }
+
             // todo complex primary key
-            // todo unknown primary key
         }
 
         //
         // basic: cmp-fields
         //
         for (CmpField cmpField : bean.getCmpField()) {
-            if (!cmpField.getFieldName().equals(bean.getPrimkeyField())) {
+            if (!primaryKeyFields.contains(cmpField.getFieldName())) {
                 Field field;
                 if (!createOverrides) {
                     field = new Basic(cmpField.getFieldName());

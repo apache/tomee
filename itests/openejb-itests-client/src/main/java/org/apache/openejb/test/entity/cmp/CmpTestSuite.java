@@ -44,7 +44,8 @@ public class CmpTestSuite extends org.apache.openejb.test.TestSuite{
         this.addTest(new CmpJndiEncTests());
         this.addTest(new CmpContextLookupTests());
         this.addTest(new CmpRmiIiopTests());
-        
+
+        this.addTest(new ComplexHomeIntfcTests());
     }
 
     public static junit.framework.Test suite() {

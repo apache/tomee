@@ -61,6 +61,8 @@ public class HsqldbTestDatabase implements TestDatabase {
     private static final String[] AUTO_CREATED_TABLES = new String[] {
             "BasicCmpBean",
             "BasicCmpBeanX",
+            "ComplexCmpBean",
+            "ComplexCmpBeanX",
             "BasicCmp2Bean",
             "AllowedOperationsCmpBean",
             "AllowedOperationsCmp2Bean",

@@ -185,6 +185,8 @@ public class JpaTest extends TestCase {
         unitInfo.setJtaDataSource(jtaDs);
         unitInfo.setNonJtaDataSource(nonJtaDs);
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Employee");
+        unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Bill");
+        unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.EmbeddedBill");
         unitInfo.getMappingFileNames().add("META-INF/jpa-test-mappings.xml");
 
         // Handle Properties
@@ -234,9 +236,19 @@ public class JpaTest extends TestCase {
     }
 
     private void initializeDatabase(DataSource dataSource) throws SQLException {
+        // employee
         createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY PRIMARY KEY, first_name VARCHAR(255), last_name VARCHAR(255))");
         execute(dataSource, "INSERT INTO employee (first_name, last_name) VALUES ('David', 'Blevins')");
 
+        // bill
+        createTable(dataSource, "bill", "CREATE TABLE bill ( billNumber BIGINT NOT NULL, billVersion BIGINT NOT NULL, billRevision BIGINT NOT NULL, billDescription VARCHAR(255) )");
+        execute(dataSource, "INSERT INTO bill (billNumber, billVersion, billRevision, billDescription) VALUES (1, 0, 0, 'Basic Model')");
+
+        // embedded bill
+        createTable(dataSource, "embeddedBill", "CREATE TABLE embeddedBill ( billNumber BIGINT NOT NULL, billVersion BIGINT NOT NULL, billRevision BIGINT NOT NULL, billDescription VARCHAR(255) )");
+        execute(dataSource, "INSERT INTO embeddedBill (billNumber, billVersion, billRevision, billDescription) VALUES (2, 0, 0, 'Advanced Model')");
+
+        // relationship bean
         createTable(dataSource, "OneToOneA", "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(255))");
         createTable(dataSource, "OneToOneB", " CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER)");
         execute(dataSource, "INSERT INTO OneToOneA(A1, A2) VALUES(1, 'value1')");

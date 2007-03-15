@@ -36,6 +36,25 @@
       <object-ql>SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
+  <ejb-deployment ejb-name="ComplexCmpBean" deployment-id="client/tests/entity/cmp/ComplexCmpHome" container-id="Default CMP Container">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+    <query>
+      <query-method>
+        <method-name>findByLastName</method-name>
+        <method-params>
+          <method-param>java.lang.String</method-param>
+        </method-params>
+      </query-method>
+      <object-ql>SELECT o FROM ComplexCmpBeanX o WHERE o.lastName = ?1</object-ql>
+    </query>
+    <query>
+      <query-method>
+        <method-name>findEmptyCollection</method-name>
+        <method-params/>
+      </query-method>
+      <object-ql>SELECT o FROM ComplexCmpBean o WHERE 'true' = 'false'</object-ql>
+    </query>
+  </ejb-deployment>
   <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome" container-id="Default CMP Container">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
     <query>
