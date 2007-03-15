@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SetAccessible;
 import org.apache.openejb.OpenEJBException;
 
 import javax.interceptor.InvocationContext;

@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.util;
 
 import java.security.PrivilegedAction;
 import java.security.AccessController;
@@ -23,7 +23,7 @@ import java.lang.reflect.AccessibleObject;
 /**
  * @version $Rev$ $Date$
  */
-class SetAccessible implements PrivilegedAction {
+public class SetAccessible implements PrivilegedAction {
     private final java.lang.reflect.AccessibleObject object;
 
     public SetAccessible(AccessibleObject object) {
