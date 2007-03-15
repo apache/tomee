@@ -209,10 +209,10 @@ public class ServiceManager {
         for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
             Map.Entry entry1 = (Map.Entry) iterator1.next();
             String key = (String) entry1.getKey();
-            String value = (String) entry1.getValue();
-            if (key.startsWith(prefix)) {
+            Object value = entry1.getValue();
+            if (value instanceof String && key.startsWith(prefix)) {
                 key = key.replaceFirst(prefix, "");
-                serviceProperties.setProperty(key, value);
+                serviceProperties.setProperty(key, (String) value);
             }
         }
 
