@@ -148,6 +148,15 @@ public class DatabaseTimerStore implements TimerStore {
         return timerData;
     }
 
+    
+    /**
+     * Used to restore a Timer that was cancelled, but the Transaction has been rolled back. 
+     */
+    public void addTimerData(TimerData timerData) throws TimerStoreException {
+        // TODO Need to verify how to handle this. Presumably, the Transaction rollback would "restore" this timer. So, no further action would be required.
+        // The MemoryTimerStore does require this capability...
+    }
+    
     public void removeTimer(long timerId) {
         boolean threwException = false;
 

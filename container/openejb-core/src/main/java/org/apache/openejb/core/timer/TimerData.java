@@ -163,6 +163,7 @@ public class TimerData {
             // if the tx was rolled back, reschedule the timer with the java.util.Timer
             if (!committed) {
                 cancelled = false;
+                timerService.addTimerData(TimerData.this);
                 timerService.schedule(TimerData.this);
             }
         }

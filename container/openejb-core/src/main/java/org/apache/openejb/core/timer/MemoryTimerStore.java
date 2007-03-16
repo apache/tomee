@@ -74,6 +74,11 @@ public class MemoryTimerStore implements TimerStore {
         Collection<TimerData> timerDatas = new ArrayList<TimerData>(tasks.getTasks().values());
         return timerDatas;
     }
+    
+    // used to re-register a TimerData, if a cancel() is rolledback...
+    public void addTimerData(TimerData timerData) throws TimerStoreException {
+        getTasks().addTimerData(timerData);
+    }
 
     public TimerData createTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) throws TimerStoreException {
         long id = counter.incrementAndGet();

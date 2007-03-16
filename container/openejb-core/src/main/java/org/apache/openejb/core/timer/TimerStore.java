@@ -26,6 +26,8 @@ public interface TimerStore {
     Collection<TimerData> getTimers(String deploymentId);
 
     Collection<TimerData> loadTimers(EjbTimerServiceImpl timerService, String deploymentId) throws TimerStoreException;
+    
+    void addTimerData(TimerData timerData) throws TimerStoreException;
 
     TimerData createTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) throws TimerStoreException;
 

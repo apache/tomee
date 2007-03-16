@@ -141,6 +141,18 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         // make sure it was removed from the strore
         timerStore.removeTimer(timerData.getId());
     }
+    
+    /**
+     * Returns a timerData to the TimerStore, if a cancel() is rolled back.
+     * @param timerData the timer to be returned to the timer store
+     */
+    public void addTimerData(TimerData timerData) {
+        try {
+            timerStore.addTimerData(timerData);
+        } catch (Exception e) {
+            log.warning("Could not add timer " + e.getMessage() + " at (now) " + System.currentTimeMillis() + " for " + timerData.getExpiration().getTime());
+        }
+    }
 
     public Timer getTimer(long timerId) {
         TimerData timerData = timerStore.getTimer((String)deployment.getDeploymentID(), timerId);
