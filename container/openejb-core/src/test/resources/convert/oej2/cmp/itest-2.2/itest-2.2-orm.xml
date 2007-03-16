@@ -66,10 +66,10 @@
             <column name="id"/>
         </attribute-override>
         <attribute-override name="firstName">
-            <column name="firstName"/>
+            <column name="first_name"/>
         </attribute-override>
         <attribute-override name="lastName">
-            <column name="lastName"/>
+            <column name="last_name"/>
         </attribute-override>
     </entity>
     <entity name="BasicCmpBeanExplicitPK" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmpBeanExplicitPK">
@@ -88,10 +88,10 @@
             <column name="id"/>
         </attribute-override>
         <attribute-override name="firstName">
-            <column name="firstName"/>
+            <column name="first_name"/>
         </attribute-override>
         <attribute-override name="lastName">
-            <column name="lastName"/>
+            <column name="last_name"/>
         </attribute-override>
     </entity>
     <entity name="AOBasicCmpBean" class="openejb.org.apache.openejb.test.entity.cmp.AOBasicCmpBean">
@@ -107,10 +107,10 @@
             <column name="id"/>
         </attribute-override>
         <attribute-override name="firstName">
-            <column name="firstName"/>
+            <column name="first_name"/>
         </attribute-override>
         <attribute-override name="lastName">
-            <column name="lastName"/>
+            <column name="last_name"/>
         </attribute-override>
     </entity>
     <entity name="EncCmpBean" class="openejb.org.apache.openejb.test.entity.cmp.EncCmpBean">
@@ -123,10 +123,10 @@
             <column name="id"/>
         </attribute-override>
         <attribute-override name="firstName">
-            <column name="firstName"/>
+            <column name="first_name"/>
         </attribute-override>
         <attribute-override name="lastName">
-            <column name="lastName"/>
+            <column name="last_name"/>
         </attribute-override>
     </entity>
     <entity name="CmpRMIIIOPBean" class="openejb.org.apache.openejb.test.entity.cmp.CmpRMIIIOPBean">
@@ -139,10 +139,10 @@
             <column name="id"/>
         </attribute-override>
         <attribute-override name="firstName">
-            <column name="firstName"/>
+            <column name="first_name"/>
         </attribute-override>
         <attribute-override name="lastName">
-            <column name="lastName"/>
+            <column name="last_name"/>
         </attribute-override>
     </entity>
     <entity name="BasicCmp2" class="openejb.org.apache.openejb.test.entity.cmp.BasicCmp2">

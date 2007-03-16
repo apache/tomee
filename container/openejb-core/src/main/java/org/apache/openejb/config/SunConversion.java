@@ -50,6 +50,7 @@ import org.apache.openejb.jee.jpa.PrimaryKeyJoinColumn;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.SecondaryTable;
 import org.apache.openejb.jee.jpa.Table;
+import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.sun.Cmp;
 import org.apache.openejb.jee.sun.CmpFieldMapping;
@@ -240,10 +241,7 @@ public class SunConversion implements DynamicDeployer {
 
             for (CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
                 String fieldName = cmpFieldMapping.getFieldName();
-                Field field = entityData.ids.get(fieldName);
-                if (field == null) {
-                    field = entityData.fields.get(fieldName);
-                }
+                Field field = entityData.fields.get(fieldName);
 
                 if (field == null) {
                     // todo warn no such cmp-field in the ejb-jar.xml
@@ -570,44 +568,50 @@ public class SunConversion implements DynamicDeployer {
     private class EntityData {
         private final Entity entity;
         private final Map<String, Id> ids = new TreeMap<String, Id>();
-        private final Map<String, Basic> fields = new TreeMap<String, Basic>();
+        private final Map<String, Field> fields = new TreeMap<String, Field>();
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
         public EntityData(Entity entity) {
+            if (entity == null) throw new NullPointerException("entity is null");
             this.entity = entity;
 
             Attributes attributes = entity.getAttributes();
-            if (attributes == null) {
-                return;
+            if (attributes != null) {
+                for (Id id : attributes.getId()) {
+                    String name = id.getName();
+                    ids.put(name, id);
+                    fields.put(name, id);
+                }
+
+                for (Basic basic : attributes.getBasic()) {
+                    String name = basic.getName();
+                    fields.put(name, basic);
+                }
+
+                for (RelationField relationField : attributes.getOneToOne()) {
+                    String name = relationField.getName();
+                    relations.put(name, relationField);
+                }
+
+                for (RelationField relationField : attributes.getOneToMany()) {
+                    String name = relationField.getName();
+                    relations.put(name, relationField);
+                }
+
+                for (RelationField relationField : attributes.getManyToOne()) {
+                    String name = relationField.getName();
+                    relations.put(name, relationField);
+                }
+
+                for (RelationField relationField : attributes.getManyToMany()) {
+                    String name = relationField.getName();
+                    relations.put(name, relationField);
+                }
             }
 
-            for (Id id : attributes.getId()) {
-                ids.put(id.getName(), id);
-            }
-
-            for (Basic basic : attributes.getBasic()) {
-                String name = basic.getName();
-                fields.put(name, basic);
-            }
-
-            for (RelationField relationField : attributes.getOneToOne()) {
-                String name = relationField.getName();
-                relations.put(name, relationField);
-            }
-
-            for (RelationField relationField : attributes.getOneToMany()) {
-                String name = relationField.getName();
-                relations.put(name, relationField);
-            }
-
-            for (RelationField relationField : attributes.getManyToOne()) {
-                String name = relationField.getName();
-                relations.put(name, relationField);
-            }
-
-            for (RelationField relationField : attributes.getManyToMany()) {
-                String name = relationField.getName();
-                relations.put(name, relationField);
+            for (AttributeOverride attributeOverride : entity.getAttributeOverride()) {
+                String name = attributeOverride.getName();
+                fields.put(name, attributeOverride);
             }
         }
 
