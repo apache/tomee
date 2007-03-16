@@ -228,7 +228,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 ClassFinder classFinder = new ClassFinder(clazz);
 
+                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
+                inheritedClassFinder.getClass();
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
@@ -300,7 +302,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                processCallbacks(bean, classFinder);
+                processCallbacks(bean, inheritedClassFinder);
 
                 Interceptors interceptors = clazz.getAnnotation(Interceptors.class);
                 if (interceptors != null){
@@ -561,32 +563,47 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass());
                     }
-                    ClassFinder classFinder = new ClassFinder(clazz);
 
-                    processCallbacks(interceptor, classFinder);    
+                    ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+                    processCallbacks(interceptor, inheritedClassFinder);
                 }
             }
 
             return ejbModule;
         }
 
+        private ClassFinder createInheritedClassFinder(Class<?> clazz) {
+            List<Class> parents = new ArrayList();
+            parents.add(clazz);
+            Class parent = clazz;
+            while ((parent = parent.getSuperclass()) != null){
+                parents.add(parent);
+            }
+
+            return new ClassFinder(parents);
+        }
+
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
             LifecycleCallback postConstruct = getFirst(bean.getPostConstruct());
             if (postConstruct == null) {
-                Method method = getFirst(classFinder.findAnnotatedMethods(PostConstruct.class));
-                if (method != null) bean.addPostConstruct(method.getName());
+                for (Method method : classFinder.findAnnotatedMethods(PostConstruct.class)) {
+                    bean.getPostConstruct().add(new LifecycleCallback(method));
+                }
             }
 
             LifecycleCallback preDestroy = getFirst(bean.getPreDestroy());
             if (preDestroy == null) {
-                Method method = getFirst(classFinder.findAnnotatedMethods(PreDestroy.class));
-                if (method != null) bean.addPreDestroy(method.getName());
+                for (Method method : classFinder.findAnnotatedMethods(PreDestroy.class)) {
+                    bean.getPreDestroy().add(new LifecycleCallback(method));
+                }
             }
 
             AroundInvoke aroundInvoke = getFirst(bean.getAroundInvoke());
             if (aroundInvoke == null) {
-                Method method = getFirst(classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class));
-                if (method != null) bean.addAroundInvoke(method.getName());
+                for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
+                    bean.getAroundInvoke().add(new AroundInvoke(method));
+                }
             }
 
             if (bean instanceof org.apache.openejb.jee.Session) {
@@ -594,14 +611,16 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 LifecycleCallback postActivate = getFirst(session.getPostActivate());
                 if (postActivate == null) {
-                    Method method = getFirst(classFinder.findAnnotatedMethods(PostActivate.class));
-                    if (method != null) session.addPostActivate(method.getName());
+                    for (Method method : classFinder.findAnnotatedMethods(PostActivate.class)) {
+                        session.getPostActivate().add(new LifecycleCallback(method));
+                    }
                 }
 
                 LifecycleCallback prePassivate = getFirst(session.getPrePassivate());
                 if (prePassivate == null) {
-                    Method method = getFirst(classFinder.findAnnotatedMethods(PrePassivate.class));
-                    if (method != null) session.addPrePassivate(method.getName());
+                    for (Method method : classFinder.findAnnotatedMethods(PrePassivate.class)) {
+                        session.getPrePassivate().add(new LifecycleCallback(method));
+                    }
                 }
 
                 List<Method> initMethods = classFinder.findAnnotatedMethods(Init.class);

@@ -51,6 +51,11 @@ public class LifecycleCallback implements CallbackMethod {
     public LifecycleCallback() {
     }
 
+    public LifecycleCallback(java.lang.reflect.Method method) {
+        this.lifecycleCallbackClass = method.getDeclaringClass().getName();
+        this.lifecycleCallbackMethod = method.getName();
+    }
+
     public LifecycleCallback(String lifecycleCallbackClass, String lifecycleCallbackMethod) {
         this.lifecycleCallbackClass = lifecycleCallbackClass;
         this.lifecycleCallbackMethod = lifecycleCallbackMethod;

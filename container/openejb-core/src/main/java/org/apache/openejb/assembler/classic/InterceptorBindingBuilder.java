@@ -90,10 +90,26 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
-                methods.add(method);
+                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
+                    methods.add(method);
+                }
+                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                    methods.add(method);
+                }
             } catch (NoSuchMethodException e) {
                 logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
             }
+        }
+        Collections.sort(methods, new MethodCallbackComparator());
+    }
+
+    public static class MethodCallbackComparator implements Comparator<Method> {
+        public int compare(Method m1, Method m2) {
+            Class<?> c1 = m1.getDeclaringClass();
+            Class<?> c2 = m2.getDeclaringClass();
+            if (c1.equals(c2)) return 0;
+            if (c1.isAssignableFrom(c2)) return -1;
+            return 1;
         }
     }
 
