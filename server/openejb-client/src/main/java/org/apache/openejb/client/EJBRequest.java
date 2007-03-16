@@ -21,6 +21,16 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 
+import java.rmi.Remote;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.rmi.PortableRemoteObject;
+import javax.rmi.CORBA.Tie;
+import javax.rmi.CORBA.Stub;
+
+import org.omg.CORBA.ORB;
+
 public class EJBRequest implements Request {
 
     private transient int requestMethod;
@@ -228,6 +238,21 @@ public class EJBRequest implements Request {
                         throw new IOException("Unkown primitive type: " + type);
                     }
                 } else {
+                    if (obj instanceof PortableRemoteObject && obj instanceof Remote) {
+                        Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
+                        if (tie == null) {
+                            throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
+                        }
+                        ORB orb = null;
+                        try {
+                            Context initialContext = new InitialContext();
+                            orb = (ORB) initialContext.lookup("java:comp/ORB");
+                        } catch (NamingException e) {
+                            throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
+                        }
+                        tie.orb(orb);
+                        obj = PortableRemoteObject.toStub((Remote) obj);
+                    }
                     out.write(L);
                     out.writeObject(type);
                     out.writeObject(obj);
