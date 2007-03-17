@@ -92,15 +92,26 @@ public class StatelessInterceptorTest extends TestCase {
         int i = target.echo(123);
         assertEquals(123, i);
 
-//        assertCalls(
-//                Call.Default_Invoke_BEFORE,
-//                Call.Method_Invoke_BEFORE,
-//                Call.Bean_Invoke_BEFORE,
-//                Call.Bean_Invoke,
-//                Call.Bean_Invoke_AFTER,
-//                Call.Method_Invoke_AFTER,
-//                Call.Default_Invoke_AFTER);
-//        calls.clear();
+        assertCalls(
+                Call.Default_Invoke_BEFORE,
+                Call.Method_Invoke_BEFORE,
+                Call.Bean_Invoke_BEFORE,
+                Call.Bean_Invoke,
+                Call.Bean_Invoke_AFTER,
+                Call.Method_Invoke_AFTER,
+                Call.Default_Invoke_AFTER);
+        calls.clear();
+
+        boolean b = target.echo(true);
+        assertEquals(true, b);
+
+        assertCalls(
+                Call.Method_Invoke_BEFORE,
+                Call.Bean_Invoke_BEFORE,
+                Call.Bean_Invoke,
+                Call.Bean_Invoke_AFTER,
+                Call.Method_Invoke_AFTER);
+        calls.clear();
 
         try {
             target.throwAppException();
@@ -202,12 +213,14 @@ public class StatelessInterceptorTest extends TestCase {
 
         @ExcludeClassInterceptors
         public int echo(int i) {
+            calls.add(Call.Bean_Invoke);
             return i;
         }
 
         @ExcludeClassInterceptors
         @ExcludeDefaultInterceptors
         public boolean echo(boolean i) {
+            calls.add(Call.Bean_Invoke);
             return i;
         }
     }
@@ -217,6 +230,7 @@ public class StatelessInterceptorTest extends TestCase {
         void throwAppException() throws AppException;
         void throwSysException();
         int echo(int i);
+        boolean echo(boolean b);
     }
 
     public static class AppException extends Exception {

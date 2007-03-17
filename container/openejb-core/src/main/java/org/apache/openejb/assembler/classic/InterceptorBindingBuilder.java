@@ -280,7 +280,7 @@ public class InterceptorBindingBuilder {
 
             try {
                 Class param = Classes.forName(methodParam, parameterType.getClassLoader());
-                if (param.equals(parameterType)) {
+                if (!param.equals(parameterType)) {
                     return false;
                 }
             } catch (ClassNotFoundException e) {
@@ -288,7 +288,7 @@ public class InterceptorBindingBuilder {
             }
         }
 
-        return false;
+        return true;
     }
 
     private static String getName(Class<?> type) {
