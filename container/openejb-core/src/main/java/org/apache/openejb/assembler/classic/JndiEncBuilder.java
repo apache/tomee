@@ -259,14 +259,15 @@ public class JndiEncBuilder {
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
             LinkRef linkRef = null;
             try {
-                if (EJBContext.class.isAssignableFrom(Class.forName(referenceInfo.resourceEnvRefType))) {
+                Class<?> type = Class.forName(referenceInfo.resourceEnvRefType, true, EJBContext.class.getClassLoader());
+                if (EJBContext.class.isAssignableFrom(type)) {
                     String jndiName = "java:comp/EJBContext";
                     linkRef = new LinkRef(jndiName);
                     bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
                     continue;
                 }
             } catch (ClassNotFoundException e) {
-                throw new OpenEJBException(e);
+//                throw new OpenEJBException(e);
             }
 
             if (referenceInfo.location != null){

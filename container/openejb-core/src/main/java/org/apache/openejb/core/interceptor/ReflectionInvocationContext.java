@@ -137,7 +137,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
 
         public String toString() {
-            return method.getDeclaringClass() + "." + method.getName();
+            return method.getDeclaringClass().getName() + "." + method.getName();
         }
     }
 
@@ -171,5 +171,11 @@ public class ReflectionInvocationContext implements InvocationContext {
         } else {
             throw new AssertionError(cause);
         }
+    }
+
+    public String toString() {
+        String methodName = (method != null)? method.getName(): null;
+
+        return "InvocationContext(target="+target.getClass().getName()+", method="+methodName+")";
     }
 }

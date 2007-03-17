@@ -130,12 +130,21 @@ public class InterceptorBindingBuilder {
     private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
-                Method method = clazz.getMethod(callbackInfo.method);
+                Method method = getMethod(clazz, callbackInfo.method);
+                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
+                    methods.add(method);
+                }
+                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                    methods.add(method);
+                }
                 methods.add(method);
             } catch (NoSuchMethodException e) {
-                logger.warning("Bean Callback method not found (skipping): public void " + callbackInfo.method + "(); in class " + clazz.getName());
+                String message = "Bean Callback method not found (skipping): public void " + callbackInfo.method + "(); in class " + clazz.getName();
+                logger.warning(message);
+                throw new IllegalStateException(message, e);
             }
         }
+        Collections.sort(methods, new MethodCallbackComparator());
     }
 
 

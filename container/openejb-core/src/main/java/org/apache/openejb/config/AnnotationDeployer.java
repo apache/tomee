@@ -45,6 +45,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.ejb.Init;
 import javax.ejb.Remove;
+import javax.ejb.EJBContext;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceProperty;
@@ -858,8 +859,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                 String[] knownConnectionFactoryTypes = {"javax.sql.DataSource","javax.jms.ConnectionFactory","javax.jms.QueueConnectionFactory","javax.jms.TopicConnectionFactory","javax.mail.Session","java.net.URL"};
                 String[] knownEnvironmentEntries = {"java.lang.String", "java.lang.Character", "java.lang.Integer", "java.lang.Boolean", "java.lang.Double", 
                         "java.lang.Byte", "java.lang.Short", "java.lang.Long", "java.lang.Float","int","char","boolean","double","byte","short","long","float"};
-
-                if(contains(knownConnectionFactoryTypes,type)) {
+                if (type.equals("javax.ejb.SessionContext")){
+                    ResourceEnvRef ref = new ResourceEnvRef();
+                    ref.setResourceEnvRefName(refName);
+                    ref.setResourceEnvRefType(type);
+                    consumer.getResourceEnvRef().add(ref);
+                    reference = ref;
+                } else if (contains(knownConnectionFactoryTypes,type)) {
                     ResourceRef resourceRef = null;
                     List<ResourceRef> resourceRefs = consumer.getResourceRef();
                     for (ResourceRef resRef : resourceRefs) {
