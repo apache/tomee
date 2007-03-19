@@ -37,8 +37,10 @@ public class Cmp1Generator implements Opcodes {
     public byte[] generate() {
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[0]);
 
+        // if we have an unknown pk, we need to add a field for the pk
         if (unknownPk) {
-            cw.visitField(ACC_PUBLIC + ACC_TRANSIENT, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
+            // public Long OpenEJB_pk;
+            cw.visitField(ACC_PUBLIC, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
         }
 
         createConstructor();
