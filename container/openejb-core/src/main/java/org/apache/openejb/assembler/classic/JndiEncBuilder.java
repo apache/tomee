@@ -153,6 +153,11 @@ public class JndiEncBuilder {
         TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
+        if (System.getProperty("duct tape") != null){
+            bindings.put("java:comp/ORB", new JndiUrlReference("java:comp/geronimo/ORB"));
+            bindings.put("java:comp/HandleDelegate", new JndiUrlReference("java:comp/geronimo/HandleDelegate"));
+        }
+
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
