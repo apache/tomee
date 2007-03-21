@@ -29,5 +29,7 @@ public class EjbJarInfo extends InfoObject {
     public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
     public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
     public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<InterceptorBindingInfo>();
+    public final List<MethodInfo> excludeList = new ArrayList<MethodInfo>();
+
 
 }

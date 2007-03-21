@@ -24,5 +24,6 @@ public class MethodPermissionInfo extends InfoObject {
     public String description;
     public final List<String> roleNames = new ArrayList<String>();
     public final List<MethodInfo> methods = new ArrayList<MethodInfo>();
+    public boolean unchecked;
 
 }

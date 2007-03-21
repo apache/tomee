@@ -41,15 +41,16 @@ public class PseudoSecurityService implements SecurityService {
         return true;
     }
 
-    public Object translateTo(Object securityIdentity, Class type) {
+
+    public <T> T translateTo(Object securityIdentity, Class<T> type) {
         if (type == java.security.Principal.class) {
-            return new java.security.Principal() {
+            return (T)new java.security.Principal() {
                 public String getName() {
                     return "TestRole";
                 }
             };
         } else if (type == javax.security.auth.Subject.class) {
-            return new javax.security.auth.Subject();
+            return (T) new javax.security.auth.Subject();
         } else {
             return null;
         }

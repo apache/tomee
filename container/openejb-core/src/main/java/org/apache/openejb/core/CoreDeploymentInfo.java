@@ -36,6 +36,7 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
+import javax.security.auth.Subject;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
@@ -108,6 +109,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private BusinessRemoteHome businessRemoteHomeRef;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
 
+    private String ejbName;
+    private String moduleId;
+    private Subject runAsSubject;
 
     private Object containerData;
 
@@ -942,5 +946,29 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setEjbTimerService(EjbTimerService ejbTimerService) {
         this.ejbTimerService = ejbTimerService;
+    }
+
+    public String getEjbName() {
+        return null;
+    }
+
+    public String getModuleID() {
+        return null;
+    }
+
+    public Subject getRunAsSubject() {
+        return null;
+    }
+
+    public void setEjbName(String ejbName) {
+        this.ejbName = ejbName;
+    }
+
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public void setRunAsSubject(Subject runAsSubject) {
+        this.runAsSubject = runAsSubject;
     }
 }

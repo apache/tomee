@@ -20,16 +20,26 @@ package org.apache.openejb;
  * @version $Rev$ $Date$
  */
 public enum InterfaceType {
-    EJB_HOME,
-    EJB_OBJECT,
-    EJB_LOCAL_HOME,
-    EJB_LOCAL,
-    BUSINESS_LOCAL,
-    BUSINESS_LOCAL_HOME,
-    BUSINESS_REMOTE,
-    BUSINESS_REMOTE_HOME,
-    SERVICE_ENDPOINT,
-    UNKNOWN;
+    EJB_HOME("Home"),
+    EJB_OBJECT("Remote"),
+    EJB_LOCAL_HOME("LocalHome"),
+    EJB_LOCAL("Local"),
+    BUSINESS_LOCAL("BusinessLocal"),
+    BUSINESS_LOCAL_HOME("BusinessLocalHome"),
+    BUSINESS_REMOTE("BusinessRemote"),
+    BUSINESS_REMOTE_HOME("BusinessRemoteHome"),
+    SERVICE_ENDPOINT("ServiceEndpoint"),
+    UNKNOWN("Unknown");
+
+    private final String name;
+
+    InterfaceType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public boolean isHome() {
         switch(this){

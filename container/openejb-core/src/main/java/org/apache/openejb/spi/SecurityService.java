@@ -22,7 +22,7 @@ public interface SecurityService extends Service {
 
     public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames);
 
-    public Object translateTo(Object securityIdentity, Class type);
+    public <T> T translateTo(Object securityIdentity, Class<T> type);
 
     /*
      * Associates a security identity object with the current thread. Setting 

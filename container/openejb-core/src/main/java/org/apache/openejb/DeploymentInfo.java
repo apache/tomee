@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.List;
 import javax.naming.Context;
+import javax.security.auth.Subject;
 
 public interface DeploymentInfo {
 
@@ -53,6 +54,12 @@ public interface DeploymentInfo {
     public Container getContainer();
 
     public Object getDeploymentID();
+
+    public String getEjbName();
+
+    public String getModuleID();
+
+    public Subject getRunAsSubject();
 
     public boolean isBeanManagedTransaction();
 

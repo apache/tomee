@@ -49,7 +49,9 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String transactionType;
     public JndiEncInfo jndiEnc;
     public NamedMethodInfo timeoutMethod;
-    
+
+    public String runAs;
+
     public final List<SecurityRoleReferenceInfo> securityRoleReferences = new ArrayList<SecurityRoleReferenceInfo>();
 
     public final List<CallbackInfo> aroundInvoke = new ArrayList<CallbackInfo>();
