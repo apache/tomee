@@ -455,7 +455,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             persistantFields.add(fieldName);
             primaryKeyFields.add(fieldName);
         } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
-            if (createOverrides) {
+            if (createOverrides || CmpVersion.CMP2.equals(bean.getCmpVersion())) {
                 String fieldName = "OpenEJB_pk";
                 Id field = new Id(fieldName);
                 field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));

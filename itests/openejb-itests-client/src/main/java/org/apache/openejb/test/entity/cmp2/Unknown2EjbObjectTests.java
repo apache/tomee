@@ -17,23 +17,23 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
+import org.apache.openejb.test.entity.cmp.UnknownCmpHome;
 
 import javax.ejb.EJBHome;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicCmpTestClients
  */
-public class Complex2EjbObjectTests extends ComplexCmp2TestClient {
+public class Unknown2EjbObjectTests extends UnknownCmp2TestClient {
 
-    public Complex2EjbObjectTests() {
+    public Unknown2EjbObjectTests() {
         super("EJBObject.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/ComplexCmpHome");
-        ejbHome = (ComplexCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
+        Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
+        ejbHome = (UnknownCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
         ejbObject = ejbHome.createObject("Third Bean");
     }
 

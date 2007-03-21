@@ -275,6 +275,9 @@
         <description>AddressEJB</description>
         <table name="address"/>
         <attributes>
+            <id name="OpenEJB_pk">
+                <generated-value strategy="AUTO"/>
+            </id>
             <basic name="street">
                 <column name="street"/>
             </basic>

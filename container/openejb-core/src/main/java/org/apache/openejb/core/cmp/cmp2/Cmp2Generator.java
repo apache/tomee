@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class Cmp2Generator implements Opcodes {
     private static final String UNKNOWN_PK_NAME = "OpenEJB_pk";
-    private static final String UNKNOWN_PK_DESCRIPTOR = Type.LONG_TYPE.getDescriptor();
+    private static final Type UNKNOWN_PK_TYPE = Type.getType(Long.class);
 
     private final String implClassName;
     private final String beanClassName;
@@ -91,7 +91,7 @@ public class Cmp2Generator implements Opcodes {
         }
 
         if (Object.class.equals(primKeyClass)) {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE, UNKNOWN_PK_NAME, UNKNOWN_PK_DESCRIPTOR, null, null);
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE, UNKNOWN_PK_NAME, UNKNOWN_PK_TYPE.getDescriptor(), null, null);
             fv.visitEnd();
         }
 
@@ -324,21 +324,19 @@ public class Cmp2Generator implements Opcodes {
     private void createSimplePrimaryKeyGetter() {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_getPrimaryKey", "()Ljava/lang/Object;", null, null);
         if (pkField != null) {
-            String descriptor = pkField.getType().getDescriptor();
-
             // push the pk field
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, implClassName, pkField.getName(), descriptor);
+            mv.visitFieldInsn(GETFIELD, implClassName, pkField.getName(), pkField.getDescriptor());
 
             // return the pk field (from the stack)
             mv.visitInsn(pkField.getType().getOpcode(IRETURN));
         } else if (Object.class.equals(primKeyClass)) {
             // push the pk field
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, implClassName, UNKNOWN_PK_NAME, UNKNOWN_PK_DESCRIPTOR);
+            mv.visitFieldInsn(GETFIELD, implClassName, UNKNOWN_PK_NAME, UNKNOWN_PK_TYPE.getDescriptor());
 
             // return the pk field (from the stack)
-            mv.visitInsn(pkField.getType().getOpcode(IRETURN));
+            mv.visitInsn(UNKNOWN_PK_TYPE.getOpcode(IRETURN));
         } else {
             String pkImplName = primKeyClass.getName().replace('.', '/');
 

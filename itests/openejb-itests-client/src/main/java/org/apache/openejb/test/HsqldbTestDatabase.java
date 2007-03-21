@@ -67,6 +67,7 @@ public class HsqldbTestDatabase implements TestDatabase {
             "UnknownCmpBeanX",
             "BasicCmp2Bean",
             "ComplexCmp2Bean",
+            "UnknownCmp2Bean",
             "AllowedOperationsCmpBean",
             "AllowedOperationsCmp2Bean",
             "EncCmpBean",
