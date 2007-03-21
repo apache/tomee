@@ -34,8 +34,8 @@ import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.openejb.OpenEJBException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 
 public class JmsProxyTest extends TestCase {
     private static final String REQUEST_QUEUE_NAME = "request";

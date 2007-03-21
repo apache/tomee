@@ -31,9 +31,12 @@ import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
+import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.xbean.naming.context.WritableContext;
+import org.omg.CORBA.ORB;
 
 import javax.ejb.EJBContext;
+import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
@@ -153,10 +156,9 @@ public class JndiEncBuilder {
         TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
-        if (System.getProperty("duct tape") != null){
-            bindings.put("java:comp/ORB", new JndiUrlReference("java:comp/geronimo/ORB"));
-            bindings.put("java:comp/HandleDelegate", new JndiUrlReference("java:comp/geronimo/HandleDelegate"));
-        }
+        // bind CORBA stuff
+        bindings.put("java:comp/ORB", new SystemComponentReference(ORB.class));
+        bindings.put("java:comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);

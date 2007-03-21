@@ -34,8 +34,8 @@ import javax.resource.spi.work.WorkManager;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 
 public class SimpleJmsTest extends TestCase {
     private static final String REQUEST_QUEUE_NAME = "request";

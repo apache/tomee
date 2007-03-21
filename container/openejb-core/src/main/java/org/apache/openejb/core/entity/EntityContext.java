@@ -180,10 +180,6 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             throw new IllegalStateException();
         }
 
-        public TimerService getTimerService() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
         public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
             throw new IllegalStateException();
         }
