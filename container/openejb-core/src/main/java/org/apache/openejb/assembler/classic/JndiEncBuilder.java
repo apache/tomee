@@ -24,6 +24,7 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
+import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
@@ -156,9 +157,13 @@ public class JndiEncBuilder {
         TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
+
+        ORB orb = SystemInstance.get().getComponent(ORB.class);
         // bind CORBA stuff
-        bindings.put("java:comp/ORB", new SystemComponentReference(ORB.class));
-        bindings.put("java:comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+        if (orb != null) {
+            bindings.put("java:comp/ORB", new ObjectReference(orb));
+            bindings.put("java:comp/HandleDelegate", new ObjectReference(SystemInstance.get().getComponent(ORB.class)));
+        }
 
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
