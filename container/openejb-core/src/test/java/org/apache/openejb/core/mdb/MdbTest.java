@@ -17,9 +17,11 @@
  */
 package org.apache.openejb.core.mdb;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
-import edu.emory.mathcs.backport.java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import junit.framework.TestCase;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ra.ActiveMQActivationSpec;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
