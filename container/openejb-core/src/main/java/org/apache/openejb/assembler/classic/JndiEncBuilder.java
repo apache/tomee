@@ -162,7 +162,7 @@ public class JndiEncBuilder {
         // bind CORBA stuff
         if (orb != null) {
             bindings.put("java:comp/ORB", new ObjectReference(orb));
-            bindings.put("java:comp/HandleDelegate", new ObjectReference(SystemInstance.get().getComponent(ORB.class)));
+            bindings.put("java:comp/HandleDelegate", new ObjectReference(SystemInstance.get().getComponent(HandleDelegate.class)));
         }
 
         // get JtaEntityManagerRegistry
