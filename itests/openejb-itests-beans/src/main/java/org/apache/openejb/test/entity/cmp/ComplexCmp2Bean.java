@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,33 +9,28 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.test.entity.cmp;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
-import java.util.Properties;
+import javax.ejb.CreateException;
 import java.util.StringTokenizer;
+import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
 
-public abstract class BasicCmp2Bean implements EntityBean {
-    private static int nextId;
+public abstract class ComplexCmp2Bean implements EntityBean {
     public EntityContext ejbContext;
     public Map<String,OperationsPolicy> allowedOperationsTable = new HashMap<String,OperationsPolicy>();
-
-    public abstract Integer getId();
-
-    public abstract void setId(Integer primaryKey);
 
     public abstract String getFirstName();
 
@@ -43,7 +39,7 @@ public abstract class BasicCmp2Bean implements EntityBean {
     public abstract String getLastName();
 
     public abstract void setLastName(String lastName);
-    
+
 
     //=============================
     // Home interface methods
@@ -62,8 +58,7 @@ public abstract class BasicCmp2Bean implements EntityBean {
     /**
      * Maps to BasicCmpHome.create(String name)
      */
-    public Integer ejbCreateObject(String name) throws CreateException {
-        setId(nextId++);
+    public ComplexCmpBeanPk ejbCreateObject(String name) throws CreateException {
         StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
@@ -72,7 +67,7 @@ public abstract class BasicCmp2Bean implements EntityBean {
 
     public void ejbPostCreateObject(String name) {
     }
-    
+
     //
     // Home interface methods
     //=============================

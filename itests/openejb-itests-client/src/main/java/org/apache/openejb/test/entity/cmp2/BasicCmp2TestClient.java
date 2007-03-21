@@ -19,11 +19,7 @@ package org.apache.openejb.test.entity.cmp2;
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 import org.apache.openejb.test.entity.cmp.BasicCmpObject;
 
-/**
- * 
- */
 public abstract class BasicCmp2TestClient extends Cmp2TestClient {
-
     protected BasicCmpHome ejbHome;
     protected BasicCmpObject ejbObject;
 

@@ -20,6 +20,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.FieldVisitor;
 
 public class Cmp1Generator implements Opcodes {
     private String implClassName;
@@ -40,7 +41,8 @@ public class Cmp1Generator implements Opcodes {
         // if we have an unknown pk, we need to add a field for the pk
         if (unknownPk) {
             // public Long OpenEJB_pk;
-            cw.visitField(ACC_PUBLIC, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
+            FieldVisitor fv = cw.visitField(ACC_PUBLIC, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
+            fv.visitEnd();
         }
 
         createConstructor();

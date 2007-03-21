@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,31 +9,31 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import javax.ejb.EJBMetaData;
+import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
 
-import org.apache.openejb.test.entity.cmp.BasicCmpHome;
+import javax.ejb.EJBMetaData;
 
 /**
  * [3] Should be run as the third test suite of the BasicCmpTestClients
  */
-public class Cmp2EjbHomeTests extends BasicCmp2TestClient {
+public class Complex2EjbHomeTests extends ComplexCmp2TestClient {
 
-    public Cmp2EjbHomeTests() {
+    public Complex2EjbHomeTests() {
         super("EJBHome.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
-        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        Object obj = initialContext.lookup("client/tests/entity/cmp2/ComplexCmpHome");
+        ejbHome = (ComplexCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
         ejbObject = ejbHome.createObject("Second Bean");
         ejbPrimaryKey = ejbObject.getPrimaryKey();
     }

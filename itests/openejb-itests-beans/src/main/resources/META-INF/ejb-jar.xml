@@ -163,6 +163,30 @@
       </resource-ref>
     </entity>
 
+    <entity>
+      <ejb-name>ComplexCmp2Bean</ejb-name>
+      <home>org.apache.openejb.test.entity.cmp.ComplexCmpHome</home>
+      <remote>org.apache.openejb.test.entity.cmp.ComplexCmpObject</remote>
+      <ejb-class>org.apache.openejb.test.entity.cmp.ComplexCmp2Bean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexCmp2Bean</abstract-schema-name>
+      <prim-key-class>org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-field>
+        <field-name>firstName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>lastName</field-name>
+      </cmp-field>
+      <resource-ref>
+        <description>This is a reference to a JDBC database.</description>
+        <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+    </entity>
+
     <!--
     ########################################################
     ID:  client/tests/entity/cmp/allowed_operations/EntityHome

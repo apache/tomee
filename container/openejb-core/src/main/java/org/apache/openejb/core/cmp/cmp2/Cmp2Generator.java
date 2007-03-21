@@ -17,10 +17,6 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
@@ -28,17 +24,28 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Cmp2Generator implements Opcodes {
-    private String implClassName;
-    private String beanClassName;
-    private ClassWriter cw;
+    private static final String UNKNOWN_PK_NAME = "OpenEJB_pk";
+    private static final String UNKNOWN_PK_DESCRIPTOR = Type.LONG_TYPE.getDescriptor();
+
+    private final String implClassName;
+    private final String beanClassName;
+    private final ClassWriter cw;
     private final Map<String, CmpField> cmpFields = new LinkedHashMap<String, CmpField>();
     private final Map<String, CmrField> cmrFields = new LinkedHashMap<String, CmrField>();
-    private CmpField pkField;
+    private final CmpField pkField;
+    private final Class primKeyClass;
 
-    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, String[] cmrFields) {
+    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmrFields) {
+        if (pkField == null && primKeyClass == null) throw new NullPointerException("Both pkField and primKeyClass are null");
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
+        this.primKeyClass = primKeyClass;
 
         for (String cmpFieldName : cmrFields) {
             String getterName = getterName(cmpFieldName);
@@ -52,11 +59,15 @@ public class Cmp2Generator implements Opcodes {
             }
         }
 
-        this.pkField = cmpFields.get(pkField);
-        // todo warn about unsupported complex primary key
-        if (pkField != null && this.pkField == null) {
-            throw new IllegalArgumentException("No such property " + pkField + " defined on bean class " + beanClassName);
+        if (pkField != null) {
+            this.pkField = cmpFields.get(pkField);
+            if (this.pkField == null) {
+                throw new IllegalArgumentException("No such property " + pkField + " defined on bean class " + beanClassName);
+            }
+        } else {
+            this.pkField = null;
         }
+
         cw = new ClassWriter(true);
     }
 
@@ -76,6 +87,11 @@ public class Cmp2Generator implements Opcodes {
         // private transient boolean deleted;
         {
             FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, "deleted", "Z", null, null);
+            fv.visitEnd();
+        }
+
+        if (Object.class.equals(primKeyClass)) {
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE, UNKNOWN_PK_NAME, UNKNOWN_PK_DESCRIPTOR, null, null);
             fv.visitEnd();
         }
 
@@ -107,7 +123,7 @@ public class Cmp2Generator implements Opcodes {
             createCmrSetter(cmrField);
         }
 
-        createSimplePrimaryKeyGetter(pkField);
+        createSimplePrimaryKeyGetter();
 
         createOpenEJB_deleted();
 
@@ -305,20 +321,64 @@ public class Cmp2Generator implements Opcodes {
         return "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
-    private void createSimplePrimaryKeyGetter(CmpField pkField) {
-        // todo complex pk
-        if (pkField == null) return;
+    private void createSimplePrimaryKeyGetter() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_getPrimaryKey", "()Ljava/lang/Object;", null, null);
+        if (pkField != null) {
+            String descriptor = pkField.getType().getDescriptor();
 
-        String descriptor = pkField.getType().getDescriptor();
+            // push the pk field
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, implClassName, pkField.getName(), descriptor);
 
-        String methodName = "OpenEJB_getPrimaryKey";
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()Ljava/lang/Object;", null, null);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, implClassName, pkField.getName(), descriptor);
-        mv.visitInsn(pkField.getType().getOpcode(IRETURN));
+            // return the pk field (from the stack)
+            mv.visitInsn(pkField.getType().getOpcode(IRETURN));
+        } else if (Object.class.equals(primKeyClass)) {
+            // push the pk field
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, implClassName, UNKNOWN_PK_NAME, UNKNOWN_PK_DESCRIPTOR);
+
+            // return the pk field (from the stack)
+            mv.visitInsn(pkField.getType().getOpcode(IRETURN));
+        } else {
+            String pkImplName = primKeyClass.getName().replace('.', '/');
+
+            // new Pk();
+            mv.visitTypeInsn(NEW, pkImplName);
+            mv.visitInsn(DUP);
+            mv.visitMethodInsn(INVOKESPECIAL, pkImplName, "<init>", "()V");
+            mv.visitVarInsn(ASTORE, 1);
+            mv.visitVarInsn(ALOAD, 1);
+
+            // copy each field from the ejb to the pk class
+            for (Field field : primKeyClass.getFields()) {
+                CmpField cmpField = cmpFields.get(field.getName());
+
+                // only process the cmp fields
+                if (cmpField == null) {
+                    continue;
+                }
+
+                // verify types match... this should have been caught by the verifier, but
+                // check again since generated code is so hard to debug
+                if (!cmpField.getType().getClassName().equals(field.getType().getName())) {
+                    throw new IllegalArgumentException("Primary key " + cmpField.getName() + " is type " + cmpField.getType().getClassName() + " but CMP field is type " + field.getType().getName());
+                }
+
+                // push the value from the cmp bean
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitFieldInsn(GETFIELD, implClassName, cmpField.getName(), cmpField.getDescriptor());
+                // set matching field in the pk class to the value on the stack
+                mv.visitFieldInsn(PUTFIELD, pkImplName, cmpField.getName(), cmpField.getDescriptor());
+                mv.visitVarInsn(ALOAD, 1);
+            }
+
+            // return the Pk();
+            mv.visitInsn(ARETURN);
+        }
+
         mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
-
 
     private void createCmrFields(CmrField cmrField) {
         FieldVisitor fv = cw.visitField(ACC_PRIVATE,

@@ -42,6 +42,22 @@ public class Cmp2TestSuite extends org.apache.openejb.test.TestSuite {
         this.addTest(new Cmp2JndiEncTests());
         this.addTest(new Cmp2RmiIiopTests());
         this.addTest(new CmrTestSuite());
+
+        this.addTest(new Complex2HomeIntfcTests());
+        this.addTest(new Complex2EjbHomeTests());
+        this.addTest(new Complex2EjbObjectTests());
+        this.addTest(new Complex2RemoteIntfcTests());
+        this.addTest(new Complex2HomeHandleTests());
+        this.addTest(new Complex2HandleTests());
+        this.addTest(new Complex2EjbMetaDataTests());
+//
+//        this.addTest(new Unknown2HomeIntfcTests());
+//        this.addTest(new Unknown2EjbHomeTests());
+//        this.addTest(new Unknown2EjbObjectTests());
+//        this.addTest(new Unknown2RemoteIntfcTests());
+//        this.addTest(new Unknown2HomeHandleTests());
+//        this.addTest(new Unknown2HandleTests());
+//        this.addTest(new Unknown2EjbMetaDataTests());
     }
 
     public static junit.framework.Test suite() {

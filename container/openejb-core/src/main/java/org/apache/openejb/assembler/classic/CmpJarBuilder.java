@@ -100,6 +100,15 @@ public class CmpJarBuilder {
             throw new IOException("Could not find entity bean class " + beanClass);
         }
 
+        Class<?> primKeyClass = null;
+        if (entityBeanInfo.primKeyClass != null) {
+            try {
+                primKeyClass = tempClassLoader.loadClass(entityBeanInfo.primKeyClass);
+            } catch (ClassNotFoundException e) {
+                throw new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass);
+            }
+        }
+
         byte[] bytes = null;
         if (entityBeanInfo.cmpVersion != 2) {
             Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
@@ -113,6 +122,7 @@ public class CmpJarBuilder {
             Cmp2Generator cmp2Generator = new Cmp2Generator(cmpImplClass,
                     beanClass,
                     entityBeanInfo.primKeyField,
+                    primKeyClass,
                     entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
 
             for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
