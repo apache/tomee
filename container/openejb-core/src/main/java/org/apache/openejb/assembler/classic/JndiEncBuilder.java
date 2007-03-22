@@ -157,13 +157,8 @@ public class JndiEncBuilder {
         TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
 
-
-        ORB orb = SystemInstance.get().getComponent(ORB.class);
-        // bind CORBA stuff
-        if (orb != null) {
-            bindings.put("java:comp/ORB", new ObjectReference(orb));
-            bindings.put("java:comp/HandleDelegate", new ObjectReference(SystemInstance.get().getComponent(HandleDelegate.class)));
-        }
+        bindings.put("java:comp/ORB", new SystemComponentReference(ORB.class));
+        bindings.put("java:comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
