@@ -39,6 +39,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -298,7 +299,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         out.close();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
+        ObjectInputStream in = new EjbObjectInputStream(bais);
         Object obj = in.readObject();
         return obj;
     }
