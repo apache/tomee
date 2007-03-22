@@ -69,20 +69,20 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return getState().getEJBLocalHome();
     }
 
-    public Properties getEnvironment() {
-        return getState().getEnvironment();
+    public final Properties getEnvironment() {
+        throw new UnsupportedOperationException();
     }
 
-    public Identity getCallerIdentity() {
-        return getState().getCallerIdentity();
+    public final Identity getCallerIdentity() {
+        throw new UnsupportedOperationException();
     }
 
     public Principal getCallerPrincipal() {
         return getState().getCallerPrincipal(securityService);
     }
 
-    public boolean isCallerInRole(Identity identity) {
-        return getState().isCallerInRole(identity);
+    public final boolean isCallerInRole(Identity identity) {
+        throw new UnsupportedOperationException();
     }
 
     public boolean isCallerInRole(String roleName) {
@@ -106,7 +106,11 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Object lookup(String name) {
-        return getState().lookup(name);
+        try {
+            return (new InitialContext()).lookup("java:comp/env/" + name);
+        } catch (NamingException ne) {
+            throw new IllegalArgumentException(ne);
+        }
     }
 
     public boolean isUserTransactionAccessAllowed() {
@@ -149,30 +153,12 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return di.getEJBLocalHome();
         }
 
-        public final Properties getEnvironment() {
-            throw new UnsupportedOperationException();
-        }
-
-        public final Identity getCallerIdentity() {
-            throw new UnsupportedOperationException();
-        }
-
         public Principal getCallerPrincipal(SecurityService securityService) {
-            Object securityIdentity = ThreadContext.getThreadContext().getSecurityIdentity();
-            return (Principal) securityService.translateTo(securityIdentity, Principal.class);
-        }
-
-        public final boolean isCallerInRole(Identity identity) {
-            throw new UnsupportedOperationException();
+            return securityService.getCallerPrincipal();
         }
 
         public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            CoreDeploymentInfo di = threadContext.getDeploymentInfo();
-            List<String> physicalRoles = di.getPhysicalRole(roleName);
-            Object caller = threadContext.getSecurityIdentity();
-
-            return securityService.isCallerAuthorized(caller, physicalRoles);
+            return securityService.isCallerInRole(roleName);
         }
 
         public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
@@ -232,14 +218,6 @@ public abstract class BaseContext implements EJBContext, Serializable {
                 throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
             }
             return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
-        }
-
-        public Object lookup(String name) {
-            try {
-                return (new InitialContext()).lookup("java:comp/env/" + name);
-            } catch (NamingException ne) {
-                throw new IllegalArgumentException(ne);
-            }
         }
 
         public boolean isUserTransactionAccessAllowed() {

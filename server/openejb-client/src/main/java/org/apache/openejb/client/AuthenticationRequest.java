@@ -22,14 +22,14 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
-    private transient Object principle;
+    private transient Object principal;
     private transient Object credentials;
 
     public AuthenticationRequest() {
     }
 
-    public AuthenticationRequest(Object principle, Object credentials) {
-        this.principle = principle;
+    public AuthenticationRequest(Object principal, Object credentials) {
+        this.principal = principal;
         this.credentials = credentials;
     }
 
@@ -37,16 +37,16 @@ public class AuthenticationRequest implements Request {
         return RequestMethodConstants.AUTH_REQUEST;
     }
 
-    public Object getPrinciple() {
-        return principle;
+    public Object getPrincipal() {
+        return principal;
     }
 
     public Object getCredentials() {
         return credentials;
     }
 
-    public void setPrinciple(Object principle) {
-        this.principle = principle;
+    public void setPrincipal(Object principal) {
+        this.principal = principal;
     }
 
     public void setCredentials(Object credentials) {
@@ -54,12 +54,12 @@ public class AuthenticationRequest implements Request {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        principle = in.readObject();
+        principal = in.readObject();
         credentials = in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(principle);
+        out.writeObject(principal);
         out.writeObject(credentials);
     }
 }

@@ -16,14 +16,15 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
-import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 class AuthRequestHandler {
 
@@ -37,17 +38,25 @@ class AuthRequestHandler {
         try {
             req.readExternal(in);
 
-            ClientMetaData client = new ClientMetaData();
 
-            client.setClientIdentity(new String((String) req.getPrinciple()));
+            String username = (String) req.getPrincipal();
+            String password = (String) req.getCredentials();
+
+            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            Object token = securityService.login(username, password);
+
+            ClientMetaData client = new ClientMetaData();
+            client.setClientIdentity(token);
 
             res.setIdentity(client);
             res.setResponseCode(ResponseCodes.AUTH_GRANTED);
 
             res.writeExternal(out);
         } catch (Throwable t) {
-
+            // TODO: Log
             return;
         }
     }
+
+
 }

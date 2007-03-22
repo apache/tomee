@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.spi;
 
+import org.apache.openejb.InterfaceType;
+
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginException;
+import java.lang.reflect.Method;
+import java.security.Principal;
 import java.util.Collection;
 
 public interface SecurityService extends Service {
@@ -38,4 +44,17 @@ public interface SecurityService extends Service {
     * If there is no association, then null is returned. 
     */
     public Object getSecurityIdentity();
+
+    public Object login(String user, String pass) throws LoginException;
+
+    public void associate(Object securityIdentity) throws LoginException;
+
+    public Subject getCurrentSubject();
+
+    public boolean isCallerInRole(String role);
+
+    public Principal getCallerPrincipal();
+
+    public void checkPermission(Method method, InterfaceType type) throws Throwable;
+
 }

@@ -92,8 +92,15 @@ class EjbRequestHandler {
             call.setEJBRequest(req);
             call.setDeploymentInfo(di);
         } catch (Throwable t) {
-            replyWithFatalError
-                    (out, t, "Unable to set the thread context for this request");
+            replyWithFatalError(out, t, "Unable to set the thread context for this request");
+            return;
+        }
+
+        try {
+            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            securityService.associate(req.getClientIdentity());
+        } catch (Throwable t) {
+            replyWithFatalError(out, t, "Security system failed to associate thread with the thread");
             return;
         }
 

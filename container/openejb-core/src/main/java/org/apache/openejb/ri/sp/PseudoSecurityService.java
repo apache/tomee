@@ -17,8 +17,13 @@
 package org.apache.openejb.ri.sp;
 
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.InterfaceType;
 
+import javax.security.auth.login.LoginException;
+import javax.security.auth.Subject;
 import java.util.Collection;
+import java.security.Principal;
+import java.lang.reflect.Method;
 
 /**
  * @org.apache.xbean.XBean element="pseudoSecurityService"
@@ -54,5 +59,28 @@ public class PseudoSecurityService implements SecurityService {
         } else {
             return null;
         }
+    }
+
+
+    public Object login(String user, String pass) throws LoginException {
+        return null;
+    }
+
+    public void associate(Object securityIdentity) throws LoginException {
+    }
+
+    public Subject getCurrentSubject() {
+        return null;
+    }
+
+    public boolean isCallerInRole(String role) {
+        return false;
+    }
+
+    public Principal getCallerPrincipal() {
+        return null;
+    }
+
+    public void checkPermission(Method method, InterfaceType type) throws Throwable {
     }
 }

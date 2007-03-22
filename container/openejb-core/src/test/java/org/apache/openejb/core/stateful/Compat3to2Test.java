@@ -30,8 +30,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
 import javax.naming.InitialContext;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -70,7 +68,11 @@ public class Compat3to2Test extends TestCase {
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         assembler.createContainer(statefulContainerInfo);
 
-        assembler.createApplication(config.configureApplication(buildTestApp()));
+        EjbJar ejbJar = new EjbJar();
+        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
+        bean.setHomeAndRemote(TargetHome.class, Target.class);
+
+        assembler.createApplication(config.configureApplication(new EjbModule(getClass().getClassLoader(), getClass().getSimpleName(), "test", ejbJar, null)));
 
         calls.clear();
 
@@ -93,15 +95,6 @@ public class Compat3to2Test extends TestCase {
     private void assertCalls(Call... expectedCalls) {
         List expected = Arrays.asList(expectedCalls);
         assertEquals(join("\n", expected), join("\n", calls));
-    }
-
-    public EjbModule buildTestApp() {
-        EjbJar ejbJar = new EjbJar();
-
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
-        bean.setHomeAndRemote(TargetHome.class, Target.class);
-
-        return new EjbModule(this.getClass().getClassLoader(), this.getClass().getSimpleName(), "test", ejbJar, null);
     }
 
     public static List<Call> calls = new ArrayList<Call>();
