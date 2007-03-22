@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.security;
+package org.apache.openejb.server.security;
 
 import junit.framework.TestCase;
 import org.apache.openejb.server.security.GroupPrincipal;
