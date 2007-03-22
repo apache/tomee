@@ -186,9 +186,13 @@ class EnterpriseBeanBuilder {
             }
         }
 
-        // TODO
-//        deployment.setPostConstruct(getCallback(ejbClass, bean.postConstruct));
-//        deployment.setPreDestroy(getCallback(ejbClass, bean.preDestroy));
+        for (ServiceReferenceInfo info : bean.jndiEnc.serviceRefs) {
+            for (InjectionInfo target : info.targets) {
+                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
+                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                deployment.getInjections().add(injection);
+            }
+        }
 
         // Timer
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
@@ -196,13 +200,6 @@ class EnterpriseBeanBuilder {
             EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(deployment);
             deployment.setEjbTimerService(timerService);
         }
-
-        // interceptors
-//        InterceptorBuilder interceptorBuilder = new InterceptorBuilder(new ArrayList(), bean);
-//        for (Method method : ejbClass.getMethods()) {
-//            List<InterceptorData> interceptorDatas = interceptorBuilder.build(method);
-//            deployment.setMethodInterceptors(method, interceptorDatas);
-//        }
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
