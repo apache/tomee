@@ -14,11 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.security;
+package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.assembler.classic.ModulePermissions;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -48,8 +49,7 @@ public class JaccPermissionsBuilder {
         ModulePermissions componentPermissions = new ModulePermissions(new Permissions(), new Permissions(), new HashMap());
 
         for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
-            DeploymentInfo deployment = deployments.get(enterpriseBean.ejbDeploymentId);
-            Map gbean = null; //
+            CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(enterpriseBean.ejbDeploymentId);
 
             Permissions permissions = new Permissions();
 
@@ -68,12 +68,8 @@ public class JaccPermissionsBuilder {
                 if (runAsSubject == null) {
                     throw new OpenEJBException("No role designate found for run-as name: " + runAsName);
                 }
-                gbean.put("runAs", runAsSubject);
+                deployment.setRunAsSubject(runAsSubject);
             }
-
-            // Default principal
-            Object defaultPrincipal = null;// TODO
-            gbean.put("defaultPrincipal", defaultPrincipal);
         }
         return componentPermissions;
     }

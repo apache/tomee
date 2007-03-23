@@ -79,6 +79,10 @@ public class SecurityIdentity {
         this.runAs = value;
     }
 
+    public void setRunAs(String value) {
+        this.runAs = new RunAs(value);
+    }
+
     public String getId() {
         return id;
     }

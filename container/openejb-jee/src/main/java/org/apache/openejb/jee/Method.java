@@ -231,6 +231,16 @@ public class Method {
     @XmlTransient
     protected TextMap description = new TextMap();
 
+    public Method(String ejbName, java.lang.reflect.Method method) {
+        this.ejbName = ejbName;
+        this.methodName = method.getName();
+        MethodParams methodParams = new MethodParams();
+        for (Class<?> type : method.getParameterTypes()) {
+            methodParams.getMethodParam().add(type.getCanonicalName());
+        }
+        this.methodParams = methodParams;
+    }
+
     public Method(String ejbName, String methodName, String... parameters) {
         this.ejbName = ejbName;
         this.methodName = methodName;

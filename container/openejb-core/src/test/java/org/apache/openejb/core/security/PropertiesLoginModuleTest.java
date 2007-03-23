@@ -14,12 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.security;
+package org.apache.openejb.core.security;
 
 import junit.framework.TestCase;
-import org.apache.openejb.server.security.GroupPrincipal;
-import org.apache.openejb.server.security.UserPrincipal;
-import org.apache.openejb.server.security.UsernamePasswordCallbackHandler;
+import org.apache.openejb.core.security.GroupPrincipal;
+import org.apache.openejb.core.security.UserPrincipal;
+import org.apache.openejb.core.security.UsernamePasswordCallbackHandler;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.FailedLoginException;

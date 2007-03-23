@@ -87,12 +87,12 @@ public class MethodPermission {
         return this.roleName;
     }
 
-    public EmptyType getUnchecked() {
-        return unchecked;
+    public boolean getUnchecked() {
+        return unchecked != null;
     }
 
-    public void setUnchecked(EmptyType value) {
-        this.unchecked = value;
+    public void setUnchecked(boolean b) {
+        this.unchecked = (b) ? new EmptyType() : null;
     }
 
     public List<Method> getMethod() {

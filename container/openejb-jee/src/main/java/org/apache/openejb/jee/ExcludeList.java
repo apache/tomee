@@ -68,6 +68,10 @@ public class ExcludeList {
         return this.method;
     }
 
+    public void addMethod(Method method){
+        getMethod().add(method);
+    }
+    
     public String getId() {
         return id;
     }

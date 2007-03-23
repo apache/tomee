@@ -290,6 +290,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return appInfo;
     }
 
+    public EjbJarInfo configureApplication(EjbJar ejbJar) throws OpenEJBException {
+        String moduleId = (ejbJar.getId() == null) ? ejbJar.getId(): ejbJar.toString();
+        EjbModule ejbModule = new EjbModule(Thread.currentThread().getContextClassLoader(), moduleId, moduleId, ejbJar, null);
+        return configureApplication(ejbModule);
+    }
+
     public EjbJarInfo configureApplication(EjbModule ejbModule) throws OpenEJBException {
         AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);

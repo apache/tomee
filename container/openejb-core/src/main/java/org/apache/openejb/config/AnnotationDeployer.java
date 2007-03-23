@@ -17,8 +17,49 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.Lifecycle;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.MethodTransaction;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SecurityIdentity;
+import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -26,10 +67,16 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resources;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.RunAs;
+import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBs;
+import javax.ejb.Init;
 import javax.ejb.Local;
 import javax.ejb.LocalHome;
 import javax.ejb.MessageDriven;
@@ -37,23 +84,21 @@ import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
 import javax.ejb.RemoteHome;
+import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.ejb.Init;
-import javax.ejb.Remove;
-import javax.ejb.EJBContext;
+import javax.interceptor.ExcludeClassInterceptors;
+import javax.interceptor.ExcludeDefaultInterceptors;
+import javax.interceptor.Interceptors;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
-import javax.interceptor.Interceptors;
-import javax.interceptor.ExcludeDefaultInterceptors;
-import javax.interceptor.ExcludeClassInterceptors;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
 import java.io.File;
@@ -103,6 +148,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
 //        @SuppressWarnings("unchecked")
+
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             ClassFinder finder;
             if (ejbModule.getJarURI() != null) {
@@ -231,7 +277,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
-                inheritedClassFinder.getClass();
+                processCallbacks(bean, inheritedClassFinder);
+
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = clazz.getAnnotation(TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
@@ -303,13 +350,61 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                processCallbacks(bean, inheritedClassFinder);
+                RolesAllowed rolesAllowed = clazz.getAnnotation(RolesAllowed.class);
+                if (rolesAllowed != null) {
+                    MethodPermission methodPermission = new MethodPermission();
+                    methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
+                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, "*"));
+                    assemblyDescriptor.getMethodPermission().add(methodPermission);
+                }
+
+                for (Method method : classFinder.findAnnotatedMethods(RolesAllowed.class)) {
+                    MethodPermission methodPermission = new MethodPermission();
+                    methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
+                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
+                    assemblyDescriptor.getMethodPermission().add(methodPermission);
+                }
+
+                PermitAll permitAll = clazz.getAnnotation(PermitAll.class);
+                if (permitAll != null) {
+                    MethodPermission methodPermission = new MethodPermission();
+                    methodPermission.setUnchecked(true);
+                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, "*"));
+                    assemblyDescriptor.getMethodPermission().add(methodPermission);
+                }
+
+                for (Method method : classFinder.findAnnotatedMethods(PermitAll.class)) {
+                    MethodPermission methodPermission = new MethodPermission();
+                    methodPermission.setUnchecked(true);
+                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
+                    assemblyDescriptor.getMethodPermission().add(methodPermission);
+                }
+
+                for (Method method : classFinder.findAnnotatedMethods(DenyAll.class)) {
+                    ExcludeList excludeList = assemblyDescriptor.getExcludeList();
+                    excludeList.addMethod(new org.apache.openejb.jee.Method(ejbName, method));
+                }
+
+                RunAs runAs = clazz.getAnnotation(RunAs.class);
+                if (runAs != null && bean.getSecurityIdentity() == null) {
+                    SecurityIdentity securityIdentity = new SecurityIdentity();
+                    securityIdentity.setRunAs(runAs.value());
+                }
+
+                DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);
+                if (declareRoles != null && bean instanceof RemoteBean){
+                    RemoteBean remoteBean = (RemoteBean) bean;
+                    List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
+                    for (String role : declareRoles.value()) {
+                        securityRoleRefs.add(new SecurityRoleRef(role));
+                    }
+                }
 
                 Interceptors interceptors = clazz.getAnnotation(Interceptors.class);
-                if (interceptors != null){
+                if (interceptors != null) {
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
-                        if (ejbJar.getInterceptor(interceptor.getName()) == null){
+                        if (ejbJar.getInterceptor(interceptor.getName()) == null) {
                             ejbJar.addInterceptor(new Interceptor(interceptor.getName()));
                         }
                     }
@@ -324,10 +419,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 for (Method method : classFinder.findAnnotatedMethods(Interceptors.class)) {
                     interceptors = method.getAnnotation(Interceptors.class);
-                    if (interceptors != null){
+                    if (interceptors != null) {
                         EjbJar ejbJar = ejbModule.getEjbJar();
                         for (Class interceptor : interceptors.value()) {
-                            if (ejbJar.getInterceptor(interceptor.getName()) == null){
+                            if (ejbJar.getInterceptor(interceptor.getName()) == null) {
                                 ejbJar.addInterceptor(new Interceptor(interceptor.getName()));
                             }
                         }
@@ -344,7 +439,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 ExcludeDefaultInterceptors excludeDefaultInterceptors = clazz.getAnnotation(ExcludeDefaultInterceptors.class);
-                if (excludeDefaultInterceptors != null){
+                if (excludeDefaultInterceptors != null) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeDefaultInterceptors(true);
                 }
@@ -356,7 +451,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 ExcludeClassInterceptors excludeClassInterceptors = clazz.getAnnotation(ExcludeClassInterceptors.class);
-                if (excludeClassInterceptors != null){
+                if (excludeClassInterceptors != null) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeClassInterceptors(true);
                 }
@@ -366,7 +461,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setExcludeClassInterceptors(true);
                     binding.setMethod(new NamedMethod(method));
                 }
-                
+
                 if (bean instanceof RemoteBean) {
                     RemoteBean remoteBean = (RemoteBean) bean;
 
@@ -377,7 +472,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             try {
                                 Method create = null;
                                 for (Method method : homeClass.getMethods()) {
-                                    if (method.getName().startsWith("create")){
+                                    if (method.getName().startsWith("create")) {
                                         create = method;
                                         break;
                                     }
@@ -400,7 +495,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             try {
                                 Method create = null;
                                 for (Method method : homeClass.getMethods()) {
-                                    if (method.getName().startsWith("create")){
+                                    if (method.getName().startsWith("create")) {
                                         create = method;
                                         break;
                                     }
@@ -578,7 +673,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<Class> parents = new ArrayList();
             parents.add(clazz);
             Class parent = clazz;
-            while ((parent = parent.getSuperclass()) != null){
+            while ((parent = parent.getSuperclass()) != null) {
                 parents.add(parent);
             }
 
@@ -629,7 +724,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     InitMethod initMethod = new InitMethod(method);
 
                     Init init = method.getAnnotation(Init.class);
-                    if (init.value() != null && !init.value().equals("")){
+                    if (init.value() != null && !init.value().equals("")) {
                         initMethod.setCreateMethod(init.value());
                     }
 
@@ -763,11 +858,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
             PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
-            if(persistenceContexts != null){
+            if (persistenceContexts != null) {
                 persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
             }
             PersistenceContext persistenceContext = clazz.getAnnotation(PersistenceContext.class);
-            if (persistenceContext != null){
+            if (persistenceContext != null) {
                 persistenceContextList.add(persistenceContext);
             }
             for (PersistenceContext pCtx : persistenceContextList) {
@@ -841,63 +936,63 @@ public class AnnotationDeployer implements DynamicDeployer {
                     break;
                 }
             }
-            
-            
-            if(reference == null) {
+
+
+            if (reference == null) {
                 String type = null;
-                if(resource.type() != java.lang.Object.class) {
+                if (resource.type() != java.lang.Object.class) {
                     type = resource.type().getName();
                 } else {
-                    type = member.getType().getName();                
+                    type = member.getType().getName();
                 }
                 /* TODO message-destination-refs have not been considered . Currently the types that are
                  *  not in the types in knownConnectionFactoryTypes array are considered resource-env-refs
                  *  This approach needs to be changed as it is just a hack to get the functionality working.
                  */
-                
-                 
-                String[] knownConnectionFactoryTypes = {"javax.sql.DataSource","javax.jms.ConnectionFactory","javax.jms.QueueConnectionFactory","javax.jms.TopicConnectionFactory","javax.mail.Session","java.net.URL"};
-                String[] knownEnvironmentEntries = {"java.lang.String", "java.lang.Character", "java.lang.Integer", "java.lang.Boolean", "java.lang.Double", 
-                        "java.lang.Byte", "java.lang.Short", "java.lang.Long", "java.lang.Float","int","char","boolean","double","byte","short","long","float"};
-                if (type.equals("javax.ejb.SessionContext")){
+
+
+                String[] knownConnectionFactoryTypes = {"javax.sql.DataSource", "javax.jms.ConnectionFactory", "javax.jms.QueueConnectionFactory", "javax.jms.TopicConnectionFactory", "javax.mail.Session", "java.net.URL"};
+                String[] knownEnvironmentEntries = {"java.lang.String", "java.lang.Character", "java.lang.Integer", "java.lang.Boolean", "java.lang.Double",
+                        "java.lang.Byte", "java.lang.Short", "java.lang.Long", "java.lang.Float", "int", "char", "boolean", "double", "byte", "short", "long", "float"};
+                if (type.equals("javax.ejb.SessionContext")) {
                     ResourceEnvRef ref = new ResourceEnvRef();
                     ref.setResourceEnvRefName(refName);
                     ref.setResourceEnvRefType(type);
                     consumer.getResourceEnvRef().add(ref);
                     reference = ref;
-                } else if (contains(knownConnectionFactoryTypes,type)) {
+                } else if (contains(knownConnectionFactoryTypes, type)) {
                     ResourceRef resourceRef = null;
                     List<ResourceRef> resourceRefs = consumer.getResourceRef();
                     for (ResourceRef resRef : resourceRefs) {
-                        if( resRef.getName().equals(refName)) {
+                        if (resRef.getName().equals(refName)) {
                             resourceRef = resRef;
                             break;
-                        }                
+                        }
                     }
-                            
+
                     if (resourceRef == null) {
                         resourceRef = new ResourceRef();
                         resourceRef.setName(refName);
                         resourceRefs.add(resourceRef);
                     }
-                
+
                     if (resourceRef.getResAuth() == null) {
-                        if (resource.authenticationType() == Resource.AuthenticationType.APPLICATION){
+                        if (resource.authenticationType() == Resource.AuthenticationType.APPLICATION) {
                             resourceRef.setResAuth(ResAuth.APPLICATION);
                         } else {
                             resourceRef.setResAuth(ResAuth.CONTAINER);
                         }
                     }
-                
+
                     if (resourceRef.getResType() == null || ("").equals(resourceRef.getResType())) {
                         if (resource.type() != java.lang.Object.class) {
                             resourceRef.setResType(resource.type().getName());
                         } else {
                             resourceRef.setResType(member.getType().getName());
-                        }                
+                        }
                     }
-                
-                    if (resourceRef.getResSharingScope() == null){
+
+                    if (resourceRef.getResSharingScope() == null) {
                         if (resource.shareable()) {
                             resourceRef.setResSharingScope(ResSharingScope.SHAREABLE);
                         } else {
@@ -905,31 +1000,32 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                     reference = resourceRef;
-                } else if (!contains(knownEnvironmentEntries,type)){             
-                                        
+                } else if (!contains(knownEnvironmentEntries, type)) {
+
                     List<ResourceEnvRef> resourceEnvRefs = consumer.getResourceEnvRef();
                     ResourceEnvRef resourceEnvRef = null;
                     for (ResourceEnvRef resEnvRef : resourceEnvRefs) {
-                        if(resEnvRef.getName().equals(refName)) {
+                        if (resEnvRef.getName().equals(refName)) {
                             resourceEnvRef = resEnvRef;
                             break;
-                        }                    
+                        }
                     }
                     if (resourceEnvRef == null) {
                         resourceEnvRef = new ResourceEnvRef();
                         resourceEnvRef.setName(refName);
                         resourceEnvRefs.add(resourceEnvRef);
                     }
-                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
+                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType()))
+                    {
                         if (resource.type() != java.lang.Object.class) {
                             resourceEnvRef.setResourceEnvRefType(resource.type().getName());
                         } else {
                             resourceEnvRef.setResourceEnvRefType(member.getType().getName());
-                        }                
-                    }  
+                        }
+                    }
                     reference = resourceEnvRef;
                 }
-            }                        
+            }
             if (reference == null) {
                 return;
             }
@@ -999,6 +1095,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
+         *
          * @param consumer
          * @param persistenceContext
          * @param member
@@ -1006,17 +1103,17 @@ public class AnnotationDeployer implements DynamicDeployer {
          */
         private void buildPersistenceContext(JndiConsumer consumer, PersistenceContext persistenceContext, Member member) throws OpenEJBException {
             String refName = persistenceContext.name();
-            
-            if(refName.equals("")) {
+
+            if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
-            
-            if(refName == null) {
+
+            if (refName == null) {
                 throw new OpenEJBException("The name attribute is not specified for the class level annotation @PersistenceContext with unitName="
-                     + persistenceContext.unitName() + ". It is mandatory for all class level PersistenceContext annotations.");
+                        + persistenceContext.unitName() + ". It is mandatory for all class level PersistenceContext annotations.");
             }
             PersistenceContextRef persistenceContextRef = null;
-            
+
             List<PersistenceContextRef> persistenceContextRefs = consumer.getPersistenceContextRef();
             for (PersistenceContextRef pcRef : persistenceContextRefs) {
                 if (pcRef.getPersistenceContextRefName().equals(refName)) {
@@ -1024,62 +1121,64 @@ public class AnnotationDeployer implements DynamicDeployer {
                     break;
                 }
             }
-            
+
             if (persistenceContextRef == null) {
                 persistenceContextRef = new PersistenceContextRef();
                 persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 persistenceContextRef.setPersistenceContextRefName(refName);
-                if(persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                if (persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                 } else {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
-                }                
+                }
                 persistenceContextRefs.add(persistenceContextRef);
             } else {
-                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
+                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName()))
+                {
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 }
-                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
-                    if(persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType()))
+                {
+                    if (persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                     } else {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
-                    }                
-                }                
+                    }
+                }
             }
-            
+
             List<Property> persistenceProperties = persistenceContextRef.getPersistenceProperty();
             if (persistenceProperties == null) {
                 persistenceProperties = new ArrayList<Property>();
                 persistenceContextRef.setPersistenceProperty(persistenceProperties);
             }
-            
+
             Property property = null;
-            for(PersistenceProperty persistenceProperty : persistenceContext.properties()) {
+            for (PersistenceProperty persistenceProperty : persistenceContext.properties()) {
                 boolean flag = true;
-                for(Property prpty : persistenceProperties) {
-                    if(prpty.getName().equals(persistenceProperty.name())) {
+                for (Property prpty : persistenceProperties) {
+                    if (prpty.getName().equals(persistenceProperty.name())) {
                         flag = false;
                         break;
-                    } 
+                    }
                 }
-                if(flag) {
+                if (flag) {
                     property = new Property();
                     property.setName(persistenceProperty.name());
                     property.setValue(persistenceProperty.value());
                     persistenceProperties.add(property);
                 }
             }
-                        
+
             if (member != null) {
                 // Set the member name where this will be injected
                 InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(member.getDeclaringClass().getName());
                 target.setInjectionTargetName(member.getName());
                 persistenceContextRef.getInjectionTarget().add(target);
-            }                        
+            }
         }
-        
+
         private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
             EjbRef ejbRef = new EjbRef();
 
@@ -1169,7 +1268,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return new ArrayList<Class<?>>(classes);
         }
 
-        private boolean contains(Object[] types,Object type){
+        private boolean contains(Object[] types, Object type) {
             int size = types.length;
             for (int i = 0; i < size; i++) {
                 if (type.equals(types[i])) {
@@ -1178,7 +1277,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             return false;
         }
-        
+
         private void addContainerTransaction(TransactionAttribute attribute, String ejbName, Method method, AssemblyDescriptor assemblyDescriptor) {
             ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method.getName(), asStrings(method.getParameterTypes()));
             assemblyDescriptor.getContainerTransaction().add(ctx);

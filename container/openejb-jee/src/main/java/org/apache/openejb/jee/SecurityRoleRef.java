@@ -59,6 +59,19 @@ public class SecurityRoleRef {
     @XmlTransient
     protected TextMap description = new TextMap();
 
+
+    public SecurityRoleRef() {
+    }
+
+    public SecurityRoleRef(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public SecurityRoleRef(String roleName, String roleLink) {
+        this.roleName = roleName;
+        this.roleLink = roleLink;
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

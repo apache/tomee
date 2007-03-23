@@ -40,7 +40,6 @@
     <module>openejb-corba</module>
     <module>openejb-derbynet</module>
     <module>openejb-hsql</module>
-    <module>openejb-security</module>
   </modules>
   <dependencies>
     <!--

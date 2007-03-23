@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.security;
+package org.apache.openejb.core.security;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;

@@ -14,10 +14,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.security;
+package org.apache.openejb.core.security;
 
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ThreadContextListener;
@@ -80,7 +79,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         ThreadContext.addThreadContextListener(this);
     }
 
-    public Serializable login(String username, String password) throws LoginException {
+    public Object login(String username, String password) throws LoginException {
         LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler(username, password));
         context.login();
 
@@ -111,7 +110,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         CoreDeploymentInfo deploymentInfo = newContext.getDeploymentInfo();
 
-        SecurityContext securityContext = oldContext.get(SecurityContext.class);
+        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
         if (deploymentInfo.getRunAsSubject() != null){
 
@@ -120,7 +119,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         } else if (securityContext == null){
 
             Subject subject = clientIdentity.get();
-            // TODO: Maybe use a default subject if client subject doesn't exist 
+            // TODO: Maybe use a default subject if client subject doesn't exist
 
             securityContext = new SecurityContext(subject);
         }
@@ -131,7 +130,11 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
 
     public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
-        PolicyContext.setContextID(reenteredContext.getDeploymentInfo().getModuleID());
+        if (reenteredContext == null){
+            PolicyContext.setContextID(null);
+        } else {
+            PolicyContext.setContextID(reenteredContext.getDeploymentInfo().getModuleID());
+        }
     }
 
 
@@ -231,7 +234,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     }
 
     public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames) {
-        return false;
+        return true;
     }
 
 }

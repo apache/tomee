@@ -91,6 +91,12 @@ public class EjbJar {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
 
+    public EjbJar() {
+    }
+
+    public EjbJar(String id) {
+        this.id = id;
+    }
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

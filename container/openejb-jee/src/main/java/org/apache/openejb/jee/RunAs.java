@@ -51,6 +51,13 @@ public class RunAs {
     @XmlID
     protected String id;
 
+    public RunAs() {
+    }
+
+    public RunAs(String roleName) {
+        this.roleName = roleName;
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();
