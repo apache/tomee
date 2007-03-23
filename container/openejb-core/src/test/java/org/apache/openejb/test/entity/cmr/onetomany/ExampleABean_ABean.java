@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 import org.apache.openejb.core.cmp.cmp2.SetValuedCmr;
 
-public class ExampleABean_ABean extends ABean implements Cmp2Entity {
+public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
     public static Object deploymentInfo;
     private transient boolean deleted;
     private Integer field1;
@@ -34,35 +34,35 @@ public class ExampleABean_ABean extends ABean implements Cmp2Entity {
     private Set<ExampleBBean_BBean> bNonCascade = new HashSet<ExampleBBean_BBean>();
     private SetValuedCmr bNonCascadeCmr = new SetValuedCmr(this, "bNonCascade", ExampleBBean_BBean.class, "aNonCascade");
 
-    public Integer getField1() {
+    public Integer getId() {
         return field1;
     }
 
-    public void setField1(Integer field1) {
+    public void setId(Integer field1) {
         this.field1 = field1;
     }
 
-    public String getField2() {
+    public String getName() {
         return field2;
     }
 
-    public void setField2(String field2) {
+    public void setName(String field2) {
         this.field2 = field2;
     }
 
-    public Set getB() {
+    public Set getPerformed() {
         return bCmr.get(b);
     }
 
-    public void setB(Set b) {
+    public void setPerformed(Set b) {
         bCmr.set(this.b, b);
     }
 
-    public Set getBNonCascade() {
+    public Set getComposed() {
         return bNonCascadeCmr.get(bNonCascade);
     }
 
-    public void setBNonCascade(Set bNonCascade) {
+    public void setComposed(Set bNonCascade) {
         bNonCascadeCmr.set(this.bNonCascade, bNonCascade);
     }
 

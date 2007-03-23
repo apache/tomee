@@ -20,22 +20,20 @@ import java.util.Set;
 import javax.ejb.EJBLocalObject;
 
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface ALocal extends EJBLocalObject {
-
+public interface ArtistLocal extends EJBLocalObject {
     // CMP
-    public Integer getField1();
-    public void setField1(Integer field1);
+    public Integer getId();
+    public void setId(Integer id);
 
-    public String getField2();
-    public void setField2(String field2);
+    public String getName();
+    public void setName(String name);
     
     // CMR
-    public Set<BLocal> getB();
-    public void setB(Set<BLocal> bSet);
+    public Set<SongLocal> getPerformed();
+    public void setPerformed(Set<SongLocal> performed);
 
-    public Set<BLocal> getBNonCascade();
-    public void setBNonCascade(Set<BLocal> bNonCascade);
+    public Set<SongLocal> getComposed();
+    public void setComposed(Set<SongLocal> composed);
 }

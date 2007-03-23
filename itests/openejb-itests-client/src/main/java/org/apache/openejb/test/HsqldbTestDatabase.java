@@ -37,18 +37,6 @@ public class HsqldbTestDatabase implements TestDatabase {
 
     private static String _dropEntity = "DROP TABLE entity";
 
-    // OneToOne
-    private static final String CREATE_ONE_TO_ONE_A = "CREATE TABLE OneToOneA(A1 INTEGER, A2 VARCHAR(255))";
-    private static final String DROP_ONE_TO_ONE_A = "DROP TABLE OneToOneA";
-    private static final String CREATE_ONE_TO_ONE_B = "CREATE TABLE OneToOneB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER)";
-    private static final String DROP_ONE_TO_ONE_B = "DROP TABLE OneToOneB";
-
-    // OneToMany
-    private static final String CREATE_ONE_TO_MANY_A = "CREATE TABLE OneToManyA(A1 INTEGER, A2 VARCHAR(255))";
-    private static final String DROP_ONE_TO_MANY_A = "DROP TABLE OneToManyA";
-    private static final String CREATE_ONE_TO_MANY_B = "CREATE TABLE OneToManyB(B1 INTEGER, B2 VARCHAR(255), B3 INTEGER, B4 VARCHAR(255), FKA1 INTEGER, FKA_NonCascade INTEGER)";
-    private static final String DROP_ONE_TO_MANY_B = "DROP TABLE OneToManyB";
-
     // CmrMapping
     private static final String CREATE_ONE_OWNING = "CREATE TABLE oneowning (col_id INTEGER, col_field1 INTEGER)";
     private static final String DROP_ONE_OWNING = "DROP TABLE oneowning";
@@ -75,6 +63,18 @@ public class HsqldbTestDatabase implements TestDatabase {
             "ContextLookupCmpBean",
             "Cmp_RMI_IIOP_Bean",
             "RmiIiopCmp2Bean",
+            "Person",
+            "License",
+            "ComplexPerson",
+            "ComplexLicense",
+            "Artist",
+            "Song",
+            "ComplexArtist",
+            "Complexsong",
+            "Game",
+            "Platform",
+            "ComplexGame",
+            "ComplexPlatform",
     };
 
     static {
@@ -84,10 +84,6 @@ public class HsqldbTestDatabase implements TestDatabase {
 
     public void createEntityTable() throws java.sql.SQLException {
         createTable(_createEntity, _dropEntity);
-        createTable(CREATE_ONE_TO_ONE_A, DROP_ONE_TO_ONE_A);
-        createTable(CREATE_ONE_TO_ONE_B, DROP_ONE_TO_ONE_B);
-        createTable(CREATE_ONE_TO_MANY_A, DROP_ONE_TO_MANY_A);
-        createTable(CREATE_ONE_TO_MANY_B, DROP_ONE_TO_MANY_B);
         createTable(CREATE_ONE_OWNING, DROP_ONE_OWNING);
         createTable(CREATE_ONE_INVERSE, DROP_ONE_INVERSE);
         createTable(CREATE_MANY_OWNING, DROP_MANY_OWNING);
@@ -96,10 +92,6 @@ public class HsqldbTestDatabase implements TestDatabase {
 
     public void dropEntityTable() throws java.sql.SQLException {
         dropTable(_dropEntity);
-        dropTable(DROP_ONE_TO_ONE_A);
-        dropTable(DROP_ONE_TO_ONE_B);
-        dropTable(DROP_ONE_TO_MANY_A);
-        dropTable(DROP_ONE_TO_MANY_B);
         dropTable(DROP_ONE_OWNING);
         dropTable(DROP_ONE_INVERSE);
         dropTable(DROP_MANY_OWNING);

@@ -27,11 +27,18 @@ import java.lang.reflect.Method;
 import java.lang.ref.WeakReference;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.ejb.EJBException;
+import javax.ejb.TransactionRequiredLocalException;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.AccessLocalException;
+import javax.transaction.TransactionRequiredException;
+import javax.transaction.TransactionRolledbackException;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
@@ -205,6 +212,30 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                          */
 
                     return _invoke(proxy, method, args);
+                } catch (TransactionRequiredException e) {
+                    if (this.isLocal()) {
+                        throw new TransactionRequiredLocalException(e.getMessage()).initCause(e.getCause());
+                    } else {
+                        throw e;
+                    }
+                } catch (TransactionRolledbackException e) {
+                    if (this.isLocal()) {
+                        throw new TransactionRolledbackLocalException(e.getMessage()).initCause(e.getCause());
+                    } else {
+                        throw e;
+                    }
+                } catch (NoSuchObjectException  e) {
+                    if (this.isLocal()) {
+                        throw new NoSuchObjectLocalException(e.getMessage()).initCause(e.getCause());
+                    } else {
+                        throw e;
+                    }
+                } catch (AccessException e) {
+                    if (this.isLocal()) {
+                        throw new AccessLocalException(e.getMessage()).initCause(e.getCause());
+                    } else {
+                        throw e;
+                    }
                 } catch (RemoteException e) {
                     if (this.isLocal()) {
                         throw new EJBException(e.getMessage()).initCause(e.getCause());

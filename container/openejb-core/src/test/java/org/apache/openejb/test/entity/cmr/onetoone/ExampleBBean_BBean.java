@@ -20,7 +20,7 @@ package org.apache.openejb.test.entity.cmr.onetoone;
 import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 
-public class ExampleBBean_BBean extends BBean implements Cmp2Entity {
+public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
     public static Object deploymentInfo;
     private transient boolean deleted;
     private Integer field1;
@@ -28,46 +28,46 @@ public class ExampleBBean_BBean extends BBean implements Cmp2Entity {
     private Integer field3;
     private String field4;
     private ExampleABean_ABean a;
-    private SingleValuedCmr<ExampleABean_ABean, ALocal> aCmr = new SingleValuedCmr<ExampleABean_ABean, ALocal>(this, "a", ExampleABean_ABean.class, "b");
+    private SingleValuedCmr<ExampleABean_ABean, PersonLocal> aCmr = new SingleValuedCmr<ExampleABean_ABean, PersonLocal>(this, "a", ExampleABean_ABean.class, "b");
 
-    public Integer getField1() {
+    public Integer getId() {
         return field1;
     }
 
-    public void setField1(Integer field1) {
+    public void setId(Integer field1) {
         this.field1 = field1;
     }
 
-    public String getField2() {
+    public String getNumber() {
         return field2;
     }
 
-    public void setField2(String field2) {
+    public void setNumber(String field2) {
         this.field2 = field2;
     }
 
-    public Integer getField3() {
+    public Integer getPoints() {
         return field3;
     }
 
-    public void setField3(Integer field3) {
+    public void setPoints(Integer field3) {
         this.field3 = field3;
     }
 
-    public String getField4() {
+    public String getNotes() {
         return field4;
     }
 
-    public void setField4(String field4) {
+    public void setNotes(String field4) {
         this.field4 = field4;
     }
 
-    public ALocal getA() {
+    public PersonLocal getPerson() {
         return aCmr.get(a);
     }
 
-    public void setA(ALocal a) {
-        this.a = aCmr.set(this.a, a);
+    public void setPerson(PersonLocal person) {
+        this.a = aCmr.set(this.a, person);
     }
 
     public Object OpenEJB_getPrimaryKey() {

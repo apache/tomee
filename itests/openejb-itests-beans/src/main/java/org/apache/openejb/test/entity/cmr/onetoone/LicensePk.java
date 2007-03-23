@@ -15,17 +15,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr;
+package org.apache.openejb.test.entity.cmr.onetoone;
 
-public class CmrTestSuite extends org.apache.openejb.test.TestSuite {
-    public CmrTestSuite() {
-        super();
-        this.addTest(new OneToOneTests());
-        this.addTest(new OneToManyTests());
-        this.addTest(new ManyToManyTests());
-        this.addTest(new OneToOneComplexPkTests());
-        this.addTest(new OneToManyComplexPkTests());
-        this.addTest(new ManyToManyComplexPkTests());
-//        this.addTest(new CmrMappingTests());
+public class LicensePk {
+    public Integer id;
+    public String number;
+
+    public LicensePk() {
+    }
+
+    public LicensePk(Integer id, String name) {
+        this.id = id;
+        this.number = name;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LicensePk personPk = (LicensePk) o;
+
+        return id.equals(personPk.id) && number.equals(personPk.number);
+    }
+
+    public int hashCode() {
+        int result;
+        result = id.hashCode();
+        result = 31 * result + number.hashCode();
+        return result;
     }
 }

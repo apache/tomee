@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.test.entity.cmr.onetomany;
 
-
-import java.util.Set;
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -29,47 +27,48 @@ import org.apache.openejb.test.entity.cmr.CompoundPK;
  *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public abstract class ABean implements EntityBean {
-
-    private EntityContext context;
-    
+public abstract class SongBean implements EntityBean {
     // CMP
-    public abstract Integer getField1();
-    public abstract void setField1(Integer field1);
+    public abstract Integer getId();
+    public abstract void setId(Integer id);
 
-    public abstract String getField2();
-    public abstract void setField2(String field2);
-    
+    public abstract String getName();
+    public abstract void setName(String name);
+
+    public abstract Integer getBpm();
+    public abstract void setBpm(Integer bpm);
+
+    public abstract String getDescription();
+    public abstract void setDescription(String description);
+
     // CMR
-    public abstract Set<BLocal> getB();
-    public abstract void setB(Set<BLocal> bSet);
+    public abstract ArtistLocal getPerformer();
+    public abstract void setPerformer(ArtistLocal performer);
 
-    public abstract Set<BLocal> getBNonCascade();
-    public abstract void setBNonCascade(Set<BLocal> bNonCascade);
-
-    public Integer ejbCreate(Integer field1)  throws CreateException {
-        setField1(field1);
+    public abstract ArtistLocal getComposer();
+    public abstract void setComposer(ArtistLocal composer);
+    
+    public Integer ejbCreate(Integer id)  throws CreateException {
+        setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer field1) {
+    public void ejbPostCreate(Integer id) {
     }
 
-    public CompoundPK ejbCreate(CompoundPK primaryKey)  throws CreateException {
-        setField1(primaryKey.field1);
-        setField2(primaryKey.field2);
+    public CompoundPK ejbCreate(SongPk primaryKey)  throws CreateException {
+        setId(primaryKey.id);
+        setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(CompoundPK primaryKey) {
+    public void ejbPostCreate(SongPk primaryKey) {
     }
-
+    
     public void setEntityContext(EntityContext ctx) {
-        context = ctx;
     }
 
     public void unsetEntityContext() {
-        context = null;
     }
 
     public void ejbActivate() {

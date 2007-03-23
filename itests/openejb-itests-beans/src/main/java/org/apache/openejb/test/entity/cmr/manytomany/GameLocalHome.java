@@ -14,33 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.onetomany;
+package org.apache.openejb.test.entity.cmr.manytomany;
 
-import javax.ejb.EJBLocalObject;
+import javax.ejb.CreateException;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.FinderException;
 
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface BLocal extends EJBLocalObject {
+public interface GameLocalHome extends EJBLocalHome {
+    // Create
+    public GameLocal create(Integer primaryKey) throws CreateException;
+    public GameLocal create(GamePk primaryKey) throws CreateException;
 
-    // CMP
-    public Integer getField1();
-    public void setField1(Integer field1);
-
-    public String getField2();
-    public void setField2(String field2);
-
-    public Integer getField3();
-    public void setField3(Integer field3);
-
-    public String getField4();
-    public void setField4(String field4);
-
-    // CMR
-    public ALocal getA();
-    public void setA(ALocal a);
-
-    public ALocal getANonCascade();
-    public void setANonCascade(ALocal aNonCascade);    
+    // Finder
+    public GameLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+    public GameLocal findByPrimaryKey(GamePk primaryKey) throws FinderException;
 }

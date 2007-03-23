@@ -18,52 +18,76 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.Synchronization;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 
-public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> extends AbstractSet<Proxy> {
+public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> extends AbstractSet {
     private final EntityBean source;
     private final String sourceProperty;
     private final CoreDeploymentInfo relatedInfo;
     private final String relatedProperty;
-    private final CollectionRef<Bean> relatedBeanRef;
-    private Class relatedLocal;
+    private final Class relatedLocal;
+    private boolean mutable = true;
+    private Collection<Bean> relatedBeans;
 
-    public CmrSet(EntityBean source, String sourceProperty, CoreDeploymentInfo relatedInfo, String relatedProperty, CollectionRef<Bean> relatedBeanRef) {
+    public CmrSet(EntityBean source, String sourceProperty, CoreDeploymentInfo relatedInfo, String relatedProperty, Collection<Bean> relatedBeans) {
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedInfo = relatedInfo;
         this.relatedProperty = relatedProperty;
-        this.relatedBeanRef = relatedBeanRef;
+        this.relatedBeans = relatedBeans;
 
         relatedLocal = relatedInfo.getLocalInterface();
+        TransactionSynchronizationRegistry transactionRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        try {
+            transactionRegistry.registerInterposedSynchronization(new Synchronization() {
+                public void beforeCompletion() {
+                }
+
+                public void afterCompletion(int i) {
+                    mutable = false;
+                }
+            });
+        } catch (IllegalStateException ignored) {
+            // no tx so not mutable
+            mutable = false;
+        }
+    }
+
+    protected void entityDeleted() {
+        relatedBeans = null;
+        mutable = false;
     }
 
     public boolean isEmpty() {
-        return getRelatedBeans(false).isEmpty();
+        return getRelatedBeans(false, false).isEmpty();
     }
 
     public int size() {
-        return getRelatedBeans(false).size();
+        return getRelatedBeans(false, false).size();
     }
 
     public boolean contains(Object o) {
         if (relatedLocal.isInstance(o)) {
             Bean entity = getEntityBean((EJBLocalObject) o);
-            return entity != null && getRelatedBeans(false).contains(entity);
+            return entity != null && getRelatedBeans(false, false).contains(entity);
         }
         return false;
     }
 
-    public boolean addAll(Collection<? extends Proxy> c) {
+    public boolean addAll(Collection c) {
         Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
         for (Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext();) {
@@ -73,13 +97,13 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return changed;
     }
 
-    public boolean add(Proxy proxy) {
+    public boolean add(Object proxy) {
         if (!relatedLocal.isInstance(proxy)) {
             throw new IllegalArgumentException("Object is not an instance of " + relatedLocal.getName() +
                                 ": " + (proxy == null ? "null" : proxy.getClass().getName()));
-
         }
-        Bean newEntity = getEntityBean(proxy);
+        
+        Bean newEntity = getEntityBean((EJBLocalObject) proxy);
         if (newEntity == null) {
             throw new IllegalArgumentException("Ejb has been deleted");
         }
@@ -88,9 +112,10 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     }
 
     private boolean add(Bean newEntity) {
-        boolean changed = getRelatedBeans(true).add(newEntity);
+        boolean changed = getRelatedBeans(true, true).add(newEntity);
         if (changed && relatedProperty != null) {
             // set the back reference in the new related bean
+            if (source == null) throw new IllegalStateException("source is null");
             Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
@@ -108,18 +133,18 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         }
 
         Bean entity = getEntityBean((EJBLocalObject) o);
-        boolean changed = entity != null && getRelatedBeans(false).remove(entity);
+        boolean changed = entity != null && getRelatedBeans(false, true).remove(entity);
         if (changed && relatedProperty != null) {
             toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
         }
         return changed;
     }
 
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection c) {
         Set entityBeans = getEntityBeans(c, null);
 
         boolean changed = false;
-        for (Iterator<Bean> iterator = getRelatedBeans(false).iterator(); iterator.hasNext();) {
+        for (Iterator<Bean> iterator = getRelatedBeans(false, true).iterator(); iterator.hasNext();) {
             Bean entity = iterator.next();
             if (!entityBeans.contains(entity)) {
                 iterator.remove();
@@ -135,18 +160,27 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     public Iterator<Proxy> iterator() {
         return new Iterator<Proxy>() {
             private Bean currentEntity;
-            private Iterator<Bean> iterator = getRelatedBeans(true).iterator();
+            private Iterator<Bean> iterator = getRelatedBeans(true, false).iterator();
 
             public boolean hasNext() {
                 return iterator.hasNext();
             }
 
             public Proxy next() {
+                if (relatedBeans == null) {
+                    throw new ConcurrentModificationException("Entity has been deleted therefore this iterator can no longer be used");
+                }
                 currentEntity = iterator.next();
                 return getEjbProxy(currentEntity);
             }
 
             public void remove() {
+                if (relatedBeans == null) {
+                    throw new ConcurrentModificationException("Entity has been deleted therefore this iterator can no longer be used");
+                }
+                if (!mutable) {
+                    throw new ConcurrentModificationException("Transaction has completed therefore this cmr collection can no longer be modified");
+                }
                 iterator.remove();
                 if (relatedProperty != null) {
                     toCmp2Entity(currentEntity).OpenEJB_removeCmr(relatedProperty, source);
@@ -191,13 +225,15 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return (Cmp2Entity) object;
     }
 
-    private Collection<Bean> getRelatedBeans(boolean mustExist) {
-        Collection<Bean> relatedBeans = relatedBeanRef.get();
+    private Collection<Bean> getRelatedBeans(boolean mustExist, boolean mutateOpation) {
         if (relatedBeans == null) {
             if (mustExist) {
                 throw new IllegalStateException("Entity has been deleted therefore this cmr collection can no longer be modified");
             }
-            relatedBeans = Collections.emptySet();
+            return Collections.emptySet();
+        }
+        if (mutateOpation && !mutable) {
+            throw new IllegalStateException("Transaction has completed therefore this cmr collection can no longer be modified");
         }
         return relatedBeans;
     }

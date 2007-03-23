@@ -20,17 +20,15 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
 
-
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface BLocalHome extends EJBLocalHome {
-
+public interface PlatformLocalHome extends EJBLocalHome {
     // Create
-    public BLocal create(Integer field1) throws CreateException;
+    public PlatformLocal create(Integer primaryKey) throws CreateException;
+    public PlatformLocal create(PlatformPk primaryKey) throws CreateException;
 
     // Finder
-    public BLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
-
+    public PlatformLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+    public PlatformLocal findByPrimaryKey(PlatformPk primaryKey) throws FinderException;
 }

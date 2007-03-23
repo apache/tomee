@@ -25,47 +25,41 @@ import javax.ejb.RemoveException;
 import org.apache.openejb.test.entity.cmr.CompoundPK;
 
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public abstract class ABean implements EntityBean {
-
-    private EntityContext context;
-    
+public abstract class PlatformBean implements EntityBean {
     // CMP
-    public abstract Integer getField1();
-    public abstract void setField1(Integer field1);
+    public abstract Integer getId();
+    public abstract void setId(Integer id);
 
-    public abstract String getField2();
-    public abstract void setField2(String field2);
+    public abstract String getName();
+    public abstract void setName(String name);
     
     // CMR
-    public abstract Set<BLocal> getB();
-    public abstract void setB(Set<BLocal> bSet);
+    public abstract Set<GameLocal> getGames();
+    public abstract void setGames(Set<GameLocal> gameSets);
     
-    public Integer ejbCreate(Integer field1)  throws CreateException {
-        setField1(field1);
+    public Integer ejbCreate(Integer id)  throws CreateException {
+        setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer field1) {
+    public void ejbPostCreate(Integer id) {
     }
 
-    public CompoundPK ejbCreate(CompoundPK primaryKey)  throws CreateException {
-        setField1(primaryKey.field1);
-        setField2(primaryKey.field2);
+    public CompoundPK ejbCreate(PlatformPk primaryKey)  throws CreateException {
+        setId(primaryKey.id);
+        setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(CompoundPK primaryKey) {
+    public void ejbPostCreate(PlatformPk primaryKey) {
     }
 
     public void setEntityContext(EntityContext ctx) {
-        context = ctx;
     }
 
     public void unsetEntityContext() {
-        context = null;
     }
 
     public void ejbActivate() {
@@ -81,5 +75,9 @@ public abstract class ABean implements EntityBean {
     }
 
     public void ejbRemove() throws RemoveException {
+    }
+
+    public String toString() {
+        return "[Platform " + getId() + " name " + getName() + "]";
     }
 }

@@ -21,6 +21,8 @@ import org.apache.openejb.test.entity.cmr.onetoone.PersonLocal;
 import org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome;
 import org.apache.openejb.test.entity.cmr.onetoone.LicenseLocal;
 import org.apache.openejb.test.entity.cmr.onetoone.LicenseLocalHome;
+import org.apache.openejb.test.entity.cmr.onetoone.PersonPk;
+import org.apache.openejb.test.entity.cmr.onetoone.LicensePk;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -33,19 +35,19 @@ import java.sql.SQLException;
  *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public class OneToOneTests extends AbstractCMRTest {
+public class OneToOneComplexPkTests extends AbstractCMRTest {
     private PersonLocalHome personLocalHome;
     private LicenseLocalHome licenseLocalHome;
 
-    public OneToOneTests() {
-        super("OneToOne.");
+    public OneToOneComplexPkTests() {
+        super("OneToOneCompound.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        personLocalHome = (PersonLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/PersonLocal");
-        licenseLocalHome = (LicenseLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/LicenseLocal");
+        personLocalHome = (PersonLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/ComplexPersonLocal");
+        licenseLocalHome = (LicenseLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToOne/ComplexLicenseLocal");
     }
 
     public void test00_AGetBExistingAB() throws Exception {
@@ -183,11 +185,11 @@ public class OneToOneTests extends AbstractCMRTest {
 
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM License");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense");
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         close(rs);
-        rs = s.executeQuery("SELECT COUNT(*) FROM License WHERE person_id = 1");
+        rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense WHERE person_id = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -207,7 +209,7 @@ public class OneToOneTests extends AbstractCMRTest {
 
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Person WHERE id = 1");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexPerson WHERE id = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -247,34 +249,31 @@ public class OneToOneTests extends AbstractCMRTest {
     }
 
     private PersonLocal createPerson(int personId) throws CreateException {
-        PersonLocal person = personLocalHome.create(personId);
-        person.setName("value" + personId);
+        PersonLocal person = personLocalHome.create(new PersonPk(personId, "value" + personId));
         return person;
     }
 
     private PersonLocal findPerson(int personId) throws FinderException {
-        return personLocalHome.findByPrimaryKey(personId);
+        return personLocalHome.findByPrimaryKey(new PersonPk(personId, "value" + personId));
     }
 
     private LicenseLocal createLicense(int licenseId) throws CreateException {
-        LicenseLocal license = licenseLocalHome.create(licenseId);
-        license.setNumber("value" + licenseId);
+        LicenseLocal license = licenseLocalHome.create(new LicensePk(licenseId, "value" + licenseId));
         return license;
     }
     private LicenseLocal findLicense(int licenseId) throws FinderException {
-        return licenseLocalHome.findByPrimaryKey(licenseId);
+        return licenseLocalHome.findByPrimaryKey(new LicensePk(licenseId, "value" + licenseId));
     }
-
 
     private void assertLinked(int personId, int licenseId) throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT name FROM Person WHERE id = " + personId);
+        ResultSet rs = s.executeQuery("SELECT name FROM ComplexPerson WHERE id = " + personId);
         assertTrue(rs.next());
         assertEquals("value" + personId, rs.getString("name"));
         close(rs);
 
-        rs = s.executeQuery("SELECT id, number FROM License WHERE person_id = " + personId);
+        rs = s.executeQuery("SELECT id, number FROM ComplexLicense WHERE person_id = " + personId);
         assertTrue(rs.next());
         assertEquals(licenseId, rs.getInt("id"));
         assertEquals("value" + licenseId, rs.getString("number"));
@@ -286,7 +285,7 @@ public class OneToOneTests extends AbstractCMRTest {
     private void assertUnlinked(int personId) throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM License WHERE person_id = " + personId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense WHERE person_id = " + personId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -302,11 +301,11 @@ public class OneToOneTests extends AbstractCMRTest {
             statement = connection.createStatement();
 
             try {
-                statement.execute("DELETE FROM Person");
+                statement.execute("DELETE FROM ComplexPerson");
             } catch (SQLException ignored) {
             }
             try {
-                statement.execute("DELETE FROM License");
+                statement.execute("DELETE FROM ComplexLicense");
             } catch (SQLException ignored) {
             }
         } finally {
@@ -322,7 +321,7 @@ public class OneToOneTests extends AbstractCMRTest {
     }
 
     protected void dump() throws Exception {
-        dumpTable(ds, "Person");
-        dumpTable(ds, "License");
+        dumpTable(ds, "ComplexPerson");
+        dumpTable(ds, "ComplexLicense");
     }
 }

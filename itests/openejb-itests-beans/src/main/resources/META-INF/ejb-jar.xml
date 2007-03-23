@@ -826,145 +826,364 @@
     -->
 
     <entity>
-      <ejb-name>OneToOneA</ejb-name>
-      <local-home>org.apache.openejb.test.entity.cmr.onetoone.ALocalHome</local-home>
-      <local>org.apache.openejb.test.entity.cmr.onetoone.ALocal</local>
-      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.ABean</ejb-class>
+      <ejb-name>Person</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetoone.PersonLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.PersonBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToOneA</abstract-schema-name>
+      <abstract-schema-name>Person</abstract-schema-name>
       <cmp-field>
-        <field-name>field1</field-name>
+        <field-name>id</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field2</field-name>
+        <field-name>name</field-name>
       </cmp-field>
-      <primkey-field>field1</primkey-field>
+      <primkey-field>id</primkey-field>
       <query>
         <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
         <query-method>
           <method-name>findByPrimaryKey</method-name>
           <method-params>
-            <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+            <method-param>org.apache.openejb.test.entity.cmr.onetoone.PersonPk</method-param>
           </method-params>
         </query-method>
-        <ejb-ql>SELECT OBJECT(A) FROM OneToOneA A</ejb-ql>
+        <ejb-ql>SELECT OBJECT(P) FROM Person P</ejb-ql>
       </query>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
     <entity>
-      <ejb-name>OneToOneB</ejb-name>
-      <local-home>org.apache.openejb.test.entity.cmr.onetoone.BLocalHome</local-home>
-      <local>org.apache.openejb.test.entity.cmr.onetoone.BLocal</local>
-      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.BBean</ejb-class>
+      <ejb-name>License</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetoone.LicenseLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetoone.LicenseLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.LicenseBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToOneB</abstract-schema-name>
+      <abstract-schema-name>License</abstract-schema-name>
       <cmp-field>
-        <field-name>field1</field-name>
+        <field-name>id</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field2</field-name>
+        <field-name>number</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field3</field-name>
+        <field-name>points</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field4</field-name>
+        <field-name>notes</field-name>
       </cmp-field>
-      <primkey-field>field1</primkey-field>
+      <primkey-field>id</primkey-field>
       <query>
         <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
         <query-method>
           <method-name>findByPrimaryKey</method-name>
           <method-params>
-            <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+            <method-param>org.apache.openejb.test.entity.cmr.onetoone.LicensePk</method-param>
           </method-params>
         </query-method>
-        <ejb-ql>SELECT OBJECT(B) FROM OneToOneB B</ejb-ql>
+        <ejb-ql>SELECT OBJECT(DL) FROM License DL</ejb-ql>
       </query>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
 
     <entity>
-      <ejb-name>OneToManyA</ejb-name>
-      <local-home>org.apache.openejb.test.entity.cmr.onetomany.ALocalHome</local-home>
-      <local>org.apache.openejb.test.entity.cmr.onetomany.ALocal</local>
-      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.ABean</ejb-class>
+      <ejb-name>Artist</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetomany.ArtistLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetomany.ArtistLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.ArtistBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToManyA</abstract-schema-name>
+      <abstract-schema-name>Artist</abstract-schema-name>
       <cmp-field>
-        <field-name>field1</field-name>
+        <field-name>id</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field2</field-name>
+        <field-name>name</field-name>
       </cmp-field>
-      <primkey-field>field1</primkey-field>
+      <primkey-field>id</primkey-field>
       <query>
         <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
         <query-method>
           <method-name>findByPrimaryKey</method-name>
           <method-params>
-            <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+            <method-param>org.apache.openejb.test.entity.cmr.onetomany.ArtistPk</method-param>
           </method-params>
         </query-method>
-        <ejb-ql>SELECT OBJECT(A) FROM OneToManyA A</ejb-ql>
+        <ejb-ql>SELECT OBJECT(A) FROM Artist A</ejb-ql>
       </query>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
     </entity>
     <entity>
-      <ejb-name>OneToManyB</ejb-name>
-      <local-home>org.apache.openejb.test.entity.cmr.onetomany.BLocalHome</local-home>
-      <local>org.apache.openejb.test.entity.cmr.onetomany.BLocal</local>
-      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.BBean</ejb-class>
+      <ejb-name>Song</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetomany.SongLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetomany.SongLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.SongBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>OneToManyB</abstract-schema-name>
+      <abstract-schema-name>Song</abstract-schema-name>
       <cmp-field>
-        <field-name>field1</field-name>
+        <field-name>id</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field2</field-name>
+        <field-name>name</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field3</field-name>
+        <field-name>bpm</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>field4</field-name>
+        <field-name>description</field-name>
       </cmp-field>
-      <primkey-field>field1</primkey-field>
+      <primkey-field>id</primkey-field>
       <query>
         <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
         <query-method>
           <method-name>findByPrimaryKey</method-name>
           <method-params>
-            <method-param>org.apache.openejb.deployment.entity.cmr.CompoundPK</method-param>
+            <method-param>org.apache.openejb.test.entity.cmr.onetomany.SongPk</method-param>
           </method-params>
         </query-method>
-        <ejb-ql>SELECT OBJECT(B) FROM OneToManyB B</ejb-ql>
+        <ejb-ql>SELECT OBJECT(B) FROM Song B</ejb-ql>
       </query>
-      <persistence-context-ref>
-        <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
-        <persistence-unit-name>cmp</persistence-unit-name>
-      </persistence-context-ref>
+    </entity>
+
+    <entity>
+      <ejb-name>Game</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.manytomany.GameLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.manytomany.GameLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.manytomany.GameBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Game</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>rating</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>org.apache.openejb.test.entity.cmr.manytomany.GamePk</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(B) FROM Game B</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>Platform</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.manytomany.PlatformLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.manytomany.PlatformLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.manytomany.PlatformBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Platform</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>org.apache.openejb.test.entity.cmr.manytomany.PlatformPk</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(B) FROM Platform B</ejb-ql>
+      </query>
+    </entity>
+
+    <entity>
+      <ejb-name>ComplexPerson</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetoone.PersonLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.PersonBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.onetoone.PersonPk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexPerson</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <query>
+        <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(P) FROM ComplexPerson P</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>ComplexLicense</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetoone.LicenseLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetoone.LicenseLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetoone.LicenseBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.onetoone.LicensePk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexLicense</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>number</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>points</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>notes</field-name>
+      </cmp-field>
+      <query>
+        <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(DL) FROM ComplexLicense DL</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>ComplexArtist</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetomany.ArtistLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetomany.ArtistLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.ArtistBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.onetomany.ArtistPk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexArtist</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <query>
+        <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(A) FROM ComplexArtist A</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>ComplexSong</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.onetomany.SongLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.onetomany.SongLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.onetomany.SongBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.onetomany.SongPk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexSong</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>bpm</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>description</field-name>
+      </cmp-field>
+      <query>
+        <!-- CompondPK one-to-one shares the local home interface so we need to declare this useless finder -->
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(B) FROM ComplexDish B</ejb-ql>
+      </query>
+    </entity>
+
+    <entity>
+      <ejb-name>ComplexGame</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.manytomany.GameLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.manytomany.GameLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.manytomany.GameBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.manytomany.GamePk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexGame</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>rating</field-name>
+      </cmp-field>
+      <query>
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(B) FROM ComplexGame B</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>ComplexPlatform</ejb-name>
+      <local-home>org.apache.openejb.test.entity.cmr.manytomany.PlatformLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.cmr.manytomany.PlatformLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.cmr.manytomany.PlatformBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>org.apache.openejb.test.entity.cmr.manytomany.PlatformPk</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexPlatform</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <query>
+        <query-method>
+          <method-name>findByPrimaryKey</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(B) FROM ComplexPlatform B</ejb-ql>
+      </query>
     </entity>
 
     <entity>
@@ -4764,35 +4983,40 @@
   </enterprise-beans>
 
   <relationships>
+
+    <!-- One to One -->
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
         <cascade-delete/>
         <relationship-role-source>
-          <ejb-name>OneToOneA</ejb-name>
+          <ejb-name>License</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>b</cmr-field-name>
+          <cmr-field-name>person</cmr-field-name>
         </cmr-field>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
+        <!--<cascade-delete/>-->
         <relationship-role-source>
-          <ejb-name>OneToOneB</ejb-name>
+          <ejb-name>Person</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>a</cmr-field-name>
+          <cmr-field-name>license</cmr-field-name>
         </cmr-field>
       </ejb-relationship-role>
     </ejb-relation>
+
+    <!-- One to Many -->
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
         <relationship-role-source>
-          <ejb-name>OneToManyA</ejb-name>
+          <ejb-name>Artist</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>b</cmr-field-name>
+          <cmr-field-name>performed</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
         <cascade-delete/>
@@ -4800,34 +5024,158 @@
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
         <relationship-role-source>
-          <ejb-name>OneToManyB</ejb-name>
+          <ejb-name>Song</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>a</cmr-field-name>
+          <cmr-field-name>performer</cmr-field-name>
         </cmr-field>
       </ejb-relationship-role>
     </ejb-relation>
+
+    <!-- One to Many non cascade -->
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
         <relationship-role-source>
-          <ejb-name>OneToManyA</ejb-name>
+          <ejb-name>Artist</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>bNonCascade</cmr-field-name>
+          <cmr-field-name>composed</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
         <relationship-role-source>
-          <ejb-name>OneToManyB</ejb-name>
+          <ejb-name>Song</ejb-name>
         </relationship-role-source>
         <cmr-field>
-          <cmr-field-name>aNonCascade</cmr-field-name>
+          <cmr-field-name>composer</cmr-field-name>
         </cmr-field>
       </ejb-relationship-role>
     </ejb-relation>
+
+    <!-- Many to Many -->
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>Game</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>platforms</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+        <cascade-delete/>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>Platform</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>games</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+
+    <!-- Complex One to One -->
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>One</multiplicity>
+        <cascade-delete/>
+        <relationship-role-source>
+          <ejb-name>ComplexLicense</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>person</cmr-field-name>
+        </cmr-field>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>One</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexPerson</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>license</cmr-field-name>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+
+
+    <!-- Complex One to Many -->
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>One</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexArtist</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>performed</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+        <cascade-delete/>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexSong</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>performer</cmr-field-name>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+
+    <!-- Complex One to Many non cascade -->
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>One</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexArtist</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>composed</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexSong</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>composer</cmr-field-name>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+
+    <!-- Complex Many to Many -->
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexGame</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>platforms</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+        <cascade-delete/>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ComplexPlatform</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>games</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
@@ -4956,28 +5304,84 @@
     <!-- CMR Test Beans -->
     <container-transaction>
       <method>
-        <ejb-name>OneToOneA</ejb-name>
+        <ejb-name>Person</ejb-name>
         <method-name>*</method-name>
       </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>
     <container-transaction>
       <method>
-        <ejb-name>OneToOneB</ejb-name>
+        <ejb-name>License</ejb-name>
         <method-name>*</method-name>
       </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>
     <container-transaction>
       <method>
-        <ejb-name>OneToManyA</ejb-name>
+        <ejb-name>Artist</ejb-name>
         <method-name>*</method-name>
       </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>
     <container-transaction>
       <method>
-        <ejb-name>OneToManyB</ejb-name>
+        <ejb-name>Song</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>Game</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>Platform</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexPerson</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexLicense</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexArtist</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexSong</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexGame</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ComplexPlatform</ejb-name>
         <method-name>*</method-name>
       </method>
       <trans-attribute>Required</trans-attribute>

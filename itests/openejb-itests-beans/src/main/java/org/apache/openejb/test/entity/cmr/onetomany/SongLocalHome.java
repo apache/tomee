@@ -20,21 +20,15 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
 
-import org.apache.openejb.test.entity.cmr.CompoundPK;
-
-
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface ALocalHome extends EJBLocalHome {
-
+public interface SongLocalHome extends EJBLocalHome {
     // Create
-    public ALocal create(Integer field1) throws CreateException;
-    public ALocal create(CompoundPK primaryKey) throws CreateException;
+    public SongLocal create(Integer field1) throws CreateException;
+    public SongLocal create(SongPk primaryKey) throws CreateException;
 
     // Finder
-    public ALocal findByPrimaryKey(Integer primaryKey) throws FinderException;
-    public ALocal findByPrimaryKey(CompoundPK primaryKey) throws FinderException;
-
+    public SongLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+    public SongLocal findByPrimaryKey(SongPk primaryKey) throws FinderException;
 }

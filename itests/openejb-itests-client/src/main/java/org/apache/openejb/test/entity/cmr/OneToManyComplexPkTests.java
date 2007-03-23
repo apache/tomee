@@ -20,6 +20,8 @@ import org.apache.openejb.test.entity.cmr.onetomany.ArtistLocal;
 import org.apache.openejb.test.entity.cmr.onetomany.ArtistLocalHome;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocal;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocalHome;
+import org.apache.openejb.test.entity.cmr.onetomany.ArtistPk;
+import org.apache.openejb.test.entity.cmr.onetomany.SongPk;
 
 import javax.ejb.FinderException;
 import javax.ejb.CreateException;
@@ -36,19 +38,19 @@ import java.util.ConcurrentModificationException;
 /**
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public class OneToManyTests extends AbstractCMRTest {
+public class OneToManyComplexPkTests extends AbstractCMRTest {
     private ArtistLocalHome artistLocalHome;
     private SongLocalHome songLocalHome;
 
-    public OneToManyTests() {
-        super("OneToMany.");
+    public OneToManyComplexPkTests() {
+        super("OneToManyComplex.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        artistLocalHome = (ArtistLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/ArtistLocal");
-        songLocalHome = (SongLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/SongLocal");
+        artistLocalHome = (ArtistLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/ComplexArtistLocal");
+        songLocalHome = (SongLocalHome) initialContext.lookup("client/tests/entity/cmr/oneToMany/ComplexSongLocal");
     }
 
     public void test00_AGetBExistingAB() throws Exception {
@@ -264,9 +266,9 @@ public class OneToManyTests extends AbstractCMRTest {
             artist.setPerformed(new HashSet<SongLocal>());
             Set<SongLocal> songs = artist.getComposed();
             Set<SongLocal> bsCopies = new HashSet<SongLocal>(songs);
-            assertSame(songs, artist.getComposed());
+            assertFalse(songs.isEmpty());
             artist.remove();
-            assertTrue("CMR collection is not empty " + System.identityHashCode(songs), songs.isEmpty());
+            assertTrue(songs.isEmpty());
             for (SongLocal songLocal : bsCopies) {
                 assertNull(songLocal.getComposer());
             }
@@ -275,7 +277,7 @@ public class OneToManyTests extends AbstractCMRTest {
         }
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Song");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexSong");
         assertTrue(rs.next());
         assertEquals(2, rs.getInt(1));
         rs.close();
@@ -298,7 +300,7 @@ public class OneToManyTests extends AbstractCMRTest {
         }
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Song");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexSong");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -498,43 +500,41 @@ public class OneToManyTests extends AbstractCMRTest {
         }
     }
 
-    private ArtistLocal createArtist(int songId) throws CreateException {
-        ArtistLocal artist = artistLocalHome.create(songId);
-        artist.setName("value" + songId);
+    private ArtistLocal createArtist(int artistId) throws CreateException {
+        ArtistLocal artist = artistLocalHome.create(new ArtistPk(artistId, "value" + artistId));
         return artist;
     }
 
     private ArtistLocal findArtist(int artistId) throws FinderException {
-        return artistLocalHome.findByPrimaryKey(artistId);
+        return artistLocalHome.findByPrimaryKey(new ArtistPk(artistId, "value" + artistId));
     }
 
     private SongLocal createSong(int songId) throws CreateException {
-        SongLocal song = songLocalHome.create(songId);
-        song.setName("value" + songId);
+        SongLocal song = songLocalHome.create(new SongPk(songId, "value" + songId));
         return song;
     }
 
     private SongLocal findSong(int songId) throws FinderException {
-        return songLocalHome.findByPrimaryKey(songId);
+        return songLocalHome.findByPrimaryKey(new SongPk(songId, "value" + songId));
     }
 
     private void assertLinked(int artistId, int... songIds) throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT name FROM Artist WHERE id = " + artistId);
+        ResultSet rs = s.executeQuery("SELECT name FROM ComplexArtist WHERE id = " + artistId);
         assertTrue(rs.next());
         assertEquals("value" + artistId, rs.getString("name"));
         close(rs);
 
         // assert that there we are looking for the same number of linked beans
-        rs = s.executeQuery("SELECT COUNT(*) FROM Song WHERE performer_id = 1");
+        rs = s.executeQuery("SELECT COUNT(*) FROM ComplexSong WHERE performer_id = 1");
         assertTrue(rs.next());
         assertEquals(songIds.length, rs.getInt(1));
         rs.close();
 
         // assert each of the listed b pks is linked to a
         for (int songId : songIds) {
-            rs = s.executeQuery("SELECT name, performer_id FROM Song WHERE id = " + songId);
+            rs = s.executeQuery("SELECT name, performer_id FROM ComplexSong WHERE id = " + songId);
             assertTrue(rs.next());
             assertEquals("value" + songId, rs.getString("name"));
             assertEquals(artistId, rs.getInt("performer_id"));
@@ -547,7 +547,7 @@ public class OneToManyTests extends AbstractCMRTest {
     private void assertUnlinked(int aPk) throws Exception {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Song WHERE performer_id = " + aPk);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexSong WHERE performer_id = " + aPk);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -562,11 +562,11 @@ public class OneToManyTests extends AbstractCMRTest {
             statement = connection.createStatement();
 
             try {
-                statement.execute("DELETE FROM Artist");
+                statement.execute("DELETE FROM ComplexArtist");
             } catch (SQLException ignored) {
             }
             try {
-                statement.execute("DELETE FROM Song");
+                statement.execute("DELETE FROM ComplexSong");
             } catch (SQLException ignored) {
             }
         } finally {
@@ -588,7 +588,7 @@ public class OneToManyTests extends AbstractCMRTest {
     }
 
     protected void dump() throws SQLException {
-        dumpTable(ds, "Artist");
-        dumpTable(ds, "Song");
+        dumpTable(ds, "ComplexArtist");
+        dumpTable(ds, "ComplexSong");
     }
 }

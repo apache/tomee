@@ -17,9 +17,10 @@
 package org.apache.openejb.test.entity.cmp;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
@@ -29,17 +30,16 @@ import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
- * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class BasicCmpBean implements javax.ejb.EntityBean{
     private static int nextId;
-    public int primaryKey;
+    public Integer primaryKey;
     public String firstName;
     public String lastName;
     public EntityContext ejbContext;
-    public Hashtable allowedOperationsTable = new Hashtable();
+    public Map<String,OperationsPolicy> allowedOperationsTable = new HashMap<String,OperationsPolicy>();
     
     
     //=============================
@@ -160,7 +160,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
      * @see BasicCmpObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
-        return (OperationsPolicy) allowedOperationsTable.get(methodName);
+        return allowedOperationsTable.get(methodName);
     }
     
     //    
@@ -245,49 +245,49 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
         /*[1] Test getEJBHome /////////////////*/ 
         try{
             ejbContext.getEJBHome();
-            policy.allow(policy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getEJBHome);
         }catch(IllegalStateException ise){}
         
         /*[2] Test getCallerPrincipal /////////*/ 
         try{
             ejbContext.getCallerPrincipal();
-            policy.allow( policy.Context_getCallerPrincipal );
+            policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         }catch(IllegalStateException ise){}
         
         /*[3] Test isCallerInRole /////////////*/ 
         try{
             ejbContext.isCallerInRole("ROLE");
-            policy.allow( policy.Context_isCallerInRole );
+            policy.allow( OperationsPolicy.Context_isCallerInRole );
         }catch(IllegalStateException ise){}
         
         /*[4] Test getRollbackOnly ////////////*/ 
         try{
             ejbContext.getRollbackOnly();
-            policy.allow( policy.Context_getRollbackOnly );
+            policy.allow( OperationsPolicy.Context_getRollbackOnly );
         }catch(IllegalStateException ise){}
         
         /*[5] Test setRollbackOnly ////////////*/ 
         try{
             ejbContext.setRollbackOnly();
-            policy.allow( policy.Context_setRollbackOnly );
+            policy.allow( OperationsPolicy.Context_setRollbackOnly );
         }catch(IllegalStateException ise){}
         
         /*[6] Test getUserTransaction /////////*/ 
         try{
             ejbContext.getUserTransaction();
-            policy.allow( policy.Context_getUserTransaction );
+            policy.allow( OperationsPolicy.Context_getUserTransaction );
         }catch(Exception e){}
         
         /*[7] Test getEJBObject ///////////////*/ 
         try{
             ejbContext.getEJBObject();
-            policy.allow( policy.Context_getEJBObject );
+            policy.allow( OperationsPolicy.Context_getEJBObject );
         }catch(IllegalStateException ise){}
 
         /*[8] Test getPrimaryKey //////////////*/ 
         try{
             ejbContext.getPrimaryKey();
-            policy.allow( policy.Context_getPrimaryKey );
+            policy.allow( OperationsPolicy.Context_getPrimaryKey );
         }catch(IllegalStateException ise){}
          
         /* TO DO:  

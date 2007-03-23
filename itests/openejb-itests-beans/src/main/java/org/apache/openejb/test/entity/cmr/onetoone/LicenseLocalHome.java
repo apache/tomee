@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.onetomany;
+package org.apache.openejb.test.entity.cmr.onetoone;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
 
-import org.apache.openejb.test.entity.cmr.CompoundPK;
-
-
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface BLocalHome extends EJBLocalHome {
+public interface LicenseLocalHome extends EJBLocalHome {
+
     // Create
-    public BLocal create(Integer field1) throws CreateException;
-    public BLocal create(CompoundPK primaryKey) throws CreateException;
+    public LicenseLocal create(Integer field1) throws CreateException;
+    public LicenseLocal create(LicensePk primaryKey) throws CreateException;
 
     // Finder
-    public BLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
-    public BLocal findByPrimaryKey(CompoundPK primaryKey) throws FinderException;
+    public LicenseLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+    public LicenseLocal findByPrimaryKey(LicensePk primaryKey) throws FinderException;
 }

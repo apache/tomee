@@ -82,16 +82,22 @@
             </id>
         </attributes>
     </entity>
-    <!--<entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean">-->
-      <!--<table name="OneOwning"/>-->
-      <!--<attributes>-->
-        <!--<id name="id">-->
-          <!--<column name="col_id"/>-->
-        <!--</id>-->
-        <!--<basic name="field1">-->
-          <!--<column name="col_field1"/>-->
-        <!--</basic>-->
-      <!--</attributes>-->
-    <!--</entity>    -->
+
+  <entity name="Book" class="org.apache.openejb.core.cmp.jpa.BookBean">
+      <attributes>
+          <id name="title"/>
+          <many-to-many name="authors">
+              <cascade>
+                  <cascade-all/>
+              </cascade>
+          </many-to-many>
+      </attributes>
+  </entity>
+  <entity name="Author" class="org.apache.openejb.core.cmp.jpa.AuthorBean">
+      <attributes>
+          <id name="name"/>
+          <many-to-many name="books" mapped-by="authors"/>
+      </attributes>
+  </entity>
 </entity-mappings>
 

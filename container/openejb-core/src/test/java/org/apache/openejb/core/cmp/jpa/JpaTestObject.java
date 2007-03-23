@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
 public class JpaTestObject extends junit.framework.Assert {
     private EntityManagerFactory entityManagerFactory;
@@ -40,6 +41,11 @@ public class JpaTestObject extends junit.framework.Assert {
 
     private EntityManager entityManager;
     private EntityTransaction transaction;
+    private static final String MCLAUGHLIN = "Brett McLaughlin";
+    private static final String FLANAGAN = "David Flanagan";
+    private static final String TIGER = "Java 5.0 Tiger";
+    private static final String JAVASCRIPT = "JavaScript";
+    private static final String ENTERPRISE_APPS = "Building Java Enterprise Applications";
 
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
@@ -104,7 +110,7 @@ public class JpaTestObject extends junit.framework.Assert {
         cmpText();
         complexCmpText();
         unknownCmpText();
-
+        manytoMany();
 
 //        beginTx();
 //        ABean_ABean a = new ABean_ABean();
@@ -487,6 +493,55 @@ public class JpaTestObject extends junit.framework.Assert {
         assertEquals(lloyd.getFirstName(), "Lloyd");
         assertEquals(lloyd.getLastName(), "Dobler");
 
+        commitTx();
+    }
+
+    private void manytoMany() throws Exception {
+        beginTx();
+
+        AuthorBean mcLaughlin = new AuthorBean(MCLAUGHLIN);
+        AuthorBean flanagan = new AuthorBean(FLANAGAN);
+
+        BookBean tiger = new BookBean(TIGER);
+        BookBean javaScript = new BookBean(JAVASCRIPT);
+
+        BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
+
+        entityManager.persist(mcLaughlin);
+        entityManager.persist(flanagan);
+        entityManager.persist(tiger);
+        entityManager.persist(javaScript);
+        entityManager.persist(enterpriseApps);
+
+        commitTx();
+
+        link(MCLAUGHLIN, TIGER);
+        link(MCLAUGHLIN, ENTERPRISE_APPS);
+        link(FLANAGAN, TIGER);
+        link(FLANAGAN, JAVASCRIPT);
+
+        beginTx();
+
+        BookBean book = entityManager.find(BookBean.class, TIGER);
+        assertTrue(entityManager.contains(book));
+
+        assertEquals(book.getTitle(), TIGER);
+        Set<AuthorBean> authors = book.getAuthors();
+        assertEquals(authors.size(), 2);
+
+        commitTx();
+    }
+
+    private void link(String authorName, String title) throws Exception {
+        beginTx();
+        AuthorBean author = entityManager.find(AuthorBean.class, authorName);
+        assertNotNull("Author not found " + authorName, author);
+
+        BookBean book = entityManager.find(BookBean.class, title);
+        assertNotNull("Book not found " + title, book);
+
+        book.OpenEJB_addCmr("authors", author);
+        author.OpenEJB_addCmr("books", book);
         commitTx();
     }
 

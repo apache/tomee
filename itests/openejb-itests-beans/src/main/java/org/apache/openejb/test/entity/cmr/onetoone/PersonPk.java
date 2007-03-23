@@ -15,18 +15,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.cmp.cmp2;
+package org.apache.openejb.test.entity.cmr.onetoone;
 
-import java.util.Collection;
+public class PersonPk {
+    public Integer id;
+    public String name;
 
-public final class CollectionRef<E> {
-    private Collection<E> collection;
-
-    public Collection<E> get() {
-        return collection;
+    public PersonPk() {
     }
 
-    public void set(Collection<E> collection) {
-        this.collection = collection;
+    public PersonPk(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PersonPk personPk = (PersonPk) o;
+
+        return id.equals(personPk.id) && name.equals(personPk.name);
+    }
+
+    public int hashCode() {
+        int result;
+        result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }

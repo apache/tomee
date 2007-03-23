@@ -20,40 +20,40 @@ package org.apache.openejb.test.entity.cmr.onetoone;
 import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 
-public class ExampleABean_ABean extends ABean implements Cmp2Entity {
+public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
     public static Object deploymentInfo;
     private transient boolean deleted;
-    private Integer field1;
-    private String field2;
-    private ExampleBBean_BBean b;
-    private SingleValuedCmr<ExampleBBean_BBean, BLocal> bCmr = new SingleValuedCmr<ExampleBBean_BBean, BLocal>(this, "b", ExampleBBean_BBean.class, "a");
+    private Integer id;
+    private String name;
+    private ExampleBBean_BBean License;
+    private SingleValuedCmr<ExampleBBean_BBean, LicenseLocal> bCmr = new SingleValuedCmr<ExampleBBean_BBean, LicenseLocal>(this, "b", ExampleBBean_BBean.class, "a");
 
-    public Integer getField1() {
-        return field1;
+    public Integer getId() {
+        return id;
     }
 
-    public void setField1(Integer field1) {
-        this.field1 = field1;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getField2() {
-        return field2;
+    public String getName() {
+        return name;
     }
 
-    public void setField2(String field2) {
-        this.field2 = field2;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public BLocal getB() {
-        return bCmr.get(b);
+    public LicenseLocal getLicense() {
+        return bCmr.get(License);
     }
 
-    public void setB(BLocal b) {
-        this.b = bCmr.set(this.b, b);
+    public void setLicense(LicenseLocal license) {
+        this.License = bCmr.set(this.License, license);
     }
 
     public Object OpenEJB_getPrimaryKey() {
-        return field1;
+        return id;
     }
 
     public void OpenEJB_deleted() {
@@ -62,7 +62,7 @@ public class ExampleABean_ABean extends ABean implements Cmp2Entity {
         }
         deleted = true;
 
-        bCmr.set(b, null);
+        bCmr.set(License, null);
     }
 
     public Object OpenEJB_addCmr(String name, Object bean) {
@@ -72,8 +72,8 @@ public class ExampleABean_ABean extends ABean implements Cmp2Entity {
 
         Object oldValue;
         if ("b".equals(name)) {
-            oldValue = b;
-            b = (ExampleBBean_BBean) bean;
+            oldValue = License;
+            License = (ExampleBBean_BBean) bean;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }
@@ -86,7 +86,7 @@ public class ExampleABean_ABean extends ABean implements Cmp2Entity {
         }
 
         if ("b".equals(name)) {
-            b = null;
+            License = null;
         } else {
             throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
         }

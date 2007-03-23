@@ -34,6 +34,7 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.Context;
@@ -73,6 +74,7 @@ public class JpaTest extends TestCase {
 
         // setup tx mgr
         transactionManager = new GeronimoTransactionManagerJTA11();
+        SystemInstance.get().setComponent(TransactionSynchronizationRegistry.class, transactionManager);
 
         // setup naming
         MockInitialContextFactory.install(Collections.singletonMap("java:comp/TransactionSynchronizationRegistry", transactionManager));

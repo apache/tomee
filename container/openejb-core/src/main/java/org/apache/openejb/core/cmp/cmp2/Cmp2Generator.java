@@ -505,16 +505,29 @@ public class Cmp2Generator implements Opcodes {
         mv.visitJumpInsn(IFEQ, end);
 
         if (cmrField.getCmrStyle() != CmrStyle.SINGLE) {
-            // ${cmrField.name}.add(arg2)
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
+            mv.visitVarInsn(ASTORE, 3);
+            mv.visitVarInsn(ALOAD, 3);
+            Label fieldNotNull = new Label();
+            mv.visitJumpInsn(IFNONNULL, fieldNotNull);
+            mv.visitTypeInsn(NEW, cmrField.getInitialValueType().getInternalName());
+            mv.visitInsn(DUP);
+            mv.visitMethodInsn(INVOKESPECIAL, cmrField.getInitialValueType().getInternalName(), "<init>", "()V");
+            mv.visitVarInsn(ASTORE, 3);
+            mv.visitLabel(fieldNotNull);
+
+            // ${cmrField.name}.add(arg2)
+            mv.visitVarInsn(ALOAD, 3);
             mv.visitVarInsn(ALOAD, 2);
-            mv.visitTypeInsn(CHECKCAST, cmrField.getType().getInternalName());
             mv.visitMethodInsn(INVOKEINTERFACE,
                     cmrField.getCmrStyle().getCollectionType().getInternalName(),
                     "add",
                     "(Ljava/lang/Object;)Z");
             mv.visitInsn(POP);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitFieldInsn(PUTFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
 
             // return null;
             mv.visitInsn(ACONST_NULL);
@@ -537,6 +550,23 @@ public class Cmp2Generator implements Opcodes {
         // end of if statement
         mv.visitLabel(end);
     }
+
+//    private void createPrintln(MethodVisitor mv, String message) {
+//        mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+//        mv.visitLdcInsn(message);
+//        mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
+//    }
+
+//    private void createPrintField(MethodVisitor mv, String fieldName, String descriptor) {
+//        mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+//        mv.visitLdcInsn(fieldName + "=");
+//        mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "print", "(Ljava/lang/String;)V");
+//
+//        mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+//        mv.visitVarInsn(ALOAD, 0);
+//        mv.visitFieldInsn(GETFIELD, implClassName, fieldName, descriptor);
+//        mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/Object;)V");
+//    }
 
     private void createOpenEJB_removeCmr(MethodVisitor mv, CmrField cmrField) {
         // if (${cmrField.name}.equals(arg1))

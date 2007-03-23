@@ -194,7 +194,7 @@ public abstract class TransactionPolicy {
     protected void throwTxExceptionToServer(Throwable sysException) throws ApplicationException {
         /* Throw javax.transaction.TransactionRolledbackException to remote client */
 
-        String message = "The transaction was rolled back because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
+        String message = "The transaction has been marked rollback only because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
         TransactionRolledbackException txException = new TransactionRolledbackException(message, sysException);
 
         throw new InvalidateReferenceException(txException);
@@ -211,7 +211,7 @@ public abstract class TransactionPolicy {
 
     protected void logSystemException(Throwable sysException) {
 
-        logger.error("The bean instances business method encountered a system exception:" + sysException.getMessage(), sysException);
+        logger.error("The bean instances business method encountered a system exception: " + sysException.getMessage(), sysException);
     }
 
     protected void discardBeanInstance(Object instance, ThreadContext callContext) {

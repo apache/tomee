@@ -16,25 +16,21 @@
  */
 package org.apache.openejb.test.entity.cmr.onetoone;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.FinderException;
-
-import org.apache.openejb.test.entity.cmr.CompoundPK;
-
+import javax.ejb.EJBLocalObject;
 
 /**
  *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface ALocalHome extends EJBLocalHome {
+public interface PersonLocal extends EJBLocalObject {
+    // CMP
+    public Integer getId();
+    public void setId(Integer field1);
 
-    // Create
-    public ALocal create(Integer field1) throws CreateException;
-    public ALocal create(CompoundPK primaryKey) throws CreateException;
-
-    // Finder
-    public ALocal findByPrimaryKey(Integer primaryKey) throws FinderException;
-    public ALocal findByPrimaryKey(CompoundPK primaryKey) throws FinderException;
-
+    public String getName();
+    public void setName(String field2);
+    
+    // CMR
+    public LicenseLocal getLicense();
+    public void setLicense(LicenseLocal license);
 }

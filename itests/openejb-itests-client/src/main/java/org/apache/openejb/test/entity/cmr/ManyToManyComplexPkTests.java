@@ -20,6 +20,8 @@ import org.apache.openejb.test.entity.cmr.manytomany.GameLocal;
 import org.apache.openejb.test.entity.cmr.manytomany.GameLocalHome;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocal;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocalHome;
+import org.apache.openejb.test.entity.cmr.manytomany.GamePk;
+import org.apache.openejb.test.entity.cmr.manytomany.PlatformPk;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -37,19 +39,19 @@ import java.util.ConcurrentModificationException;
 /**
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public class ManyToManyTests extends AbstractCMRTest {
+public class ManyToManyComplexPkTests extends AbstractCMRTest {
     private PlatformLocalHome platformLocalHome;
     private GameLocalHome gameLocalHome;
 
-    public ManyToManyTests() {
-        super("ManyToMany.");
+    public ManyToManyComplexPkTests() {
+        super("ManyToManyComplex.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        platformLocalHome = (PlatformLocalHome) initialContext.lookup("client/tests/entity/cmr/manyToMany/PlatformLocal");
-        gameLocalHome = (GameLocalHome) initialContext.lookup("client/tests/entity/cmr/manyToMany/GameLocal");
+        platformLocalHome = (PlatformLocalHome) initialContext.lookup("client/tests/entity/cmr/manyToMany/ComplexPlatformLocal");
+        gameLocalHome = (GameLocalHome) initialContext.lookup("client/tests/entity/cmr/manyToMany/ComplexGameLocal");
     }
 
     public void testAGetBExistingAB() throws Exception {
@@ -247,10 +249,11 @@ public class ManyToManyTests extends AbstractCMRTest {
         } finally {
             completeTransaction();
         }
+
         assertPlatformDeleted(1);
     }
 
-    public void testIllegalCmrCollectionArgument() throws Exception {
+       public void testIllegalCmrCollectionArgument() throws Exception {
         resetDB();
         beginTransaction();
         try {
@@ -448,12 +451,12 @@ public class ManyToManyTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE id=" + platformId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE id=" + platformId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
 
-        rs = s.executeQuery("SELECT COUNT(*) FROM Platform WHERE id=" + platformId);
+        rs = s.executeQuery("SELECT COUNT(*) FROM ComplexPlatform WHERE id=" + platformId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -466,7 +469,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform");
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -479,16 +482,16 @@ public class ManyToManyTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE id = " + platformId + " AND Games_id = " + gameId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE id = " + platformId + " AND Games_id = " + gameId);
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         rs.close();
 
-        rs = s.executeQuery("SELECT name FROM Platform WHERE id = " + platformId);
+        rs = s.executeQuery("SELECT name FROM ComplexPlatform WHERE id = " + platformId);
         assertTrue(rs.next());
         assertEquals("value" + platformId, rs.getString(1));
 
-        rs = s.executeQuery("SELECT name FROM Game WHERE id = " + gameId);
+        rs = s.executeQuery("SELECT name FROM ComplexGame WHERE id = " + gameId);
         assertTrue(rs.next());
         assertEquals("value" + gameId, rs.getString(1));
         rs.close();
@@ -498,23 +501,21 @@ public class ManyToManyTests extends AbstractCMRTest {
     }
 
     private GameLocal createGame(int gameId) throws CreateException {
-        GameLocal menu = gameLocalHome.create(gameId);
-        menu.setName("value" + gameId);
+        GameLocal menu = gameLocalHome.create(new GamePk(gameId, "value" + gameId));
         return menu;
     }
 
     private GameLocal findGame(int gameId) throws FinderException {
-        return gameLocalHome.findByPrimaryKey(gameId);
+        return gameLocalHome.findByPrimaryKey(new GamePk(gameId, "value" + gameId));
     }
 
     private PlatformLocal createPlatform(int platformId) throws CreateException {
-        PlatformLocal platform = platformLocalHome.create(platformId);
-        platform.setName("value" + platformId);
+        PlatformLocal platform = platformLocalHome.create(new PlatformPk(platformId, "value" + platformId));
         return platform;
     }
 
     private PlatformLocal findPlatform(int platformId) throws FinderException {
-        return platformLocalHome.findByPrimaryKey(platformId);
+        return platformLocalHome.findByPrimaryKey(new PlatformPk(platformId, "value" + platformId));
     }
 
     private void resetDB() throws Exception {
@@ -524,15 +525,15 @@ public class ManyToManyTests extends AbstractCMRTest {
             statement = connection.createStatement();
 
             try {
-                statement.execute("DELETE FROM Game_Platform");
+                statement.execute("DELETE FROM ComplexGame_ComplexPlatform");
             } catch (SQLException ignored) {
             }
             try {
-                statement.execute("DELETE FROM Game");
+                statement.execute("DELETE FROM ComplexGame");
             } catch (SQLException ignored) {
             }
             try {
-                statement.execute("DELETE FROM Platform");
+                statement.execute("DELETE FROM ComplexPlatform");
             } catch (SQLException ignored) {
             }
         } finally {
@@ -565,8 +566,8 @@ public class ManyToManyTests extends AbstractCMRTest {
     }
 
     protected void dump() throws SQLException {
-        dumpTable(ds, "Game");
-        dumpTable(ds, "Platform");
-        dumpTable(ds, "Game_Platform");
+        dumpTable(ds, "ComplexGame");
+        dumpTable(ds, "ComplexPlatform");
+        dumpTable(ds, "ComplexGame_ComplexPlatform");
     }
 }

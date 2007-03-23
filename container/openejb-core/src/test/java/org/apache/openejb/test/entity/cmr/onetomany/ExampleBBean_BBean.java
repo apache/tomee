@@ -20,7 +20,7 @@ package org.apache.openejb.test.entity.cmr.onetomany;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 
-public class ExampleBBean_BBean extends BBean implements Cmp2Entity {
+public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
     public static Object deploymentInfo;
     private transient boolean deleted;
     private Integer field1;
@@ -33,52 +33,52 @@ public class ExampleBBean_BBean extends BBean implements Cmp2Entity {
     private ExampleABean_ABean aNonCascade;
     private SingleValuedCmr aNonCascadeCmr = new SingleValuedCmr(this, "aNonCascade", ExampleABean_ABean.class, "bNonCascade");
 
-    public Integer getField1() {
+    public Integer getId() {
         return field1;
     }
 
-    public void setField1(Integer field1) {
+    public void setId(Integer field1) {
         this.field1 = field1;
     }
 
-    public String getField2() {
+    public String getName() {
         return field2;
     }
 
-    public void setField2(String field2) {
+    public void setName(String field2) {
         this.field2 = field2;
     }
 
-    public Integer getField3() {
+    public Integer getBpm() {
         return field3;
     }
 
-    public void setField3(Integer field3) {
+    public void setBpm(Integer field3) {
         this.field3 = field3;
     }
 
-    public String getField4() {
+    public String getDescription() {
         return field4;
     }
 
-    public void setField4(String field4) {
+    public void setDescription(String field4) {
         this.field4 = field4;
     }
 
-    public ALocal getA() {
-        return (ALocal) aCmr.get(a);
+    public ArtistLocal getPerformer() {
+        return (ArtistLocal) aCmr.get(a);
     }
 
-    public void setA(ALocal a) {
-        this.a = (ExampleABean_ABean) aCmr.set(this.a, a);
+    public void setPerformer(ArtistLocal artist) {
+        this.a = (ExampleABean_ABean) aCmr.set(this.a, artist);
     }
 
-    public ALocal getANonCascade() {
-        return (ALocal) aNonCascadeCmr.get(aNonCascade);
+    public ArtistLocal getComposer() {
+        return (ArtistLocal) aNonCascadeCmr.get(aNonCascade);
     }
 
-    public void setANonCascade(ALocal aNonCascade) {
-        this.aNonCascade = (ExampleABean_ABean) aNonCascadeCmr.set(this.aNonCascade, aNonCascade);
+    public void setComposer(ArtistLocal artistNonCascade) {
+        this.aNonCascade = (ExampleABean_ABean) aNonCascadeCmr.set(this.aNonCascade, artistNonCascade);
     }
 
     public Object OpenEJB_getPrimaryKey() {

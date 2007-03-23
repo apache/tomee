@@ -14,31 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.onetoone;
+package org.apache.openejb.test.entity.cmr.manytomany;
 
+import java.util.Set;
 import javax.ejb.EJBLocalObject;
 
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public interface BLocal extends EJBLocalObject {
-
+public interface GameLocal extends EJBLocalObject {
     // CMP
-    public Integer getField1();
-    public void setField1(Integer field1);
+    public Integer getId();
+    public void setId(Integer id);
 
-    public String getField2();
-    public void setField2(String field2);
+    public String getName();
+    public void setName(String name);
 
-    public Integer getField3();
-    public void setField3(Integer field3);
-
-    public String getField4();
-    public void setField4(String field4);
+    public Integer getRating();
+    public void setRating(Integer rating);
 
     // CMR
-    public ALocal getA();
-    public void setA(ALocal a);
-    
+    public Set<PlatformLocal> getPlatforms();
+    public void setPlatforms(Set<PlatformLocal> platforms);
 }

@@ -15,17 +15,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr;
+package org.apache.openejb.core.cmp.jpa;
 
-public class CmrTestSuite extends org.apache.openejb.test.TestSuite {
-    public CmrTestSuite() {
-        super();
-        this.addTest(new OneToOneTests());
-        this.addTest(new OneToManyTests());
-        this.addTest(new ManyToManyTests());
-        this.addTest(new OneToOneComplexPkTests());
-        this.addTest(new OneToManyComplexPkTests());
-        this.addTest(new ManyToManyComplexPkTests());
-//        this.addTest(new CmrMappingTests());
-    }
+import javax.ejb.EJBLocalHome;
+
+public interface AuthorHome extends EJBLocalHome {
 }

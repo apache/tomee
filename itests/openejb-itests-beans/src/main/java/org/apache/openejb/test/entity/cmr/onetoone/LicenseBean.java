@@ -14,50 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr.manytomany;
+package org.apache.openejb.test.entity.cmr.onetoone;
 
-import java.util.Set;
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
 
+import org.apache.openejb.test.entity.cmr.CompoundPK;
+
 /**
- *
  * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
  */
-public abstract class BBean implements EntityBean {
-
-    private EntityContext context;
-    
+public abstract class LicenseBean implements EntityBean {
     // CMP
-    public abstract Integer getField1();
-    public abstract void setField1(Integer field1);
+    public abstract Integer getId();
+    public abstract void setId(Integer id);
 
-    public abstract String getField2();
-    public abstract void setField2(String field2);
+    public abstract String getNumber();
+    public abstract void setNumber(String number);
 
-    public abstract Integer getField3();
-    public abstract void setField3(Integer field3);
+    public abstract Integer getPoints();
+    public abstract void setPoints(Integer points);
+
+    public abstract String getNotes();
+    public abstract void setNotes(String notes);
 
     // CMR
-    public abstract Set<ALocal> getA();
-    public abstract void setA(Set<ALocal> aSet);
+    public abstract PersonLocal getPerson();
+    public abstract void setPerson(PersonLocal personLocal);
     
-    public Integer ejbCreate(Integer field1)  throws CreateException {
-        setField1(field1);
+    public Integer ejbCreate(Integer id)  throws CreateException {
+        setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer field1) {
+    public void ejbPostCreate(Integer id) {
+    }
+
+    public CompoundPK ejbCreate(LicensePk primaryKey)  throws CreateException {
+        setId(primaryKey.id);
+        setNumber(primaryKey.number);
+        return null;
+    }
+
+    public void ejbPostCreate(LicensePk primaryKey) {
     }
 
     public void setEntityContext(EntityContext ctx) {
-        context = ctx;
     }
 
     public void unsetEntityContext() {
-        context = null;
     }
 
     public void ejbActivate() {
