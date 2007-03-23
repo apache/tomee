@@ -61,6 +61,8 @@ public interface DeploymentInfo {
 
     public String getRunAs();
 
+    public String getSecurityRole(String securityRoleReference);
+
     public boolean isBeanManagedTransaction();
 
     public Class getHomeInterface();
@@ -87,13 +89,13 @@ public interface DeploymentInfo {
 
     public boolean isReentrant();
 
-    Class getInterface(InterfaceType interfaceType);
+    public Class getInterface(InterfaceType interfaceType);
 
-    Class getMdbInterface();
+    public Class getMdbInterface();
 
-    Map<String, String> getActivationProperties();
+    public Map<String, String> getActivationProperties();
 
-    ClassLoader getClassLoader();
+    public ClassLoader getClassLoader();
 
     public List<Method> getAroundInvoke();
 
@@ -105,13 +107,13 @@ public interface DeploymentInfo {
 
     public List<Method> getPrePassivate();
 
-    List<Injection> getInjections();
+    public List<Injection> getInjections();
 
-    void setContainer(Container container);
+    public void setContainer(Container container);
 
-    Method getEjbTimeout();
+    public Method getEjbTimeout();
 
-    EjbTimerService getEjbTimerService();
+    public EjbTimerService getEjbTimerService();
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();

@@ -406,17 +406,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
-                RoleMapping roleMapping = new RoleMapping(new ArrayList<RoleMappingInfo>());
+
+                JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
+                PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
+                jaccPermissionsBuilder.install(policyContext);
+
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    applyMethodPermissions((CoreDeploymentInfo) deploymentInfo, ejbJar.methodPermissions, roleMapping);
                     applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
                     containerSystem.addDeployment(deploymentInfo);
                     jndiBuilder.bind(deploymentInfo);
-                }
 
-                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                    CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(beanInfo.ejbDeploymentId);
-                    applySecurityRoleReference(deployment, beanInfo, roleMapping);
                 }
 
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {

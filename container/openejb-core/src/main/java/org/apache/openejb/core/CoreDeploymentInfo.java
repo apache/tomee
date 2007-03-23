@@ -126,7 +126,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
-    private final Map<String, List<String>> securityRoleReferenceMap = new HashMap<String, List<String>>();
+    private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
     private String jarPath;
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
@@ -443,12 +443,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public List<String> getPhysicalRole(String securityRoleReference) {
+    public String getSecurityRole(String securityRoleReference) {
         return securityRoleReferenceMap.get(securityRoleReference);
     }
 
-    public void addSecurityRoleReference(String securityRoleReference, List<String> physicalRoles) {
-        securityRoleReferenceMap.put(securityRoleReference, physicalRoles);
+    public void addSecurityRoleReference(String securityRoleReference, String linkedRoleName) {
+        securityRoleReferenceMap.put(securityRoleReference, linkedRoleName);
     }
 
     public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {

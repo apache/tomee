@@ -22,6 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -29,18 +31,28 @@ import javax.security.auth.login.LoginContext;
 import javax.security.jacc.PolicyContext;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
+import javax.security.jacc.PolicyConfigurationFactory;
+import javax.security.jacc.PolicyContextException;
+import javax.security.jacc.PolicyConfiguration;
 import javax.ejb.AccessLocalException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.security.AccessControlContext;
 import java.security.Permission;
 import java.security.AccessControlException;
 import java.security.PrivilegedAction;
 import java.security.AccessController;
 import java.security.Principal;
+import java.security.Permissions;
+import java.security.ProtectionDomain;
+import java.security.PermissionCollection;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.io.Serializable;
@@ -77,6 +89,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         }
 
         ThreadContext.addThreadContextListener(this);
+        PolicyConfigurationFactoryImpl.install();
     }
 
     public Object login(String username, String password) throws LoginException {

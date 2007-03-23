@@ -19,10 +19,6 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
@@ -36,20 +32,12 @@ import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.security.jacc.EJBMethodPermission;
-import javax.security.jacc.EJBRoleRefPermission;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.io.Serializable;
-import java.security.PermissionCollection;
-import java.security.Permissions;
-import java.security.Permission;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -135,6 +123,20 @@ class EnterpriseBeanBuilder {
         deployment.setModuleId(moduleId);
 
         deployment.setRunAs(bean.runAs);
+
+        for (SecurityRoleReferenceInfo roleReferenceInfo : bean.securityRoleReferences) {
+            String alias = roleReferenceInfo.roleName;
+            String actualName = roleReferenceInfo.roleLink;
+
+            // EJB 3.0 - 17.2.5.3
+            // In the absence of this linking step, any security role name as used in the code will be assumed to
+            // correspond to a security role of the same name.
+            if (actualName == null){
+                actualName = alias;
+            }
+
+            deployment.addSecurityRoleReference(alias, actualName);
+        }
 
         for (EnvEntryInfo info : bean.jndiEnc.envEntries) {
             for (InjectionInfo target : info.targets) {

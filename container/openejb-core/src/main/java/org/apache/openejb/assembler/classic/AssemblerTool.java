@@ -27,8 +27,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.List;
-import java.util.Set;
-import java.util.LinkedHashSet;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -99,126 +97,6 @@ public class AssemblerTool {
             }
         }
 
-    }
-
-    public void applySecurityRoleReference(CoreDeploymentInfo deployment, EnterpriseBeanInfo beanInfo, AssemblerTool.RoleMapping roleMapping) {
-        for (SecurityRoleReferenceInfo roleRef : beanInfo.securityRoleReferences) {
-            List<String> physicalRoles = roleMapping.getPhysicalRoles(roleRef.roleLink);
-            deployment.addSecurityRoleReference(roleRef.roleName, physicalRoles);
-        }
-    }
-
-    public static void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions) {
-        /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
-         there is a lot of complex code here, I'm sure something could go wrong the user
-         might want to know about.
-         At the very least, log a warning or two.
-         */
-        for (MethodPermissionInfo methodPermission : permissions) {
-            for (MethodInfo methodInfo : methodPermission.methods) {
-
-                if (methodInfo.ejbDeploymentId == null || methodInfo.ejbDeploymentId.equals(deployment.getDeploymentID())) {
-
-                    List<Method> methods = resolveMethodInfo(methodInfo, deployment);
-                    for (Method method : methods) {
-                        deployment.appendMethodPermissions(method, methodPermission.roleNames);
-                    }
-                }
-
-            }
-        }
-    }
-
-    public static void applyMethodPermissions(CoreDeploymentInfo deployment, List<MethodPermissionInfo> permissions, AssemblerTool.RoleMapping roleMapping) {
-        /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
-         there is a lot of complex code here, I'm sure something could go wrong the user
-         might want to know about.
-         At the very least, log a warning or two.
-         */
-        for (MethodPermissionInfo permission : permissions) {
-            applyRoleMappings(permission, roleMapping);
-        }
-        applyMethodPermissions(deployment, permissions);
-    }
-
-    /*
-    * Makes a copy of the MethodPermissionObject and then replaces the logical roles of the MethodPermissionInfo copy
-    * with the physical roles in the roleMapping object.
-    * If the RoleMapping object doesn't have a set of physical roles for a particular logical role in the
-    * MethodPermissionInfo, then the logical role is used.
-    *
-    * @param methodPermission the permission object to be copies and updated.
-    * @param roleMapping encapsulates the mapping of many logical roles to their equivalent physical roles.
-    * @see org.apache.openejb.assembler.classic.MethodPermissionInfo
-    * @see org.apache.openejb.assembler.classic.AssemblerTool.RoleMapping
-    */
-    public static void applyRoleMappings(MethodPermissionInfo methodPermission,
-                                  AssemblerTool.RoleMapping roleMapping) {
-        /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
-         there is a lot of complex code here, I'm sure something could go wrong the user
-         might want to know about.
-         At the very least, log a warning or two.
-         */
-
-        // Map the logical roles to physical roles
-        Set<String> physicalRoles = new LinkedHashSet<String>();
-        for (String roleName : methodPermission.roleNames) {
-            List<String> physicals = roleMapping.getPhysicalRoles(roleName);
-            if (physicals != null) {
-                physicalRoles.addAll(physicals);
-            } else {
-                // if no physical roles are mapped use logical role
-                physicalRoles.add(roleName);
-            }
-        }
-
-        // replace the existing role for this permission with the new roles
-        methodPermission.roleNames.clear();
-        methodPermission.roleNames.addAll(physicalRoles);
-    }
-
-    public static class RoleMapping {
-        private Map<String, List<String>> map = new HashMap<String, List<String>>();
-
-        public RoleMapping(List<RoleMappingInfo> roleMappingInfos) {
-            for (RoleMappingInfo mapping : roleMappingInfos) {
-                for (String logincalRoleName : mapping.logicalRoleNames) {
-                    map.put(logincalRoleName, mapping.physicalRoleNames);
-                }
-            }
-        }
-
-        public String[] logicalRoles() {
-            return (String[]) map.keySet().toArray();
-        }
-
-        public ArrayList<String> getPhysicalRoles(String logicalRole) {
-            List<String> roles = map.get(logicalRole);
-            return roles != null ? new ArrayList<String>(roles) : null;
-        }
-
-    }
-
-    protected static List<Method> resolveMethodInfo(MethodInfo methodInfo, org.apache.openejb.core.CoreDeploymentInfo di) {
-        /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
-         there is a lot of complex code here, I'm sure something could go wrong the user
-         might want to know about.
-         At the very least, log a warning or two.
-         */
-
-        List<Method> methods = new ArrayList<Method>();
-
-        Class remote = di.getRemoteInterface();
-        Class home = di.getHomeInterface();
-        if (methodInfo.methodIntf == null) {
-            resolveMethods(methods, remote, methodInfo);
-            resolveMethods(methods, home, methodInfo);
-        } else if (methodInfo.methodIntf.equals("Remote")) {
-            resolveMethods(methods, remote, methodInfo);
-        } else {
-            resolveMethods(methods, home, methodInfo);
-        }
-        return methods;
     }
 
     protected static void resolveMethods(List<Method> methods, Class intrface, MethodInfo mi)

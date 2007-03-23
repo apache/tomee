@@ -21,8 +21,13 @@ import org.apache.openejb.InterfaceType;
 
 import javax.security.auth.login.LoginException;
 import javax.security.auth.Subject;
+import javax.security.jacc.PolicyConfigurationFactory;
+import javax.security.jacc.PolicyConfiguration;
+import javax.security.jacc.PolicyContextException;
 import java.util.Collection;
 import java.security.Principal;
+import java.security.PermissionCollection;
+import java.security.Permission;
 import java.lang.reflect.Method;
 
 /**
@@ -30,6 +35,10 @@ import java.lang.reflect.Method;
  */
 public class PseudoSecurityService implements SecurityService {
     private final ThreadLocal<Object> securityIdentity = new ThreadLocal<Object>();
+
+    public PseudoSecurityService() {
+        PseudoPolicyConfigurationFactory.install();
+    }
 
     public void init(java.util.Properties props) {
     }

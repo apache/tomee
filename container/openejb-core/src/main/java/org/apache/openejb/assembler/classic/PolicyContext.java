@@ -51,7 +51,7 @@ public class PolicyContext {
         return rolePermissions;
     }
 
-    public String getContextID() throws PolicyContextException {
+    public String getContextID() {
         return contextId;
     }
 

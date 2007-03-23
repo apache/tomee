@@ -16,22 +16,16 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.assembler.classic.PolicyContext;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.MethodPermissionInfo;
-import org.apache.openejb.assembler.classic.MethodInfo;
-import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
-import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyConfiguration;
-import javax.security.auth.Subject;
+import javax.security.jacc.PolicyConfigurationFactory;
+import javax.security.jacc.PolicyContextException;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Permissions;
@@ -45,23 +39,30 @@ import java.util.Map;
  */
 public class JaccPermissionsBuilder {
 
-    public static class RunAsBuilder {
-        
+    static {
+        System.setProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessRemote,BusinessLocal");
     }
-    public void install(PolicyContext policyContext) throws Exception {
-        PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
-        PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
+    public void install(PolicyContext policyContext) throws OpenEJBException {
+        try {
+            PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
-        policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
+            PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
 
-        policy.addToUncheckedPolicy(policyContext.getUncheckedPermissions());
+            policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
 
-        for (Map.Entry<String, PermissionCollection> entry : policyContext.getRolePermissions().entrySet()) {
-            policy.addToRole(entry.getKey(), entry.getValue());
+            policy.addToUncheckedPolicy(policyContext.getUncheckedPermissions());
+
+            for (Map.Entry<String, PermissionCollection> entry : policyContext.getRolePermissions().entrySet()) {
+                policy.addToRole(entry.getKey(), entry.getValue());
+            }
+
+            policy.commit();
+        } catch (ClassNotFoundException e) {
+            throw new OpenEJBException("PolicyConfigurationFactory class not found", e);
+        } catch (PolicyContextException e) {
+            throw new OpenEJBException("JACC PolicyConfiguration failed: ContextId=" + policyContext.getContextID(), e);
         }
-
-        policy.commit();
     }
 
 
@@ -76,6 +77,8 @@ public class JaccPermissionsBuilder {
 
             String ejbName = enterpriseBean.ejbName;
             for (InterfaceType type : InterfaceType.values()) {
+                if (type == InterfaceType.BUSINESS_LOCAL_HOME || type == InterfaceType.BUSINESS_REMOTE_HOME || type == InterfaceType.UNKNOWN) continue;
+
                 addPossibleEjbMethodPermissions(permissions, ejbName, type.getName(), deployment.getInterface(type));
             }
 
@@ -90,7 +93,7 @@ public class JaccPermissionsBuilder {
 
         PermissionCollection uncheckedPermissions = policyContext.getUncheckedPermissions();
         PermissionCollection excludedPermissions = policyContext.getExcludedPermissions();
-        Map<String,PermissionCollection> rolePermissions = policyContext.getRolePermissions();
+        Map<String, PermissionCollection> rolePermissions = policyContext.getRolePermissions();
 
         String ejbName = beanInfo.ejbName;
 
