@@ -314,8 +314,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
-                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding());
-                    binding.setEjbName(bean.getEjbName());
+                    InterceptorBinding binding = new InterceptorBinding(bean);
+                    assemblyDescriptor.getInterceptorBinding().add(0, binding);
 
                     for (Class interceptor : interceptors.value()) {
                         binding.getInterceptorClass().add(interceptor.getName());
@@ -332,8 +332,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
-                        InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding());
-                        binding.setEjbName(bean.getEjbName());
+                        InterceptorBinding binding = new InterceptorBinding(bean);
+                        assemblyDescriptor.getInterceptorBinding().add(0, binding);
 
                         for (Class interceptor : interceptors.value()) {
                             binding.getInterceptorClass().add(interceptor.getName());
