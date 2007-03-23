@@ -71,8 +71,8 @@ public class SecurityIdentity {
         this.useCallerIdentity = value;
     }
 
-    public RunAs getRunAs() {
-        return runAs;
+    public String getRunAs() {
+        return runAs == null ? null: runAs.getRoleName();
     }
 
     public void setRunAs(RunAs value) {

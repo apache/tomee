@@ -59,7 +59,7 @@ public interface DeploymentInfo {
 
     public String getModuleID();
 
-    public Subject getRunAsSubject();
+    public String getRunAs();
 
     public boolean isBeanManagedTransaction();
 

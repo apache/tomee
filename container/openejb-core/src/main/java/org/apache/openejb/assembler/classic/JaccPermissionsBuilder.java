@@ -20,16 +20,18 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.assembler.classic.ModulePermissions;
+import org.apache.openejb.assembler.classic.PolicyContext;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.MethodPermissionInfo;
 import org.apache.openejb.assembler.classic.MethodInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 
-import javax.security.auth.Subject;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
+import javax.security.jacc.PolicyConfigurationFactory;
+import javax.security.jacc.PolicyConfiguration;
+import javax.security.auth.Subject;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Permissions;
@@ -43,10 +45,29 @@ import java.util.Map;
  */
 public class JaccPermissionsBuilder {
 
+    public static class RunAsBuilder {
+        
+    }
+    public void install(PolicyContext policyContext) throws Exception {
+        PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
-    public ModulePermissions build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+        PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
 
-        ModulePermissions componentPermissions = new ModulePermissions(new Permissions(), new Permissions(), new HashMap());
+        policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
+
+        policy.addToUncheckedPolicy(policyContext.getUncheckedPermissions());
+
+        for (Map.Entry<String, PermissionCollection> entry : policyContext.getRolePermissions().entrySet()) {
+            policy.addToRole(entry.getKey(), entry.getValue());
+        }
+
+        policy.commit();
+    }
+
+
+    public PolicyContext build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+
+        PolicyContext policyContext = new PolicyContext(ejbJar.moduleId);
 
         for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
             CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(enterpriseBean.ejbDeploymentId);
@@ -55,44 +76,21 @@ public class JaccPermissionsBuilder {
 
             String ejbName = enterpriseBean.ejbName;
             for (InterfaceType type : InterfaceType.values()) {
-                addToPermissions(permissions, ejbName, type.getName(), deployment.getInterface(type));
+                addPossibleEjbMethodPermissions(permissions, ejbName, type.getName(), deployment.getInterface(type));
             }
 
-            String defaultRole = null;
-            addComponentPermissions(ejbJar, enterpriseBean, defaultRole, permissions, componentPermissions);
+            addDeclaredEjbPermissions(ejbJar, enterpriseBean, null, permissions, policyContext);
 
-            // RunAs subject
-            String runAsName = enterpriseBean.runAs;
-            if (runAsName != null) {
-                Subject runAsSubject = null; // TODO: Turn name into subject
-                if (runAsSubject == null) {
-                    throw new OpenEJBException("No role designate found for run-as name: " + runAsName);
-                }
-                deployment.setRunAsSubject(runAsSubject);
-            }
         }
-        return componentPermissions;
+
+        return policyContext;
     }
 
-    /**
-     * Fill the container moduleBuilder with the security information that it needs
-     * to create the proper interceptors.  A <code>SecurityConfiguration</code>
-     * is also filled with permissions that need to be used to fill the JACC
-     * policy configuration.
-     *
-     * @param defaultRole       default role for otherwise unassigned permissions
-     * @param notAssigned       the set of all possible permissions.  These will be
-     *                          culled so that all that are left are those that have
-     *                          not been assigned roles.
-     * @param modulePermissions the holder for the ejb's permissions
-     * @throws org.apache.openejb.OpenEJBException
-     *          if any constraints are violated
-     */
-    private void addComponentPermissions(EjbJarInfo ejbJar, EnterpriseBeanInfo beanInfo, String defaultRole, Permissions notAssigned, ModulePermissions modulePermissions) throws OpenEJBException {
+    private void addDeclaredEjbPermissions(EjbJarInfo ejbJar, EnterpriseBeanInfo beanInfo, String defaultRole, Permissions notAssigned, PolicyContext policyContext) throws OpenEJBException {
 
-        PermissionCollection uncheckedPermissions = modulePermissions.getUncheckedPermissions();
-        PermissionCollection excludedPermissions = modulePermissions.getExcludedPermissions();
-        Map rolePermissions = modulePermissions.getRolePermissions();
+        PermissionCollection uncheckedPermissions = policyContext.getUncheckedPermissions();
+        PermissionCollection excludedPermissions = policyContext.getExcludedPermissions();
+        Map<String,PermissionCollection> rolePermissions = policyContext.getRolePermissions();
 
         String ejbName = beanInfo.ejbName;
 
@@ -244,7 +242,7 @@ public class JaccPermissionsBuilder {
      * @throws org.apache.openejb.OpenEJBException
      *          in case a class could not be found
      */
-    public void addToPermissions(Permissions permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
+    public void addPossibleEjbMethodPermissions(Permissions permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
         if (clazz == null) return;
         for (java.lang.reflect.Method method : clazz.getMethods()) {
             permissions.add(new EJBMethodPermission(ejbName, methodInterface, method));

@@ -19,7 +19,6 @@ package org.apache.openejb.core.security;
 import junit.framework.TestCase;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -28,21 +27,14 @@ import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.Method;
 
 import javax.naming.InitialContext;
 import javax.ejb.Stateless;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.DenyAll;
-import java.util.List;
+import javax.annotation.security.RunAs;
 
 /**
  * @version $Rev$ $Date$
@@ -50,10 +42,10 @@ import java.util.List;
 public class SecurityTest extends TestCase {
 
 
-    public void test() throws Exception {
+    public void _test() throws Exception {
 
     }
-    public void _test() throws Exception {
+    public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         ConfigurationFactory config = new ConfigurationFactory();
@@ -72,50 +64,69 @@ public class SecurityTest extends TestCase {
 
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
 
-        List<MethodPermission> permissions = ejbJar.getAssemblyDescriptor().getMethodPermission();
+        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
-        assembler.createApplication(config.configureApplication(ejbJar));
+        assembler.createApplication(ejbJarInfo);
 
         InitialContext ctx = new InitialContext();
 //        Target target = (Target) ctx.lookup("TargetBeanBusinessLocal");
     }
 
-
     @Stateless
     public static class FooBean implements Foo {
-        @RolesAllowed({"Manager"})
-        public String allowManager(String s) {
+        @RolesAllowed({"Committer"})
+        public String svnCommit(String s) {
             return s;
         }
 
-        @RolesAllowed({"Manager", "Employee"})
-        public String allowEmployee(String s) {
+        @RolesAllowed({"Committer", "Contributor"})
+        public String submitPatch(String s) {
             return s;
         }
 
         @PermitAll
-        public String allowEveryone(String s) {
+        public String svnCheckout(String s) {
             return s;
         }
 
         @DenyAll
-        public String excluded(String s) {
+        public String deleteProject(String s) {
+            return s;
+        }
+    }
+
+    @Stateless
+    @RunAs("Contributor")
+    public static class BarBean implements Foo {
+        @RolesAllowed({"Committer"})
+        public String svnCommit(String s) {
+            return s;
+        }
+
+        @RolesAllowed({"Committer", "Contributor"})
+        public String submitPatch(String s) {
+            return s;
+        }
+
+        @PermitAll
+        public String svnCheckout(String s) {
+            return s;
+        }
+
+        @DenyAll
+        public String deleteProject(String s) {
             return s;
         }
     }
 
     public static interface Foo {
 
-        @RolesAllowed({"Manager"})
-        String allowManager(String s);
+        public String svnCommit(String s);
 
-        @RolesAllowed({"Manager","Employee"})
-        String allowEmployee(String s);
+        public String submitPatch(String s);
 
-        @PermitAll
-        String allowEveryone(String s);
+        public String svnCheckout(String s);
 
-        @DenyAll
-        String excluded(String s);
+        public String deleteProject(String s);
     }
 }

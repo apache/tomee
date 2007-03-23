@@ -130,6 +130,12 @@ class EnterpriseBeanBuilder {
             deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
         }
 
+        deployment.setEjbName(bean.ejbName);
+
+        deployment.setModuleId(moduleId);
+
+        deployment.setRunAs(bean.runAs);
+
         for (EnvEntryInfo info : bean.jndiEnc.envEntries) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");

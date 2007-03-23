@@ -101,6 +101,9 @@ public class EjbJarInfoBuilder {
             infos.put(beanInfo.ejbName, beanInfo);
             items.put(beanInfo.ejbName, bean);
 
+            if (bean.getSecurityIdentity() != null) {
+                beanInfo.runAs = bean.getSecurityIdentity().getRunAs();
+            }
 
         }
 
@@ -289,6 +292,7 @@ public class EjbJarInfoBuilder {
             info.description = mp.getDescription();
             info.roleNames.addAll(mp.getRoleName());
             info.methods.addAll(getMethodInfos(mp.getMethod(), ejbds));
+            info.unchecked = mp.getUnchecked();
 
             ejbJarInfo.methodPermissions.add(info);
         }
@@ -328,6 +332,7 @@ public class EjbJarInfoBuilder {
 
             methodInfo.description = method.getDescription();
             methodInfo.ejbDeploymentId = d.getDeploymentId();
+            methodInfo.ejbName = method.getEjbName();
             methodInfo.methodIntf = (method.getMethodIntf() == null) ? null : method.getMethodIntf().toString();
             methodInfo.methodName = method.getMethodName();
 

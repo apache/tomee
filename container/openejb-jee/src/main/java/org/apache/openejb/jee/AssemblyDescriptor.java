@@ -143,6 +143,9 @@ public class AssemblyDescriptor {
     }
 
     public ExcludeList getExcludeList() {
+        if (excludeList == null){
+            excludeList = new ExcludeList();
+        }
         return excludeList;
     }
 

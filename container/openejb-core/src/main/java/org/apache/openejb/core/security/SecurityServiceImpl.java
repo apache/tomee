@@ -112,9 +112,13 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        if (deploymentInfo.getRunAsSubject() != null){
+        if (deploymentInfo.getRunAs() != null){
 
-            securityContext = new SecurityContext(deploymentInfo.getRunAsSubject());
+            String runAsRole = deploymentInfo.getRunAs();
+
+            Subject runAs = resolve(runAsRole);
+
+            securityContext = new SecurityContext(runAs);
 
         } else if (securityContext == null){
 
@@ -126,6 +130,15 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         newContext.set(SecurityContext.class, securityContext);
 
+    }
+
+    /**
+     * TODO
+     * @param runAsRole
+     * @return the role converted to a subject
+     */
+    private Subject resolve(String runAsRole) {
+        return null;
     }
 
 

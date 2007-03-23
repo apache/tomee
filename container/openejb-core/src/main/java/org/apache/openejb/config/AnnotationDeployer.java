@@ -359,6 +359,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 for (Method method : classFinder.findAnnotatedMethods(RolesAllowed.class)) {
+                    rolesAllowed = method.getAnnotation(RolesAllowed.class);
                     MethodPermission methodPermission = new MethodPermission();
                     methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
                     methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));

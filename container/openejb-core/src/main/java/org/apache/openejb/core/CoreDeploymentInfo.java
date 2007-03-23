@@ -29,8 +29,6 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.SessionSynchronization;
-import javax.ejb.EnterpriseBean;
-import javax.ejb.SessionBean;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -111,7 +109,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private String ejbName;
     private String moduleId;
-    private Subject runAsSubject;
+    private String runAs;
 
     private Object containerData;
 
@@ -956,7 +954,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return null;
     }
 
-    public Subject getRunAsSubject() {
+    public String getRunAs() {
         return null;
     }
 
@@ -968,7 +966,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.moduleId = moduleId;
     }
 
-    public void setRunAsSubject(Subject runAsSubject) {
-        this.runAsSubject = runAsSubject;
+    public void setRunAs(String runAs) {
+        this.runAs = runAs;
     }
 }
