@@ -27,6 +27,7 @@ import org.apache.openejb.util.proxy.Jdk13ProxyFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EjbJarInfoBuilder;
+import org.apache.openejb.config.JndiEncInfoBuilder;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.assembler.classic.EjbJarBuilder;
@@ -110,6 +111,7 @@ public class StatelessContainerTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        super.setUp();
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
         bean.setBusinessRemote(RemoteWidget.class.getName());
@@ -148,10 +150,14 @@ public class StatelessContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule ejbModule) throws OpenEJBException {
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
+        EjbJarInfo jarInfo = infoBuilder.buildInfo(ejbModule);
+
+        // Process JNDI refs
+        JndiEncInfoBuilder.initJndiReferences(ejbModule, jarInfo);
+
         EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
-        EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
         HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
         return ejbs;
     }
@@ -170,7 +176,7 @@ public class StatelessContainerTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        private static Stack<Lifecycle> lifecycle = new Stack();
+        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);

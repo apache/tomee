@@ -29,6 +29,7 @@ import org.apache.openejb.ri.sp.PseudoTransactionService;
 import org.apache.openejb.ri.sp.PseudoSecurityService;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EjbJarInfoBuilder;
+import org.apache.openejb.config.JndiEncInfoBuilder;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
@@ -37,10 +38,6 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
-import javax.ejb.SessionContext;
-import java.util.Stack;
-import java.util.List;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.HashMap;
 import java.net.URL;
@@ -49,7 +46,6 @@ import java.net.URL;
  * @version $Revision: 500061 $ $Date: 2007-01-25 15:47:53 -0800 (Thu, 25 Jan 2007) $
  */
 public class ExtendedInjectionTest extends TestCase {
-    private StatelessContainer container;
     private DeploymentInfo deploymentInfo;
 
     public void testBusinessLocalInterface() throws Exception {
@@ -93,6 +89,7 @@ public class ExtendedInjectionTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        super.setUp();
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
         bean.setBusinessRemote(RemoteWidget.class.getName());
@@ -112,7 +109,7 @@ public class ExtendedInjectionTest extends TestCase {
         PseudoTransactionService transactionManager = new PseudoTransactionService();
         PseudoSecurityService securityService = new PseudoSecurityService();
         SystemInstance.get().setComponent(SecurityService.class, securityService);
-        container = new StatelessContainer("Stateless Container", transactionManager, securityService, 10, 0, false);
+        StatelessContainer container = new StatelessContainer("Stateless Container", transactionManager, securityService, 10, 0, false);
         Properties props = new Properties();
         props.put(container.getContainerID(), container);
 
@@ -124,18 +121,14 @@ public class ExtendedInjectionTest extends TestCase {
 
     }
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
-            sb.append(item.toString()).append(delimeter);
-        }
-        return sb.toString();
-    }
-
-    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule ejbModule) throws OpenEJBException {
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
+        EjbJarInfo jarInfo = infoBuilder.buildInfo(ejbModule);
+
+        // Process JNDI refs
+        JndiEncInfoBuilder.initJndiReferences(ejbModule, jarInfo);
+
         EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
-        EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
         HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
         return ejbs;
     }

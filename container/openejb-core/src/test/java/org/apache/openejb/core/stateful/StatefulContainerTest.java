@@ -24,6 +24,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EjbJarInfoBuilder;
+import org.apache.openejb.config.JndiEncInfoBuilder;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.ri.sp.PseudoTransactionService;
 import org.apache.openejb.ri.sp.PseudoSecurityService;
@@ -135,8 +136,9 @@ public class StatefulContainerTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        // Setup the descriptor information
+        super.setUp();
 
+        // Setup the descriptor information
         StatefulBean bean = new StatefulBean("widget", WidgetBean.class.getName());
         bean.setBusinessLocal(Widget.class.getName());
         bean.setBusinessRemote(RemoteWidget.class.getName());
@@ -161,9 +163,8 @@ public class StatefulContainerTest extends TestCase {
         PseudoSecurityService securityService = new PseudoSecurityService();
         SystemInstance.get().setComponent(SecurityService.class, securityService);
 
-
         // Create the Container
-        container = new StatefulContainer("Stateful Container", transactionManager, securityService,null, 10, 0, 1);
+        container = new StatefulContainer("Stateful Container", transactionManager, securityService, null, 10, 0, 1);
         Properties props = new Properties();
         props.put(container.getContainerID(), container);
 
@@ -188,10 +189,14 @@ public class StatefulContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule jar) throws OpenEJBException {
+    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule ejbModule) throws OpenEJBException {
         EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
+        EjbJarInfo jarInfo = infoBuilder.buildInfo(ejbModule);
+
+        // Process JNDI refs
+        JndiEncInfoBuilder.initJndiReferences(ejbModule, jarInfo);
+
         EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
-        EjbJarInfo jarInfo = infoBuilder.buildInfo(jar);
         HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
         return ejbs;
     }
@@ -210,11 +215,12 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public static class WidgetBean implements Widget, RemoteWidget, Serializable {
+        private static final long serialVersionUID = -8499745487520955081L;
 
         private int activates = 0;
         private int passivates = 0;
 
-        public static Stack<Lifecycle> lifecycle = new Stack();
+        public static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
@@ -229,11 +235,11 @@ public class StatefulContainerTest extends TestCase {
         }
 
         public void activate(){
-            lifecycle.push((Lifecycle) Enum.valueOf(Lifecycle.class, "POST_ACTIVATE" + (++activates)));
+            lifecycle.push(Enum.valueOf(Lifecycle.class, "POST_ACTIVATE" + (++activates)));
         }
 
         public void passivate(){
-            lifecycle.push((Lifecycle) Enum.valueOf(Lifecycle.class, "PRE_PASSIVATE" + (++passivates)));
+            lifecycle.push(Enum.valueOf(Lifecycle.class, "PRE_PASSIVATE" + (++passivates)));
         }
 
         public void init() {

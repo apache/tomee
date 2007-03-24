@@ -18,23 +18,68 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.assembler.classic.*;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.assembler.classic.CallbackInfo;
+import org.apache.openejb.assembler.classic.CmrFieldInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.EntityBeanInfo;
+import org.apache.openejb.assembler.classic.InitMethodInfo;
+import org.apache.openejb.assembler.classic.InterceptorBindingInfo;
+import org.apache.openejb.assembler.classic.InterceptorInfo;
+import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
+import org.apache.openejb.assembler.classic.MethodInfo;
+import org.apache.openejb.assembler.classic.MethodPermissionInfo;
+import org.apache.openejb.assembler.classic.MethodTransactionInfo;
+import org.apache.openejb.assembler.classic.NamedMethodInfo;
+import org.apache.openejb.assembler.classic.QueryInfo;
+import org.apache.openejb.assembler.classic.RemoveMethodInfo;
+import org.apache.openejb.assembler.classic.SecurityRoleInfo;
+import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
+import org.apache.openejb.assembler.classic.StatefulBeanInfo;
+import org.apache.openejb.assembler.classic.StatelessBeanInfo;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.CallbackMethod;
+import org.apache.openejb.jee.CmpField;
+import org.apache.openejb.jee.CmpVersion;
+import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.EjbRelation;
+import org.apache.openejb.jee.EjbRelationshipRole;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.Icon;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.Method;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.Multiplicity;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.Query;
+import org.apache.openejb.jee.QueryMethod;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.SecurityRole;
+import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
-import java.util.Iterator;
-import java.io.File;
 
 /**
  * @version $Revision$ $Date$
@@ -106,8 +151,6 @@ public class EjbJarInfoBuilder {
             }
 
         }
-
-        initJndiReferences(ejbds, infos, items);
 
         if (jar.getEjbJar().getAssemblyDescriptor() != null) {
             initInterceptors(jar, ejbJar, infos);
@@ -221,32 +264,6 @@ public class EjbJarInfoBuilder {
 
             info.method = toInfo(binding.getMethod());
             ejbJar.interceptorBindings.add(info);
-        }
-    }
-
-    private void initJndiReferences(Map<String, EjbDeployment> ejbds, Map<String, EnterpriseBeanInfo> beanInfos, Map<String, EnterpriseBean> beanData) throws OpenEJBException {
-
-        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(beanInfos.values(), null);
-
-        for (EnterpriseBeanInfo beanInfo : beanInfos.values()) {
-
-            String ejbName = beanInfo.ejbName;
-            JndiConsumer jndiConsumer = beanData.get(ejbName);
-
-            EjbDeployment ejbDeployment = ejbds.get(ejbName);
-
-            // Link all the resource refs
-            List<ResourceRef> resourceRefs = jndiConsumer.getResourceRef();
-            for (ResourceRef res : resourceRefs) {
-                ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
-                if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                    res.setResLink(resourceLink.getResId());
-                }
-            }
-
-            JndiEncInfo jndi = jndiEncInfoBuilder.build(jndiConsumer, ejbName);
-
-            beanInfo.jndiEnc = jndi;
         }
     }
 
