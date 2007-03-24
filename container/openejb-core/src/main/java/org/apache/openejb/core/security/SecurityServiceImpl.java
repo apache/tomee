@@ -16,49 +16,38 @@
  */
 package org.apache.openejb.core.security;
 
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.ThreadContextListener;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ThreadContextListener;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
-import javax.security.jacc.PolicyContext;
+import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
-import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyContextException;
-import javax.security.jacc.PolicyConfiguration;
-import javax.ejb.AccessLocalException;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.security.AccessControlContext;
-import java.security.Permission;
-import java.security.AccessControlException;
-import java.security.PrivilegedAction;
-import java.security.AccessController;
-import java.security.Principal;
-import java.security.Permissions;
-import java.security.ProtectionDomain;
-import java.security.PermissionCollection;
-import java.lang.reflect.Method;
-import java.rmi.AccessException;
-import java.io.Serializable;
+import javax.security.jacc.PolicyContext;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.AccessControlContext;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @version $Rev$ $Date$
@@ -66,13 +55,17 @@ import java.net.URL;
 public class SecurityServiceImpl implements SecurityService, ThreadContextListener {
     static private final Map<Object, Identity> identities = new java.util.concurrent.ConcurrentHashMap();
 
+    private final String defaultUser = "guest";
+    private final Subject defaultSubject;
+    private final SecurityContext defaultContext;
+
     public SecurityServiceImpl() {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
             try {
                 File conf = SystemInstance.get().getBase().getDirectory("conf");
                 File loginConfig = new File(conf, "login.config");
-                if (loginConfig.exists()){
+                if (loginConfig.exists()) {
                     path = conf.getAbsolutePath();
                     System.setProperty("java.security.auth.login.config", path);
                 }
@@ -90,6 +83,13 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         ThreadContext.addThreadContextListener(this);
         PolicyConfigurationFactoryImpl.install();
+
+        try {
+            defaultSubject = getSubject(defaultUser);
+            defaultContext = new SecurityContext(defaultSubject);
+        } catch (LoginException e) {
+            throw new IllegalStateException("Unable to create default subject: " + defaultUser, e);
+        }
     }
 
     public Object login(String username, String password) throws LoginException {
@@ -102,6 +102,14 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         Serializable token = identity.getToken();
         identities.put(token, identity);
         return token;
+    }
+
+    private Subject getSubject(String name) throws LoginException {
+        LoginContext context = new LoginContext("PropertiesLogin", new Handler(name));
+
+        context.login();
+
+        return context.getSubject();
     }
 
     private final static class SecurityContext {
@@ -125,7 +133,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        if (deploymentInfo.getRunAs() != null){
+        if (deploymentInfo.getRunAs() != null) {
 
             String runAsRole = deploymentInfo.getRunAs();
 
@@ -133,12 +141,16 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
             securityContext = new SecurityContext(runAs);
 
-        } else if (securityContext == null){
+        } else if (securityContext == null) {
 
             Subject subject = clientIdentity.get();
-            // TODO: Maybe use a default subject if client subject doesn't exist
 
-            securityContext = new SecurityContext(subject);
+            if (subject != null){
+                securityContext = new SecurityContext(subject);
+            } else {
+                securityContext = defaultContext;
+            }
+
         }
 
         newContext.set(SecurityContext.class, securityContext);
@@ -147,16 +159,21 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     /**
      * TODO
+     *
      * @param runAsRole
      * @return the role converted to a subject
      */
     private Subject resolve(String runAsRole) {
-        return null;
+        try {
+            return getSubject(runAsRole);
+        } catch (LoginException e) {
+            throw new IllegalStateException("RunAs user does not exist:" + runAsRole, e);
+        }
     }
 
 
     public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
-        if (reenteredContext == null){
+        if (reenteredContext == null) {
             PolicyContext.setContextID(null);
         } else {
             PolicyContext.setContextID(reenteredContext.getDeploymentInfo().getModuleID());
@@ -174,10 +191,13 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     private static ThreadLocal<Subject> clientIdentity = new ThreadLocal<Subject>();
 
     public void associate(Object securityIdentity) throws LoginException {
+        if (securityIdentity == null) return;
+        
         Identity identity = identities.get(securityIdentity);
-        if (identity == null) throw new LoginException("Identity does not exist: "+securityIdentity);
+        if (identity == null) throw new LoginException("Identity does not exist: " + securityIdentity);
 
         clientIdentity.set(identity.subject);
+
     }
 
     public boolean isCallerInRole(String role) {
@@ -205,25 +225,24 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         return null;
     }
 
-    public void checkPermission(Method method, InterfaceType type) throws Throwable {
+    public boolean isCallerAuthorized(Method method, InterfaceType type) {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
         try {
 
             String ejbName = threadContext.getDeploymentInfo().getEjbName();
-            Permission permission = new EJBMethodPermission(ejbName, type.getName(), method);
+
+            String name = type.getName();
+
+            Permission permission = new EJBMethodPermission(ejbName, name, method);
 
             if (permission != null) securityContext.acc.checkPermission(permission);
 
         } catch (AccessControlException e) {
-            boolean isLocal = false;// TODO: This check should go in the proxy handler
-            if (isLocal) {
-                throw new AccessLocalException(e.getMessage());
-            } else {
-                throw new AccessException(e.getMessage());
-            }
+            return false;
         }
+        return true;
     }
 
     private static class Identity {
@@ -261,6 +280,21 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames) {
         return true;
+    }
+
+    final static class Handler implements CallbackHandler {
+        private final String user;
+
+        private Handler(String user) {
+            this.user = user;
+        }
+
+        String getUser() {
+            return user;
+        }
+
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        }
     }
 
 }

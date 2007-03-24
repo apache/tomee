@@ -26,8 +26,6 @@ import java.util.Collection;
 
 public interface SecurityService extends Service {
 
-    public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames);
-
     public <T> T translateTo(Object securityIdentity, Class<T> type);
 
     /*
@@ -55,6 +53,6 @@ public interface SecurityService extends Service {
 
     public Principal getCallerPrincipal();
 
-    public void checkPermission(Method method, InterfaceType type) throws Throwable;
+    public boolean isCallerAuthorized(Method method, InterfaceType type);
 
 }

@@ -351,7 +351,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     }
 
     private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod, Object securityIdentity) throws ApplicationException {
-        boolean authorized = securityService.isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+        boolean authorized = securityService.isCallerAuthorized(callMethod, null);
         if (!authorized) {
             throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
         }

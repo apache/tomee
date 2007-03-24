@@ -242,7 +242,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
 
-            boolean authorized = securityService.isCallerAuthorized(securityIdentity, deployInfo.getAuthorizedRoles(callMethod));
+            boolean authorized = securityService.isCallerAuthorized(callMethod, null);
             if (!authorized) {
                 throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
             }

@@ -109,7 +109,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {
         Object caller = getThreadSpecificSecurityIdentity();
-        boolean authorized = getSecurityService().isCallerAuthorized(caller, getDeploymentInfo().getAuthorizedRoles(method));
+        boolean authorized = getSecurityService().isCallerAuthorized(method, null);
         if (!authorized)
             throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
     }

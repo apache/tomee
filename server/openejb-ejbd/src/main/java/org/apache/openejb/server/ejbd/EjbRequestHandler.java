@@ -390,7 +390,7 @@ class EjbRequestHandler {
         CallContext caller = CallContext.getCallContext();
         DeploymentInfo di = caller.getDeploymentInfo();
 
-        if (sec.isCallerAuthorized(req.getClientIdentity(), di.getAuthorizedRoles(req.getMethodInstance()))) {
+        if (sec.isCallerAuthorized(req.getMethodInstance(), null)) {
             res.setResponse(ResponseCodes.EJB_OK, null);
         } else {
             this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");

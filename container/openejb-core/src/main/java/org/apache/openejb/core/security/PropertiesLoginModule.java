@@ -91,26 +91,30 @@ public class PropertiesLoginModule implements LoginModule {
             throw new LoginException("Unable to load group properties file " + f);
         }
 
-        Callback[] callbacks = new Callback[2];
+        if (callbackHandler instanceof SecurityServiceImpl.Handler) {
+            SecurityServiceImpl.Handler systemHandler = (SecurityServiceImpl.Handler) callbackHandler;
+            user = systemHandler.getUser();
+        } else {
+            Callback[] callbacks = new Callback[2];
 
-        callbacks[0] = new NameCallback("Username: ");
-        callbacks[1] = new PasswordCallback("Password: ", false);
-        try {
-            callbackHandler.handle(callbacks);
-        } catch (IOException ioe) {
-            throw new LoginException(ioe.getMessage());
-        } catch (UnsupportedCallbackException uce) {
-            throw new LoginException(uce.getMessage() + " not available to obtain information from user");
+            callbacks[0] = new NameCallback("Username: ");
+            callbacks[1] = new PasswordCallback("Password: ", false);
+            try {
+                callbackHandler.handle(callbacks);
+            } catch (IOException ioe) {
+                throw new LoginException(ioe.getMessage());
+            } catch (UnsupportedCallbackException uce) {
+                throw new LoginException(uce.getMessage() + " not available to obtain information from user");
+            }
+            user = ((NameCallback) callbacks[0]).getName();
+            char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
+            if (tmpPassword == null) tmpPassword = new char[0];
+
+            String password = users.getProperty(user);
+
+            if (password == null) throw new FailedLoginException("User does exist");
+            if (!password.equals(new String(tmpPassword))) throw new FailedLoginException("Password does not match");
         }
-        user = ((NameCallback) callbacks[0]).getName();
-        char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
-        if (tmpPassword == null) tmpPassword = new char[0];
-
-        String password = users.getProperty(user);
-
-        if (password == null) throw new FailedLoginException("User does exist");
-        if (!password.equals(new String(tmpPassword))) throw new FailedLoginException("Password does not match");
-
         users.clear();
 
         if (debug) {

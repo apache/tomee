@@ -21,13 +21,8 @@ import org.apache.openejb.InterfaceType;
 
 import javax.security.auth.login.LoginException;
 import javax.security.auth.Subject;
-import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyContextException;
 import java.util.Collection;
 import java.security.Principal;
-import java.security.PermissionCollection;
-import java.security.Permission;
 import java.lang.reflect.Method;
 
 /**
@@ -90,6 +85,7 @@ public class PseudoSecurityService implements SecurityService {
         return null;
     }
 
-    public void checkPermission(Method method, InterfaceType type) throws Throwable {
+    public boolean isCallerAuthorized(Method method, InterfaceType type) {
+        return true;
     }
 }

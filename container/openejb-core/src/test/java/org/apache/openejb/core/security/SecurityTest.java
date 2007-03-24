@@ -35,6 +35,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.RunAs;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -42,10 +43,10 @@ import javax.annotation.security.RunAs;
 public class SecurityTest extends TestCase {
 
 
-    public void _test() throws Exception {
+    public void test() throws Exception {
 
     }
-    public void test() throws Exception {
+    public void _test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         ConfigurationFactory config = new ConfigurationFactory();
@@ -53,7 +54,14 @@ public class SecurityTest extends TestCase {
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        SecurityServiceInfo serviceInfo = new SecurityServiceInfo();
+        serviceInfo.serviceType = "SecurityService";
+        serviceInfo.className = SecurityServiceImpl.class.getName();
+        serviceInfo.id = "New Security Service";
+        serviceInfo.properties = new Properties();
+
+        assembler.createSecurityService(serviceInfo);
 
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
@@ -69,7 +77,9 @@ public class SecurityTest extends TestCase {
         assembler.createApplication(ejbJarInfo);
 
         InitialContext ctx = new InitialContext();
-//        Target target = (Target) ctx.lookup("TargetBeanBusinessLocal");
+        Foo foo = (Foo) ctx.lookup("FooBeanBusinessLocal");
+
+        foo.svnCheckout("");
     }
 
     @Stateless
