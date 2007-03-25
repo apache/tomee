@@ -17,9 +17,9 @@
 package org.apache.openejb.core.security;
 
 import junit.framework.TestCase;
-import org.apache.openejb.core.security.GroupPrincipal;
-import org.apache.openejb.core.security.UserPrincipal;
-import org.apache.openejb.core.security.UsernamePasswordCallbackHandler;
+import org.apache.openejb.core.security.jaas.GroupPrincipal;
+import org.apache.openejb.core.security.jaas.UserPrincipal;
+import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.FailedLoginException;

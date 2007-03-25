@@ -43,10 +43,10 @@ import java.util.Properties;
 public class SecurityTest extends TestCase {
 
 
-    public void test() throws Exception {
-
-    }
     public void _test() throws Exception {
+    }
+    
+    public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         ConfigurationFactory config = new ConfigurationFactory();

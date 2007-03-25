@@ -14,19 +14,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.security;
+package org.apache.openejb.core.security.jaas;
 
 import java.security.Principal;
 
 /**
  * @version $Rev$ $Date$
  */
-public class GroupPrincipal implements Principal {
+public class UserPrincipal implements Principal {
 
     private final String name;
     private transient int hash;
 
-    public GroupPrincipal(String name) {
+    public UserPrincipal(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
         this.name = name;
     }
@@ -39,7 +39,7 @@ public class GroupPrincipal implements Principal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final GroupPrincipal that = (GroupPrincipal) o;
+        final UserPrincipal that = (UserPrincipal) o;
 
         if (!name.equals(that.name)) return false;
 

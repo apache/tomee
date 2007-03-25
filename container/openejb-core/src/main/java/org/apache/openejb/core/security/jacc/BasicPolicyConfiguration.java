@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.security;
+package org.apache.openejb.core.security.jacc;
 
 import javax.security.jacc.PolicyConfiguration;
 import javax.security.jacc.PolicyContextException;
@@ -32,7 +32,7 @@ import java.util.HashSet;
 /**
  * @version $Rev$ $Date$
  */
-public class PolicyConfigurationImpl implements PolicyConfiguration {
+public class BasicPolicyConfiguration implements PolicyConfiguration {
     final static int OPEN = 1;
     final static int IN_SERVICE = 2;
     final static int DELETED = 3;
@@ -46,7 +46,7 @@ public class PolicyConfigurationImpl implements PolicyConfiguration {
 
     private final HashMap<Principal, Permissions> principalPermissionsMap = new HashMap();
 
-    PolicyConfigurationImpl(String contextID) {
+    BasicPolicyConfiguration(String contextID) {
         this.contextID = contextID;
         this.state = OPEN;
     }
@@ -190,7 +190,7 @@ public class PolicyConfigurationImpl implements PolicyConfiguration {
         return (state == IN_SERVICE);
     }
 
-    //TODO I have no idea what side effects this might have, but it's needed in some form from GeronimoPolicyConfigurationFactory.
+    //TODO I have no idea what side effects this might have, but it's needed in some form from PolicyConfigurationFactoryImpl.
     //see JACC spec 1.0 section 3.1.1.1 discussion of in service and deleted.
     //spec p. 31 3.1.7 on the effects of remove:
     //If the getPolicyConfiguration method  is used, the value true should be passed as the second

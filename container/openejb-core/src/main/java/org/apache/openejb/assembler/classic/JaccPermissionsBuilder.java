@@ -40,7 +40,7 @@ import java.util.Map;
 public class JaccPermissionsBuilder {
 
     static {
-        System.setProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessRemote,BusinessLocal");
+        System.setProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessLocalHome,BusinessRemoteHome,BusinessRemote,BusinessLocal");
     }
 
     public void install(PolicyContext policyContext) throws OpenEJBException {
@@ -76,10 +76,11 @@ public class JaccPermissionsBuilder {
             Permissions permissions = new Permissions();
 
             String ejbName = enterpriseBean.ejbName;
-            for (InterfaceType type : InterfaceType.values()) {
-                if (type == InterfaceType.BUSINESS_LOCAL_HOME || type == InterfaceType.BUSINESS_REMOTE_HOME || type == InterfaceType.UNKNOWN) continue;
 
-                addPossibleEjbMethodPermissions(permissions, ejbName, type.getName(), deployment.getInterface(type));
+            for (InterfaceType type : InterfaceType.values()) {
+                if (type == InterfaceType.UNKNOWN) continue;
+
+                addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), deployment.getInterface(type));
             }
 
             addDeclaredEjbPermissions(ejbJar, enterpriseBean, null, permissions, policyContext);

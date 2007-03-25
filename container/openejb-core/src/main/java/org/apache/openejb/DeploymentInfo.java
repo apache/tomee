@@ -45,6 +45,8 @@ public interface DeploymentInfo {
 
     public BeanType getComponentType();
 
+    public InterfaceType getInterfaceType(Class clazz);
+    
     public byte getTransactionAttribute(Method method);
 
     public Collection<String> getAuthorizedRoles(Method method);

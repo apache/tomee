@@ -131,6 +131,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
+    private final Map<Class, InterfaceType> interfaces = new HashMap();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -145,6 +146,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             case SERVICE_ENDPOINT: return getServiceEndpointInterface();
             default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
         }
+    }
+
+    public InterfaceType getInterfaceType(Class clazz) {
+        return interfaces.get(clazz);
     }
 
     public CoreDeploymentInfo(DeploymentContext context,
@@ -188,6 +193,16 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 throw new IllegalStateException(e);
             }
         }
+
+        interfaces.put(getHomeInterface(), InterfaceType.EJB_HOME);
+        interfaces.put(getRemoteInterface(), InterfaceType.EJB_OBJECT);
+        interfaces.put(getLocalHomeInterface(), InterfaceType.EJB_LOCAL_HOME);
+        interfaces.put(getLocalInterface(), InterfaceType.EJB_LOCAL);
+        interfaces.put(getBusinessLocalInterface(), InterfaceType.BUSINESS_LOCAL);
+        interfaces.put(getBusinessRemoteInterface(), InterfaceType.BUSINESS_REMOTE);
+        interfaces.put(DeploymentInfo.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
+        interfaces.put(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
+        interfaces.put(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
     }
 
     public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
@@ -947,15 +962,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public String getEjbName() {
-        return null;
+        return ejbName;
     }
 
     public String getModuleID() {
-        return null;
+        return moduleId;
     }
 
     public String getRunAs() {
-        return null;
+        return runAs;
     }
 
     public void setEjbName(String ejbName) {

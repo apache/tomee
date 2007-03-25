@@ -20,13 +20,12 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
+import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
+import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
@@ -43,11 +42,17 @@ import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.security.Policy;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 
 /**
  * @version $Rev$ $Date$
@@ -57,39 +62,21 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     private final String defaultUser = "guest";
     private final Subject defaultSubject;
+
     private final SecurityContext defaultContext;
 
     public SecurityServiceImpl() {
-        String path = System.getProperty("java.security.auth.login.config");
-        if (path == null) {
-            try {
-                File conf = SystemInstance.get().getBase().getDirectory("conf");
-                File loginConfig = new File(conf, "login.config");
-                if (loginConfig.exists()) {
-                    path = conf.getAbsolutePath();
-                    System.setProperty("java.security.auth.login.config", path);
-                }
-            } catch (IOException e) {
-            }
-        }
 
-        if (path == null) {
-            URL resource = this.getClass().getClassLoader().getResource("login.config");
-            if (resource != null) {
-                path = resource.getFile();
-                System.setProperty("java.security.auth.login.config", path);
-            }
-        }
+        System.setProperty(JaccProvider.class.getName(), BasicJaccProvider.class.getName());
+
+        installJaas();
+
+        installJacc();
 
         ThreadContext.addThreadContextListener(this);
-        PolicyConfigurationFactoryImpl.install();
 
-        try {
-            defaultSubject = getSubject(defaultUser);
-            defaultContext = new SecurityContext(defaultSubject);
-        } catch (LoginException e) {
-            throw new IllegalStateException("Unable to create default subject: " + defaultUser, e);
-        }
+        defaultSubject = getSubject(defaultUser);
+        defaultContext = new SecurityContext(defaultSubject);
     }
 
     public Object login(String username, String password) throws LoginException {
@@ -104,12 +91,57 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         return token;
     }
 
-    private Subject getSubject(String name) throws LoginException {
-        LoginContext context = new LoginContext("PropertiesLogin", new Handler(name));
+    public static class Group implements java.security.acl.Group {
+        private final List<Principal> members = new ArrayList<Principal>();
+        private final String name;
 
-        context.login();
+        public Group(String name) {
+            this.name = name;
+        }
 
-        return context.getSubject();
+        public boolean addMember(Principal user) {
+            return members.add(user);
+        }
+
+        public boolean removeMember(Principal user) {
+            return members.remove(user);
+        }
+
+        public boolean isMember(Principal member) {
+            return members.contains(member);
+        }
+
+        public Enumeration<? extends Principal> members() {
+            return Collections.enumeration(members);
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class User implements Principal {
+        private final String name;
+
+        public User(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    private Subject getSubject(String name) {
+        SecurityServiceImpl.User user = new SecurityServiceImpl.User(name);
+        SecurityServiceImpl.Group group = new SecurityServiceImpl.Group(name);
+        group.addMember(user);
+
+        HashSet<Principal> principals = new HashSet<Principal>();
+        principals.add(user);
+        principals.add(group);
+
+        return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
     private final static class SecurityContext {
@@ -127,7 +159,8 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     }
 
     public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {
-        PolicyContext.setContextID(newContext.getDeploymentInfo().getModuleID());
+        String moduleID = newContext.getDeploymentInfo().getModuleID();
+        PolicyContext.setContextID(moduleID);
 
         CoreDeploymentInfo deploymentInfo = newContext.getDeploymentInfo();
 
@@ -164,11 +197,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
      * @return the role converted to a subject
      */
     private Subject resolve(String runAsRole) {
-        try {
-            return getSubject(runAsRole);
-        } catch (LoginException e) {
-            throw new IllegalStateException("RunAs user does not exist:" + runAsRole, e);
-        }
+        return getSubject(runAsRole);
     }
 
 
@@ -192,7 +221,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     public void associate(Object securityIdentity) throws LoginException {
         if (securityIdentity == null) return;
-        
+
         Identity identity = identities.get(securityIdentity);
         if (identity == null) throw new LoginException("Identity does not exist: " + securityIdentity);
 
@@ -225,15 +254,19 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         return null;
     }
 
-    public boolean isCallerAuthorized(Method method, InterfaceType type) {
+    public boolean isCallerAuthorized(Method method, InterfaceType typee) {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
         try {
 
-            String ejbName = threadContext.getDeploymentInfo().getEjbName();
+            CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
 
-            String name = type.getName();
+            String ejbName = deploymentInfo.getEjbName();
+
+            InterfaceType type = deploymentInfo.getInterfaceType(method.getDeclaringClass());
+
+            String name = (type == null)? null: type.getSpecName();
 
             Permission permission = new EJBMethodPermission(ejbName, name, method);
 
@@ -282,19 +315,44 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         return true;
     }
 
-    final static class Handler implements CallbackHandler {
-        private final String user;
-
-        private Handler(String user) {
-            this.user = user;
+    private static void installJaas() {
+        String path = System.getProperty("java.security.auth.login.config");
+        if (path == null) {
+            try {
+                File conf = SystemInstance.get().getBase().getDirectory("conf");
+                File loginConfig = new File(conf, "login.config");
+                if (loginConfig.exists()) {
+                    path = conf.getAbsolutePath();
+                    System.setProperty("java.security.auth.login.config", path);
+                }
+            } catch (IOException e) {
+            }
         }
 
-        String getUser() {
-            return user;
-        }
-
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        if (path == null) {
+            URL resource = Thread.currentThread().getContextClassLoader().getResource("login.config");
+            if (resource != null) {
+                path = resource.getFile();
+                System.setProperty("java.security.auth.login.config", path);
+            }
         }
     }
 
+    private static void installJacc() {
+        final String providerKey = "javax.security.jacc.PolicyConfigurationFactory.provider";
+        if (System.getProperty(providerKey) == null){
+            System.setProperty(providerKey, JaccProvider.Factory.class.getName()) ;
+        }
+
+        String policyProvider = System.getProperty("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            Class policyClass = Class.forName(policyProvider, true, classLoader);
+            Policy policy = (Policy) policyClass.newInstance();
+            policy.refresh();
+            Policy.setPolicy(policy);
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not install JACC Policy Provider: "+policyProvider, e);
+        }
+    }
 }

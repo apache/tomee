@@ -24,21 +24,21 @@ public enum InterfaceType {
     EJB_OBJECT("Remote"),
     EJB_LOCAL_HOME("LocalHome"),
     EJB_LOCAL("Local"),
-    BUSINESS_LOCAL("BusinessLocal"),
-    BUSINESS_LOCAL_HOME("BusinessLocalHome"),
-    BUSINESS_REMOTE("BusinessRemote"),
-    BUSINESS_REMOTE_HOME("BusinessRemoteHome"),
+    BUSINESS_LOCAL("Local"),
+    BUSINESS_LOCAL_HOME("LocalHome"),
+    BUSINESS_REMOTE("Remote"),
+    BUSINESS_REMOTE_HOME("Home"),
     SERVICE_ENDPOINT("ServiceEndpoint"),
     UNKNOWN("Unknown");
 
-    private final String name;
+    private final String specName;
 
     InterfaceType(String name) {
-        this.name = name;
+        this.specName = name;
     }
 
-    public String getName() {
-        return name;
+    public String getSpecName() {
+        return specName;
     }
 
     public boolean isHome() {
