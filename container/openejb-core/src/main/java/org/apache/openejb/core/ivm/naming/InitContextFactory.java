@@ -20,10 +20,13 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.naming.Context;
+import javax.naming.AuthenticationException;
+import javax.security.auth.login.LoginException;
 
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.spi.SecurityService;
 
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
@@ -32,6 +35,19 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             initializeOpenEJB(env);
         }
 
+
+        String user = (String) env.get(Context.SECURITY_PRINCIPAL);
+        String pass = (String) env.get(Context.SECURITY_CREDENTIALS);
+
+        if (user != null && pass != null){
+            try {
+                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                Object identity = securityService.login(user, pass);
+                securityService.associate(identity);
+            } catch (LoginException e) {
+                throw (AuthenticationException) new AuthenticationException("User could not be authenticated: "+user).initCause(e);
+            }
+        }
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Context context = containerSystem.getJNDIContext();
         context = (Context) context.lookup("java:openejb/ejb");

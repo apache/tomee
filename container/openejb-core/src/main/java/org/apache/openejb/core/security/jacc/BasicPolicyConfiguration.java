@@ -40,11 +40,8 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     private final String contextID;
     private int state;
     private final HashMap<String, Permissions> rolePermissionsMap = new HashMap();
-    private final HashMap<Principal, Permissions> principalRoleMapping = new HashMap();
     private Permissions unchecked = null;
     private Permissions excluded = null;
-
-    private final HashMap<Principal, Permissions> principalPermissionsMap = new HashMap();
 
     BasicPolicyConfiguration(String contextID) {
         this.contextID = contextID;
@@ -67,17 +64,12 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         for (int i = 0; i < principals.length; i++) {
             Principal principal = principals[i];
 
-            Permissions permissions = (Permissions) principalPermissionsMap.get(principal);
+            Permissions permissions = (Permissions) rolePermissionsMap.get(principal.getName());
 
             if (permissions != null && permissions.implies(permission)) return true;
         }
 
         return false;
-    }
-
-    public void setPrincipalRoleMapping(Map principalRoleMap) throws PolicyContextException {
-        principalRoleMapping.clear();
-        principalRoleMapping.putAll(principalRoleMap);
     }
 
     public void addToRole(String roleName, PermissionCollection permissions) throws PolicyContextException {
@@ -162,27 +154,6 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     public void commit() throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
-
-        for (Iterator principalEntries = principalRoleMapping.entrySet().iterator(); principalEntries.hasNext(); ) {
-            Map.Entry principalEntry = (Map.Entry) principalEntries.next();
-            Principal principal = (Principal) principalEntry.getKey();
-            Permissions principalPermissions = (Permissions) principalPermissionsMap.get(principal);
-
-            if (principalPermissions == null) {
-                principalPermissions = new Permissions();
-                principalPermissionsMap.put(principal, principalPermissions);
-            }
-
-            HashSet roleSet = (HashSet) principalEntry.getValue();
-            for (Iterator roles = roleSet.iterator(); roles.hasNext(); ) {
-                Permissions permissions = (Permissions) rolePermissionsMap.get(roles.next());
-                if (permissions == null) continue;
-                for (Enumeration rolePermissions = permissions.elements(); rolePermissions.hasMoreElements(); ) {
-                    principalPermissions.add((Permission) rolePermissions.nextElement());
-                }
-            }
-
-        }
         state = IN_SERVICE;
     }
 
@@ -198,10 +169,8 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     public void open(boolean remove) {
         if (remove) {
             rolePermissionsMap.clear();
-            principalRoleMapping.clear();
             unchecked = null;
             excluded = null;
-            principalPermissionsMap.clear();
         }
         state = OPEN;
     }

@@ -68,6 +68,7 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -156,6 +157,7 @@ public class EjbJarInfoBuilder {
             initInterceptors(jar, ejbJar, infos);
             initSecurityRoles(jar, ejbJar);
             initMethodPermissions(jar, ejbds, ejbJar);
+            initExcludesList(jar, ejbds, ejbJar);
             initMethodTransactions(jar, ejbds, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -315,6 +317,15 @@ public class EjbJarInfoBuilder {
         }
     }
 
+    private void initExcludesList(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
+
+        ExcludeList methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getExcludeList();
+
+        for (Method excludedMethod : methodPermissions.getMethod()) {
+            ejbJarInfo.excludeList.add(getMethodInfo(excludedMethod, ejbds));
+        }
+    }
+
     private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, JndiConsumer item) {
         if (!(item instanceof RemoteBean)) {
             return;
@@ -343,24 +354,29 @@ public class EjbJarInfoBuilder {
 
         List<MethodInfo> mi = new ArrayList<MethodInfo>(ms.size());
         for (Method method : ms) {
-            MethodInfo methodInfo = new MethodInfo();
-
-            EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
-
-            methodInfo.description = method.getDescription();
-            methodInfo.ejbDeploymentId = d.getDeploymentId();
-            methodInfo.ejbName = method.getEjbName();
-            methodInfo.methodIntf = (method.getMethodIntf() == null) ? null : method.getMethodIntf().toString();
-            methodInfo.methodName = method.getMethodName();
-
-            MethodParams mp = method.getMethodParams();
-            if (mp != null) {
-                methodInfo.methodParams = mp.getMethodParam();
-            }
+            MethodInfo methodInfo = getMethodInfo(method, ejbds);
             mi.add(methodInfo);
         }
 
         return mi;
+    }
+
+    private MethodInfo getMethodInfo(Method method, Map ejbds) {
+        MethodInfo methodInfo = new MethodInfo();
+
+        EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
+
+        methodInfo.description = method.getDescription();
+        methodInfo.ejbDeploymentId = d.getDeploymentId();
+        methodInfo.ejbName = method.getEjbName();
+        methodInfo.methodIntf = (method.getMethodIntf() == null) ? null : method.getMethodIntf().toString();
+        methodInfo.methodName = method.getMethodName();
+
+        MethodParams mp = method.getMethodParams();
+        if (mp != null) {
+            methodInfo.methodParams = mp.getMethodParam();
+        }
+        return methodInfo;
     }
 
     private EnterpriseBeanInfo initSessionBean(SessionBean s, Map m) throws OpenEJBException {

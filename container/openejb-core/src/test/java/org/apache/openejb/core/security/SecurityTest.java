@@ -30,6 +30,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
 import javax.naming.InitialContext;
+import javax.naming.Context;
 import javax.ejb.Stateless;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.PermitAll;
@@ -45,7 +46,7 @@ public class SecurityTest extends TestCase {
 
     public void _test() throws Exception {
     }
-    
+
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -76,20 +77,35 @@ public class SecurityTest extends TestCase {
 
         assembler.createApplication(ejbJarInfo);
 
-        InitialContext ctx = new InitialContext();
+        Properties props = new Properties();
+        props.setProperty(Context.SECURITY_PRINCIPAL, "jonathan");
+        props.setProperty(Context.SECURITY_CREDENTIALS, "secret");
+
+        InitialContext ctx = new InitialContext(props);
+
+
         Foo foo = (Foo) ctx.lookup("FooBeanBusinessLocal");
 
         foo.svnCheckout("");
+
+        foo.svnCommit("");
+
+        try {
+            foo.deleteProject("");
+            fail("Should not be allowed");
+        } catch (Exception e) {
+            // good.
+        }
     }
 
     @Stateless
     public static class FooBean implements Foo {
-        @RolesAllowed({"Committer"})
+        @RolesAllowed({"committer"})
         public String svnCommit(String s) {
             return s;
         }
 
-        @RolesAllowed({"Committer", "Contributor"})
+        @RolesAllowed({"committer", "contributor"})
         public String submitPatch(String s) {
             return s;
         }
@@ -106,14 +122,14 @@ public class SecurityTest extends TestCase {
     }
 
     @Stateless
-    @RunAs("Contributor")
+    @RunAs("contributor")
     public static class BarBean implements Foo {
-        @RolesAllowed({"Committer"})
+        @RolesAllowed({"committer"})
         public String svnCommit(String s) {
             return s;
         }
 
-        @RolesAllowed({"Committer", "Contributor"})
+        @RolesAllowed({"committer", "contributor"})
         public String submitPatch(String s) {
             return s;
         }
