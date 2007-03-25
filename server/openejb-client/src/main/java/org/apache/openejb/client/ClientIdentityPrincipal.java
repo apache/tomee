@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,25 +15,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.client;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.security.Principal;
+import java.io.Serializable;
 
-public class ClientInfo extends InfoObject {
+public class ClientIdentityPrincipal implements Principal, Serializable {
+    private static final long serialVersionUID = -4620883427203231384L;
+    private final String name;
+    private final Object clientIdentity;
 
-    public String codebase;
-    public String description;
-    public String displayName;
-    public String smallIcon;
-    public String largeIcon;
-    public String moduleId;
-    public String mainClass;
-    public String callbackHandler;
+    public ClientIdentityPrincipal(String name, Object clientIdentity) {
+        this.name = name;
+        this.clientIdentity = clientIdentity;
+    }
 
-    public JndiEncInfo jndiEnc;
+    public String getName() {
+        return name;
+    }
 
-    public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
-
+    public Object getClientIdentity() {
+        return clientIdentity;
+    }
 }

@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -28,10 +27,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Client {
+    private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
-    private static Logger logger = Logger.getLogger(Client.class.getName());
+    private static Client client = new Client();
+
+    // This lame hook point if only of testing
+    public static void setClient(Client client) {
+        Client.client = client;
+    }
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
+        return client.processRequest(req, res, server);
+    }
+
+    protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
         if (server == null)
             throw new IllegalArgumentException("Server instance cannot be null");
 
@@ -56,7 +65,7 @@ public class Client {
                 }
             }
             
-            //If no servers responded, thow an error
+            // If no servers responded, throw an error
             if (conn == null) {
                 StringBuffer buffer = new StringBuffer();
                 for (int i = 0; i < uris.length; i++) {
