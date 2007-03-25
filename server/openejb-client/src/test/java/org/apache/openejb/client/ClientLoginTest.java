@@ -54,9 +54,12 @@ public class ClientLoginTest extends TestCase {
         assertEquals("jonathan", principal.getName());
         assertEquals("SecretIdentity", principal.getClientIdentity());
 
+        // logout
         context.logout();
 
+        // verify we are logged out
         assertEquals("Should have zero principals", 0, subject.getPrincipals().size());
+        assertNull("ClientSecurity.getIdentity() is not null", ClientSecurity.getIdentity());
     }
 
     public void testAuthDenied() throws Exception {
@@ -68,6 +71,5 @@ public class ClientLoginTest extends TestCase {
             fail("Should have thrown a FailedLoginException");
         } catch (FailedLoginException doNothing) {
         }
-
     }
 }

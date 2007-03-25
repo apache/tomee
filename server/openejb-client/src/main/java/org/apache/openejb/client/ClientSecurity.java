@@ -21,6 +21,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
+import java.io.IOException;
 
 public class ClientSecurity {
     public static final String IDENTITY_RESOLVER_STRATEGY = "openejb.client.identityResolver";

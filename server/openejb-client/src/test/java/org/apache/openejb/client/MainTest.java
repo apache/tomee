@@ -92,6 +92,9 @@ public class MainTest extends TestCase {
             ClientIdentityPrincipal principal = subject.getPrincipals(ClientIdentityPrincipal.class).iterator().next();
             assertEquals("victoria", principal.getName());
             assertEquals("SecretIdentity", principal.getClientIdentity());
+
+            // verify identity
+            assertEquals("SecretIdentity", ClientSecurity.getIdentity());
         }
     }
 
@@ -105,6 +108,9 @@ public class MainTest extends TestCase {
             Subject subject = Subject.getSubject(AccessController.getContext());
 
             assertNull("subject is not null", subject);
+
+            // verify we are not logged in
+            assertNull("ClientSecurity.getIdentity() is not null", ClientSecurity.getIdentity());
         }
     }
 
