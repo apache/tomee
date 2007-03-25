@@ -43,16 +43,31 @@ public interface SecurityService extends Service {
     */
     public Object getSecurityIdentity();
 
+    /**
+     * Active
+     */
     public Object login(String user, String pass) throws LoginException;
 
+    /**
+     * Active
+     */
     public void associate(Object securityIdentity) throws LoginException;
 
     public Subject getCurrentSubject();
 
+    /**
+     * Active
+     */
     public boolean isCallerInRole(String role);
 
+    /**
+     * Active
+     */
     public Principal getCallerPrincipal();
 
+    /**
+     * Active
+     */
     public boolean isCallerAuthorized(Method method, InterfaceType type);
 
 }
