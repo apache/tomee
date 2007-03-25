@@ -194,7 +194,6 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         req.setMethodParameters(args);
         req.setMethodInstance(method);
-        req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
         req.setDeploymentId(ejb.deploymentID);
         req.setPrimaryKey(primaryKey);

@@ -157,7 +157,6 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     public Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_METHOD);
 
-        req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
         req.setDeploymentId(ejb.deploymentID);
         req.setMethodInstance(method);
@@ -187,7 +186,6 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_CREATE);
 
-        req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(ejb.deploymentCode);
         req.setDeploymentId(ejb.deploymentID);
         req.setMethodInstance(method);

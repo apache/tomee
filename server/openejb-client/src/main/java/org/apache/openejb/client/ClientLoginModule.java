@@ -24,12 +24,10 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -93,21 +91,7 @@ public class ClientLoginModule implements LoginModule {
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
         if (tmpPassword == null) tmpPassword = new char[0];
 
-        // authenticate
-        AuthenticationRequest authReq = new AuthenticationRequest(user, new String(tmpPassword));
-        AuthenticationResponse authRes;
-        try {
-            authRes = (AuthenticationResponse) Client.request(authReq, new AuthenticationResponse(), server);
-        } catch (RemoteException e) {
-            throw (LoginException) new LoginException("Unable to authenticate with server " + serverUri).initCause(e);
-        }
-
-        // check the response
-        if (authRes.getResponseCode() == ResponseCodes.AUTH_GRANTED) {
-            clientIdentity = authRes.getIdentity().getClientIdentity();
-        } else {
-            throw new FailedLoginException("This principle is not authorized.");
-        }
+        clientIdentity = ClientSecurity.directAuthentication(user, new String(tmpPassword), server);
 
         if (debug) {
             log.config("login " + user);

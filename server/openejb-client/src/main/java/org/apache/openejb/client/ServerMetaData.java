@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
+import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
@@ -45,5 +46,8 @@ public class ServerMetaData implements Externalizable {
         out.writeObject(locations);
     }
 
+    public String toString() {
+        return Arrays.toString(locations);
+    }
 }
 

@@ -21,8 +21,12 @@ import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
+import java.security.AccessController;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
+
+import javax.security.auth.Subject;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
@@ -78,7 +82,17 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected abstract Object _invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
     protected EJBResponse request(EJBRequest req) throws Exception {
+        req.setClientIdentity(getClientIdentity());
         return (EJBResponse) Client.request(req, new EJBResponse(), server);
+    }
+
+    protected Object getClientIdentity() {
+        Object identity = client.getClientIdentity();
+        if (identity != null) {
+            return identity;
+        }
+
+        return ClientSecurity.getIdentity();
     }
 
     protected void invalidateReference() {

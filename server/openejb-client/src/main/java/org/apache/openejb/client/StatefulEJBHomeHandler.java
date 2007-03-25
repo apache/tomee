@@ -51,7 +51,6 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
         }
 
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE);
-        req.setClientIdentity(client.getClientIdentity());
         req.setDeploymentCode(handler.ejb.deploymentCode);
         req.setDeploymentId(handler.ejb.deploymentID);
         req.setMethodInstance(method);
