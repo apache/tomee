@@ -87,9 +87,11 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     }
 
     protected Object getClientIdentity() {
-        Object identity = client.getClientIdentity();
-        if (identity != null) {
-            return identity;
+        if (client != null) {
+            Object identity = client.getClientIdentity();
+            if (identity != null) {
+                return identity;
+            }
         }
 
         return ClientSecurity.getIdentity();

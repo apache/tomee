@@ -92,8 +92,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         moduleId = (String) env.get("openejb.client.moduleId");
 
         if (serverURI == null) serverURI = "foo://localhost:4201";
-        if (userID == null) userID = "anonymous";
-        if (psswrd == null) psswrd = "anon";
+        // if (userID == null) userID = "anonymous";
+        // if (psswrd == null) psswrd = "anon";
 
         String uriString = (String) serverURI;
         URI location = null;
@@ -112,7 +112,9 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         this.server = new ServerMetaData(location);
         //TODO:1: Either aggressively initiate authentication or wait for the
         //        server to send us an authentication challange.
-        authenticate(userID, psswrd);
+        if (userID != null) {
+            authenticate(userID, psswrd);
+        }
 
         return this;
     }

@@ -24,35 +24,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 
 public class PassthroughFactory {
-    private static final Map<String,Object> values = new ConcurrentHashMap<String,Object>();
-    private static final AtomicInteger sequence = new AtomicInteger();
+    public static Object create(Object object) {
+        return object;
+    }
 
-    public static void add(ServiceInfo info, Object item) {
+    public static void add(ServiceInfo info, Object object) {
         info.className = PassthroughFactory.class.getName();
-        info.constructorArgs.add("id");
+        info.constructorArgs.add("object");
         info.factoryMethod = "create";
         info.properties = new Properties();
 
-        String id = add(item);
-        info.properties.setProperty("id", id);
-    }
-
-    public static String add(Object item) {
-        String id = Integer.toString(sequence.getAndIncrement());
-        values.put(id, item);
-        return id;
-    }
-
-    public static void remove(ServiceInfo info) {
-        String id = info.properties.getProperty("id");
-        remove(id);
-    }
-
-    public static void remove(String id) {
-        values.remove(id);
-    }
-
-    public static Object create(String id) {
-        return values.get(id);
+        info.properties.put("object", object);
     }
 }
