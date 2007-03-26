@@ -90,7 +90,6 @@ public class EjbJarInfoBuilder {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    public static final String DEFAULT_SECURITY_ROLE = "openejb.default.security.role";
     private final List<String> deploymentIds = new ArrayList<String>();
     private final List<String> securityRoles = new ArrayList<String>();
 
@@ -342,8 +341,7 @@ public class EjbJarInfoBuilder {
             info.roleName = ref.getRoleName();
 
             if (info.roleLink == null) {
-                ConfigUtils.logger.i18n.warning("conf.0009", info.roleName, bean.ejbName, jar.getJarURI());
-                info.roleLink = DEFAULT_SECURITY_ROLE;
+                info.roleLink = info.roleName;
             }
             bean.securityRoleReferences.add(info);
         }

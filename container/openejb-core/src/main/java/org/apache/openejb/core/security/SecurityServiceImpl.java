@@ -59,6 +59,9 @@ import java.util.HashSet;
  */
 public class SecurityServiceImpl implements SecurityService, ThreadContextListener {
     static private final Map<Object, Identity> identities = new java.util.concurrent.ConcurrentHashMap();
+    static private final ThreadLocal<Subject> clientIdentity = new ThreadLocal<Subject>();
+
+
 
     private final String defaultUser = "guest";
     private final Subject defaultSubject;
@@ -79,6 +82,9 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         defaultContext = new SecurityContext(defaultSubject);
     }
 
+    public void init(Properties props) throws Exception {
+    }
+
     public Object login(String username, String password) throws LoginException {
         LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler(username, password));
         context.login();
@@ -89,59 +95,6 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         Serializable token = identity.getToken();
         identities.put(token, identity);
         return token;
-    }
-
-    public static class Group implements java.security.acl.Group {
-        private final List<Principal> members = new ArrayList<Principal>();
-        private final String name;
-
-        public Group(String name) {
-            this.name = name;
-        }
-
-        public boolean addMember(Principal user) {
-            return members.add(user);
-        }
-
-        public boolean removeMember(Principal user) {
-            return members.remove(user);
-        }
-
-        public boolean isMember(Principal member) {
-            return members.contains(member);
-        }
-
-        public Enumeration<? extends Principal> members() {
-            return Collections.enumeration(members);
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public static class User implements Principal {
-        private final String name;
-
-        public User(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    private Subject createSubject(String name) {
-        SecurityServiceImpl.User user = new SecurityServiceImpl.User(name);
-        SecurityServiceImpl.Group group = new SecurityServiceImpl.Group(name);
-        group.addMember(user);
-
-        HashSet<Principal> principals = new HashSet<Principal>();
-        principals.add(user);
-        principals.add(group);
-
-        return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
     private final static class SecurityContext {
@@ -217,8 +170,6 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         return securityContext.subject;
     }
 
-    private static ThreadLocal<Subject> clientIdentity = new ThreadLocal<Subject>();
-
     public void associate(Object securityIdentity) throws LoginException {
         if (securityIdentity == null) return;
 
@@ -229,6 +180,24 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     }
 
+    private static class Identity {
+        private final Subject subject;
+        private final UUID token;
+
+        public Identity(Subject subject) {
+            this.subject = subject;
+            this.token = UUID.randomUUID();
+        }
+
+        public Subject getSubject() {
+            return subject;
+        }
+
+        public Serializable getToken() {
+            return token;
+        }
+    }
+
     public boolean isCallerInRole(String role) {
         if (role == null) throw new IllegalArgumentException("Role must not be null");
 
@@ -237,6 +206,8 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         try {
             CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
+
+            role = deployment.getSecurityRole(role);
             securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
         } catch (AccessControlException e) {
             return false;
@@ -277,28 +248,6 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         }
         return true;
     }
-
-    private static class Identity {
-        private final Subject subject;
-        private final UUID token;
-
-        public Identity(Subject subject) {
-            this.subject = subject;
-            this.token = UUID.randomUUID();
-        }
-
-        public Subject getSubject() {
-            return subject;
-        }
-
-        public Serializable getToken() {
-            return token;
-        }
-    }
-
-    public void init(Properties props) throws Exception {
-    }
-
 
     public Object getSecurityIdentity() {
         return null;
@@ -355,4 +304,58 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
             throw new IllegalStateException("Could not install JACC Policy Provider: "+policyProvider, e);
         }
     }
+
+    private Subject createSubject(String name) {
+        SecurityServiceImpl.User user = new SecurityServiceImpl.User(name);
+        SecurityServiceImpl.Group group = new SecurityServiceImpl.Group(name);
+        group.addMember(user);
+
+        HashSet<Principal> principals = new HashSet<Principal>();
+        principals.add(user);
+        principals.add(group);
+
+        return new Subject(true, principals, new HashSet(), new HashSet());
+    }
+
+    public static class Group implements java.security.acl.Group {
+        private final List<Principal> members = new ArrayList<Principal>();
+        private final String name;
+
+        public Group(String name) {
+            this.name = name;
+        }
+
+        public boolean addMember(Principal user) {
+            return members.add(user);
+        }
+
+        public boolean removeMember(Principal user) {
+            return members.remove(user);
+        }
+
+        public boolean isMember(Principal member) {
+            return members.contains(member);
+        }
+
+        public Enumeration<? extends Principal> members() {
+            return Collections.enumeration(members);
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class User implements Principal {
+        private final String name;
+
+        public User(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
 }

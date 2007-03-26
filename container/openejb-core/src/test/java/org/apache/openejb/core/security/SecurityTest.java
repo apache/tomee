@@ -32,10 +32,13 @@ import org.apache.openejb.jee.StatelessBean;
 import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.ejb.Stateless;
+import javax.ejb.SessionContext;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.RunAs;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.Resource;
 import java.util.Properties;
 
 /**
@@ -85,7 +88,7 @@ public class SecurityTest extends TestCase {
         InitialContext ctx = new InitialContext(props);
 
 
-        Foo foo = (Foo) ctx.lookup("FooBeanBusinessLocal");
+        Project foo = (Project) ctx.lookup("FooBeanBusinessLocal");
 
         foo.svnCheckout("");
 
@@ -98,27 +101,41 @@ public class SecurityTest extends TestCase {
             // good.
         }
 
-        foo = (Foo) ctx.lookup("BarBeanBusinessLocal");
+        assertTrue("not in role committer", foo.isCallerInRole("committer"));
+        assertTrue("not in role community", foo.isCallerInRole("community"));
+        assertFalse("in role contributor", foo.isCallerInRole("contributor"));
 
-        foo.svnCheckout("");
+        Project bar = (Project) ctx.lookup("BarBeanBusinessLocal");
+
+        bar.svnCheckout("");
 
         try {
-            foo.svnCommit("");
+            bar.svnCommit("");
             fail("Should not be allowed");
         } catch (Exception e) {
             // good
         }
 
         try {
-            foo.deleteProject("");
+            bar.deleteProject("");
             fail("Should not be allowed");
         } catch (Exception e) {
             // good.
         }
+
+        assertFalse("in role committer", bar.isCallerInRole("committer"));
+        assertFalse("in role community", bar.isCallerInRole("community"));
+        assertTrue("not in role contributor", bar.isCallerInRole("contributor"));
+
     }
 
     @Stateless
-    public static class FooBean implements Foo {
+    @DeclareRoles({"committer", "contributor","community"})
+    public static class FooBean implements Project {
+
+        @Resource
+        private SessionContext context;
+
         @RolesAllowed({"committer"})
         public String svnCommit(String s) {
             return s;
@@ -137,12 +154,21 @@ public class SecurityTest extends TestCase {
         @DenyAll
         public String deleteProject(String s) {
             return s;
+        }
+
+        public boolean isCallerInRole(String role){
+            return context.isCallerInRole(role);
         }
     }
 
     @Stateless
     @RunAs("contributor")
-    public static class BarBean implements Foo {
+    @DeclareRoles({"committer", "contributor","community"})
+    public static class BarBean implements Project {
+
+        @Resource
+        private SessionContext context;
+
         @RolesAllowed({"committer"})
         public String svnCommit(String s) {
             return s;
@@ -162,9 +188,14 @@ public class SecurityTest extends TestCase {
         public String deleteProject(String s) {
             return s;
         }
+
+        @PermitAll
+        public boolean isCallerInRole(String role){
+            return context.isCallerInRole(role);
+        }
     }
 
-    public static interface Foo {
+    public static interface Project {
 
         public String svnCommit(String s);
 
@@ -173,5 +204,7 @@ public class SecurityTest extends TestCase {
         public String svnCheckout(String s);
 
         public String deleteProject(String s);
+
+        public boolean isCallerInRole(String s);
     }
 }

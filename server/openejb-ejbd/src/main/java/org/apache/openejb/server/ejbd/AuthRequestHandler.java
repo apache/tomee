@@ -22,11 +22,17 @@ import org.apache.openejb.client.ClientMetaData;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.Logger;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 class AuthRequestHandler {
+
+    Messages _messages = new Messages("org.apache.openejb.server.util.resources");
+    Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
 
     AuthRequestHandler(EjbDaemon daemon) {
     }
@@ -53,8 +59,12 @@ class AuthRequestHandler {
 
             res.writeExternal(out);
         } catch (Throwable t) {
-            // TODO: Log
-            return;
+            try {
+                res.setResponseCode(ResponseCodes.AUTH_DENIED);
+                res.writeExternal(out);
+            } catch (IOException e) {
+                logger.error("Failed to write to AuthenticationResponse", e);
+            }
         }
     }
 
