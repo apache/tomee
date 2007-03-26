@@ -75,7 +75,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         ThreadContext.addThreadContextListener(this);
 
-        defaultSubject = getSubject(defaultUser);
+        defaultSubject = createSubject(defaultUser);
         defaultContext = new SecurityContext(defaultSubject);
     }
 
@@ -132,7 +132,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         }
     }
 
-    private Subject getSubject(String name) {
+    private Subject createSubject(String name) {
         SecurityServiceImpl.User user = new SecurityServiceImpl.User(name);
         SecurityServiceImpl.Group group = new SecurityServiceImpl.Group(name);
         group.addMember(user);
@@ -197,7 +197,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
      * @return the role converted to a subject
      */
     private Subject resolve(String runAsRole) {
-        return getSubject(runAsRole);
+        return createSubject(runAsRole);
     }
 
 

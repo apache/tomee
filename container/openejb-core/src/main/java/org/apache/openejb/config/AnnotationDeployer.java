@@ -390,6 +390,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (runAs != null && bean.getSecurityIdentity() == null) {
                     SecurityIdentity securityIdentity = new SecurityIdentity();
                     securityIdentity.setRunAs(runAs.value());
+                    bean.setSecurityIdentity(securityIdentity);
                 }
 
                 DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);

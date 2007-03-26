@@ -72,6 +72,7 @@ public class SecurityTest extends TestCase {
         EjbJar ejbJar = new EjbJar("SecurityTest");
 
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));
 
         EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
@@ -89,6 +90,24 @@ public class SecurityTest extends TestCase {
         foo.svnCheckout("");
 
         foo.svnCommit("");
+
+        try {
+            foo.deleteProject("");
+            fail("Should not be allowed");
+        } catch (Exception e) {
+            // good.
+        }
+
+        foo = (Foo) ctx.lookup("BarBeanBusinessLocal");
+
+        foo.svnCheckout("");
+
+        try {
+            foo.svnCommit("");
+            fail("Should not be allowed");
+        } catch (Exception e) {
+            // good
+        }
 
         try {
             foo.deleteProject("");

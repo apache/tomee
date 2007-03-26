@@ -984,4 +984,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public void setRunAs(String runAs) {
         this.runAs = runAs;
     }
+
+    public String toString() {
+        return "DeploymentInfo(id="+getDeploymentID()+")";
+    }
 }
