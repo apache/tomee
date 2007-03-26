@@ -149,7 +149,15 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public InterfaceType getInterfaceType(Class clazz) {
-        return interfaces.get(clazz);
+        InterfaceType type = interfaces.get(clazz);
+        if (type != null) return type;
+
+        if (javax.ejb.EJBLocalHome.class.isAssignableFrom(clazz)) return InterfaceType.EJB_LOCAL_HOME;
+        if (javax.ejb.EJBLocalObject.class.isAssignableFrom(clazz)) return InterfaceType.EJB_LOCAL;
+        if (javax.ejb.EJBHome.class.isAssignableFrom(clazz)) return InterfaceType.EJB_HOME;
+        if (javax.ejb.EJBObject.class.isAssignableFrom(clazz)) return InterfaceType.EJB_OBJECT;
+
+        return null;
     }
 
     public CoreDeploymentInfo(DeploymentContext context,
@@ -194,6 +202,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
+        interfaces.put(javax.ejb.EJBHome.class, InterfaceType.EJB_HOME);
+        interfaces.put(javax.ejb.EJBObject.class, InterfaceType.EJB_OBJECT);
+        interfaces.put(javax.ejb.EJBLocalHome.class, InterfaceType.EJB_LOCAL_HOME);
+        interfaces.put(javax.ejb.EJBLocalObject.class, InterfaceType.EJB_LOCAL);
         interfaces.put(getHomeInterface(), InterfaceType.EJB_HOME);
         interfaces.put(getRemoteInterface(), InterfaceType.EJB_OBJECT);
         interfaces.put(getLocalHomeInterface(), InterfaceType.EJB_LOCAL_HOME);
