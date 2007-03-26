@@ -47,8 +47,6 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     }
 
     protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
-        checkAuthorization(method);
-
         try {
             EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
             return new Boolean(deploymentID.equals(handler.deploymentID));
@@ -59,7 +57,6 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     }
 
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
-        checkAuthorization(method);
         invalidateReference();
         return null;
     }

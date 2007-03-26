@@ -108,10 +108,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {
-        Object caller = getThreadSpecificSecurityIdentity();
-        boolean authorized = getSecurityService().isCallerAuthorized(method, null);
-        if (!authorized)
-            throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+        // todo can't really do auth check here
+//        Object caller = getThreadSpecificSecurityIdentity();
+//        boolean authorized = getSecurityService().isCallerAuthorized(method, null);
+//        if (!authorized)
+//            throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
     }
 
     private SecurityService getSecurityService() {
