@@ -25,6 +25,7 @@ import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.EjbRef;
 
 /**
  * @version $Rev$ $Date$
@@ -53,6 +54,15 @@ public class GeronimoMappedName implements DynamicDeployer {
         }
 
         for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+            for (EjbRef ref : enterpriseBean.getEjbRef()) {
+                // remap only corba references
+                String mappedName = ref.getMappedName();
+                if (mappedName != null &&
+                        (mappedName.startsWith("jndi:corbaloc") || mappedName.startsWith("jndi:corbaname"))) {
+                    String refName = ref.getEjbRefName();
+                    ref.setMappedName(MAPPED_NAME_PREFIX + refName);
+                }
+            }
             for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
                 String refName = ref.getMessageDestinationRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);

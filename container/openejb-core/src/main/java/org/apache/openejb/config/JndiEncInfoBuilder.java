@@ -50,6 +50,7 @@ import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
+import org.apache.openejb.jee.oejb3.EjbLink;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -131,6 +132,15 @@ public class JndiEncInfoBuilder {
             ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
             if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
                 res.setResLink(resourceLink.getResId());
+            }
+        }
+
+        // Link all the ejb refs
+        List<EjbRef> ejbRefs = enterpriseBean.getEjbRef();
+        for (EjbRef ejbRef : ejbRefs) {
+            EjbLink ejbLink = ejbDeployment.getEjbLink(ejbRef.getEjbRefName());
+            if (ejbLink != null && ejbLink.getDeployentId() != null /* don't overwrite with null */) {
+                ejbRef.setMappedName(ejbLink.getDeployentId());
             }
         }
 
@@ -310,27 +320,31 @@ public class JndiEncInfoBuilder {
             info.location = buildLocationInfo(ejb);
 
             if (info.location == null) {
-                EnterpriseBeanInfo otherBean = null;
-
-                if (ejb.getEjbLink() != null) {
-                    String ejbLink = ejb.getEjbLink();
-                    otherBean = byEjbName.get(ejbLink);
+                if (ejb.getMappedName() != null) {
+                    info.ejbDeploymentId = ejb.getMappedName();
                 } else {
-                    otherBean = byInterfaces.get("l=" + ejb.getLocal() + ":" + ejb.getLocalHome());
-                }
+                    EnterpriseBeanInfo otherBean = null;
 
-                if (otherBean == null) {
-                    String msg;
-                    if (ejb.getEjbLink() == null) {
-                        msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
+                    if (ejb.getEjbLink() != null) {
+                        String ejbLink = ejb.getEjbLink();
+                        otherBean = byEjbName.get(ejbLink);
                     } else {
-                        msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
+                        otherBean = byInterfaces.get("l=" + ejb.getLocal() + ":" + ejb.getLocalHome());
                     }
 
-                    logger.fatal(msg);
-                    throw new OpenEJBException(msg);
+                    if (otherBean == null) {
+                        String msg;
+                        if (ejb.getEjbLink() == null) {
+                            msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
+                        } else {
+                            msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
+                        }
+
+                        logger.fatal(msg);
+                        throw new OpenEJBException(msg);
+                    }
+                    info.ejbDeploymentId = otherBean.ejbDeploymentId;
                 }
-                info.ejbDeploymentId = otherBean.ejbDeploymentId;
             }
             info.targets.addAll(buildInjectionInfos(ejb));
             infos.add(info);
@@ -350,27 +364,31 @@ public class JndiEncInfoBuilder {
             info.location = buildLocationInfo(ejb);
 
             if (info.location == null) {
-                EnterpriseBeanInfo otherBean = null;
-
-                if (ejb.getEjbLink() != null) {
-                    String ejbLink = ejb.getEjbLink();
-                    otherBean = byEjbName.get(ejbLink);
+                if (ejb.getMappedName() != null) {
+                    info.ejbDeploymentId = ejb.getMappedName();
                 } else {
-                    otherBean = byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome());
-                }
+                    EnterpriseBeanInfo otherBean = null;
 
-                if (otherBean == null) {
-                    String msg;
-                    if (ejb.getEjbLink() == null) {
-                        msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
+                    if (ejb.getEjbLink() != null) {
+                        String ejbLink = ejb.getEjbLink();
+                        otherBean = byEjbName.get(ejbLink);
                     } else {
-                        msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
+                        otherBean = byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome());
                     }
 
-                    logger.fatal(msg);
-                    throw new OpenEJBException(msg);
+                    if (otherBean == null) {
+                        String msg;
+                        if (ejb.getEjbLink() == null) {
+                            msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
+                        } else {
+                            msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
+                        }
+
+                        logger.fatal(msg);
+                        throw new OpenEJBException(msg);
+                    }
+                    info.ejbDeploymentId = otherBean.ejbDeploymentId;
                 }
-                info.ejbDeploymentId = otherBean.ejbDeploymentId;
             }
 
             info.targets.addAll(buildInjectionInfos(ejb));

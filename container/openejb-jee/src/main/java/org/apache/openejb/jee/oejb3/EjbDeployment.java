@@ -31,9 +31,12 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"resourceLink", "query"})
+@XmlType(propOrder = {"ejbLink", "resourceLink", "query"})
 @XmlRootElement(name = "ejb-deployment")
 public class EjbDeployment {
+
+    @XmlElement(name = "ejb-link", required = true)
+    protected List<EjbLink> ejbLink;
 
     @XmlElement(name = "resource-link", required = true)
     protected List<ResourceLink> resourceLink;
@@ -61,6 +64,13 @@ public class EjbDeployment {
         this.ejbName = ejbName;
     }
 
+    public List<EjbLink> getEjbLink() {
+        if (ejbLink == null) {
+            ejbLink = new ArrayList<EjbLink>();
+        }
+        return this.ejbLink;
+    }
+
     public List<ResourceLink> getResourceLink() {
         if (resourceLink == null) {
             resourceLink = new ArrayList<ResourceLink>();
@@ -83,6 +93,18 @@ public class EjbDeployment {
         Map<String,ResourceLink> map = new LinkedHashMap<String,ResourceLink>();
         for (ResourceLink link : getResourceLink()) {
             map.put(link.getResRefName(), link);
+        }
+        return map;
+    }
+
+    public EjbLink getEjbLink(String refName) {
+        return getEjbLinksMap().get(refName);
+    }
+
+    public Map<String,EjbLink> getEjbLinksMap(){
+        Map<String,EjbLink> map = new LinkedHashMap<String,EjbLink>();
+        for (EjbLink link : getEjbLink()) {
+            map.put(link.getEjbRefName(), link);
         }
         return map;
     }
@@ -114,6 +136,10 @@ public class EjbDeployment {
 
     public void addResourceLink(ResourceLink resourceLink) {
         getResourceLink().add(resourceLink);
+    }
+
+    public void addEjbLink(EjbLink ejbLink) {
+        getEjbLink().add(ejbLink);
     }
 
     public void addQuery(Query query) {

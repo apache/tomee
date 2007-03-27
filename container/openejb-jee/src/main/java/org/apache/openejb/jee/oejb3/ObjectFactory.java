@@ -66,6 +66,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link EjbLink }
+     */
+    public EjbLink createEjbLink() {
+        return new EjbLink();
+    }
+
+    /**
      * Create an instance of {@link ResourceLink }
      */
     public ResourceLink createResourceLink() {

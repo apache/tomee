@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.openejb.jee.jpa.Attributes;
@@ -49,7 +51,12 @@ import org.apache.openejb.jee.oejb2.QueryType;
 import org.apache.openejb.jee.oejb2.MessageDrivenBeanType;
 import org.apache.openejb.jee.oejb2.ActivationConfigType;
 import org.apache.openejb.jee.oejb2.ActivationConfigPropertyType;
+import org.apache.openejb.jee.oejb2.EjbRefType;
+import org.apache.openejb.jee.oejb2.PatternType;
+import org.apache.openejb.jee.oejb2.EjbLocalRefType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.EjbLink;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -61,6 +68,7 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             Object altDD = getOpenejbJarType(ejbModule);
             if (altDD instanceof OpenejbJarType) {
+                convertEjbRefs(ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
                 convertMdbConfigs(ejbModule.getEjbJar(), (OpenejbJarType) altDD);
                 mergeEntityMappings(appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
             }
@@ -91,6 +99,64 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
             return (OpenejbJarType) altDD;
         }
         return null;
+    }
+
+    public void convertEjbRefs(OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
+        Map<String, EjbDeployment> deployments =  new TreeMap<String, EjbDeployment>();
+        for (EjbDeployment deployment : openejbJar.getEjbDeployment()) {
+            deployments.put(deployment.getEjbName(), deployment);
+        }
+        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+            EjbDeployment deployment = deployments.get(enterpriseBean.getEjbName());
+            if (deployment == null) {
+                // todo warn no such ejb in the ejb-jar.xml
+                continue;
+            }
+
+            Set<String> ejbLinks =  new TreeSet<String>();
+            for (EjbLink ejbLink : deployment.getEjbLink()) {
+                ejbLinks.add(ejbLink.getEjbRefName());
+            }
+
+            for (EjbRefType refType : enterpriseBean.getEjbRef()) {
+                String refName = refType.getRefName();
+                if (ejbLinks.contains(refName)) {
+                    // don't overwrite refs that have been already set
+                    continue;
+                }
+
+                String nsCorbaloc = refType.getNsCorbaloc();
+                if (nsCorbaloc != null) {
+                    EjbLink ejbLink = new EjbLink(refName, "jndi:" + nsCorbaloc);
+                    deployment.getEjbLink().add(ejbLink);
+                } else {
+                    PatternType pattern = refType.getPattern();
+                    addEjbLink(deployment, refName, pattern);
+                }
+            }
+
+            for (EjbLocalRefType refType : enterpriseBean.getEjbLocalRef()) {
+                String refName = refType.getRefName();
+                if (ejbLinks.contains(refName)) {
+                    // don't overwrite refs that have been already set
+                    continue;
+                }
+
+                PatternType pattern = refType.getPattern();
+                addEjbLink(deployment, refName, pattern);
+            }
+        }
+    }
+
+    private void addEjbLink(EjbDeployment deployment, String refName, PatternType pattern) {
+        String module = pattern.getModule();
+        if (module == null) {
+            module = pattern.getArtifactId();
+        }
+        String ejbName = pattern.getName();
+        String deploymentId = module + "/" + ejbName;
+        EjbLink ejbLink = new EjbLink(refName, deploymentId);
+        deployment.getEjbLink().add(ejbLink);
     }
 
     public void convertMdbConfigs(EjbJar ejbJar, OpenejbJarType openejbJarType) {
