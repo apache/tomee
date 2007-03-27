@@ -409,7 +409,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
-                if (System.getProperty("duct tape") != null) {
+                if (System.getProperty("duct tape") == null) {
                     jaccPermissionsBuilder.install(policyContext);
                 }
 
