@@ -239,6 +239,9 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <cmp-field>
+        <field-name>number</field-name>
+      </cmp-field>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -313,6 +316,9 @@
       </cmp-field>
       <cmp-field>
         <field-name>lastName</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>number</field-name>
       </cmp-field>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>

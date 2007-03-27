@@ -38,7 +38,6 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
         req.setMethodInstance(method);
         req.setDeploymentCode(ejb.deploymentCode);
         req.setDeploymentId(ejb.deploymentID);
-        req.setPrimaryKey(primaryKey);
 
         EJBResponse res = request(req);
 
@@ -92,27 +91,68 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-
         Object primKey = args[0];
 
         if (primKey == null) throw new NullPointerException("The primary key is null.");
 
-        /* 
-         * This operation takes care of invalidating all the EjbObjectProxyHanders 
-         * associated with the same RegistryId. See this.createProxy().
-         */
-        invalidateAllHandlers(ejb.deploymentID + ":" + primKey);
-        return null;
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY);
+
+        req.setMethodParameters(args);
+        req.setMethodInstance(method);
+        req.setDeploymentCode(ejb.deploymentCode);
+        req.setDeploymentId(ejb.deploymentID);
+        req.setPrimaryKey(primKey);
+
+        EJBResponse res = request(req);
+
+        switch (res.getResponseCode()) {
+            case ResponseCodes.EJB_ERROR:
+                throw new SystemError((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_SYS_EXCEPTION:
+                throw new SystemException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_APP_EXCEPTION:
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_OK:
+                invalidateAllHandlers(ejb.deploymentID + ":" + primKey);
+                return null;
+            default:
+                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
+        }
     }
 
     protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
-
         if (args[0] == null) throw new RemoteException("Handler is null");
 
         Handle handle = (Handle) args[0];
-        EJBObject ejbObject = handle.getEJBObject();
-        ejbObject.remove();
-        return null;
-    }
 
+        EJBObject ejbObject = handle.getEJBObject();
+        if (ejbObject == null) throw new NullPointerException("The handle.getEJBObject() is null.");
+
+        Object primKey = ejbObject.getPrimaryKey();
+        if (primKey == null) throw new NullPointerException("The handle.getEJBObject().getPrimaryKey() is null.");
+
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE);
+
+        req.setMethodParameters(args);
+        req.setMethodInstance(method);
+        req.setDeploymentCode(ejb.deploymentCode);
+        req.setDeploymentId(ejb.deploymentID);
+        req.setPrimaryKey(primKey);
+
+        EJBResponse res = request(req);
+
+        switch (res.getResponseCode()) {
+            case ResponseCodes.EJB_ERROR:
+                throw new SystemError((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_SYS_EXCEPTION:
+                throw new SystemException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_APP_EXCEPTION:
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_OK:
+                invalidateAllHandlers(ejb.deploymentID + ":" + primKey);
+                return null;
+            default:
+                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
+        }
+    }
 }

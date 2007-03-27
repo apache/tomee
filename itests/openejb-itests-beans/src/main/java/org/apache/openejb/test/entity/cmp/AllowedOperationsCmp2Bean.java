@@ -46,6 +46,10 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
 
     public abstract void setLastName(String lastName);
 
+    public abstract int getNumber();
+
+    public abstract void setNumber(int number);
+
 
     //=============================
     // Home interface methods
@@ -91,6 +95,7 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
      */
     public String businessMethod(String text) {
         testAllowedOperations("businessMethod");
+        setNumber(getNumber() + 1);
         StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }

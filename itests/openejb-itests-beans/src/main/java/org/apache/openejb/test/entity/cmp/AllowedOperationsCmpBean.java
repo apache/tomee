@@ -42,6 +42,7 @@ public class AllowedOperationsCmpBean implements EntityBean{
     public Integer primaryKey;
     public String firstName;
     public String lastName;
+    public int number;
     public EntityContext ejbContext;
     public static Map<String,OperationsPolicy> allowedOperationsTable = new TreeMap<String,OperationsPolicy>();
     
@@ -98,6 +99,7 @@ public class AllowedOperationsCmpBean implements EntityBean{
      */
     public String businessMethod(String text){
         testAllowedOperations("businessMethod");
+        number++;
         StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }

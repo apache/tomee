@@ -541,8 +541,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
      * ______________________|__________________________________________________
      * </PRE>
      */
-    // todo store is never called
-    public void TODO_test13_ejbStore() {
+    public void test13_ejbStore() {
         try {
 
             OperationsPolicy policy = new OperationsPolicy();

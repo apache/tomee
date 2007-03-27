@@ -29,6 +29,7 @@
             <basic name="lastName"/>
             <transient name="nextId"/>
             <transient name="primaryKey"/>
+            <transient name="number"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
         </attributes>

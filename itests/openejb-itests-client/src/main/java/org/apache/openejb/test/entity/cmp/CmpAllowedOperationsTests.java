@@ -177,11 +177,8 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
       
       ejbHome.sum(1, 2); 
                 
-      ejbObject = (BasicCmpObject)ejbHandle.getEJBObject();
-     
-      ejbHome.findByPrimaryKey((Integer)ejbObject.getPrimaryKey());
-      ejbHome.remove(ejbObject.getPrimaryKey());
-      
+      ejbObject.remove();
+
       ejbObject = ejbHome.createObject("Fourth Bean");
       ejbHome.findEmptyCollection(); 
     } 
@@ -612,8 +609,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
      * ______________________|__________________________________________________
      * </PRE>
      */
-    // todo store is never called
-    public void TODO_test13_ejbStore(){
+    public void test13_ejbStore(){
         try{
             
         OperationsPolicy policy = new OperationsPolicy();
