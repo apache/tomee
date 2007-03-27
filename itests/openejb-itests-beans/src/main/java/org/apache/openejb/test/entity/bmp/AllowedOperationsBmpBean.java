@@ -17,14 +17,16 @@
 package org.apache.openejb.test.entity.bmp;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
+import javax.ejb.CreateException;
 import javax.naming.InitialContext;
-import javax.sql.DataSource;
+import javax.naming.NamingException;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
@@ -35,11 +37,11 @@ import org.apache.openejb.test.object.OperationsPolicy;
  */
 public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
     
-    private int primaryKey;
-    private String firstName;
-    private String lastName;
-    private EntityContext ejbContext;
-    private Hashtable allowedOperationsTable = new Hashtable();
+    protected int primaryKey;
+    protected String firstName;
+    protected String lastName;
+    protected EntityContext ejbContext;
+    private Map<String,OperationsPolicy> allowedOperationsTable = new TreeMap<String,OperationsPolicy>();
     
     
     //=============================
@@ -51,8 +53,6 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
      * 
      * Adds x and y and returns the result.
      * 
-     * @param one
-     * @param two
      * @return x + y
      * @see BasicBmpHome#sum
      */
@@ -63,23 +63,16 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
     
     /**
      * Maps to BasicBmpHome.findEmptyCollection
-     * 
-     * @return Collection
-     * @exception javax.ejb.FinderException
      */
-    public java.util.Collection ejbFindEmptyCollection()
-    throws javax.ejb.FinderException, java.rmi.RemoteException {
+    public java.util.Collection ejbFindEmptyCollection() {
         return new java.util.Vector();
     }
 
-    public java.util.Enumeration ejbFindEmptyEnumeration()
-    throws javax.ejb.FinderException
-    {
+    public java.util.Enumeration ejbFindEmptyEnumeration() {
         return (new java.util.Vector()).elements();
     }
 
-    public java.util.Collection ejbFindByLastName(String lastName)
-    throws javax.ejb.FinderException{
+    public java.util.Collection ejbFindByLastName(String lastName) {
         return new java.util.Vector();
     }
 
@@ -90,28 +83,22 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
      * @return Integer
      * @exception javax.ejb.FinderException
      */
-    public Integer ejbFindByPrimaryKey(Integer primaryKey)
-    throws javax.ejb.FinderException{
+    public Integer ejbFindByPrimaryKey(Integer primaryKey) {
         testAllowedOperations("ejbFind");
         return new Integer(-1);
     }
 
     /**
      * Maps to BasicBmpHome.create
-     * 
-     * @param name
-     * @return Integer
-     * @exception javax.ejb.CreateException
      */
-    public Integer ejbCreateObject(String name)
-    throws javax.ejb.CreateException{
+    public Integer ejbCreateObject(String name) throws CreateException{
         testAllowedOperations("ejbCreate");
                 
         return new Integer(-1);
     }
     
-    public void ejbPostCreateObject(String name)
-    throws javax.ejb.CreateException{
+    public void ejbPostCreateObject(String name) throws CreateException{
+        testAllowedOperations("ejbPostCreate");
     }
 
     //    
@@ -177,7 +164,7 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
      * @return OperationsPolicy 
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
-        return (OperationsPolicy) allowedOperationsTable.get(methodName);
+        return allowedOperationsTable.get(methodName);
     }
     
     //    
@@ -266,49 +253,49 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
 		/*[0] Test getEJBHome /////////////////*/ 
 		try {
 			ejbContext.getEJBHome();
-			policy.allow(policy.Context_getEJBHome);
+			policy.allow(OperationsPolicy.Context_getEJBHome);
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[1] Test getCallerPrincipal /////////*/
 		try {
 			ejbContext.getCallerPrincipal();
-			policy.allow( policy.Context_getCallerPrincipal );
+			policy.allow(OperationsPolicy.Context_getCallerPrincipal );
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[2] Test isCallerInRole /////////////*/
 		try {
 			ejbContext.isCallerInRole("ROLE");
-			policy.allow( policy.Context_isCallerInRole );
+			policy.allow(OperationsPolicy.Context_isCallerInRole );
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[3] Test getRollbackOnly ////////////*/
 		try {
 			ejbContext.getRollbackOnly();
-			policy.allow( policy.Context_getRollbackOnly );
+			policy.allow(OperationsPolicy.Context_getRollbackOnly );
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[4] Test setRollbackOnly ////////////*/
 		try {
 			ejbContext.setRollbackOnly();
-			policy.allow( policy.Context_setRollbackOnly );
+			policy.allow(OperationsPolicy.Context_setRollbackOnly );
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[5] Test getUserTransaction /////////*/
 		try {
 			ejbContext.getUserTransaction();
-			policy.allow( policy.Context_getUserTransaction );
+			policy.allow(OperationsPolicy.Context_getUserTransaction );
 		} catch (IllegalStateException ise) {
 		}
 	
 		/*[6] Test getEJBObject ///////////////*/
 		try {
 			ejbContext.getEJBObject();
-			policy.allow( policy.Context_getEJBObject );
+			policy.allow(OperationsPolicy.Context_getEJBObject );
 		} catch (IllegalStateException ise) {
 		}
 	
@@ -318,7 +305,7 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
 		 */
 		try {
 			ejbContext.getPrimaryKey();
-			policy.allow( policy.Context_getPrimaryKey );
+			policy.allow(OperationsPolicy.Context_getPrimaryKey );
 		} catch (IllegalStateException ise) {
 		}
 
@@ -326,11 +313,11 @@ public class AllowedOperationsBmpBean implements javax.ejb.EntityBean{
 		try {
 			InitialContext jndiContext = new InitialContext();            
 	
-			String actual = (String)jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
+			jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 	
-			policy.allow( policy.JNDI_access_to_java_comp_env );
+			policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env );
 		} catch (IllegalStateException ise) {
-		} catch (javax.naming.NamingException ne) {
+		} catch (NamingException ne) {
 		}
 
 		allowedOperationsTable.put(methodName, policy);

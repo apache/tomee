@@ -73,7 +73,7 @@ public class Complex2EjbHomeTests extends ComplexCmp2TestClient {
         }
     }
 
-    public void Xtest04_ejbHomeMethod() {
+    public void test04_ejbHomeMethod() {
         try {
             assertEquals(8+9, ejbHome.sum(8, 9));
         } catch (Throwable e) {

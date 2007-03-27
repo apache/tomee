@@ -16,24 +16,23 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-/**
- *
- */
 public abstract class AllowedOperationsCmp2Bean implements EntityBean {
     private static int nextId;
     public EntityContext ejbContext;
-    public static final Hashtable allowedOperationsTable = new Hashtable();
+    public static final Map<String,OperationsPolicy> allowedOperationsTable = new TreeMap<String,OperationsPolicy>();
 
     public abstract Integer getId();
 
@@ -135,7 +134,7 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
      * @param methodName The method for which to get the allowed opperations report
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) {
-        return (OperationsPolicy) allowedOperationsTable.get(methodName);
+        return allowedOperationsTable.get(methodName);
     }
 
     //
@@ -220,101 +219,75 @@ public abstract class AllowedOperationsCmp2Bean implements EntityBean {
     protected void testAllowedOperations(String methodName) {
         OperationsPolicy policy = new OperationsPolicy();
 
-        /*[1] Test getEJBHome /////////////////*/
+        /*[0] Test getEJBHome /////////////////*/
         try {
             ejbContext.getEJBHome();
             policy.allow(OperationsPolicy.Context_getEJBHome);
         } catch (IllegalStateException ise) {
         }
 
-        /*[2] Test getCallerPrincipal /////////*/
+        /*[1] Test getCallerPrincipal /////////*/
         try {
             ejbContext.getCallerPrincipal();
-            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal );
         } catch (IllegalStateException ise) {
         }
 
-        /*[3] Test isCallerInRole /////////////*/
+        /*[2] Test isCallerInRole /////////////*/
         try {
             ejbContext.isCallerInRole("ROLE");
-            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            policy.allow(OperationsPolicy.Context_isCallerInRole );
         } catch (IllegalStateException ise) {
         }
 
-        /*[4] Test getRollbackOnly ////////////*/
+        /*[3] Test getRollbackOnly ////////////*/
         try {
             ejbContext.getRollbackOnly();
-            policy.allow(OperationsPolicy.Context_getRollbackOnly);
+            policy.allow(OperationsPolicy.Context_getRollbackOnly );
         } catch (IllegalStateException ise) {
         }
 
-        /*[5] Test setRollbackOnly ////////////*/
-        // This is way to difficult to test as it rolls back all work
+        /*[4] Test setRollbackOnly ////////////*/
 //        try {
 //            ejbContext.setRollbackOnly();
-//            policy.allow(OperationsPolicy.Context_setRollbackOnly);
+//            policy.allow(OperationsPolicy.Context_setRollbackOnly );
 //        } catch (IllegalStateException ise) {
 //        }
 
-        /*[6] Test getUserTransaction /////////*/
+        /*[5] Test getUserTransaction /////////*/
         try {
             ejbContext.getUserTransaction();
-            policy.allow(OperationsPolicy.Context_getUserTransaction);
-        } catch (Exception e) {
+            policy.allow(OperationsPolicy.Context_getUserTransaction );
+        } catch (IllegalStateException ise) {
         }
 
-        /*[7] Test getEJBObject ///////////////*/
+        /*[6] Test getEJBObject ///////////////*/
         try {
             ejbContext.getEJBObject();
-            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getEJBObject );
         } catch (IllegalStateException ise) {
         }
 
-        /*[8] Test getPrimaryKey //////////////*/
+        /*[7] Test Context_getPrimaryKey ///////////////
+         *
+         * TODO: Write this test.
+         */
         try {
             ejbContext.getPrimaryKey();
-            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey );
         } catch (IllegalStateException ise) {
         }
 
-        /* TO DO:
-         * Check for policy.Enterprise_bean_access
-         * Check for policy.JNDI_access_to_java_comp_env
-         * Check for policy.Resource_manager_access
-         */
-
-        /*[9] Test JNDI_access_to_java_comp_env ///////////////*/
+        /*[8] Test JNDI_access_to_java_comp_env ///////////////*/
         try {
             InitialContext jndiContext = new InitialContext();
 
-            jndiContext.lookup("java:comp/env/entity/references/JNDI_access_to_java_comp_env");
+            jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
-            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env );
         } catch (IllegalStateException ise) {
-        } catch (javax.naming.NamingException ne) {
+        } catch (NamingException ne) {
         }
-
-        /*[9] Test Resource_manager_access ///////////////*/
-//        try {
-//            InitialContext jndiContext = new InitialContext();
-//
-//            jndiContext.lookup("java:comp/env/stateless/references/Resource_manager_access");
-//
-//            policy.allow(OperationsPolicy.Resource_manager_access);
-//        } catch (IllegalStateException ise) {
-//        } catch (javax.naming.NamingException ne) {
-//        }
-
-        /*[10] Test Enterprise_bean_access ///////////////*/
-//        try {
-//            InitialContext jndiContext = new InitialContext();
-//
-//            jndiContext.lookup("java:comp/env/stateless/beanReferences/Enterprise_bean_access");
-//
-//            policy.allow(OperationsPolicy.Enterprise_bean_access);
-//        } catch (IllegalStateException ise) {
-//        } catch (javax.naming.NamingException ne) {
-//        }
 
         allowedOperationsTable.put(methodName, policy);
     }

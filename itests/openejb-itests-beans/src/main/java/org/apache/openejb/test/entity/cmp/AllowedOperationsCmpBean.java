@@ -17,13 +17,18 @@
 package org.apache.openejb.test.entity.cmp;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
+import javax.ejb.CreateException;
+import javax.ejb.EntityBean;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
@@ -32,13 +37,13 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
+public class AllowedOperationsCmpBean implements EntityBean{
     private static int nextId;
-    public int primaryKey;
+    public Integer primaryKey;
     public String firstName;
     public String lastName;
     public EntityContext ejbContext;
-    public Hashtable allowedOperationsTable = new Hashtable();
+    public static Map<String,OperationsPolicy> allowedOperationsTable = new TreeMap<String,OperationsPolicy>();
     
     
     //=============================
@@ -62,14 +67,8 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
     
     /**
      * Maps to BasicCmpHome.create
-     * 
-     * @param name
-     * @return 
-     * @exception javax.ejb.CreateException
-     * @see BasicCmpHome#createObject
      */
-    public Integer ejbCreateObject(String name)
-    throws javax.ejb.CreateException{
+    public Integer ejbCreateObject(String name) throws CreateException{
         primaryKey = nextId++;
         testAllowedOperations("ejbCreate");
         StringTokenizer st = new StringTokenizer(name, " ");    
@@ -78,8 +77,8 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
         return new Integer(primaryKey);
     }
     
-    public void ejbPostCreateObject(String name)
-    throws javax.ejb.CreateException{
+    public void ejbPostCreateObject(String name) throws CreateException{
+        testAllowedOperations("ejbPostCreate");
     }
 
     //    
@@ -148,7 +147,7 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
      * @see BasicCmpObject#getAllowedOperationsReport
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName){
-        return (OperationsPolicy) allowedOperationsTable.get(methodName);
+        return allowedOperationsTable.get(methodName);
     }
     
     //    
@@ -230,64 +229,79 @@ public class AllowedOperationsCmpBean implements javax.ejb.EntityBean{
     //    
     // EntityBean interface methods
     //================================
-    
-    protected void testAllowedOperations(String methodName){
+    protected void testAllowedOperations(String methodName) {
         OperationsPolicy policy = new OperationsPolicy();
-        
-        /*[1] Test getEJBHome /////////////////*/ 
-        try{
-            ejbContext.getEJBHome();
-            policy.allow(policy.Context_getEJBHome);
-        }catch(IllegalStateException ise){}
-        
-        /*[2] Test getCallerPrincipal /////////*/ 
-        try{
-            ejbContext.getCallerPrincipal();
-            policy.allow( policy.Context_getCallerPrincipal );
-        }catch(IllegalStateException ise){}
-        
-        /*[3] Test isCallerInRole /////////////*/ 
-        try{
-            ejbContext.isCallerInRole("ROLE");
-            policy.allow( policy.Context_isCallerInRole );
-        }catch(IllegalStateException ise){}
-        
-        /*[4] Test getRollbackOnly ////////////*/ 
-        try{
-            ejbContext.getRollbackOnly();
-            policy.allow( policy.Context_getRollbackOnly );
-        }catch(IllegalStateException ise){}
-        
-        /*[5] Test setRollbackOnly ////////////*/ 
-//        try{
-//            ejbContext.setRollbackOnly();
-//            policy.allow( policy.Context_setRollbackOnly );
-//        }catch(IllegalStateException ise){}
-        
-        /*[6] Test getUserTransaction /////////*/ 
-        try{
-            ejbContext.getUserTransaction();
-            policy.allow( policy.Context_getUserTransaction );
-        }catch(Exception e){}
-        
-        /*[7] Test getEJBObject ///////////////*/ 
-        try{
-            ejbContext.getEJBObject();
-            policy.allow( policy.Context_getEJBObject );
-        }catch(IllegalStateException ise){}
 
-        /*[8] Test getPrimaryKey //////////////*/ 
-        try{
-            ejbContext.getPrimaryKey();
-            policy.allow( policy.Context_getPrimaryKey );
-        }catch(IllegalStateException ise){}
-         
-        /* TO DO:  
-         * Check for policy.Enterprise_bean_access       
-         * Check for policy.JNDI_access_to_java_comp_env 
-         * Check for policy.Resource_manager_access      
+        /*[0] Test getEJBHome /////////////////*/
+        try {
+            ejbContext.getEJBHome();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[1] Test getCallerPrincipal /////////*/
+        try {
+            ejbContext.getCallerPrincipal();
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[2] Test isCallerInRole /////////////*/
+        try {
+            ejbContext.isCallerInRole("ROLE");
+            policy.allow(OperationsPolicy.Context_isCallerInRole );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[3] Test getRollbackOnly ////////////*/
+        try {
+            ejbContext.getRollbackOnly();
+            policy.allow(OperationsPolicy.Context_getRollbackOnly );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[4] Test setRollbackOnly ////////////*/
+//        try {
+//            ejbContext.setRollbackOnly();
+//            policy.allow(OperationsPolicy.Context_setRollbackOnly );
+//        } catch (IllegalStateException ise) {
+//        }
+	
+        /*[5] Test getUserTransaction /////////*/
+        try {
+            ejbContext.getUserTransaction();
+            policy.allow(OperationsPolicy.Context_getUserTransaction );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[6] Test getEJBObject ///////////////*/
+        try {
+            ejbContext.getEJBObject();
+            policy.allow(OperationsPolicy.Context_getEJBObject );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[7] Test Context_getPrimaryKey ///////////////
+         *
+         * TODO: Write this test.
          */
+        try {
+            ejbContext.getPrimaryKey();
+            policy.allow(OperationsPolicy.Context_getPrimaryKey );
+        } catch (IllegalStateException ise) {
+        }
+
+        /*[8] Test JNDI_access_to_java_comp_env ///////////////*/
+        try {
+            InitialContext jndiContext = new InitialContext();
+
+            jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
+
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env );
+        } catch (IllegalStateException ise) {
+        } catch (NamingException ne) {
+        }
+
         allowedOperationsTable.put(methodName, policy);
     }
-
 }
