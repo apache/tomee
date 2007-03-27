@@ -215,31 +215,31 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     return _invoke(proxy, method, args);
                 } catch (TransactionRequiredException e) {
                     if (this.isLocal()) {
-                        throw new TransactionRequiredLocalException(e.getMessage()).initCause(e.getCause());
+                        throw new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
                     } else {
                         throw e;
                     }
                 } catch (TransactionRolledbackException e) {
                     if (this.isLocal()) {
-                        throw new TransactionRolledbackLocalException(e.getMessage()).initCause(e.getCause());
+                        throw new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
                     } else {
                         throw e;
                     }
                 } catch (NoSuchObjectException  e) {
                     if (this.isLocal()) {
-                        throw new NoSuchObjectLocalException(e.getMessage()).initCause(e.getCause());
+                        throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
                     } else {
                         throw e;
                     }
                 } catch (AccessException e) {
                     if (this.isLocal()) {
-                        throw new AccessLocalException(e.getMessage()).initCause(e.getCause());
+                        throw new AccessLocalException(e.getMessage()).initCause(getCause(e));
                     } else {
                         throw e;
                     }
                 } catch (RemoteException e) {
                     if (this.isLocal()) {
-                        throw new EJBException(e.getMessage()).initCause(e.getCause());
+                        throw new EJBException(e.getMessage()).initCause(getCause(e));
                     } else {
                         throw e;
                     }
@@ -272,6 +272,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 IntraVmCopyMonitor.postCopyOperation();
             }
         }
+    }
+
+    private Throwable getCause(RemoteException e) {
+        if (e != null && e.getCause() != null) {
+            return e.getCause();
+        }
+        return e;
     }
 
     public String toString() {
