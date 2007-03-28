@@ -70,8 +70,8 @@ public class Cmp2TestSuite extends org.apache.openejb.test.TestSuite {
      */
     protected void setUp() throws Exception {
         Properties props = TestManager.getServer().getContextEnvironment();
-        props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
-        props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
+        //props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
+        //props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
         new InitialContext(props);
 
         /*[2] Create database table */

@@ -32,7 +32,7 @@ import java.net.URL;
  */
 public class PropertiesLoginModuleTest extends TestCase {
 
-    static {
+    protected void setUp() throws Exception {
         loadJassLoginConfig();
     }
 

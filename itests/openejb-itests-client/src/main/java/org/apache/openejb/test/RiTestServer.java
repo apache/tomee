@@ -176,8 +176,8 @@ public class RiTestServer implements TestServer {
         properties.put(Context.PROVIDER_URL, new URL("http","127.0.0.1",1098,""));
         } catch (Exception e){}
         
-        properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_TEST_CLIENT");
-        properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_TEST_CLIENT");
+        //properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_TEST_CLIENT");
+        //properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_TEST_CLIENT");
 
         return properties;
     }

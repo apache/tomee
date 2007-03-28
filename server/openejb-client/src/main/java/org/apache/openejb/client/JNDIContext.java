@@ -114,6 +114,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         //        server to send us an authentication challange.
         if (userID != null) {
             authenticate(userID, psswrd);
+        } else {
+            client = new ClientMetaData();
         }
 
         return this;

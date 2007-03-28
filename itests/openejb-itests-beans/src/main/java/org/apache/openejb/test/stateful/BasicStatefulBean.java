@@ -217,7 +217,7 @@ public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchron
         
         /*[3] Test isCallerInRole /////////////*/ 
         try{
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow( policy.Context_isCallerInRole );
         }catch(IllegalStateException ise){}
         

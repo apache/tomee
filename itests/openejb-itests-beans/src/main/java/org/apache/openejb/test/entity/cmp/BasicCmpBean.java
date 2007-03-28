@@ -256,7 +256,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
         
         /*[3] Test isCallerInRole /////////////*/ 
         try{
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow( OperationsPolicy.Context_isCallerInRole );
         }catch(IllegalStateException ise){}
         

@@ -203,7 +203,7 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
 
         /*[2] Test isCallerInRole /////////////*/
         try {
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole);
         } catch (IllegalStateException ise) {
         }

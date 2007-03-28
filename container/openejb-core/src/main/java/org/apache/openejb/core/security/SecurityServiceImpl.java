@@ -17,6 +17,7 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.util.ConfUtils;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
@@ -60,8 +61,6 @@ import java.util.HashSet;
 public class SecurityServiceImpl implements SecurityService, ThreadContextListener {
     static private final Map<Object, Identity> identities = new java.util.concurrent.ConcurrentHashMap();
     static private final ThreadLocal<Subject> clientIdentity = new ThreadLocal<Subject>();
-
-
 
     private final String defaultUser = "guest";
     private final Subject defaultSubject;
@@ -207,8 +206,11 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         try {
             CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
 
-            role = deployment.getSecurityRole(role);
-            securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
+            String securityRole = deployment.getSecurityRole(role);
+            if (securityRole == null) {
+                throw new IllegalArgumentException("Cannot do an isCallerInRole check using an role name not declared via <security-role-ref> or @DeclareRoles: role="+role+", referenced-by="+deployment.getBeanClass().getName());
+            }
+            securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), securityRole));
         } catch (AccessControlException e) {
             return false;
         }
@@ -266,25 +268,16 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     private static void installJaas() {
         String path = System.getProperty("java.security.auth.login.config");
-        if (path == null) {
-            try {
-                File conf = SystemInstance.get().getBase().getDirectory("conf");
-                File loginConfig = new File(conf, "login.config");
-                if (loginConfig.exists()) {
-                    path = conf.getAbsolutePath();
-                    System.setProperty("java.security.auth.login.config", path);
-                }
-            } catch (IOException e) {
-            }
+
+        if (path != null) {
+            return;
         }
 
-        if (path == null) {
-            URL resource = Thread.currentThread().getContextClassLoader().getResource("login.config");
-            if (resource != null) {
-                path = resource.getFile();
-                System.setProperty("java.security.auth.login.config", path);
-            }
-        }
+        URL loginConfig = ConfUtils.getConfResource("login.config");
+
+        path = loginConfig.getFile();
+        
+        System.setProperty("java.security.auth.login.config", path);
     }
 
     private static void installJacc() {

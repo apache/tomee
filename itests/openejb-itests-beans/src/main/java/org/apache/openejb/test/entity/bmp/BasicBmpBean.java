@@ -460,7 +460,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
         /*[2] Test isCallerInRole /////////////*/
         try {
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow( policy.Context_isCallerInRole );
         } catch ( IllegalStateException ise ) {
         }

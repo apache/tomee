@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
-import org.apache.openejb.core.security.SecurityServiceImpl;
+import org.apache.openejb.util.ConfUtils;
 
 import javax.security.auth.spi.LoginModule;
 import javax.security.auth.Subject;
@@ -38,14 +38,15 @@ import java.util.Map;
 import java.util.Enumeration;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
  */
 public class PropertiesLoginModule implements LoginModule {
 
-    private final String USER_FILE = "org.apache.openejb.jaas.properties.users";
-    private final String GROUP_FILE = "org.apache.openejb.jaas.properties.groups";
+    private final String USER_FILE = "UsersFile";
+    private final String GROUP_FILE = "GroupsFile";
 
     private static final Log log = LogFactory.getLog(PropertiesLoginModule.class);
 
@@ -53,45 +54,41 @@ public class PropertiesLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
 
     private boolean debug;
-    private String usersFile;
-    private String groupsFile;
     private Properties users = new Properties();
     private Properties groups = new Properties();
     private String user;
     private Set principals = new HashSet();
-    private File baseDir;
+
+    private URL usersUrl;
+    private URL groupsUrl;
 
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
-        if( System.getProperty("java.security.auth.login.config")!=null ) {
-            baseDir=new File(System.getProperty("java.security.auth.login.config")).getParentFile();
-        } else {
-            baseDir = new File(".");
-        }
+        debug = "true".equalsIgnoreCase((String) options.get("Debug"));
+        String usersFile = (String) options.get(USER_FILE)+"";
+        String groupsFile = (String) options.get(GROUP_FILE)+"";
 
-        debug = "true".equalsIgnoreCase((String) options.get("debug"));
-        usersFile = (String) options.get(USER_FILE)+"";
-        groupsFile = (String) options.get(GROUP_FILE)+"";
+        usersUrl = ConfUtils.getConfResource(usersFile);
+        groupsUrl = ConfUtils.getConfResource(groupsFile);
 
         if (debug) {
-            log.debug("Initialized debug=" + debug + " usersFile=" + usersFile + " groupsFile=" + groupsFile+" basedir="+baseDir);
+            log.debug("Initialized debug=" + debug + " usersFile=" + usersFile + " groupsFile=" + groupsFile);
         }
     }
 
     public boolean login() throws LoginException {
-        File f = new File(baseDir,usersFile);
         try {
-            users.load(new java.io.FileInputStream(f));
+            users.load(usersUrl.openStream());
         } catch (IOException ioe) {
-            throw new LoginException("Unable to load user properties file " + f);
+            throw new LoginException("Unable to load user properties file " + usersUrl.getFile());
         }
-        f = new File(baseDir, groupsFile);
+
         try {
-            groups.load(new java.io.FileInputStream(f));
+            groups.load(groupsUrl.openStream());
         } catch (IOException ioe) {
-            throw new LoginException("Unable to load group properties file " + f);
+            throw new LoginException("Unable to load group properties file " + groupsUrl.getFile());
         }
 
         Callback[] callbacks = new Callback[2];
@@ -105,6 +102,7 @@ public class PropertiesLoginModule implements LoginModule {
         } catch (UnsupportedCallbackException uce) {
             throw new LoginException(uce.getMessage() + " not available to obtain information from user");
         }
+
         user = ((NameCallback) callbacks[0]).getName();
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
         if (tmpPassword == null) tmpPassword = new char[0];

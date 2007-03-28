@@ -53,6 +53,16 @@ public interface SecurityService extends Service {
      */
     public void associate(Object securityIdentity) throws LoginException;
 
+    /**
+     * Active
+     */
+//    public Object logout(Object securityIdentity) throws LoginException;
+
+    /**
+     * Active
+     */
+//    public void disassociate() throws LoginException;
+
     public Subject getCurrentSubject();
 
     /**

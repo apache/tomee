@@ -51,8 +51,8 @@ public abstract class StatefulTestClient extends org.apache.openejb.test.NamedTe
     protected void setUp() throws Exception {
         
         Properties properties = TestManager.getServer().getContextEnvironment();
-        properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_test00_CLIENT");
-        properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_test00_CLIENT");
+        //properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_test00_CLIENT");
+        //properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_test00_CLIENT");
         
         initialContext = new InitialContext(properties);
     }

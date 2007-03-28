@@ -185,7 +185,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
         
         /*[3] Test isCallerInRole /////////////*/ 
         try{
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow( policy.Context_isCallerInRole );
         }catch(IllegalStateException ise){}
         

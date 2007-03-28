@@ -177,7 +177,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
 
 		/*[2] Test isCallerInRole /////////////*/
 		try {
-			mdbContext.isCallerInRole("ROLE");
+			mdbContext.isCallerInRole("TheMan");
 			policy.allow( policy.Context_isCallerInRole );
 		} catch (IllegalStateException ise) {
 		}

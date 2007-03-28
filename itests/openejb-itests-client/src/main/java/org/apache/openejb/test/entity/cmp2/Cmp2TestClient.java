@@ -48,8 +48,8 @@ public abstract class Cmp2TestClient extends org.apache.openejb.test.NamedTestCa
     protected void setUp() throws Exception {
 
         Properties properties = TestManager.getServer().getContextEnvironment();
-        properties.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
-        properties.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
+        //properties.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
+        //properties.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
 
         initialContext = new InitialContext(properties);
 

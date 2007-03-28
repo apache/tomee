@@ -250,7 +250,7 @@ public class AllowedOperationsCmpBean implements EntityBean{
 
         /*[2] Test isCallerInRole /////////////*/
         try {
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole );
         } catch (IllegalStateException ise) {
         }

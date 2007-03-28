@@ -212,12 +212,12 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default Security Service"
+          id="PseudoSecurityService"
           provider-type="SecurityService"
           class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
 
   <ServiceProvider
-          id="New Security Service"
+          id="Default Security Service"
           provider-type="SecurityService"
           class-name="org.apache.openejb.core.security.SecurityServiceImpl"/>
 

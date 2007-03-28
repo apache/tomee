@@ -102,8 +102,6 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put("java.naming.provider.url", "foo://127.0.0.1:" + port);
-            props.put("java.naming.security.principal", "testuser");
-            props.put("java.naming.security.credentials", "testpassword");
             return props;
         }
     }

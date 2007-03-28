@@ -43,12 +43,12 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
     public void init(Properties props) {
         properties = props;
-
+        if (props.contains("java.naming.security.principal")) throw new IllegalArgumentException("Not allowed 'java.naming.security.principal'");
 //        props.put("test.server.class","org.apache.openejb.test.RemoteTestServer");
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "127.0.0.1:4201");
-        props.put("java.naming.security.principal", "testuser");
-        props.put("java.naming.security.credentials", "testpassword");
+//        props.put("java.naming.security.principal", "testuser");
+//        props.put("java.naming.security.credentials", "testpassword");
     }
 
     public Properties getProperties() {

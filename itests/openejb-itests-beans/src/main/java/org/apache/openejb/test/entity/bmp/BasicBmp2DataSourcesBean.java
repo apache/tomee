@@ -395,7 +395,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
         /*[3] Test isCallerInRole /////////////*/
         try {
-            ejbContext.isCallerInRole("ROLE");
+            ejbContext.isCallerInRole("TheMan");
             policy.allow(policy.Context_isCallerInRole);
         } catch (IllegalStateException ise) {
         }

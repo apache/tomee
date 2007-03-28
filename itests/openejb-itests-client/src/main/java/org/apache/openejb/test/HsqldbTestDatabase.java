@@ -23,6 +23,7 @@ import org.apache.openejb.test.beans.DatabaseHome;
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 import java.util.Properties;
+import java.util.Map;
 
 public class HsqldbTestDatabase implements TestDatabase {
 
@@ -168,7 +169,12 @@ public class HsqldbTestDatabase implements TestDatabase {
 
     public void start() throws IllegalStateException {
         try {
-            Properties properties = TestManager.getServer().getContextEnvironment();
+            TestServer server = TestManager.getServer();
+            System.out.println("test server = " + server.getClass().getName());
+            Properties properties = server.getContextEnvironment();
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                System.out.println("entry = " + entry.getKey() +":"+entry.getValue());
+            }
             initialContext = new InitialContext(properties);
         } catch (Exception e) {
             throw (IllegalStateException) new IllegalStateException("Cannot create initial context: " + e.getClass().getName() + " " + e.getMessage()).initCause(e);

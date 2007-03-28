@@ -79,6 +79,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <entity>
@@ -103,6 +107,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <entity>
@@ -127,6 +135,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -161,6 +173,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <entity>
@@ -185,6 +201,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <entity>
@@ -209,6 +229,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -270,6 +294,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -348,6 +376,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -2460,8 +2492,8 @@
         <ejb-link>BasicStatefulBean</ejb-link>
       </ejb-ref>
       <security-role-ref>
-        <role-name>BigWig</role-name>
-        <role-link>Teller</role-link>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
       </security-role-ref>
       <security-role-ref>
         <role-name>HighRoller</role-name>
@@ -2510,8 +2542,8 @@
         <ejb-link>BasicStatefulBean</ejb-link>
       </ejb-ref>
       <security-role-ref>
-        <role-name>BigWig</role-name>
-        <role-link>Teller</role-link>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
       </security-role-ref>
       <security-role-ref>
         <role-name>HighRoller</role-name>
@@ -2561,8 +2593,8 @@
         <ejb-link>BasicStatefulBean</ejb-link>
       </ejb-ref>
       <security-role-ref>
-        <role-name>BigWig</role-name>
-        <role-link>Teller</role-link>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
       </security-role-ref>
       <security-role-ref>
         <role-name>HighRoller</role-name>
@@ -2595,8 +2627,8 @@
       <session-type>Stateless</session-type>
       <transaction-type>Bean</transaction-type>
       <security-role-ref>
-        <role-name>BigWig</role-name>
-        <role-link>Teller</role-link>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
       </security-role-ref>
       <security-role-ref>
         <role-name>HighRoller</role-name>
@@ -2626,8 +2658,8 @@
       <session-type>Stateless</session-type>
       <transaction-type>Bean</transaction-type>
       <security-role-ref>
-        <role-name>BigWig</role-name>
-        <role-link>Teller</role-link>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
       </security-role-ref>
       <security-role-ref>
         <role-name>HighRoller</role-name>
@@ -3622,6 +3654,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -3669,6 +3705,10 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </entity>
 
     <!--
@@ -5297,27 +5337,6 @@
       <description>The description</description>
       <role-name>Executive</role-name>
     </security-role>
-
-    <method-permission>
-      <description>The description</description>
-      <role-name>Teller</role-name>
-      <method>
-        <description>The description</description>
-        <ejb-name>BasicStatelessBean</ejb-name>
-        <method-name>remove</method-name>
-      </method>
-    </method-permission>
-
-    <method-permission>
-      <description>The description</description>
-      <role-name>Accountant</role-name>
-      <role-name>Manager</role-name>
-      <method>
-        <description>The description</description>
-        <ejb-name>BasicStatefulBean</ejb-name>
-        <method-name>*</method-name>
-      </method>
-    </method-permission>
 
     <container-transaction>
       <method>

@@ -57,8 +57,8 @@ public class StatelessContainerTxTests extends org.apache.openejb.test.NamedTest
     protected void setUp() throws Exception {
 
         Properties properties = TestManager.getServer().getContextEnvironment();
-        properties.put(Context.SECURITY_PRINCIPAL, "STATELESS_test00_CLIENT");
-        properties.put(Context.SECURITY_CREDENTIALS, "STATELESS_test00_CLIENT");
+        //properties.put(Context.SECURITY_PRINCIPAL, "STATELESS_test00_CLIENT");
+        //properties.put(Context.SECURITY_CREDENTIALS, "STATELESS_test00_CLIENT");
 
         initialContext = new InitialContext(properties);
 
