@@ -228,6 +228,8 @@ public class InterceptorBindingBuilder {
         for (InterceptorBindingInfo info : bindings) {
             Level level = level(info);
 
+            if (excludes.contains(level)) continue;
+
             if (!implies(method, ejbName, level, info)) continue;
 
             Type type = type(level, info);
@@ -254,11 +256,9 @@ public class InterceptorBindingBuilder {
                 continue;
             }
 
-            if (!excludes.contains(level)){
-                methodBindings.add(info);
-                if (info.excludeClassInterceptors) excludes.add(Level.CLASS);
-                if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
-            }
+            methodBindings.add(info);
+            if (info.excludeClassInterceptors) excludes.add(Level.CLASS);
+            if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
         }
         return methodBindings;
     }
