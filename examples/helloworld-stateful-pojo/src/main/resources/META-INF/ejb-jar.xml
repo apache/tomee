@@ -32,6 +32,12 @@
                 <method-params/>
               </bean-method>
             </init-method>
+            <remove-method>
+              <bean-method>
+                <method-name>remove</method-name>
+                <method-params/>
+              </bean-method>
+            </remove-method>
             <transaction-type>Container</transaction-type>
         </session>
     </enterprise-beans>

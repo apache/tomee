@@ -50,7 +50,12 @@ public class RemoveMethod {
     }
 
     public RemoveMethod(java.lang.reflect.Method beanMethod) {
+        this(beanMethod, false);
+    }
+
+    public RemoveMethod(java.lang.reflect.Method beanMethod, boolean retainIfException) {
         this.beanMethod = new NamedMethod(beanMethod);
+        this.retainIfException = retainIfException;
     }
 
     public NamedMethod getBeanMethod() {

@@ -231,13 +231,13 @@ public class StatelessInstanceManager {
 
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
-            callContext.setCurrentOperation(Operation.REMOVE);
+            callContext.setCurrentOperation(Operation.PRE_DESTROY);
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
             Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
 
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
         } catch (Throwable re) {

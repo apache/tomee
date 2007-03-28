@@ -192,7 +192,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 //            this.homeInterface = BusinessRemoteHome.class;
 //        }
 
-        createMethodMap();
+        // createMethodMap();
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
@@ -586,6 +586,19 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return removeMethods;
     }
 
+    private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method,Boolean>();
+
+    public void setRetainIfExeption(Method removeMethod, boolean retain){
+        if (getRemoveMethods().contains(removeMethod)){
+            removeExceptionPolicy.put(removeMethod, retain);
+        }
+    }
+
+    public boolean retainIfExeption(Method removeMethod){
+        Boolean retain = removeExceptionPolicy.get(removeMethod);
+        return retain != null && retain;
+    }
+
     public List<InterceptorData> getMethodInterceptors(Method method) {
         List<InterceptorData> interceptors = methodInterceptors.get(method);
         if (interceptors == null) {
@@ -722,7 +735,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    private void createMethodMap() throws org.apache.openejb.SystemException {
+    public void createMethodMap() throws org.apache.openejb.SystemException {
         if (remoteInterface != null) {
             mapObjectInterface(remoteInterface);
             mapHomeInterface(homeInterface);
@@ -748,12 +761,29 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         try {
             // map the remove methods
-            if (componentType == BeanType.STATEFUL || componentType == BeanType.STATELESS) {
-                Method beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
+            if (componentType == BeanType.STATEFUL ) {
+
+                Method beanMethod = null;
+                if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
+                    beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
+                } else {
+                    for (Method method : getRemoveMethods()) {
+                        if (method.getParameterTypes().length == 0){
+                            beanMethod = method;
+                            break;
+                        }
+                    }
+                    if (beanMethod == null && (homeInterface != null || localHomeInterface != null)){
+                        throw new IllegalStateException("Bean class has no @Remove methods to match EJBObject.remove() or EJBLocalObject.remove().  A no-arg remove method must be added: beanClass="+beanClass.getName());
+                    }
+                }
+
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
                 methodMap.put(clientMethod, beanMethod);
+
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
                 methodMap.put(clientMethod, beanMethod);
+
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
                 methodMap.put(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {

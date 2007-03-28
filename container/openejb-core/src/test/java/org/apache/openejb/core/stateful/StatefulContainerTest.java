@@ -20,73 +20,51 @@ package org.apache.openejb.core.stateful;
 import junit.framework.TestCase;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EjbJarInfoBuilder;
 import org.apache.openejb.config.JndiEncInfoBuilder;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.ri.sp.PseudoTransactionService;
-import org.apache.openejb.ri.sp.PseudoSecurityService;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.util.proxy.Jdk13ProxyFactory;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.classic.EjbJarBuilder;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
+import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 
 import javax.ejb.SessionContext;
-import javax.transaction.TransactionManager;
+import javax.ejb.Remote;
+import javax.ejb.Local;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remove;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.naming.InitialContext;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Properties;
-import java.lang.reflect.Method;
 import java.io.Serializable;
 
 /**
  * @version $Revision$ $Date$
  */
 public class StatefulContainerTest extends TestCase {
-    private StatefulContainer container;
-    private DeploymentInfo deploymentInfo;
-
-    public void testPojoStyleBean() throws Exception {
-
-        // Do a create...
-        Method createMethod = DeploymentInfo.BusinessLocalHome.class.getMethod("create");
-
-        Object result = container.invoke("widget", createMethod, new Object[]{}, null, "");
-        assertTrue("instance of ProxyInfo", result instanceof ProxyInfo);
-        ProxyInfo proxyInfo = (ProxyInfo) result;
-
-        // Do a business method...
-        result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
-        assertTrue("instance of Stack", result instanceof Stack);
-
-        // Do a remove...
-        result = container.invoke("widget", Widget.class.getMethod("destroy"), new Object[]{}, proxyInfo.getPrimaryKey(), "");
-
-        // Check the lifecycle of the bean
-        List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
-
-        assertEquals(StatefulContainerTest.join("\n", expected) , join("\n", WidgetBean.lifecycle));
-    }
 
     public void testBusinessLocalInterface() throws Exception {
 
         // Do a create...
 
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-        DeploymentInfo.BusinessLocalHome businessLocalHome = coreDeploymentInfo.getBusinessLocalHome();
-        assertNotNull("businessLocalHome", businessLocalHome);
-
-        Object object = businessLocalHome.create();
-        assertNotNull("businessLocalHome.create()", businessLocalHome);
+        InitialContext ctx = new InitialContext();
+        Object object = ctx.lookup("WidgetBeanBusinessLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
@@ -110,12 +88,8 @@ public class StatefulContainerTest extends TestCase {
 
         // Do a create...
 
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-        DeploymentInfo.BusinessRemoteHome businessRemoteHome = coreDeploymentInfo.getBusinessRemoteHome();
-        assertNotNull("businessRemoteHome", businessRemoteHome);
-
-        Object object = businessRemoteHome.create();
-        assertNotNull("businessRemoteHome.create()", businessRemoteHome);
+        InitialContext ctx = new InitialContext();
+        Object object = ctx.lookup("WidgetBeanBusinessRemote");
 
         assertTrue("instanceof widget", object instanceof RemoteWidget);
 
@@ -129,6 +103,12 @@ public class StatefulContainerTest extends TestCase {
         // Do a remove...
         widget.destroy();
 
+        try {
+            widget.destroy();
+            fail("Calling a removed bean should not be possible");
+        } catch (Exception e) {
+        }
+
         // Check the lifecycle of the bean
         List expected = Arrays.asList(StatefulContainerTest.Lifecycle.values());
 
@@ -138,44 +118,29 @@ public class StatefulContainerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
+
+        // containers
+        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+        statefulContainerInfo.properties.setProperty("PoolSize", "0");
+        statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
+        assembler.createContainer(statefulContainerInfo);
+
         // Setup the descriptor information
-        StatefulBean bean = new StatefulBean("widget", WidgetBean.class.getName());
-        bean.setBusinessLocal(Widget.class.getName());
-        bean.setBusinessRemote(RemoteWidget.class.getName());
-        bean.addPostConstruct("init");
-        bean.addPreDestroy("destroy");
-        bean.addPrePassivate("passivate");
-        bean.addPostActivate("activate");
 
         EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(bean);
+        ejbJar.addEnterpriseBean(new StatefulBean(WidgetBean.class));
 
-        OpenejbJar openejbJar = new OpenejbJar();
-        openejbJar.addEjbDeployment(new EjbDeployment("Stateful Container", "widget", "widget"));
-
-        EjbModule jar = new EjbModule(this.getClass().getClassLoader(), "", ejbJar, openejbJar);
-
-        // Build and register the TransactionManager and SecurityService
-
-        PseudoTransactionService transactionManager = new PseudoTransactionService();
-        SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
-
-        PseudoSecurityService securityService = new PseudoSecurityService();
-        SystemInstance.get().setComponent(SecurityService.class, securityService);
-
-        // Create the Container
-        container = new StatefulContainer("Stateful Container", transactionManager, securityService, null, 10, 0, 1);
-        Properties props = new Properties();
-        props.put(container.getContainerID(), container);
-
-        // Build the DeploymentInfos
-
-        HashMap<String, DeploymentInfo> ejbs = build(props, jar);
-        deploymentInfo = ejbs.get("widget");
-
-        ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
-        ProxyManager.setDefaultFactory("ivm_server");
-
+        assembler.createApplication(config.configureApplication(ejbJar));
 
         WidgetBean.lifecycle.clear();
 
@@ -201,17 +166,19 @@ public class StatefulContainerTest extends TestCase {
         return ejbs;
     }
 
+    @Local
     public static interface Widget {
         Stack<Lifecycle> getLifecycle();
         void destroy();
     }
 
+    @Remote
     public static interface RemoteWidget extends Widget {
 
     }
 
     public static enum Lifecycle {
-        CONSTRUCTOR, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2, PRE_DESTROY
+        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2, REMOVE, PRE_DESTROY
     }
 
     public static class WidgetBean implements Widget, RemoteWidget, Serializable {
@@ -225,8 +192,10 @@ public class StatefulContainerTest extends TestCase {
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
+
+        @Resource
         public void setSessionContext(SessionContext sessionContext){
-        //    lifecycle.push(Lifecycle.INJECTION);
+            lifecycle.push(Lifecycle.INJECTION);
         }
 
         public Stack<Lifecycle> getLifecycle() {
@@ -234,20 +203,29 @@ public class StatefulContainerTest extends TestCase {
             return lifecycle;
         }
 
+        @PostActivate
         public void activate(){
             lifecycle.push(Enum.valueOf(Lifecycle.class, "POST_ACTIVATE" + (++activates)));
         }
 
+        @PrePassivate
         public void passivate(){
             lifecycle.push(Enum.valueOf(Lifecycle.class, "PRE_PASSIVATE" + (++passivates)));
         }
 
+        @PostConstruct
         public void init() {
             lifecycle.push(Lifecycle.POST_CONSTRUCT);
         }
 
-        public void destroy() {
+        @PreDestroy
+        public void predestroy() {
             lifecycle.push(Lifecycle.PRE_DESTROY);
+        }
+
+        @Remove
+        public void destroy() {
+            lifecycle.push(Lifecycle.REMOVE);
         }
     }
 }

@@ -43,6 +43,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
                     null,
                     String.class, 
                     BeanType.CMP_ENTITY);
+            ((CoreDeploymentInfo)deploymentInfo).createMethodMap();
         } catch (SystemException e) {
             throw new RuntimeException(e);
         }

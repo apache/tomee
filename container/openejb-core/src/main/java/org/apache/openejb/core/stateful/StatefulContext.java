@@ -60,6 +60,7 @@ public class StatefulContext extends BaseSessionContext {
         states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
         states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
         states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
+        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleStatelessState();
         states[Operation.REMOVE.ordinal()] = new LifecycleStatelessState();
     }
 

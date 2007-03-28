@@ -231,8 +231,9 @@ class EnterpriseBeanBuilder {
             }
 
             for (RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
-                // TODO: Process retainIfException
-                deployment.getRemoveMethods().add(toMethod(ejbClass, removeMethod.beanMethod));
+                Method method = toMethod(ejbClass, removeMethod.beanMethod);
+                deployment.getRemoveMethods().add(method);
+                deployment.setRetainIfExeption(method, removeMethod.retainIfException);
             }
 
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
@@ -283,6 +284,9 @@ class EnterpriseBeanBuilder {
                 }
             }
         }
+
+        deployment.createMethodMap();
+
         return deployment;
     }
 

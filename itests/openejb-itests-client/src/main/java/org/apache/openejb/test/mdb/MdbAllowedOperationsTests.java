@@ -184,7 +184,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test04_businessMethod(){
+    public void TODO_test04_businessMethod(){
         try {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getRollbackOnly );

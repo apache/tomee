@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 
 import javax.ejb.SessionContext;
+import javax.ejb.Remove;
 import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
@@ -40,6 +41,10 @@ public class PersistenceContextStatefulBean {
         ejbContext = ctx;
     }
 
+    @Remove
+    public void remove(){
+    }
+    
     public void testPersistenceContext() throws TestFailureException {
         try{
             try{

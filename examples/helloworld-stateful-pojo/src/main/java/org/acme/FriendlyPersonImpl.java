@@ -47,6 +47,8 @@ public class FriendlyPersonImpl implements FriendlyPerson {
 
     public void create(){}
 
+    public void remove(){}
+
     public String greet(String friend) {
         String language = languagePreferences.getProperty(friend, defaultLanguage);
         return greet(language, friend);

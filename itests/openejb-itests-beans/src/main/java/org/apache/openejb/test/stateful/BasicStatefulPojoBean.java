@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
+import javax.ejb.Remove;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
@@ -35,6 +36,10 @@ import org.apache.openejb.test.object.OperationsPolicy;
 public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicStatefulBusinessRemote {
 
     public void create(String name) {
+    }
+
+    @Remove
+    public void remove(){
     }
 
     /**

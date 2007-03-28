@@ -37,6 +37,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Init;
+import javax.ejb.Remove;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
@@ -140,7 +141,7 @@ public class Compat3to2Test extends TestCase {
             calls.add((Call) Enum.valueOf(Call.class, "EjbPassivate" + (++passivates)));
         }
 
-        @PreDestroy
+        @Remove
         public void beanRemove() throws EJBException, RemoteException {
             calls.add(Call.EjbRemove);
         }

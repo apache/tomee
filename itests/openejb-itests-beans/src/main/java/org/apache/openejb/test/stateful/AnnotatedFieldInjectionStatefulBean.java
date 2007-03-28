@@ -28,6 +28,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.EJB;
 import javax.ejb.CreateException;
 import javax.ejb.Init;
+import javax.ejb.Remove;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.persistence.PersistenceUnit;
@@ -101,6 +102,10 @@ public class AnnotatedFieldInjectionStatefulBean {
     public void create(String name) {
     }
 
+    @Remove
+    public void remove(){
+    }
+    
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHome);

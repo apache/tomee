@@ -27,6 +27,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.ejb.Init;
+import javax.ejb.Remove;
 import javax.sql.DataSource;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
@@ -54,6 +55,10 @@ public class ContextLookupStatefulPojoBean {
     public void create(String name) {
     }
 
+    @Remove
+    public void remove(){
+    }
+    
     public void setSessionContext(SessionContext ejbContext) {
         this.ejbContext = ejbContext;
     }

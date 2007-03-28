@@ -314,7 +314,7 @@ public class StatefulInstanceManager {
 
     protected void handleTimeout(BeanEntry entry, ThreadContext threadContext) {
         Operation currentOperation = threadContext.getCurrentOperation();
-        threadContext.setCurrentOperation(Operation.REMOVE);
+        threadContext.setCurrentOperation(Operation.PRE_DESTROY);
         CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Instance instance = (Instance) entry.bean;
 
@@ -322,7 +322,7 @@ public class StatefulInstanceManager {
             Method remove = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbRemove"): null;
 
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
         } catch (Throwable callbackException) {

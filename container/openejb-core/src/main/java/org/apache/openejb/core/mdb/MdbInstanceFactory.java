@@ -145,14 +145,14 @@ public class MdbInstanceFactory {
         Operation originalOperation = callContext.getCurrentOperation();
         try {
             // call post destroy method
-            callContext.setCurrentOperation(Operation.REMOVE);
+            callContext.setCurrentOperation(Operation.PRE_DESTROY);
 
             Method remove = bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
 
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
             ArrayList interceptorDatas = new ArrayList(); // TODO
             HashMap interceptorInstances = new HashMap(); // TODO
-            InterceptorStack interceptorStack = new InterceptorStack(bean, remove, Operation.REMOVE, interceptorDatas, interceptorInstances);
+            InterceptorStack interceptorStack = new InterceptorStack(bean, remove, Operation.PRE_DESTROY, interceptorDatas, interceptorInstances);
 
             interceptorStack.invoke();
         } catch (Throwable re) {

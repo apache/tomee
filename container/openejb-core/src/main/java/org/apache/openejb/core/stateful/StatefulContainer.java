@@ -39,6 +39,8 @@ import org.apache.openejb.util.Logger;
 
 import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
@@ -94,14 +96,14 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private Map<Method, MethodType> getLifecycelMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
-        List<Method> preDestroys = deploymentInfo.getPreDestroy();
-        for (Method preDestroy : preDestroys) {
-            methods.put(preDestroy, MethodType.REMOVE);
+        List<Method> removeMethods = deploymentInfo.getRemoveMethods();
+        for (Method removeMethod : removeMethods) {
+            methods.put(removeMethod, MethodType.REMOVE);
 
             Class businessLocal = deploymentInfo.getBusinessLocalInterface();
             if (businessLocal != null) {
                 try {
-                    Method method = businessLocal.getMethod(preDestroy.getName());
+                    Method method = businessLocal.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
                 }
@@ -110,7 +112,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             Class businessRemote = deploymentInfo.getBusinessRemoteInterface();
             if (businessRemote != null) {
                 try {
-                    Method method = businessRemote.getMethod(preDestroy.getName());
+                    Method method = businessRemote.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
                 }
@@ -297,26 +299,51 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
-            try {
-                StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
-                if (instance != null) {
-                    callContext.setCurrentOperation(Operation.REMOVE);
+            Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
 
-                    Method remove = null;
+            if (instance == null) throw new ApplicationException(new javax.ejb.NoSuchEJBException());
+
+            boolean retain = false;
+            try {
+
+                callContext.setCurrentOperation(Operation.REMOVE);
+
+                Class<?> declaringClass = callMethod.getDeclaringClass();
+                if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
+                    args = new Object[]{}; // no args to pass on home.remove(remote) calls
+                }
+                
+                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
+                _invoke(callMethod, interceptorStack, args, instance, callContext);
+
+            } catch(ApplicationException e){
+                retain = deploymentInfo.retainIfExeption(runMethod);
+                throw e;
+            } finally {
+                if (retain){
+                    instanceManager.poolInstance(primKey, instance);
+                } else {
+                    callContext.setCurrentOperation(Operation.PRE_DESTROY);
 
                     try {
-                        remove = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbRemove"): null;
-                    } catch (NoSuchMethodException neverHappen) {
+                        List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
+                        interceptorStack.invoke();
+                    } catch (Throwable callbackException) {
+                        String logMessage = "An unexpected exception occured while invoking the preDestroy method on the removed Stateful SessionBean instance; " + callbackException.getClass().getName() + " " + callbackException.getMessage();
+
+                        /* [1] Log the exception or error */
+                        logger.error(logMessage);
+
+                    } finally {
+                        callContext.setCurrentOperation(Operation.REMOVE);
                     }
 
-                    List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.REMOVE, callbackInterceptors, instance.interceptors);
-
-                    _invoke(callMethod, interceptorStack, new Object[]{}, instance, callContext);
+                    // todo destroy extended persistence contexts
+                    instanceManager.freeInstance(callContext.getPrimaryKey());
                 }
-            } finally {
-                // todo destroy extended persistence contexts
-                instanceManager.freeInstance(callContext.getPrimaryKey());
             }
         } finally {
             ThreadContext.exit(oldCallContext);

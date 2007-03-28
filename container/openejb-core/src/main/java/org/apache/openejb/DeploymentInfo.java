@@ -129,4 +129,5 @@ public interface DeploymentInfo {
 
     public <T> T set(Class<T> type, T value);
 
+    public boolean retainIfExeption(Method removeMethod); 
 }

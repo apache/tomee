@@ -735,7 +735,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 List<Method> removeMethods = classFinder.findAnnotatedMethods(Remove.class);
                 for (Method method : removeMethods) {
-                    session.getRemoveMethod().add(new RemoveMethod(method));
+                    Remove remove = method.getAnnotation(Remove.class);
+
+                    session.getRemoveMethod().add(new RemoveMethod(method, remove.retainIfException()));
                 }
             }
         }
