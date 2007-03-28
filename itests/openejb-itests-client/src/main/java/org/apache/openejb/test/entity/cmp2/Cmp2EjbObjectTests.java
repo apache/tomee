@@ -17,6 +17,7 @@
 package org.apache.openejb.test.entity.cmp2;
 
 import javax.ejb.EJBHome;
+import javax.ejb.ObjectNotFoundException;
 
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 
@@ -88,13 +89,21 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
 
     public void test05_remove() {
         try {
+            // remove the ejb
             ejbObject.remove();
+
+            // verify that the ejb was actually removed
             try {
+                ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
+                fail("Entity was not actually removed");
+            } catch (ObjectNotFoundException e) {
+            }
+
+            // verify the proxy is dead
+            try{
                 ejbObject.businessMethod("Should throw an exception");
-                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
-            } catch (Exception e) {
-                assertTrue(true);
-                return;
+                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
+            } catch (Exception e){
             }
         } catch (Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());

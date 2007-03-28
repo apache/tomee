@@ -30,11 +30,11 @@ public class StatelessEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new UnsupportedOperationException("Stateful beans may not have find methods");
+        throw new SystemException(new UnsupportedOperationException("Stateful beans may not have find methods"));
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new RemoveException("Session objects are private resources and do not have primary keys");
+        throw new ApplicationException(new RemoveException("Session objects are private resources and do not have primary keys"));
     }
 
     /*
@@ -50,10 +50,10 @@ public class StatelessEJBHomeHandler extends EJBHomeHandler {
 
         if (handle == null) throw new NullPointerException("The handle is null");
 
-        EJBObjectHandler handler = (EJBObjectHandler) handle.ejbObjectProxy.getEJBObjectHandler();
+        EJBObjectHandler handler = handle.ejbObjectProxy.getEJBObjectHandler();
 
         if (!handler.ejb.deploymentID.equals(this.ejb.deploymentID)) {
-            throw new IllegalArgumentException("The handle is not from the same deployment");
+            throw new SystemException(new IllegalArgumentException("The handle is not from the same deployment"));
         }
         handler.invalidateReference();
 

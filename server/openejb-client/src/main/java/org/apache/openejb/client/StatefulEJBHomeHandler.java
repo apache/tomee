@@ -17,6 +17,7 @@
 package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 
 import javax.ejb.RemoveException;
 
@@ -30,11 +31,11 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new UnsupportedOperationException("Stateful beans may not have find methods");
+        throw new SystemException(new UnsupportedOperationException("Stateful beans may not have find methods"));
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new RemoveException("Session objects are private resources and do not have primary keys");
+        throw new ApplicationException(new RemoveException("Session objects are private resources and do not have primary keys"));
     }
 
     protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
@@ -47,7 +48,7 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
         Object primKey = handler.primaryKey;
 
         if (!handler.ejb.deploymentID.equals(this.ejb.deploymentID)) {
-            throw new IllegalArgumentException("The handle is not from the same deployment");
+            throw new SystemException(new IllegalArgumentException("The handle is not from the same deployment"));
         }
 
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE);
@@ -59,12 +60,20 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
 
         EJBResponse res = request(req);
 
-        if (res.getResponseCode() == ResponseCodes.EJB_ERROR) {
-            throw (Throwable) res.getResult();
+        switch (res.getResponseCode()) {
+            case ResponseCodes.EJB_ERROR:
+                throw new SystemError((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_SYS_EXCEPTION:
+                throw new SystemException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_APP_EXCEPTION:
+                throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_OK:
+                invalidateAllHandlers(handler.getRegistryId());
+                handler.invalidateReference();
+                return null;
+            default:
+                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }
 
-        invalidateAllHandlers(handler.getRegistryId());
-        handler.invalidateReference();
-        return null;
     }
 }

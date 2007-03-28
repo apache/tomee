@@ -630,6 +630,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        } catch (javax.ejb.FinderException fe) {
+            txPolicy.handleApplicationException(fe, txContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {

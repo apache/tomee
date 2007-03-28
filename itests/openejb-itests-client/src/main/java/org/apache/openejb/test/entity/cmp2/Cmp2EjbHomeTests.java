@@ -17,6 +17,7 @@
 package org.apache.openejb.test.entity.cmp2;
 
 import javax.ejb.EJBMetaData;
+import javax.ejb.ObjectNotFoundException;
 
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 
@@ -58,21 +59,62 @@ public class Cmp2EjbHomeTests extends BasicCmp2TestClient {
         }
     }
 
-    public void test03_remove() {
-        try {
+    public void test03_removeByPrimaryKey(){
+        try{
+            // remove the ejb
             ejbHome.remove(ejbPrimaryKey);
+
+            // verify that the ejb was actually removed
             try {
-                ejbObject.businessMethod("Should throw an exception");
-                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
-            } catch (Exception e) {
-                assertTrue(true);
+                ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
+                fail("Entity was not actually removed");
+            } catch (ObjectNotFoundException e) {
             }
-        } catch (Exception e) {
-            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+
+            // verify the proxy is dead
+            try{
+                ejbObject.businessMethod("Should throw an exception");
+                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
+            } catch (Exception e){
+            }
+
+            // create a new ejb for the next test
+            ejbObject = ejbHome.createObject("Second Bean");
+            ejbPrimaryKey = ejbObject.getPrimaryKey();
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
-    public void test04_ejbHomeMethod() {
+    public void test04_removeByPrimaryHandle(){
+        try{
+            // remove the ejb
+            ejbHome.remove(ejbObject.getHandle());
+
+            // verify that the ejb was actually removed
+            try {
+                ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
+                fail("Entity was not actually removed");
+            } catch (ObjectNotFoundException e) {
+            }
+
+            // verify the proxy is dead
+            try{
+                ejbObject.businessMethod("Should throw an exception");
+                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
+            } catch (Exception e){
+            }
+
+            // create a new ejb for the next test
+            ejbObject = ejbHome.createObject("Second Bean");
+            ejbPrimaryKey = ejbObject.getPrimaryKey();
+        } catch (Exception e){
+            e.printStackTrace();
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test05_ejbHomeMethod() {
         try {
             assertEquals(8+9, ejbHome.sum(8, 9));
         } catch (Throwable e) {

@@ -144,12 +144,24 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                 return homeMethod(method, args, proxy);
             }
 
-        } catch (SystemException se) {
+        } catch (SystemException e) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException", se.getCause());
+            throw e.getCause();
+            /*
+            * Application exceptions must be reported dirctly to the client. They
+            * do not impact the viability of the proxy.
+            */
+        } catch (ApplicationException ae) {
+            throw ae.getCause();
+            /*
+            * A system exception would be highly unusual and would indicate a sever
+            * problem with the container system.
+            */
         } catch (SystemError se) {
             invalidateReference();
             throw new RemoteException("Container has suffered a SystemException", se.getCause());
+        } catch (Throwable oe) {
+            throw new RemoteException("Unknown Container Exception", oe.getCause());
         }
 
     }

@@ -19,6 +19,7 @@ package org.apache.openejb.test.entity.cmp;
 
 import javax.rmi.PortableRemoteObject;
 import javax.ejb.EJBHome;
+import javax.ejb.ObjectNotFoundException;
 
 /**
  * [4] Should be run as the fourth test suite of the UnknownCmpTestClients
@@ -90,18 +91,27 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
         }
     }
 
-    public void test05_remove() {
-        try {
+    public void test05_remove(){
+        try{
+            // remove the ejb
             ejbObject.remove();
+
+            // verify that the ejb was actually removed
             try {
-                ejbObject.businessMethod("Should throw an exception");
-                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
-            } catch (Exception e) {
-                assertTrue(true);
+                ejbHome.findByPrimaryKey(ejbPrimaryKey);
+                fail("Entity was not actually removed");
+            } catch (ObjectNotFoundException e) {
             }
-        } catch (Exception e) {
-            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
-        } finally {
+
+            // verify the proxy is dead
+            try{
+                ejbObject.businessMethod("Should throw an exception");
+                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
+            } catch (Exception e){
+            }
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } finally{
             ejbObject = null;
         }
     }
