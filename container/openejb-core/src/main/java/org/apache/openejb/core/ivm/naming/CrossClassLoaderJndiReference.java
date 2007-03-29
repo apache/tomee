@@ -19,29 +19,19 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class CrossClassLoaderJndiReference extends Reference {
-
-    private String jndiName;
-
+public class CrossClassLoaderJndiReference extends IntraVmJndiReference {
     public CrossClassLoaderJndiReference(String jndiName) {
-        this.jndiName = jndiName;
-    }
-
-    public String getJndiName() {
-        return jndiName;
+        super(jndiName);
     }
 
     public Object getObject() throws javax.naming.NamingException {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        Object o = containerSystem.getJNDIContext().lookup(jndiName);
+        Object o = super.getObject();
         try {
             o = copy(o);
         } catch (Exception e) {
