@@ -46,7 +46,6 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -80,6 +79,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     * property in the static block for this class.
     */
     protected boolean doIntraVmCopy;
+    protected boolean doCrossClassLoaderCopy;
     private boolean isLocal;
     protected final InterfaceType interfaceType;
 
@@ -105,6 +105,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         setDeploymentInfo((CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID));
         container = (RpcContainer) getDeploymentInfo().getContainer();
+
+        if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
+            doCrossClassLoaderCopy = true;
+        }
     }
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {
@@ -151,127 +155,136 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             else
                 throw new UnsupportedOperationException("Unkown method: " + method);
         }
-//        /* Preserve the context
-//            When entering a container the ThreadContext will change to match the context of
-//            the bean being serviced. That changes the current context of the calling bean,
-//            so the context must be preserved and then resourced after request is serviced.
-//            The context is restored in the finnaly clause below.
-//
-//            We could have same some typing by obtaining a ref to the ThreadContext and then
-//            setting the current ThreadContext to null, but this results in more object creation
-//            since the container will create a new context on the invoke( ) operation if the current
-//            context is null. Getting the context values and resetting them reduces object creation.
-//            It's ugly but performant.
-//        */
-//
-//        ThreadContext cntext = null;
-//        CoreDeploymentInfo depInfo = null;
-//        Object prmryKey = null;
-//        Operation crrntOperation = null;
-//        Object scrtyIdentity = null;
-//        boolean cntextValid = false;
-//        cntext = ThreadContext.getThreadContext();
-//        if (cntext.valid()) {
-//            depInfo = cntext.getDeploymentInfo();
-//            prmryKey = cntext.getPrimaryKey();
-//            crrntOperation = cntext.getCurrentOperation();
-//            scrtyIdentity = cntext.getSecurityIdentity();
-//            cntextValid = true;
-//        }
+
 
         String jndiEnc = System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
 //        System.setProperty(javax.naming.Context.URL_PKG_PREFIXES,"org.apache.openejb.core.ivm.naming");
 
-        try {
-            if (doIntraVmCopy == true) {// copy arguments as required by the specification
+        // Should we copy arguments as required by the specification?
+        if (doIntraVmCopy && !doCrossClassLoaderCopy) {
 
-                if (args != null && args.length > 0) {
-
-                    IntraVmCopyMonitor.preCopyOperation();
+            if (args != null && args.length > 0) {
+                IntraVmCopyMonitor.preCopyOperation();
+                try {
                     args = copyArgs(args);
-
+                } finally {
                     IntraVmCopyMonitor.postCopyOperation();
                 }
-                Object returnObj = _invoke(proxy, method, args);
-
-                IntraVmCopyMonitor.preCopyOperation();
-                returnObj = copyObj(returnObj);
-                return returnObj;
-
-            } else {
-                try {
-                    /*
-                         * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
-                         * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and
-                         * never passed as references.  However, it is possible for the system administrator to turn off the
-                         * copy operation so that arguments and return values are passed by reference as a performance optimization.
-                         * Simply setting the org.apache.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause
-                         * IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value.
-                         * This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
-                         * or a property of the Property argument when invoking OpenEJB.init(props).  The doIntraVmCopy variable is set to that
-                         * property in the static block for this class.
-                         */
-
-                    return _invoke(proxy, method, args);
-                } catch (TransactionRequiredException e) {
-                    if (this.isLocal()) {
-                        throw new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
-                    } else {
-                        throw e;
-                    }
-                } catch (TransactionRolledbackException e) {
-                    if (this.isLocal()) {
-                        throw new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
-                    } else {
-                        throw e;
-                    }
-                } catch (NoSuchObjectException  e) {
-                    if (this.isLocal()) {
-                        throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
-                    } else {
-                        throw e;
-                    }
-                } catch (AccessException e) {
-                    if (this.isLocal()) {
-                        throw new AccessLocalException(e.getMessage()).initCause(getCause(e));
-                    } else {
-                        throw e;
-                    }
-                } catch (RemoteException e) {
-                    if (this.isLocal()) {
-                        throw new EJBException(e.getMessage()).initCause(getCause(e));
-                    } else {
-                        throw e;
-                    }
-                } catch (Throwable t) {
-                    //t.printStackTrace();
-                    Class[] etypes = method.getExceptionTypes();
-                    for (int i = 0; i < etypes.length; i++) {
-
-                        if (etypes[i].isAssignableFrom(t.getClass())) {
-                            throw t;
-                        }
-                    }
-                    // Exception is undeclared
-                    // Try and find a runtime exception in there
-                    while (t.getCause() != null && !(t instanceof RuntimeException)) {
-                        t = t.getCause();
-                    }
-                    throw t;
-                }
             }
-        } finally {
-//            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, jndiEnc);
+            Object returnObj = _invoke(proxy, method, args);
 
-//            if (cntextValid) {
-//                cntext.set(depInfo, prmryKey, scrtyIdentity);
-//                cntext.setCurrentOperation(crrntOperation);
-//            }
-            if (doIntraVmCopy == true) {
-
+            IntraVmCopyMonitor.preCopyOperation();
+            try {
+                returnObj = copyObj(returnObj);
+            } finally {
                 IntraVmCopyMonitor.postCopyOperation();
             }
+            return returnObj;
+
+        } else if (doIntraVmCopy) {
+            // copy method and arguments to EJB's class loader
+            IntraVmCopyMonitor.preCrossClassLoaderOperation();
+            ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
+            try {
+                if (args != null && args.length > 0) {
+                    args = copyArgs(args);
+                }
+                method = copyMethod(method);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldClassLoader);
+                IntraVmCopyMonitor.postCrossClassLoaderOperation();
+            }
+
+            // invoke method
+            Object returnObj = _invoke(proxy, method, args);
+
+            if (returnObj != null) {
+                IntraVmCopyMonitor.preCrossClassLoaderOperation();
+                try {
+                    returnObj = copyObj(returnObj);
+                } finally {
+                    IntraVmCopyMonitor.postCrossClassLoaderOperation();
+                }
+            }
+            return returnObj;
+        } else {
+            try {
+                /*
+                     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
+                     * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and
+                     * never passed as references.  However, it is possible for the system administrator to turn off the
+                     * copy operation so that arguments and return values are passed by reference as a performance optimization.
+                     * Simply setting the org.apache.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause
+                     * IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value.
+                     * This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
+                     * or a property of the Property argument when invoking OpenEJB.init(props).  The doIntraVmCopy variable is set to that
+                     * property in the static block for this class.
+                     */
+
+                return _invoke(proxy, method, args);
+            } catch (TransactionRequiredException e) {
+                if (this.isLocal()) {
+                    throw new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
+                } else {
+                    throw e;
+                }
+            } catch (TransactionRolledbackException e) {
+                if (this.isLocal()) {
+                    throw new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
+                } else {
+                    throw e;
+                }
+            } catch (NoSuchObjectException  e) {
+                if (this.isLocal()) {
+                    throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
+                } else {
+                    throw e;
+                }
+            } catch (AccessException e) {
+                if (this.isLocal()) {
+                    throw new AccessLocalException(e.getMessage()).initCause(getCause(e));
+                } else {
+                    throw e;
+                }
+            } catch (RemoteException e) {
+                if (this.isLocal()) {
+                    throw new EJBException(e.getMessage()).initCause(getCause(e));
+                } else {
+                    throw e;
+                }
+            } catch (Throwable t) {
+                //t.printStackTrace();
+                Class[] etypes = method.getExceptionTypes();
+                for (int i = 0; i < etypes.length; i++) {
+
+                    if (etypes[i].isAssignableFrom(t.getClass())) {
+                        throw t;
+                    }
+                }
+                // Exception is undeclared
+                // Try and find a runtime exception in there
+                while (t.getCause() != null && !(t instanceof RuntimeException)) {
+                    t = t.getCause();
+                }
+                throw t;
+            }
         }
+    }
+
+    private Method copyMethod(Method method) throws Exception {
+        int parameterCount = method.getParameterTypes().length;
+        Object[] types = new Object[1 + parameterCount];
+        types[0] = method.getDeclaringClass();
+        System.arraycopy(method.getParameterTypes(), 0, types, 1, parameterCount);
+
+        types = copyArgs(types);
+
+        Class targetClass = (Class) types[0];
+        Class[] targetParameters = new Class[parameterCount];
+        System.arraycopy(types, 1, targetParameters, 0, parameterCount);
+        Method targetMethod = targetClass.getMethod(method.getName(), targetParameters);
+        return targetMethod;
     }
 
     private Throwable getCause(RemoteException e) {

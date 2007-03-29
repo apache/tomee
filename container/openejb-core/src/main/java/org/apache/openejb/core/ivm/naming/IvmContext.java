@@ -518,7 +518,8 @@ public class IvmContext implements Context, Serializable {
 
     protected Object writeReplace() throws ObjectStreamException {
         if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
-
+            return new JndiEncArtifact(this);
+        } else if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
             return new JndiEncArtifact(this);
         }
 

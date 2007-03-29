@@ -243,7 +243,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {
         /*
-         * If the proxy is being  copied between bean instances in a RPC
+         * If the proxy is being copied between bean instances in a RPC
          * call we use the IntraVmArtifact
          */
         if (IntraVmCopyMonitor.isIntraVmCopyOperation()) {
@@ -253,6 +253,12 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * passivated by the container we allow this object to be serialized.
             */
         } else if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
+            return proxy;
+            /*
+            * If the proxy is being copied between class loaders
+            * we allow this object to be serialized.
+            */
+        } else if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
             return proxy;
             /*
             * If the proxy is serialized outside the core container system,

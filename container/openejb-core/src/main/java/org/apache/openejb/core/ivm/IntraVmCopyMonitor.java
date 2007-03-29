@@ -23,6 +23,8 @@ public class IntraVmCopyMonitor {
 
     private boolean statefulPassivationOperation = false;
 
+    private boolean crossClassLoaderOperation = false;
+
     private IntraVmCopyMonitor() {
     }
 
@@ -63,6 +65,16 @@ public class IntraVmCopyMonitor {
         monitor.statefulPassivationOperation = false;
     }
 
+    public static void preCrossClassLoaderOperation() {
+        IntraVmCopyMonitor monitor = getMonitor();
+        monitor.crossClassLoaderOperation = true;
+    }
+
+    public static void postCrossClassLoaderOperation() {
+        IntraVmCopyMonitor monitor = getMonitor();
+        monitor.crossClassLoaderOperation = false;
+    }
+
     public static boolean isIntraVmCopyOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         return monitor.intraVmCopyOperation;
@@ -71,5 +83,10 @@ public class IntraVmCopyMonitor {
     public static boolean isStatefulPassivationOperation() {
         IntraVmCopyMonitor monitor = getMonitor();
         return monitor.statefulPassivationOperation;
+    }
+
+    public static boolean isCrossClassLoaderOperation() {
+        IntraVmCopyMonitor monitor = getMonitor();
+        return monitor.crossClassLoaderOperation;
     }
 }

@@ -164,6 +164,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         } else if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
             return proxy;
             /*
+            * If the proxy is being copied between class loaders
+            * we allow this object to be serialized.
+            */
+        } else if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
+            return proxy;
+            /*
             * If the proxy is serialized outside the core container system,
             * we allow the application server to handle it.
             */

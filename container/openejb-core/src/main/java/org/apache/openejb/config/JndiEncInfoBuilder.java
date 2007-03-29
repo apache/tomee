@@ -62,6 +62,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
@@ -152,6 +154,7 @@ public class JndiEncInfoBuilder {
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
+    private final Set<String> deploymentsInApplication = new TreeSet<String>();
     private final Map<String, EnterpriseBeanInfo> byEjbName = new HashMap<String, EnterpriseBeanInfo>();
     private final Map<String, EnterpriseBeanInfo> byInterfaces = new HashMap<String, EnterpriseBeanInfo>();
 
@@ -168,6 +171,8 @@ public class JndiEncInfoBuilder {
     }
 
     private void index(EnterpriseBeanInfo bean) {
+        deploymentsInApplication.add(bean.ejbDeploymentId);
+
         byInterfaces.put("r=" + bean.remote + ":" + bean.home, bean);
         byInterfaces.put("r=" + bean.businessRemote + ":" + null, bean);
         byInterfaces.put("l=" + bean.local + ":" + bean.localHome, bean);
@@ -365,7 +370,11 @@ public class JndiEncInfoBuilder {
 
             if (info.location == null) {
                 if (ejb.getMappedName() != null) {
-                    info.ejbDeploymentId = ejb.getMappedName();
+                    String mappedName = ejb.getMappedName();
+                    if (!deploymentsInApplication.contains(mappedName)) {
+                        info.externalReference = true;
+                    }
+                    info.ejbDeploymentId = mappedName;
                 } else {
                     EnterpriseBeanInfo otherBean = null;
 

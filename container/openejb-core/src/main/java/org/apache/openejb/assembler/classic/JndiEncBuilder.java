@@ -24,7 +24,6 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
@@ -33,6 +32,7 @@ import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
+import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.xbean.naming.context.WritableContext;
 import org.omg.CORBA.ORB;
 
@@ -179,11 +179,19 @@ public class JndiEncBuilder {
                 // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                 if (referenceInfo.homeType == null){
                     String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessRemote";
-                    reference = new IntraVmJndiReference(jndiName);
+                    if (referenceInfo.externalReference) {
+                        reference = new CrossClassLoaderJndiReference(jndiName);
+                    } else {
+                        reference = new IntraVmJndiReference(jndiName);
+                    }
                 } else {
                     // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                     String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId;
-                    reference = new IntraVmJndiReference(jndiName);
+                    if (referenceInfo.externalReference) {
+                        reference = new CrossClassLoaderJndiReference(jndiName);
+                    } else {
+                        reference = new IntraVmJndiReference(jndiName);
+                    }
                 }
             }
             bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));

@@ -58,6 +58,12 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
         } else if (IntraVmCopyMonitor.isStatefulPassivationOperation()) {
             return this;
             /*
+            * If the proxy is being copied between class loaders
+            * we allow this object to be serialized.
+            */
+        } else if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
+            return this;
+            /*
             * If the handle is serialized outside the core container system, we
             * allow the application server to handle it.
             */
