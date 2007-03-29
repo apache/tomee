@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.util.Classes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -32,7 +34,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        return Class.forName(classDesc.getName(), false, getClassloader());
+        return Classes.forName(classDesc.getName(), getClassloader());
     }
 
     protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
