@@ -39,6 +39,8 @@ public interface CmpEngine {
 
     List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException;
 
+    List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException;
+
     void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
 
     void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;

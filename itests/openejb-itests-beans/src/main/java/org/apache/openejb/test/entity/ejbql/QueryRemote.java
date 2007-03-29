@@ -16,19 +16,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
 
-/**
- *
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
- */
-public interface ALocal extends EJBLocalObject {
-
-    // CMP
-    public Integer getField1();
-    public void setField1(Integer field1);
-
-    public String getField2();
-    public void setField2(String field2);
-    
+public interface QueryRemote extends EJBObject {
 }

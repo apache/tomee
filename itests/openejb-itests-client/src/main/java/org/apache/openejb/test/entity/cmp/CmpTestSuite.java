@@ -46,6 +46,20 @@ public class CmpTestSuite extends org.apache.openejb.test.TestSuite{
         this.addTest(new CmpRmiIiopTests());
 
         this.addTest(new ComplexHomeIntfcTests());
+        this.addTest(new ComplexEjbHomeTests());
+        this.addTest(new ComplexEjbObjectTests());
+        this.addTest(new ComplexRemoteIntfcTests());
+        this.addTest(new ComplexHomeHandleTests());
+        this.addTest(new ComplexHandleTests());
+        this.addTest(new ComplexEjbMetaDataTests());
+
+        this.addTest(new UnknownHomeIntfcTests());
+        this.addTest(new UnknownEjbHomeTests());
+        this.addTest(new UnknownEjbObjectTests());
+        this.addTest(new UnknownRemoteIntfcTests());
+        this.addTest(new UnknownHomeHandleTests());
+        this.addTest(new UnknownHandleTests());
+        this.addTest(new UnknownEjbMetaDataTests());
     }
 
     public static junit.framework.Test suite() {

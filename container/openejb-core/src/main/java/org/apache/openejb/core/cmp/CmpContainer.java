@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -38,6 +41,7 @@ import javax.ejb.EntityBean;
 import javax.ejb.ObjectNotFoundException;
 import javax.ejb.RemoveException;
 import javax.ejb.Timer;
+import javax.ejb.FinderException;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ApplicationException;
@@ -51,6 +55,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.entity.EntityContext;
+import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -59,6 +64,7 @@ import org.apache.openejb.core.transaction.TxRequired;
 import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Enumerator;
+import org.apache.openejb.util.proxy.ProxyManager;
 
 /**
  * @org.apache.xbean.XBean element="cmpContainer"
@@ -697,6 +703,103 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             txPolicy.afterInvoke(null, txContext);
         }
         throw new AssertionError("Should not get here");
+    }
+
+    public Object select(DeploymentInfo di, String methodSignature, String returnType, Object... args) throws FinderException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) di;
+        String signature = deploymentInfo.getAbstractSchemaName() + "." + methodSignature;
+
+        try {
+            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
+            List<Object> results = cmpEngine.queryBeans(deploymentInfo, signature, args);
+
+            Iterator<Object> iterator = results.iterator();
+            if (iterator.hasNext()) {
+                Class<? extends Object> type = iterator.next().getClass();
+                CoreDeploymentInfo resultInfo = (CoreDeploymentInfo) deploymentsByClass.get(type);
+                if (resultInfo != null) {
+                    //
+                    // Note we assume all results are the same java type, which won't be true for union queries
+                    //
+                    KeyGenerator kg = resultInfo.getKeyGenerator();
+
+                    // get the proxy interface and home proxy handler
+                    Class proxyInterface;
+                    EntityEjbHomeHandler handler;
+                    if (deploymentInfo.isRemoteQueryResults(methodSignature)) {
+                        EJBHome homeProxy = resultInfo.getEJBHome();
+                        handler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
+                        proxyInterface = resultInfo.getRemoteInterface();
+                    } else {
+                        EJBLocalHome homeProxy = resultInfo.getEJBLocalHome();
+                        handler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
+                        proxyInterface = resultInfo.getLocalInterface();
+                    }
+
+                    List<Object> proxies = new ArrayList<Object>();
+                    for (Object value : results) {
+                        EntityBean bean = (EntityBean) value;
+
+                        // The KeyGenerator creates a new primary key and populates its fields with the
+                        // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
+                        Object primaryKey = kg.getPrimaryKey(bean);
+
+                        // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
+                        ProxyInfo proxyInfo = new ProxyInfo(resultInfo, primaryKey, proxyInterface, this);
+
+                        // create the proxy
+                        Object proxy = handler.createProxy(proxyInfo);
+                        proxies.add(proxy);
+                    }
+                    results = proxies;
+                }
+            }
+//            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+//
+//            Class<?> callingClass = callMethod.getDeclaringClass();
+//            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+//
+//            /*
+//            The following block of code is responsible for returning ProxyInfo object(s) for each
+//            matching entity bean found by the query.  If its a multi-value find operation a Vector
+//            of ProxyInfo objects will be returned. If its a single-value find operation then a
+//            single ProxyInfo object is returned.
+//            */
+//            if (callMethod.getReturnType() == Collection.class || callMethod.getReturnType() == Enumeration.class) {
+//                Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
+//                for (Object value : results) {
+//                    EntityBean bean = (EntityBean) value;
+//
+//                    /*
+//                    The KeyGenerator creates a new primary key and populates its fields with the
+//                    primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
+//                    */
+//                    Object primaryKey = kg.getPrimaryKey(bean);
+//                    /*   create a new ProxyInfo based on the deployment info and primary key and add it to the vector */
+//                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+//                }
+//                if (callMethod.getReturnType() == Enumeration.class) {
+//                    return new Enumerator(proxies);
+//                } else {
+//                    return proxies;
+//                }
+//            } else {
+//                if (results.size() != 1) throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
+//
+//                // create a new ProxyInfo based on the deployment info and primary key
+//                EntityBean bean = (EntityBean) results.get(0);
+//                Object primaryKey = kg.getPrimaryKey(bean);
+//                return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+//            }
+            if (returnType.equals("java.util.Collection") || returnType.equals("java.util.Set")) {
+                return results;
+            }
+            return results.iterator().next();
+        } catch (FinderException e) {
+            throw e;
+        } catch (RuntimeException e) {// handle reflection exception
+            throw new EJBException(e);
+        }
     }
 
     private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {

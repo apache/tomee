@@ -69,6 +69,7 @@ import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -567,8 +568,14 @@ public class EjbJarInfoBuilder {
                 MethodInfo method = new MethodInfo();
                 QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
-                method.methodParams = qm.getMethodParams().getMethodParam();
+                if (qm.getMethodParams() != null) {
+                    method.methodParams = qm.getMethodParams().getMethodParam();
+                }
                 query.method = method;
+                ResultTypeMapping resultType = q.getResultTypeMapping();
+                if (ResultTypeMapping.REMOTE.equals(resultType)) {
+                    query.remoteResultType = true;
+                }
                 bean.queries.add(query);
             }
 
@@ -580,7 +587,9 @@ public class EjbJarInfoBuilder {
                 MethodInfo method = new MethodInfo();
                 org.apache.openejb.jee.oejb3.QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
-                method.methodParams = qm.getMethodParams().getMethodParam();
+                if (qm.getMethodParams() != null) {
+                    method.methodParams = qm.getMethodParams().getMethodParam();
+                }
                 query.method = method;
                 bean.queries.add(query);
             }

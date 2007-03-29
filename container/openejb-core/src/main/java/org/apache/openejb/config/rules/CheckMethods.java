@@ -158,6 +158,11 @@ public class CheckMethods implements ValidationRule {
             return false;
         }
 
+        if (b instanceof EntityBean) {
+            // entity beans are not required to have a create method
+            return false;
+        }
+
         Method[] homeMethods = home.getMethods();
 
         boolean hasCreateMethod = false;

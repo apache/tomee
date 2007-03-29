@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.TreeSet;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -34,7 +35,6 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
-import javax.security.auth.Subject;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.RpcContainer;
@@ -922,6 +922,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private String abstractSchemaName;
 
     private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
+    private Set<String> remoteQueryResults = new TreeSet<String>();
 
     public boolean isCmp2() {
         return cmp2;
@@ -961,6 +962,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public String getQuery(Method queryMethod) {
         return queryMethodMap.get(queryMethod);
+    }
+
+    public void setRemoteQueryResults(String methodSignature) {
+        remoteQueryResults.add(methodSignature);
+    }
+
+    public boolean isRemoteQueryResults(String methodSignature) {
+        return remoteQueryResults.contains(methodSignature);
     }
 
     public Class getCmpImplClass() {

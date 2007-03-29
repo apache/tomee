@@ -188,6 +188,8 @@
   <ejb-deployment ejb-name="ComplexSong" deployment-id="client/tests/entity/cmr/oneToMany/ComplexSong" container-id="Default CMP Container"/>
   <ejb-deployment ejb-name="ComplexGame" deployment-id="client/tests/entity/cmr/manyToMany/ComplexGame" container-id="Default CMP Container"/>
   <ejb-deployment ejb-name="ComplexPlatform" deployment-id="client/tests/entity/cmr/manyToMany/ComplexPlatform" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="Query" deployment-id="client/tests/entity/ejbql/Query" container-id="Default CMP Container"/>
+  <ejb-deployment ejb-name="QueryData" deployment-id="client/tests/entity/ejbql/QueryData" container-id="Default CMP Container"/>
   <ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome" container-id="Default CMP Container"/>
   <ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome" container-id="Default CMP Container"/>
   <ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome" container-id="Default CMP Container"/>

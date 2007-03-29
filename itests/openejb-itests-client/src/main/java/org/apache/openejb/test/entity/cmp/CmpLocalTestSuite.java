@@ -17,6 +17,7 @@
 package org.apache.openejb.test.entity.cmp;
 
 import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.entity.cmp2.EjbqlLocalTest;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -59,6 +60,8 @@ public class CmpLocalTestSuite extends org.apache.openejb.test.TestSuite{
         this.addTest(new UnknownHomeHandleTests());
         this.addTest(new UnknownHandleTests());
         this.addTest(new UnknownEjbMetaDataTests());
+
+        this.addTest(new EjbqlLocalTest());
     }
 
     public static junit.framework.Test suite() {

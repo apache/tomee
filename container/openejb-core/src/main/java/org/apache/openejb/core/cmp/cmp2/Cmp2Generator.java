@@ -26,12 +26,24 @@ import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Cmp2Generator implements Opcodes {
     private static final String UNKNOWN_PK_NAME = "OpenEJB_pk";
     private static final Type UNKNOWN_PK_TYPE = Type.getType(Long.class);
+    private static final Method EJB_SELECT_EXECUTE;
+    static {
+        try {
+            EJB_SELECT_EXECUTE = EjbSelect.class.getMethod("execute", Object.class, String.class, String.class, Object[].class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private final String implClassName;
     private final String beanClassName;
@@ -40,6 +52,7 @@ public class Cmp2Generator implements Opcodes {
     private final Map<String, CmrField> cmrFields = new LinkedHashMap<String, CmrField>();
     private final CmpField pkField;
     private final Class primKeyClass;
+    private final List<Method> selectMethods = new ArrayList<Method>();
 
     public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmrFields) {
         if (pkField == null && primKeyClass == null) throw new NullPointerException("Both pkField and primKeyClass are null");
@@ -68,11 +81,21 @@ public class Cmp2Generator implements Opcodes {
             this.pkField = null;
         }
 
+        for (Method method : beanClass.getMethods()) {
+            if (Modifier.isAbstract(method.getModifiers()) && method.getName().startsWith("ejbSelect")) {
+                addSelectMethod(method);
+            }
+        }
+
         cw = new ClassWriter(true);
     }
 
     public void addCmrField(CmrField cmrField) {
         cmrFields.put(cmrField.getName(), cmrField);
+    }
+
+    public void addSelectMethod(Method selectMethod) {
+        selectMethods.add(selectMethod);
     }
 
     public byte[] generate() {
@@ -130,6 +153,10 @@ public class Cmp2Generator implements Opcodes {
         createOpenEJB_addCmr();
 
         createOpenEJB_removeCmr();
+
+        for (Method selectMethod : selectMethods) {
+            createSelectMethod(selectMethod);
+        }
 
         cw.visitEnd();
 
@@ -295,6 +322,7 @@ public class Cmp2Generator implements Opcodes {
     private void createGetter(CmpField cmpField) {
         String methodName = getterName(cmpField.getName());
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmpField.getDescriptor(), null, null);
+        mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, cmpField.getName(), cmpField.getDescriptor());
         mv.visitInsn(cmpField.getType().getOpcode(IRETURN));
@@ -309,6 +337,7 @@ public class Cmp2Generator implements Opcodes {
     private void createSetter(CmpField cmpField) {
         String methodName = setterName(cmpField.getName());
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmpField.getDescriptor() + ")V", null, null);
+        mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(cmpField.getType().getOpcode(ILOAD), 1);
         mv.visitFieldInsn(PUTFIELD, implClassName, cmpField.getName(), cmpField.getDescriptor());
@@ -323,6 +352,7 @@ public class Cmp2Generator implements Opcodes {
 
     private void createSimplePrimaryKeyGetter() {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_getPrimaryKey", "()Ljava/lang/Object;", null, null);
+        mv.visitCode();
         if (pkField != null) {
             // push the pk field
             mv.visitVarInsn(ALOAD, 0);
@@ -602,5 +632,179 @@ public class Cmp2Generator implements Opcodes {
 
         // end of if statement
         mv.visitLabel(end);
+    }
+
+    private void createSelectMethod(Method selectMethod) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, selectMethod.getName(), Type.getMethodDescriptor(selectMethod), null, getExceptionTypes(selectMethod));
+        mv.visitCode();
+
+        // push deploymentInfo
+        mv.visitFieldInsn(GETSTATIC, implClassName, "deploymentInfo", "Ljava/lang/Object;");
+
+        // push method signature
+        mv.visitLdcInsn(getSelectMethodSignature(selectMethod));
+
+        // push return type
+        mv.visitLdcInsn(selectMethod.getReturnType().getName());
+
+        // new Object[]
+        mv.visitIntInsn(BIPUSH, selectMethod.getParameterTypes().length);
+        mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+
+        // object[i] = arg${i}
+        int i = 0;
+        for (Class<?> parameterType : selectMethod.getParameterTypes()) {
+            // push arguement i on stack
+            mv.visitInsn(DUP);
+            bipush(mv, i);
+            mv.visitVarInsn(Type.getType(parameterType).getOpcode(ILOAD), i + 1);
+
+            // convert argument on stack to an Object
+            Convert.toObjectFrom(mv, parameterType);
+
+            // store it into the array
+            mv.visitInsn(AASTORE);
+
+            if (long.class.equals(parameterType) || double.class.equals(parameterType)) {
+                // longs and doubles are double wide
+                i = i + 2;
+            } else {
+                i++;
+            }
+        }
+
+        // EjbSelect.execute(deploymentInfo, signature, args[]);
+        mv.visitMethodInsn(INVOKESTATIC,
+                Type.getInternalName(EJB_SELECT_EXECUTE.getDeclaringClass()),
+                EJB_SELECT_EXECUTE.getName(),
+                Type.getMethodDescriptor(EJB_SELECT_EXECUTE));
+
+        // convert return type
+        Convert.fromObjectTo(mv, selectMethod.getReturnType());
+
+        // return
+        mv.visitInsn(Type.getReturnType(selectMethod).getOpcode(IRETURN));
+
+        // close method
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private String getSelectMethodSignature(Method selectMethod) {
+        StringBuilder signature = new StringBuilder();
+        signature.append(selectMethod.getName());
+        if (selectMethod.getParameterTypes().length > 0) {
+            signature.append('(');
+            boolean first = true;
+            for (Class<?> parameterType : selectMethod.getParameterTypes()) {
+                if (!first) signature.append(',');
+                signature.append(parameterType.getCanonicalName());
+                first = false;
+            }
+            signature.append(')');
+        }
+        return signature.toString();
+    }
+
+    private static String[] getExceptionTypes(Method method) {
+        List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
+        for (Class<?> exceptionType : method.getExceptionTypes()) {
+            types.add(Type.getInternalName(exceptionType));
+        }
+        return types.toArray(new String[types.size()]);
+    }
+
+    private static void bipush(MethodVisitor mv, int i) {
+        switch(i) {
+            case -1:
+                mv.visitInsn(ICONST_M1);
+                break;
+            case 0:
+                mv.visitInsn(ICONST_0);
+                break;
+            case 1:
+                mv.visitInsn(ICONST_1);
+                break;
+            case 2:
+                mv.visitInsn(ICONST_2);
+                break;
+            case 3:
+                mv.visitInsn(ICONST_3);
+                break;
+            case 4:
+                mv.visitInsn(ICONST_4);
+                break;
+            case 5:
+                mv.visitInsn(ICONST_5);
+                break;
+            default:
+                mv.visitIntInsn(BIPUSH, i);
+        }
+
+    }
+    private static class Convert {
+        public static void toObjectFrom(MethodVisitor mv, Class from) {
+            if (from.isPrimitive()) {
+                Convert conversion = getConversion(from);
+                if (conversion == null) throw new NullPointerException("conversion is null " + from.getName() + " " + from.isPrimitive());
+                conversion.primitiveToObject(mv);
+            }
+        }
+
+        public static void fromObjectTo(MethodVisitor mv, Class to) {
+            if (to.equals(Object.class)) {
+                // direct assignment will work
+            } else if (!to.isPrimitive()) {
+                mv.visitTypeInsn(CHECKCAST, Type.getInternalName(to));
+            } else {
+                Convert conversion = getConversion(to);
+                conversion.objectToPrimitive(mv);
+            }
+        }
+
+        private static Map<Class, Convert> conversionsByPrimitive = new HashMap<Class, Convert>();
+
+        public static Convert getConversion(Class primitive) {
+            if (!primitive.isPrimitive()) {
+                throw new IllegalArgumentException(primitive.getName() + " is not a primitive class");
+            }
+            return conversionsByPrimitive.get(primitive);
+        }
+
+        public static final Convert BOOLEAN = new Convert(boolean.class, Boolean.class, "booleanValue");
+        public static final Convert CHAR = new Convert(char.class, Character.class, "charValue");
+        public static final Convert BYTE = new Convert(byte.class, Byte.class, "byteValue");
+        public static final Convert SHORT = new Convert(short.class, Short.class, "shortValue");
+        public static final Convert INT = new Convert(int.class, Integer.class, "intValue");
+        public static final Convert LONG = new Convert(long.class, Long.class, "longValue");
+        public static final Convert FLOAT = new Convert(float.class, Float.class, "floatValue");
+        public static final Convert DOUBLE = new Convert(double.class, Double.class, "doubleValue");
+
+        private Type objectType;
+        private final Method toPrimitive;
+        private final Method toObject;
+
+        private Convert(Class primitiveClass, Class objectClass, String toPrimitiveMethodName) {
+            objectType = Type.getType(objectClass);
+
+            try {
+                toObject = objectClass.getMethod("valueOf", primitiveClass);
+                toPrimitive = objectClass.getMethod(toPrimitiveMethodName);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+
+            conversionsByPrimitive.put(primitiveClass, this);
+        }
+
+        public void primitiveToObject(MethodVisitor mv) {
+            mv.visitMethodInsn(INVOKESTATIC, objectType.getInternalName(), toObject.getName(), Type.getMethodDescriptor(toObject));
+        }
+
+        public void objectToPrimitive(MethodVisitor mv) {
+            mv.visitTypeInsn(CHECKCAST, objectType.getInternalName());
+            mv.visitMethodInsn(INVOKEVIRTUAL, objectType.getInternalName(), toPrimitive.getName(), Type.getMethodDescriptor(toPrimitive));
+        }
+
     }
 }

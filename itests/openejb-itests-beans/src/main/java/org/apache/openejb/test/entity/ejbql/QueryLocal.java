@@ -16,21 +16,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import java.rmi.RemoteException;
+import javax.ejb.EJBLocalObject;
 
-import javax.ejb.EJBObject;
-
-/**
- *
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
- */
-public interface ARemote extends EJBObject {
-
-    // CMP
-    public Integer getField1() throws RemoteException;
-    public void setField1(Integer field1) throws RemoteException;
-
-    public String getField2() throws RemoteException;
-    public void setField2(String field2) throws RemoteException;
-    
+public interface QueryLocal extends EJBLocalObject {
 }

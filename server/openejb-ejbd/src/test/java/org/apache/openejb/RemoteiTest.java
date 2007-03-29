@@ -26,6 +26,7 @@ import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
+import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 
@@ -58,7 +59,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatelessTestSuite.suite());
         suite.addTest(StatefulTestSuite.suite());
         suite.addTest(BmpTestSuite.suite());
-        suite.addTest(CmpLocalTestSuite.suite());
+        suite.addTest(CmpTestSuite.suite());
 //        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }

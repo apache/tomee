@@ -58,7 +58,7 @@ public class HsqldbTestDatabase implements TestDatabase {
             "ComplexCmp2Bean",
             "UnknownCmp2Bean",
             "AOBasicCmpBean",
-            "AOBasicCmp2Bean",
+            "AllowedOperationsCmp2Bean",
             "EncCmpBean",
             "EncCmp2Bean",
             "ContextLookupCmpBean",
@@ -76,6 +76,8 @@ public class HsqldbTestDatabase implements TestDatabase {
             "Platform",
             "ComplexGame",
             "ComplexPlatform",
+            "Query",
+            "QueryData",
     };
 
     static {

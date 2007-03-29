@@ -276,6 +276,23 @@ class EnterpriseBeanBuilder {
                     for (Method method : finderMethods) {
                         deployment.addQuery(method, query.queryStatement);
                     }
+
+                    if (query.remoteResultType) {
+                        StringBuilder methodSignature = new StringBuilder();
+                        methodSignature.append(query.method.methodName);
+                        if (query.method.methodParams != null && !query.method.methodParams.isEmpty()) {
+                            methodSignature.append('(');
+                            boolean first = true;
+                            for (String methodParam : query.method.methodParams) {
+                                if (!first) methodSignature.append(",");
+                                methodSignature.append(methodParam);
+                                first = false;
+                            }
+                            methodSignature.append(')');
+                        }
+                        deployment.setRemoteQueryResults(methodSignature.toString());
+                    }
+
                 }
                 deployment.setCmrFields(entity.cmpFieldNames.toArray(new String[]{}));
 

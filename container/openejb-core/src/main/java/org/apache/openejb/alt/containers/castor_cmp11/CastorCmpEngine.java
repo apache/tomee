@@ -284,6 +284,10 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
+    public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
+        throw new FinderException("ejbSelect methods not implemented for castor cmp engine");
+    }
+
     private String preprocessQuery(String queryString) {
         // OQL uses FQN for abstract schema name so replace abstract
         // schema name with FQN

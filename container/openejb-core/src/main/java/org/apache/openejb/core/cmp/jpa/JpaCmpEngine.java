@@ -44,13 +44,11 @@ import org.apache.openejb.core.cmp.ComplexKeyGenerator;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
-import org.apache.openejb.util.Logger;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 
 public class JpaCmpEngine implements CmpEngine {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
     private static final Object[] NO_ARGS = new Object[0];
 
     public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
@@ -164,7 +162,6 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-        logger.error("Executing query " + queryMethod);
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
@@ -190,7 +187,27 @@ public class JpaCmpEngine implements CmpEngine {
                 throw new FinderException("No query defined for method " + fullName);
             }
         }
+        return executeQuery(query, args);
+    }
 
+    public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
+        EntityManager entityManager = getEntityManager(deploymentInfo);
+
+        Query query = createNamedQuery(entityManager, signature);
+        if (query == null) {
+            int parenIndex = signature.indexOf('(');
+            if (parenIndex > 0) {
+                String shortName = signature.substring(0, parenIndex);
+                query = createNamedQuery(entityManager, shortName);
+            }
+            if (query == null) {
+                throw new FinderException("No query defined for method " + signature);
+            }
+        }
+        return executeQuery(query, args);
+    }
+
+    private List<Object> executeQuery(Query query, Object[] args) {
         // process args
         if (args == null) {
             args = NO_ARGS;

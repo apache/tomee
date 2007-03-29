@@ -1282,6 +1282,235 @@
     </entity>
 
     <entity>
+      <ejb-name>Query</ejb-name>
+      <home>org.apache.openejb.test.entity.ejbql.QueryHome</home>
+      <remote>org.apache.openejb.test.entity.ejbql.QueryRemote</remote>
+      <local-home>org.apache.openejb.test.entity.ejbql.QueryLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.ejbql.QueryLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.ejbql.QueryBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Query</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleStringField</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.stringField FROM QueryData o WHERE o.stringField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleBooleanField</method-name>
+          <method-params>
+            <method-param>boolean</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.booleanField FROM QueryData o WHERE o.booleanField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleCharField</method-name>
+          <method-params>
+            <method-param>char</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.charField FROM QueryData o WHERE o.charField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleByteField</method-name>
+          <method-params>
+            <method-param>byte</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.byteField FROM QueryData o WHERE o.byteField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleShortField</method-name>
+          <method-params>
+            <method-param>short</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.shortField FROM QueryData o WHERE o.shortField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleIntField</method-name>
+          <method-params>
+            <method-param>int</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.intField FROM QueryData o WHERE o.intField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleLongField</method-name>
+          <method-params>
+            <method-param>long</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.longField FROM QueryData o WHERE o.longField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleFloatField</method-name>
+          <method-params>
+            <method-param>float</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.floatField FROM QueryData o WHERE o.floatField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleDoubleField</method-name>
+          <method-params>
+            <method-param>double</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o.doubleField FROM QueryData o WHERE o.doubleField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionStringField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.stringField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionBooleanField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.booleanField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionCharField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.charField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionByteField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.byteField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionShortField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.shortField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionIntField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.intField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionLongField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.longField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionFloatField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.floatField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionDoubleField</method-name>
+        </query-method>
+        <ejb-ql>SELECT o.doubleField FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleLocalEjb</method-name>
+          <method-params>
+            <method-param>int</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT Object(o) FROM QueryData o WHERE o.intField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectSingleRemoteEjb</method-name>
+          <method-params>
+            <method-param>int</method-param>
+          </method-params>
+        </query-method>
+        <result-type-mapping>Remote</result-type-mapping>
+        <ejb-ql>SELECT Object(o) FROM QueryData o WHERE o.intField = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionLocalEjb</method-name>
+        </query-method>
+        <ejb-ql>SELECT Object(o) FROM QueryData o</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectCollectionRemoteEjb</method-name>
+        </query-method>
+        <result-type-mapping>Remote</result-type-mapping>
+        <ejb-ql>SELECT Object(o) FROM QueryData o</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>QueryData</ejb-name>
+      <home>org.apache.openejb.test.entity.ejbql.QueryDataHome</home>
+      <remote>org.apache.openejb.test.entity.ejbql.QueryDataRemote</remote>
+      <local-home>org.apache.openejb.test.entity.ejbql.QueryDataLocalHome</local-home>
+      <local>org.apache.openejb.test.entity.ejbql.QueryDataLocal</local>
+      <ejb-class>org.apache.openejb.test.entity.ejbql.QueryDataBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>QueryData</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>booleanField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>charField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>byteField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>shortField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>intField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>longField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>floatField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>doubleField</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>stringField</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+    </entity>
+
+    <entity>
       <ejb-name>OneOwningSideBean</ejb-name>
       <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
       <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal</local>
