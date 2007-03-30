@@ -179,7 +179,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             InterceptorStack interceptorStack = new InterceptorStack(((Instance)bean).bean, runMethod, Operation.BUSINESS, interceptors, ((Instance)bean).interceptors);
             returnValue = interceptorStack.invoke(args);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
@@ -190,7 +190,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
         } catch (Throwable re) {// handle reflection exception
-            if (re instanceof RuntimeException) {
+            if (!isApplicationException(deploymentInfo, re)) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(re, bean, txContext);
@@ -215,6 +215,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         }
 
         return returnValue;
+    }
+
+    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
+        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private TransactionManager getTransactionManager() {

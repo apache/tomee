@@ -201,7 +201,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             ejbStore_If_No_Transaction(callContext, bean);
             instanceManager.poolInstance(callContext, bean);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
@@ -227,6 +227,10 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         }
 
         return returnValue;
+    }
+
+    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
+        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
@@ -355,7 +359,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             // update pool
             instanceManager.poolInstance(callContext, bean);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
@@ -466,7 +470,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         } catch (org.apache.openejb.SystemException se) {
             txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
         } catch (Exception e) {// handle reflection exception
-            if (e instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), e)) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(e, bean, txContext);
             } else {

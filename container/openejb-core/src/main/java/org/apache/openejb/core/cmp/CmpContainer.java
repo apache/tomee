@@ -466,7 +466,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         } catch (InvocationTargetException ite) {
 
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
 
@@ -482,6 +482,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
 
         return returnValue;
+    }
+
+    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
+        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
@@ -516,7 +520,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         } catch (InvocationTargetException ite) {
 
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
 
@@ -591,7 +595,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             }
 
         } catch (InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {

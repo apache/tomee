@@ -38,7 +38,6 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Logger;
 
 import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.persistence.EntityManager;
@@ -408,7 +407,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 returnValue = interceptorStack.invoke(args);
             }
         } catch (InvocationTargetException ite) {// handle enterprise bean exception
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
@@ -419,7 +418,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
         } catch (Throwable re) {// handle reflection exception
-            if (re instanceof RuntimeException) {
+            if (!isApplicationException(callContext.getDeploymentInfo(), re)) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(re, bean, txContext);
@@ -446,6 +445,10 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
 
         return returnValue;
+    }
+
+    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
+        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {

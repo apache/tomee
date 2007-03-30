@@ -283,7 +283,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             callContext.set(Method.class, targetMethod);
 
             // invoke the target method
-            returnValue = _invoke(instance, targetMethod, args, mdbCallContext);
+            returnValue = _invoke(instance, targetMethod, args, deployInfo, mdbCallContext);
             return returnValue;
         } catch (ApplicationException e) {
             openEjbException = e;
@@ -305,12 +305,12 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    private Object _invoke(Object instance, Method runMethod, Object [] args, MdbCallContext mdbCallContext) throws SystemException, ApplicationException {
+    private Object _invoke(Object instance, Method runMethod, Object [] args, DeploymentInfo deploymentInfo, MdbCallContext mdbCallContext) throws SystemException, ApplicationException {
         try {
             Object returnValue = runMethod.invoke(instance, args);
             return returnValue;
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
-            if (ite.getTargetException() instanceof RuntimeException) {
+            if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
                 //
                 /// System Exception ****************************
                 mdbCallContext.txPolicy.handleSystemException(ite.getTargetException(), instance, mdbCallContext.txContext);
@@ -331,6 +331,9 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         throw new AssertionError("Should not get here");
     }
 
+    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
+        return e instanceof Exception && !(e instanceof RuntimeException);
+    }
 
     public void afterDelivery(Object instance) throws SystemException {
         // get the mdb call context
