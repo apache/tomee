@@ -36,14 +36,11 @@ public class MdbInvoker implements MessageListener {
     private final Object target;
     private Connection connection;
     private Session session;
+    private ConnectionFactory connectionFactory;
 
     public MdbInvoker(ConnectionFactory connectionFactory, Object target) throws JMSException {
         this.target = target;
-        connection = connectionFactory.createConnection();
-        connection.start();
-
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
+        this.connectionFactory = connectionFactory;
         for (Method method : target.getClass().getMethods()) {
             String signature = MdbUtil.getSignature(method);
             signatures.put(signature, method);
@@ -57,7 +54,10 @@ public class MdbInvoker implements MessageListener {
         connection = null;
     }
 
-    private synchronized Session getSession() {
+    private synchronized Session getSession() throws JMSException{
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         return session;
     }
 
@@ -124,6 +124,7 @@ public class MdbInvoker implements MessageListener {
                 e.printStackTrace();
             } finally {
                 MdbUtil.close(producer);
+                destroy();
             }
         } catch (Throwable e) {
             e.printStackTrace();
