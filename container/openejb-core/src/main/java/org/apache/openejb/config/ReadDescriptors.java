@@ -150,6 +150,7 @@ public class ReadDescriptors implements DynamicDeployer {
                         if (bean instanceof SessionBeanType) {
                             SessionBeanType sb = (SessionBeanType) bean;
                             WebServiceBindingType b = new WebServiceBindingType();
+                            b.setEjbName(sb.getEjbName());
                             b.setWebServiceAddress(sb.getWebServiceAddress());
                             b.setWebServiceVirtualHost(sb.getWebServiceVirtualHost());
                             b.setWebServiceSecurity(sb.getWebServiceSecurity());
