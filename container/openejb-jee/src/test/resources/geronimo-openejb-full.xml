@@ -380,6 +380,17 @@
             <ns2:name>String</ns2:name>
         </ns2:pattern>
     </ns2:message-destination>
+    <ns4:web-service-binding>
+        <ns4:ejb-name>FooBean</ns4:ejb-name>
+        <ns4:web-service-address>/foo/bean</ns4:web-service-address>
+        <ns4:web-service-virtual-host>http://host</ns4:web-service-virtual-host>
+        <ns4:web-service-security>
+            <ns4:security-realm-name>securityfoo</ns4:security-realm-name>
+            <ns4:realm-name>foorealm</ns4:realm-name>
+            <ns4:transport-guarantee>NONE</ns4:transport-guarantee>
+            <ns4:auth-method>BASIC</ns4:auth-method>
+        </ns4:web-service-security>
+    </ns4:web-service-binding>
     <gbean name="String" class="String">
         <attribute type="String" name="String">String</attribute>
         <attribute type="String" name="String">String</attribute>

@@ -28,6 +28,22 @@ import java.lang.String;
  */
 public class OpenejbJarTest extends TestCase {
 
+//    public void test() throws Exception {
+//        WebServiceBindingType binding = new WebServiceBindingType();
+//        binding.setEjbName("FooBean");
+//        binding.setWebServiceAddress("/foo/bean");
+//        binding.getWebServiceVirtualHost().add("http://host");
+//        WebServiceBindingType.WebServiceSecurityType security = new WebServiceBindingType.WebServiceSecurityType();
+//        binding.setWebServiceSecurity(security);
+//        security.setAuthMethod(AuthMethodType.BASIC);
+//        security.setRealmName("foorealm");
+//        security.setSecurityRealmName("securityfoo");
+//        security.setTransportGuarantee(TransportGuaranteeType.NONE);
+//
+//        String actual = JaxbOpenejbJar2.marshal(WebServiceBindingType.class, binding);
+//        assertEquals("", actual);
+//
+//    }
     public void testValidOpenejbJar() throws Exception {
         unmarshalAndMarshal(OpenejbJarType.class, "openejb-jar-2-full.xml");
     }

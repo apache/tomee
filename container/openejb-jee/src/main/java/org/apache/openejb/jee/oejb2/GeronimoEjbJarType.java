@@ -52,6 +52,7 @@ import java.util.ArrayList;
     "resourceEnvRef",
     "messageDestination",
     "tssLink",
+    "webServiceBinding",
     "security",
     "service",
     "persistence"
@@ -93,6 +94,9 @@ public class GeronimoEjbJarType {
 
     @XmlElement(name = "tss-link")
     protected List<TssLinkType> tssLink;
+
+    @XmlElement(name = "web-service-binding")
+    protected List<WebServiceBindingType> webServiceBinding;
 
     @XmlElementRef(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractSecurityType> security;
@@ -264,6 +268,13 @@ public class GeronimoEjbJarType {
             tssLink = new ArrayList<TssLinkType>();
         }
         return tssLink;
+    }
+
+    public List<WebServiceBindingType> getWebServiceBinding() {
+        if (webServiceBinding == null) {
+            webServiceBinding = new ArrayList<WebServiceBindingType>();
+        }
+        return webServiceBinding;
     }
 
     public JAXBElement<? extends AbstractSecurityType> getSecurity() {

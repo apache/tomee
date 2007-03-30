@@ -146,6 +146,17 @@ public class ReadDescriptors implements DynamicDeployer {
                                 g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
                             }
                         }
+
+                        if (bean instanceof SessionBeanType) {
+                            SessionBeanType sb = (SessionBeanType) bean;
+                            WebServiceBindingType b = new WebServiceBindingType();
+                            b.setWebServiceAddress(sb.getWebServiceAddress());
+                            b.setWebServiceVirtualHost(sb.getWebServiceVirtualHost());
+                            b.setWebServiceSecurity(sb.getWebServiceSecurity());
+                            if (b.containsData()){
+                                g2.getWebServiceBinding().add(b);
+                            }
+                        }
                     }
 
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", g2);
