@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.ArrayList;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -406,8 +405,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private boolean isDeleted(EntityBean entityBean) {
         try {
-            return entityBean.getClass().getField("deleted").getBoolean(entityBean);
-        } catch (NoSuchFieldException e) {
+            return (Boolean)entityBean.getClass().getMethod("OpenEJB_isDeleted").invoke(entityBean);
+        } catch (NoSuchMethodException e) {
             return false;
         } catch (Exception e) {
             throw new EJBException(e);
@@ -815,6 +814,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
+            if (entityBean == null) {
+                throw new ObjectNotFoundException(callContext.getDeploymentInfo().getDeploymentID() + " " + callContext.getPrimaryKey());
+            }
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
             cancelTimers(callContext);

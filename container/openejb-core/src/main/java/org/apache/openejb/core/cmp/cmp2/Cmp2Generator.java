@@ -148,6 +148,8 @@ public class Cmp2Generator implements Opcodes {
 
         createSimplePrimaryKeyGetter();
 
+        createOpenEJB_isDeleted();
+
         createOpenEJB_deleted();
 
         createOpenEJB_addCmr();
@@ -174,6 +176,16 @@ public class Cmp2Generator implements Opcodes {
         }
 
         mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private void createOpenEJB_isDeleted() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_isDeleted", "()Z", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitFieldInsn(GETFIELD, implClassName, "deleted", "Z");
+        mv.visitInsn(IRETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
