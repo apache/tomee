@@ -171,13 +171,26 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     IntraVmCopyMonitor.postCopyOperation();
                 }
             }
-            Object returnObj = _invoke(proxy, method, args);
-
-            IntraVmCopyMonitor.preCopyOperation();
+            Object returnObj = null;
             try {
-                returnObj = copyObj(returnObj);
-            } finally {
-                IntraVmCopyMonitor.postCopyOperation();
+                returnObj = _invoke(proxy, method, args);
+            } catch (Throwable throwable) {
+                // exceptions are return values and must be coppied
+                IntraVmCopyMonitor.preCopyOperation();
+                try {
+                    throw (Throwable) copyObj(throwable);
+                } finally {
+                    IntraVmCopyMonitor.postCopyOperation();
+                }
+            }
+
+            if (returnObj != null) {
+                IntraVmCopyMonitor.preCopyOperation();
+                try {
+                    returnObj = copyObj(returnObj);
+                } finally {
+                    IntraVmCopyMonitor.postCopyOperation();
+                }
             }
             return returnObj;
 
@@ -197,7 +210,18 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
 
             // invoke method
-            Object returnObj = _invoke(proxy, method, args);
+            Object returnObj = null;
+            try {
+                returnObj = _invoke(proxy, method, args);
+            } catch (Throwable throwable) {
+                // exceptions are return values and must be coppied
+                IntraVmCopyMonitor.preCrossClassLoaderOperation();
+                try {
+                    throw (Throwable) copyObj(throwable);
+                } finally {
+                    IntraVmCopyMonitor.postCrossClassLoaderOperation();
+                }
+            }
 
             if (returnObj != null) {
                 IntraVmCopyMonitor.preCrossClassLoaderOperation();
