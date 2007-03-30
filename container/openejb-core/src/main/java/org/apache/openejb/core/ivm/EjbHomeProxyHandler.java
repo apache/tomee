@@ -29,6 +29,7 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -265,7 +266,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            ApplicationServer applicationServer = ServerFederation.getApplicationServer();
             return applicationServer.getEJBHome(this.getProxyInfo());
         }
     }

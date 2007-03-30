@@ -22,6 +22,7 @@ import java.rmi.RemoteException;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
@@ -174,7 +175,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * we allow the application server to handle it.
             */
         } else {
-            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            ApplicationServer applicationServer = ServerFederation.getApplicationServer();
             return applicationServer.getEJBObject(this.getProxyInfo());
         }
     }
