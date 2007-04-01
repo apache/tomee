@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -143,9 +144,11 @@ public class MdbInstanceFactory {
 
         ThreadContext callContext = ThreadContext.getThreadContext();
         Operation originalOperation = callContext.getCurrentOperation();
+        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
         try {
             // call post destroy method
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
+            callContext.setCurrentAllowedStates(MdbContext.getStates());
 
             Method remove = bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
 
@@ -159,6 +162,7 @@ public class MdbInstanceFactory {
             MdbInstanceFactory.logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
         } finally {
             callContext.setCurrentOperation(originalOperation);
+            callContext.setCurrentAllowedStates(originalAllowedStates);
         }
     }
 
@@ -211,6 +215,7 @@ public class MdbInstanceFactory {
             }
             // only in this case should the callback be used
             callContext.setCurrentOperation(Operation.INJECTION);
+            callContext.setCurrentAllowedStates(MdbContext.getStates());
             if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
                 objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
             }
@@ -235,6 +240,7 @@ public class MdbInstanceFactory {
 
             try {
                 callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                callContext.setCurrentAllowedStates(MdbContext.getStates());
 
                 List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
                 InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
@@ -246,6 +252,7 @@ public class MdbInstanceFactory {
             try {
                 if (bean instanceof MessageDrivenBean){
                     callContext.setCurrentOperation(Operation.CREATE);
+                    callContext.setCurrentAllowedStates(MdbContext.getStates());
                     Method create = deploymentInfo.getCreateMethod();
                     InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
                     interceptorStack.invoke();

@@ -43,6 +43,10 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
 
     protected final static State[] states = new State[Operation.values().length];
 
+    public static State[] getStates() {
+        return states;
+    }
+
     public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }
@@ -104,6 +108,10 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         public Object getPrimaryKey() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             return threadContext.getPrimaryKey();
+        }
+        
+        public boolean isTimerMethodAllowed() {
+            return false;
         }
     }
 
@@ -209,6 +217,10 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
 
         public boolean isMessageContextAccessAllowed() {
             return false;
+        }
+
+        public boolean isTimerMethodAllowed() {
+            return true;
         }
     }
 

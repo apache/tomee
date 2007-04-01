@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
@@ -163,7 +165,9 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         }
     }
 
-    public Collection<Timer> getTimers(Object primaryKey) {
+    public Collection<Timer> getTimers(Object primaryKey) throws IllegalStateException {
+        checkState();
+
         Collection<Timer> timers = new ArrayList<Timer>();
         for (Iterator iterator = timerStore.getTimers((String)deployment.getDeploymentID()).iterator(); iterator.hasNext();) {
             TimerData timerData = (TimerData) iterator.next();
@@ -175,6 +179,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
 
     public Timer createTimer(Object primaryKey, long duration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (duration < 0) throw new IllegalArgumentException("duration is negative: " + duration);
+        checkState();
 
         Date time = new Date(System.currentTimeMillis() + duration);
         try {
@@ -188,6 +193,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     public Timer createTimer(Object primaryKey, long initialDuration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (initialDuration < 0) throw new IllegalArgumentException("initialDuration is negative: " + initialDuration);
         if (intervalDuration < 0) throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
+        checkState();
 
 
         Date time = new Date(System.currentTimeMillis() + initialDuration);
@@ -202,6 +208,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     public Timer createTimer(Object primaryKey, Date expiration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (expiration == null) throw new IllegalArgumentException("expiration is null");
         if (expiration.getTime() < 0) throw new IllegalArgumentException("expiration is negative: " + expiration.getTime());
+        checkState();
 
         try {
             TimerData timerData = createTimerData(primaryKey, expiration, 0, info);
@@ -215,6 +222,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         if (initialExpiration == null) throw new IllegalArgumentException("initialExpiration is null");
         if (initialExpiration.getTime() < 0) throw new IllegalArgumentException("initialExpiration is negative: " + initialExpiration.getTime());
         if (intervalDuration < 0) throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
+        checkState();
 
         try {
             TimerData timerData = createTimerData(primaryKey, initialExpiration, intervalDuration, info);
@@ -233,6 +241,15 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         return timerData;
     }
 
+    /**
+     * Insure that timer methods can be invoked for the current operation on this Context.
+     */
+    private void checkState() throws IllegalStateException {
+        if (!BaseContext.isTimerMethodAllowed()) {
+            throw new IllegalStateException("TimerService method not permitted for current operation " + ThreadContext.getThreadContext().getCurrentOperation().name());
+        }
+    }
+    
     /**
      * This method calls the ejbTimeout method and starts a transaction if the timeout is transacted.
      *

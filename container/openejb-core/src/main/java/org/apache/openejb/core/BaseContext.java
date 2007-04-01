@@ -59,6 +59,12 @@ public abstract class BaseContext implements EJBContext, Serializable {
         this.userTransaction = userTransaction;
     }
 
+    protected static State[] states;
+    
+    public static State[] getStates() {
+        return states;
+    }
+    
     protected abstract State getState();
 
     public EJBHome getEJBHome() {
@@ -137,7 +143,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return getState().isTimerAccessAllowed();
     }
 
-    protected static class State {
+    public static boolean isTimerMethodAllowed() {
+        State[] currentStates = ThreadContext.getThreadContext().getCurrentAllowedStates();
+        State currentState = currentStates[ThreadContext.getThreadContext().getCurrentOperation().ordinal()];
+        
+        return currentState.isTimerMethodAllowed();
+    }
+    
+    public static class State {
 
         public EJBHome getEJBHome() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
@@ -220,6 +233,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
         }
 
+        public boolean isTimerAccessAllowed() {
+            return true;
+        }
+
+        public boolean isTimerMethodAllowed() {
+            return true;
+        }
+
         public boolean isUserTransactionAccessAllowed() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
@@ -243,8 +264,5 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return true;
         }
 
-        public boolean isTimerAccessAllowed() {
-            return true;
-        }
     }
 }

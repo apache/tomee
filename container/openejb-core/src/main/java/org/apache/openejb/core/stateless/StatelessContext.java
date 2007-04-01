@@ -32,6 +32,10 @@ public class StatelessContext extends BaseSessionContext {
 
     protected final static State[] states = new State[Operation.values().length];
 
+    public static State[] getStates() {
+        return states;
+    }
+    
     public StatelessContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);
     }

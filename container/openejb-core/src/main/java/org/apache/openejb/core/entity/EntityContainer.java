@@ -39,10 +39,12 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -154,6 +156,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             }
 
             callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentAllowedStates(EntityContext.getStates());
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -235,6 +238,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
     public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
         Operation orginalOperation = callContext.getCurrentOperation();
+        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
         if (orginalOperation == Operation.BUSINESS || orginalOperation == Operation.REMOVE) {
 
             Transaction currentTx = null;
@@ -246,6 +250,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
             if (currentTx == null) {
                 callContext.setCurrentOperation(Operation.LOAD);
+                callContext.setCurrentAllowedStates(EntityContext.getStates());
                 try {
                     bean.ejbLoad();
                 } catch (Exception e) {
@@ -254,6 +259,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                     throw e;
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
+                    callContext.setCurrentAllowedStates(originalAllowedStates);
                 }
             }
 
@@ -268,6 +274,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             throws Exception {
 
         Operation currentOp = callContext.getCurrentOperation();
+        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
         if (currentOp == Operation.BUSINESS) {
 
             Transaction currentTx = null;
@@ -279,6 +286,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
             if (currentTx == null) {
                 callContext.setCurrentOperation(Operation.STORE);
+                callContext.setCurrentAllowedStates(EntityContext.getStates());
                 try {
                     bean.ejbStore();
                 } catch (Exception e) {
@@ -287,6 +295,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                     throw e;
                 } finally {
                     callContext.setCurrentOperation(currentOp);
+                    callContext.setCurrentAllowedStates(originalAllowedStates);
                 }
             }
         }
@@ -299,6 +308,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         callContext.setCurrentOperation(Operation.CREATE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
@@ -340,6 +350,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             // create a new context containing the pk for the post create call
             ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
+            postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 
             ThreadContext oldContext = ThreadContext.enter(postCreateContext);
             try {
@@ -393,6 +404,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.FIND);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
@@ -428,6 +440,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
         org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.HOME);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         return invoke(callMethod, runMethod, args, callContext);
     }
@@ -440,10 +453,13 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Object primaryKey = threadContext.getPrimaryKey();
 
-        // stop timers
-        if (primaryKey != null && deploymentInfo.getEjbTimerService() != null) {
-            for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
-                timer.cancel();
+        // if we have a real timerservice, stop all timers. Otherwise, ignore...
+        if (primaryKey != null) {
+            EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+            if (timerService != null && timerService instanceof EjbTimerServiceImpl) {
+                for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
+                    timer.cancel();
+                }
             }
         }
     }
@@ -451,6 +467,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext)
             throws org.apache.openejb.OpenEJBException {
         callContext.setCurrentOperation(Operation.REMOVE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);

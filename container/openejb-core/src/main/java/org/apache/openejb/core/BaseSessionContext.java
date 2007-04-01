@@ -258,6 +258,10 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isTimerAccessAllowed() {
             return false;
         }
+
+        public boolean isTimerMethodAllowed() {
+            return false;
+        }
     }
 
     /**

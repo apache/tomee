@@ -19,6 +19,7 @@ package org.apache.openejb.core.entity;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -176,6 +177,7 @@ public class EntityInstanceManager {
                 loadingBean(bean, callContext);
                 Operation orginalOperation = callContext.getCurrentOperation();
                 callContext.setCurrentOperation(org.apache.openejb.core.Operation.LOAD);
+                BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
                 try {
                     bean.ejbLoad();
                 } catch (Exception e) {
@@ -184,6 +186,7 @@ public class EntityInstanceManager {
                     throw new org.apache.openejb.OpenEJBException(e);
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
+                    callContext.setCurrentAllowedStates(EntityContext.getStates());
                 }
                 txReadyPool.put(key, wrapper);
 
@@ -222,6 +225,7 @@ public class EntityInstanceManager {
 
             Operation currentOp = callContext.getCurrentOperation();
             callContext.setCurrentOperation(org.apache.openejb.core.Operation.SET_CONTEXT);
+            BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
             try {
                 /*
@@ -246,6 +250,7 @@ public class EntityInstanceManager {
                 throw new org.apache.openejb.ApplicationException(e);
             } finally {
                 callContext.setCurrentOperation(currentOp);
+                callContext.setCurrentAllowedStates(originalStates);
             }
         } else {
             reusingBean(bean, callContext);
@@ -265,6 +270,7 @@ public class EntityInstanceManager {
             Operation currentOp = callContext.getCurrentOperation();
 
             callContext.setCurrentOperation(org.apache.openejb.core.Operation.ACTIVATE);
+            BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
             try {
                 /*
                 In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -288,6 +294,7 @@ public class EntityInstanceManager {
                 throw new ApplicationException(new java.rmi.RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
             } finally {
                 callContext.setCurrentOperation(currentOp);
+                callContext.setCurrentAllowedStates(originalStates);
             }
 
         }
@@ -369,6 +376,7 @@ public class EntityInstanceManager {
                 Operation currentOp = callContext.getCurrentOperation();
 
                 callContext.setCurrentOperation(org.apache.openejb.core.Operation.PASSIVATE);
+                BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
                 try {
                     /*
@@ -392,6 +400,7 @@ public class EntityInstanceManager {
                     throw new ApplicationException(new java.rmi.RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
                 } finally {
                     callContext.setCurrentOperation(currentOp);
+                    callContext.setCurrentAllowedStates(originalStates);
                 }
             }
 
@@ -413,6 +422,7 @@ public class EntityInstanceManager {
 
         Operation currentOp = callContext.getCurrentOperation();
         callContext.setCurrentOperation(org.apache.openejb.core.Operation.UNSET_CONTEXT);
+        BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         try {
             /*
@@ -436,6 +446,7 @@ public class EntityInstanceManager {
             logger.info(getClass().getName() + ".freeInstance: ignoring exception " + e + " on bean instance " + bean);
         } finally {
             callContext.setCurrentOperation(currentOp);
+            callContext.setCurrentAllowedStates(originalStates);
         }
 
     }
@@ -586,6 +597,7 @@ public class EntityInstanceManager {
 
                 ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
                 callContext.setCurrentOperation(Operation.STORE);
+                callContext.setCurrentAllowedStates(EntityContext.getStates());
 
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
 

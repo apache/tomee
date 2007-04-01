@@ -53,6 +53,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.entity.EntityContext;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -277,6 +278,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // business method
             callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentAllowedStates(EntityContext.getStates());
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -321,6 +323,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = new ThreadContext(deployInfo, null, null);
         callContext.setCurrentOperation(Operation.SET_CONTEXT);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -337,6 +340,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.UNSET_CONTEXT);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -353,6 +357,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.LOAD);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -369,6 +374,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.STORE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -386,6 +392,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.REMOVE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -418,6 +425,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.ACTIVATE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -434,6 +442,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.PASSIVATE);
+        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -507,6 +516,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             try {
                 callContext.setCurrentOperation(Operation.HOME);
+                callContext.setCurrentAllowedStates(EntityContext.getStates());
 
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
@@ -563,6 +573,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // Set current operation for allowed operations
             callContext.setCurrentOperation(Operation.CREATE);
+            callContext.setCurrentAllowedStates(EntityContext.getStates());
 
             // Invoke the proper ejbCreate() method on the instance
             ejbCreateMethod.invoke(bean, args);
@@ -577,6 +588,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             // create a new context containing the pk for the post create call
             ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
+            postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 
             ThreadContext oldContext = ThreadContext.enter(postCreateContext);
             try {
@@ -833,8 +845,11 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         // stop timers
         if (primaryKey != null && deploymentInfo.getEjbTimerService() != null) {
-            for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
-                timer.cancel();
+            EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+            if (timerService != null && timerService instanceof EjbTimerServiceImpl) {
+                for (Timer timer : deploymentInfo.getEjbTimerService().getTimers(primaryKey)) {
+                    timer.cancel();
+                }
             }
         }
     }

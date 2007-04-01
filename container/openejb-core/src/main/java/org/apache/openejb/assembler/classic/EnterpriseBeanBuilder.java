@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
@@ -204,9 +205,15 @@ class EnterpriseBeanBuilder {
 
         // Timer
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
-        if (deployment.getEjbTimeout() != null) {
-            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(deployment);
-            deployment.setEjbTimerService(timerService);
+        
+        // This is a change in behavor from OpenEJB 2.x, which required an ejbTimeout method
+        if (!(bean instanceof StatefulBeanInfo)) {
+            if (deployment.getEjbTimeout() != null) {
+                EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(deployment);
+                deployment.setEjbTimerService(timerService);
+            } else {
+                deployment.setEjbTimerService(new NullEjbTimerServiceImpl());
+            }
         }
 
         if (bean instanceof StatefulBeanInfo) {

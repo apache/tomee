@@ -34,6 +34,10 @@ import java.security.Principal;
 public class StatefulContext extends BaseSessionContext {
 
     protected final static State[] states = new State[Operation.values().length];
+    
+    public static State[] getStates() {
+        return states;
+    }
 
     public StatefulContext(TransactionManager transactionManager, SecurityService securityService) {
         super(transactionManager, securityService);

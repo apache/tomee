@@ -140,6 +140,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             Object bean = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentAllowedStates(StatelessContext.getStates());
 
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 

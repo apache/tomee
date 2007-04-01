@@ -95,6 +95,7 @@ public class ThreadContext {
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
     private Operation currentOperation;
+    private BaseContext.State[] currentAllowedStates;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
         this(deploymentInfo, primaryKey, securityIdentity, null);
@@ -138,6 +139,16 @@ public class ThreadContext {
         currentOperation = operation;
     }
 
+    public BaseContext.State[] getCurrentAllowedStates() {
+        return currentAllowedStates;
+    }
+
+    public BaseContext.State[] setCurrentAllowedStates(BaseContext.State[] newAllowedStates) {
+        BaseContext.State[] oldAllowedStates = currentAllowedStates; 
+        currentAllowedStates = newAllowedStates;
+        return oldAllowedStates;
+    }
+    
     @SuppressWarnings({"unchecked"})
     public <T> T get(Class<T> type) {
         return (T)data.get(type);

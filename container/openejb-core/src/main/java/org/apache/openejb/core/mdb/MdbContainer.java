@@ -23,14 +23,16 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Logger;
+
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -271,6 +273,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         OpenEJBException openEjbException = null;
         Operation oldOperation = callContext.getCurrentOperation();
         callContext.setCurrentOperation(Operation.BUSINESS);
+        BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(MdbContext.getStates());
         try {
             if (logger.isInfoEnabled()) {
                 logger.info("invoking method " + method.getName() + " on " + deployInfo.getDeploymentID());
@@ -293,6 +296,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             throw e;
         } finally {
             callContext.setCurrentOperation(oldOperation);
+            callContext.setCurrentAllowedStates(originalStates);
             // Log the invocation results
             if (logger.isDebugEnabled()) {
                 if (openEjbException == null) {

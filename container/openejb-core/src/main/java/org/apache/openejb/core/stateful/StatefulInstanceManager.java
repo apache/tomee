@@ -21,6 +21,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.Operation;
@@ -315,6 +316,7 @@ public class StatefulInstanceManager {
     protected void handleTimeout(BeanEntry entry, ThreadContext threadContext) {
         Operation currentOperation = threadContext.getCurrentOperation();
         threadContext.setCurrentOperation(Operation.PRE_DESTROY);
+        BaseContext.State[] originalAllowedStates = threadContext.setCurrentAllowedStates(StatefulContext.getStates());
         CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Instance instance = (Instance) entry.bean;
 
@@ -340,6 +342,7 @@ public class StatefulInstanceManager {
         } finally {
             logger.info("Removing the timed-out stateful session bean instance " + entry.primaryKey);
             threadContext.setCurrentOperation(currentOperation);
+            threadContext.setCurrentAllowedStates(originalAllowedStates);
         }
     }
 
@@ -395,6 +398,7 @@ public class StatefulInstanceManager {
 
         BeanEntry currentEntry;
         final Operation currentOperation = threadContext.getCurrentOperation();
+        final BaseContext.State[] originalAllowedStates = threadContext.setCurrentAllowedStates(StatefulContext.getStates());
         CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         try {
             for (int i = 0; i < bulkPassivationSize; ++i) {
@@ -429,6 +433,7 @@ public class StatefulInstanceManager {
             }
         } finally {
             threadContext.setCurrentOperation(currentOperation);
+            threadContext.setCurrentAllowedStates(originalAllowedStates);
         }
 
         /*

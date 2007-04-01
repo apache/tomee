@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateless;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -102,6 +103,7 @@ public class StatelessInstanceManager {
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
             Operation originalOperation = callContext.getCurrentOperation();
+            BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
             try {
                 Context ctx = deploymentInfo.getJndiEnc();
@@ -115,6 +117,7 @@ public class StatelessInstanceManager {
                 }
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
+                    callContext.setCurrentAllowedStates(StatelessContext.getStates());                    
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
                 }
                 for (Injection injection : deploymentInfo.getInjections()) {
@@ -161,6 +164,7 @@ public class StatelessInstanceManager {
 
                 try {
                     callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                    callContext.setCurrentAllowedStates(StatelessContext.getStates());
 
                     List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
                     InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
@@ -172,6 +176,7 @@ public class StatelessInstanceManager {
                 try {
                     if (bean instanceof SessionBean){
                         callContext.setCurrentOperation(Operation.CREATE);
+                        callContext.setCurrentAllowedStates(StatelessContext.getStates());
                         Method create = deploymentInfo.getCreateMethod();
                         InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
                         interceptorStack.invoke();
@@ -190,6 +195,7 @@ public class StatelessInstanceManager {
                 throw new org.apache.openejb.ApplicationException(new RemoteException("Can not obtain a free instance.", e));
             } finally {
                 callContext.setCurrentOperation(originalOperation);
+                callContext.setCurrentAllowedStates(originalAllowedStates);
             }
         }
         return bean;
@@ -232,6 +238,7 @@ public class StatelessInstanceManager {
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
+            callContext.setCurrentAllowedStates(StatelessContext.getStates());
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
             Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;

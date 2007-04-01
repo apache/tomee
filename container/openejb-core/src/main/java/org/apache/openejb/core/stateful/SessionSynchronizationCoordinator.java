@@ -18,6 +18,9 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.stateful.StatefulContext;
+import org.apache.openejb.core.stateless.StatelessContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContext;
@@ -75,6 +78,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
         Operation currentOperation = callContext.getCurrentOperation();
         callContext.setCurrentOperation(Operation.AFTER_BEGIN);
+        BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(StatefulContext.getStates());
         try {
 
             session.afterBegin();
@@ -86,6 +90,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
         } finally {
             callContext.setCurrentOperation(currentOperation);
+            callContext.setCurrentAllowedStates(originalStates);
         }
     }
 
@@ -108,6 +113,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
                 callContext.setCurrentOperation(Operation.BEFORE_COMPLETION);
+                callContext.setCurrentAllowedStates(StatefulContext.getStates());
 
                 StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 SessionSynchronization bean = (SessionSynchronization) instance.bean;
@@ -171,6 +177,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 * that the instance manager doesn't mistake this as a concurrent access.
                 */
                 callContext.setCurrentOperation(Operation.AFTER_COMPLETION);
+                callContext.setCurrentAllowedStates(StatefulContext.getStates());
 
                 StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 SessionSynchronization bean = (SessionSynchronization) instance.bean;

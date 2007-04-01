@@ -257,7 +257,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
         createContext.setCurrentOperation(Operation.CREATE);
+        createContext.setCurrentAllowedStates(StatefulContext.getStates());
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
+
         try {
             checkAuthorization(deploymentInfo, callMethod, securityIdentity);
 
@@ -305,7 +307,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             boolean retain = false;
             try {
-
+                    callContext.setCurrentAllowedStates(StatefulContext.getStates());
+                    
                 callContext.setCurrentOperation(Operation.REMOVE);
 
                 Class<?> declaringClass = callMethod.getDeclaringClass();
@@ -357,6 +360,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             Object bean = instanceManager.obtainInstance(primKey, callContext);
             callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentAllowedStates(StatefulContext.getStates());
             Object returnValue = null;
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
