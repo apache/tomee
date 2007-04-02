@@ -780,11 +780,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
                 methodMap.put(clientMethod, beanMethod);
-
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
                 methodMap.put(clientMethod, beanMethod);
-
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
+                methodMap.put(clientMethod, beanMethod);
+                clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
                 methodMap.put(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
                 Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
@@ -793,6 +793,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
                 methodMap.put(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
+                methodMap.put(clientMethod, beanMethod);
+                clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
                 methodMap.put(clientMethod, beanMethod);
             }
         } catch (java.lang.NoSuchMethodException nsme) {
