@@ -64,6 +64,17 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase {
         suite.addTest(new StatelessAnnotatedFieldInjectionTests());
         suite.addTest(new StatelessRmiIiopTests());
         suite.addTest(new MiscEjbTests());
+        
+        /*///////////////////////////
+         * Annotated test clients
+         *///////////////////////////
+        
+        // Annotated field injection test clients
+        suite.addTest(new AnnotatedFieldInjectionStatelessPojoLocalHomeIntfcTests());
+        
+       // Annotated setter injection test clients
+        suite.addTest(new AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests());
+        
         /* TO DO
         suite.addTest(new StatelessEjbContextTests());
         suite.addTest(new BMTStatelessEjbContextTests());

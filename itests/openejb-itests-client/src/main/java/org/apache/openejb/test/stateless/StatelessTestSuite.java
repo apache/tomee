@@ -82,7 +82,17 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessRmiIiopTests());
 
         suite.addTest(new MiscEjbTests());
-
+        
+        /*///////////////////////////
+         * Annotated test clients
+         *///////////////////////////
+        
+        // Annotated field injection test clients
+        suite.addTest(new AnnotatedFieldInjectionStatelessPojoHomeIntfcTests());
+        
+        // Annotated setter injection test clients
+        suite.addTest(new AnnotatedSetterInjectionStatelessPojoHomeIntfcTests());
+        
         /* TO DO
         suite.addTest(new StatelessEjbContextTests());
         suite.addTest(new BMTStatelessEjbContextTests());

@@ -16,31 +16,26 @@
  */
 package org.apache.openejb.test.stateless;
 
+import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
+import javax.rmi.PortableRemoteObject;
 
+import org.apache.openejb.test.TestClient;
 import org.apache.openejb.test.TestManager;
+import org.apache.xbean.finder.ClassFinder;
 
 /**
  * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public abstract class StatelessTestClient extends org.apache.openejb.test.NamedTestCase{
+public abstract class StatelessTestClient extends TestClient {
     
-    protected InitialContext initialContext;
-
-    protected BasicStatelessHome   ejbHome;
-    protected BasicStatelessObject ejbObject;
-    protected EJBMetaData       ejbMetaData;
-    protected HomeHandle        ejbHomeHandle;
-    protected Handle            ejbHandle;
-    protected Integer           ejbPrimaryKey;
-
     public StatelessTestClient(String name){
         super("Stateless."+name);
     }
@@ -54,7 +49,6 @@ public abstract class StatelessTestClient extends org.apache.openejb.test.NamedT
         Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "STATELESS_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, toString() );
-        
         initialContext = new InitialContext(properties);
     }
     

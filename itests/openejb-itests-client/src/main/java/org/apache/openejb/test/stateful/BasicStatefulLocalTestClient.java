@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
+import javax.ejb.EJB;
+
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
@@ -24,11 +26,14 @@ package org.apache.openejb.test.stateful;
  */
 public abstract class BasicStatefulLocalTestClient extends StatefulTestClient {
     
-    protected BasicStatefulLocalHome   ejbLocalHome;
-    protected BasicStatefulLocalObject ejbLocalObject;
+	@EJB(name="client/tests/stateful/BasicStatefulPojoHomeLocal",
+	     beanInterface = BasicStatefulLocalHome.class)
+	protected BasicStatefulLocalHome ejbLocalHome = null;
+	protected BasicStatefulLocalObject ejbLocalObject = null;
 
     public BasicStatefulLocalTestClient(String name){
         super(name);
     }
 }
+
 

@@ -62,5 +62,9 @@
       <version>3.8.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder</artifactId>
+    </dependency>
   </dependencies>
 </project>

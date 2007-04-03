@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
+import javax.ejb.EJB;
+
 /**
  * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -23,11 +25,14 @@ package org.apache.openejb.test.stateless;
  */
 public abstract class BasicStatelessTestClient extends StatelessTestClient{
     
-    protected BasicStatelessHome   ejbHome;
-    protected BasicStatelessObject ejbObject;
+	@EJB(name="client/tests/stateless/BasicStatelessPojoHome",
+	     beanInterface=BasicStatelessHome.class)
+    protected BasicStatelessHome ejbHome = null;
+    protected BasicStatelessObject ejbObject = null;
 
     public BasicStatelessTestClient(String name){
         super(name);
     }
 }
+
 

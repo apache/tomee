@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
+import javax.ejb.EJB;
+
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
@@ -25,11 +27,19 @@ package org.apache.openejb.test.stateless;
  */
 public abstract class BasicStatelessLocalTestClient extends StatelessTestClient {
 
-    protected BasicStatelessLocalHome   ejbLocalHome;
-    protected BasicStatelessLocalObject ejbLocalObject;
+	@EJB(name="client/tests/stateless/BasicStatelessPojoHomeLocal",
+		 beanInterface = BasicStatelessLocalHome.class)
+	protected BasicStatelessLocalHome ejbLocalHome = null;
+    protected BasicStatelessLocalObject ejbLocalObject = null;
 
     public BasicStatelessLocalTestClient(String name){
         super(name);
     }
+    
+    protected Object cast(Object object, Class type) {
+    	return type.cast(object);
+    }
+    
 }
+
 

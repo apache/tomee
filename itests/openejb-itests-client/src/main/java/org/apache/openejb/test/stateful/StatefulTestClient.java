@@ -18,12 +18,10 @@ package org.apache.openejb.test.stateful;
 
 import java.util.Properties;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.apache.openejb.test.TestClient;
 import org.apache.openejb.test.TestManager;
 
 /**
@@ -31,15 +29,8 @@ import org.apache.openejb.test.TestManager;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public abstract class StatefulTestClient extends org.apache.openejb.test.NamedTestCase{
+public abstract class StatefulTestClient extends TestClient {
     
-    protected InitialContext initialContext;
-
-    protected EJBMetaData       ejbMetaData;
-    protected HomeHandle        ejbHomeHandle;
-    protected Handle            ejbHandle;
-    protected Integer           ejbPrimaryKey;
-
     public StatefulTestClient(String name){
         super("Stateful."+name);
     }
@@ -56,5 +47,5 @@ public abstract class StatefulTestClient extends org.apache.openejb.test.NamedTe
         
         initialContext = new InitialContext(properties);
     }
-    
+
 }
