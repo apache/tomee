@@ -165,6 +165,10 @@ public class EjbJar {
         return enterpriseBeans.get(ejbName);
     }
 
+    public Map<String,EnterpriseBean> getEnterpriseBeansByEjbName() {
+        return enterpriseBeans;
+    }
+    
     public Interceptor[] getInterceptors() {
         if (interceptors == null) return null;
         return interceptors.getInterceptor();

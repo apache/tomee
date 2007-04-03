@@ -62,13 +62,14 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.EjbRef;
 
 public class OpenEjb2CmpConversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             Object altDD = getOpenejbJarType(ejbModule);
             if (altDD instanceof OpenejbJarType) {
-                convertEjbRefs(ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
+                convertEjbRefs(ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
                 convertMdbConfigs(ejbModule.getEjbJar(), (OpenejbJarType) altDD);
                 mergeEntityMappings(appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
             }
@@ -101,12 +102,21 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
         return null;
     }
 
-    public void convertEjbRefs(OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
-        Map<String, EjbDeployment> deployments =  new TreeMap<String, EjbDeployment>();
-        for (EjbDeployment deployment : openejbJar.getEjbDeployment()) {
-            deployments.put(deployment.getEjbName(), deployment);
-        }
+    public void convertEjbRefs(EjbJar ejbJar, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
+        Map<String, EnterpriseBean> ejbs = ejbJar.getEnterpriseBeansByEjbName();
+        Map<String, EjbDeployment> deployments =  openejbJar.getDeploymentsByEjbName();
+
         for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+            EnterpriseBean ejb = ejbs.get(enterpriseBean.getEjbName());
+            if (ejb == null) {
+                // todo warn no such ejb in the ejb-jar.xml
+                continue;
+            }
+            Map<String,EjbRef> ejbRefs =  new TreeMap<String,EjbRef>();
+            for (EjbRef ref : ejb.getEjbRef()) {
+                ejbRefs.put(ref.getEjbRefName(), ref);
+            }
+
             EjbDeployment deployment = deployments.get(enterpriseBean.getEjbName());
             if (deployment == null) {
                 // todo warn no such ejb in the ejb-jar.xml
@@ -127,8 +137,10 @@ public class OpenEjb2CmpConversion implements DynamicDeployer {
 
                 String nsCorbaloc = refType.getNsCorbaloc();
                 if (nsCorbaloc != null) {
-                    EjbLink ejbLink = new EjbLink(refName, "jndi:" + nsCorbaloc);
-                    deployment.getEjbLink().add(ejbLink);
+                    EjbRef ref = ejbRefs.get(refName);
+                    if (ref != null) {
+                        ref.setMappedName("jndi:" + nsCorbaloc);
+                    }
                 } else {
                     PatternType pattern = refType.getPattern();
                     addEjbLink(deployment, refName, pattern);
