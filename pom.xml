@@ -127,33 +127,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.geronimo.genesis.plugins</groupId>
-        <artifactId>tools-maven-plugin</artifactId>
-        <version>1.1</version>
-
-        <!-- Tools includes custom packagings, install as extension to pick them up -->
-        <extensions>true</extensions>
-
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>require-java-version</goal>
-            </goals>
-            <configuration>
-              <version>1.5+</version>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>install-legal-files</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy-legal-files</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
