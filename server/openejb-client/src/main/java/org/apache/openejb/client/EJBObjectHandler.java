@@ -141,7 +141,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 else if (m.equals(REMOVE)) retValue = remove(m, a, p);
                 else
                     throw new UnsupportedOperationException("Unkown method: " + m);
-            } else if (m.getDeclaringClass() == ejb.remoteClass) {
+            } else if (m.getDeclaringClass().isAssignableFrom(ejb.remoteClass)) {
                 retValue = businessMethod(m, a, p);
             } else {
                 throw new UnsupportedOperationException("Unkown method: " + m);
