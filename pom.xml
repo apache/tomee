@@ -127,7 +127,6 @@
         </configuration>
       </plugin>
       <plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
