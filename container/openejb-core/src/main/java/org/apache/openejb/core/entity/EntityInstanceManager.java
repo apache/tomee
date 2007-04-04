@@ -123,8 +123,7 @@ public class EntityInstanceManager {
                     wrapper.disassociate();
                 }
 
-                if (wrapper.isAvailable()) {
-
+                if (wrapper.isAvailable() || wrapper.primaryKey.equals(primaryKey)) {
                     return wrapper.getEntityBean();
                 } else {
 
