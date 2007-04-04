@@ -27,6 +27,9 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -44,6 +47,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.UnavailableException;
 import javax.resource.ResourceException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentMap;
@@ -310,8 +314,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     }
 
     private Object _invoke(Object instance, Method runMethod, Object [] args, DeploymentInfo deploymentInfo, MdbCallContext mdbCallContext) throws SystemException, ApplicationException {
+        Object returnValue = null;
         try {
-            Object returnValue = runMethod.invoke(instance, args);
+            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+            InterceptorStack interceptorStack = new InterceptorStack(((Instance)instance).bean, runMethod, Operation.BUSINESS, interceptors, ((Instance)instance).interceptors);
+            returnValue = interceptorStack.invoke(args);            
             return returnValue;
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
             if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
@@ -372,7 +379,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
                 logger.error("error while releasing message endpoint", e);
             } finally {
                 EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
-                endpointFactory.getInstanceFactory().freeInstance(instance, false);
+                endpointFactory.getInstanceFactory().freeInstance((Instance)instance, false);
                 ThreadContext.exit(mdbCallContext.oldCallContext);
             }
         }

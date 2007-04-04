@@ -213,6 +213,8 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
     static {
         states[Operation.INJECTION.ordinal()] = new InjectionMdbState();
         states[Operation.CREATE.ordinal()] = new LifecycleMdbState();
+        states[Operation.POST_CONSTRUCT.ordinal()] = new LifecycleMdbState();
+        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleMdbState();
         states[Operation.BUSINESS.ordinal()] = new BusinessTimeoutMdbState();
         states[Operation.TIMEOUT.ordinal()] = new BusinessTimeoutMdbState();
     }

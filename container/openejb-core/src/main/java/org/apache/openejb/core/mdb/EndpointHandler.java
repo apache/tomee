@@ -20,6 +20,7 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.mdb.Instance;
 
 import javax.ejb.EJBException;
 import javax.resource.spi.ApplicationServerInternalException;
@@ -308,7 +309,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         try {
             container.release(deployment, instance);
         } finally {
-            instanceFactory.freeInstance(instance, false);
+            instanceFactory.freeInstance((Instance)instance, false);
             instance = null;
         }
     }

@@ -23,6 +23,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.Injection;
 import org.apache.openejb.util.Logger;
@@ -132,8 +133,8 @@ public class MdbInstanceFactory {
      * @param bean the bean instance to free
      * @param ignoredInstanceCount
      */
-    public void freeInstance(Object bean, boolean ignoredInstanceCount) {
-        if (bean == null) throw new NullPointerException("bean is null");
+    public void freeInstance(Instance instance, boolean ignoredInstanceCount) {
+        if (instance == null) throw new NullPointerException("bean is null");
 
         // decrement the instance count
         if (!ignoredInstanceCount) {
@@ -149,17 +150,12 @@ public class MdbInstanceFactory {
             // call post destroy method
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(MdbContext.getStates());
-
-            Method remove = bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
-
-            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-            ArrayList interceptorDatas = new ArrayList(); // TODO
-            HashMap interceptorInstances = new HashMap(); // TODO
-            InterceptorStack interceptorStack = new InterceptorStack(bean, remove, Operation.PRE_DESTROY, interceptorDatas, interceptorInstances);
-
+            Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();           
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
             interceptorStack.invoke();
         } catch (Throwable re) {
-            MdbInstanceFactory.logger.error("The bean instance " + bean + " threw a system exception:" + re, re);
+            MdbInstanceFactory.logger.error("The bean instance " + instance.bean + " threw a system exception:" + re, re);
         } finally {
             callContext.setCurrentOperation(originalOperation);
             callContext.setCurrentAllowedStates(originalAllowedStates);
@@ -237,7 +233,7 @@ public class MdbInstanceFactory {
 
             // TODO: We need to keep these somehwere
             interceptorInstances.put(beanClass.getName(), bean);
-
+            Instance instance = new Instance(bean,interceptorInstances);
             try {
                 callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
                 callContext.setCurrentAllowedStates(MdbContext.getStates());
@@ -261,7 +257,7 @@ public class MdbInstanceFactory {
                 throw e;
             }
 
-            return bean;
+            return instance;
         } catch (Throwable e) {
             if (e instanceof java.lang.reflect.InvocationTargetException) {
                 e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();

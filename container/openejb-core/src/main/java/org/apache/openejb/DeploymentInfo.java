@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.timer.EjbTimerService;
 
 import java.lang.reflect.Method;
@@ -110,6 +111,8 @@ public interface DeploymentInfo {
     public List<Method> getPrePassivate();
 
     public List<Injection> getInjections();
+    
+    public List<InterceptorData> getMethodInterceptors(Method method);
 
     public void setContainer(Container container);
 
