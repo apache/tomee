@@ -75,7 +75,7 @@ public class EjbContainerProvider extends RPCProvider {
 
             RpcContainer container = (RpcContainer) ejbDeployment.getContainer();
 
-            Object[] arguments = {message, interceptor};
+            Object[] arguments = {msgContext, interceptor};
 
             Object result = container.invoke(ejbDeployment.getDeploymentID(), operation.getMethod(), arguments, null, null);
 
