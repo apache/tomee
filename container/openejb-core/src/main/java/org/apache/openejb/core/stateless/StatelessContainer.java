@@ -30,16 +30,20 @@ import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.transaction.TransactionManager;
+import javax.interceptor.AroundInvoke;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -164,29 +168,34 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return instanceManager;
     }
 
-    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object bean, ThreadContext callContext)
+    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object object, ThreadContext callContext)
             throws org.apache.openejb.OpenEJBException {
+        Instance instance = (Instance) object;
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
         TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
         txContext.callContext = callContext;
 
-        txPolicy.beforeInvoke(bean, txContext);
+        txPolicy.beforeInvoke(instance, txContext);
 
         Object returnValue = null;
         try {
-            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-            InterceptorStack interceptorStack = new InterceptorStack(((Instance)bean).bean, runMethod, Operation.BUSINESS, interceptors, ((Instance)bean).interceptors);
-            returnValue = interceptorStack.invoke(args);
+            if (isWebServiceCall(deploymentInfo, callMethod, args)){
+                returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);
+            } else {
+                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+                returnValue = interceptorStack.invoke(args);
+            }
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
             if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
                 /* System Exception ****************************/
 
-                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
+                txPolicy.handleSystemException(ite.getTargetException(), instance, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext, bean);
+                instanceManager.poolInstance(callContext, instance);
 
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
@@ -194,10 +203,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             if (!isApplicationException(deploymentInfo, re)) {
                 /* System Exception ****************************/
 
-                txPolicy.handleSystemException(re, bean, txContext);
+                txPolicy.handleSystemException(re, instance, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext, bean);
+                instanceManager.poolInstance(callContext, instance);
 
                 txPolicy.handleApplicationException(re, txContext);
             }
@@ -212,10 +221,58 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 //            txPolicy.handleSystemException(re, bean, txContext);
         } finally {
 
-            txPolicy.afterInvoke(bean, txContext);
+            txPolicy.afterInvoke(instance, txContext);
         }
 
         return returnValue;
+    }
+
+    private Object invokeWebService(Object[] args, CoreDeploymentInfo deploymentInfo, Method runMethod, Instance instance, Object returnValue) throws Exception {
+        if (args.length != 2){
+            throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor}.");
+        }
+
+        Object messageContext = args[0];
+
+        // This object will be used as an interceptor in the stack and will be responsible
+        // for unmarshalling the soap message parts into an argument list that will be
+        // used for the actual method invocation.
+        //
+        // We just need to make it an interceptor in the OpenEJB sense and tack it on the end
+        // of our stack.
+        Object interceptor = args[1];
+
+
+        //  Add the webservice interceptor to the list of interceptor instances
+        Map<String, Object> interceptors = new HashMap(instance.interceptors);
+        {
+            interceptors.put(interceptor.getClass().getName(), interceptor);
+        }
+
+        //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
+        List<InterceptorData> interceptorDatas = new ArrayList(deploymentInfo.getMethodInterceptors(runMethod));
+        {
+            InterceptorData providerData = new InterceptorData(interceptor.getClass());
+            ClassFinder finder = new ClassFinder(interceptor.getClass());
+            providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
+            interceptorDatas.add(providerData);
+        }
+
+        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
+
+        if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
+            returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext);
+        } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
+            returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext);
+        }
+        return returnValue;
+    }
+
+    private boolean isWebServiceCall(DeploymentInfo deployment, Method callMethod, Object[] args) {
+        Class serviceEndpointInterface = deployment.getServiceEndpointInterface();
+        // DMB: This will be a problem if the calling method is in an interface and the
+        // service-endpoint interface extends that interface.
+        return (serviceEndpointInterface != null && serviceEndpointInterface.isAssignableFrom(callMethod.getDeclaringClass()));
     }
 
     private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {

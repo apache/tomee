@@ -22,7 +22,6 @@ import org.apache.openejb.core.Operation;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -70,6 +69,18 @@ public class InterceptorStack {
     public Object invoke(Object... parameters) throws Exception {
         InvocationContext invocationContext = createInvocationContext();
         invocationContext.setParameters(parameters);
+        Object value = invocationContext.proceed();
+        return value;
+    }
+
+    public Object invoke(javax.xml.ws.handler.MessageContext messageContext) throws Exception {
+        InvocationContext invocationContext = new JaxWsInvocationContext(interceptors, beanInstance, targetMethod, messageContext);
+        Object value = invocationContext.proceed();
+        return value;
+    }
+
+    public Object invoke(javax.xml.rpc.handler.MessageContext messageContext) throws Exception {
+        InvocationContext invocationContext = new JaxRpcInvocationContext(interceptors, beanInstance, targetMethod, messageContext);
         Object value = invocationContext.proceed();
         return value;
     }

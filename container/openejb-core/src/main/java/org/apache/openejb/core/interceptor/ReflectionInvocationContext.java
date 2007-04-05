@@ -18,6 +18,7 @@
 package org.apache.openejb.core.interceptor;
 
 import javax.interceptor.InvocationContext;
+import javax.xml.ws.handler.MessageContext;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;

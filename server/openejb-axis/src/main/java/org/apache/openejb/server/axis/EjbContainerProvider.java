@@ -35,19 +35,30 @@ import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.RpcContainer;
 import org.xml.sax.SAXException;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+import javax.xml.rpc.handler.HandlerChain;
+import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.soap.SOAPFaultException;
 import javax.xml.soap.SOAPMessage;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Vector;
 
 public class EjbContainerProvider extends RPCProvider {
 
     private final DeploymentInfo ejbDeployment;
+    private final List<HandlerInfo> handlerInfos;
 
     public EjbContainerProvider(DeploymentInfo ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
+        this.handlerInfos = new ArrayList();
+    }
+
+    public EjbContainerProvider(DeploymentInfo ejbDeployment, List<HandlerInfo> handlerInfos) {
+        this.ejbDeployment = ejbDeployment;
+        this.handlerInfos = handlerInfos;
     }
 
     public void processMessage(MessageContext msgContext, SOAPEnvelope reqEnv, SOAPEnvelope resEnv, Object obj) throws Exception {
@@ -55,7 +66,7 @@ public class EjbContainerProvider extends RPCProvider {
         RPCElement body = getBody(reqEnv, msgContext);
         OperationDesc operation = getOperationDesc(msgContext, body);
 
-        AxisRpcInvocation invocation = new AxisRpcInvocation(operation, msgContext);
+        AxisRpcInterceptor interceptor = new AxisRpcInterceptor(operation, msgContext);
         SOAPMessage message = msgContext.getMessage();
 
         try {
@@ -63,12 +74,16 @@ public class EjbContainerProvider extends RPCProvider {
             msgContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION, Boolean.FALSE);
 
             RpcContainer container = (RpcContainer) ejbDeployment.getContainer();
-            Object result = container.invoke(ejbDeployment.getDeploymentID(), null, invocation.getArguments(), null, null);
-            invocation.createResult(result);
+
+            Object[] arguments = {message, interceptor};
+
+            Object result = container.invoke(ejbDeployment.getDeploymentID(), operation.getMethod(), arguments, null, null);
+
+            interceptor.createResult(result);
         } catch (InvalidateReferenceException e) {
-            invocation.createExceptionResult(e.getCause());
+            interceptor.createExceptionResult(e.getCause());
         } catch (ApplicationException e) {
-            invocation.createExceptionResult(e.getCause());
+            interceptor.createExceptionResult(e.getCause());
         } catch (Throwable throwable) {
             throw new AxisFault("Web Service EJB Invocation failed: method " + operation.getMethod(), throwable);
         }
@@ -84,15 +99,46 @@ public class EjbContainerProvider extends RPCProvider {
      *
      * @see org.apache.axis.providers.java.RPCProvider
      */
-    private class AxisRpcInvocation {
+    private class AxisRpcInterceptor {
 
-        private Map attributes = new HashMap();
         private OperationDesc operation;
         private MessageContext messageContext;
 
-        public AxisRpcInvocation(OperationDesc operation, MessageContext msgContext) throws Exception {
+        public AxisRpcInterceptor(OperationDesc operation, MessageContext msgContext) throws Exception {
             this.messageContext = msgContext;
             this.operation = operation;
+        }
+
+        @AroundInvoke
+        public Object intercept(InvocationContext context) throws Exception {
+            context.setParameters(getArguments());
+
+            HandlerChain handlerChain = new HandlerChainImpl(handlerInfos);
+            try {
+                Object invocationResult = null;
+
+                try {
+                    if (handlerChain.handleRequest(messageContext)) {
+                        invocationResult = context.proceed();
+
+                    } else {
+                        /* The Handler implementation class has the responsibility of setting
+                         * the response SOAP message in the handleRequest method and perform
+                         * additional processing in the handleResponse method.
+                         */
+                        invocationResult = null;
+                    }
+                } catch (SOAPFaultException e) {
+                    handlerChain.handleFault(messageContext);
+                    throw e;
+                }
+
+                handlerChain.handleResponse(messageContext);
+
+                return invocationResult;
+            } finally {
+                handlerChain.destroy();
+            }
         }
 
         public Object[] getArguments() {
@@ -145,10 +191,6 @@ public class EjbContainerProvider extends RPCProvider {
             }
         }
 
-        public Object getId() {
-            return null;
-        }
-
         public void createResult(Object object) {
             messageContext.setPastPivot(true);
             try {
@@ -182,4 +224,6 @@ public class EjbContainerProvider extends RPCProvider {
             return new ArrayList(); //TODO collect out an inout params in demarshalArguments
         }
     }
+
+
 }

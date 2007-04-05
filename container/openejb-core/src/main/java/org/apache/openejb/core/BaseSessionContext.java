@@ -100,7 +100,10 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         }
 
         public MessageContext getMessageContext() throws IllegalStateException {
-            throw new UnsupportedOperationException("not implemented");
+            ThreadContext threadContext = ThreadContext.getThreadContext();
+            MessageContext messageContext = threadContext.get(MessageContext.class);
+            if (messageContext == null) throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
+            return messageContext;
         }
 
         public Object getBusinessObject(Class interfce) {
