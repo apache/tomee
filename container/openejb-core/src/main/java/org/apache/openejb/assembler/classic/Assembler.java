@@ -428,6 +428,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
                 JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInfo.moduleId);
+                jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build().lookup("env");
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
                 if (clientInfo.codebase != null) {

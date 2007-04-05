@@ -311,12 +311,11 @@
       <version>1.2.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- used by dbcp -->
+    <!-- used by dbcp and openjp -->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.1</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>

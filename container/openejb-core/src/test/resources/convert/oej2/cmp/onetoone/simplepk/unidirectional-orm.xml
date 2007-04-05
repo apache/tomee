@@ -13,6 +13,7 @@
             <basic name="field2">
                 <column name="a2"/>
             </basic>
+            <one-to-one name="OneToOneB_a" mapped-by="a"/>
         </attributes>
     </entity>
     <entity name="OneToOneB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneB">
@@ -33,6 +34,9 @@
             </basic>
             <one-to-one name="a">
                 <join-column referenced-column-name="a1" name="fka1"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
             </one-to-one>
         </attributes>
     </entity>

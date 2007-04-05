@@ -137,7 +137,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (isInvalidReference) throw new NoSuchObjectException("reference is invalid");
+        if (isInvalidReference) {
+            if (isLocal) {
+                throw new EJBException("reference is invalid");
+            } else {
+                throw new NoSuchObjectException("reference is invalid");
+            }
+        }
         getDeploymentInfo(); // will throw an exception if app has been undeployed.
 
         if (method.getDeclaringClass() == Object.class) {

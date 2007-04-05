@@ -64,7 +64,7 @@ import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbRef;
 
-public class OpenEjb2CmpConversion implements DynamicDeployer {
+public class OpenEjb2Conversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             Object altDD = getOpenejbJarType(ejbModule);

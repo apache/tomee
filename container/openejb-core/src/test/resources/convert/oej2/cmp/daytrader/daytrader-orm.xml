@@ -33,13 +33,11 @@
             </basic>
             <many-to-one name="account">
                 <join-column referenced-column-name="accountID" name="account_accountID"/>
-                <cascade>
-                    <cascade-all/>
-                </cascade>
             </many-to-one>
             <many-to-one name="quote">
                 <join-column referenced-column-name="symbol" name="quote_symbol"/>
             </many-to-one>
+            <one-to-one name="Orders_holding" mapped-by="holding"/>
         </attributes>
     </entity>
     <entity name="AccountProfile" class="openejb.org.apache.geronimo.samples.daytrader.ejb.AccountProfile">
@@ -70,11 +68,7 @@
             <basic name="fullName">
                 <column name="fullName"/>
             </basic>
-            <one-to-one name="account" mapped-by="profile">
-                <cascade>
-                    <cascade-all/>
-                </cascade>
-            </one-to-one>
+            <one-to-one name="account" mapped-by="profile"/>
         </attributes>
     </entity>
     <entity name="Quote" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Quote">
@@ -126,7 +120,12 @@
             <basic name="change">
                 <column name="change1"/>
             </basic>
-            <one-to-many name="orders" mapped-by="quote"/>
+            <one-to-many name="Holding_quote" mapped-by="quote"/>
+            <one-to-many name="orders" mapped-by="quote">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
         </attributes>
     </entity>
     <entity name="KeyGen" class="openejb.org.apache.geronimo.samples.daytrader.ejb.KeyGen">
@@ -184,10 +183,21 @@
             <basic name="loginCount">
                 <column name="loginCount"/>
             </basic>
-            <one-to-many name="orders" mapped-by="account"/>
-            <one-to-many name="holdings" mapped-by="account"/>
+            <one-to-many name="orders" mapped-by="account">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="holdings" mapped-by="account">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
             <one-to-one name="profile">
                 <join-column referenced-column-name="userID" name="profile_userID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
             </one-to-one>
         </attributes>
     </entity>
@@ -236,18 +246,15 @@
             </basic>
             <many-to-one name="account">
                 <join-column referenced-column-name="accountID" name="account_accountID"/>
-                <cascade>
-                    <cascade-all/>
-                </cascade>
             </many-to-one>
             <many-to-one name="quote">
                 <join-column referenced-column-name="symbol" name="quote_symbol"/>
-                <cascade>
-                    <cascade-all/>
-                </cascade>
             </many-to-one>
             <one-to-one name="holding">
                 <join-column referenced-column-name="holdingID" name="holding_holdingID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
             </one-to-one>
         </attributes>
     </entity>

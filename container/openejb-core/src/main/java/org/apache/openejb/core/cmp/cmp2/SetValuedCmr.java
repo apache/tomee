@@ -19,8 +19,12 @@ package org.apache.openejb.core.cmp.cmp2;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
+import javax.ejb.EJBException;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
@@ -37,7 +41,6 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
 
     public SetValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
-        if (sourceProperty == null) throw new NullPointerException("sourceProperty is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
 
         this.source = source;
@@ -50,6 +53,11 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     }
 
     public Set<Proxy> get(Set<Bean> others) {
+        if (sourceProperty == null) {
+            throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
+                    "this entity does not have a cmr field for the relationship");
+        }
+
         if (others == null) {
             throw new NullPointerException("others is null");
         }
@@ -74,7 +82,12 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         return cmrSet;
     }
 
-    public void set(Set<Bean> relatedBeans, Set<Proxy> newProxies) {
+    public void set(Set<Bean> relatedBeans, Collection newProxies) {
+        if (sourceProperty == null) {
+            throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
+                    "this entity does not have a cmr field for the relationship");
+        }
+
         // null can not be set into a cmr field
         // EJB 3.0 Section 8.3.8 "Collections Managed by the Container" bullet 4 
         if (newProxies == null) {
@@ -91,7 +104,8 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
         relatedBeans.clear();
 
-        for (Proxy newProxy : newProxies) {
+        for (Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext();) {
+            Proxy newProxy = (Proxy) iterator.next();
             Bean newBean = Cmp2Util.<Bean>getEntityBean(newProxy);
 
             if (newProxy != null) {

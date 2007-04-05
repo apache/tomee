@@ -614,8 +614,8 @@
       <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-persistence-jdbc</artifactId>
-        <!--version>0.9.7-incubating-SNAPSHOT</version-->
-        <version>0.9.6-incubating</version>
+        <version>0.9.7-incubating-SNAPSHOT</version>
+        <!--version>0.9.6-incubating</version-->
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>

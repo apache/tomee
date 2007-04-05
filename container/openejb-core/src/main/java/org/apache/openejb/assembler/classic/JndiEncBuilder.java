@@ -73,6 +73,8 @@ public class JndiEncBuilder {
     private final Map<String, EntityManagerFactory> absoluteFactories = new TreeMap<String,EntityManagerFactory>();
     private final Map<String, SortedSet<String>> factoryPaths = new TreeMap<String,SortedSet<String>>();
 
+    private boolean useCrossClassLoaderRef = true;
+
     public JndiEncBuilder(JndiEncInfo jndiEnc, String moduleId) throws OpenEJBException {
         this(jndiEnc, null, null, null, moduleId);
     }
@@ -112,6 +114,14 @@ public class JndiEncBuilder {
         Map<String, EntityManagerFactory> factories = allFactories.get(moduleId);
         if (factories == null) factories = new HashMap<String, EntityManagerFactory>();
         localFactories = factories;
+    }
+
+    public boolean isUseCrossClassLoaderRef() {
+        return useCrossClassLoaderRef;
+    }
+
+    public void setUseCrossClassLoaderRef(boolean useCrossClassLoaderRef) {
+        this.useCrossClassLoaderRef = useCrossClassLoaderRef;
     }
 
     public Context build() throws OpenEJBException {
@@ -179,7 +189,7 @@ public class JndiEncBuilder {
                 // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                 if (referenceInfo.homeType == null){
                     String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessRemote";
-                    if (referenceInfo.externalReference) {
+                    if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                         reference = new CrossClassLoaderJndiReference(jndiName);
                     } else {
                         reference = new IntraVmJndiReference(jndiName);
@@ -187,7 +197,7 @@ public class JndiEncBuilder {
                 } else {
                     // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
                     String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId;
-                    if (referenceInfo.externalReference) {
+                    if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                         reference = new CrossClassLoaderJndiReference(jndiName);
                     } else {
                         reference = new IntraVmJndiReference(jndiName);

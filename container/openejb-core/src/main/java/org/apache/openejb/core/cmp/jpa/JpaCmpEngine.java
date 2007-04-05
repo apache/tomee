@@ -30,6 +30,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.ejb.EJBLocalObject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -44,13 +45,13 @@ import org.apache.openejb.core.cmp.ComplexKeyGenerator;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
-
     public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
 
     private final CmpCallback cmpCallback;
@@ -214,20 +215,17 @@ public class JpaCmpEngine implements CmpEngine {
         }
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
-                if (arg instanceof EJBObject) {
-                    // todo replace EjbObject arg with actual bean instance from EjbObject
-//                    try {
-//                        Object pk = ((EJBObject) arg).getPrimaryKey();
-//                        Object bean = entityManager.find(beanClass, pk);
-//                        arg = bean;
-//                    } catch (RemoteException re) {
-//                        throw new FinderException("Could not extract primary key from EJBObject reference; argument number " + i);
-//                    }
-                }
+            // ejb proxies need to be swapped out for real instance classes
+            if (arg instanceof EJBObject) {
+                arg = Cmp2Util.getEntityBean(((EJBObject) arg));
+            }
+            if (arg instanceof EJBLocalObject) {
+                arg = Cmp2Util.getEntityBean(((EJBLocalObject) arg));
+            }
             query.setParameter(i + 1, arg);
         }
 
-        // todo results should not be iterated over, but should insted
+        // todo results should not be iterated over, but should instead
         // perform all work in a wrapper list on demand by the application code
         List results = query.getResultList();
         for (Object value : results) {

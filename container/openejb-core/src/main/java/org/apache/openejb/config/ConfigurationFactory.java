@@ -129,7 +129,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 //        chain.add(new DebuggableVmHackery());
 
         chain.add(new CmpJpaConversion());
-        chain.add(new OpenEjb2CmpConversion());
+        chain.add(new OpenEjb2Conversion());
         chain.add(new SunConversion());
 
         if (System.getProperty("duct tape") != null){

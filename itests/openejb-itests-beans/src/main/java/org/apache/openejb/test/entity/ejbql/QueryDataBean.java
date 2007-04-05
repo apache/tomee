@@ -53,7 +53,7 @@ public abstract class QueryDataBean implements EntityBean {
 
     public Integer ejbCreate(int value) {
         setId(value);
-        setBooleanField(value % 2 != 0);
+        setBooleanField(value == 2);
         setCharField((char) ('0' + value));
         setByteField((byte) value);
         setShortField((short) value);

@@ -33,6 +33,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -52,6 +53,8 @@ import org.apache.openejb.jee.jpa.SecondaryTable;
 import org.apache.openejb.jee.jpa.Table;
 import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.EjbLink;
 import org.apache.openejb.jee.sun.Cmp;
 import org.apache.openejb.jee.sun.CmpFieldMapping;
 import org.apache.openejb.jee.sun.CmrFieldMapping;
@@ -65,6 +68,8 @@ import org.apache.openejb.jee.sun.OneOneFinders;
 import org.apache.openejb.jee.sun.SunCmpMapping;
 import org.apache.openejb.jee.sun.SunCmpMappings;
 import org.apache.openejb.jee.sun.SunEjbJar;
+import org.apache.openejb.jee.sun.EjbRef;
+import org.apache.openejb.jee.sun.SunApplicationClient;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -77,7 +82,32 @@ public class SunConversion implements DynamicDeployer {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             convertModule(ejbModule, appModule.getCmpMappings());
         }
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            convertModule(clientModule);
+        }
         return appModule;
+    }
+
+    private SunApplicationClient getSunApplicationClient(ClientModule clientModule) {
+        Object altDD = clientModule.getAltDDs().get("sun-application-client.xml");
+        if (altDD instanceof String) {
+            try {
+                altDD = JaxbSun.unmarshal(SunApplicationClient.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+            } catch (Exception e) {
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof URL) {
+            try {
+                altDD = JaxbSun.unmarshal(SunApplicationClient.class, ((URL)altDD).openStream());
+            } catch (Exception e) {
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof SunApplicationClient) {
+            return (SunApplicationClient) altDD;
+        }
+        return null;
     }
 
     private SunEjbJar getSunEjbJar(EjbModule ejbModule) {
@@ -125,21 +155,93 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
+    public void convertModule(ClientModule clientModule) {
+        if (clientModule == null) {
+            return;
+        }
+
+        ApplicationClient applicationClient = clientModule.getApplicationClient();
+        if (applicationClient == null) {
+            return;
+        }
+        SunApplicationClient sunApplicationClient = getSunApplicationClient(clientModule);
+        if (sunApplicationClient == null) {
+            return;
+        }
+
+        // map ejb-refs
+        Map<String,org.apache.openejb.jee.EjbRef> refMap = new TreeMap<String,org.apache.openejb.jee.EjbRef>();
+        for (org.apache.openejb.jee.EjbRef ejbRef : applicationClient.getEjbRef()) {
+            refMap.put(ejbRef.getEjbRefName(), ejbRef);
+        }
+
+        // map ejb-ref jndi name declaration to deploymentId
+        for (EjbRef ref : sunApplicationClient.getEjbRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getEjbRefName();
+                org.apache.openejb.jee.EjbRef ejbRef = refMap.get(refName);
+                if (ejbRef == null) {
+                    ejbRef = new org.apache.openejb.jee.EjbRef();
+                    ejbRef.setEjbRefName(refName);
+                    refMap.put(refName, ejbRef);
+                    applicationClient.getEjbRef().add(ejbRef);
+                }
+                ejbRef.setMappedName(ref.getJndiName());
+            }
+        }
+    }
+
     public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
-       Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
+        Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
         for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new SunConversion.EntityData(entity));
         }
 
-
         // merge data from sun-ejb-jar.xml file
-        mergeEntityMappings(entities, ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), getSunEjbJar(ejbModule));
+        SunEjbJar sunEjbJar = getSunEjbJar(ejbModule);
+        mergeEjbConfig(ejbModule.getOpenejbJar(), sunEjbJar);
+        mergeEntityMappings(entities, ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), sunEjbJar);
 
         // merge data from sun-cmp-mappings.xml file
         SunCmpMappings sunCmpMappings = getSunCmpMappings(ejbModule);
         if (sunCmpMappings != null) {
             for (SunCmpMapping sunCmpMapping : sunCmpMappings.getSunCmpMapping()) {
                 mergeEntityMappings(entities, ejbModule, entityMappings, sunCmpMapping);
+            }
+        }
+    }
+
+    private void mergeEjbConfig(OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
+        if (openejbJar == null) return;
+        if (sunEjbJar == null) return;
+        if (sunEjbJar.getEnterpriseBeans() == null) return;
+
+        for (Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
+            EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
+            if (deployment == null) {
+                // warn no matching deployment
+                continue;
+            }
+
+            // ejb jndi name is the deploymentId
+            if (ejb.getJndiName() != null) {
+                deployment.setDeploymentId(ejb.getJndiName());
+            }
+
+            // map ejb-ref jndi name declaration to deploymentId
+            Map<String, EjbLink> linksMap = deployment.getEjbLinksMap();
+            for (EjbRef ref : ejb.getEjbRef()) {
+                if (ref.getJndiName() != null) {
+                    String refName = ref.getEjbRefName();
+                    EjbLink link = linksMap.get(refName);
+                    if (link == null) {
+                        link = new EjbLink();
+                        link.setEjbRefName(refName);
+                        linksMap.put(refName, link);
+                        deployment.getEjbLink().add(link);
+                    }
+                    link.setDeployentId(ref.getJndiName());
+                }
             }
         }
     }
@@ -222,8 +324,8 @@ public class SunConversion implements DynamicDeployer {
                 SecondaryTable secondaryTable = new SecondaryTable();
                 secondaryTable.setName(sunSecondaryTable.getTableName());
                 for (ColumnPair columnPair : sunSecondaryTable.getColumnPair()) {
-                    SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0));
-                    SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1));
+                    SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
+                    SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                     // if user specified in reverse order, swap
                     if (localColumnName.table != null) {
@@ -251,7 +353,7 @@ public class SunConversion implements DynamicDeployer {
                 boolean readOnly = cmpFieldMapping.getReadOnly() != null;
 
                 for (ColumnName columnName : cmpFieldMapping.getColumnName()) {
-                    SunColumnName sunColumnName = new SunColumnName(columnName);
+                    SunColumnName sunColumnName = new SunColumnName(columnName, table.getName());
                     Column column = new Column();
                     column.setTable(sunColumnName.table);
                     column.setName(sunColumnName.column);
@@ -276,8 +378,8 @@ public class SunConversion implements DynamicDeployer {
 
                 if (field instanceof OneToOne) {
                     for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
-                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0));
-                        SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1));
+                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
+                        SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
@@ -290,39 +392,23 @@ public class SunConversion implements DynamicDeployer {
                         if (isFk) {
                             // Make sure that the field with the FK is marked as the owning field
                             field.setMappedBy(null);
-                            if (field.getRelatedField() != null) {
-                                field.getRelatedField().setMappedBy(field.getName());
-                            }
+                            field.getRelatedField().setMappedBy(field.getName());
 
                             JoinColumn joinColumn = new JoinColumn();
                             joinColumn.setName(localColumnName.column);
                             joinColumn.setReferencedColumnName(referencedColumnName.column);
                             field.getJoinColumn().add(joinColumn);
-                        } else {
-                            // Make sure that the field with the FK is marked as the owning field
-                            if (field.getRelatedField() != null) {
-                                field.getRelatedField().setMappedBy(null);
-                                // fk declaration will be on related field
-                                continue;
-                            }
-
-                            JoinColumn joinColumn = new JoinColumn();
-                            // for reverse-mapping the join column name is the other (fk) column
-                            joinColumn.setName(referencedColumnName.column);
-                            // and the referenced column is the local (pk) column
-                            joinColumn.setReferencedColumnName(localColumnName.column);
-                            field.getJoinColumn().add(joinColumn);
                         }
                     }
                 } else if (field instanceof OneToMany) {
                     // Bi-directional OneToMany do not have field mappings
-                    if (field.getRelatedField() != null) {
+                    if (!field.getRelatedField().isSyntheticField()) {
                         continue;
                     }
 
                     for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
-                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0));
-                        SunColumnName otherColumnName = new SunColumnName(columnPair.getColumnName().get(1));
+                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
+                        SunColumnName otherColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
@@ -336,12 +422,12 @@ public class SunConversion implements DynamicDeployer {
                         joinColumn.setName(otherColumnName.column);
                         // and the referenced column is the local (pk) column
                         joinColumn.setReferencedColumnName(localColumnName.column);
-                        field.getJoinColumn().add(joinColumn);
+                        field.getRelatedField().getJoinColumn().add(joinColumn);
                     }
                 } else if (field instanceof ManyToOne) {
                     for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
-                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0));
-                        SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1));
+                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
+                        SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
@@ -362,8 +448,8 @@ public class SunConversion implements DynamicDeployer {
                     JoinTable joinTable = new JoinTable();
                     field.setJoinTable(joinTable);
                     for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
-                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0));
-                        SunColumnName joinTableColumnName = new SunColumnName(columnPair.getColumnName().get(1));
+                        SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
+                        SunColumnName joinTableColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         if (localColumnName.table == null || joinTableColumnName.table == null) {
                             // if user specified in reverse order, swap
@@ -549,14 +635,19 @@ public class SunConversion implements DynamicDeployer {
         private final String table;
         private final String column;
 
-        public SunColumnName(ColumnName columnName) {
-            this(columnName.getvalue());
+        public SunColumnName(ColumnName columnName, String primaryTableName) {
+            this(columnName.getvalue(), primaryTableName);
         }
 
-        public SunColumnName(String fullName) {
+        public SunColumnName(String fullName, String primaryTableName) {
             int dot = fullName.indexOf('.');
             if (dot > 0) {
-                table = fullName.substring(0, dot);
+                String t = fullName.substring(0, dot);
+                if (primaryTableName.equals(t)) {
+                    table = null;
+                } else {
+                    table = t;
+                }
                 column = fullName.substring(dot + 1);
             } else {
                 table = null;

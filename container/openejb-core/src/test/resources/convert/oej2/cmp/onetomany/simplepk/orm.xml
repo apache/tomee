@@ -13,7 +13,11 @@
             <basic name="field2">
                 <column name="a2"/>
             </basic>
-            <one-to-many name="b" mapped-by="a"/>
+            <one-to-many name="b" mapped-by="a">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
         </attributes>
     </entity>
     <entity name="onetomanyB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyB">
@@ -34,9 +38,6 @@
             </basic>
             <many-to-one name="a">
                 <join-column referenced-column-name="a1" name="fka1"/>
-                <cascade>
-                    <cascade-all/>
-                </cascade>
             </many-to-one>
         </attributes>
     </entity>

@@ -448,7 +448,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE id=" + platformId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE Platforms_id=" + platformId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -479,7 +479,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE id = " + platformId + " AND Games_id = " + gameId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE Platforms_id = " + platformId + " AND Games_id = " + gameId);
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         rs.close();

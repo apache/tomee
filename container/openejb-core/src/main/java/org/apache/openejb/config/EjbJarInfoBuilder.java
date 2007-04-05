@@ -82,6 +82,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
@@ -191,14 +192,14 @@ public class EjbJarInfoBuilder {
             EjbRelationshipRole right = iterator.next();
 
             // left role info
-            CmrFieldInfo leftCmrFieldInfo = initRelationshipRole(left, infos);
-            CmrFieldInfo rightCmrFieldInfo = initRelationshipRole(right, infos);
+            CmrFieldInfo leftCmrFieldInfo = initRelationshipRole(left, right, infos);
+            CmrFieldInfo rightCmrFieldInfo = initRelationshipRole(right, left, infos);
             leftCmrFieldInfo.mappedBy = rightCmrFieldInfo;
             rightCmrFieldInfo.mappedBy = leftCmrFieldInfo;
         }
     }
 
-    private CmrFieldInfo initRelationshipRole(EjbRelationshipRole role, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
+    private CmrFieldInfo initRelationshipRole(EjbRelationshipRole role, EjbRelationshipRole relatedRole, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
         CmrFieldInfo cmrFieldInfo = new CmrFieldInfo();
 
         // find the entityBeanInfo info for this role
@@ -216,6 +217,8 @@ public class EjbJarInfoBuilder {
         // RoleName: this may be null
         cmrFieldInfo.roleName = role.getEjbRelationshipRoleName();
 
+        cmrFieldInfo.synthetic = role.getCmrField() == null;
+
         // CmrFieldName: is null for uni-directional relationships
         if (role.getCmrField() != null) {
             cmrFieldInfo.fieldName = role.getCmrField().getCmrFieldName();
@@ -223,6 +226,22 @@ public class EjbJarInfoBuilder {
             if (role.getCmrField().getCmrFieldType() != null) {
                 cmrFieldInfo.fieldType = role.getCmrField().getCmrFieldType().toString();
             }
+        } else {
+            String relatedEjbName = relatedRole.getRelationshipRoleSource().getEjbName();
+            EnterpriseBeanInfo relatedEjb = infos.get(relatedEjbName);
+            if (relatedEjb == null) {
+                throw new OpenEJBException("Relation role source ejb not found " + relatedEjbName);
+            }
+            if (!(relatedEjb instanceof EntityBeanInfo)) {
+                throw new OpenEJBException("Relation role source ejb is not an entity bean " + relatedEjbName);
+            }
+            EntityBeanInfo relatedEntity = (EntityBeanInfo) relatedEjb;
+
+            relatedRole.getRelationshipRoleSource();
+            cmrFieldInfo.fieldName = relatedEntity.abstractSchemaName + "_" + relatedRole.getCmrField().getCmrFieldName();
+            if (relatedRole.getMultiplicity() == Multiplicity.MANY) {
+                cmrFieldInfo.fieldType = Collection.class.getName();
+            }            
         }
 
         // CascadeDelete

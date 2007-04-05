@@ -16,21 +16,25 @@
  */
 package org.apache.openejb.util;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 public class Enumerator implements java.io.Serializable, java.util.Enumeration {
+    private static final long serialVersionUID = 8382575322402414896L;
+    private final List list;
+    private int index;
 
-    private java.util.Vector _list;
-    private int _index;
-
-    public Enumerator(java.util.Vector list) {
-        _list = (java.util.Vector) list.clone();
-        _index = 0;
+    public Enumerator(List list) {
+        this.list = list;
+        index = 0;
     }
 
     public boolean hasMoreElements() {
-        return (_index < _list.size());
+        return (index < list.size());
     }
 
     public Object nextElement() {
-        return _list.elementAt(_index++);
+        if (!hasMoreElements()) throw new NoSuchElementException();
+        return list.get(index++);
     }
 }

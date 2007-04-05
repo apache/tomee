@@ -27,9 +27,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -55,7 +54,6 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.entity.EntityContext;
-import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -64,7 +62,6 @@ import org.apache.openejb.core.transaction.TxRequired;
 import org.apache.openejb.core.transaction.TxRequiresNew;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Enumerator;
-import org.apache.openejb.util.proxy.ProxyManager;
 
 /**
  * @org.apache.xbean.XBean element="cmpContainer"
@@ -678,24 +675,24 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             Class<?> callingClass = callMethod.getDeclaringClass();
             Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
-            /*
-            The following block of code is responsible for returning ProxyInfo object(s) for each
-            matching entity bean found by the query.  If its a multi-value find operation a Vector
-            of ProxyInfo objects will be returned. If its a single-value find operation then a
-            single ProxyInfo object is returned.
-            */
+            // The following block of code is responsible for returning ProxyInfo object(s) for each
+            // matching entity bean found by the query.  If its a multi-value find operation a Vector
+            // of ProxyInfo objects will be returned. If its a single-value find operation then a
+            // single ProxyInfo object is returned.
             if (callMethod.getReturnType() == Collection.class || callMethod.getReturnType() == Enumeration.class) {
-                Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
+                List<ProxyInfo> proxies = new ArrayList<ProxyInfo>();
                 for (Object value : results) {
                     EntityBean bean = (EntityBean) value;
 
-                    /*
-                    The KeyGenerator creates a new primary key and populates its fields with the
-                    primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
-                    */
-                    Object primaryKey = kg.getPrimaryKey(bean);
-                    /*   create a new ProxyInfo based on the deployment info and primary key and add it to the vector */
-                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+                    if (value == null) {
+                        proxies.add(null);
+                    } else {
+                        // get the primary key
+                        Object primaryKey = kg.getPrimaryKey(bean);
+
+                        // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
+                        proxies.add(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+                    }
                 }
                 if (callMethod.getReturnType() == Enumeration.class) {
                     return new Enumerator(proxies);
@@ -703,12 +700,18 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                     return proxies;
                 }
             } else {
-                if (results.size() != 1) throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
+                if (results.size() != 1) {
+                    throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
+                }
 
                 // create a new ProxyInfo based on the deployment info and primary key
                 EntityBean bean = (EntityBean) results.get(0);
-                Object primaryKey = kg.getPrimaryKey(bean);
-                return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+                if (bean == null) {
+                    return null;
+                } else {
+                    Object primaryKey = kg.getPrimaryKey(bean);
+                    return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+                }
             }
         } catch (javax.ejb.FinderException fe) {
             txPolicy.handleApplicationException(fe, txContext);
@@ -725,94 +728,67 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         String signature = deploymentInfo.getAbstractSchemaName() + "." + methodSignature;
 
         try {
+            // exectue the select query
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
-            List<Object> results = cmpEngine.queryBeans(deploymentInfo, signature, args);
+            Collection<Object> results = cmpEngine.queryBeans(deploymentInfo, signature, args);
 
-            Iterator<Object> iterator = results.iterator();
-            if (iterator.hasNext()) {
-                Class<? extends Object> type = iterator.next().getClass();
-                CoreDeploymentInfo resultInfo = (CoreDeploymentInfo) deploymentsByClass.get(type);
-                if (resultInfo != null) {
-                    //
-                    // Note we assume all results are the same java type, which won't be true for union queries
-                    //
-                    KeyGenerator kg = resultInfo.getKeyGenerator();
+            //
+            // process the results
+            //
 
-                    // get the proxy interface and home proxy handler
-                    Class proxyInterface;
-                    EntityEjbHomeHandler handler;
-                    if (deploymentInfo.isRemoteQueryResults(methodSignature)) {
-                        EJBHome homeProxy = resultInfo.getEJBHome();
-                        handler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
-                        proxyInterface = resultInfo.getRemoteInterface();
-                    } else {
-                        EJBLocalHome homeProxy = resultInfo.getEJBLocalHome();
-                        handler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
-                        proxyInterface = resultInfo.getLocalInterface();
-                    }
+            // If we need to return a set...
+            Collection<Object> proxies;
+            if (returnType.equals("java.util.Set")) {
+                // we collect values into a LinkedHashSet to preserve ordering
+                proxies = new LinkedHashSet<Object>();
+            } else {
+                // otherwise use a simple array list
+                proxies = new ArrayList<Object>();
+            }
 
-                    List<Object> proxies = new ArrayList<Object>();
-                    for (Object value : results) {
-                        EntityBean bean = (EntityBean) value;
-
-                        // The KeyGenerator creates a new primary key and populates its fields with the
-                        // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
-                        Object primaryKey = kg.getPrimaryKey(bean);
-
-                        // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
-                        ProxyInfo proxyInfo = new ProxyInfo(resultInfo, primaryKey, proxyInterface, this);
-
-                        // create the proxy
-                        Object proxy = handler.createProxy(proxyInfo);
-                        proxies.add(proxy);
-                    }
-                    results = proxies;
+            boolean isSingleValued = !returnType.equals("java.util.Collection") && !returnType.equals("java.util.Set");
+            ProxyFactory proxyFactory = null;
+            for (Object value : results) {
+                // if this is a single valued query and we already have results, throw FinderException
+                if (isSingleValued && !proxies.isEmpty()) {
+                    throw new FinderException("The single valued query " + methodSignature + "returned more than one item");
                 }
+
+                // if we have an EntityBean, we need to proxy it
+                if (value instanceof EntityBean) {
+                    EntityBean entityBean = (EntityBean) value;
+                    if (proxyFactory == null) {
+                        CoreDeploymentInfo resultInfo = (CoreDeploymentInfo) deploymentsByClass.get(entityBean.getClass());
+                        if (resultInfo != null) {
+                            proxyFactory = new ProxyFactory(resultInfo);
+                        }
+                    }
+
+                    if (proxyFactory != null) {
+                        if (deploymentInfo.isRemoteQueryResults(methodSignature)) {
+                            value = proxyFactory.createRemoteProxy(entityBean, this);
+                        } else {
+                            value = proxyFactory.createLocalProxy(entityBean, this);
+                        }
+                    }
+                }
+                proxies.add(value);
             }
-//            KeyGenerator kg = deploymentInfo.getKeyGenerator();
-//
-//            Class<?> callingClass = callMethod.getDeclaringClass();
-//            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
-//
-//            /*
-//            The following block of code is responsible for returning ProxyInfo object(s) for each
-//            matching entity bean found by the query.  If its a multi-value find operation a Vector
-//            of ProxyInfo objects will be returned. If its a single-value find operation then a
-//            single ProxyInfo object is returned.
-//            */
-//            if (callMethod.getReturnType() == Collection.class || callMethod.getReturnType() == Enumeration.class) {
-//                Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
-//                for (Object value : results) {
-//                    EntityBean bean = (EntityBean) value;
-//
-//                    /*
-//                    The KeyGenerator creates a new primary key and populates its fields with the
-//                    primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
-//                    */
-//                    Object primaryKey = kg.getPrimaryKey(bean);
-//                    /*   create a new ProxyInfo based on the deployment info and primary key and add it to the vector */
-//                    proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
-//                }
-//                if (callMethod.getReturnType() == Enumeration.class) {
-//                    return new Enumerator(proxies);
-//                } else {
-//                    return proxies;
-//                }
-//            } else {
-//                if (results.size() != 1) throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " + deploymentInfo.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
-//
-//                // create a new ProxyInfo based on the deployment info and primary key
-//                EntityBean bean = (EntityBean) results.get(0);
-//                Object primaryKey = kg.getPrimaryKey(bean);
-//                return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
-//            }
-            if (returnType.equals("java.util.Collection") || returnType.equals("java.util.Set")) {
-                return results;
+
+            // if not single valued, return the set
+            if (!isSingleValued) {
+                return proxies;
             }
-            return results.iterator().next();
-        } catch (FinderException e) {
-            throw e;
-        } catch (RuntimeException e) {// handle reflection exception
+
+            // single valued query that returned no rows, is an exception
+            if (proxies.isEmpty()) {
+                throw new ObjectNotFoundException();
+            }
+
+            // return the single item.... multpile return values was handled in for loop above
+            Object returnValue = proxies.iterator().next();
+            return returnValue;
+        } catch (RuntimeException e) {
             throw new EJBException(e);
         }
     }

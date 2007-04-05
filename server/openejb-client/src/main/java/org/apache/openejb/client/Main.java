@@ -17,7 +17,6 @@
 package org.apache.openejb.client;
 
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;

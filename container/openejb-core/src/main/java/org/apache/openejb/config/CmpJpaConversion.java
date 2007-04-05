@@ -107,7 +107,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 persistenceUnit.setNonJtaDataSource("java:openejb/Connector/Default Unmanaged JDBC Database");
                 // todo paramterize this
                 Properties properties = new Properties();
-                 properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+                properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
                 // properties.setProperty("openjpa.DataCache", "false");
                 // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
                 persistenceUnit.setProperties(properties);
@@ -255,7 +255,6 @@ public class CmpJpaConversion implements DynamicDeployer {
                 // get left entity
                 EjbRelationshipRole leftRole = roles.get(0);
                 RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
-                // todo simplify role source using a wrapper
                 String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
                 Entity leftEntity = entitiesByName.get(leftEjbName);
 
@@ -281,14 +280,22 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
 
                 String leftFieldName = null;
+                boolean leftSynthetic = false;
                 if (leftRole.getCmrField() != null) {
                     leftFieldName = leftRole.getCmrField().getCmrFieldName();
+                } else {
+                    leftFieldName = rightEntity.getName() + "_" + rightRole.getCmrField().getCmrFieldName();
+                    leftSynthetic = true;
                 }
                 boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
 
                 String rightFieldName = null;
+                boolean rightSynthetic = false;
                 if (rightRole.getCmrField() != null) {
                     rightFieldName = rightRole.getCmrField().getCmrFieldName();
+                } else {
+                    rightFieldName = leftEntity.getName() + "_" + leftRole.getCmrField().getCmrFieldName();
+                    rightSynthetic = true;
                 }
                 boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
 
@@ -299,31 +306,24 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                     // left
                     OneToOne leftOneToOne = null;
-                    if (leftFieldName != null) {
-                        leftOneToOne = new OneToOne();
-                        leftOneToOne.setName(leftFieldName);
-                        setCascade(leftRole, leftOneToOne);
-                        leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
-                    }
+                    leftOneToOne = new OneToOne();
+                    leftOneToOne.setName(leftFieldName);
+                    leftOneToOne.setSyntheticField(leftSynthetic);
+                    setCascade(rightRole, leftOneToOne);
+                    leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
 
                     // right
                     OneToOne rightOneToOne = null;
-                    if (rightFieldName != null) {
-                        rightOneToOne = new OneToOne();
-                        rightOneToOne.setName(rightFieldName);
-                        // mapped by only required for bi-directional
-                        if (leftFieldName != null) {
-                            rightOneToOne.setMappedBy(leftFieldName);
-                        }
-                        setCascade(rightRole, rightOneToOne);
-                        rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
-                    }
+                    rightOneToOne = new OneToOne();
+                    rightOneToOne.setName(rightFieldName);
+                    rightOneToOne.setSyntheticField(rightSynthetic);
+                    rightOneToOne.setMappedBy(leftFieldName);
+                    setCascade(leftRole, rightOneToOne);
+                    rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
 
                     // link
-                    if (leftFieldName != null && rightFieldName != null) {
-                        leftOneToOne.setRelatedField(rightOneToOne);
-                        rightOneToOne.setRelatedField(leftOneToOne);
-                    }
+                    leftOneToOne.setRelatedField(rightOneToOne);
+                    rightOneToOne.setRelatedField(leftOneToOne);
                 } else if (leftIsOne && !rightIsOne) {
                     //
                     // one-to-many
@@ -331,31 +331,24 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                     // left
                     OneToMany leftOneToMany = null;
-                    if (leftFieldName != null) {
-                        leftOneToMany = new OneToMany();
-                        leftOneToMany.setName(leftFieldName);
-                        // mapped by only required for bi-directional
-                        if (rightFieldName != null) {
-                            leftOneToMany.setMappedBy(rightFieldName);
-                        }
-                        setCascade(leftRole, leftOneToMany);
-                        leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
-                    }
+                    leftOneToMany = new OneToMany();
+                    leftOneToMany.setName(leftFieldName);
+                    leftOneToMany.setSyntheticField(leftSynthetic);
+                    leftOneToMany.setMappedBy(rightFieldName);
+                    setCascade(rightRole, leftOneToMany);
+                    leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
 
                     // right
                     ManyToOne rightManyToOne = null;
-                    if (rightFieldName != null) {
-                        rightManyToOne = new ManyToOne();
-                        rightManyToOne.setName(rightFieldName);
-                        setCascade(rightRole, rightManyToOne);
-                        rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
-                    }
+                    rightManyToOne = new ManyToOne();
+                    rightManyToOne.setName(rightFieldName);
+                    rightManyToOne.setSyntheticField(rightSynthetic);
+                    setCascade(leftRole, rightManyToOne);
+                    rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
 
                     // link
-                    if (leftFieldName != null && rightFieldName != null) {
-                        leftOneToMany.setRelatedField(rightManyToOne);
-                        rightManyToOne.setRelatedField(leftOneToMany);
-                    }
+                    leftOneToMany.setRelatedField(rightManyToOne);
+                    rightManyToOne.setRelatedField(leftOneToMany);
                 } else if (!leftIsOne && rightIsOne) {
                     //
                     // many-to-one
@@ -363,31 +356,24 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                     // left
                     ManyToOne leftManyToOne = null;
-                    if (leftFieldName != null) {
-                        leftManyToOne = new ManyToOne();
-                        leftManyToOne.setName(leftFieldName);
-                        setCascade(leftRole, leftManyToOne);
-                        leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
-                    }
+                    leftManyToOne = new ManyToOne();
+                    leftManyToOne.setName(leftFieldName);
+                    leftManyToOne.setSyntheticField(leftSynthetic);
+                    setCascade(rightRole, leftManyToOne);
+                    leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
 
                     // right
                     OneToMany rightOneToMany = null;
-                    if (rightFieldName != null) {
-                        rightOneToMany = new OneToMany();
-                        rightOneToMany.setName(rightFieldName);
-                        // mapped by only required for bi-directional
-                        if (leftFieldName != null) {
-                            rightOneToMany.setMappedBy(leftFieldName);
-                        }
-                        setCascade(rightRole, rightOneToMany);
-                        rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
-                    }
+                    rightOneToMany = new OneToMany();
+                    rightOneToMany.setName(rightFieldName);
+                    rightOneToMany.setSyntheticField(rightSynthetic);
+                    rightOneToMany.setMappedBy(leftFieldName);
+                    setCascade(leftRole, rightOneToMany);
+                    rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
 
                     // link
-                    if (leftFieldName != null && rightFieldName != null) {
-                        leftManyToOne.setRelatedField(rightOneToMany);
-                        rightOneToMany.setRelatedField(leftManyToOne);
-                    }
+                    leftManyToOne.setRelatedField(rightOneToMany);
+                    rightOneToMany.setRelatedField(leftManyToOne);
                 } else if (!leftIsOne && !rightIsOne) {
                     //
                     // many-to-many
@@ -395,31 +381,24 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                     // left
                     ManyToMany leftManyToMany = null;
-                    if (leftFieldName != null) {
-                        leftManyToMany = new ManyToMany();
-                        leftManyToMany.setName(leftFieldName);
-                        setCascade(leftRole, leftManyToMany);
-                        leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
-                    }
+                    leftManyToMany = new ManyToMany();
+                    leftManyToMany.setName(leftFieldName);
+                    leftManyToMany.setSyntheticField(leftSynthetic);
+                    setCascade(rightRole, leftManyToMany);
+                    leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
 
                     // right
                     ManyToMany rightManyToMany = null;
-                    if (rightFieldName != null) {
-                        rightManyToMany = new ManyToMany();
-                        rightManyToMany.setName(rightFieldName);
-                        // mapped by only required for bi-directional
-                        if (leftFieldName != null) {
-                            rightManyToMany.setMappedBy(leftFieldName);
-                        }
-                        setCascade(rightRole, rightManyToMany);
-                        rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
-                    }
+                    rightManyToMany = new ManyToMany();
+                    rightManyToMany.setName(rightFieldName);
+                    rightManyToMany.setSyntheticField(rightSynthetic);
+                    rightManyToMany.setMappedBy(leftFieldName);
+                    setCascade(leftRole, rightManyToMany);
+                    rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
 
                     // link
-                    if (leftFieldName != null && rightFieldName != null) {
-                        leftManyToMany.setRelatedField(rightManyToMany);
-                        rightManyToMany.setRelatedField(leftManyToMany);
-                    }
+                    leftManyToMany.setRelatedField(rightManyToMany);
+                    rightManyToMany.setRelatedField(leftManyToMany);
                 }
             }
         }

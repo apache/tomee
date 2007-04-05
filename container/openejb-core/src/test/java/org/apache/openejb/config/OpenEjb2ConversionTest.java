@@ -35,7 +35,7 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 /**
  * @version $Rev$ $Date$
  */
-public class OpenEjb2CmpConversionTest extends TestCase {
+public class OpenEjb2ConversionTest extends TestCase {
     public void testItests22() throws Exception {
         convert("convert/oej2/cmp/itest-2.2/itest-2.2-");
     }
@@ -101,8 +101,8 @@ public class OpenEjb2CmpConversionTest extends TestCase {
 //        OpenejbJarType openejbJarType = (OpenejbJarType) element.getValue();
 
         // fill in the jpa entity declarations with database mappings from the openejb-jar.xml file
-        OpenEjb2CmpConversion openEjb2CmpConversion = new OpenEjb2CmpConversion();
-        openEjb2CmpConversion.deploy(appModule);
+        OpenEjb2Conversion openEjb2Conversion = new OpenEjb2Conversion();
+        openEjb2Conversion.deploy(appModule);
 //        openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
 
         // compare the results to the expected results (direct text comparison)

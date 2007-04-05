@@ -28,6 +28,7 @@ import org.apache.openejb.ProxyInfo;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBObject;
 import java.lang.reflect.Field;
 
 public class Cmp2Util {
@@ -41,6 +42,21 @@ public class Cmp2Util {
     }
 
     public static <Bean extends EntityBean> Bean getEntityBean(EJBLocalObject proxy) {
+        if (proxy == null) return null;
+
+        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        if (handler.container == null) {
+            return null;
+        }
+        if (!(handler.container instanceof CmpContainer)) {
+            throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
+        }
+        CmpContainer container = (CmpContainer) handler.container;
+        Bean entity = (Bean) container.getEjbInstance(handler.getDeploymentInfo(), handler.primaryKey);
+        return entity;
+    }
+
+    public static <Bean extends EntityBean> Bean getEntityBean(EJBObject proxy) {
         if (proxy == null) return null;
 
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);

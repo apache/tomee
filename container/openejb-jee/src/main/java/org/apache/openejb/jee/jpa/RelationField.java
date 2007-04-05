@@ -57,4 +57,18 @@ public interface RelationField {
      * @param value field on the target entity for this relationship.
      */
     void setRelatedField(RelationField value);
+
+    /**
+     * This is only used for xml converters and will normally return false.
+     * A true value indicates that this field was generated for CMR back references.
+     * @return true if this field was generated for CMR back references.
+     */
+    boolean isSyntheticField();
+
+    /**
+     * This is only used for xml converters and will normally return false.
+     * A true value indicates that this field was generated for CMR back references.
+     * @return true if this field was generated for CMR back references.
+     */
+    void setSyntheticField(boolean syntheticField);
 }

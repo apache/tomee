@@ -34,7 +34,6 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
 
     public SingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
-        if (sourceProperty == null) throw new NullPointerException("sourceProperty is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
         this.source = source;
         this.sourceProperty = sourceProperty;
@@ -44,18 +43,23 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     }
 
     public Proxy get(Bean entity) throws EJBException {
+        if (sourceProperty == null) {
+            throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
+                    "this entity does not have a cmr field for the relationship");
+        }
+
         if (entity == null) return null;
 
         Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
-    public void deleted(Bean oldBean) throws EJBException {
-        set(oldBean, null);
-    }
-
     public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
         Bean newBean = Cmp2Util.<Bean>getEntityBean(newValue);
+        if (newValue != null && newBean == null) {
+            // todo verify that this is the only way null can be returned
+            throw new IllegalArgumentException("A deleted bean can not be assigned to a relationship");
+        }
 
         if (relatedProperty != null) {
             // clear back reference in the old related bean
@@ -75,6 +79,10 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
             }
         }
         return newBean;
+    }
+
+    public void deleted(Bean oldBean) throws EJBException {
+        set(oldBean, null);
     }
 
     private Cmp2Entity toCmp2Entity(Object object) {

@@ -59,6 +59,14 @@ public class CmrField {
     @XmlID
     protected String id;
 
+    public CmrField() {
+    }
+
+    public CmrField(String cmrFieldName, CmrFieldType cmrFieldType) {
+        this.cmrFieldName = cmrFieldName;
+        this.cmrFieldType = cmrFieldType;
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();

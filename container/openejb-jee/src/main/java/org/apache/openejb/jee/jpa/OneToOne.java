@@ -97,6 +97,8 @@ public class OneToOne implements RelationField {
     protected String targetEntity;
     @XmlTransient
     protected RelationField relatedField;
+    @XmlTransient
+    protected boolean syntheticField;
 
     /**
      * Gets the value of the primaryKeyJoinColumn property.
@@ -339,5 +341,13 @@ public class OneToOne implements RelationField {
      */
     public void setRelatedField(RelationField value) {
         this.relatedField = value;
+    }
+
+    public boolean isSyntheticField() {
+        return syntheticField;
+    }
+
+    public void setSyntheticField(boolean syntheticField) {
+        this.syntheticField = syntheticField;
     }
 }

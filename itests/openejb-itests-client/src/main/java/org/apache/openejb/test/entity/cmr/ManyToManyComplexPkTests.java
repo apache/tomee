@@ -451,7 +451,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE id=" + platformId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE Platforms_id=" + platformId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -482,7 +482,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         Connection c = ds.getConnection();
         Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE id = " + platformId + " AND Games_id = " + gameId);
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexGame_ComplexPlatform WHERE Platforms_id = " + platformId + " AND Games_id = " + gameId);
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
         rs.close();

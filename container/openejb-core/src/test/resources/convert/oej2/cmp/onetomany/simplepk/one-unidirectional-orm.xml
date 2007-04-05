@@ -13,8 +13,10 @@
             <basic name="field2">
                 <column name="a2"/>
             </basic>
-            <one-to-many name="b">
-                <join-column referenced-column-name="a1" name="fka1"/>
+            <one-to-many name="b" mapped-by="onetomanyA_b">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
             </one-to-many>
         </attributes>
     </entity>
@@ -34,6 +36,9 @@
             <basic name="field3">
                 <column name="fka1"/>
             </basic>
+            <many-to-one name="onetomanyA_b">
+                <join-column referenced-column-name="a1" name="fka1"/>
+            </many-to-one>
         </attributes>
     </entity>
 </entity-mappings>

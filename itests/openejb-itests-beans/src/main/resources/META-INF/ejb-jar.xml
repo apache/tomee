@@ -5319,7 +5319,6 @@
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
-        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>License</ejb-name>
         </relationship-role-source>
@@ -5329,7 +5328,7 @@
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
-        <!--<cascade-delete/>-->
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>Person</ejb-name>
         </relationship-role-source>
@@ -5350,10 +5349,10 @@
           <cmr-field-name>performed</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
-        <cascade-delete/>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>Song</ejb-name>
         </relationship-role-source>
@@ -5397,10 +5396,10 @@
           <cmr-field-name>platforms</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
-        <cascade-delete/>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>Platform</ejb-name>
         </relationship-role-source>
@@ -5415,7 +5414,6 @@
     <ejb-relation>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
-        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>ComplexLicense</ejb-name>
         </relationship-role-source>
@@ -5425,6 +5423,7 @@
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>One</multiplicity>
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>ComplexPerson</ejb-name>
         </relationship-role-source>
@@ -5446,10 +5445,10 @@
           <cmr-field-name>performed</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
-        <cascade-delete/>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>ComplexSong</ejb-name>
         </relationship-role-source>
@@ -5493,10 +5492,10 @@
           <cmr-field-name>platforms</cmr-field-name>
           <cmr-field-type>java.util.Set</cmr-field-type>
         </cmr-field>
-        <cascade-delete/>
       </ejb-relationship-role>
       <ejb-relationship-role>
         <multiplicity>Many</multiplicity>
+        <cascade-delete/>
         <relationship-role-source>
           <ejb-name>ComplexPlatform</ejb-name>
         </relationship-role-source>

@@ -25,16 +25,10 @@ public class CmrField {
     private final Type type;
     private final Type proxyType;
     private final String relatedName;
+    private final boolean synthetic;
 
-    public CmrField(String name, CmrStyle cmrStyle, Type type, Type proxyType, String relatedName) {
-        this.name = name;
-        this.cmrStyle = cmrStyle;
-        this.type = type;
-        this.proxyType = proxyType;
-        this.relatedName = relatedName;
-    }
-
-    public CmrField(String fieldName, String fieldType, String cmpImplClass, String local, String relatedName) {
+    public CmrField(String fieldName, String fieldType, String cmpImplClass, String local, String relatedName, boolean synthetic) {
+        this.synthetic = synthetic;
         this.name = fieldName;
         if (fieldType == null) {
             cmrStyle = CmrStyle.SINGLE;
@@ -46,12 +40,20 @@ public class CmrField {
             throw new IllegalArgumentException("Unsupported fieldType " + fieldType);
         }
         type = Type.getType("L" + cmpImplClass.replace('.', '/') + ";");
-        proxyType = Type.getType("L" + local.replace('.', '/') + ";");
+        if (local != null) {
+            proxyType = Type.getType("L" + local.replace('.', '/') + ";");
+        } else {
+            proxyType = null;
+        }
         this.relatedName = relatedName;
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isSynthetic() {
+        return synthetic;
     }
 
     public CmrStyle getCmrStyle() {

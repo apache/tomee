@@ -89,7 +89,9 @@ public class ManyToOne implements RelationField {
     protected String targetEntity;
     @XmlTransient
     protected RelationField relatedField;
-
+    @XmlTransient
+    protected boolean syntheticField;
+   
     /**
      * Gets the value of the joinColumn property.
      *
@@ -286,5 +288,23 @@ public class ManyToOne implements RelationField {
      */
     public void setRelatedField(RelationField value) {
         this.relatedField = value;
+    }
+
+    /**
+     * This is only used for xml converters and will normally return false.
+     * A true value indicates that this field was generated for CMR back references.
+     * @return true if this field was generated for CMR back references.
+     */
+    public boolean isSyntheticField() {
+        return syntheticField;
+    }
+
+    /**
+     * This is only used for xml converters and will normally return false.
+     * A true value indicates that this field was generated for CMR back references.
+     * @return true if this field was generated for CMR back references.
+     */
+    public void setSyntheticField(boolean syntheticField) {
+        this.syntheticField = syntheticField;
     }
 }

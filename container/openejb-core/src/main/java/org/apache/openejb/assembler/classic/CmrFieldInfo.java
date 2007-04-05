@@ -25,4 +25,5 @@ public class CmrFieldInfo extends InfoObject {
     public boolean cascadeDelete;
     public boolean many;
     public CmrFieldInfo mappedBy;
+    public boolean synthetic;
 }

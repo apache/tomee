@@ -55,10 +55,14 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
 
             case ResponseCodes.EJB_OK_FOUND:
                 primKey = res.getResult();
-                handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
-                handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                registerHandler(ejb.deploymentID + ":" + primKey, handler);
-                return handler.createEJBObjectProxy();
+                if (primKey == null) {
+                    return null;
+                } else {
+                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                    handler.setEJBHomeProxy((EJBHomeProxy) proxy);
+                    registerHandler(ejb.deploymentID + ":" + primKey, handler);
+                    return handler.createEJBObjectProxy();
+                }
 
             case ResponseCodes.EJB_OK_FOUND_COLLECTION:
 
@@ -66,10 +70,12 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
 
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
-                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
-                    handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                    registerHandler(ejb.deploymentID + ":" + primKey, handler);
-                    primaryKeys[i] = handler.createEJBObjectProxy();
+                    if (primKey != null) {
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler.setEJBHomeProxy((EJBHomeProxy) proxy);
+                        registerHandler(ejb.deploymentID + ":" + primKey, handler);
+                        primaryKeys[i] = handler.createEJBObjectProxy();
+                    }
                 }
                 return java.util.Arrays.asList(primaryKeys);
             case ResponseCodes.EJB_OK_FOUND_ENUMERATION:
@@ -78,10 +84,12 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
 
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
-                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
-                    handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                    registerHandler(ejb.deploymentID + ":" + primKey, handler);
-                    primaryKeys[i] = handler.createEJBObjectProxy();
+                    if (primKey != null) {
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler.setEJBHomeProxy((EJBHomeProxy) proxy);
+                        registerHandler(ejb.deploymentID + ":" + primKey, handler);
+                        primaryKeys[i] = handler.createEJBObjectProxy();
+                    }
                 }
 
                 return new ArrayEnumeration(java.util.Arrays.asList(primaryKeys));

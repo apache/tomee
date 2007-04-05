@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.ArrayList;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
@@ -287,7 +288,12 @@ class EjbRequestHandler {
             Object [] primaryKeys = ((Collection) result).toArray();
 
             for (int i = 0; i < primaryKeys.length; i++) {
-                primaryKeys[i] = ((ProxyInfo) primaryKeys[i]).getPrimaryKey();
+                ProxyInfo proxyInfo = ((ProxyInfo) primaryKeys[i]);
+                if (proxyInfo == null) {
+                    primaryKeys[i] = null;
+                } else {
+                    primaryKeys[i] = proxyInfo.getPrimaryKey();
+                }
             }
 
             res.setResponse(ResponseCodes.EJB_OK_FOUND_COLLECTION, primaryKeys);
@@ -295,17 +301,24 @@ class EjbRequestHandler {
         } else if (result instanceof java.util.Enumeration) {
 
             java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
-            java.util.List listOfPKs = new java.util.ArrayList();
+            java.util.List<Object> listOfPKs = new ArrayList<Object>();
             while (resultAsEnum.hasMoreElements()) {
-                listOfPKs.add(((ProxyInfo) resultAsEnum.nextElement()).getPrimaryKey());
+                ProxyInfo proxyInfo = ((ProxyInfo) resultAsEnum.nextElement());
+                if (proxyInfo == null) {
+                    listOfPKs.add(null);
+                } else {
+                    listOfPKs.add(proxyInfo.getPrimaryKey());
+                }
             }
 
             res.setResponse(ResponseCodes.EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
             /* Single instance found */
         } else if (result instanceof ProxyInfo) {
-            result = ((ProxyInfo) result).getPrimaryKey();
+            ProxyInfo proxyInfo = ((ProxyInfo) result);
+            result = proxyInfo.getPrimaryKey();
             res.setResponse(ResponseCodes.EJB_OK_FOUND, result);
-
+        } else if (result == null) {
+            res.setResponse(ResponseCodes.EJB_OK_FOUND, null);
         } else {
 
             final String message = "The bean is not EJB compliant. " +

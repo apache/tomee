@@ -126,15 +126,14 @@ public class CmpJarBuilder {
                     entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
 
             for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
-                if (cmrFieldInfo.fieldName != null) {
-                    EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
-                    CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
-                            cmrFieldInfo.fieldType,
-                            CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
-                            roleSource.local,
-                            cmrFieldInfo.mappedBy.fieldName);
-                    cmp2Generator.addCmrField(cmrField);
-                }
+                EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
+                CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
+                        cmrFieldInfo.fieldType,
+                        CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
+                        roleSource.local,
+                        cmrFieldInfo.mappedBy.fieldName,
+                        cmrFieldInfo.synthetic);
+                cmp2Generator.addCmrField(cmrField);
             }
             bytes = cmp2Generator.generate();
         }

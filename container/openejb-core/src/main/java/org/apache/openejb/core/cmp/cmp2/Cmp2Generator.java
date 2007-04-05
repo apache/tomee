@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
 
 public class Cmp2Generator implements Opcodes {
     private static final String UNKNOWN_PK_NAME = "OpenEJB_pk";
@@ -49,7 +50,7 @@ public class Cmp2Generator implements Opcodes {
     private final String beanClassName;
     private final ClassWriter cw;
     private final Map<String, CmpField> cmpFields = new LinkedHashMap<String, CmpField>();
-    private final Map<String, CmrField> cmrFields = new LinkedHashMap<String, CmrField>();
+    private final Collection<CmrField> cmrFields = new ArrayList<CmrField>();
     private final CmpField pkField;
     private final Class primKeyClass;
     private final List<Method> selectMethods = new ArrayList<Method>();
@@ -91,7 +92,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void addCmrField(CmrField cmrField) {
-        cmrFields.put(cmrField.getName(), cmrField);
+        cmrFields.add(cmrField);
     }
 
     public void addSelectMethod(Method selectMethod) {
@@ -123,7 +124,7 @@ public class Cmp2Generator implements Opcodes {
             createField(cmpField);
         }
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             createCmrFields(cmrField);
         }
 
@@ -141,7 +142,7 @@ public class Cmp2Generator implements Opcodes {
             createSetter(cmpField);
         }
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             createCmrGetter(cmrField);
             createCmrSetter(cmrField);
         }
@@ -171,7 +172,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V");
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             initCmrFields(mv, cmrField);
         }
 
@@ -207,7 +208,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(ICONST_1);
         mv.visitFieldInsn(PUTFIELD, implClassName, "deleted", "Z");
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             // ${cmrField.accessor}.delete(${cmrField.name});
             createOpenEJB_deleted(mv, cmrField);
         }
@@ -231,7 +232,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(ARETURN);
         mv.visitLabel(notDeleted);
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             // if ("${cmrField.name}".equals(name)) {
             //     ${cmrField.name}.add((${cmrField.type})value);
             //     return null;
@@ -283,7 +284,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(RETURN);
         mv.visitLabel(notDeleted);
 
-        for (CmrField cmrField : cmrFields.values()) {
+        for (CmrField cmrField : cmrFields) {
             // if ("${cmrField.name}".equals(name)) {
             //     ${cmrField.name}.remove(value);
             //     return;
@@ -485,6 +486,8 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createCmrGetter(CmrField cmrField) {
+        if (cmrField.isSynthetic()) return;
+
         String methodName = getterName(cmrField.getName());
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmrField.getProxyDescriptor(), null, null);
         mv.visitCode();
@@ -502,6 +505,8 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createCmrSetter(CmrField cmrField) {
+        if (cmrField.isSynthetic()) return;
+
         String methodName = setterName(cmrField.getName());
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmrField.getProxyDescriptor() + ")V", null, null);
         mv.visitCode();
