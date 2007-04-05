@@ -75,7 +75,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         throw new IllegalStateException("A home reference must never be invalidated!");
     }
 
-    protected Object createProxy(ProxyInfo proxyInfo) {
+    public Object createProxy(ProxyInfo proxyInfo) {
         Object newProxy = null;
         try {
 
