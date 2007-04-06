@@ -121,6 +121,13 @@ public class MappedSuperclass implements Mapping {
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;
 
+    public MappedSuperclass() {
+    }
+
+    public MappedSuperclass(String clazz) {
+        this.clazz = clazz;
+    }
+
     /**
      * Gets the value of the description property.
      * 

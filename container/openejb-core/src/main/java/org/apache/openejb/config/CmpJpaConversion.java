@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashSet;
+import java.util.Collection;
 import java.lang.reflect.Modifier;
 
 public class CmpJpaConversion implements DynamicDeployer {
@@ -180,16 +181,13 @@ public class CmpJpaConversion implements DynamicDeployer {
             // for CMP 1 we also need apply the mappings to a super-mappings
             // declaration since fields are on the super-class
             String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
-            boolean generateMappedSuperclass = bean.getCmpVersion() == CmpVersion.CMP1 && !bean.getEjbClass().equals(cmpImplClassName);
 
-            // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
-            mapClass(cmpImplClassName, entity, bean, classLoader, generateMappedSuperclass);
-
-            if (generateMappedSuperclass) {
-                // finally declare the mapped super class, if needed
-                MappedSuperclass mappedSuperclass = new MappedSuperclass();
-                mapClass(bean.getEjbClass(), mappedSuperclass, bean, classLoader, false);
-                entityMappings.getMappedSuperclass().add(mappedSuperclass);
+            if (bean.getCmpVersion() == CmpVersion.CMP2) {
+                mapClass2x(cmpImplClassName, entity, bean, classLoader);
+            } else {
+                // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
+                Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(cmpImplClassName, entity, bean, classLoader);
+                entityMappings.getMappedSuperclass().addAll(mappedSuperclasses);
             }
 
             // process queries
@@ -404,7 +402,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
     }
 
-    private void mapClass(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader, boolean createOverrides) {
+    private void mapClass2x(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         // class: the java class for the entity
         mapping.setClazz(className);
 
@@ -414,53 +412,31 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
 
         //
-        // Map fields remembering the names of the mapped fields
-        //
-        Set<String> persistantFields = new TreeSet<String>();
-
-        //
         // id: the primary key
         //
         Set<String> primaryKeyFields = new HashSet<String>();
         if (bean.getPrimkeyField() != null) {
             String fieldName = bean.getPrimkeyField();
-            Field field;
-            if (!createOverrides) {
-                field = new Id(fieldName);
-            } else {
-                field = new AttributeOverride(fieldName);
-            }
+            Field field = new Id(fieldName);
             mapping.addField(field);
-            persistantFields.add(fieldName);
             primaryKeyFields.add(fieldName);
         } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
-            if (createOverrides || CmpVersion.CMP2.equals(bean.getCmpVersion())) {
-                String fieldName = "OpenEJB_pk";
-                Id field = new Id(fieldName);
-                field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
-                mapping.addField(field);
-                persistantFields.add(fieldName);
-                primaryKeyFields.add(fieldName);
-            }
+            String fieldName = "OpenEJB_pk";
+            Id field = new Id(fieldName);
+            field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
+            mapping.addField(field);
+            primaryKeyFields.add(fieldName);
         } else if (bean.getPrimKeyClass() != null) {
             Class<?> pkClass = null;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
-                if (!createOverrides) {
-                    mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
-                }
+                mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
                 for (java.lang.reflect.Field pkField : pkClass.getFields()) {
                     String pkFieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
                     if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(pkFieldName)) {
-                        Field field;
-                        if (!createOverrides) {
-                            field = new Id(pkFieldName);
-                        } else {
-                            field = new AttributeOverride(pkFieldName);
-                        }
+                        Field field = new Id(pkFieldName);
                         mapping.addField(field);
-                        persistantFields.add(pkFieldName);
                         primaryKeyFields.add(pkFieldName);
                     }
                 }
@@ -474,33 +450,111 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         for (CmpField cmpField : bean.getCmpField()) {
             if (!primaryKeyFields.contains(cmpField.getFieldName())) {
-                Field field;
-                if (!createOverrides) {
-                    field = new Basic(cmpField.getFieldName());
-                } else {
-                    field = new AttributeOverride(cmpField.getFieldName());
-                }
+                Field field = new Basic(cmpField.getFieldName());
                 mapping.addField(field);
-                persistantFields.add(cmpField.getFieldName());
+            }
+        }
+    }
+
+    private Collection<MappedSuperclass> mapClass1x(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
+        // class: the java class for the entity
+        mapping.setClazz(className);
+
+        Class ejbClass = null;
+        try {
+            ejbClass = classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        // build a set of all field names
+        Set<String> allFields = new TreeSet<String>();
+        for (CmpField cmpField : bean.getCmpField()) {
+            allFields.add(cmpField.getFieldName());
+        }
+
+        // build a map from the field name to the super class that contains that field
+        Map<String, MappedSuperclass> superclassByField = mapFields(ejbClass, allFields);
+
+        //
+        // id: the primary key
+        //
+        Set<String> primaryKeyFields = new HashSet<String>();
+        if (bean.getPrimkeyField() != null) {
+            String fieldName = bean.getPrimkeyField();
+            MappedSuperclass superclass = superclassByField.get(fieldName);
+            if (superclass == null) {
+                throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
+            }
+            superclass.addField(new Id(fieldName));
+            mapping.addField(new AttributeOverride(fieldName));
+            primaryKeyFields.add(fieldName);
+        } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
+            String fieldName = "OpenEJB_pk";
+            Id field = new Id(fieldName);
+            field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
+            mapping.addField(field);
+        } else if (bean.getPrimKeyClass() != null) {
+            Class<?> pkClass = null;
+            try {
+                pkClass = classLoader.loadClass(bean.getPrimKeyClass());
+                mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                for (java.lang.reflect.Field pkField : pkClass.getFields()) {
+                    String fieldName = pkField.getName();
+                    int modifiers = pkField.getModifiers();
+                    if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(fieldName)) {
+                        MappedSuperclass superclass = superclassByField.get(fieldName);
+                        if (superclass == null) {
+                            throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
+                        }
+                        superclass.addField(new Id(fieldName));
+                        mapping.addField(new AttributeOverride(fieldName));
+                        primaryKeyFields.add(fieldName);
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                // todo throw exception
             }
         }
 
         //
-        // transient: non-persistent fields
+        // basic: cmp-fields
         //
-        if (classLoader != null && bean.getCmpVersion() == CmpVersion.CMP1) {
-            try {
-                Class ejbClass = classLoader.loadClass(className);
-                for (java.lang.reflect.Field field : ejbClass.getDeclaredFields()) {
-                    if (!persistantFields.contains(field.getName())) {
-                        Transient transientField = new Transient(field.getName());
-                        mapping.addField(transientField);
-                    }
+        for (CmpField cmpField : bean.getCmpField()) {
+            String fieldName = cmpField.getFieldName();
+            if (!primaryKeyFields.contains(fieldName)) {
+                MappedSuperclass superclass = superclassByField.get(fieldName);
+                if (superclass == null) {
+                    throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
                 }
-            } catch (ClassNotFoundException e) {
-                // todo warn
+                superclass.addField(new Basic(fieldName));
+                mapping.addField(new AttributeOverride(fieldName));
             }
         }
+
+        return superclassByField.values();
+    }
+
+    private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
+        persistantFields = new TreeSet<String>(persistantFields);
+        Map<String,MappedSuperclass> fields = new HashMap<String,MappedSuperclass>();
+
+        while (!persistantFields.isEmpty() && !clazz.equals(Object.class)) {
+            MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
+            for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+                String fieldName = field.getName();
+                if (!persistantFields.contains(fieldName)) {
+                    fields.put(fieldName, superclass);
+                    persistantFields.remove(fieldName);
+                } else {
+                    Transient transientField = new Transient(field.getName());
+                    superclass.addField(transientField);
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        return fields;
     }
 
     private boolean addPersistenceContextRef(EntityBean bean) {
