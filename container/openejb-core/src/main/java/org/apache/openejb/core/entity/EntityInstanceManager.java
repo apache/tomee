@@ -23,6 +23,7 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.NoSuchObjectException;
 import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.Logger;
@@ -37,7 +38,6 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.rmi.NoSuchObjectException;
 
 public class EntityInstanceManager {
 

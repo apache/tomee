@@ -28,6 +28,7 @@ import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.ejb.NoSuchEntityException;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
@@ -318,12 +319,15 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             try {
                 PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
                 try {
-                    Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     ResultSet rs = stmt.executeQuery();
-                    while ( rs.next() ) {
-                        lastName = rs.getString("last_name");
-                        firstName = rs.getString("first_name");
+                    if (!rs.next()) {
+                        throw new NoSuchEntityException("" + primaryKey);
+                    }
+                    lastName = rs.getString("last_name");
+                    firstName = rs.getString("first_name");
+                    if (rs.next()) {
+                        throw new EJBException("Found more than one entity with id " + primaryKey);
                     }
                 } finally {
                     stmt.close();
@@ -400,8 +404,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             try {
                 PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
                 try {
-                    Integer primaryKey = (Integer)ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
                 } finally {
                     stmt.close();
@@ -423,6 +426,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * the ready state.
      */
     public void ejbActivate() throws EJBException,RemoteException {
+        primaryKey = (Integer)ejbContext.getPrimaryKey();
         testAllowedOperations("ejbActivate");
     }
 
@@ -434,6 +438,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      */
     public void ejbPassivate() throws EJBException,RemoteException {
         testAllowedOperations("ejbPassivate");
+        primaryKey = -1;
     }
 
 

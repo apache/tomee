@@ -30,6 +30,8 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.Timer;
+import javax.ejb.NoSuchEntityException;
+import javax.ejb.EJBException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -43,6 +45,7 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.NoSuchObjectException;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -253,10 +256,15 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                 callContext.setCurrentAllowedStates(EntityContext.getStates());
                 try {
                     bean.ejbLoad();
+                } catch (NoSuchEntityException e) {
+                    instanceManager.discardInstance(callContext, bean);
+                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + callContext.getPrimaryKey())/*.initCause(e)*/);
                 } catch (Exception e) {
-
                     instanceManager.discardInstance(callContext, bean);
                     throw e;
+//                } catch (Throwable e) {
+//                    System.out.println(e.getClass().getName() + "[" + System.identityHashCode(e.getClass()) + "]@" + System.identityHashCode(e));
+//                    System.out.println(NoSuchEntityException.class.getName() + "[" + System.identityHashCode(NoSuchEntityException.class) + "]");
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
                     callContext.setCurrentAllowedStates(originalAllowedStates);
