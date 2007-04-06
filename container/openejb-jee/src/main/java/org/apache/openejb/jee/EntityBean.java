@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Set;
 
 
 /**
@@ -184,7 +185,7 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     @XmlElement(required = true)
     protected boolean reentrant;
     @XmlElement(name = "cmp-version", defaultValue = "2.x")
-    protected CmpVersion cmpVersion = CmpVersion.CMP2;
+    protected CmpVersion cmpVersion;
     @XmlElement(name = "abstract-schema-name")
     protected String abstractSchemaName;
     @XmlElement(name = "cmp-field", required = true)
@@ -223,6 +224,15 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public EntityBean() {
+        Set<String> publicIds = JaxbJavaee.currentPublicId.get();
+        if (publicIds != null && publicIds.contains("-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN")) {
+            cmpVersion = CmpVersion.CMP1;
+        } else {
+            cmpVersion = CmpVersion.CMP2;
+        }
+    }
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

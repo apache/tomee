@@ -2,33 +2,30 @@
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
         <attributes>
-            <id name="id"/>
+            <id name="primaryKey"/>
             <basic name="firstName"/>
             <basic name="lastName"/>
             <transient name="nextId"/>
-            <transient name="primaryKey"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
         </attributes>
     </mapped-superclass>
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
         <attributes>
-            <id name="id"/>
+            <id name="primaryKey"/>
             <basic name="firstName"/>
             <basic name="lastName"/>
             <transient name="nextId"/>
-            <transient name="primaryKey"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
         </attributes>
     </mapped-superclass>
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
         <attributes>
-            <id name="id"/>
+            <id name="primaryKey"/>
             <basic name="firstName"/>
             <basic name="lastName"/>
             <transient name="nextId"/>
-            <transient name="primaryKey"/>
             <transient name="number"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
@@ -36,21 +33,19 @@
     </mapped-superclass>
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.EncCmpBean">
         <attributes>
-            <id name="id"/>
+            <id name="primaryKey"/>
             <basic name="firstName"/>
             <basic name="lastName"/>
             <transient name="nextId"/>
-            <transient name="primaryKey"/>
             <transient name="ejbContext"/>
         </attributes>
     </mapped-superclass>
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.RmiIiopCmpBean">
         <attributes>
-            <id name="id"/>
+            <id name="primaryKey"/>
             <basic name="firstName"/>
             <basic name="lastName"/>
             <transient name="nextId"/>
-            <transient name="primaryKey"/>
             <transient name="ejbContext"/>
         </attributes>
     </mapped-superclass>
@@ -63,8 +58,8 @@
         <named-query name="BasicCmpBean.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM BasicCmpBean AS o WHERE 1 = 0</query>
         </named-query>
-        <attribute-override name="id">
-            <column name="id"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
         </attribute-override>
         <attribute-override name="firstName">
             <column name="first_name"/>
@@ -85,8 +80,8 @@
         <named-query name="BasicCmpBeanExplicitPK.findByLastName(java.lang.String)">
             <query>SELECT OBJECT(o) FROM BasicCmpBeanExplicitPK AS o WHERE o.lastName = ?1</query>
         </named-query>
-        <attribute-override name="id">
-            <column name="id"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
         </attribute-override>
         <attribute-override name="firstName">
             <column name="first_name"/>
@@ -104,8 +99,8 @@
         <named-query name="AOBasicCmpBean.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM AOBasicCmpBean AS o WHERE 1 = 0</query>
         </named-query>
-        <attribute-override name="id">
-            <column name="id"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
         </attribute-override>
         <attribute-override name="firstName">
             <column name="first_name"/>
@@ -120,8 +115,8 @@
         <named-query name="EncCmpBean.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM EncCmpBean AS o WHERE 1 = 0</query>
         </named-query>
-        <attribute-override name="id">
-            <column name="id"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
         </attribute-override>
         <attribute-override name="firstName">
             <column name="first_name"/>
@@ -136,8 +131,8 @@
         <named-query name="CmpRMIIIOPBean.findEmptyCollection">
             <query>SELECT OBJECT(o) FROM CmpRMIIIOPBean AS o WHERE 1 = 0</query>
         </named-query>
-        <attribute-override name="id">
-            <column name="id"/>
+        <attribute-override name="primaryKey">
+            <column name="primaryKey"/>
         </attribute-override>
         <attribute-override name="firstName">
             <column name="first_name"/>

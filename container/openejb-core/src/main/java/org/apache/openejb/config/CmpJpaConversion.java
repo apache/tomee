@@ -174,19 +174,19 @@ public class CmpJpaConversion implements DynamicDeployer {
             String entityName = bean.getAbstractSchemaName();
             entity.setName(entityName);
 
+            // class: impl class name
+            String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
+            entity.setClazz(cmpImplClassName);
+
             // add the entity
             entityMappings.getEntity().add(entity);
             entitiesByName.put(bean.getEjbName(), entity);
 
-            // for CMP 1 we also need apply the mappings to a super-mappings
-            // declaration since fields are on the super-class
-            String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
-
             if (bean.getCmpVersion() == CmpVersion.CMP2) {
-                mapClass2x(cmpImplClassName, entity, bean, classLoader);
+                mapClass2x(entity, bean, classLoader);
             } else {
                 // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
-                Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(cmpImplClassName, entity, bean, classLoader);
+                Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
                 entityMappings.getMappedSuperclass().addAll(mappedSuperclasses);
             }
 
@@ -402,10 +402,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
     }
 
-    private void mapClass2x(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
-        // class: the java class for the entity
-        mapping.setClazz(className);
-
+    private void mapClass2x(Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         Set<String> allFields = new TreeSet<String>();
         for (CmpField cmpField : bean.getCmpField()) {
             allFields.add(cmpField.getFieldName());
@@ -456,13 +453,10 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
     }
 
-    private Collection<MappedSuperclass> mapClass1x(String className, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
-        // class: the java class for the entity
-        mapping.setClazz(className);
-
+    private Collection<MappedSuperclass> mapClass1x(String ejbClassName, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         Class ejbClass = null;
         try {
-            ejbClass = classLoader.loadClass(className);
+            ejbClass = classLoader.loadClass(ejbClassName);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -475,7 +469,6 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // build a map from the field name to the super class that contains that field
         Map<String, MappedSuperclass> superclassByField = mapFields(ejbClass, allFields);
-
         //
         // id: the primary key
         //
@@ -484,7 +477,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             String fieldName = bean.getPrimkeyField();
             MappedSuperclass superclass = superclassByField.get(fieldName);
             if (superclass == null) {
-                throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
+                throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
             }
             superclass.addField(new Id(fieldName));
             mapping.addField(new AttributeOverride(fieldName));
@@ -498,19 +491,22 @@ public class CmpJpaConversion implements DynamicDeployer {
             Class<?> pkClass = null;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
-                mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                MappedSuperclass superclass = null;
                 for (java.lang.reflect.Field pkField : pkClass.getFields()) {
                     String fieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
                     if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(fieldName)) {
-                        MappedSuperclass superclass = superclassByField.get(fieldName);
+                        superclass = superclassByField.get(fieldName);
                         if (superclass == null) {
-                            throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
+                            throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
                         }
                         superclass.addField(new Id(fieldName));
                         mapping.addField(new AttributeOverride(fieldName));
                         primaryKeyFields.add(fieldName);
                     }
+                }
+                if (superclass != null) {
+                    superclass.setIdClass(new IdClass(bean.getPrimKeyClass()));
                 }
             } catch (ClassNotFoundException e) {
                 // todo throw exception
@@ -525,14 +521,14 @@ public class CmpJpaConversion implements DynamicDeployer {
             if (!primaryKeyFields.contains(fieldName)) {
                 MappedSuperclass superclass = superclassByField.get(fieldName);
                 if (superclass == null) {
-                    throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + className + " or any super classes");
+                    throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
                 }
                 superclass.addField(new Basic(fieldName));
                 mapping.addField(new AttributeOverride(fieldName));
             }
         }
 
-        return superclassByField.values();
+        return new HashSet<MappedSuperclass>(superclassByField.values());
     }
 
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
@@ -543,7 +539,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
             for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
                 String fieldName = field.getName();
-                if (!persistantFields.contains(fieldName)) {
+                if (persistantFields.contains(fieldName)) {
                     fields.put(fieldName, superclass);
                     persistantFields.remove(fieldName);
                 } else {

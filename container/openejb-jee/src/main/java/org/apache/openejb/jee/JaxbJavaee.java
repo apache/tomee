@@ -35,13 +35,17 @@ import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
  */
 public class JaxbJavaee {
+    public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
 
     private static Map<Class,JAXBContext> jaxbContexts = new HashMap<Class,JAXBContext>();
 
@@ -94,13 +98,26 @@ public class JaxbJavaee {
 
         SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        return unmarshaller.unmarshal(source);
+        currentPublicId.set(new TreeSet<String>());
+        try {
+            return unmarshaller.unmarshal(source);
+        } finally {
+            currentPublicId.set(null);
+        }
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
 
         public NamespaceFilter(XMLReader xmlReader) {
             super(xmlReader);
+        }
+
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            Set<String> publicIds = currentPublicId.get();
+            if (publicIds != null) {
+                publicIds.add(publicId);
+            }
+            return super.resolveEntity(publicId, systemId);
         }
 
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {

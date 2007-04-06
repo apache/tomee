@@ -59,7 +59,7 @@
             <reentrant>false</reentrant>
             <cmp-version>1.x</cmp-version>
             <cmp-field>
-                <field-name>id</field-name>
+                <field-name>primaryKey</field-name>
             </cmp-field>
             <cmp-field>
                 <field-name>firstName</field-name>
@@ -67,7 +67,7 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
-            <primkey-field>id</primkey-field>
+            <primkey-field>primaryKey</primkey-field>
             <resource-ref>
                 <description>
                     This is a reference to a JDBC database.
@@ -97,7 +97,7 @@
             <reentrant>false</reentrant>
             <cmp-version>1.x</cmp-version>
             <cmp-field>
-                <field-name>id</field-name>
+                <field-name>primaryKey</field-name>
             </cmp-field>
             <cmp-field>
                 <field-name>firstName</field-name>
@@ -105,7 +105,7 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
-            <primkey-field>id</primkey-field>
+            <primkey-field>primaryKey</primkey-field>
         </entity>
 
         <!--
@@ -127,7 +127,7 @@
             <reentrant>false</reentrant>
             <cmp-version>1.x</cmp-version>
             <cmp-field>
-                <field-name>id</field-name>
+                <field-name>primaryKey</field-name>
             </cmp-field>
             <cmp-field>
                 <field-name>firstName</field-name>
@@ -135,7 +135,7 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
-            <primkey-field>id</primkey-field>
+            <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/references/JNDI_access_to_java_comp_env</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
@@ -185,7 +185,7 @@
             <reentrant>false</reentrant>
             <cmp-version>1.x</cmp-version>
             <cmp-field>
-                <field-name>id</field-name>
+                <field-name>primaryKey</field-name>
             </cmp-field>
             <cmp-field>
                 <field-name>firstName</field-name>
@@ -193,7 +193,7 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
-            <primkey-field>id</primkey-field>
+            <primkey-field>primaryKey</primkey-field>
             <env-entry>
                 <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
                 <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -286,7 +286,7 @@
             <reentrant>false</reentrant>
             <cmp-version>1.x</cmp-version>
             <cmp-field>
-                <field-name>id</field-name>
+                <field-name>primaryKey</field-name>
             </cmp-field>
             <cmp-field>
                 <field-name>firstName</field-name>
@@ -294,7 +294,7 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
-            <primkey-field>id</primkey-field>
+            <primkey-field>primaryKey</primkey-field>
             <ejb-ref>
                 <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
