@@ -60,7 +60,7 @@ public class BmpEjbHomeTests extends BasicBmpTestClient{
         }
     }
 
-    public void test03_removeByPrimaryKey(){
+    public void Xtest03_removeByPrimaryKey(){
         try{
             // remove the ejb
             ejbHome.remove(ejbPrimaryKey);
@@ -88,7 +88,7 @@ public class BmpEjbHomeTests extends BasicBmpTestClient{
         }
     }
 
-    public void test04_removeByPrimaryHandle(){
+    public void Xtest04_removeByPrimaryHandle(){
         try{
             // remove the ejb
             ejbHome.remove(ejbObject.getHandle());
