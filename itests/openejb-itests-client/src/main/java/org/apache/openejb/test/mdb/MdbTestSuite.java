@@ -53,6 +53,7 @@ public class MdbTestSuite extends junit.framework.TestCase {
         suite.addTest(new MdbFieldInjectionTests());
         suite.addTest(new MdbSetterInjectionTests());
         suite.addTest(new MdbAnnotatedFieldInjectionTests());
+        suite.addTest(new MdbInterceptorTests());
 
         return suite;
     }

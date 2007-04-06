@@ -342,4 +342,8 @@
     <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
   </ejb-deployment>
   <ejb-deployment ejb-name="TimerSyncBean" deployment-id="TimerSyncBean" container-id="Default Stateless Container"/>
+  <ejb-deployment ejb-name="InterceptorMdbBean" deployment-id="InterceptorMdbBean" container-id="Default MDB Container">
+    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
+  </ejb-deployment>
+  
 </openejb-jar>
