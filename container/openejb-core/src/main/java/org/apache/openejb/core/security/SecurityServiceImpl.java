@@ -79,6 +79,16 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         defaultSubject = createSubject(defaultUser);
         defaultContext = new SecurityContext(defaultSubject);
+
+        try {
+            // Perform a login attempt (which should fail)
+            // simply to excercise the initialize code of any
+            // LoginModules that are configured.
+            // They should have a chance to perform any special
+            // boot-time code that they may need.
+            login("","");
+        } catch (Throwable e) {
+        }
     }
 
     public void init(Properties props) throws Exception {

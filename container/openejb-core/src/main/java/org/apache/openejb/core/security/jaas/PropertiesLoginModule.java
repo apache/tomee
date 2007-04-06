@@ -16,29 +16,25 @@
  */
 package org.apache.openejb.core.security.jaas;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.openejb.core.security.jaas.UserPrincipal;
-import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.util.ConfUtils;
+import org.apache.openejb.util.Logger;
 
-import javax.security.auth.spi.LoginModule;
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Enumeration;
-import java.io.File;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -48,7 +44,7 @@ public class PropertiesLoginModule implements LoginModule {
     private final String USER_FILE = "UsersFile";
     private final String GROUP_FILE = "GroupsFile";
 
-    private static final Log log = LogFactory.getLog(PropertiesLoginModule.class);
+    private static Logger log = Logger.getInstance("OpenEJB.security", "org.apache.openejb.util.resources");
 
     private Subject subject;
     private CallbackHandler callbackHandler;
@@ -67,8 +63,8 @@ public class PropertiesLoginModule implements LoginModule {
         this.callbackHandler = callbackHandler;
 
         debug = "true".equalsIgnoreCase((String) options.get("Debug"));
-        String usersFile = (String) options.get(USER_FILE)+"";
-        String groupsFile = (String) options.get(GROUP_FILE)+"";
+        String usersFile = (String) options.get(USER_FILE) + "";
+        String groupsFile = (String) options.get(GROUP_FILE) + "";
 
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
