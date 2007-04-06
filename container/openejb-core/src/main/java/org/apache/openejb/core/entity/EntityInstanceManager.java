@@ -30,12 +30,14 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Stack;
 
 import javax.ejb.EntityBean;
+import javax.ejb.NoSuchEntityException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.rmi.NoSuchObjectException;
 
 public class EntityInstanceManager {
 
@@ -113,7 +115,7 @@ public class EntityInstanceManager {
                     * its likely that the application server would have already made the reference invalid, but this bit of
                     * code is an extra precaution.
                     */
-                    throw new org.apache.openejb.InvalidateReferenceException(new javax.ejb.NoSuchEntityException("Entity not found: " + primaryKey));
+                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey));
                 } else if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
                     *  To avoid calling ejbStore( ) on a bean that after its removed, we can not delegate
@@ -179,6 +181,8 @@ public class EntityInstanceManager {
                 BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
                 try {
                     bean.ejbLoad();
+                } catch (NoSuchEntityException e) {
+                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey).initCause(e));
                 } catch (Exception e) {
                     logger.error("Exception encountered during ejbLoad():", e);
 
