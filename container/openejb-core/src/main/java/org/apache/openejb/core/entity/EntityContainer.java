@@ -31,7 +31,6 @@ import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.Timer;
 import javax.ejb.NoSuchEntityException;
-import javax.ejb.EJBException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -40,6 +39,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ContainerType;
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
@@ -195,12 +195,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
         try {
 
-            try {
-                bean = instanceManager.obtainInstance(callContext);
-            } catch (org.apache.openejb.OpenEJBException e) {
-
-                throw e.getRootCause();
-            }
+            bean = instanceManager.obtainInstance(callContext);
 
             ejbLoad_If_No_Transaction(callContext, bean);
             returnValue = runMethod.invoke(bean, args);
@@ -216,6 +211,8 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                 instanceManager.poolInstance(callContext, bean);
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
+        } catch (org.apache.openejb.ApplicationException e) {
+            txPolicy.handleApplicationException(e.getRootCause(), txContext);
         } catch (org.apache.openejb.SystemException se) {
             txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
         } catch (Throwable iae) {// handle reflection exception
@@ -258,7 +255,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                     bean.ejbLoad();
                 } catch (NoSuchEntityException e) {
                     instanceManager.discardInstance(callContext, bean);
-                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + callContext.getPrimaryKey())/*.initCause(e)*/);
+                    throw new ApplicationException(new NoSuchObjectException("Entity not found: " + callContext.getPrimaryKey())/*.initCause(e)*/);
                 } catch (Exception e) {
                     instanceManager.discardInstance(callContext, bean);
                     throw e;
@@ -489,6 +486,8 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             bean.ejbRemove();
             didRemove(bean, callContext);
             instanceManager.poolInstance(callContext, bean);
+        } catch (org.apache.openejb.ApplicationException e) {
+            txPolicy.handleApplicationException(e.getRootCause(), txContext);
         } catch (org.apache.openejb.SystemException se) {
             txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
         } catch (Exception e) {// handle reflection exception
