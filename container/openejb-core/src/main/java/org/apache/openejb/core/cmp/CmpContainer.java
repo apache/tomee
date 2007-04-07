@@ -40,6 +40,7 @@ import javax.ejb.ObjectNotFoundException;
 import javax.ejb.RemoveException;
 import javax.ejb.Timer;
 import javax.ejb.FinderException;
+import javax.ejb.EJBAccessException;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ApplicationException;
@@ -247,7 +248,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             boolean authorized = securityService.isCallerAuthorized(callMethod, null);
             if (!authorized) {
-                throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+                throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
             }
 
             Class declaringClass = callMethod.getDeclaringClass();

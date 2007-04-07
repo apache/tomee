@@ -16,13 +16,27 @@
  */
 package org.apache.openejb.core.stateless;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.interceptor.AroundInvoke;
+import javax.transaction.TransactionManager;
+
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.ContainerType;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -31,19 +45,6 @@ import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.xbean.finder.ClassFinder;
-
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.transaction.TransactionManager;
-import javax.interceptor.AroundInvoke;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -129,7 +130,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         try {
             boolean authorized = getSecurityService().isCallerAuthorized(callMethod, null);
             if (!authorized)
-                throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+                throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
             Class declaringClass = callMethod.getDeclaringClass();
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {

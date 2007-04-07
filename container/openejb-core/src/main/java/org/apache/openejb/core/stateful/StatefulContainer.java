@@ -16,6 +16,24 @@
  */
 package org.apache.openejb.core.stateful;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.rmi.dgc.VMID;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
+
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
@@ -36,22 +54,6 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Logger;
-
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionRequiredException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.rmi.dgc.VMID;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
@@ -383,7 +385,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod, Object securityIdentity) throws ApplicationException {
         boolean authorized = securityService.isCallerAuthorized(callMethod, null);
         if (!authorized) {
-            throw new ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+            throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
         }
     }
 

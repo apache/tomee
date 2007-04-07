@@ -17,40 +17,40 @@
 package org.apache.openejb.core.entity;
 
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Enumeration;
+import java.rmi.NoSuchObjectException;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
-import javax.ejb.Timer;
 import javax.ejb.NoSuchEntityException;
+import javax.ejb.Timer;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.ContainerType;
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.NoSuchObjectException;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
 
 /**
@@ -131,7 +131,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         try {
             boolean authorized = getSecurityService().isCallerAuthorized(callMethod, null);
             if (!authorized)
-                throw new org.apache.openejb.ApplicationException(new RemoteException("Unauthorized Access by Principal Denied"));
+                throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
             Class declaringClass = callMethod.getDeclaringClass();
             String methodName = callMethod.getName();

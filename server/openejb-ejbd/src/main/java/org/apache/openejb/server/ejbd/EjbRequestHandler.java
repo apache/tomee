@@ -19,21 +19,22 @@ package org.apache.openejb.server.ejbd;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 class EjbRequestHandler {
@@ -407,7 +408,7 @@ class EjbRequestHandler {
             res.setResponse(ResponseCodes.EJB_OK, null);
         } else {
             this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
-            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new RemoteException("Unauthorized Access by Principal Denied")));
+            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new EJBAccessException("Unauthorized Access by Principal Denied")));
         }
     }
 
