@@ -403,6 +403,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 entityBean.getClass().getMethod("OpenEJB_deleted").invoke(entityBean);
             } catch (Exception ignored) {
             }
+            cancelTimers(callContext);
             ThreadContext.exit(oldCallContext);
         }
     }
@@ -479,6 +480,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 /* Application Exception ***********************/
                 txPolicy.handleApplicationException(ite.getTargetException(), txContext);
             }
+        } catch (NoSuchObjectException e) {
+            txPolicy.handleApplicationException(e, txContext);
         } catch (Throwable e) {
             /* System Exception ****************************/
             txPolicy.handleSystemException(e, bean, txContext);
@@ -803,11 +806,12 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             if (entityBean == null) {
-                throw new ObjectNotFoundException(callContext.getDeploymentInfo().getDeploymentID() + " " + callContext.getPrimaryKey());
+                throw new NoSuchObjectException(callContext.getDeploymentInfo().getDeploymentID() + " " + callContext.getPrimaryKey());
             }
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
-            cancelTimers(callContext);
+        } catch (NoSuchObjectException e) {
+            txPolicy.handleApplicationException(e, txContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {
