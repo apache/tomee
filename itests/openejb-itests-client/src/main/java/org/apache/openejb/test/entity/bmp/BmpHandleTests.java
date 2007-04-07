@@ -64,7 +64,7 @@ public class BmpHandleTests extends BasicBmpTestClient{
      * is more a test on the handle then on the remove method
      * itself.
      */
-    public void test02_EJBHome_remove(){
+    public void Xtest02_EJBHome_remove(){
         try{
             ejbHome.remove(ejbHandle);
             try{

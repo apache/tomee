@@ -262,9 +262,6 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
                 } catch (Exception e) {
                     instanceManager.discardInstance(callContext, bean);
                     throw e;
-//                } catch (Throwable e) {
-//                    System.out.println(e.getClass().getName() + "[" + System.identityHashCode(e.getClass()) + "]@" + System.identityHashCode(e));
-//                    System.out.println(NoSuchEntityException.class.getName() + "[" + System.identityHashCode(NoSuchEntityException.class) + "]");
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
                     callContext.setCurrentAllowedStates(originalAllowedStates);

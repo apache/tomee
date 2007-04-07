@@ -17,9 +17,11 @@
 package org.apache.openejb.test.entity.bmp;
 
 import java.rmi.RemoteException;
+import java.rmi.NoSuchObjectException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -30,6 +32,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.ejb.NoSuchEntityException;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.openejb.test.ApplicationException;
@@ -311,8 +314,9 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * underlying database.
      */
     public void ejbLoad() throws EJBException,RemoteException {
+
         try {
-            InitialContext jndiContext = new InitialContext( ); 
+            InitialContext jndiContext = new InitialContext( );
             DataSource ds = (DataSource)jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
             Connection con = ds.getConnection();
 
@@ -335,9 +339,10 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             } finally {
                 con.close();
             }
-
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        } catch (NamingException e) {
+            throw new EJBException(e);
+        } catch (SQLException e) {
+            throw new EJBException(e);
         }
     }
 
