@@ -41,4 +41,8 @@ public interface RemoteBean extends EnterpriseBean {
     public void setLocal(String value);
 
     public List<SecurityRoleRef> getSecurityRoleRef();
+
+    String getBusinessLocal();
+
+    String getBusinessRemote();
 }

@@ -497,6 +497,14 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         return this.securityRoleRef;
     }
 
+    public String getBusinessLocal() {
+        return null;
+    }
+
+    public String getBusinessRemote() {
+        return null;
+    }
+
     public SecurityIdentity getSecurityIdentity() {
         return securityIdentity;
     }
