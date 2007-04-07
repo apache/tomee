@@ -17,43 +17,41 @@
  */
 package org.apache.openejb.test.mdb;
 
-import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
-import org.apache.openejb.test.TestFailureException;
-
-import javax.ejb.SessionContext;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.MessageDrivenContext;
-import javax.sql.DataSource;
 import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.MessageListener;
-import javax.jms.Message;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.entity.bmp.BasicBmpHome;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
+import org.apache.openejb.test.stateless.BasicStatelessHome;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
-    private SessionContext ejbContextField;
+    private MessageDrivenContext ejbContextField;
     private BasicBmpHome bmpHomeField;
     private BasicStatefulHome statefulHomeField;
     private BasicStatelessHome statelessHomeField;
@@ -221,11 +219,11 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         this.eemField = eem;
     }
 
-    public SessionContext getEjbContext() {
+    public MessageDrivenContext getEjbContext() {
         return ejbContextField;
     }
 
-    public void setEjbContext(SessionContext ejbContext) {
+    public void setEjbContext(MessageDrivenContext ejbContext) {
         this.ejbContextField = ejbContext;
     }
 
