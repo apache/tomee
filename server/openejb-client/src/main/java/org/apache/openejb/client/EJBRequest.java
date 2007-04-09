@@ -99,6 +99,7 @@ public class EJBRequest implements Request {
     }
 
     public static class Body implements java.io.Externalizable {
+        private transient ORB orb; 
         private transient Method methodInstance;
         private transient Class methodClass;
         private transient String methodName;
@@ -243,13 +244,7 @@ public class EJBRequest implements Request {
                         if (tie == null) {
                             throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
                         }
-                        ORB orb = null;
-                        try {
-                            Context initialContext = new InitialContext();
-                            orb = (ORB) initialContext.lookup("java:comp/ORB");
-                        } catch (NamingException e) {
-                            throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
-                        }
+                        ORB orb = getORB();
                         tie.orb(orb);
                         obj = PortableRemoteObject.toStub((Remote) obj);
                     }
@@ -262,6 +257,25 @@ public class EJBRequest implements Request {
 
         static final Class[] noArgsC = new Class[0];
         static final Object[] noArgsO = new Object[0];
+
+        /**
+         * Obtain an ORB instance for this request to activate remote 
+         * arguments and return results.
+         * 
+         * @return An ORB instance.
+         */
+        protected ORB getORB() throws IOException {
+            // first ORB request?  Check our various sources 
+            if (orb == null) {
+                try {
+                    Context initialContext = new InitialContext();
+                    orb = (ORB) initialContext.lookup("java:comp/ORB");
+                } catch (NamingException e) {
+                    throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
+                }
+            }
+            return orb; 
+        }
 
         protected void readMethodParameters(ObjectInput in) throws IOException, ClassNotFoundException {
             int length = in.read();
@@ -325,6 +339,11 @@ public class EJBRequest implements Request {
                     case L:
                         clazz = (Class) in.readObject();
                         obj = in.readObject();
+                        if (obj instanceof Stub) {
+                            Stub stub = (Stub)obj;
+                            ORB orb = getORB();
+                            stub.connect(orb);
+                        }
                         break;
                     default:
                         throw new IOException("Unkown data type: " + type);
