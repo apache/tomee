@@ -122,11 +122,18 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         }
     }
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws org.apache.openejb.OpenEJBException {
+    /**
+     * @deprecated use invoke signature without 'securityIdentity' argument.
+     */
+    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
+        return invoke(deployID, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws org.apache.openejb.OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
         
-        ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
+        ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             boolean authorized = getSecurityService().isCallerAuthorized(callMethod, null);
@@ -350,7 +357,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod(ejbCreateMethod);
 
             // create a new context containing the pk for the post create call
-            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
+            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey);
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
             postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 

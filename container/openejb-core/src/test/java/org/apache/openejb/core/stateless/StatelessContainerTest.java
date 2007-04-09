@@ -53,7 +53,7 @@ public class StatelessContainerTest extends TestCase {
 
     public void testPojoStyleBean() throws Exception {
 
-        Object result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, null, "");
+        Object result = container.invoke("widget", Widget.class.getMethod("getLifecycle"), new Object[]{}, null);
         assertTrue("instance of Stack", result instanceof Stack);
 
         Stack<Lifecycle> actual = (Stack<Lifecycle>) result;

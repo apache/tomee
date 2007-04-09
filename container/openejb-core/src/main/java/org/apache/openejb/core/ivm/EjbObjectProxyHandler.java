@@ -24,7 +24,6 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
@@ -188,6 +187,6 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
 //        checkAuthorization(method);
-        return container.invoke(deploymentID, method, args, primaryKey, getThreadSpecificSecurityIdentity());
+        return container.invoke(deploymentID, method, args, primaryKey);
     }
 }

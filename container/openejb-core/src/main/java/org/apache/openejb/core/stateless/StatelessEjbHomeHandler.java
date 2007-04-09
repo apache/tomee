@@ -60,7 +60,7 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, method, args, primKey, getThreadSpecificSecurityIdentity());
+        container.invoke(deploymentID, method, args, primKey);
         if (stub != null) {
             stub.invalidateReference();
         }

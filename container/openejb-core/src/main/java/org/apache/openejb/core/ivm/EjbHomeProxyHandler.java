@@ -30,7 +30,6 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Logger;
@@ -211,11 +210,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+        return container.invoke(deploymentID, method, args, null);
     }
 
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
-        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null, getThreadSpecificSecurityIdentity());
+        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null);
         assert proxyInfo != null: "Container returned a null ProxyInfo: ContainerID="+container.getContainerID();
         return createProxy(proxyInfo);
     }
@@ -283,7 +282,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, method, args, primKey, getThreadSpecificSecurityIdentity());
+        container.invoke(deploymentID, method, args, primKey);
 
         /*
          * This operation takes care of invalidating all the EjbObjectProxyHanders associated with

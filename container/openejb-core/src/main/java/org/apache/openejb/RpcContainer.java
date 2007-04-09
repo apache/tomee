@@ -20,5 +20,11 @@ import java.lang.reflect.Method;
 
 public interface RpcContainer extends Container {
 
+    /**
+     * @deprecated use invoke signature without "securityIdentity" param.  As of OpenEJB 3.0 this argument is ignored.
+     */
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException;
+
+    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws OpenEJBException;
+
 }

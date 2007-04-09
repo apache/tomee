@@ -172,7 +172,14 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
+    /**
+     * @deprecated use invoke signature without 'securityIdentity' argument.
+     */
+    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
+        return invoke(deployID, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey) throws OpenEJBException {
         // get the target deployment (MDB)
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
         if (deployInfo == null) throw new SystemException("Unknown deployment " + deploymentId);
@@ -216,7 +223,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
     public void beforeDelivery(CoreDeploymentInfo deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
         // intialize call context
-        ThreadContext callContext = new ThreadContext(deployInfo, null, null);
+        ThreadContext callContext = new ThreadContext(deployInfo, null);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
         // create mdb context
@@ -365,7 +372,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext == null) {
-            callContext = new ThreadContext(deployInfo, null, null);
+            callContext = new ThreadContext(deployInfo, null);
             ThreadContext.enter(callContext);
 
         }

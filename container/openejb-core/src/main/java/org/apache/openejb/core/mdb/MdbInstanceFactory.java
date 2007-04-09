@@ -181,7 +181,7 @@ public class MdbInstanceFactory {
         objectRecipe.allow(Option.PRIVATE_PROPERTIES);
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
-        ThreadContext callContext = new ThreadContext(deploymentInfo, null, null, Operation.INJECTION);
+        ThreadContext callContext = new ThreadContext(deploymentInfo, null, Operation.INJECTION);
         ThreadContext.enter(callContext);
         try {
             Context ctx = deploymentInfo.getJndiEnc();

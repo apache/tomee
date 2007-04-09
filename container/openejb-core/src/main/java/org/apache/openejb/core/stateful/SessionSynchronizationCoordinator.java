@@ -20,7 +20,6 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.stateful.StatefulContext;
-import org.apache.openejb.core.stateless.StatelessContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionContext;
@@ -71,7 +70,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         if (registered) return;
 
         try {
-            callContext = new ThreadContext(callContext.getDeploymentInfo(), callContext.getPrimaryKey(), callContext.getSecurityIdentity());
+            callContext = new ThreadContext(callContext.getDeploymentInfo(), callContext.getPrimaryKey());
         } catch (Exception e) {
         }
         sessionSynchronizations.put(callContext.getPrimaryKey(), callContext);

@@ -201,7 +201,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
         CmpEngine cmpEngine = getCmpEngine(deployInfo);
 
-        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey, null);
+        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey);
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -238,10 +238,17 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return cmpEngine;
     }
 
+    /**
+     * @deprecated use invoke signature without 'securityIdentity' argument.
+     */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
+        return invoke(deployID, callMethod, args, primKey);
+    }
+    
+    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
-        ThreadContext callContext = new ThreadContext(deployInfo, primKey, securityIdentity);
+        ThreadContext callContext = new ThreadContext(deployInfo, primKey);
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -309,7 +316,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         KeyGenerator keyGenerator = deployInfo.getKeyGenerator();
         Object primaryKey = keyGenerator.getPrimaryKey(entityBean);
 
-        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey, null);
+        ThreadContext callContext = new ThreadContext(deployInfo, primaryKey);
         return callContext;
     }
 
@@ -319,7 +326,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         // activating entity doen't have a primary key
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfoByClass(entityBean.getClass());
 
-        ThreadContext callContext = new ThreadContext(deployInfo, null, null);
+        ThreadContext callContext = new ThreadContext(deployInfo, null);
         callContext.setCurrentOperation(Operation.SET_CONTEXT);
         callContext.setCurrentAllowedStates(EntityContext.getStates());
 
@@ -587,7 +594,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             Method ejbPostCreateMethod = deploymentInfo.getMatchingPostCreateMethod(ejbCreateMethod);
 
             // create a new context containing the pk for the post create call
-            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey, callContext.getSecurityIdentity());
+            ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey);
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
             postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 

@@ -566,7 +566,7 @@ public class EntityInstanceManager {
             isAssociated = true;
             deploymentInfo = callContext.getDeploymentInfo();
             primaryKey = callContext.getPrimaryKey();
-            securityIdentity = callContext.getSecurityIdentity();
+            securityIdentity = null;
         }
 
         public void disassociate() {
@@ -598,7 +598,7 @@ public class EntityInstanceManager {
                     bean = this.bean;
                 }
 
-                ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey, securityIdentity);
+                ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey);
                 callContext.setCurrentOperation(Operation.STORE);
                 callContext.setCurrentAllowedStates(EntityContext.getStates());
 

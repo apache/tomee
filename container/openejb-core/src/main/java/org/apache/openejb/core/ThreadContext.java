@@ -91,30 +91,27 @@ public class ThreadContext {
 
     private final CoreDeploymentInfo deploymentInfo;
     private final Object primaryKey;
-    private final Object securityIdentity;
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
     private Operation currentOperation;
     private BaseContext.State[] currentAllowedStates;
 
-    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity) {
-        this(deploymentInfo, primaryKey, securityIdentity, null);
+    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey) {
+        this(deploymentInfo, primaryKey, null);
     }
 
-    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object securityIdentity, Operation operation) {
+    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Operation operation) {
         if (deploymentInfo == null) {
             throw new NullPointerException("deploymentInfo is null");
         }
         this.deploymentInfo = deploymentInfo;
         this.primaryKey = primaryKey;
-        this.securityIdentity = securityIdentity;
         this.currentOperation = operation;
     }
 
     public ThreadContext(ThreadContext that) {
         this.deploymentInfo = that.deploymentInfo;
         this.primaryKey = that.primaryKey;
-        this.securityIdentity = that.securityIdentity;
         this.data.putAll(that.data);
         this.oldClassLoader = that.oldClassLoader;
     }
@@ -125,10 +122,6 @@ public class ThreadContext {
 
     public Object getPrimaryKey() {
         return primaryKey;
-    }
-
-    public Object getSecurityIdentity() {
-        return securityIdentity;
     }
 
     public Operation getCurrentOperation() {

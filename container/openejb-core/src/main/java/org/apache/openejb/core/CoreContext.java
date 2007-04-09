@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core;
 
-import java.util.List;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -74,7 +73,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public java.security.Principal getCallerPrincipal() {
         checkBeanState(SECURITY_METHOD);
-        Object securityIdentity = ThreadContext.getThreadContext().getSecurityIdentity();
+        Object securityIdentity = null;
         return (java.security.Principal) getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
     }
 

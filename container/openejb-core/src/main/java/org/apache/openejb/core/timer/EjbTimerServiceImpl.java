@@ -278,7 +278,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 // call the timeout method
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
-                    container.invoke(deployment.getDeploymentID(), deployment.getEjbTimeout(), new Object[] {timer}, timerData.getPrimaryKey(), null);
+                    container.invoke(deployment.getDeploymentID(), deployment.getEjbTimeout(), new Object[] {timer}, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     // exception from a timer does not necessairly mean failure
                     log.warning("RuntimeException from ejbTimeout on " + deployment.getDeploymentID(), e);

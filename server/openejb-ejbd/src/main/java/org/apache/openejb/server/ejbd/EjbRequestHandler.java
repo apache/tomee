@@ -198,8 +198,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         if (result instanceof ProxyInfo) {
             ProxyInfo info = (ProxyInfo) result;
@@ -228,8 +228,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         if (result instanceof ProxyInfo) {
             ProxyInfo info = (ProxyInfo) result;
@@ -258,8 +258,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         if (result instanceof ProxyInfo) {
             ProxyInfo info = (ProxyInfo) result;
@@ -280,8 +280,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         /* Multiple instances found */
         if (result instanceof Collection) {
@@ -356,8 +356,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
@@ -378,8 +378,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
@@ -392,8 +392,8 @@ class EjbRequestHandler {
         Object result = c.invoke(req.getDeploymentId(),
                 req.getMethodInstance(),
                 req.getMethodParameters(),
-                req.getPrimaryKey(),
-                req.getClientIdentity());
+                req.getPrimaryKey()
+        );
 
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
