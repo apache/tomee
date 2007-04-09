@@ -216,11 +216,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         try {
             CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
 
-            String securityRole = deployment.getSecurityRole(role);
-            if (securityRole == null) {
-                throw new IllegalArgumentException("Cannot do an isCallerInRole check using an role name not declared via <security-role-ref> or @DeclareRoles: role="+role+", referenced-by="+deployment.getBeanClass().getName());
-            }
-            securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), securityRole));
+            securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
         } catch (AccessControlException e) {
             return false;
         }
