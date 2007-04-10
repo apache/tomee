@@ -202,19 +202,42 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        interfaces.put(javax.ejb.EJBHome.class, InterfaceType.EJB_HOME);
-        interfaces.put(javax.ejb.EJBObject.class, InterfaceType.EJB_OBJECT);
-        interfaces.put(javax.ejb.EJBLocalHome.class, InterfaceType.EJB_LOCAL_HOME);
-        interfaces.put(javax.ejb.EJBLocalObject.class, InterfaceType.EJB_LOCAL);
-        interfaces.put(getHomeInterface(), InterfaceType.EJB_HOME);
-        interfaces.put(getRemoteInterface(), InterfaceType.EJB_OBJECT);
-        interfaces.put(getLocalHomeInterface(), InterfaceType.EJB_LOCAL_HOME);
-        interfaces.put(getLocalInterface(), InterfaceType.EJB_LOCAL);
-        interfaces.put(getBusinessLocalInterface(), InterfaceType.BUSINESS_LOCAL);
-        interfaces.put(getBusinessRemoteInterface(), InterfaceType.BUSINESS_REMOTE);
-        interfaces.put(DeploymentInfo.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
-        interfaces.put(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
-        interfaces.put(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
+
+        addInterface(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
+
+        addInterface(javax.ejb.EJBHome.class, InterfaceType.EJB_HOME);
+        addInterface(javax.ejb.EJBObject.class, InterfaceType.EJB_OBJECT);
+
+        addInterface(javax.ejb.EJBLocalHome.class, InterfaceType.EJB_LOCAL_HOME);
+        addInterface(javax.ejb.EJBLocalObject.class, InterfaceType.EJB_LOCAL);
+
+        addInterface(getHomeInterface(), InterfaceType.EJB_HOME);
+        addInterface(getRemoteInterface(), InterfaceType.EJB_OBJECT);
+
+        addInterface(getLocalHomeInterface(), InterfaceType.EJB_LOCAL_HOME);
+        addInterface(getLocalInterface(), InterfaceType.EJB_LOCAL);
+
+        addInterface(DeploymentInfo.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
+        addInterface(getBusinessRemoteInterface(), InterfaceType.BUSINESS_REMOTE);
+
+        addInterface(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
+        addInterface(getBusinessLocalInterface(), InterfaceType.BUSINESS_LOCAL);
+    }
+
+    /**
+     * DMB: This is a not so reliable way to determine the proxy type
+     * The proxy type really should come with the call in the invoke.
+     * 
+     * @param interfce
+     * @param type
+     */
+    private void addInterface(Class interfce, InterfaceType type){
+        if (interfce == null) return;
+        interfaces.put(interfce, type);
+
+        for (Class clazz : interfce.getInterfaces()) {
+            addInterface(clazz, type);
+        }
     }
 
     public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
