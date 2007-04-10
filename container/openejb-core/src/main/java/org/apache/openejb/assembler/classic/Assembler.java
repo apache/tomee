@@ -120,6 +120,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         SystemInstance system = SystemInstance.get();
 
+        system.setComponent(Assembler.class, this);
+        
         containerSystem = new CoreContainerSystem();
         system.setComponent(ContainerSystem.class, containerSystem);
 

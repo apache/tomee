@@ -23,7 +23,6 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.Subject;
@@ -32,8 +31,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
 import javax.security.jacc.PolicyContext;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -107,6 +104,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     }
 
     private final static class SecurityContext {
+
         private final Subject subject;
         private final AccessControlContext acc;
 
@@ -124,13 +122,13 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         String moduleID = newContext.getDeploymentInfo().getModuleID();
         PolicyContext.setContextID(moduleID);
 
-        CoreDeploymentInfo deploymentInfo = newContext.getDeploymentInfo();
+        CoreDeploymentInfo callingDeploymentInfo = (oldContext != null)? oldContext.getDeploymentInfo(): null;
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        if (deploymentInfo.getRunAs() != null) {
+        if (callingDeploymentInfo != null && callingDeploymentInfo.getRunAs() != null) {
 
-            String runAsRole = deploymentInfo.getRunAs();
+            String runAsRole = callingDeploymentInfo.getRunAs();
 
             Subject runAs = resolve(runAsRole);
 
@@ -152,17 +150,6 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
     }
 
-    /**
-     * TODO
-     *
-     * @param runAsRole
-     * @return the role converted to a subject
-     */
-    private Subject resolve(String runAsRole) {
-        return createSubject(runAsRole);
-    }
-
-
     public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
         if (reenteredContext == null) {
             PolicyContext.setContextID(null);
@@ -170,6 +157,11 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
             PolicyContext.setContextID(reenteredContext.getDeploymentInfo().getModuleID());
         }
     }
+
+    private Subject resolve(String runAsRole) {
+        return createSubject(runAsRole);
+    }
+
 
 
     public Subject getCurrentSubject() {

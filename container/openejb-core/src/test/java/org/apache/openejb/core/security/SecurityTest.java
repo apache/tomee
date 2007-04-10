@@ -105,27 +105,27 @@ public class SecurityTest extends TestCase {
         assertTrue("not in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
 
-        Project bar = (Project) ctx.lookup("BarBeanBusinessLocal");
-
-        bar.svnCheckout("");
-
-        try {
-            bar.svnCommit("");
-            fail("Should not be allowed");
-        } catch (Exception e) {
-            // good
-        }
-
-        try {
-            bar.deleteProject("");
-            fail("Should not be allowed");
-        } catch (Exception e) {
-            // good.
-        }
-
-        assertFalse("in role committer", bar.isCallerInRole("committer"));
-        assertFalse("in role community", bar.isCallerInRole("community"));
-        assertTrue("not in role contributor", bar.isCallerInRole("contributor"));
+//        Project bar = (Project) ctx.lookup("BarBeanBusinessLocal");
+//
+//        bar.svnCheckout("");
+//
+//        try {
+//            bar.svnCommit("");
+//            fail("Should not be allowed");
+//        } catch (Exception e) {
+//            // good
+//        }
+//
+//        try {
+//            bar.deleteProject("");
+//            fail("Should not be allowed");
+//        } catch (Exception e) {
+//            // good.
+//        }
+//
+//        assertFalse("in role committer", bar.isCallerInRole("committer"));
+//        assertFalse("in role community", bar.isCallerInRole("community"));
+//        assertTrue("not in role contributor", bar.isCallerInRole("contributor"));
 
     }
 
