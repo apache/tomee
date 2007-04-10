@@ -35,7 +35,25 @@ public class EjbSelect {
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         Object result = cmpContainer.select(deploymentInfo, methodSignature, returnType, args);
-        return result;
+        if (result instanceof Number) {
+            Number number = (Number) result;
+            if ("char".equals(returnType) || Character.class.getName().equals(returnType)) {
+                result = new Character((char) number.intValue());
+            } else if ("byte".equals(returnType) || Byte.class.getName().equals(returnType)) {
+                result = number.byteValue();
+            } else if ("short".equals(returnType) || Short.class.getName().equals(returnType)) {
+                result = number.shortValue();
+            } else if ("int".equals(returnType) || Integer.class.getName().equals(returnType)) {
+                result = number.intValue();
+            } else if ("long".equals(returnType) || Long.class.getName().equals(returnType)) {
+                result = number.longValue();
+            } else if ("float".equals(returnType) || Float.class.getName().equals(returnType)) {
+                result = number.floatValue();
+            } else if ("double".equals(returnType) || Double.class.getName().equals(returnType)) {
+                result = number.doubleValue();
+            }
+        }
 
+        return result;
     }
 }
