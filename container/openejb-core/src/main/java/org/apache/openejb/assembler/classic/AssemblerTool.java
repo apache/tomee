@@ -72,6 +72,12 @@ public class AssemblerTool {
                             if (deploymentInfo.getHomeInterface() != null) {
                                 resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                             }
+                            if (deploymentInfo.getLocalInterface() != null) {
+                                resolveMethods(methods, deploymentInfo.getLocalInterface(), methodInfo);
+                            }
+                            if (deploymentInfo.getLocalHomeInterface() != null) {
+                                resolveMethods(methods, deploymentInfo.getLocalHomeInterface(), methodInfo);
+                            }
                             if(deploymentInfo.getMdbInterface() != null) {
                             	resolveMethods(methods, deploymentInfo.getMdbInterface(), methodInfo);
                             }
@@ -80,8 +86,10 @@ public class AssemblerTool {
                             resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {
                             resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
-                        } else {
-
+                        } else if (methodInfo.methodIntf.equals("LocalHome")) {
+                            resolveMethods(methods, deploymentInfo.getLocalHomeInterface(), methodInfo);
+                        } else if (methodInfo.methodIntf.equals("Local")) {
+                            resolveMethods(methods, deploymentInfo.getLocalInterface(), methodInfo);
                         }
 
                         for (Method method : methods) {

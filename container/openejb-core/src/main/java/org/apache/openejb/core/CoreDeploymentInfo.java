@@ -131,7 +131,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
-    private final Map<Class, InterfaceType> interfaces = new HashMap();
+    private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
