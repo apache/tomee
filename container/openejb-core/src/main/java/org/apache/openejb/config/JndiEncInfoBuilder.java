@@ -369,7 +369,7 @@ public class JndiEncInfoBuilder {
             info.location = buildLocationInfo(ejb);
 
             if (info.location == null) {
-                if (ejb.getMappedName() != null) {
+                if (ejb.getMappedName() != null && !ejb.getMappedName().equals("")) {
                     String mappedName = ejb.getMappedName();
                     if (!deploymentsInApplication.contains(mappedName)) {
                         info.externalReference = true;
