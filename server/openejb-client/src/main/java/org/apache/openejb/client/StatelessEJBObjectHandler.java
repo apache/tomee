@@ -53,7 +53,11 @@ public class StatelessEJBObjectHandler extends EJBObjectHandler {
         if (arg == null || !(arg instanceof EJBObjectProxy)) return Boolean.FALSE;
         EJBObjectProxy proxy2 = (EJBObjectProxy) arg;
         EJBObjectHandler that = proxy2.getEJBObjectHandler();
-        return new Boolean(this.ejb.deploymentID.equals(that.ejb.deploymentID));
+        return this.ejb.deploymentID.equals(that.ejb.deploymentID);
+    }
+
+    protected Object equals(Method method, Object[] args, Object proxy) throws Throwable {
+        return isIdentical(method, args, proxy);
     }
 
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {

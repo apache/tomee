@@ -50,6 +50,10 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
         return new Boolean(this.primaryKey.equals(that.primaryKey));
     }
 
+    protected Object equals(Method method, Object[] args, Object proxy) throws Throwable {
+        return isIdentical(method, args, proxy);
+    }
+    
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE);

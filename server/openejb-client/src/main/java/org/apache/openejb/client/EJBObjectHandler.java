@@ -109,14 +109,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
          */
 
         try {
-
+            System.out.println("method = " + m.getDeclaringClass() + "."+m.getName());
             String methodName = m.getName();
-            if (m.getDeclaringClass() == Object.class) {
+            if (m.getDeclaringClass().equals(Object.class)) {
                 if (m.equals(TOSTRING)) {
                     return "proxy=" + this;
                 } else if (m.equals(EQUALS)) {
 
-                    return Boolean.FALSE;
+                    return equals(m, a, p);
 
                 } else if (m.equals(HASHCODE)) {
                     return new Integer(this.hashCode());
@@ -164,7 +164,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             invalidateReference();
             throw new RemoteException("Container has suffered a SystemException", se.getCause());
         } catch (Throwable oe) {
-            throw new RemoteException("Unknown Container Exception", oe.getCause());
+            throw new RemoteException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage(), oe.getCause());
         }
         return retValue;
     }
@@ -183,6 +183,8 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     protected abstract Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
 
     protected abstract Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable;
+
+    protected abstract Object equals(Method method, Object[] args, Object proxy) throws Throwable;
 
     protected abstract Object remove(Method method, Object[] args, Object proxy) throws Throwable;
 

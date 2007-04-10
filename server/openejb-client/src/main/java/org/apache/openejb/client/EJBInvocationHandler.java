@@ -30,9 +30,9 @@ import javax.security.auth.Subject;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
-    protected static final Method EQUALS = getMethod(Object.class, "equals", null);
-    protected static final Method HASHCODE = getMethod(Object.class, "hashCode", null);
-    protected static final Method TOSTRING = getMethod(Object.class, "toString", null);
+    protected static final Method EQUALS = getMethod(Object.class, "equals", Object.class);
+    protected static final Method HASHCODE = getMethod(Object.class, "hashCode");
+    protected static final Method TOSTRING = getMethod(Object.class, "toString");
 
     protected static final Hashtable<Object,HashSet> liveHandleRegistry = new Hashtable();
 
@@ -62,7 +62,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         this.primaryKey = primaryKey;
     }
 
-    protected static Method getMethod(Class c, String method, Class[] params) {
+    protected static Method getMethod(Class c, String method, Class... params) {
         try {
             return c.getMethod(method, params);
         } catch (NoSuchMethodException nse) {
