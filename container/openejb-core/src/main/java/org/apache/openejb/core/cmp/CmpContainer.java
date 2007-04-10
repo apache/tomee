@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -43,6 +44,7 @@ import javax.ejb.FinderException;
 import javax.ejb.EJBAccessException;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.Synchronization;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
@@ -100,6 +102,12 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
      * Tracks entity instances that have been "entered" so we can throw reentrancy exceptions.
      */
     protected EntrancyTracker entrancyTracker;
+    protected TransactionSynchronizationRegistry synchronizationRegistry;
+    private static final Object ENTITIES_TO_STORE = new Object() {
+        public String toString() {
+            return "EntitiesToStore";
+        }
+    };
 
     public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) {
         this.transactionManager = transactionManager;
@@ -108,7 +116,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         this.cmpEngineFactory = cmpEngineFactory;
         this.connectorName = connectorName;
         this.engine = engine;
-        entrancyTracker = new EntrancyTracker(SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+        synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        entrancyTracker = new EntrancyTracker(synchronizationRegistry);
 
         cmpCallback = new ContainerCmpCallback();
     }
@@ -380,6 +389,32 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         } finally {
             ThreadContext.exit(oldCallContext);
         }
+
+        // if we call load we must call store
+        try {
+            //noinspection unchecked
+            Set<EntityBean> registeredEntities = (LinkedHashSet<EntityBean>) synchronizationRegistry.getResource(ENTITIES_TO_STORE);
+            if (registeredEntities == null) {
+                registeredEntities = new LinkedHashSet<EntityBean>();
+                synchronizationRegistry.putResource(ENTITIES_TO_STORE, registeredEntities);
+                synchronizationRegistry.registerInterposedSynchronization(new Synchronization() {
+                    public void beforeCompletion() {
+                        //noinspection unchecked
+                        Set<EntityBean> registeredEntities = (LinkedHashSet<EntityBean>) synchronizationRegistry.getResource(ENTITIES_TO_STORE);
+                        if (registeredEntities == null) {
+                            return;
+                        }
+                        for (EntityBean entityBean : registeredEntities) {
+                            ejbStore(entityBean);
+                        }
+                    }
+                    public void afterCompletion(int i) {
+                    }
+                });
+            }
+            registeredEntities.add(entityBean);
+        } catch (Exception e) {
+        }
     }
 
     private void ejbStore(EntityBean entityBean) {
@@ -511,6 +546,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return returnValue;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
         return e instanceof Exception && !(e instanceof RuntimeException);
     }
