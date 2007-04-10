@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
+import java.rmi.AccessException;
 import java.rmi.RemoteException;
 
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.Handle;
 
@@ -32,8 +34,8 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
     protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
-    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class []{Object.class});
-    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class []{Handle.class});
+    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class[]{Object.class});
+    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
     protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
 
     public EJBHomeHandler() {
@@ -152,7 +154,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw ae.getCause();
+            Throwable exc = (ae.getCause() != null) ? ae.getCause() : ae;
+            if (exc instanceof EJBAccessException) {
+                throw new AccessException(exc.getMessage());
+            }
+            throw exc;
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.

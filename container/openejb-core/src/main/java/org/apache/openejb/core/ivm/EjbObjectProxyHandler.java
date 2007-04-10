@@ -19,6 +19,10 @@ package org.apache.openejb.core.ivm;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.rmi.AccessException;
+
+import javax.ejb.EJBAccessException;
+import javax.ejb.AccessLocalException;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
@@ -99,6 +103,18 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             */
         } catch (org.apache.openejb.ApplicationException ae) {
             exc = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
+            if (exc instanceof EJBAccessException) {
+                if (interfaceType.isBusiness()) {
+                    throw exc;
+                } else {
+                    if (this.isLocal()) {
+                        throw new AccessLocalException(exc.getMessage()).initCause(exc.getCause());
+                    } else {
+                        throw new AccessException(exc.getMessage());
+                    }
+                }
+
+            }
             throw exc;
 
             /*

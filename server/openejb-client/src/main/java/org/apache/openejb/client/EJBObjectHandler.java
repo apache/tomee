@@ -18,8 +18,11 @@ package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.rmi.AccessException;
 
 import javax.ejb.EJBObject;
+import javax.ejb.EJBAccessException;
+import javax.ejb.AccessLocalException;
 
 import org.apache.openejb.client.proxy.ProxyManager;
 
@@ -155,7 +158,13 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw ae.getCause();
+            Throwable exc = (ae.getCause() != null) ? ae.getCause() : ae;
+            if (exc instanceof EJBAccessException) {
+                if (EJBObject.class.isAssignableFrom(ejb.getRemoteInterfaceClass())) {
+                    throw new AccessException(exc.getMessage());
+                }
+            }
+            throw exc;
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.

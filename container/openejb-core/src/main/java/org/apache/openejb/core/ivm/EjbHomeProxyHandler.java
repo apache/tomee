@@ -18,26 +18,29 @@ package org.apache.openejb.core.ivm;
 
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
+import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.EJBHome;
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
 
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    private final Map<String,MethodType> dispatchTable;
+    private final Map<String, MethodType> dispatchTable;
 
     private static enum MethodType {
         CREATE,
@@ -49,7 +52,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
         super(container, pk, depID, interfaceType);
-        dispatchTable = new HashMap<String,MethodType>();
+        dispatchTable = new HashMap<String, MethodType>();
         dispatchTable.put("create", MethodType.CREATE);
         dispatchTable.put("getEJBMetaData", MethodType.META_DATA);
         dispatchTable.put("getHomeHandle", MethodType.HOME_HANDLE);
@@ -60,9 +63,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             Class homeInterface = deploymentInfo.getInterface(interfaceType);
             Method[] methods = homeInterface.getMethods();
             for (Method method : methods) {
-                if (method.getName().startsWith("create")){
+                if (method.getName().startsWith("create")) {
                     dispatchTable.put(method.getName(), MethodType.CREATE);
-                } else if (method.getName().startsWith("find")){
+                } else if (method.getName().startsWith("find")) {
                     dispatchTable.put(method.getName(), MethodType.FIND);
                 }
             }
@@ -75,7 +78,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     public Object createProxy(ProxyInfo proxyInfo) {
-        Object newProxy = null;
+        Object newProxy;
         try {
 
             InterfaceType interfaceType = InterfaceType.EJB_OBJECT;
@@ -93,7 +96,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         } catch (IllegalAccessException iae) {
             throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
         }
-        if (newProxy == null) throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
+        if (newProxy == null)
+            throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
 
         return newProxy;
     }
@@ -181,7 +185,20 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * do not impact the viability of the proxy.
             */
         } catch (org.apache.openejb.ApplicationException ae) {
-            throw ae.getRootCause();
+            Throwable exc = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
+            if (exc instanceof EJBAccessException) {
+                if (interfaceType.isBusiness()) {
+                    throw exc;
+                } else {
+                    if (this.isLocal()) {
+                        throw new AccessLocalException(exc.getMessage());
+                    } else {
+                        throw new AccessException(exc.getMessage());
+                    }
+                }
+
+            }
+            throw exc;
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
@@ -215,7 +232,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
         ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null);
-        assert proxyInfo != null: "Container returned a null ProxyInfo: ContainerID="+container.getContainerID();
+        assert proxyInfo != null : "Container returned a null ProxyInfo: ContainerID=" + container.getContainerID();
         return createProxy(proxyInfo);
     }
 

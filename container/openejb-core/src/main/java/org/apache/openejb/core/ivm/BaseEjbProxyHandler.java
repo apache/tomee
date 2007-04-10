@@ -16,37 +16,33 @@
  */
 package org.apache.openejb.core.ivm;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.lang.reflect.Method;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
-import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.ejb.EJBException;
+import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.AccessLocalException;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -250,12 +246,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             } catch (NoSuchObjectException  e) {
                 if (this.isLocal()) {
                     throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
-                } else {
-                    throw e;
-                }
-            } catch (AccessException e) {
-                if (this.isLocal()) {
-                    throw new AccessLocalException(e.getMessage()).initCause(getCause(e));
                 } else {
                     throw e;
                 }
