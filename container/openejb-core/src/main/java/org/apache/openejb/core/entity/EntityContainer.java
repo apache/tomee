@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -34,6 +35,7 @@ import javax.ejb.NoSuchEntityException;
 import javax.ejb.Timer;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
@@ -41,6 +43,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -68,10 +71,16 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
+    /**
+     * Tracks entity instances that have been "entered" so we can throw reentrancy exceptions.
+     */
+    protected EntrancyTracker entrancyTracker;
+
     public EntityContainer(Object id, TransactionManager transactionManager, SecurityService securityService, int poolSize) throws OpenEJBException {
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
+        entrancyTracker = new EntrancyTracker(SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
 
         instanceManager = new EntityInstanceManager(this, transactionManager, securityService, poolSize);
     }
@@ -199,9 +208,8 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         txPolicy.beforeInvoke(bean, txContext);
 
         Object returnValue = null;
-
+        entrancyTracker.enter(callContext.getDeploymentInfo(), callContext.getPrimaryKey());
         try {
-
             bean = instanceManager.obtainInstance(callContext);
 
             ejbLoad_If_No_Transaction(callContext, bean);
@@ -233,6 +241,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             */
             txPolicy.handleSystemException(iae, bean, txContext);
         } finally {
+            entrancyTracker.exit(callContext.getDeploymentInfo(), callContext.getPrimaryKey());
             txPolicy.afterInvoke(bean, txContext);
         }
 
@@ -426,7 +435,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         */
         if (returnValue instanceof java.util.Collection) {
             Iterator keys = ((Collection) returnValue).iterator();
-            java.util.Vector proxies = new java.util.Vector();
+            Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasNext()) {
                 Object primaryKey = keys.next();
                 proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
@@ -434,7 +443,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             returnValue = proxies;
         } else if (returnValue instanceof java.util.Enumeration) {
             Enumeration keys = (Enumeration) returnValue;
-            java.util.Vector proxies = new java.util.Vector();
+            Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
                 proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
@@ -520,5 +529,4 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             }
         }
     }
-
 }

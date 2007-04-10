@@ -42,6 +42,7 @@ import javax.ejb.Timer;
 import javax.ejb.FinderException;
 import javax.ejb.EJBAccessException;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
@@ -49,12 +50,14 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.ContainerType;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.entity.EntityContext;
+import org.apache.openejb.core.entity.EntrancyTracker;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -93,6 +96,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
      */
     protected final Map<Object, CmpEngine> cmpEngines = new HashMap<Object, CmpEngine>();
 
+    /**
+     * Tracks entity instances that have been "entered" so we can throw reentrancy exceptions.
+     */
+    protected EntrancyTracker entrancyTracker;
 
     public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) {
         this.transactionManager = transactionManager;
@@ -101,6 +108,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         this.cmpEngineFactory = cmpEngineFactory;
         this.connectorName = connectorName;
         this.engine = engine;
+        entrancyTracker = new EntrancyTracker(SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
 
         cmpCallback = new ContainerCmpCallback();
     }
@@ -469,6 +477,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         EntityBean bean = null;
         Object returnValue = null;
+
+        entrancyTracker.enter(deploymentInfo, callContext.getPrimaryKey());
         try {
             CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             bean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
@@ -494,6 +504,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             /* System Exception ****************************/
             txPolicy.handleSystemException(e, bean, txContext);
         } finally {
+            entrancyTracker.exit(deploymentInfo, callContext.getPrimaryKey());
             txPolicy.afterInvoke(bean, txContext);
         }
 

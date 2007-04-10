@@ -18,6 +18,9 @@ package org.apache.openejb.core.entity;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -35,9 +38,11 @@ import javax.ejb.NoSuchEntityException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
+import javax.transaction.RollbackException;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
+import java.rmi.RemoteException;
 
 public class EntityInstanceManager {
 
@@ -53,12 +58,12 @@ public class EntityInstanceManager {
     * by using an instance of the inner Key class. The Key class is a compound key composed
     * of the tx, deployment, and primary key identifiers.
     */
-    protected Hashtable txReadyPool = new Hashtable();
+    protected Hashtable<Object,SyncronizationWrapper> txReadyPool = new Hashtable<Object,SyncronizationWrapper>();
     /*
     * contains a collection of LinkListStacks indexed by deployment id. Each indexed stack
     * represents the method ready pool of for that class.
     */
-    protected HashMap poolMap = null;
+    protected Map<Object,LinkedListStack> poolMap = null;
 
     public Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
@@ -71,37 +76,37 @@ public class EntityInstanceManager {
         this.securityService = securityService;
         this.poolsize = poolSize;
         this.container = container;
-        poolMap = new HashMap();// put size in later
+        poolMap = new HashMap<Object,LinkedListStack>();// put size in later
 
-        org.apache.openejb.DeploymentInfo[] deploymentInfos = this.container.deployments();
+        DeploymentInfo[] deploymentInfos = this.container.deployments();
         for (int i = 0; i < deploymentInfos.length; i++) {
-            org.apache.openejb.DeploymentInfo deploymentInfo = deploymentInfos[i];
+            DeploymentInfo deploymentInfo = deploymentInfos[i];
             deploy(deploymentInfo);
         }
     }
 
-    public void deploy(org.apache.openejb.DeploymentInfo deploymentInfo) {
+    public void deploy(DeploymentInfo deploymentInfo) {
         poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
     }
 
-    public void undeploy(org.apache.openejb.DeploymentInfo deploymentInfo) {
+    public void undeploy(DeploymentInfo deploymentInfo) {
         poolMap.remove(deploymentInfo.getDeploymentID());
     }
 
-    public EntityBean obtainInstance(ThreadContext callContext)
-            throws OpenEJBException {
-        Transaction currentTx = null;
+    public EntityBean obtainInstance(ThreadContext callContext) throws OpenEJBException {
+        Transaction currentTx;
         try {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new org.apache.openejb.SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure");
         }
 
         Object primaryKey = callContext.getPrimaryKey();// null if its a servicing a home methods (create, find, ejbHome)
         if (currentTx != null && primaryKey != null) {// primkey is null if create operation is called
-            Key key = new Key(currentTx, callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
-            SyncronizationWrapper wrapper = (SyncronizationWrapper) txReadyPool.get(key);
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Key key = new Key(currentTx, deploymentInfo.getDeploymentID(), primaryKey);
+            SyncronizationWrapper wrapper = txReadyPool.get(key);
 
             if (wrapper != null) {// if true, the requested bean instance is already enrolled in a transaction
 
@@ -115,7 +120,7 @@ public class EntityInstanceManager {
                     * its likely that the application server would have already made the reference invalid, but this bit of
                     * code is an extra precaution.
                     */
-                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey));
+                    throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey));
                 } else if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
                     *  To avoid calling ejbStore( ) on a bean that after its removed, we can not delegate
@@ -129,22 +134,16 @@ public class EntityInstanceManager {
                     return wrapper.getEntityBean();
                 } else {
 
-                    org.apache.openejb.core.CoreDeploymentInfo depInfo = (org.apache.openejb.core.CoreDeploymentInfo) callContext.getDeploymentInfo();
-                    if (depInfo.isReentrant()) {
-                        /*
-                         * If the bean is declared as reentrant then the instance may be accessed
-                         * by more then one thread at a time.  This is one of the reasons that reentrancy
-                         * is bad. In this case beans must be programmed to be multi threaded. The other reason
-                         * reentrancy is bad has to do with transaction isolation. Multiple instances writing to
-                         * the same database records will inevitably cancel out previous writes within the same tx.
-                         *
-                         * In the future we may change this to return a new instance of the bean and to
-                         * link it and its wrapper to the original wrapper, but for now we choose this strategy because
-                         * its simpler to implement.
-                        */
-                        return wrapper.getEntityBean();
-                    } else
-                        throw new org.apache.openejb.ApplicationException(new java.rmi.RemoteException("Attempted reentrant access. Bean is not reentrant"));
+                    // If the bean is declared as reentrant then the instance may be accessed
+                    // by more then one thread at a time.  This is one of the reasons that reentrancy
+                    // is bad. In this case beans must be programmed to be multi threaded. The other reason
+                    // reentrancy is bad has to do with transaction isolation. Multiple instances writing to
+                    // the same database records will inevitably cancel out previous writes within the same tx.
+                    //
+                    // In the future we may change this to return a new instance of the bean and to
+                    // link it and its wrapper to the original wrapper, but for now we choose this strategy because
+                    // its simpler to implement.
+                    return wrapper.getEntityBean();
                 }
             } else {
                 /*
@@ -169,24 +168,23 @@ public class EntityInstanceManager {
 
                 try {
                     currentTx.registerSynchronization(wrapper);
-                } catch (javax.transaction.SystemException se) {
-                    logger.error("Transaction Manager registerSynchronization() failed.", se);
-                    throw new org.apache.openejb.SystemException(se);
-                } catch (javax.transaction.RollbackException re) {
-                    throw new org.apache.openejb.ApplicationException(new TransactionRolledbackException(re));
+                } catch (javax.transaction.SystemException e) {
+                    logger.error("Transaction Manager registerSynchronization() failed.", e);
+                    throw new SystemException(e);
+                } catch (RollbackException e) {
+                    throw new ApplicationException(new TransactionRolledbackException(e));
                 }
                 loadingBean(bean, callContext);
                 Operation orginalOperation = callContext.getCurrentOperation();
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.LOAD);
-                BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
+                callContext.setCurrentOperation(Operation.LOAD);
                 try {
                     bean.ejbLoad();
                 } catch (NoSuchEntityException e) {
-                    throw new org.apache.openejb.InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey).initCause(e));
+                    throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey).initCause(e));
                 } catch (Exception e) {
                     logger.error("Exception encountered during ejbLoad():", e);
 
-                    throw new org.apache.openejb.OpenEJBException(e);
+                    throw new OpenEJBException(e);
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
                     callContext.setCurrentAllowedStates(EntityContext.getStates());
@@ -195,27 +193,25 @@ public class EntityInstanceManager {
 
                 return bean;
             }
-        } else {  /*
-                If no transaction is associated with the thread or if its a create, find or home method (primaryKey == null), then no synchronized wrapper is needed.
-                if bean instance is used for a create method then a syncrhonziation wrapper may be assigned
-                when the bean is returned to the pool -- depending on if the tx is a client initiated or container initiated.
-                */
+        } else {
+            // If no transaction is associated with the thread or if its a create, find or home method
+            // (primaryKey == null), then no synchronized wrapper is needed. if bean instance is used
+            // for a create method then a syncrhonziation wrapper may be assigned when the bean is
+            // returned to the pool -- depending on if the tx is a client initiated or container initiated.
             return getPooledInstance(callContext);
         }
     }
 
-    protected void loadingBean(javax.ejb.EntityBean bean, org.apache.openejb.core.ThreadContext callContext) throws OpenEJBException {
+    protected void loadingBean(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
     }
 
-    protected void reusingBean(javax.ejb.EntityBean bean, org.apache.openejb.core.ThreadContext callContext) throws OpenEJBException {
+    protected void reusingBean(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
     }
 
-    protected EntityBean getPooledInstance(ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
+    protected EntityBean getPooledInstance(ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Stack methodReadyPool = (Stack) poolMap.get(deploymentInfo.getDeploymentID());
-        if (methodReadyPool == null)
-            throw new org.apache.openejb.SystemException("Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container");
+        Stack methodReadyPool = poolMap.get(deploymentInfo.getDeploymentID());
+        if (methodReadyPool == null) throw new SystemException("Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container");
 
         EntityBean bean = (EntityBean) methodReadyPool.pop();
         if (bean == null) {
@@ -223,11 +219,11 @@ public class EntityInstanceManager {
                 bean = (EntityBean) deploymentInfo.getBeanClass().newInstance();
             } catch (Exception e) {
                 logger.error("Bean instantiation failed for class " + deploymentInfo.getBeanClass(), e);
-                throw new org.apache.openejb.SystemException(e);
+                throw new SystemException(e);
             }
 
             Operation currentOp = callContext.getCurrentOperation();
-            callContext.setCurrentOperation(org.apache.openejb.core.Operation.SET_CONTEXT);
+            callContext.setCurrentOperation(Operation.SET_CONTEXT);
             BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
             try {
@@ -241,16 +237,15 @@ public class EntityInstanceManager {
                 * we don't want the TransactionScopeHandler commiting the transaction in afterInvoke() which is what it would attempt
                 * to do.
                 */
-                CoreDeploymentInfo deploymentInfo1 = callContext.getDeploymentInfo();
                 bean.setEntityContext(createEntityContext());
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
                 /*
                 * The EJB 1.1 specification does not specify how exceptions thrown by setEntityContext impact the
                 * transaction, if there is one.  In this case we choose the least disruptive operation, throwing an
                 * application exception and NOT automatically marking the transaciton for rollback.
                 */
                 logger.error("Bean callback method failed ", e);
-                throw new org.apache.openejb.ApplicationException(e);
+                throw new ApplicationException(e);
             } finally {
                 callContext.setCurrentOperation(currentOp);
                 callContext.setCurrentAllowedStates(originalStates);
@@ -259,8 +254,7 @@ public class EntityInstanceManager {
             reusingBean(bean, callContext);
         }
 
-        if ((callContext.getCurrentOperation() == org.apache.openejb.core.Operation.BUSINESS) ||
-                (callContext.getCurrentOperation() == org.apache.openejb.core.Operation.REMOVE)) {
+        if ((callContext.getCurrentOperation() == Operation.BUSINESS) || (callContext.getCurrentOperation() == Operation.REMOVE)) {
             /*
             * When a bean is retrieved from the bean pool to service a client's business method request it must be
             * notified that its about to enter service by invoking its ejbActivate( ) method. A bean instance
@@ -272,7 +266,7 @@ public class EntityInstanceManager {
             */
             Operation currentOp = callContext.getCurrentOperation();
 
-            callContext.setCurrentOperation(org.apache.openejb.core.Operation.ACTIVATE);
+            callContext.setCurrentOperation(Operation.ACTIVATE);
             BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
             try {
                 /*
@@ -292,9 +286,9 @@ public class EntityInstanceManager {
                     }
                 } catch (javax.transaction.SystemException se) {
                     logger.error("Transaction Manager getTransaction() failed.", se);
-                    throw new org.apache.openejb.SystemException(se);
+                    throw new SystemException(se);
                 }
-                throw new ApplicationException(new java.rmi.RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
+                throw new ApplicationException(new RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
             } finally {
                 callContext.setCurrentOperation(currentOp);
                 callContext.setCurrentAllowedStates(originalStates);
@@ -308,10 +302,8 @@ public class EntityInstanceManager {
         return new EntityContext(transactionManager, securityService);
     }
 
-    public void poolInstance(ThreadContext callContext, EntityBean bean)
-            throws OpenEJBException {
+    public void poolInstance(ThreadContext callContext, EntityBean bean) throws OpenEJBException {
         if (bean == null) {
-
             return;
         }
         Object primaryKey = callContext.getPrimaryKey();// null if servicing a home ejbFind or ejbHome method.
@@ -320,11 +312,11 @@ public class EntityInstanceManager {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new org.apache.openejb.SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure");
         }
         if (currentTx != null && primaryKey != null) {// primary key is null for find and home methods
             Key key = new Key(currentTx, callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
-            SyncronizationWrapper wrapper = (SyncronizationWrapper) txReadyPool.get(key);
+            SyncronizationWrapper wrapper = txReadyPool.get(key);
             if (wrapper != null) {
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
@@ -338,7 +330,7 @@ public class EntityInstanceManager {
                     * If the bean has been removed then the bean instance is no longer needed and can return to the methodReadyPool
                     * to service another identity.
                     */
-                    Stack methodReadyPool = (Stack) poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
+                    Stack methodReadyPool = poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
                     methodReadyPool.push(bean);
                 } else
                     wrapper.setEntityBean(bean);
@@ -356,9 +348,9 @@ public class EntityInstanceManager {
                     currentTx.registerSynchronization(wrapper);
                 } catch (javax.transaction.SystemException se) {
                     logger.error("Transaction Manager registerSynchronization() failed.", se);
-                    throw new org.apache.openejb.SystemException(se);
-                } catch (javax.transaction.RollbackException re) {
-                    throw new org.apache.openejb.ApplicationException(new TransactionRolledbackException(re));
+                    throw new SystemException(se);
+                } catch (RollbackException re) {
+                    throw new ApplicationException(new TransactionRolledbackException(re));
                 }
 
                 txReadyPool.put(key, wrapper);
@@ -378,7 +370,7 @@ public class EntityInstanceManager {
                 */
                 Operation currentOp = callContext.getCurrentOperation();
 
-                callContext.setCurrentOperation(org.apache.openejb.core.Operation.PASSIVATE);
+                callContext.setCurrentOperation(Operation.PASSIVATE);
                 BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
                 try {
@@ -398,9 +390,9 @@ public class EntityInstanceManager {
                         }
                     } catch (javax.transaction.SystemException se) {
                         logger.error("Transaction Manager getTransaction() failed.", se);
-                        throw new org.apache.openejb.SystemException(se);
+                        throw new SystemException(se);
                     }
-                    throw new ApplicationException(new java.rmi.RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
+                    throw new ApplicationException(new RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
                 } finally {
                     callContext.setCurrentOperation(currentOp);
                     callContext.setCurrentAllowedStates(originalStates);
@@ -412,19 +404,18 @@ public class EntityInstanceManager {
             * method and is not still part of a tx.  While in the method ready pool the bean instance is not associated with a
             * primary key and may be used to service a request for any bean of the same class.
             */
-            Stack methodReadyPool = (Stack) poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
+            Stack methodReadyPool = poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
             methodReadyPool.push(bean);
         }
 
     }
 
-    public void freeInstance(ThreadContext callContext, EntityBean bean)
-            throws org.apache.openejb.SystemException {
+    public void freeInstance(ThreadContext callContext, EntityBean bean) throws SystemException {
 
         discardInstance(callContext, bean);
 
         Operation currentOp = callContext.getCurrentOperation();
-        callContext.setCurrentOperation(org.apache.openejb.core.Operation.UNSET_CONTEXT);
+        callContext.setCurrentOperation(Operation.UNSET_CONTEXT);
         BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         try {
@@ -439,7 +430,7 @@ public class EntityInstanceManager {
             * to do.
             */
             bean.unsetEntityContext();
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             /*
             * The EJB 1.1 specification does not specify how exceptions thrown by unsetEntityContext impact the
             * transaction, if there is one.  In this case we choose to do nothing since the instance is being disposed
@@ -454,14 +445,13 @@ public class EntityInstanceManager {
 
     }
 
-    public void discardInstance(ThreadContext callContext, EntityBean bean)
-            throws org.apache.openejb.SystemException {
+    public void discardInstance(ThreadContext callContext, EntityBean bean) throws SystemException {
         Transaction currentTx = null;
         try {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new org.apache.openejb.SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure");
         }
         if (currentTx != null) {
             if (callContext.getPrimaryKey() == null)
@@ -475,7 +465,7 @@ public class EntityInstanceManager {
                in the txReadyPool is indicative of an entity bean that has been removed via
                ejbRemove() rather than freed because of an error condition as is the case here.
             */
-            SyncronizationWrapper wrapper = (SyncronizationWrapper) txReadyPool.remove(key);
+            SyncronizationWrapper wrapper = txReadyPool.remove(key);
 
             if (wrapper != null) {
                 /*
@@ -554,7 +544,6 @@ public class EntityInstanceManager {
         private final Key myIndex;
         private final CoreDeploymentInfo deploymentInfo;
         private final Object primaryKey;
-        private final Object securityIdentity;
 
         public SyncronizationWrapper(EntityBean bean, Key key, boolean available, ThreadContext callContext) throws OpenEJBException {
             if (bean == null || callContext == null || key == null) {
@@ -566,7 +555,6 @@ public class EntityInstanceManager {
             isAssociated = true;
             deploymentInfo = callContext.getDeploymentInfo();
             primaryKey = callContext.getPrimaryKey();
-            securityIdentity = null;
         }
 
         public void disassociate() {
@@ -611,7 +599,7 @@ public class EntityInstanceManager {
                     TransactionManager transactionManager = getTransactionManager();
                     try {
                         transactionManager.setRollbackOnly();
-                    } catch (SystemException se) {
+                    } catch (javax.transaction.SystemException se) {
                         logger.error("Transaction manager reported error during setRollbackOnly()", se);
                     }
 
