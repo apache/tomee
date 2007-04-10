@@ -141,6 +141,11 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                     if (ref != null) {
                         ref.setMappedName("jndi:" + nsCorbaloc);
                     }
+                } else if (refType.getEjbLink() != null) {
+                    EjbRef ref = ejbRefs.get(refName);
+                    if (ref != null) {
+                        ref.setEjbLink(refType.getEjbLink());
+                    }
                 } else {
                     PatternType pattern = refType.getPattern();
                     addEjbLink(deployment, refName, pattern);
@@ -154,8 +159,15 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                     continue;
                 }
 
-                PatternType pattern = refType.getPattern();
-                addEjbLink(deployment, refName, pattern);
+                if (refType.getEjbLink() != null) {
+                    EjbRef ref = ejbRefs.get(refName);
+                    if (ref != null) {
+                        ref.setEjbLink(refType.getEjbLink());
+                    }
+                } else {
+                    PatternType pattern = refType.getPattern();
+                    addEjbLink(deployment, refName, pattern);
+                }
             }
         }
     }
