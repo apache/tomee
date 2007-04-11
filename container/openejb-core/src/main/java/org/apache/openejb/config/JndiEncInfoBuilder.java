@@ -300,7 +300,7 @@ public class JndiEncInfoBuilder {
             }
 
             if (otherBean != null) {
-                if (interfce.equals(otherBean.businessRemote) || jndiConsumer instanceof ApplicationClient) {
+                if (otherBean.businessRemote.contains(interfce)) {
                     ejb.setRefType(EjbRef.Type.REMOTE);
                 } else {
                     ejb.setRefType(EjbRef.Type.LOCAL);
@@ -308,7 +308,7 @@ public class JndiEncInfoBuilder {
                     jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
                 }
             } else {
-                if (byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome()) != null || jndiConsumer instanceof ApplicationClient) {
+                if (byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome()) != null) {
                     ejb.setRefType(EjbRef.Type.REMOTE);
                 } else {
                     ejb.setRefType(EjbRef.Type.LOCAL);
