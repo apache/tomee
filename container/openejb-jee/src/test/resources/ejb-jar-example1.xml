@@ -65,7 +65,9 @@
             <local-home>token</local-home>
             <local>token</local>
             <business-local>token</business-local>
+            <business-local>token2</business-local>
             <business-remote>token</business-remote>
+            <business-remote>token2</business-remote>
             <service-endpoint>token</service-endpoint>
             <ejb-class>token</ejb-class>
             <session-type>Stateful</session-type>

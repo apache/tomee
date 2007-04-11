@@ -201,22 +201,6 @@ class EjbRequestHandler {
                 req.getPrimaryKey()
         );
 
-        if (result instanceof ProxyInfo) {
-            ProxyInfo info = (ProxyInfo) result;
-
-            if (EJBObject.class.isAssignableFrom(info.getInterface())) {
-                result = this.daemon.clientObjectFactory._getEJBObject(call, info);
-            } else if (EJBHome.class.isAssignableFrom(info.getInterface())) {
-                result = this.daemon.clientObjectFactory._getEJBHome(call, info);
-            } else {
-
-                result = new RemoteException("The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
-                this.daemon.logger.error(req + "The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
-                res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, result);
-                return;
-            }
-        }
-
         res.setResponse(ResponseCodes.EJB_OK, result);
     }
 
@@ -230,22 +214,6 @@ class EjbRequestHandler {
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
-
-        if (result instanceof ProxyInfo) {
-            ProxyInfo info = (ProxyInfo) result;
-
-            if (EJBObject.class.isAssignableFrom(info.getInterface())) {
-                result = this.daemon.clientObjectFactory._getEJBObject(call, info);
-            } else if (EJBHome.class.isAssignableFrom(info.getInterface())) {
-                result = this.daemon.clientObjectFactory._getEJBHome(call, info);
-            } else {
-
-                result = new RemoteException("The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
-                this.daemon.logger.error(req + "The container returned a ProxyInfo object that is neither a javax.ejb.EJBObject or javax.ejb.EJBHome: " + info.getInterface());
-                res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, result);
-                return;
-            }
-        }
 
         res.setResponse(ResponseCodes.EJB_OK, result);
     }

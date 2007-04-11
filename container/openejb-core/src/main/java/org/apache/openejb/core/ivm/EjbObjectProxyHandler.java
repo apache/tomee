@@ -163,7 +163,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getDeploymentInfo().getInterface(interfaceType), container, interfaceType);
+        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getDeploymentInfo().getInterfaces(interfaceType), container, interfaceType);
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {

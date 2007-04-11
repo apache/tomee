@@ -112,7 +112,6 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
          */
 
         try {
-            System.out.println("method = " + m.getDeclaringClass() + "."+m.getName());
             String methodName = m.getName();
             if (m.getDeclaringClass().equals(Object.class)) {
                 if (m.equals(TOSTRING)) {

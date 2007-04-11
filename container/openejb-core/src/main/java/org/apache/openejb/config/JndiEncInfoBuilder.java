@@ -174,9 +174,13 @@ public class JndiEncInfoBuilder {
         deploymentsInApplication.add(bean.ejbDeploymentId);
 
         byInterfaces.put("r=" + bean.remote + ":" + bean.home, bean);
-        byInterfaces.put("r=" + bean.businessRemote + ":" + null, bean);
+        for (String businessLocal : bean.businessLocal) {
+            byInterfaces.put("l=" + businessLocal + ":" + null, bean);
+        }
         byInterfaces.put("l=" + bean.local + ":" + bean.localHome, bean);
-        byInterfaces.put("l=" + bean.businessLocal + ":" + null, bean);
+        for (String businessRemote : bean.businessRemote) {
+            byInterfaces.put("r=" + businessRemote + ":" + null, bean);
+        }
 
         byEjbName.put(bean.ejbName, bean);
         // TODO: DMB: this path part should actually *only* be relative to the app archive,

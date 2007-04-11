@@ -18,6 +18,8 @@ package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.List;
+import java.util.ArrayList;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
@@ -30,9 +32,11 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
+import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -51,26 +55,26 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        return ((StatelessState) getState()).getEJBLocalObject();
+        return ((SessionState) getState()).getEJBLocalObject();
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
-        return ((StatelessState) getState()).getEJBObject();
+        return ((SessionState) getState()).getEJBObject();
     }
 
     public MessageContext getMessageContext() throws IllegalStateException {
-        return ((StatelessState) getState()).getMessageContext();
+        return ((SessionState) getState()).getMessageContext();
     }
 
     public Object getBusinessObject(Class aClass) {
-        return ((StatelessState) getState()).getBusinessObject(aClass);
+        return ((SessionState) getState()).getBusinessObject(aClass);
     }
 
     public Class getInvokedBusinessInterface() {
-        return ((StatelessState) getState()).getInvokedBusinessInterface();
+        return ((SessionState) getState()).getInvokedBusinessInterface();
     }
 
-    protected static class StatelessState extends State {
+    protected static class SessionState extends State {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
@@ -110,19 +114,35 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            InterfaceType interfaceType;
-            if (di.getBusinessLocalInterface() != null && di.getBusinessLocalInterface().getName().equals(interfce.getName())) {
-                interfaceType = InterfaceType.BUSINESS_LOCAL;
-            } else if (di.getBusinessRemoteInterface() != null && di.getBusinessRemoteInterface().getName().equals(interfce.getName())) {
-                interfaceType = InterfaceType.BUSINESS_REMOTE;
-            } else {
-                throw new IllegalArgumentException("Component has no such interface " + interfce.getName());
+
+            InterfaceType interfaceType = di.getInterfaceType(interfce);
+
+            if (interfaceType == null){
+                throw new IllegalArgumentException("Component has no such interface: " + interfce.getName());
+            }
+
+            if (!interfaceType.isBusiness()) {
+                throw new IllegalStateException("Interface is not a business interface for this bean: " + interfce.getName());
             }
 
             try {
-                EjbObjectProxyHandler handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
-                Class[] interfaces = new Class[]{interfce, IntraVmProxy.class};
-                return ProxyManager.newProxyInstance(interfaces, handler);
+                EjbObjectProxyHandler handler;
+                switch(di.getComponentType()){
+                    case STATEFUL: {
+                        handler = new StatefulEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
+                        break;
+                    }
+                    case STATELESS: {
+                        handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
+                        break;
+                    }
+                    default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
+                }
+
+                List<Class> interfaces = new ArrayList<Class>();
+                interfaces.addAll(di.getInterfaces(interfaceType));
+                interfaces.add(IntraVmProxy.class);
+                return ProxyManager.newProxyInstance(interfaces.toArray(new Class[]{}), handler);
             } catch (IllegalAccessException iae) {
                 throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
             }
@@ -142,7 +162,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * Dependency injection methods (e.g., setSessionContext)
      */
-    public static class InjectionStatelessState extends StatelessState {
+    public static class InjectionSessionState extends SessionState {
 
         public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
             throw new IllegalStateException();
@@ -212,7 +232,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    public static class LifecycleStatelessState extends StatelessState {
+    public static class LifecycleSessionState extends SessionState {
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
@@ -271,7 +291,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
      * Business method from business interface or component interface; business
      * method interceptor method
      */
-    public static class BusinessStatelessState extends StatelessState {
+    public static class BusinessSessionState extends SessionState {
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
@@ -285,7 +305,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     /**
      * Timeout callback method
      */
-    public static class TimeoutStatelessState extends StatelessState {
+    public static class TimeoutSessionState extends SessionState {
 
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();

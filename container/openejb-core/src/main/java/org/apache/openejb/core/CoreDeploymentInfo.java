@@ -80,8 +80,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Class localInterface;
     private Class beanClass;
     private Class pkClass;
-    private Class businessLocal;
-    private Class businessRemote;
+    private final List<Class> businessLocals = new ArrayList<Class>();
+    private final List<Class> businessRemotes = new ArrayList<Class>();
     private Class mdbInterface;
     private Class serviceEndpointInterface;
 
@@ -148,6 +148,18 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
+    public List<Class> getInterfaces(InterfaceType interfaceType) {
+        switch(interfaceType){
+            case BUSINESS_LOCAL: return getBusinessLocalInterfaces();
+            case BUSINESS_REMOTE: return getBusinessRemoteInterfaces();
+            default: {
+                List<Class> interfaces = new ArrayList<Class>();
+                interfaces.add(getInterface(interfaceType));
+                return interfaces;
+            }
+        }
+    }
+
     public InterfaceType getInterfaceType(Class clazz) {
         InterfaceType type = interfaces.get(clazz);
         if (type != null) return type;
@@ -165,7 +177,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class remoteInterface,
                               Class localHomeInterface,
                               Class localInterface,
-                              Class businessLocal, Class businessRemote, Class pkClass,
+                              List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType
     ) throws SystemException {
 
@@ -176,8 +188,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.remoteInterface = remoteInterface;
         this.localInterface = localInterface;
         this.localHomeInterface = localHomeInterface;
-        this.businessLocal = businessLocal;
-        this.businessRemote = businessRemote;
+        if (businessLocals != null){
+            this.businessLocals.addAll(businessLocals);
+        }
+        if (businessRemotes != null) {
+            this.businessRemotes.addAll(businessRemotes);
+        }
         this.remoteInterface = remoteInterface;
         this.beanClass = beanClass;
         this.pkClass = pkClass;
@@ -218,10 +234,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         addInterface(getLocalInterface(), InterfaceType.EJB_LOCAL);
 
         addInterface(DeploymentInfo.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
-        addInterface(getBusinessRemoteInterface(), InterfaceType.BUSINESS_REMOTE);
+        for (Class businessRemote : this.businessRemotes) {
+            addInterface(businessRemote, InterfaceType.BUSINESS_REMOTE);
+        }
 
         addInterface(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
-        addInterface(getBusinessLocalInterface(), InterfaceType.BUSINESS_LOCAL);
+        for (Class businessLocal : this.businessLocals) {
+            addInterface(businessLocal, InterfaceType.BUSINESS_LOCAL);
+        }
     }
 
     /**
@@ -389,11 +409,19 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public Class getBusinessLocalInterface() {
-        return businessLocal;
+        return businessLocals.size() > 0 ? businessLocals.get(0) : null;
     }
 
     public Class getBusinessRemoteInterface() {
-        return businessRemote;
+        return businessRemotes.size() > 0 ? businessRemotes.get(0) : null;
+    }
+
+    public List<Class> getBusinessLocalInterfaces() {
+        return businessLocals;
+    }
+
+    public List<Class> getBusinessRemoteInterfaces() {
+        return businessRemotes;
     }
 
     public Class getMdbInterface() {
@@ -767,10 +795,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             mapObjectInterface(localInterface);
             mapHomeInterface(localHomeInterface);
         }
-        if (businessLocal != null){
+
+        for (Class businessLocal : businessLocals) {
             mapObjectInterface(businessLocal);
         }
-        if (businessRemote != null){
+
+        for (Class businessRemote : businessRemotes) {
             mapObjectInterface(businessRemote);
         }
 
@@ -903,15 +933,19 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public Class getObjectInterface(Class homeInterface){
+    public List<Class> getObjectInterface(Class homeInterface){
         if (BusinessLocalHome.class.isAssignableFrom(homeInterface)){
-            return getBusinessLocalInterface();
+            return getBusinessLocalInterfaces();
         } else if (BusinessRemoteHome.class.isAssignableFrom(homeInterface)){
-            return getBusinessRemoteInterface();
+            return getBusinessRemoteInterfaces();
         } else if (EJBLocalHome.class.isAssignableFrom(homeInterface)){
-            return getLocalInterface();
+            List<Class> classes = new ArrayList<Class>();
+            classes.add(getLocalInterface());
+            return classes;
         } else if (EJBHome.class.isAssignableFrom(homeInterface)){
-            return getRemoteInterface();
+            List<Class> classes = new ArrayList<Class>();
+            classes.add(getRemoteInterface());
+            return classes;
         } else {
             throw new IllegalArgumentException("Cannot determine object interface for "+homeInterface);
         }

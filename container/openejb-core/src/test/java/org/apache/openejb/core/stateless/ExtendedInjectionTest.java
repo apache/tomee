@@ -91,8 +91,8 @@ public class ExtendedInjectionTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
-        bean.setBusinessLocal(Widget.class.getName());
-        bean.setBusinessRemote(RemoteWidget.class.getName());
+        bean.addBusinessLocal(Widget.class.getName());
+        bean.addBusinessRemote(RemoteWidget.class.getName());
 
         EnvEntry envEntry = new EnvEntry("homepage", String.class.getName(), "http://people.apache.org/~dblevins/");
         envEntry.getInjectionTarget().add(new InjectionTarget(bean.getEjbClass(), "homepage"));

@@ -16,11 +16,14 @@
  */
 package org.apache.openejb;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class ProxyInfo {
 
     protected DeploymentInfo deploymentInfo;
     protected Object primaryKey;
-    protected Class proxyInterface;
+    protected List<Class> proxyInterface;
     protected RpcContainer beanContainer;
     protected InterfaceType interfaceType;
 
@@ -28,6 +31,10 @@ public class ProxyInfo {
     }
 
     public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container, InterfaceType proxyType) {
+        this(depInfo, pk, asList(intrfc), container, proxyType);
+    }
+
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, List<Class> intrfc, RpcContainer container, InterfaceType proxyType) {
         this.deploymentInfo = depInfo;
         this.primaryKey = pk;
         this.proxyInterface = intrfc;
@@ -35,8 +42,18 @@ public class ProxyInfo {
         this.beanContainer = container;
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, List<Class> intrfc, RpcContainer container) {
         this(depInfo, pk, intrfc, container, InterfaceType.UNKNOWN);
+    }
+
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
+        this(depInfo, pk, asList(intrfc), container);
+    }
+
+    private static List asList(Object object){
+        List list = new ArrayList();
+        list.add(object);
+        return list;
     }
 
     public InterfaceType getInterfaceType() {
@@ -52,6 +69,10 @@ public class ProxyInfo {
     }
 
     public Class getInterface() {
+        return proxyInterface.get(0);
+    }
+
+    public List<Class> getInterfaces() {
         return proxyInterface;
     }
 

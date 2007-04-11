@@ -42,7 +42,7 @@ public interface RemoteBean extends EnterpriseBean {
 
     public List<SecurityRoleRef> getSecurityRoleRef();
 
-    String getBusinessLocal();
+    List<String> getBusinessLocal();
 
-    String getBusinessRemote();
+    List<String> getBusinessRemote();
 }

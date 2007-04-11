@@ -145,9 +145,9 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session {
     protected String localHome;
     protected String local;
     @XmlElement(name = "business-local")
-    protected String businessLocal;
+    protected List<String> businessLocal;
     @XmlElement(name = "business-remote")
-    protected String businessRemote;
+    protected List<String> businessRemote;
     @XmlElement(name = "service-endpoint")
     protected String serviceEndpoint;
     @XmlElement(name = "ejb-class")
@@ -334,20 +334,28 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session {
         this.local = value;
     }
 
-    public String getBusinessLocal() {
+    public List<String> getBusinessLocal() {
+        if (businessLocal == null){
+            businessLocal = new ArrayList<String>();
+        }
         return businessLocal;
     }
 
-    public void setBusinessLocal(String businessLocal) {
-        this.businessLocal = businessLocal;
+    public void addBusinessLocal(String businessLocal) {
+        if (businessLocal == null) return;
+        getBusinessLocal().add(businessLocal);
     }
 
-    public String getBusinessRemote() {
+    public List<String> getBusinessRemote() {
+        if (businessRemote == null){
+            businessRemote = new ArrayList<String>();
+        }
         return businessRemote;
     }
 
-    public void setBusinessRemote(String businessRemote) {
-        this.businessRemote = businessRemote;
+    public void addBusinessRemote(String businessRemote) {
+        if (businessRemote == null) return;
+        getBusinessRemote().add(businessRemote);
     }
 
     public String getServiceEndpoint() {

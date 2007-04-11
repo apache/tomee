@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.List;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -414,7 +415,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
         // return a proxy to the bean
         Class callingClass = callMethod.getDeclaringClass();
-        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
         return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
 
     }
@@ -427,7 +428,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
         Class callingClass = callMethod.getDeclaringClass();
-        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
         /*
         * Find operations return either a single primary key or a collection of primary keys.

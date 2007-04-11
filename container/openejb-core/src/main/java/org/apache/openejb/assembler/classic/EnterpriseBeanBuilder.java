@@ -88,15 +88,16 @@ class EnterpriseBeanBuilder {
             local = loadClass(bean.local, "classNotFound.local");
         }
 
-        Class businessLocal = null;
-        if (bean.businessLocal != null) {
-            businessLocal = loadClass(bean.businessLocal, "classNotFound.businessLocal");
+        List<Class> businessLocals = new ArrayList<Class>();
+        for (String businessLocal : bean.businessLocal) {
+            businessLocals.add(loadClass(businessLocal, "classNotFound.businessLocal"));
         }
 
-        Class businessRemote = null;
-        if (bean.businessRemote != null) {
-            businessRemote = loadClass(bean.businessRemote, "classNotFound.businessRemote");
+        List<Class> businessRemotes = new ArrayList<Class>();
+        for (String businessRemote : bean.businessRemote) {
+            businessRemotes.add(loadClass(businessRemote, "classNotFound.businessRemote"));
         }
+
 
         Class primaryKey = null;
         if (ejbType.isEntity() && ((EntityBeanInfo) bean).primKeyClass != null) {
@@ -112,7 +113,7 @@ class EnterpriseBeanBuilder {
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocal, businessRemote, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocals, businessRemotes, primaryKey, ejbType);
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");

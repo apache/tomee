@@ -56,19 +56,19 @@ public class StatelessContext extends BaseSessionContext {
     /**
      * Business method from web service endpoint
      */
-    private static class BusinessWsStatelessState extends StatelessState {
+    private static class BusinessWsStatelessState extends SessionState {
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
         }
     }
 
     static {
-        states[Operation.INJECTION.ordinal()] = new InjectionStatelessState();
-        states[Operation.CREATE.ordinal()] = new LifecycleStatelessState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
+        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
+        states[Operation.CREATE.ordinal()] = new LifecycleSessionState();
+        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
         states[Operation.BUSINESS_WS.ordinal()] = new BusinessWsStatelessState();
-        states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleStatelessState();
+        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
+        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleSessionState();
     }
 
 }

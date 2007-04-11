@@ -57,22 +57,22 @@ public class StatefulContext extends BaseSessionContext {
     }
 
     static {
-        states[Operation.INJECTION.ordinal()] = new InjectionStatelessState();
-        states[Operation.CREATE.ordinal()] = new LifecycleStatelessState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessStatelessState();
+        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
+        states[Operation.CREATE.ordinal()] = new LifecycleSessionState();
+        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
         states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
         states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
         states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
-        states[Operation.TIMEOUT.ordinal()] = new TimeoutStatelessState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleStatelessState();
-        states[Operation.REMOVE.ordinal()] = new LifecycleStatelessState();
+        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
+        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleSessionState();
+        states[Operation.REMOVE.ordinal()] = new LifecycleSessionState();
     }
 
     /**
      * afterBegin
      * beforeCompletion
      */
-    public static class BeforeCompletion extends StatelessState {
+    public static class BeforeCompletion extends SessionState {
 
         public Class getInvokedBusinessInterface() {
             throw new IllegalStateException();
@@ -90,7 +90,7 @@ public class StatefulContext extends BaseSessionContext {
     /**
      * afterCompletion
      */
-    public static class AfterCompletion extends StatelessState {
+    public static class AfterCompletion extends SessionState {
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
         }

@@ -22,6 +22,8 @@ import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
@@ -91,8 +93,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             EjbObjectProxyHandler handler = newEjbObjectHandler(proxyInfo.getBeanContainer(), proxyInfo.getPrimaryKey(), proxyInfo.getDeploymentInfo().getDeploymentID(), interfaceType);
             handler.setLocal(isLocal());
             handler.doIntraVmCopy = this.doIntraVmCopy;
-            Class[] interfaces = new Class[]{proxyInfo.getInterface(), IntraVmProxy.class};
-            newProxy = ProxyManager.newProxyInstance(interfaces, handler);
+            List<Class> interfacess = new ArrayList<Class>();
+            interfacess.addAll(proxyInfo.getInterfaces());
+            interfacess.add(IntraVmProxy.class);
+            newProxy = ProxyManager.newProxyInstance(interfacess.toArray(new Class[]{}), handler);
         } catch (IllegalAccessException iae) {
             throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
         }

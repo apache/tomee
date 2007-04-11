@@ -94,6 +94,8 @@ public interface DeploymentInfo {
 
     public Class getInterface(InterfaceType interfaceType);
 
+    public List<Class> getInterfaces(InterfaceType interfaceType);
+
     public Class getMdbInterface();
 
     public Map<String, String> getActivationProperties();

@@ -244,8 +244,8 @@ public class CrossClassLoaderProxyTest extends TestCase {
         StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
         bean.setRemote(WidgetRemote.class.getName());
         bean.setHome(WidgetHome.class.getName());
-        bean.setBusinessLocal(Widget.class.getName());
-        bean.setBusinessRemote(RemoteWidget.class.getName());
+        bean.addBusinessLocal(Widget.class.getName());
+        bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 

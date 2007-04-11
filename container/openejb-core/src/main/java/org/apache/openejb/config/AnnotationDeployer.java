@@ -518,8 +518,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         // Anything declared in the xml is also not eligable
                         List<String> declared = new ArrayList<String>();
-                        declared.add(sessionBean.getBusinessLocal());
-                        declared.add(sessionBean.getBusinessRemote());
+                        declared.addAll(sessionBean.getBusinessLocal());
+                        declared.addAll(sessionBean.getBusinessRemote());
                         declared.add(sessionBean.getHome());
                         declared.add(sessionBean.getRemote());
                         declared.add(sessionBean.getLocalHome());
@@ -602,12 +602,12 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         for (Class interfce : remotes) {
                             // TODO: This should be turned back into an array
-                            sessionBean.setBusinessRemote(interfce.getName());
+                            sessionBean.addBusinessRemote(interfce.getName());
                         }
 
                         for (Class interfce : locals) {
                             // TODO: This should be turned back into an array
-                            sessionBean.setBusinessLocal(interfce.getName());
+                            sessionBean.addBusinessLocal(interfce.getName());
                         }
                     }
                 }

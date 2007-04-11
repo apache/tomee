@@ -80,7 +80,9 @@ public class JaccPermissionsBuilder {
             for (InterfaceType type : InterfaceType.values()) {
                 if (type == InterfaceType.UNKNOWN) continue;
 
-                addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), deployment.getInterface(type));
+                for (Class interfce : deployment.getInterfaces(type)) {
+                    addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), interfce);
+                }
             }
 
             addDeclaredEjbPermissions(ejbJar, enterpriseBean, null, permissions, policyContext);

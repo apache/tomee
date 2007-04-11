@@ -677,7 +677,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
 
         Class callingClass = callMethod.getDeclaringClass();
-        Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
         return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
     }
 
@@ -702,7 +702,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // Determine the proxy type
             Class<?> callingClass = callMethod.getDeclaringClass();
-            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+            List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
@@ -731,7 +731,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
 
             Class<?> callingClass = callMethod.getDeclaringClass();
-            Class objectInterface = deploymentInfo.getObjectInterface(callingClass);
+            List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
 
             // The following block of code is responsible for returning ProxyInfo object(s) for each
             // matching entity bean found by the query.  If its a multi-value find operation a Vector
