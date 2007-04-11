@@ -19,14 +19,23 @@ package org.apache.openejb.client;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Set;
-import java.security.AccessController;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
 
-import javax.security.auth.Subject;
+import javax.transaction.TransactionRequiredException;
+import javax.transaction.TransactionRolledbackException;
+import javax.ejb.TransactionRequiredLocalException;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBHome;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
@@ -47,14 +56,18 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected transient ClientMetaData client;
 
     protected transient Object primaryKey;
+    protected final boolean remote;
 
     public EJBInvocationHandler() {
+        remote = false;
     }
 
     public EJBInvocationHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
         this.ejb = ejb;
         this.server = server;
         this.client = client;
+        Class remoteInterface = ejb.getRemoteInterfaceClass();
+        remote = remoteInterface != null && (EJBObject.class.isAssignableFrom(remoteInterface) || EJBHome.class.isAssignableFrom(remoteInterface));
     }
 
     public EJBInvocationHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
@@ -100,7 +113,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected void invalidateReference() {
         this.server = null;
         this.client = null;
-        this.ejb = null;
+//        this.ejb = null;
         this.inProxyMap = false;
         this.isInvalidReference = true;
         this.primaryKey = null;
@@ -130,5 +143,39 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         synchronized (set) {
             set.add(handler);
         }
+    }
+
+    protected Throwable convert(Throwable e) {
+        if (!remote && e instanceof RemoteException) {
+            if (e instanceof TransactionRequiredException) {
+                return new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
+            }
+            if (e instanceof TransactionRolledbackException) {
+                return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
+            }
+            if (e instanceof NoSuchObjectException) {
+                return new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
+            }
+            if (e instanceof AccessException) {
+                return new AccessLocalException(e.getMessage()).initCause(getCause(e));
+            }
+            return new EJBException(e.getMessage()).initCause(getCause(e));
+        }
+
+        if (remote && e instanceof EJBAccessException) {
+            if (e.getCause() instanceof Exception) {
+                return new AccessException(e.getMessage(), (Exception) e.getCause());
+            } else {
+                return new AccessException(e.getMessage());
+            }
+        }
+        return e;
+    }
+
+    protected Throwable getCause(Throwable e) {
+        if (e != null && e.getCause() != null) {
+            return e.getCause();
+        }
+        return e;
     }
 }

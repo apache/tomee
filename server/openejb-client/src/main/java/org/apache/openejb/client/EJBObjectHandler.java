@@ -16,16 +16,14 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.proxy.ProxyManager;
+
+import javax.ejb.EJBException;
+import javax.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.rmi.AccessException;
-import java.util.List;
 import java.util.ArrayList;
-
-import javax.ejb.EJBObject;
-import javax.ejb.EJBAccessException;
-
-import org.apache.openejb.client.proxy.ProxyManager;
+import java.util.List;
 
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
@@ -156,28 +154,30 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         } catch (SystemException e) {
             invalidateAllHandlers(getRegistryId());
-            throw e.getCause();
+            throw convert(e.getCause());
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            Throwable exc = (ae.getCause() != null) ? ae.getCause() : ae;
-            if (exc instanceof EJBAccessException) {
-                if (ejb.remoteClass != null && EJBObject.class.isAssignableFrom(ejb.getRemoteInterfaceClass())) {
-                    throw new AccessException(exc.getMessage());
-                }
-            }
-            throw exc;
+            throw convert(ae.getCause());
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
         } catch (SystemError se) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException", se.getCause());
+            if (remote) {
+                throw new RemoteException("Container has suffered a SystemException", se.getCause());
+            } else {
+                throw new EJBException("Container has suffered a SystemException").initCause(se.getCause());
+            }
         } catch (Throwable oe) {
-            throw new RemoteException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage(), oe.getCause());
+            if (remote) {
+                throw new RemoteException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage(), oe.getCause());
+            } else {
+                throw new EJBException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage()).initCause(oe.getCause());
+            }
         }
         return retValue;
     }

@@ -21,12 +21,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
-import java.rmi.AccessException;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.Handle;
+import javax.ejb.EJBException;
 
 import org.apache.openejb.client.proxy.ProxyManager;
 
@@ -148,26 +147,30 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
         } catch (SystemException e) {
             invalidateReference();
-            throw e.getCause();
+            throw convert(e.getCause());
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            Throwable exc = (ae.getCause() != null) ? ae.getCause() : ae;
-            if (exc instanceof EJBAccessException) {
-                throw new AccessException(exc.getMessage());
-            }
-            throw exc;
+            throw convert(ae.getCause());
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
         } catch (SystemError se) {
             invalidateReference();
-            throw new RemoteException("Container has suffered a SystemException", se.getCause());
+            if (remote) {
+                throw new RemoteException("Container has suffered a SystemException", se.getCause());
+            } else {
+                throw new EJBException("Container has suffered a SystemException").initCause(se.getCause());
+            }
         } catch (Throwable oe) {
-            throw new RemoteException("Unknown Container Exception", oe.getCause());
+            if (remote) {
+                throw new RemoteException("Unknown Container Exception", oe.getCause());
+            } else {
+                throw new EJBException("Unknown Container Exception").initCause(oe.getCause());
+            }
         }
 
     }
