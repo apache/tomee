@@ -48,6 +48,7 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.EjbLink;
@@ -299,7 +300,7 @@ public class JndiEncInfoBuilder {
             }
 
             if (otherBean != null) {
-                if (interfce.equals(otherBean.businessRemote)) {
+                if (interfce.equals(otherBean.businessRemote) || jndiConsumer instanceof ApplicationClient) {
                     ejb.setRefType(EjbRef.Type.REMOTE);
                 } else {
                     ejb.setRefType(EjbRef.Type.LOCAL);
@@ -307,7 +308,7 @@ public class JndiEncInfoBuilder {
                     jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
                 }
             } else {
-                if (byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome()) != null) {
+                if (byInterfaces.get("r=" + ejb.getRemote() + ":" + ejb.getHome()) != null || jndiConsumer instanceof ApplicationClient) {
                     ejb.setRefType(EjbRef.Type.REMOTE);
                 } else {
                     ejb.setRefType(EjbRef.Type.LOCAL);
