@@ -58,17 +58,33 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.jpa.unit.Properties;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.TreeMap;
 import java.lang.reflect.Modifier;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
+
+    private static final Set<String> ENHANCEED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
+            "pcInheritedFieldCount",
+            "pcFieldNames",
+            "pcFieldTypes",
+            "pcFieldFlags",
+            "pcPCSuperclass",
+            "pcStateManager",
+            "class$Ljava$lang$String",
+            "class$Ljava$lang$Integer",
+            "class$Lcom$sun$ts$tests$common$ejb$wrappers$CMP11Wrapper",
+            "pcDetachedState",
+            "serialVersionUID"
+    )));
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         // search for the cmp persistence unit
@@ -143,7 +159,16 @@ public class CmpJpaConversion implements DynamicDeployer {
         OpenejbJar openejbJar = ejbModule.getOpenejbJar();
         ClassLoader classLoader = ejbModule.getClassLoader();
 
-        Map<String, Entity> entitiesByName = new HashMap<String,Entity>();
+        Map<String, MappedSuperclass> mappedSuperclassByClass = new TreeMap<String,MappedSuperclass>();
+        for (MappedSuperclass mappedSuperclass : entityMappings.getMappedSuperclass()) {
+            mappedSuperclassByClass.put(mappedSuperclass.getClazz(), mappedSuperclass);
+        }
+
+        Map<String, Entity> entitiesByName = new TreeMap<String,Entity>();
+        for (Entity entity : entityMappings.getEntity()) {
+            entitiesByName.put(entity.getName(), entity);
+        }
+        
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
             if (!(enterpriseBean instanceof EntityBean) ||
@@ -155,6 +180,13 @@ public class CmpJpaConversion implements DynamicDeployer {
             // Always set the abstract schema name
             if (bean.getAbstractSchemaName() == null) {
                 String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
+                if (entitiesByName.containsKey(abstractSchemaName)) {
+                    int i = 2;
+                    while (entitiesByName.containsKey(abstractSchemaName + i)) {
+                         i++;
+                    }
+                    abstractSchemaName = abstractSchemaName + i;
+                }
                 bean.setAbstractSchemaName(abstractSchemaName);
             }
 
@@ -187,7 +219,9 @@ public class CmpJpaConversion implements DynamicDeployer {
             } else {
                 // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
                 Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
-                entityMappings.getMappedSuperclass().addAll(mappedSuperclasses);
+                for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
+                    mappedSuperclassByClass.put(mappedSuperclass.getClazz(), mappedSuperclass);
+                }
             }
 
             // process queries
@@ -240,6 +274,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
             }
         }
+        entityMappings.getMappedSuperclass().addAll(mappedSuperclassByClass.values());
 
         Relationships relationships = ejbJar.getRelationships();
         if (relationships != null) {
@@ -533,7 +568,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
         persistantFields = new TreeSet<String>(persistantFields);
-        Map<String,MappedSuperclass> fields = new HashMap<String,MappedSuperclass>();
+        Map<String,MappedSuperclass> fields = new TreeMap<String,MappedSuperclass>();
 
         while (!persistantFields.isEmpty() && !clazz.equals(Object.class)) {
             MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
@@ -542,8 +577,8 @@ public class CmpJpaConversion implements DynamicDeployer {
                 if (persistantFields.contains(fieldName)) {
                     fields.put(fieldName, superclass);
                     persistantFields.remove(fieldName);
-                } else {
-                    Transient transientField = new Transient(field.getName());
+                } else if (!ENHANCEED_FIELDS.contains(fieldName)){
+                    Transient transientField = new Transient(fieldName);
                     superclass.addField(transientField);
                 }
             }
