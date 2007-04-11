@@ -443,6 +443,11 @@ public class JndiEncInfoBuilder {
     private List<EnvEntryInfo> buildEnvEntryInfos(JndiConsumer item) {
         List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
         for (EnvEntry env : item.getEnvEntry()) {
+            // ignore env entries without a value
+            if (env.getEnvEntryValue() == null) {
+                continue;
+            }
+
             EnvEntryInfo info = new EnvEntryInfo();
 
             info.name = env.getEnvEntryName();
