@@ -19,10 +19,11 @@ package org.apache.openejb.client;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.ejb.EJBObject;
 import javax.ejb.EJBAccessException;
-import javax.ejb.AccessLocalException;
 
 import org.apache.openejb.client.proxy.ProxyManager;
 
@@ -90,11 +91,17 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         EJBObjectProxy ejbObject = null;
 
         try {
-            // Interface class must be listed first otherwise the proxy code will select
-            // the openejb system class loader for proxy creation instead of the
-            // application class loader
-            Class[] interfaces = new Class[]{ejb.remoteClass, EJBObjectProxy.class};
-            ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces, this);
+            List<Class> interfaces = new ArrayList<Class>();
+            // Interface class must be listed first, before EJBObjectProxy,
+            // otherwise the proxy code will selectï the openejb system class
+            // loader for proxy creation instead of the application class loader
+            if (ejb.remoteClass != null){
+                interfaces.add(ejb.remoteClass);
+            } else if (ejb.businessClasses.size() > 0){
+                interfaces.addAll(ejb.businessClasses);
+            }
+            interfaces.add(EJBObjectProxy.class);
+            ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces.toArray(new Class[]{}), this);
 
         } catch (IllegalAccessException e) {
 
@@ -143,10 +150,8 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 else if (m.equals(REMOVE)) retValue = remove(m, a, p);
                 else
                     throw new UnsupportedOperationException("Unkown method: " + m);
-            } else if (m.getDeclaringClass().isAssignableFrom(ejb.remoteClass)) {
-                retValue = businessMethod(m, a, p);
             } else {
-                throw new UnsupportedOperationException("Unkown method: " + m);
+                retValue = businessMethod(m, a, p);
             }
 
         } catch (SystemException e) {
@@ -159,7 +164,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         } catch (ApplicationException ae) {
             Throwable exc = (ae.getCause() != null) ? ae.getCause() : ae;
             if (exc instanceof EJBAccessException) {
-                if (EJBObject.class.isAssignableFrom(ejb.getRemoteInterfaceClass())) {
+                if (ejb.remoteClass != null && EJBObject.class.isAssignableFrom(ejb.getRemoteInterfaceClass())) {
                     throw new AccessException(exc.getMessage());
                 }
             }

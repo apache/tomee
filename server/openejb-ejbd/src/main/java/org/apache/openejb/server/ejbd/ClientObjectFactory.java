@@ -79,7 +79,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode);
+                idCode, null);
         return metaData;
     }
 
@@ -100,7 +100,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode);
+                idCode, null);
         Object primKey = info.getPrimaryKey();
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, sMetaData, cMetaData, primKey);
@@ -125,7 +125,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode);
+                idCode, null);
 
         EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, sMetaData, cMetaData);
 
@@ -149,7 +149,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode);
+                idCode, null);
         Object primKey = info.getPrimaryKey();
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, sMetaData, cMetaData, primKey);
@@ -174,7 +174,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode);
+                idCode, null);
 
         EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, sMetaData, cMetaData);
 

@@ -84,6 +84,10 @@ public interface DeploymentInfo {
 
     public Class getBusinessRemoteInterface();
 
+    public List<Class> getBusinessLocalInterfaces();
+
+    public List<Class> getBusinessRemoteInterfaces();
+
     public Class getServiceEndpointInterface();
 
     public String getPrimaryKeyField();

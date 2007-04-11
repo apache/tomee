@@ -35,7 +35,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.JNDIRequest;
 import org.apache.openejb.client.JNDIResponse;
-import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.InjectionMetaData;
@@ -147,7 +146,7 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1);
+                        -1, null);
                 res.setResult(metaData);
                 break;
             }
@@ -159,11 +158,11 @@ class JndiRequestHandler {
             case BUSINESS_REMOTE: {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                        deployment.getBusinessRemoteInterface(),
+                        null,
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1);
+                        -1, deployment.getBusinessRemoteInterfaces());
                 Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                 res.setResult(data);
                 break;
@@ -177,7 +176,7 @@ class JndiRequestHandler {
                             deployment.getPrimaryKeyClass(),
                             deployment.getComponentType().toString(),
                             deploymentID,
-                            -1);
+                            -1, null);
                     Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                     res.setResult(data);
                 } else {
