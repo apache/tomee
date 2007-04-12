@@ -60,14 +60,15 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-kernel</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-transaction</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.modules</groupId>
@@ -85,12 +86,27 @@
           <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-security</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.tranql</groupId>
+          <artifactId>tranql</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${version}</version>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-javamail_1.4_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxr_1.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-saaj_1.1_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -109,16 +125,28 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
+      <artifactId>openejb-hsql</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>openejb-activemq</artifactId>-->
+      <!--<version>${version}</version>-->
+    <!--</dependency>-->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.2.1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-http</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>idb</groupId>
-      <artifactId>idb</artifactId>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-telnet</artifactId>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -127,13 +155,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests-beans</artifactId>
+      <artifactId>openejb-itests-client</artifactId>
       <version>${version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests-client</artifactId>
+      <artifactId>openejb-itests-beans</artifactId>
       <version>${version}</version>
       <scope>test</scope>
     </dependency>

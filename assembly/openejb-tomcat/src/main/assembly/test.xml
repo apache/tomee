@@ -28,7 +28,12 @@
       <unpack>true</unpack>
       <includes>
           <include>org.apache.geronimo.specs:geronimo-ejb_3.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec</include>
+          <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
+          <include>org.apache.geronimo.specs:geronimo-interceptor_3.0_spec</include>
+          <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
+          <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
+          <include>org.apache.xbean:xbean-finder</include>
+          <include>asm:asm</include>
           <include>junit:junit</include>
           <include>org.apache.openejb:openejb-itests-beans</include>
           <include>org.apache.openejb:openejb-itests-client</include>

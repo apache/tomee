@@ -33,6 +33,13 @@
       <attainGoal name="tomcat.env"/>
     </goal>
 
+    <goal name="tomcat6">
+      <j:set var="tomcat.branch" value="6"/>
+      <j:set var="tomcat.version" value="6.0.10"/>
+      <j:set var="tomcat.prefix" value="apache"/>
+      <attainGoal name="tomcat.env"/>
+    </goal>
+
     <goal name="tomcat50">
       <j:set var="tomcat.branch" value="5"/>
       <j:set var="tomcat.version" value="5.0.30"/>
@@ -183,14 +190,23 @@
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
       <attainGoal name="setup:itests"/>
-      <!--<attainGoal name="start:tomcat"/>-->
+      <attainGoal name="start:tomcat"/>
       <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
         <arg value="tomcat"/>
       </java>
-      <!--<attainGoal name="stop:tomcat"/>-->
+      <attainGoal name="stop:tomcat"/>
+    </goal>
+
+    <goal name="test:client">
+      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
+        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
+        <sysproperty key="tomcat.home" value="${tomcat.home}"/>
+        <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
+        <arg value="tomcat"/>
+      </java>
     </goal>
 
     <goal name="itest:all">
