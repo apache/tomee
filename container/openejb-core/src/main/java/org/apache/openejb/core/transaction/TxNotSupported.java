@@ -17,6 +17,9 @@
 package org.apache.openejb.core.transaction;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.SystemException;
+
+import javax.transaction.InvalidTransactionException;
 
 public class TxNotSupported extends TransactionPolicy {
 
@@ -24,24 +27,24 @@ public class TxNotSupported extends TransactionPolicy {
         super(Type.NotSupported, container);
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
 
         try {
 
             context.clientTx = context.getTransactionManager().suspend();
         } catch (javax.transaction.SystemException se) {
-            throw new org.apache.openejb.SystemException(se);
+            throw new SystemException(se);
         }
         context.currentTx = null;
 
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         if (context.clientTx != null) {
             try {
                 context.getTransactionManager().resume(context.clientTx);
-            } catch (javax.transaction.InvalidTransactionException ite) {
+            } catch (InvalidTransactionException ite) {
 
                 logger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());
             } catch (IllegalStateException e) {
@@ -54,12 +57,13 @@ public class TxNotSupported extends TransactionPolicy {
         }
     }
 
-    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
+        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
 
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         /* [1] Log the system exception or error *********/
         logSystemException(sysException);
 

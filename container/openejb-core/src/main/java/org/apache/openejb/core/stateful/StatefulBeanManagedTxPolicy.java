@@ -86,7 +86,8 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
         }
     }
 
-    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
+        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
         throw new ApplicationException(appException);
     }
 

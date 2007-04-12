@@ -33,6 +33,7 @@ import javax.ejb.SessionSynchronization;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.ejb.ApplicationException;
 import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
 
@@ -132,6 +133,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final List<Injection> injections = new ArrayList<Injection>();
     private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
+    private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -257,6 +259,34 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         for (Class clazz : interfce.getInterfaces()) {
             addInterface(clazz, type);
+        }
+    }
+
+    public void addApplicationException(Class exception, boolean rollback) {
+        if (rollback) {
+            exceptions.put(exception, ExceptionType.APPLICATION_ROLLBACK);
+        } else {
+            exceptions.put(exception, ExceptionType.APPLICATION);
+        }
+    }
+
+    public ExceptionType getExceptionType(Throwable e) {
+        // Errors are always system exceptions
+        if (!(e instanceof Exception)) {
+            return ExceptionType.SYSTEM;
+        }
+
+        // check the registered app exceptions
+        ExceptionType type = exceptions.get(e.getClass());
+        if (type != null) {
+            return type;
+        }
+
+        // Unregistered - runtime exceptions are system exception and the rest are application exceptions
+        if (e instanceof RuntimeException) {
+            return ExceptionType.SYSTEM;
+        } else {
+            return ExceptionType.APPLICATION;
         }
     }
 

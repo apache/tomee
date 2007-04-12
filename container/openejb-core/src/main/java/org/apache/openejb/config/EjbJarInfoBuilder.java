@@ -37,6 +37,7 @@ import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
+import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -70,6 +71,7 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.ResultTypeMapping;
+import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -163,6 +165,7 @@ public class EjbJarInfoBuilder {
             initMethodPermissions(jar, ejbds, ejbJar);
             initExcludesList(jar, ejbds, ejbJar);
             initMethodTransactions(jar, ejbds, ejbJar);
+            initApplicationExceptions(jar, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 resolveRoleLinks(jar, bean, items.get(bean.ejbName));
@@ -301,6 +304,15 @@ public class EjbJarInfoBuilder {
             info.transAttribute = cTx.getTransAttribute().toString();
             info.methods.addAll(getMethodInfos(cTx.getMethod(), ejbds));
             ejbJarInfo.methodTransactions.add(info);
+        }
+    }
+
+    private void initApplicationExceptions(EjbModule jar, EjbJarInfo ejbJarInfo) {
+        for (ApplicationException applicationException : jar.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
+            ApplicationExceptionInfo info = new ApplicationExceptionInfo();
+            info.exceptionClass = applicationException.getExceptionClass();
+            info.rollback = applicationException.getRollback();
+            ejbJarInfo.applicationException.add(info);
         }
     }
 

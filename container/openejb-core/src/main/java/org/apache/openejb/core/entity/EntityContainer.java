@@ -49,6 +49,7 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -218,17 +219,18 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             ejbStore_If_No_Transaction(callContext, bean);
             instanceManager.poolInstance(callContext, bean);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, bean);
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } catch (org.apache.openejb.ApplicationException e) {
-            txPolicy.handleApplicationException(e.getRootCause(), txContext);
+            txPolicy.handleApplicationException(e.getRootCause(), false, txContext);
         } catch (org.apache.openejb.SystemException se) {
             txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
         } catch (Throwable iae) {// handle reflection exception
@@ -247,10 +249,6 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         }
 
         return returnValue;
-    }
-
-    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
-        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
@@ -389,13 +387,14 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             // update pool
             instanceManager.poolInstance(callContext, bean);
         } catch (java.lang.reflect.InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, bean);
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } catch (OpenEJBException e) {
             txPolicy.handleSystemException(e.getRootCause(), bean, txContext);
@@ -504,17 +503,18 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             didRemove(bean, callContext);
             instanceManager.poolInstance(callContext, bean);
         } catch (org.apache.openejb.ApplicationException e) {
-            txPolicy.handleApplicationException(e.getRootCause(), txContext);
+            txPolicy.handleApplicationException(e.getRootCause(), false, txContext);
         } catch (org.apache.openejb.SystemException se) {
             txPolicy.handleSystemException(se.getRootCause(), bean, txContext);
         } catch (Exception e) {// handle reflection exception
-            if (!isApplicationException(callContext.getDeploymentInfo(), e)) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(e, bean, txContext);
             } else {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, bean);
-                txPolicy.handleApplicationException(e, txContext);
+                txPolicy.handleApplicationException(e, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } finally {
             txPolicy.afterInvoke(bean, txContext);

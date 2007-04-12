@@ -37,6 +37,7 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -196,19 +197,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
                 returnValue = interceptorStack.invoke(args);
             }
-        } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
-            if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
-                /* System Exception ****************************/
-
-                txPolicy.handleSystemException(ite.getTargetException(), instance, txContext);
-            } else {
-                /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext, instance);
-
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
-            }
         } catch (Throwable re) {// handle reflection exception
-            if (!isApplicationException(deploymentInfo, re)) {
+            ExceptionType type = deploymentInfo.getExceptionType(re);
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(re, instance, txContext);
@@ -216,17 +207,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, instance);
 
-                txPolicy.handleApplicationException(re, txContext);
+                txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
-            /*
-              Any exception thrown by reflection; not by the enterprise bean. Possible
-              Exceptions are:
-                IllegalAccessException - if the underlying method is inaccessible.
-                IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
-                NullPointerException - if the specified object is null and the method is an instance method.
-                ExceptionInInitializerError - if the initialization provoked by this method fails.
-            */
-//            txPolicy.handleSystemException(re, bean, txContext);
         } finally {
 
             txPolicy.afterInvoke(instance, txContext);
@@ -252,13 +234,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
 
         //  Add the webservice interceptor to the list of interceptor instances
-        Map<String, Object> interceptors = new HashMap(instance.interceptors);
+        Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
         {
             interceptors.put(interceptor.getClass().getName(), interceptor);
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        List<InterceptorData> interceptorDatas = new ArrayList(deploymentInfo.getMethodInterceptors(runMethod));
+        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(deploymentInfo.getMethodInterceptors(runMethod));
         {
             InterceptorData providerData = new InterceptorData(interceptor.getClass());
             ClassFinder finder = new ClassFinder(interceptor.getClass());
@@ -281,10 +263,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         // DMB: This will be a problem if the calling method is in an interface and the
         // service-endpoint interface extends that interface.
         return (serviceEndpointInterface != null && serviceEndpointInterface.isAssignableFrom(callMethod.getDeclaringClass()));
-    }
-
-    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
-        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private TransactionManager getTransactionManager() {

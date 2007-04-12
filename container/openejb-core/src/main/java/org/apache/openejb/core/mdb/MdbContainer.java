@@ -29,7 +29,6 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -335,7 +334,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             } else {
                 //
                 // Application Exception ***********************
-                mdbCallContext.txPolicy.handleApplicationException(ite.getTargetException(), mdbCallContext.txContext);
+                mdbCallContext.txPolicy.handleApplicationException(ite.getTargetException(), false, mdbCallContext.txContext);
             }
         } catch (Throwable re) {// handle reflection exception
             //  Any exception thrown by reflection; not by the enterprise bean. Possible

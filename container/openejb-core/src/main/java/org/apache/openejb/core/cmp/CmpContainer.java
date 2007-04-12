@@ -56,6 +56,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.entity.EntityContext;
@@ -524,17 +525,17 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             returnValue = runMethod.invoke(bean, args);
 
         } catch (InvocationTargetException ite) {
-
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
 
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } catch (NoSuchObjectException e) {
-            txPolicy.handleApplicationException(e, txContext);
+            txPolicy.handleApplicationException(e, false, txContext);
         } catch (Throwable e) {
             /* System Exception ****************************/
             txPolicy.handleSystemException(e, bean, txContext);
@@ -544,11 +545,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
 
         return returnValue;
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
-        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
@@ -583,14 +579,14 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             bean = null; // poof
 
         } catch (InvocationTargetException ite) {
-
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
 
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } catch (Throwable e) {
             /* System Exception ****************************/
@@ -661,12 +657,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             }
 
         } catch (InvocationTargetException ite) {// handle enterprise bean exceptions
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
+                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
         } catch (CreateException e) {
             txPolicy.handleSystemException(e, bean, txContext);
@@ -707,7 +704,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
         } catch (javax.ejb.FinderException fe) {
-            txPolicy.handleApplicationException(fe, txContext);
+            txPolicy.handleApplicationException(fe, false, txContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {
@@ -772,7 +769,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 }
             }
         } catch (javax.ejb.FinderException fe) {
-            txPolicy.handleApplicationException(fe, txContext);
+            txPolicy.handleApplicationException(fe, false, txContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {
@@ -866,7 +863,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
         } catch (NoSuchObjectException e) {
-            txPolicy.handleApplicationException(e, txContext);
+            txPolicy.handleApplicationException(e, false, txContext);
         } catch (Throwable e) {// handle reflection exception
             txPolicy.handleSystemException(e, null, txContext);
         } finally {

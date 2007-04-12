@@ -18,13 +18,13 @@ package org.apache.openejb;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.ExceptionType;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.List;
 import javax.naming.Context;
-import javax.security.auth.Subject;
 
 public interface DeploymentInfo {
 
@@ -125,6 +125,8 @@ public interface DeploymentInfo {
     public Method getEjbTimeout();
 
     public EjbTimerService getEjbTimerService();
+
+    public ExceptionType getExceptionType(Throwable e);
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();

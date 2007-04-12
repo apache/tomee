@@ -56,9 +56,12 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
         }
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
-        invalidateReference();
-        return null;
+    public void invalidateReference() {
+        // stateless can't be removed
     }
 
+    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+        // stateless can't be removed
+        return null;
+    }
 }

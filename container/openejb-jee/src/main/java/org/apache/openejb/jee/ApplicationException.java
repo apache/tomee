@@ -57,6 +57,14 @@ public class ApplicationException {
     @XmlID
     protected String id;
 
+    public ApplicationException() {
+    }
+
+    public ApplicationException(String exceptionClass, boolean rollback) {
+        this.exceptionClass = exceptionClass;
+        this.rollback = rollback;
+    }
+
     public String getExceptionClass() {
         return exceptionClass;
     }

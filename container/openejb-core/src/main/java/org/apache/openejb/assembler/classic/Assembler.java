@@ -422,6 +422,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
 
+                // process application exceptions
+                for (ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
+                    try {
+                        Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
+                        for (DeploymentInfo deploymentInfo : deployments.values()) {
+                            CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+                            coreDeploymentInfo.addApplicationException(exceptionClass, exceptionInfo.rollback);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        logger.error("Application class invalid: class=" + exceptionInfo.exceptionClass + ".  Exception: " + e.getMessage(), e);
+                    }
+                }
+
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     logger.info("Created Ejb(deployment-id="+beanInfo.ejbDeploymentId+", ejb-name="+beanInfo.ejbName+", container="+beanInfo.containerId+")");
                 }

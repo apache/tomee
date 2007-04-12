@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -38,12 +39,12 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
         return "TX_BeanManaged: ";
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
 
         context.clientTx = suspendTransaction(context);
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
         try {
             /*
             * The Container must detect the case in which a transaction was started, but
@@ -53,8 +54,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
 
             if (context.currentTx == null) return;
 
-            if (context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK && context.currentTx.getStatus() != Status.STATUS_COMMITTED)
-            {
+            if (context.currentTx.getStatus() != Status.STATUS_ROLLEDBACK && context.currentTx.getStatus() != Status.STATUS_COMMITTED) {
                 String message = "The stateless session bean started a transaction but did not complete it.";
 
                 /* [1] Log this as an application error ********/
@@ -72,18 +72,19 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
             }
 
         } catch (javax.transaction.SystemException e) {
-            throw new org.apache.openejb.SystemException(e);
+            throw new SystemException(e);
         } finally {
             resumeTransaction(context, context.clientTx);
         }
     }
 
-    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
+        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
 
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         try {
             context.currentTx = context.getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException e) {

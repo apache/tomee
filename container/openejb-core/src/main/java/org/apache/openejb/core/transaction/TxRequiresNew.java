@@ -17,6 +17,7 @@
 package org.apache.openejb.core.transaction;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.SystemException;
 
 import javax.transaction.Status;
 
@@ -26,7 +27,7 @@ public class TxRequiresNew extends TransactionPolicy {
         super(Type.RequiresNew, container);
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
 
         try {
 
@@ -35,12 +36,12 @@ public class TxRequiresNew extends TransactionPolicy {
             context.currentTx = context.getTransactionManager().getTransaction();
 
         } catch (javax.transaction.SystemException se) {
-            throw new org.apache.openejb.SystemException(se);
+            throw new SystemException(se);
         }
 
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         try {
 
@@ -51,7 +52,7 @@ public class TxRequiresNew extends TransactionPolicy {
             }
 
         } catch (javax.transaction.SystemException se) {
-            throw new org.apache.openejb.SystemException(se);
+            throw new SystemException(se);
         } finally {
             if (context.clientTx != null) {
                 resumeTransaction(context, context.clientTx);
@@ -61,11 +62,13 @@ public class TxRequiresNew extends TransactionPolicy {
         }
     }
 
-    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
+        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
+
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         /* [1] Log the system exception or error **********/
         logSystemException(sysException);

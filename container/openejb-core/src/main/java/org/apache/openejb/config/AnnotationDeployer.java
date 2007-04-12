@@ -91,6 +91,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.ejb.ApplicationException;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -227,6 +228,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (messageBean.getEjbClass() == null) {
                     messageBean.setEjbClass(beanClass.getName());
                 }
+            }
+
+            classes = finder.findAnnotatedClasses(ApplicationException.class);
+            if (!classes.isEmpty()) {
+                if (ejbJar.getAssemblyDescriptor() == null) {
+                    ejbJar.setAssemblyDescriptor(new AssemblyDescriptor());
+                }
+            }
+            for (Class<?> exceptionClass : classes) {
+                ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
+                org.apache.openejb.jee.ApplicationException exception = new org.apache.openejb.jee.ApplicationException(exceptionClass.getName(), annotation.rollback());
+                ejbJar.getAssemblyDescriptor().getApplicationException().add(exception);
             }
 
             return ejbModule;

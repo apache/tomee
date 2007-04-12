@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.dgc.VMID;
@@ -43,6 +42,7 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -285,7 +285,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
                 Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
 
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList(), new HashMap());
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String,Object>());
 
                 _invoke(callMethod, interceptorStack, args, instance, createContext);
             }
@@ -419,19 +419,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             } else {
                 returnValue = interceptorStack.invoke(args);
             }
-        } catch (InvocationTargetException ite) {// handle enterprise bean exception
-            if (!isApplicationException(callContext.getDeploymentInfo(), ite.getTargetException())) {
-                /* System Exception ****************************/
-
-                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
-            } else {
-                /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
-
-                txPolicy.handleApplicationException(ite.getTargetException(), txContext);
-            }
         } catch (Throwable re) {// handle reflection exception
-            if (!isApplicationException(callContext.getDeploymentInfo(), re)) {
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(re);
+            if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
                 txPolicy.handleSystemException(re, bean, txContext);
@@ -439,29 +429,14 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
 
-                txPolicy.handleApplicationException(re, txContext);
+                txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
-            /*
-              Any exception thrown by reflection; not by the enterprise bean. Possible
-              Exceptions are:
-                IllegalAccessException - if the underlying method is inaccessible.
-                IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
-                NullPointerException - if the specified object is null and the method is an instance method.
-                ExceptionInitializerError - if the initialization provoked by this method fails.
-            */
-
-            txPolicy.handleSystemException(re, bean, txContext);
-
         } finally {
             unregisterEntityManagers(callContext);
             txPolicy.afterInvoke(bean, txContext);
         }
 
         return returnValue;
-    }
-
-    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
-        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {

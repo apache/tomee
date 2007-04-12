@@ -90,14 +90,9 @@ public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestCli
 
     public void test04_remove() {
         try {
-            try {
-                ejbLocalObject.remove();
-                ejbLocalObject.businessMethod("Should throw an exception");
-                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
-            } catch (Exception e) {
-                assertTrue(true);
-                return;
-            }
+            ejbLocalObject.remove();
+            // you can't really remove a stateless handle
+            ejbLocalObject.businessMethod("Should not throw an exception");
         } catch (Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }

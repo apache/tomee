@@ -17,6 +17,7 @@
 package org.apache.openejb.core.transaction;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.SystemException;
 
 public class TxSupports extends TransactionPolicy {
 
@@ -24,7 +25,7 @@ public class TxSupports extends TransactionPolicy {
         super(Type.Supports, container);
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws org.apache.openejb.SystemException, org.apache.openejb.ApplicationException {
+    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
 
         try {
 
@@ -32,20 +33,21 @@ public class TxSupports extends TransactionPolicy {
             context.currentTx = context.clientTx;
 
         } catch (javax.transaction.SystemException se) {
-            throw new org.apache.openejb.SystemException(se);
+            throw new SystemException(se);
         }
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
     }
 
-    public void handleApplicationException(Throwable appException, TransactionContext context) throws ApplicationException {
+    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
+        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
 
         throw new ApplicationException(appException);
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws org.apache.openejb.ApplicationException, org.apache.openejb.SystemException {
+    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         boolean runningInTransaction = (context.currentTx != null);
 

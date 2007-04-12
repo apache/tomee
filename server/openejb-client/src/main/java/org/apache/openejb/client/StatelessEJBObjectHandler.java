@@ -60,9 +60,11 @@ public class StatelessEJBObjectHandler extends EJBObjectHandler {
         return isIdentical(method, args, proxy);
     }
 
+    protected void invalidateReference() {
+    }
+
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
-//      checkAuthorization(method);
-        invalidateReference();
+        // you can't really remove a stateless handle
         return null;
     }
 

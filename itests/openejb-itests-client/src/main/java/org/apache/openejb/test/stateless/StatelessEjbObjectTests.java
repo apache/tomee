@@ -104,13 +104,8 @@ public class StatelessEjbObjectTests extends BasicStatelessTestClient{
     public void test05_remove(){
         try{
             ejbObject.remove();
-            try{
-                ejbObject.businessMethod("Should throw an exception");
-                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
-                assertTrue( true );
-                return;
-            }
+            // you can't really remove a stateless handle
+            ejbObject.businessMethod("Should not throw an exception");
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
