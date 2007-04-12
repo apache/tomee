@@ -174,7 +174,17 @@ public class TomcatRemoteTestServer implements TestServer {
 
         String s = File.pathSeparator;
 
-        if (path.indexOf("tomcat-5.5") != -1) {
+        if (path.indexOf("tomcat-6") != -1) {
+            return new String[]{javaHome.l("bin").s("java"),
+                    "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
+                    "-Djava.util.logging.config.file=" + tomcat.l("conf").l("logging.properties"),
+                    "-Djava.endorsed.dirs=" + tomcat.l("common").l("endorsed"),
+                    "-classpath", tomcatBin.l("bootstrap.jar") + s + tomcatBin.l("commons-logging-api.jar"),
+                    "-Dcatalina.base=" + tomcat,
+                    "-Dcatalina.home=" + tomcat,
+                    "-Djava.io.tmpdir=" + tomcat.l("temp"),
+                    "org.apache.catalina.startup.Bootstrap", command};
+        } else if (path.indexOf("tomcat-5.5") != -1) {
             return new String[]{javaHome.l("bin").s("java"),
                     "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
                     "-Djava.util.logging.config.file=" + tomcat.l("conf").l("logging.properties"),

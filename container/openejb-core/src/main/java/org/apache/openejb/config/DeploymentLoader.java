@@ -305,12 +305,12 @@ public class DeploymentLoader {
             return AppModule.class;
         }
 
-        if (descriptors.containsKey("application-client.xml")) {
-            return ClientModule.class;
-        }
-
         if (descriptors.containsKey("ejb-jar.xml")) {
             return EjbModule.class;
+        }
+
+        if (descriptors.containsKey("application-client.xml")) {
+            return ClientModule.class;
         }
 
         if (descriptors.containsKey("ra.xml")) {
