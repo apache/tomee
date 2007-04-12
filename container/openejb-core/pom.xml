@@ -71,16 +71,18 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!-- Launch a new vm for each test -->
           <forkMode>pertest</forkMode>
-
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar</argLine>-->
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar</argLine>
+          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>
           <systemProperties>
             <property>
               <name>openejb.home</name>
               <value>${basedir}/target/test-classes</value>
+            </property>
+            <property>
+              <name>log4j.configuration</name>
+              <value>file:///${basedir}/target/classes/default.logging.conf</value>
             </property>
           </systemProperties>
         </configuration>
