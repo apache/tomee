@@ -17,8 +17,9 @@
  */
 package org.apache.openejb.core.interceptor;
 
+import org.apache.openejb.core.Operation;
+
 import javax.interceptor.InvocationContext;
-import javax.xml.ws.handler.MessageContext;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
@@ -37,19 +38,24 @@ public class ReflectionInvocationContext implements InvocationContext {
     private final Map<String, Object> contextData = new TreeMap<String, Object>();
     private final Class<?>[] parameterTypes;
 
-    private boolean parametersSet;
+    private final Operation operation;
 
-    public ReflectionInvocationContext(List<Interceptor> interceptors, Object target, Method method) {
+    public ReflectionInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, Object... parameters) {
+        if (operation == null) throw new NullPointerException("operation is null");
         if (interceptors == null) throw new NullPointerException("interceptors is null");
         if (target == null) throw new NullPointerException("target is null");
 
+        this.operation = operation;
         this.interceptors = interceptors.iterator();
         this.target = target;
         this.method = method;
-        parameterTypes = (method == null)? new Class[]{}: method.getParameterTypes();
-        parameters = new Object[parameterTypes.length];
+        this.parameters = parameters;
 
-        parametersSet = parameters.length == 0;
+        if (method == null) {
+            parameterTypes = new Class[0];
+        } else {
+            parameterTypes = method.getParameterTypes();
+        }
     }
 
     public Object getTarget() {
@@ -61,21 +67,24 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Object[] getParameters() {
-        if (method == null) {
+        if (operation.isCallback()) {
             throw new IllegalStateException("Callback methods can not access parameters"); 
         }
         return parameters.clone();
     }
 
     public void setParameters(Object[] parameters) {
+        if (operation.isCallback()) {
+            throw new IllegalStateException("Callback methods can not access parameters");
+        }
         if (parameters == null) throw new NullPointerException("parameters is null");
         if (parameters.length != this.parameters.length) {
             throw new IllegalArgumentException("Expected " + this.parameters.length + " parameters, but only got " + parameters.length + " parameters");
         }
-        for (int i = 0; i < parameters.length; i++) {
-            Object parameter = parameters[i];
-            Class<?> parameterType = parameterTypes[i];
-
+//        for (int i = 0; i < parameters.length; i++) {
+//            Object parameter = parameters[i];
+//            Class<?> parameterType = parameterTypes[i];
+//
 //            if (parameter == null) {
 //                if (parameterType.isPrimitive()) {
 //                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
@@ -85,9 +94,8 @@ public class ReflectionInvocationContext implements InvocationContext {
 //                throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
 //                    ", but got a parameter of type " + parameter.getClass().getName());
 //            }
-        }
+//        }
         System.arraycopy(parameters, 0, this.parameters, 0, parameters.length);
-        parametersSet = true;
     }
 
     public Map<String, Object> getContextData() {
@@ -113,7 +121,6 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Object proceed() throws Exception {
-        if (!parametersSet) throw new IllegalStateException("Parameters have not been set");
         // The bulk of the logic of this method has intentionally been moved
         // out so stepping through a large stack in a debugger can be done quickly.
         // Simply put one break point on 'next.invoke()' or one inside that method.
@@ -180,6 +187,6 @@ public class ReflectionInvocationContext implements InvocationContext {
     public String toString() {
         String methodName = (method != null)? method.getName(): null;
 
-        return "InvocationContext(target="+target.getClass().getName()+", method="+methodName+")";
+        return "InvocationContext(operation=" + operation + ", target="+target.getClass().getName()+", method="+methodName+")";
     }
 }

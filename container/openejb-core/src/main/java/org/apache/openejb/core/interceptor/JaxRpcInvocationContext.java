@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.interceptor;
 
+import org.apache.openejb.core.Operation;
+
 import javax.xml.rpc.handler.MessageContext;
 import java.util.List;
 import java.lang.reflect.Method;
@@ -29,8 +31,8 @@ import java.lang.reflect.Method;
  */
 public class JaxRpcInvocationContext extends ReflectionInvocationContext {
 
-    public JaxRpcInvocationContext(List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext) {
-        super(interceptors, target, method);
+    public JaxRpcInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext) {
+        super(operation, interceptors, target, method);
         getContextData().put(MessageContext.class.getName(), messageContext);
     }
 }

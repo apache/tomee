@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.interceptor;
 
+import org.apache.openejb.core.Operation;
+
 import javax.xml.ws.handler.MessageContext;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,8 @@ import java.lang.reflect.Method;
 public class JaxWsInvocationContext extends ReflectionInvocationContext {
     private final javax.xml.ws.handler.MessageContext messageContext;
 
-    public JaxWsInvocationContext(List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext) {
-        super(interceptors, target, method);
+    public JaxWsInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext) {
+        super(operation, interceptors, target, method);
         this.messageContext = messageContext;
     }
 

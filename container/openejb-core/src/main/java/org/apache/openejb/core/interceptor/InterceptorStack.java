@@ -32,12 +32,14 @@ public class InterceptorStack {
     private final Object beanInstance;
     private final List<Interceptor> interceptors;
     private final Method targetMethod;
+    private final Operation operation;
 
     public InterceptorStack(Object beanInstance, Method targetMethod, Operation operation, List<InterceptorData> interceptorDatas, Map<String, Object> interceptorInstances) {
         if (interceptorDatas == null) throw new NullPointerException("interceptorDatas is null");
         if (interceptorInstances == null) throw new NullPointerException("interceptorInstances is null");
         this.beanInstance = beanInstance;
         this.targetMethod = targetMethod;
+        this.operation = operation;
 
         interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
         for (InterceptorData interceptorData : interceptorDatas) {
@@ -55,32 +57,25 @@ public class InterceptorStack {
         }
     }
 
-    public InterceptorStack(Object beanInstance, Method method, List<Interceptor> interceptors) {
-        this.beanInstance = beanInstance;
-        this.targetMethod = method;
-        this.interceptors = interceptors;
-    }
-
-    public InvocationContext createInvocationContext() {
-        InvocationContext invocationContext = new ReflectionInvocationContext(interceptors, beanInstance, targetMethod);
+    public InvocationContext createInvocationContext(Object... parameters) {
+        InvocationContext invocationContext = new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, parameters);
         return invocationContext;
     }
 
     public Object invoke(Object... parameters) throws Exception {
-        InvocationContext invocationContext = createInvocationContext();
-        invocationContext.setParameters(parameters);
+        InvocationContext invocationContext = createInvocationContext(parameters);
         Object value = invocationContext.proceed();
         return value;
     }
 
     public Object invoke(javax.xml.ws.handler.MessageContext messageContext) throws Exception {
-        InvocationContext invocationContext = new JaxWsInvocationContext(interceptors, beanInstance, targetMethod, messageContext);
+        InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext);
         Object value = invocationContext.proceed();
         return value;
     }
 
     public Object invoke(javax.xml.rpc.handler.MessageContext messageContext) throws Exception {
-        InvocationContext invocationContext = new JaxRpcInvocationContext(interceptors, beanInstance, targetMethod, messageContext);
+        InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext);
         Object value = invocationContext.proceed();
         return value;
     }
