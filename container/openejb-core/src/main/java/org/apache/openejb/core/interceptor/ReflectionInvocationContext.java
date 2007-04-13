@@ -61,6 +61,9 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Object[] getParameters() {
+        if (method == null) {
+            throw new IllegalStateException("Callback methods can not access parameters"); 
+        }
         return parameters.clone();
     }
 
