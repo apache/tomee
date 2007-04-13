@@ -358,7 +358,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             clientInfo.moduleId = getClientModuleId(clientModule);
 
             JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation());
+            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
             appInfo.clients.add(clientInfo);
         }
 
