@@ -48,6 +48,7 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.EjbLink;
@@ -469,7 +470,11 @@ public class JndiEncInfoBuilder {
         for (ResourceRef res : item.getResourceRef()) {
             ResourceReferenceInfo info = new ResourceReferenceInfo();
 
-            info.referenceAuth = res.getResAuth().toString();
+            if (res.getResAuth() != null) {
+                info.referenceAuth = res.getResAuth().toString();
+            } else {
+                info.referenceAuth = ResAuth.CONTAINER.toString();
+            }
             info.referenceName = res.getResRefName();
             info.referenceType = res.getResType();
             info.resourceID = res.getResLink();
