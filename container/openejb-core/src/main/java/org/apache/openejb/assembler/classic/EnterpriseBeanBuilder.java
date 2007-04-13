@@ -375,11 +375,13 @@ class EnterpriseBeanBuilder {
         Method method = null;
         List<Class> parameterTypes = new ArrayList<Class>();
 
-        for (String paramType : info.methodParams) {
-            try {
-                parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
-            } catch (ClassNotFoundException cnfe) {
-                throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
+        if (info.methodParams != null){
+            for (String paramType : info.methodParams) {
+                try {
+                    parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
+                } catch (ClassNotFoundException cnfe) {
+                    throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
+                }
             }
         }
 
