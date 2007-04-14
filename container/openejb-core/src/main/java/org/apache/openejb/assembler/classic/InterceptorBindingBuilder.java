@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * @version $Rev$ $Date$
@@ -43,11 +44,11 @@ public class InterceptorBindingBuilder {
     private final List<InterceptorBindingInfo> packageAndClassBindings;
 
     public static enum Level {
-        PACKAGE, CLASS, OVERLOADED_METHOD, EXACT_METHOD;
+        PACKAGE, CLASS, OVERLOADED_METHOD, EXACT_METHOD
     }
 
     public static enum Type {
-        ADDITION_OR_LOWER_EXCLUSION, SAME_LEVEL_EXCLUSION, SAME_AND_LOWER_EXCLUSION, EXPLICIT_ORDERING;
+        ADDITION_OR_LOWER_EXCLUSION, SAME_LEVEL_EXCLUSION, SAME_AND_LOWER_EXCLUSION, EXPLICIT_ORDERING
     }
 
     private final EjbJarInfo ejbJarInfo;
@@ -131,13 +132,30 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method);
-                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
+                if (callbackInfo.className == null){
                     methods.add(method);
-                }
-                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
                     methods.add(method);
+                } else {
+                    // check for a private method on the declared class
+
+                    // find declared class
+                    Class c = clazz;
+                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
+
+                    // get callback method
+                    if (c != null) {
+                        try {
+                            method = c.getDeclaredMethod(callbackInfo.method);
+                            // make sure it is private
+                            if (Modifier.isPrivate(method.getModifiers())) {
+                                SetAccessible.on(method);
+                                methods.add(method);
+                            }
+                        } catch (NoSuchMethodException e) {
+                        }
+                    }
                 }
-                methods.add(method);
             } catch (NoSuchMethodException e) {
                 String message = "Bean Callback method not found (skipping): public void " + callbackInfo.method + "(); in class " + clazz.getName();
                 logger.warning(message);
@@ -298,14 +316,6 @@ public class InterceptorBindingBuilder {
         }
 
         return true;
-    }
-
-    private static String getName(Class<?> type) {
-        if (type.isArray()) {
-            return getName(type.getComponentType()) + "[]";
-        } else {
-            return type.getName();
-        }
     }
 
     public static class IntercpetorBindingComparator implements Comparator<InterceptorBindingInfo> {

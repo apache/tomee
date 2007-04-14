@@ -108,13 +108,13 @@ public class ReflectionInvocationContext implements InvocationContext {
             Object nextInstance = interceptor.getInstance();
             Method nextMethod = interceptor.getMethod();
 
-            if (nextMethod.getParameterTypes().length == 0){
-                return new Invocation(nextInstance, nextMethod, new Object[]{});
+            if (nextMethod.getParameterTypes().length > 0){
+                return new InterceptorInvocation(nextInstance, nextMethod, this);
             } else {
-                return new Invocation(nextInstance, nextMethod, new Object[]{this});
+                return new LifecycleInvocation(nextInstance, nextMethod, this);
             }
         } else if (method != null) {
-            return new Invocation(target, method, parameters);
+            return new BeanInvocation(target, method, parameters);
         } else {
             return new NoOpInvocation();
         }
@@ -132,7 +132,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
-    private static class Invocation {
+    private abstract static class Invocation {
         private final Method method;
         private final Object[] args;
         private final Object target;
@@ -142,13 +142,43 @@ public class ReflectionInvocationContext implements InvocationContext {
             this.method = method;
             this.args = args;
         }
-        public Object invoke() throws IllegalAccessException, InvocationTargetException {
+        public Object invoke() throws Exception {
             Object value = method.invoke(target, args);
             return value;
         }
 
         public String toString() {
             return method.getDeclaringClass().getName() + "." + method.getName();
+        }
+    }
+
+    private static class BeanInvocation extends Invocation {
+        public BeanInvocation(Object target, Method method, Object[] args) {
+            super(target, method, args);
+        }
+    }
+
+    private static class InterceptorInvocation extends Invocation {
+        public InterceptorInvocation(Object target, Method method, InvocationContext invocationContext) {
+            super(target, method, new Object[] {invocationContext});
+        }
+    }
+
+    private static class LifecycleInvocation extends Invocation {
+        private final InvocationContext invocationContext;
+
+        public LifecycleInvocation(Object target, Method method, InvocationContext invocationContext) {
+            super(target, method, new Object[] {});
+            this.invocationContext = invocationContext;
+        }
+
+        public Object invoke() throws Exception {
+            // invoke the callback
+            super.invoke();
+
+            // we need to call proceed so callbacks in subclasses get invoked
+            Object value = invocationContext.proceed();
+            return value;
         }
     }
 
