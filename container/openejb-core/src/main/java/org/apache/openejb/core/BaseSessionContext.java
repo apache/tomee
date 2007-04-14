@@ -80,7 +80,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
             EjbObjectProxyHandler handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
-            handler.setLocal(true);
             try {
                 Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
                 return (EJBLocalObject) ProxyManager.newProxyInstance(interfaces, handler);

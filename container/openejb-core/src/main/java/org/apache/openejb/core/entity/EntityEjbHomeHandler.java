@@ -32,12 +32,12 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public EntityEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+    public EntityEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
         super(deploymentInfo, interfaceType, interfaces);
     }
 
-    public Object createProxy(ProxyInfo proxyInfo) {
-        Object proxy = super.createProxy(proxyInfo);
+    public Object createProxy(Object primaryKey, List<Class> interfaces) {
+        Object proxy = super.createProxy(primaryKey, interfaces);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         /* 
@@ -65,13 +65,15 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             Object [] proxyInfos = ((java.util.Collection) retValue).toArray();
             Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
-                proxies.addElement(createProxy((ProxyInfo) proxyInfos[i]));
+                ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
+                proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
             }
             return proxies;
         } else if (retValue instanceof org.apache.openejb.util.ArrayEnumeration) {
             org.apache.openejb.util.ArrayEnumeration enumeration = (org.apache.openejb.util.ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
-                enumeration.set(i, createProxy((ProxyInfo) enumeration.get(i)));
+                ProxyInfo proxyInfo = ((ProxyInfo) enumeration.get(i));
+                enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
             }
             return enumeration;
         } else if (retValue instanceof java.util.Enumeration) {
@@ -79,14 +81,15 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
             java.util.List proxies = new java.util.ArrayList();
             while (enumeration.hasMoreElements()) {
-                proxies.add(createProxy((ProxyInfo) enumeration.nextElement()));
+                ProxyInfo proxyInfo = ((ProxyInfo) enumeration.nextElement());
+                proxies.add(createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
             }
             return new org.apache.openejb.util.ArrayEnumeration(proxies);
         } else {
             org.apache.openejb.ProxyInfo proxyInfo = (org.apache.openejb.ProxyInfo) retValue;
 
 
-            return createProxy(proxyInfo);
+            return createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces());
         }
 
     }

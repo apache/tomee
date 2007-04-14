@@ -117,7 +117,7 @@ public abstract class CoreContext implements java.io.Serializable {
         org.apache.openejb.DeploymentInfo di = threadContext.getDeploymentInfo();
 
         EjbObjectProxyHandler handler = newEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_LOCAL);
-        handler.setLocal(true);
+
         Object newProxy = null;
         try {
             Class[] interfaces = new Class[]{di.getLocalInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};

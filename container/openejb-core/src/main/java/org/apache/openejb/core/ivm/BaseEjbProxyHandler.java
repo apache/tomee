@@ -83,6 +83,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     private boolean isLocal;
     protected final InterfaceType interfaceType;
     protected final List<Class> interfaces;
+    private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
 
     public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
         this.container = (RpcContainer) deploymentInfo.getContainer();
@@ -93,12 +94,20 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         this.interfaces = Collections.unmodifiableList(interfaces);
 
+        setLocal(interfaceType.isLocal());
+
+        if (!interfaceType.isLocal()){
+            doIntraVmCopy = REMOTE_COPY_ENABLED;
+        }
+    }
+
+    private static boolean parseRemoteCopySetting() {
         Properties properties = SystemInstance.get().getProperties();
         String value = properties.getProperty("openejb.localcopy");
         if (value == null) {
             value = properties.getProperty(org.apache.openejb.core.EnvProps.INTRA_VM_COPY);
         }
-        doIntraVmCopy = value == null || !value.equalsIgnoreCase("FALSE");
+        return value == null || !value.equalsIgnoreCase("FALSE");
     }
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException, NoSuchMethodException {

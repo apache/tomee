@@ -37,7 +37,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
 
 import org.apache.openejb.Container;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
@@ -45,14 +44,11 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.KeyGenerator;
-import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.stateful.SessionSynchronizationTxPolicy;
 import org.apache.openejb.core.stateful.StatefulBeanManagedTxPolicy;
 import org.apache.openejb.core.stateful.StatefulContainerManagedTxPolicy;
-import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessBeanManagedTxPolicy;
-import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TxManditory;
@@ -479,17 +475,18 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             throw new IllegalStateException("This component has no home interface: " + getDeploymentID());
         }
         if (ejbHomeRef == null) {
-            ejbHomeRef = createEJBHomeRef();
+            ejbHomeRef = (EJBHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.EJB_HOME, new ArrayList<Class>());
         }
         return ejbHomeRef;
     }
+
 
     public EJBLocalHome getEJBLocalHome() {
         if (getLocalHomeInterface() == null) {
             throw new IllegalStateException("This component has no local home interface: " + getDeploymentID());
         }
         if (ejbLocalHomeRef == null) {
-            ejbLocalHomeRef = createEJBLocalHomeRef();
+            ejbLocalHomeRef = (EJBLocalHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.EJB_LOCAL_HOME, new ArrayList<Class>());
         }
         return ejbLocalHomeRef;
     }
@@ -511,38 +508,27 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        BusinessLocalHome result;
-
-        EjbHomeProxyHandler handler = null;
-
-        switch (getComponentType()) {
-            case STATEFUL:
-                handler = new StatefulEjbHomeHandler(this, InterfaceType.BUSINESS_LOCAL_HOME, new ArrayList<Class>());
-                break;
-
-            case STATELESS:
-                handler = new StatelessEjbHomeHandler(this, InterfaceType.BUSINESS_LOCAL_HOME, new ArrayList<Class>());
-                break;
-        }
-        handler.setLocal(true);
-        try {
-            Class[] interfaces1 = new Class[]{BusinessLocalHome.class, org.apache.openejb.core.ivm.IntraVmProxy.class};
-            result = (BusinessLocalHome) ProxyManager.newProxyInstance(interfaces1, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Can't create BusinessLocalHome stub" + e.getMessage());
-        }
-        return result;
+        return (BusinessLocalHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.BUSINESS_LOCAL_HOME, new ArrayList<Class>());
     }
 
     public BusinessRemoteHome getBusinessRemoteHome() {
+        return getBusinessRemoteHome(getBusinessRemoteInterfaces());
+    }
+
+    public BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces) {
         if (getBusinessRemoteInterfaces().size() == 0){
             throw new IllegalStateException("This component has no business remote interfaces: " + getDeploymentID());
         }
-        if (businessRemoteHomeRef == null) {
-            businessRemoteHomeRef = createBusinessRemoteHomeRef();
+        if (interfaces.size() == 0){
+            throw new IllegalArgumentException("No interface classes were specified");
         }
-        return businessRemoteHomeRef;
+        for (Class clazz : interfaces) {
+            if (!getBusinessRemoteInterfaces().contains(clazz)){
+                throw new IllegalArgumentException("Not a business interface of this bean:" + clazz.getName());
+            }
+        }
+
+        return (BusinessRemoteHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, new ArrayList<Class>());
     }
 
     public void setBeanManagedTransaction(boolean value) {
@@ -738,89 +724,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.callbackInterceptors.clear();
         this.callbackInterceptors.addAll(callbackInterceptors);
         this.interceptors.addAll(callbackInterceptors);
-    }
-
-    private javax.ejb.EJBHome createEJBHomeRef() {
-
-        EjbHomeProxyHandler handler = null;
-
-        switch (getComponentType()) {
-            case STATEFUL:
-                handler = new StatefulEjbHomeHandler(this, InterfaceType.EJB_HOME, new ArrayList<Class>());
-                break;
-
-            case STATELESS:
-                handler = new StatelessEjbHomeHandler(this, InterfaceType.EJB_HOME, new ArrayList<Class>());
-                break;
-            case CMP_ENTITY:
-            case BMP_ENTITY:
-                handler = new EntityEjbHomeHandler(this, InterfaceType.EJB_HOME, new ArrayList<Class>());
-                break;
-        }
-
-        Object proxy = null;
-        try {
-            Class[] interfaces = new Class[]{this.getHomeInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
-            proxy = ProxyManager.newProxyInstance(interfaces, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Can't create EJBHome stub" + e.getMessage());
-        }
-
-        return (javax.ejb.EJBHome) proxy;
-
-    }
-
-    private javax.ejb.EJBLocalHome createEJBLocalHomeRef() {
-
-        EjbHomeProxyHandler handler = null;
-
-        switch (getComponentType()) {
-            case STATEFUL:
-                handler = new StatefulEjbHomeHandler(this, InterfaceType.EJB_LOCAL_HOME, new ArrayList<Class>());
-                break;
-
-            case STATELESS:
-                handler = new StatelessEjbHomeHandler(this, InterfaceType.EJB_LOCAL_HOME, new ArrayList<Class>());
-                break;
-            case CMP_ENTITY:
-            case BMP_ENTITY:
-                handler = new EntityEjbHomeHandler(this, InterfaceType.EJB_LOCAL_HOME, new ArrayList<Class>());
-                break;
-        }
-        handler.setLocal(true);
-        Object proxy = null;
-        try {
-            Class[] interfaces = new Class[]{this.getLocalHomeInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
-            proxy = ProxyManager.newProxyInstance(interfaces, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Can't create EJBLocalHome stub" + e.getMessage());
-        }
-
-        return (javax.ejb.EJBLocalHome) proxy;
-    }
-
-    private BusinessRemoteHome createBusinessRemoteHomeRef() {
-
-        EjbHomeProxyHandler handler = null;
-
-        switch (getComponentType()) {
-            case STATEFUL:
-                handler = new StatefulEjbHomeHandler(this, InterfaceType.BUSINESS_REMOTE_HOME, new ArrayList<Class>());
-                break;
-
-            case STATELESS:
-                handler = new StatelessEjbHomeHandler(this, InterfaceType.BUSINESS_REMOTE_HOME, new ArrayList<Class>());
-                break;
-        }
-        try {
-            Class[] interfaces = new Class[]{BusinessRemoteHome.class, org.apache.openejb.core.ivm.IntraVmProxy.class};
-            return (BusinessRemoteHome) ProxyManager.newProxyInstance(interfaces, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Can't create BusinessRemoteHome stub" + e.getMessage());
-        }
     }
 
     public void createMethodMap() throws org.apache.openejb.SystemException {

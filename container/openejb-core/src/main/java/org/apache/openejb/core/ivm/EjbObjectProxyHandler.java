@@ -26,9 +26,9 @@ import java.util.List;
 import javax.ejb.EJBAccessException;
 import javax.ejb.AccessLocalException;
 
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.spi.ApplicationServer;
@@ -207,5 +207,10 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
 //        checkAuthorization(method);
         return container.invoke(deploymentID, method, args, primaryKey);
+    }
+
+    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType interfaceType) {
+        EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces);
+        return homeHandler.createProxy(primaryKey, interfaces);
     }
 }

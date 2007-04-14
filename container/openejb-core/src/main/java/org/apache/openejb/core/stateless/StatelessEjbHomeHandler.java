@@ -29,7 +29,7 @@ import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
         super(deploymentInfo, interfaceType, interfaces);
     }
 

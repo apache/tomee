@@ -34,6 +34,9 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.entity.EntityEjbHomeHandler;
+import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
+import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -51,7 +54,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         REMOVE
     }
 
-    public EjbHomeProxyHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+    public EjbHomeProxyHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
         super(deploymentInfo, null, interfaceType, interfaces);
         dispatchTable = new HashMap<String, MethodType>();
         dispatchTable.put("create", MethodType.CREATE);
@@ -77,7 +80,34 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         throw new IllegalStateException("A home reference must never be invalidated!");
     }
 
-    public Object createProxy(ProxyInfo proxyInfo) {
+    protected static EjbHomeProxyHandler createHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
+        switch (deploymentInfo.getComponentType()) {
+            case STATEFUL:
+                return new StatefulEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
+            case STATELESS:
+                return  new StatelessEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
+            case CMP_ENTITY:
+            case BMP_ENTITY:
+                return  new EntityEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
+            default: throw new IllegalStateException("Component type does not support rpc interfaces: " + deploymentInfo.getComponentType());
+        }
+    }
+
+    public static Object createProxy(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+        try {
+            EjbHomeProxyHandler handler = createHomeHandler(deploymentInfo, interfaceType, interfaces);
+
+            Class homeInterface = deploymentInfo.getInterface(interfaceType);
+
+            Class[] interfacesArray = new Class[]{homeInterface, IntraVmProxy.class};
+
+            return ProxyManager.newProxyInstance(interfacesArray, handler);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't create EJBHome stub" + e.getMessage());
+        }
+    }
+
+    public Object createProxy(Object primaryKey, List<Class> interfaces) {
         Object newProxy;
         try {
 
@@ -88,18 +118,17 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 case BUSINESS_REMOTE_HOME: interfaceType = InterfaceType.BUSINESS_REMOTE; break;
                 case BUSINESS_LOCAL_HOME: interfaceType = InterfaceType.BUSINESS_LOCAL; break;
             }
-            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), proxyInfo.getPrimaryKey(), interfaceType, interfaces);
-            handler.setLocal(isLocal());
-            handler.doIntraVmCopy = this.doIntraVmCopy;
+            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), primaryKey, interfaceType, this.interfaces);
+
             List<Class> interfacess = new ArrayList<Class>();
-            interfacess.addAll(proxyInfo.getInterfaces());
+            interfacess.addAll(interfaces);
             interfacess.add(IntraVmProxy.class);
             newProxy = ProxyManager.newProxyInstance(interfacess.toArray(new Class[]{}), handler);
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
+            throw new RuntimeException("Could not create IVM proxy for " + interfaces.get(0));
         }
         if (newProxy == null)
-            throw new RuntimeException("Could not create IVM proxy for " + proxyInfo.getInterface() + " interface");
+            throw new RuntimeException("Could not create IVM proxy for " + interfaces.get(0));
 
         return newProxy;
     }
@@ -235,7 +264,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
         ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null);
         assert proxyInfo != null : "Container returned a null ProxyInfo: ContainerID=" + container.getContainerID();
-        return createProxy(proxyInfo);
+        return createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces());
     }
 
     protected abstract Object findX(Method method, Object[] args, Object proxy) throws Throwable;

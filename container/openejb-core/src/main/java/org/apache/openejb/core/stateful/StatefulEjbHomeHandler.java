@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -31,12 +30,12 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+    public StatefulEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
         super(deploymentInfo, interfaceType, interfaces);
     }
 
-    public Object createProxy(ProxyInfo proxyInfo) {
-        Object proxy = super.createProxy(proxyInfo);
+    public Object createProxy(Object primaryKey, List<Class> interfaces) {
+        Object proxy = super.createProxy(primaryKey, interfaces);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         registerHandler(handler.getRegistryId(), handler);

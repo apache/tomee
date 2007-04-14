@@ -23,11 +23,6 @@ import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
 
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.entity.EntityEjbHomeHandler;
-import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
-import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
-import org.apache.openejb.util.proxy.ProxyManager;
 
 import java.util.ArrayList;
 
@@ -50,41 +45,10 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public EJBObject getEJBObject(ProxyInfo pi) {
-        EjbHomeProxyHandler handler = null;
-        return (EJBObject) getEjbHomeHandler(pi).createProxy(pi);
+        return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaces(), pi.getInterfaceType());
     }
 
     public EJBHome getEJBHome(ProxyInfo pi) {
-
-        if (pi.getDeploymentInfo() instanceof org.apache.openejb.core.CoreDeploymentInfo) {
-            org.apache.openejb.core.CoreDeploymentInfo coreDeployment = (org.apache.openejb.core.CoreDeploymentInfo) pi.getDeploymentInfo();
-            return coreDeployment.getEJBHome();
-
-        } else {
-            try {
-                Class[] interfaces = new Class[]{pi.getDeploymentInfo().getHomeInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
-                return (javax.ejb.EJBHome) ProxyManager.newProxyInstance(interfaces, getEjbHomeHandler(pi));
-            } catch (Exception e) {
-                throw new RuntimeException("Can't create EJBHome stub" + e.getMessage());
-            }
-        }
-    }
-
-    private EjbHomeProxyHandler getEjbHomeHandler(ProxyInfo pi) {
-
-        switch (pi.getDeploymentInfo().getComponentType()) {
-
-            case BMP_ENTITY:
-            case CMP_ENTITY:
-                return new EntityEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
-
-            case STATEFUL:
-                return new StatefulEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
-
-            case STATELESS:
-                return new StatelessEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
-            default:
-                throw new RuntimeException("Unknown EJB type: " + pi.getDeploymentInfo());
-        }
+        return (EJBHome) EjbHomeProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getInterfaceType(), new ArrayList<Class>());
     }
 }

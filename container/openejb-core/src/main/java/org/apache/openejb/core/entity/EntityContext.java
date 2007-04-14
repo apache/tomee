@@ -83,8 +83,8 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(((RpcContainer) di.getContainer()).getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
-            handler.setLocal(true);
+            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
+
             try {
                 Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
                 return (EJBLocalObject) ProxyManager.newProxyInstance(interfaces, handler);

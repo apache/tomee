@@ -26,6 +26,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EntityBean;
+import java.util.ArrayList;
 
 public class ProxyFactory {
     private final CoreDeploymentInfo deploymentInfo;
@@ -61,11 +62,11 @@ public class ProxyFactory {
         // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
-        // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
-        ProxyInfo proxyInfo = new ProxyInfo(deploymentInfo, primaryKey, remoteInterface, container);
+        ArrayList<Class> interfaces = new ArrayList<Class>();
+        interfaces.add(remoteInterface);
 
         // create the proxy
-        Object proxy = remoteHandler.createProxy(proxyInfo);
+        Object proxy = remoteHandler.createProxy(primaryKey, interfaces);
         return proxy;
     }
 
@@ -74,11 +75,11 @@ public class ProxyFactory {
         // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
-        // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
-        ProxyInfo proxyInfo = new ProxyInfo(deploymentInfo, primaryKey, localInterface, container);
+        ArrayList<Class> interfaces = new ArrayList<Class>();
+        interfaces.add(localInterface);
 
         // create the proxy
-        Object proxy = localHandler.createProxy(proxyInfo);
+        Object proxy = localHandler.createProxy(primaryKey, interfaces);
         return proxy;
 
     }
