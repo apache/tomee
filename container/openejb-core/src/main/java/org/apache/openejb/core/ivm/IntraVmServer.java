@@ -29,6 +29,8 @@ import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
+import java.util.ArrayList;
+
 public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 
     public EJBMetaData getEJBMetaData(ProxyInfo pi) {
@@ -74,13 +76,13 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 
             case BMP_ENTITY:
             case CMP_ENTITY:
-                return new EntityEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
+                return new EntityEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
 
             case STATEFUL:
-                return new StatefulEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
+                return new StatefulEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
 
             case STATELESS:
-                return new StatelessEjbHomeHandler(pi.getBeanContainer(), pi.getPrimaryKey(), pi.getDeploymentInfo().getDeploymentID(), InterfaceType.EJB_HOME);
+                return new StatelessEjbHomeHandler(pi.getDeploymentInfo(), InterfaceType.EJB_HOME, new ArrayList<Class>());
             default:
                 throw new RuntimeException("Unknown EJB type: " + pi.getDeploymentInfo());
         }

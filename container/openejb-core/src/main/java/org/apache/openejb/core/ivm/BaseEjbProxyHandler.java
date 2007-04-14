@@ -30,6 +30,9 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.ejb.EJBException;
 import javax.ejb.NoSuchObjectLocalException;
@@ -40,6 +43,7 @@ import javax.transaction.TransactionRolledbackException;
 
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -78,13 +82,16 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected boolean doCrossClassLoaderCopy;
     private boolean isLocal;
     protected final InterfaceType interfaceType;
+    protected final List<Class> interfaces;
 
-    public BaseEjbProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
+    public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
+        this.container = (RpcContainer) deploymentInfo.getContainer();
+        this.deploymentID = deploymentInfo.getDeploymentID();
         this.interfaceType = interfaceType;
-        this.container = container;
         this.primaryKey = pk;
-        this.deploymentID = depID;
-        this.setDeploymentInfo((CoreDeploymentInfo) container.getDeploymentInfo(depID));
+        this.setDeploymentInfo((CoreDeploymentInfo) deploymentInfo);
+
+        this.interfaces = Collections.unmodifiableList(interfaces);
 
         Properties properties = SystemInstance.get().getProperties();
         String value = properties.getProperty("openejb.localcopy");

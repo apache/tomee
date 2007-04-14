@@ -147,13 +147,13 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
         } catch (SystemException e) {
             invalidateReference();
-            throw convert(e.getCause());
+            throw convertException(e.getCause(), method);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw convert(ae.getCause());
+            throw convertException(ae.getCause(), method);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.

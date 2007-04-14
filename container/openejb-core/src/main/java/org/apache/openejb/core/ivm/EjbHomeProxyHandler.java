@@ -33,7 +33,6 @@ import javax.ejb.EJBHome;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.Logger;
@@ -52,8 +51,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         REMOVE
     }
 
-    public EjbHomeProxyHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        super(container, pk, depID, interfaceType);
+    public EjbHomeProxyHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+        super(deploymentInfo, null, interfaceType, interfaces);
         dispatchTable = new HashMap<String, MethodType>();
         dispatchTable.put("create", MethodType.CREATE);
         dispatchTable.put("getEJBMetaData", MethodType.META_DATA);
@@ -61,7 +60,6 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("remove", MethodType.REMOVE);
 
         if (interfaceType.isHome()) {
-            DeploymentInfo deploymentInfo = container.getDeploymentInfo(depID);
             Class homeInterface = deploymentInfo.getInterface(interfaceType);
             Method[] methods = homeInterface.getMethods();
             for (Method method : methods) {
@@ -90,7 +88,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 case BUSINESS_REMOTE_HOME: interfaceType = InterfaceType.BUSINESS_REMOTE; break;
                 case BUSINESS_LOCAL_HOME: interfaceType = InterfaceType.BUSINESS_LOCAL; break;
             }
-            EjbObjectProxyHandler handler = newEjbObjectHandler(proxyInfo.getBeanContainer(), proxyInfo.getPrimaryKey(), proxyInfo.getDeploymentInfo().getDeploymentID(), interfaceType);
+            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), proxyInfo.getPrimaryKey(), interfaceType, interfaces);
             handler.setLocal(isLocal());
             handler.doIntraVmCopy = this.doIntraVmCopy;
             List<Class> interfacess = new ArrayList<Class>();
@@ -106,7 +104,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         return newProxy;
     }
 
-    protected abstract EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType);
+    protected abstract EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces);
 
     protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {
 

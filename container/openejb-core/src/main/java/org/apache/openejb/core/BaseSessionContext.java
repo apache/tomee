@@ -32,7 +32,6 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.BeanType;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
@@ -80,7 +79,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_LOCAL);
+            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
             handler.setLocal(true);
             try {
                 Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
@@ -94,7 +93,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_OBJECT);
+            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
             try {
                 Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
                 return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
@@ -129,11 +128,11 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 EjbObjectProxyHandler handler;
                 switch(di.getComponentType()){
                     case STATEFUL: {
-                        handler = new StatefulEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
+                        handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
                         break;
                     }
                     case STATELESS: {
-                        handler = new StatelessEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), interfaceType);
+                        handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
                         break;
                     }
                     default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());

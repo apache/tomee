@@ -17,20 +17,20 @@
 package org.apache.openejb.core.stateless;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.RpcContainer;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.core.ivm.IntraVmHandle;
-import org.apache.openejb.util.proxy.ProxyManager;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatelessEjbHomeHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        super(container, pk, depID, interfaceType);
+    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+        super(deploymentInfo, interfaceType, interfaces);
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
@@ -46,8 +46,8 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new StatelessEjbObjectHandler(container, pk, depID, interfaceType);
+    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
+        return new StatelessEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces);
     }
 
 }

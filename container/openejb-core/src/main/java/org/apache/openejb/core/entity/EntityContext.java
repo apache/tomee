@@ -17,6 +17,7 @@
 package org.apache.openejb.core.entity;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.TimerService;
@@ -82,7 +83,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new EntityEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_LOCAL);
+            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(((RpcContainer) di.getContainer()).getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
             handler.setLocal(true);
             try {
                 Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
@@ -96,7 +97,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new EntityEjbObjectHandler((RpcContainer) di.getContainer(), threadContext.getPrimaryKey(), di.getDeploymentID(), InterfaceType.EJB_OBJECT);
+            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(((RpcContainer) di.getContainer()).getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
             try {
                 Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
                 return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);

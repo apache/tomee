@@ -18,11 +18,13 @@ package org.apache.openejb.core.entity;
 
 import java.lang.reflect.Method;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -30,8 +32,8 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public EntityEjbHomeHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        super(container, pk, depID, interfaceType);
+    public EntityEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> interfaces) {
+        super(deploymentInfo, interfaceType, interfaces);
     }
 
     public Object createProxy(ProxyInfo proxyInfo) {
@@ -101,8 +103,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(RpcContainer container, Object pk, Object depID, InterfaceType interfaceType) {
-        return new EntityEjbObjectHandler(container, pk, depID, interfaceType);
+    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
+        return new EntityEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces);
     }
 
 }

@@ -154,13 +154,13 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         } catch (SystemException e) {
             invalidateAllHandlers(getRegistryId());
-            throw convert(e.getCause());
+            throw convertException(e.getCause(), m);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw convert(ae.getCause());
+            throw convertException(ae.getCause(), m);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.

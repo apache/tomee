@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
+import java.rmi.Remote;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -36,6 +37,7 @@ import javax.ejb.EJBException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
+import javax.ejb.NoSuchEJBException;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
@@ -145,7 +147,13 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         }
     }
 
-    protected Throwable convert(Throwable e) {
+    /**
+     * Renamed method so it shows up with a much more understandable purpose as it
+     * will be the top element in the stacktrace
+     * @param e
+     * @param method
+     */
+    protected Throwable convertException(Throwable e, Method method) {
         if (!remote && e instanceof RemoteException) {
             if (e instanceof TransactionRequiredException) {
                 return new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
@@ -153,8 +161,20 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             if (e instanceof TransactionRolledbackException) {
                 return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
             }
+
+            /**
+             * If a client attempts to invoke a method on a removed bean's business interface,
+             * we must throw a javax.ejb.NoSuchEJBException. If the business interface is a
+             * remote business interface that extends java.rmi.Remote, the
+             * java.rmi.NoSuchObjectException is thrown to the client instead.
+             * See EJB 3.0, section 4.4
+             */
             if (e instanceof NoSuchObjectException) {
-                return new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
+                if (java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
+                    return e;
+                } else {
+                    return new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
+                }
             }
             if (e instanceof AccessException) {
                 return new AccessLocalException(e.getMessage()).initCause(getCause(e));

@@ -27,8 +27,6 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.StatefulBean;
 
 import javax.naming.InitialContext;

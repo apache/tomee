@@ -20,12 +20,15 @@ import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.AccessLocalException;
 
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.spi.ApplicationServer;
@@ -44,8 +47,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getEJBLocalHome", new Integer(6));
     }
 
-    public EjbObjectProxyHandler(RpcContainer container, Object pk, Object depID, Class homeInterface, InterfaceType interfaceType) {
-        super(container, pk, depID, interfaceType);
+    public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
+        super(deploymentInfo, pk, interfaceType, interfaces);
     }
 
     public abstract Object getRegistryId();
