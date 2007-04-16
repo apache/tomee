@@ -111,14 +111,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         Object newProxy;
         try {
 
-            InterfaceType interfaceType = InterfaceType.EJB_OBJECT;
-            switch(this.interfaceType){
-                case EJB_HOME: interfaceType = InterfaceType.EJB_OBJECT; break;
-                case EJB_LOCAL_HOME: interfaceType = InterfaceType.EJB_LOCAL; break;
-                case BUSINESS_REMOTE_HOME: interfaceType = InterfaceType.BUSINESS_REMOTE; break;
-                case BUSINESS_LOCAL_HOME: interfaceType = InterfaceType.BUSINESS_LOCAL; break;
-            }
-            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), primaryKey, interfaceType, this.interfaces);
+
+            InterfaceType objectInterfaceType = this.interfaceType.getCounterpart();
+
+            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), primaryKey, objectInterfaceType, this.interfaces);
 
             List<Class> interfacess = new ArrayList<Class>();
             interfacess.addAll(interfaces);

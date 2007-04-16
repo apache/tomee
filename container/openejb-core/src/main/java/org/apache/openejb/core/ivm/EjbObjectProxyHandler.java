@@ -20,7 +20,6 @@ import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJBAccessException;
@@ -28,7 +27,6 @@ import javax.ejb.AccessLocalException;
 
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.spi.ApplicationServer;
@@ -210,7 +208,10 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType interfaceType) {
+        if (!interfaceType.isHome()){
+            interfaceType = interfaceType.getCounterpart();
+        }
         EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces);
-        return homeHandler.createProxy(primaryKey, interfaces);
+        return homeHandler.createProxy(primaryKey, deploymentInfo.getInterfaces(interfaceType.getCounterpart()));
     }
 }

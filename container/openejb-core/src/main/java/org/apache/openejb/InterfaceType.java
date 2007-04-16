@@ -84,4 +84,18 @@ public enum InterfaceType {
         }
         return false;
     }
+
+    public InterfaceType getCounterpart() {
+        switch(this){
+            case EJB_HOME: return InterfaceType.EJB_OBJECT;
+            case EJB_LOCAL_HOME: return InterfaceType.EJB_LOCAL;
+            case BUSINESS_REMOTE_HOME: return InterfaceType.BUSINESS_REMOTE;
+            case BUSINESS_LOCAL_HOME: return InterfaceType.BUSINESS_LOCAL;
+            case EJB_OBJECT: return InterfaceType.EJB_HOME;
+            case EJB_LOCAL: return InterfaceType.EJB_LOCAL_HOME;
+            case BUSINESS_REMOTE: return InterfaceType.BUSINESS_REMOTE_HOME;
+            case BUSINESS_LOCAL: return InterfaceType.BUSINESS_LOCAL_HOME;
+            default: throw new IllegalArgumentException("InterfaceType has no counterpart: " + this);
+        }
+    }
 }
