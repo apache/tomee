@@ -216,18 +216,20 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         undeploy((CoreDeploymentInfo) info);
     }
 
-    private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) {
+    private synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         deploymentsById.remove(deploymentInfo.getDeploymentID());
         deploymentInfo.setContainer(null);
         deploymentInfo.setContainerData(null);
+        instanceManager.undeploy(deploymentInfo);
     }
 
-    private synchronized void deploy(CoreDeploymentInfo deploymentInfo) {
+    private synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
         deploymentInfo.setContainerData(new Data(new Index<Method, MethodType>(methods)));
 
         deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
+        instanceManager.deploy(deploymentInfo);
     }
 
     /**
