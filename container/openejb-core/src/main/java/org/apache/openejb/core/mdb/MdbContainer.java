@@ -142,7 +142,12 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(deploymentInfo.getClassLoader());
 
             // validate the activation spec
-            activationSpec.validate();
+            try {
+                activationSpec.validate();
+            } catch (UnsupportedOperationException uoe) {
+                logger.info("ActivationSpec does not support validate. Implementation of validate is optional", uoe);
+            }
+            
 
             // set the resource adapter into the activation spec
             activationSpec.setResourceAdapter(resourceAdapter);
