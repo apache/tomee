@@ -23,7 +23,7 @@ import javax.ejb.EJBObject;
 
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.core.ServerFederation;
 
 public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle, javax.ejb.Handle {
     protected Object theProxy;
@@ -70,10 +70,10 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy);
             if (theProxy instanceof javax.ejb.EJBObject) {
-                ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+                ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHandle(handler.getProxyInfo());
             } else if (theProxy instanceof javax.ejb.EJBHome) {
-                ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+                ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHomeHandle(handler.getProxyInfo());
             } else {
                 throw new RuntimeException("Invalid proxy type. Handles are only supported by EJBObject types in EJB 1.1");

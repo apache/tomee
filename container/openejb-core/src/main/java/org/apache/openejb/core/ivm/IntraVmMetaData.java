@@ -22,7 +22,7 @@ import javax.ejb.EJBHome;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -113,7 +113,7 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
             */
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
-            ApplicationServer applicationServer = SystemInstance.get().getComponent(ApplicationServer.class);
+            ApplicationServer applicationServer = ServerFederation.getApplicationServer();
             return applicationServer.getEJBMetaData(handler.getProxyInfo());
         }
     }
