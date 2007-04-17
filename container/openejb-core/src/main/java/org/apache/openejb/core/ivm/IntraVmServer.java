@@ -24,8 +24,6 @@ import javax.ejb.HomeHandle;
 
 import org.apache.openejb.ProxyInfo;
 
-import java.util.ArrayList;
-
 public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 
     public EJBMetaData getEJBMetaData(ProxyInfo pi) {
@@ -45,10 +43,10 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public EJBObject getEJBObject(ProxyInfo pi) {
-        return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaces(), pi.getInterfaceType());
+        return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces());
     }
 
     public EJBHome getEJBHome(ProxyInfo pi) {
-        return (EJBHome) EjbHomeProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getInterfaceType(), new ArrayList<Class>());
+        return (EJBHome) EjbHomeProxyHandler.createHomeProxy(pi.getDeploymentInfo(), pi.getInterfaceType());
     }
 }

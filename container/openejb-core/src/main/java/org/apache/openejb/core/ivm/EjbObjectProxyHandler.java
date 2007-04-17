@@ -207,11 +207,15 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         return container.invoke(deploymentID, method, args, primaryKey);
     }
 
-    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType interfaceType) {
+    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType) {
+        return createProxy(deploymentInfo, primaryKey, interfaceType, null);
+    }
+
+    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, List<Class> interfaces) {
         if (!interfaceType.isHome()){
             interfaceType = interfaceType.getCounterpart();
         }
         EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces);
-        return homeHandler.createProxy(primaryKey, deploymentInfo.getInterfaces(interfaceType.getCounterpart()));
+        return homeHandler.createProxy(primaryKey);
     }
 }

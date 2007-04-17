@@ -92,6 +92,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.primaryKey = pk;
         this.setDeploymentInfo((CoreDeploymentInfo) deploymentInfo);
 
+        if (interfaces == null || interfaces.size() == 0) {
+            InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
+            interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
+        }
+
         this.interfaces = Collections.unmodifiableList(interfaces);
 
         setLocal(interfaceType.isLocal());

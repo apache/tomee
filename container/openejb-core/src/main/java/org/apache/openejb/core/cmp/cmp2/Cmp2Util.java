@@ -21,14 +21,11 @@ import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.cmp.CmpContainer;
 import org.apache.openejb.core.cmp.KeyGenerator;
-import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.InterfaceType;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
-import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -79,19 +76,12 @@ public class Cmp2Util {
         // build the primary key
         Object primaryKey = getPrimaryKey(deploymentInfo, entity);
 
-        // get the local interface
-        Class localInterface = deploymentInfo.getLocalInterface();
-
         // get the cmp container
         if (!(deploymentInfo.getContainer() instanceof CmpContainer)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + deploymentInfo.getContainer().getClass().getName());
         }
 
-        // create the proxy
-        ArrayList<Class> interfaces = new ArrayList<Class>();
-        interfaces.add(localInterface);
-
-        Proxy proxy = (Proxy) EjbObjectProxyHandler.createProxy(deploymentInfo, primaryKey, interfaces, InterfaceType.EJB_LOCAL_HOME);
+        Proxy proxy = (Proxy) EjbObjectProxyHandler.createProxy(deploymentInfo, primaryKey, InterfaceType.EJB_LOCAL_HOME);
         return proxy;
     }
 

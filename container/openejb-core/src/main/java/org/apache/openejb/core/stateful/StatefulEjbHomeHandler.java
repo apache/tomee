@@ -17,7 +17,6 @@
 package org.apache.openejb.core.stateful;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.RemoveException;
@@ -34,8 +33,8 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
         super(deploymentInfo, interfaceType, interfaces);
     }
 
-    public Object createProxy(Object primaryKey, List<Class> interfaces) {
-        Object proxy = super.createProxy(primaryKey, interfaces);
+    public Object createProxy(Object primaryKey) {
+        Object proxy = super.createProxy(primaryKey);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         registerHandler(handler.getRegistryId(), handler);

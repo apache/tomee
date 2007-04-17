@@ -45,6 +45,8 @@ public enum InterfaceType {
         switch(this){
             case EJB_HOME: return true;
             case EJB_LOCAL_HOME: return true;
+            case BUSINESS_LOCAL_HOME: return true;
+            case BUSINESS_REMOTE_HOME: return true;
         }
         return false;
     }

@@ -673,9 +673,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             txPolicy.afterInvoke(bean, txContext);
         }
 
-        Class callingClass = callMethod.getDeclaringClass();
-        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        return new ProxyInfo(deploymentInfo, primaryKey, this);
     }
 
     private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {

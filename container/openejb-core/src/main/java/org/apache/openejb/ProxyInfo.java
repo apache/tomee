@@ -30,8 +30,16 @@ public class ProxyInfo {
     protected ProxyInfo() {
     }
 
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, RpcContainer container) {
+        this(depInfo, pk, container, InterfaceType.UNKNOWN);
+    }
+
     public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container, InterfaceType proxyType) {
         this(depInfo, pk, asList(intrfc), container, proxyType);
+    }
+
+    public ProxyInfo(DeploymentInfo depInfo, Object pk, RpcContainer container, InterfaceType proxyType) {
+        this(depInfo, pk, new ArrayList<Class>(), container, proxyType);
     }
 
     public ProxyInfo(DeploymentInfo depInfo, Object pk, List<Class> intrfc, RpcContainer container, InterfaceType proxyType) {

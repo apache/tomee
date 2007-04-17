@@ -18,7 +18,6 @@ package org.apache.openejb.core.entity;
 
 import java.lang.reflect.Method;
 import java.util.Vector;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.openejb.ProxyInfo;
@@ -36,8 +35,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         super(deploymentInfo, interfaceType, interfaces);
     }
 
-    public Object createProxy(Object primaryKey, List<Class> interfaces) {
-        Object proxy = super.createProxy(primaryKey, interfaces);
+    public Object createProxy(Object primaryKey) {
+        Object proxy = super.createProxy(primaryKey);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         /* 
@@ -66,14 +65,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
                 ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
-                proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
+                proxies.addElement(createProxy(proxyInfo.getPrimaryKey()));
             }
             return proxies;
         } else if (retValue instanceof org.apache.openejb.util.ArrayEnumeration) {
             org.apache.openejb.util.ArrayEnumeration enumeration = (org.apache.openejb.util.ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
                 ProxyInfo proxyInfo = ((ProxyInfo) enumeration.get(i));
-                enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
+                enumeration.set(i, createProxy(proxyInfo.getPrimaryKey()));
             }
             return enumeration;
         } else if (retValue instanceof java.util.Enumeration) {
@@ -82,14 +81,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             java.util.List proxies = new java.util.ArrayList();
             while (enumeration.hasMoreElements()) {
                 ProxyInfo proxyInfo = ((ProxyInfo) enumeration.nextElement());
-                proxies.add(createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces()));
+                proxies.add(createProxy(proxyInfo.getPrimaryKey()));
             }
             return new org.apache.openejb.util.ArrayEnumeration(proxies);
         } else {
             org.apache.openejb.ProxyInfo proxyInfo = (org.apache.openejb.ProxyInfo) retValue;
 
 
-            return createProxy(proxyInfo.getPrimaryKey(), proxyInfo.getInterfaces());
+            return createProxy(proxyInfo.getPrimaryKey());
         }
 
     }

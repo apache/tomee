@@ -60,7 +60,6 @@ import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Logger;
 
@@ -475,7 +474,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             throw new IllegalStateException("This component has no home interface: " + getDeploymentID());
         }
         if (ejbHomeRef == null) {
-            ejbHomeRef = (EJBHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.EJB_HOME, new ArrayList<Class>());
+            ejbHomeRef = (EJBHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_HOME);
         }
         return ejbHomeRef;
     }
@@ -486,7 +485,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             throw new IllegalStateException("This component has no local home interface: " + getDeploymentID());
         }
         if (ejbLocalHomeRef == null) {
-            ejbLocalHomeRef = (EJBLocalHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.EJB_LOCAL_HOME, new ArrayList<Class>());
+            ejbLocalHomeRef = (EJBLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_LOCAL_HOME);
         }
         return ejbLocalHomeRef;
     }
@@ -508,7 +507,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        return (BusinessLocalHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.BUSINESS_LOCAL_HOME, new ArrayList<Class>());
+        return (BusinessLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCAL_HOME);
     }
 
     public BusinessRemoteHome getBusinessRemoteHome() {
@@ -528,7 +527,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        return (BusinessRemoteHome) EjbHomeProxyHandler.createProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, new ArrayList<Class>());
+        return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME);
     }
 
     public void setBeanManagedTransaction(boolean value) {
