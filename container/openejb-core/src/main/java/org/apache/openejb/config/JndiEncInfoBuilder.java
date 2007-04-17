@@ -135,17 +135,29 @@ public class JndiEncInfoBuilder {
 
     private static void initJndiReferences(EnterpriseBean enterpriseBean, EjbDeployment ejbDeployment, EnterpriseBeanInfo beanInfo, JndiEncInfoBuilder jndiEncInfoBuilder, String moduleId) throws OpenEJBException {
         // Link all the resource refs
-        List<ResourceRef> resourceRefs = enterpriseBean.getResourceRef();
-        for (ResourceRef res : resourceRefs) {
+        for (ResourceRef res : enterpriseBean.getResourceRef()) {
             ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
             if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
                 res.setResLink(resourceLink.getResId());
             }
         }
 
+        for (ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
+            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getResourceEnvRefName());
+            if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
+                ref.setId(resourceLink.getResId());
+            }
+        }
+
+        for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
+            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getMessageDestinationRefName());
+            if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
+                ref.setMessageDestinationLink(resourceLink.getResId());
+            }
+        }
+
         // Link all the ejb refs
-        List<EjbRef> ejbRefs = enterpriseBean.getEjbRef();
-        for (EjbRef ejbRef : ejbRefs) {
+        for (EjbRef ejbRef : enterpriseBean.getEjbRef()) {
             EjbLink ejbLink = ejbDeployment.getEjbLink(ejbRef.getEjbRefName());
             if (ejbLink != null && ejbLink.getDeployentId() != null /* don't overwrite with null */) {
                 ejbRef.setMappedName(ejbLink.getDeployentId());
@@ -267,6 +279,7 @@ public class JndiEncInfoBuilder {
             MessageDestinationReferenceInfo info = new MessageDestinationReferenceInfo();
             info.referenceName = ref.getName();
             info.location = buildLocationInfo(ref);
+            info.messageDestinationLink = ref.getMessageDestinationLink();
             info.targets.addAll(buildInjectionInfos(ref));
             infos.add(info);
         }
@@ -491,6 +504,7 @@ public class JndiEncInfoBuilder {
             ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
             info.resourceEnvRefName = res.getResourceEnvRefName();
             info.resourceEnvRefType = res.getResourceEnvRefType();
+            info.resourceID = res.getId();
             info.location = buildLocationInfo(res);
             info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);

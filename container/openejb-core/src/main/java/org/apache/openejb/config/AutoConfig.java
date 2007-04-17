@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -33,9 +34,12 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
 import javax.sql.DataSource;
+import javax.jms.MessageListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.io.IOException;
 
 public class AutoConfig implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -162,6 +166,41 @@ public class AutoConfig implements DynamicDeployer {
                     String id = getConnectorId(ejbDeployment.getDeploymentId(), link.getResId(), ref.getResType());
                     link.setResId(id);
                     link.setResRefName(ref.getResRefName());
+                }
+            }
+
+            // MDB destination is deploymentId if none set
+            if (bean.getBean() instanceof MessageDrivenBean) {
+                MessageDrivenBean mdb = (MessageDrivenBean) bean.getBean();
+
+                // message destination link is deployment id
+                if (mdb.getMessageDestinationLink() == null) {
+                    mdb.setMessageDestinationLink(ejbDeployment.getDeploymentId());
+                }
+
+                // For JMS beans make sure destination is specified
+                if (MessageListener.class.getName().equals(mdb.getMessagingType())) {
+                    if (mdb.getActivationConfig() == null) {
+                        mdb.setActivationConfig(new ActivationConfig());
+                    }
+
+                    Properties properties = mdb.getActivationConfig().toProperties();
+                    if (mdb.getMessageDestinationType() != null && !properties.containsKey("destination")) {
+                        properties.put("destinationType", mdb.getMessageDestinationType());
+                        mdb.getActivationConfig().addProperty("destinationType", mdb.getMessageDestinationType());
+                    }
+                    if (!properties.containsKey("destination")) {
+                        mdb.getActivationConfig().addProperty("destination", ejbDeployment.getDeploymentId());
+                    }
+                    // topics need a clientId and subscriptionName
+                    if ("javax.jms.Topic".equals(properties.get("destinationType"))) {
+                        if (!properties.containsKey("clientId")) {
+                            mdb.getActivationConfig().addProperty("clientId", ejbDeployment.getDeploymentId());
+                        }
+                        if (!properties.containsKey("subscriptionName")) {
+                            mdb.getActivationConfig().addProperty("subscriptionName", ejbDeployment.getDeploymentId() + "_subscription");
+                        }
+                    }
                 }
             }
         }

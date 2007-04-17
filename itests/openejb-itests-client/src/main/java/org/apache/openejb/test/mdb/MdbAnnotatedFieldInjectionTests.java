@@ -20,6 +20,8 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
 
+import javax.jms.Destination;
+
 /**
  * [4] Should be run as the fourth test suite of the StatefulTestClients
  *
@@ -35,7 +37,8 @@ public class MdbAnnotatedFieldInjectionTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, "AnnotatedFieldInjectionMdb");
+        Destination destination = (Destination) initialContext.lookup("AnnotatedFieldInjectionMdbBean");
+        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
 

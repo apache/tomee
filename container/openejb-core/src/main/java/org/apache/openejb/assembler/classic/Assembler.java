@@ -698,6 +698,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
         } else {
             GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
+            // default transaction support is "local" and that doesn't seem to work
+            connectionManagerFactory.setTransactionSupport("xa");
             connectionManagerFactory.setTransactionManager(transactionManager);
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader == null) classLoader = getClass().getClassLoader();

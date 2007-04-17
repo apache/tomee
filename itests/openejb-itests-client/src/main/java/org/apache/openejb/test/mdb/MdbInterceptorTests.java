@@ -21,6 +21,8 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.TestManager;
 
+import javax.jms.Destination;
+
 public class MdbInterceptorTests extends MdbTestClient {
 
     public MdbInterceptorTests() {
@@ -33,7 +35,8 @@ public class MdbInterceptorTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ejbObject = MdbProxy.newProxyInstance(InterceptorMdbObject.class, connectionFactory, "InterceptorMdbBean");
+        Destination destination = (Destination) initialContext.lookup("InterceptorMdbBean");
+        ejbObject = MdbProxy.newProxyInstance(InterceptorMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
 

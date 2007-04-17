@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.TreeMap;
+import java.util.Iterator;
 import javax.naming.Binding;
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -566,4 +569,40 @@ public class IvmContext implements Context, Serializable {
         ois.close();
     }
 
+    //
+    // Helper methods for debugging
+    //
+
+    public static Map<String,Object> print(Context context) throws NamingException {
+        return print(context, System.out);
+    }
+
+    public static Map<String,Object> print(Context context, PrintStream out) throws NamingException {
+        Map<String, Object> map = buildMap(context);
+        for (Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<String, Object> entry = iterator.next();
+            out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
+        }
+        return map;
+    }
+
+    public static Map<String,Object> buildMap(Context context) throws NamingException {
+        Map<String, Object> map = new TreeMap<String, Object>();
+        buildMap(context, "", map);
+        return map;
+    }
+
+    public static void buildMap(Context context, String baseName, Map<String,Object> results) throws NamingException {
+        NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
+        while (namingEnumeration.hasMoreElements()) {
+            Binding binding = namingEnumeration.nextElement();
+            String name = binding.getName();
+            String fullName = baseName + name;
+            Object object = binding.getObject();
+            results.put(fullName, object);
+            if (object instanceof Context) {
+                buildMap((Context) object, fullName + "/", results);
+            }
+        }
+    }
 }

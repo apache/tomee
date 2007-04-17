@@ -100,6 +100,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private BusinessLocalHome businessLocalHomeRef;
     private BusinessRemoteHome businessRemoteHomeRef;
+    private String messageDestination;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
 
     private String ejbName;
@@ -374,10 +375,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             } else if (componentType == BeanType.STATEFUL) {
                 policy = new TxRequired((TransactionContainer) container);
                 policy = new StatefulContainerManagedTxPolicy(policy);
-            } else if (componentType == BeanType.CMP_ENTITY) {
-                // default cmp policy is required
-                policy = new TxRequired((TransactionContainer) container);
             } else {
+                // default transaction policy is required
                 policy = new TxRequired((TransactionContainer) container);
             }
             methodTransactionPolicies.put(method, policy);
@@ -528,6 +527,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
 
         return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME);
+    }
+
+    public String getMessageDestination() {
+        return messageDestination;
+    }
+
+    public void setMessageDestination(String messageDestination) {
+        this.messageDestination = messageDestination;
     }
 
     public void setBeanManagedTransaction(boolean value) {

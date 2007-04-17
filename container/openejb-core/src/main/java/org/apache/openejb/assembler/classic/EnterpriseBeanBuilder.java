@@ -118,6 +118,7 @@ class EnterpriseBeanBuilder {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
             deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+            deployment.setMessageDestination(messageDrivenBeanInfo.messageDestinationLink);
         }
 
         deployment.setEjbName(bean.ejbName);

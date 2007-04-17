@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -65,6 +66,10 @@ public class ActivationConfig {
         return this.description;
     }
 
+    public void addProperty(String name, String value) {
+        getActivationConfigProperty().add(new ActivationConfigProperty(name, value));
+    }
+    
     public List<ActivationConfigProperty> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
             activationConfigProperty = new ArrayList<ActivationConfigProperty>();
@@ -80,4 +85,13 @@ public class ActivationConfig {
         this.id = value;
     }
 
+    public Properties toProperties() {
+        Properties properties = new Properties();
+        for (ActivationConfigProperty property : getActivationConfigProperty()) {
+            String name = property.getActivationConfigPropertyName();
+            String value = property.getActivationConfigPropertyValue();
+            properties.put(name, value);
+        }
+        return properties;
+    }
 }

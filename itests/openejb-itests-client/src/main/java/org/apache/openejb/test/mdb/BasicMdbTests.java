@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.test.mdb;
 
+import javax.jms.Destination;
+
 /**
  * [5] Should be run as the fifth test suite of the BasicStatelessTestClients
  *
@@ -32,7 +34,8 @@ public class BasicMdbTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+        Destination destination = (Destination) initialContext.lookup("BasicMdb");
+        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
     }
 
 

@@ -22,12 +22,15 @@ import org.apache.openejb.test.TestManager;
 import javax.jms.ConnectionFactory;
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.naming.InitialContext;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public abstract class MdbTestClient extends org.apache.openejb.test.NamedTestCase {
+    protected InitialContext initialContext;
     protected ConnectionFactory connectionFactory;
 
 
@@ -40,6 +43,8 @@ public abstract class MdbTestClient extends org.apache.openejb.test.NamedTestCas
      * This method is called before a test is executed.
      */
     protected void setUp() throws Exception {
+        Properties properties = TestManager.getServer().getContextEnvironment();
+        initialContext = new InitialContext(properties);
         connectionFactory = TestManager.getJms().getConnectionFactory();
     }
 

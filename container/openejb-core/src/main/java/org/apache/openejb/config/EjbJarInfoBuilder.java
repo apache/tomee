@@ -508,9 +508,12 @@ public class EjbJarInfoBuilder {
             bean.mdbInterface = "javax.jms.MessageListener";
         }
 
+        bean.messageDestinationLink = mdb.getMessageDestinationLink();
+        
         if (mdb.getMessageDestinationType() != null) {
             bean.activationProperties.put("destinationType", mdb.getMessageDestinationType());
         }
+
         ActivationConfig activationConfig = mdb.getActivationConfig();
         if (activationConfig != null) {
             for (ActivationConfigProperty property : activationConfig.getActivationConfigProperty()) {

@@ -20,6 +20,8 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.TestManager;
 
+import javax.jms.Destination;
+
 /**
  * [4] Should be run as the fourth test suite of the EncStatelessTestClients
  *
@@ -35,7 +37,8 @@ public class MdbJndiEncTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, "EncMdbBean");
+        Destination destination = (Destination) initialContext.lookup("EncMdbBean");
+        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
 

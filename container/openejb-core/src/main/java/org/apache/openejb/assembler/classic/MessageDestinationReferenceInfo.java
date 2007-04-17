@@ -24,4 +24,6 @@ public class MessageDestinationReferenceInfo extends InjectableInfo {
     public String referenceName;
     
     public ReferenceLocationInfo location;
+
+    public String messageDestinationLink;
 }

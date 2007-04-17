@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+import java.lang.reflect.Constructor;
 import javax.naming.AuthenticationException;
 import javax.naming.ConfigurationException;
 import javax.naming.Context;
@@ -237,6 +238,21 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 String driver = uri.getScheme();
                 String url = uri.getSchemeSpecificPart();
                 return new ClientDataSource(driver, url, null, null);
+            } else if (scheme.equals("connectionfactory")) {
+                uri = new URI(uri.getSchemeSpecificPart());
+                String driver = uri.getScheme();
+                String url = uri.getSchemeSpecificPart();
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                if (classLoader == null) getClass().getClassLoader();
+                if (classLoader == null) ClassLoader.getSystemClassLoader();
+                try {
+                    Class<?> clazz = Class.forName(driver, true, classLoader);
+                    Constructor<?> constructor = clazz.getConstructor(String.class);
+                    Object connectionFactory = constructor.newInstance(url);
+                    return connectionFactory;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot use ConnectionFactory in client VM without the classh: "+driver, e);
+                }
             } else {
                 throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }

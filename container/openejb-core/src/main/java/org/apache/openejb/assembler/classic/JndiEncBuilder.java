@@ -34,6 +34,8 @@ import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.xbean.naming.context.WritableContext;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.EJBContext;
@@ -45,6 +47,8 @@ import javax.naming.Name;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.jms.Queue;
+import javax.jms.Topic;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -140,13 +144,6 @@ public class JndiEncBuilder {
                 Object value = entry.getValue();
                 if (value == null) continue;
                 try {
-                    Name parsedName = context.getNameParser("").parse(name);
-                    for (int i = 1; i < parsedName.size(); i++) {
-                        Name contextName = parsedName.getPrefix(i);
-                        if (!bindingExists(context, contextName)) {
-                            context.createSubcontext(contextName);
-                        }
-                    }
                     context.bind(name, value);
                 } catch (NamingException e) {
                     throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
@@ -204,7 +201,7 @@ public class JndiEncBuilder {
                     }
                 }
             }
-            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (EjbLocalReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
@@ -221,7 +218,7 @@ public class JndiEncBuilder {
                 String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "Local";
                 reference = new IntraVmJndiReference(jndiName);
             }
-            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (EnvEntryInfo entry : jndiEnc.envEntries) {
@@ -278,7 +275,7 @@ public class JndiEncBuilder {
                 String jndiName = "java:openejb/Connector/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
-            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
@@ -295,9 +292,22 @@ public class JndiEncBuilder {
 //                throw new OpenEJBException(e);
             }
 
+            Object reference = null;
             if (referenceInfo.location != null){
-                Reference reference = buildReferenceLocation(referenceInfo.location);
-                bindings.put(normalize(referenceInfo.resourceEnvRefName), wrapReference(reference));
+                reference = buildReferenceLocation(referenceInfo.location);
+            } else {
+                String destination = referenceInfo.resourceID;
+                if (destination == null) destination = referenceInfo.resourceEnvRefName;
+
+                String destinationType = referenceInfo.resourceEnvRefType;
+                if (Queue.class.getName().equals(destinationType)) {
+                    reference = new ActiveMQQueue(destination);
+                } else if (Topic.class.getName().equals(destinationType)) {
+                    reference = new ActiveMQTopic(destination);
+                }
+            }
+            if (reference != null) {
+                bindings.put(normalize(referenceInfo.resourceEnvRefName), reference);
             }
 
             //TODO code for handling other resource-env-refs need to be added here.
@@ -306,7 +316,7 @@ public class JndiEncBuilder {
         for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
             if (referenceInfo.location != null){
                 Reference reference = buildReferenceLocation(referenceInfo.location);
-                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+                bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
 
@@ -317,13 +327,13 @@ public class JndiEncBuilder {
             }
 
             Reference reference = new PersistenceUnitReference(factory);
-            bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
             if (contextInfo.location != null){
                 Reference reference = buildReferenceLocation(contextInfo.location);
-                bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
+                bindings.put(normalize(contextInfo.referenceName), reference);
                 continue;
             }
 
@@ -335,20 +345,27 @@ public class JndiEncBuilder {
 
             JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
             Reference reference = new PersistenceContextReference(jtaEntityManager);
-            bindings.put(normalize(contextInfo.referenceName), wrapReference(reference));
+            bindings.put(normalize(contextInfo.referenceName), reference);
         }
 
         for (MessageDestinationReferenceInfo referenceInfo : jndiEnc.messageDestinationRefs) {
+            Reference reference;
             if (referenceInfo.location != null){
-                Reference reference = buildReferenceLocation(referenceInfo.location);
-                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+                reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.messageDestinationLink != null) {
+                String jndiName = "java:openejb/ejb/" + referenceInfo.messageDestinationLink;
+                reference = new IntraVmJndiReference(jndiName);
+            } else {
+                String jndiName = "java:openejb/ejb/" + referenceInfo.referenceName;
+                reference = new IntraVmJndiReference(jndiName);
             }
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
             if (referenceInfo.location != null){
                 Reference reference = buildReferenceLocation(referenceInfo.location);
-                bindings.put(normalize(referenceInfo.referenceName), wrapReference(reference));
+                bindings.put(normalize(referenceInfo.referenceName), reference);
             }
         }
         return bindings;
@@ -368,6 +385,8 @@ public class JndiEncBuilder {
         IvmContext context = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
         try {
             context.createSubcontext("comp").createSubcontext("env");
+            // todo remove this... IvmContext seems to drop empty nodes
+            context.bind("java:comp/env/dummy", "dummy");
         } catch (NamingException e) {
             throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
         }
@@ -401,10 +420,6 @@ public class JndiEncBuilder {
                 name = "java:comp/env/" + name;
         }
         return name;
-    }
-
-    private Object wrapReference(Reference reference) {
-        return reference;
     }
 
     public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {

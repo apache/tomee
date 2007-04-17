@@ -24,6 +24,7 @@ import java.util.HashMap;
  */
 public class MessageDrivenBeanInfo extends EnterpriseBeanInfo {
     public String mdbInterface;
+    public String messageDestinationLink;
     public final Map<String, String> activationProperties = new HashMap<String, String>();
 
     public MessageDrivenBeanInfo() {

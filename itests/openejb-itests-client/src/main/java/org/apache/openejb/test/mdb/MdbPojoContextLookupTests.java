@@ -20,6 +20,8 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.TestManager;
 
+import javax.jms.Destination;
+
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
@@ -33,7 +35,8 @@ public class MdbPojoContextLookupTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, "ContextLookupMdbPojoBean");
+        Destination destination = (Destination) initialContext.lookup("ContextLookupMdbPojoBean");
+        ejbObject = MdbProxy.newProxyInstance(EncMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
 

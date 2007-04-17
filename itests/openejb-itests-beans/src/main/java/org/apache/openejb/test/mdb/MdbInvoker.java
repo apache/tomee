@@ -25,6 +25,8 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,7 +59,19 @@ public class MdbInvoker implements MessageListener {
     private synchronized Session getSession() throws JMSException{
         connection = connectionFactory.createConnection();
         connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        boolean isBeanManagedTransaction = false;
+
+        try {
+            new InitialContext().lookup("java:comp/UserTransaction");
+            isBeanManagedTransaction = true;
+        } catch (NamingException e) {
+        }
+
+        if (isBeanManagedTransaction) {
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        } else {
+            session = connection.createSession(true, Session.SESSION_TRANSACTED);
+        }
         return session;
     }
 

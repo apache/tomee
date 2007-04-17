@@ -55,6 +55,7 @@ import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.sun.Cmp;
 import org.apache.openejb.jee.sun.CmpFieldMapping;
 import org.apache.openejb.jee.sun.CmrFieldMapping;
@@ -70,6 +71,8 @@ import org.apache.openejb.jee.sun.SunCmpMappings;
 import org.apache.openejb.jee.sun.SunEjbJar;
 import org.apache.openejb.jee.sun.EjbRef;
 import org.apache.openejb.jee.sun.SunApplicationClient;
+import org.apache.openejb.jee.sun.ResourceEnvRef;
+import org.apache.openejb.jee.sun.MessageDestinationRef;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -189,6 +192,22 @@ public class SunConversion implements DynamicDeployer {
                 ejbRef.setMappedName(ref.getJndiName());
             }
         }
+
+        // map resource-env-refs
+        Map<String,org.apache.openejb.jee.ResourceEnvRef> resEnvMap = new TreeMap<String,org.apache.openejb.jee.ResourceEnvRef>();
+        for (org.apache.openejb.jee.ResourceEnvRef envRef : applicationClient.getResourceEnvRef()) {
+            resEnvMap.put(envRef.getResourceEnvRefName(), envRef);
+        }
+
+        for (ResourceEnvRef ref : sunApplicationClient.getResourceEnvRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getResourceEnvRefName();
+                org.apache.openejb.jee.ResourceEnvRef resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setId(ref.getJndiName());
+                }
+            }
+        }
     }
 
     public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
@@ -241,6 +260,35 @@ public class SunConversion implements DynamicDeployer {
                         deployment.getEjbLink().add(link);
                     }
                     link.setDeployentId(ref.getJndiName());
+                }
+            }
+
+            Map<String, ResourceLink> resourceLinksMap = deployment.getResourceLinksMap();
+            for (ResourceEnvRef ref : ejb.getResourceEnvRef()) {
+                if (ref.getJndiName() != null) {
+                    String refName = ref.getResourceEnvRefName();
+                    ResourceLink link = resourceLinksMap.get(refName);
+                    if (link == null) {
+                        link = new ResourceLink();
+                        link.setResRefName(refName);
+                        resourceLinksMap.put(refName, link);
+                        deployment.getResourceLink().add(link);
+                    }
+                    link.setResId(ref.getJndiName());
+                }
+            }
+
+            for (MessageDestinationRef ref : ejb.getMessageDestinationRef()) {
+                if (ref.getJndiName() != null) {
+                    String refName = ref.getMessageDestinationRefName();
+                    ResourceLink link = resourceLinksMap.get(refName);
+                    if (link == null) {
+                        link = new ResourceLink();
+                        link.setResRefName(refName);
+                        resourceLinksMap.put(refName, link);
+                        deployment.getResourceLink().add(link);
+                    }
+                    link.setResId(ref.getJndiName());
                 }
             }
         }

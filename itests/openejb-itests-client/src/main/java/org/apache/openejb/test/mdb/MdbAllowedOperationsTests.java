@@ -19,6 +19,8 @@ package org.apache.openejb.test.mdb;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
+import javax.jms.Destination;
+
 /**
  *
  * [9] Should be run as the nineth test suite of the BasicStatelessTestClients
@@ -71,7 +73,8 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+        Destination destination = (Destination) initialContext.lookup("BasicMdb");
+        basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
         basicMdbObject.businessMethod("foo");
     }
 

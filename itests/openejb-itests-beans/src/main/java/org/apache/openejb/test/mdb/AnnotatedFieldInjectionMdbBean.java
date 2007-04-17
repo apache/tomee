@@ -52,7 +52,7 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName="destinationType", propertyValue = " javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName="destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName="destination", propertyValue = "AnnotatedFieldInjectionMdb")})
 public class AnnotatedFieldInjectionMdbBean implements MessageListener {
     @Resource

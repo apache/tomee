@@ -47,6 +47,17 @@ public class MdbProxy {
         return (T) proxy;
     }
 
+    @SuppressWarnings({"unchecked"})
+    public static <T> T newProxyInstance(Class<T> type, ConnectionFactory connectionFactory, Destination requestQueue) throws JMSException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) classLoader = type.getClassLoader();
+        if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+
+        InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueue);
+        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
+        return (T) proxy;
+    }
+
     public static void destroyProxy(Object proxy) {
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         if (handler instanceof MdbProxy) {
@@ -72,6 +83,21 @@ public class MdbProxy {
 
             // create the request queue
             requestQueue = session.createQueue(requestQueueName);
+
+            // create a producer which is used to send requests
+            producer = session.createProducer(requestQueue);
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+        }
+
+        public MdbInvocationHandler(ConnectionFactory connectionFactory, Destination requestQueue) throws JMSException {
+            this.requestQueue = requestQueue;
+
+            // open a connection
+            connection = connectionFactory.createConnection();
+            connection.start();
+
+            // create a session
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // create a producer which is used to send requests
             producer = session.createProducer(requestQueue);
@@ -137,7 +163,7 @@ public class MdbProxy {
                 Message message = consumer.receive(MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT);
 
                 // verify message
-                if (message == null) throw new NullPointerException("message is null");
+                if (message == null) throw new NullPointerException("Did not get a response withing " + MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT + "ms");
                 if (!correlationId.equals(message.getJMSCorrelationID())) {
                     throw new IllegalStateException("Recieved a response message with the wrong correlation id");
                 }
