@@ -270,9 +270,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
     }
 
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
-        Class callingClass = callMethod.getDeclaringClass();
-        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-        return new ProxyInfo(deploymentInfo, null, objectInterface, this);
+        return new ProxyInfo(deploymentInfo, null);
     }
 
     public void discardInstance(Object instance, ThreadContext context) {

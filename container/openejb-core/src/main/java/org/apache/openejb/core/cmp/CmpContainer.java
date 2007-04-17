@@ -673,7 +673,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             txPolicy.afterInvoke(bean, txContext);
         }
 
-        return new ProxyInfo(deploymentInfo, primaryKey, this);
+        return new ProxyInfo(deploymentInfo, primaryKey);
     }
 
     private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
@@ -695,12 +695,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
             Object primaryKey = kg.getPrimaryKey(bean);
 
-            // Determine the proxy type
-            Class<?> callingClass = callMethod.getDeclaringClass();
-            List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-
             // create a new ProxyInfo based on the deployment info and primary key
-            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+            return new ProxyInfo(deploymentInfo, primaryKey);
         } catch (javax.ejb.FinderException fe) {
             txPolicy.handleApplicationException(fe, false, txContext);
         } catch (Throwable e) {// handle reflection exception
@@ -725,9 +721,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
 
-            Class<?> callingClass = callMethod.getDeclaringClass();
-            List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-
             // The following block of code is responsible for returning ProxyInfo object(s) for each
             // matching entity bean found by the query.  If its a multi-value find operation a Vector
             // of ProxyInfo objects will be returned. If its a single-value find operation then a
@@ -744,7 +737,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                         Object primaryKey = kg.getPrimaryKey(bean);
 
                         // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
-                        proxies.add(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+                        proxies.add(new ProxyInfo(deploymentInfo, primaryKey));
                     }
                 }
                 if (callMethod.getReturnType() == Enumeration.class) {
@@ -763,7 +756,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                     return null;
                 } else {
                     Object primaryKey = kg.getPrimaryKey(bean);
-                    return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+                    return new ProxyInfo(deploymentInfo, primaryKey);
                 }
             }
         } catch (javax.ejb.FinderException fe) {

@@ -294,9 +294,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             instanceManager.poolInstance(primaryKey, instance);
 
-            Class callingClass = callMethod.getDeclaringClass();
-            List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-            return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+            return new ProxyInfo(deploymentInfo, primaryKey);
         } finally {
             ThreadContext.exit(oldCallContext);
         }

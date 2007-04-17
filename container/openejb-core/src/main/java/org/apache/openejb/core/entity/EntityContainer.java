@@ -412,10 +412,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             txPolicy.afterInvoke(bean, txContext);
         }
 
-        // return a proxy to the bean
-        Class callingClass = callMethod.getDeclaringClass();
-        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-        return new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this);
+        return new ProxyInfo(deploymentInfo, primaryKey);
 
     }
 
@@ -426,9 +423,6 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
-        Class callingClass = callMethod.getDeclaringClass();
-        List<Class> objectInterface = deploymentInfo.getObjectInterface(callingClass);
-
         /*
         * Find operations return either a single primary key or a collection of primary keys.
         * The primary keys are converted to ProxyInfo objects.
@@ -438,7 +432,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasNext()) {
                 Object primaryKey = keys.next();
-                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey));
             }
             returnValue = proxies;
         } else if (returnValue instanceof java.util.Enumeration) {
@@ -446,11 +440,11 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
             Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
-                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey, objectInterface, this));
+                proxies.addElement(new ProxyInfo(deploymentInfo, primaryKey));
             }
             returnValue = new org.apache.openejb.util.ArrayEnumeration(proxies);
         } else
-            returnValue = new ProxyInfo(deploymentInfo, returnValue, objectInterface, this);
+            returnValue = new ProxyInfo(deploymentInfo, returnValue);
 
         return returnValue;
     }

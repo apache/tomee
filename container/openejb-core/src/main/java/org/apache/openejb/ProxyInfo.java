@@ -23,45 +23,32 @@ public class ProxyInfo {
 
     protected DeploymentInfo deploymentInfo;
     protected Object primaryKey;
-    protected List<Class> proxyInterface;
+    protected List<Class> proxyInterfaces;
     protected RpcContainer beanContainer;
     protected InterfaceType interfaceType;
 
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, RpcContainer container) {
-        this(depInfo, pk, container, InterfaceType.UNKNOWN);
-    }
-
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container, InterfaceType proxyType) {
-        this(depInfo, pk, asList(intrfc), container, proxyType);
-    }
-
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, RpcContainer container, InterfaceType proxyType) {
-        this(depInfo, pk, new ArrayList<Class>(), container, proxyType);
-    }
-
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, List<Class> intrfc, RpcContainer container, InterfaceType proxyType) {
-        this.deploymentInfo = depInfo;
-        this.primaryKey = pk;
-        this.proxyInterface = intrfc;
+    public ProxyInfo(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType proxyType) {
+        this.deploymentInfo = deploymentInfo;
+        this.primaryKey = primaryKey;
+        this.proxyInterfaces = interfaces;
         this.interfaceType = proxyType;
-        this.beanContainer = container;
+        this.beanContainer = (RpcContainer) deploymentInfo.getContainer();
     }
 
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, List<Class> intrfc, RpcContainer container) {
-        this(depInfo, pk, intrfc, container, InterfaceType.UNKNOWN);
-    }
-
-    public ProxyInfo(DeploymentInfo depInfo, Object pk, Class intrfc, RpcContainer container) {
-        this(depInfo, pk, asList(intrfc), container);
-    }
-
-    private static List asList(Object object){
-        List list = new ArrayList();
-        list.add(object);
-        return list;
+    /**
+     * This is the constructor that containers should call.
+     * Containers do not know the list of interfaces that should
+     * be applied nor do they need to tell the proxy handling
+     * code what kind of proxy it should create.
+     * 
+     * @param depInfo
+     * @param pk
+     */
+    public ProxyInfo(DeploymentInfo depInfo, Object pk) {
+        this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN);
     }
 
     public InterfaceType getInterfaceType() {
@@ -77,11 +64,11 @@ public class ProxyInfo {
     }
 
     public Class getInterface() {
-        return proxyInterface.get(0);
+        return proxyInterfaces.get(0);
     }
 
     public List<Class> getInterfaces() {
-        return proxyInterface;
+        return proxyInterfaces;
     }
 
     public RpcContainer getBeanContainer() {
