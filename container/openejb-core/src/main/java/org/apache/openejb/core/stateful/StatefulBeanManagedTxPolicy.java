@@ -44,8 +44,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
             context.clientTx = suspendTransaction(context);
 
             // Resume previous Bean transaction if there was one
-            Object primaryKey = context.callContext.getPrimaryKey();
-            Transaction beanTransaction = instanceManager.getBeanTransaction(primaryKey);
+            Transaction beanTransaction = instanceManager.getBeanTransaction(context.callContext);
             if (beanTransaction != null) {
                 context.currentTx = beanTransaction;
                 resumeTransaction(context, context.currentTx);
@@ -72,9 +71,8 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
             }
 
             // Update the user transaction reference in the bean instance data
-            Object primaryKey = context.callContext.getPrimaryKey();
             StatefulInstanceManager instanceManager = ((StatefulContainer)container).getInstanceManager();
-            instanceManager.setBeanTransaction(primaryKey, context.currentTx);
+            instanceManager.setBeanTransaction(context.callContext, context.currentTx);
         } catch (OpenEJBException e) {
             handleSystemException(e.getRootCause(), instance, context);
         } catch (javax.transaction.SystemException e) {

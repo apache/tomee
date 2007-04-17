@@ -62,7 +62,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Object containerID;
-    private final TransactionManager transactionManager;
+    private final TransactionManager transactionManager;  
     private final SecurityService securityService;
     private final StatefulInstanceManager instanceManager;
     // todo this should be part of the constructor
@@ -80,18 +80,6 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         this.securityService = securityService;
 
         instanceManager = new StatefulInstanceManager(transactionManager, securityService, entityManagerRegistry, passivator, timeOut, poolSize, bulkPassivate);
-    }
-
-    private class Data {
-        private final Index<Method, MethodType> methodIndex;
-
-        private Data(Index<Method, MethodType> methodIndex) {
-            this.methodIndex = methodIndex;
-        }
-
-        public Index<Method, MethodType> getMethodIndex() {
-            return methodIndex;
-        }
     }
 
     private Map<Method, MethodType> getLifecycelMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
@@ -184,7 +172,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         return methods;
     }
 
-    private static enum MethodType {
+    static enum MethodType {
         CREATE, REMOVE, BUSINESS
     }
 
@@ -225,11 +213,10 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
     private synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
-        deploymentInfo.setContainerData(new Data(new Index<Method, MethodType>(methods)));
 
         deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
-        instanceManager.deploy(deploymentInfo);
+        instanceManager.deploy(deploymentInfo, new Index<Method, MethodType>(methods));
     }
 
     /**
@@ -244,8 +231,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         if (deployInfo == null)
             throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
 
-        Data data = (Data) deployInfo.getContainerData();
-        MethodType methodType = data.getMethodIndex().get(callMethod);
+        MethodType methodType = instanceManager.getMethodIndex(deployInfo).get(callMethod);
         methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
 
         switch (methodType) {
@@ -281,7 +267,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             Object o = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
             StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) o;
 
-            instanceManager.setEntityManagers(primaryKey, entityManagers);
+            instanceManager.setEntityManagers(createContext, entityManagers);
 
             if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) && !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
 
@@ -292,7 +278,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 _invoke(callMethod, interceptorStack, args, instance, createContext);
             }
 
-            instanceManager.poolInstance(primaryKey, instance);
+            instanceManager.poolInstance(createContext, instance);
 
             return new ProxyInfo(deploymentInfo, primaryKey);
         } finally {
@@ -334,7 +320,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 throw e;
             } finally {
                 if (retain){
-                    instanceManager.poolInstance(primKey, instance);
+                    instanceManager.poolInstance(callContext, instance);
                 } else {
                     callContext.setCurrentOperation(Operation.PRE_DESTROY);
 
@@ -353,7 +339,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                     }
 
                     // todo destroy extended persistence contexts
-                    instanceManager.freeInstance(callContext.getPrimaryKey());
+                    instanceManager.freeInstance(callContext);
                 }
             }
         } finally {
@@ -370,7 +356,6 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             Object bean = instanceManager.obtainInstance(primKey, callContext);
             callContext.setCurrentOperation(Operation.BUSINESS);
             callContext.setCurrentAllowedStates(StatefulContext.getStates());
-            Object returnValue = null;
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -379,9 +364,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
-            returnValue = _invoke(callMethod, interceptorStack, args, bean, callContext);
+            Object returnValue = _invoke(callMethod, interceptorStack, args, bean, callContext);
 
-            instanceManager.poolInstance(primKey, bean);
+            instanceManager.poolInstance(callContext, bean);
 
             return returnValue;
         } finally {
@@ -406,7 +391,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             if (e.getRootCause() instanceof TransactionRequiredException ||
                     e.getRootCause() instanceof RemoteException) {
 
-                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
+                instanceManager.poolInstance(callContext, bean);
             }
             throw e;
         }
@@ -427,7 +412,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 txPolicy.handleSystemException(re, bean, txContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext.getPrimaryKey(), bean);
+                instanceManager.poolInstance(callContext, bean);
 
                 txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
             }
@@ -475,7 +460,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         // get the managers for the factories
         Object primaryKey = callContext.getPrimaryKey();
-        Map<EntityManagerFactory, EntityManager> entityManagers = instanceManager.getEntityManagers(primaryKey, factories);
+        Map<EntityManagerFactory, EntityManager> entityManagers = instanceManager.getEntityManagers(callContext, factories);
         if (entityManagers == null) return;
 
         // register them
@@ -500,8 +485,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
     public void discardInstance(Object bean, ThreadContext threadContext) {
         try {
-            Object primaryKey = threadContext.getPrimaryKey();
-            instanceManager.freeInstance(primaryKey);
+            instanceManager.freeInstance(threadContext);
         } catch (Throwable t) {
             logger.error("", t);
         }

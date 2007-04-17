@@ -64,8 +64,6 @@ public class StatefulInstanceManager {
 
     private final long timeOut;
 
-    private final Hashtable<Object, BeanEntry> beanIndex = new Hashtable<Object, BeanEntry>();
-
     // queue of beans for LRU algorithm
     private final BeanEntryQueue lruQueue;
 
@@ -97,32 +95,42 @@ public class StatefulInstanceManager {
         }
     }
 
-    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploymentInfo.set(Data.class, new Data());
+    public void deploy(CoreDeploymentInfo deploymentInfo, Index<Method, StatefulContainer.MethodType> index) throws OpenEJBException {
+        deploymentInfo.setContainerData(new Data(index));
     }
 
-    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploymentInfo.set(Data.class, null);
+    public void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        Data data = (Data) deploymentInfo.getContainerData();
+        if (data != null) {
+            for (BeanEntry entry: data.getBeanIndex().values()) {
+                lruQueue.remove(entry);
+            }
+            deploymentInfo.setContainerData(null);
+        }
     }
 
+    Index<Method, StatefulContainer.MethodType> getMethodIndex(CoreDeploymentInfo deploymentInfo) {
+        Data data = (Data) deploymentInfo.getContainerData();
+        return data.getMethodIndex();
+    }
 
-    public Transaction getBeanTransaction(Object primaryKey) throws OpenEJBException {
-        BeanEntry entry = getBeanEntry(primaryKey);
+    public Transaction getBeanTransaction(ThreadContext callContext) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(callContext);
         return entry.beanTransaction;
     }
 
-    public void setBeanTransaction(Object primaryKey, Transaction beanTransaction) throws OpenEJBException {
-        BeanEntry entry = getBeanEntry(primaryKey);
+    public void setBeanTransaction(ThreadContext callContext, Transaction beanTransaction) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(callContext);
         entry.beanTransaction = beanTransaction;
     }
 
-    public Map<EntityManagerFactory, EntityManager> getEntityManagers(Object primaryKey, Index<EntityManagerFactory, Map> factories) throws OpenEJBException {
-        BeanEntry entry = getBeanEntry(primaryKey);
+    public Map<EntityManagerFactory, EntityManager> getEntityManagers(ThreadContext callContext, Index<EntityManagerFactory, Map> factories) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(callContext);
         return entry.getEntityManagers(factories);
     }
 
-    public void setEntityManagers(Object primaryKey, Index<EntityManagerFactory, EntityManager> entityManagers) throws OpenEJBException {
-        BeanEntry entry = getBeanEntry(primaryKey);
+    public void setEntityManagers(ThreadContext callContext, Index<EntityManagerFactory, EntityManager> entityManagers) throws OpenEJBException {
+        BeanEntry entry = getBeanEntry(callContext);
         entry.setEntityManagers(entityManagers);
     }
 
@@ -135,12 +143,12 @@ public class StatefulInstanceManager {
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
             objectRecipe.allow(Option.FIELD_INJECTION);
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
-            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+//            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
             ThreadContext callContext = ThreadContext.getThreadContext();
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Context ctx = deploymentInfo.getJndiEnc();
-            SessionContext sessionContext = null;
+            SessionContext sessionContext;
             try {
                 sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
             } catch (NamingException e1) {
@@ -214,7 +222,7 @@ public class StatefulInstanceManager {
 
         // add to index
         BeanEntry entry = new BeanEntry(bean, primaryKey, timeOut);
-        getBeanIndex().put(primaryKey, entry);
+        getBeanIndex(threadContext).put(primaryKey, entry);
 
         return bean;
     }
@@ -240,7 +248,7 @@ public class StatefulInstanceManager {
         }
 
         // look for entry in index
-        BeanEntry entry = getBeanIndex().get(primaryKey);
+        BeanEntry entry = getBeanIndex(callContext).get(primaryKey);
 
         // if we didn't find the bean in the index, try to activate it
         if (entry == null) {
@@ -258,7 +266,7 @@ public class StatefulInstanceManager {
         if (queueEntry != null) {
             // if bean is timed out, destroy it
             if (entry.isTimedOut()) {
-                entry = getBeanIndex().remove(entry.primaryKey);
+                entry = getBeanIndex(callContext).remove(entry.primaryKey);
                 handleTimeout(entry, callContext);
                 throw new InvalidateReferenceException(new NoSuchObjectException("Stateful SessionBean has timed-out"));
             }
@@ -318,7 +326,7 @@ public class StatefulInstanceManager {
         }
 
         // add it to the index
-        getBeanIndex().put(primaryKey, entry);
+        getBeanIndex(callContext).put(primaryKey, entry);
 
         return entry.bean;
     }
@@ -356,12 +364,13 @@ public class StatefulInstanceManager {
         }
     }
 
-    public void poolInstance(Object primaryKey, Object bean) throws OpenEJBException {
+    public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
+        Object primaryKey = callContext.getPrimaryKey();
         if (primaryKey == null || bean == null) {
             throw new SystemException("Invalid arguments");
         }
 
-        BeanEntry entry = getBeanIndex().get(primaryKey);
+        BeanEntry entry = getBeanIndex(callContext).get(primaryKey);
         if (entry == null) {
             entry = activate(primaryKey);
             if (entry == null) {
@@ -386,9 +395,9 @@ public class StatefulInstanceManager {
         }
     }
 
-    public Object freeInstance(Object primaryKey) throws SystemException {
-        BeanEntry entry = null;
-        entry = getBeanIndex().remove(primaryKey);// remove frm index
+    public Object freeInstance(ThreadContext threadContext) throws SystemException {
+        Object primaryKey = threadContext.getPrimaryKey();
+        BeanEntry entry = getBeanIndex(threadContext).remove(primaryKey);// remove frm index
         if (entry == null) {
             entry = activate(primaryKey);
         } else {
@@ -416,7 +425,7 @@ public class StatefulInstanceManager {
                 if (currentEntry == null) {
                     break;
                 }
-                getBeanIndex().remove(currentEntry.primaryKey);
+                getBeanIndex(threadContext).remove(currentEntry.primaryKey);
                 if (currentEntry.isTimedOut()) {
                     handleTimeout(currentEntry, threadContext);
                 } else {
@@ -466,9 +475,9 @@ public class StatefulInstanceManager {
         return (BeanEntry) passivator.activate(primaryKey);
     }
 
-    protected InvalidateReferenceException destroy(BeanEntry entry, Exception t) throws SystemException {
+    protected InvalidateReferenceException destroy(ThreadContext callContext, BeanEntry entry, Exception t) throws SystemException {
 
-        getBeanIndex().remove(entry.primaryKey);// remove frm index
+        getBeanIndex(callContext).remove(entry.primaryKey);// remove frm index
         lruQueue.remove(entry);// remove from queue
         if (entry.beanTransaction != null) {
             try {
@@ -490,30 +499,37 @@ public class StatefulInstanceManager {
 
     }
 
-    protected BeanEntry getBeanEntry(Object primaryKey) throws OpenEJBException {
+    protected BeanEntry getBeanEntry(ThreadContext callContext) throws OpenEJBException {
+        Object primaryKey = callContext.getPrimaryKey();
         if (primaryKey == null) {
             throw new SystemException(new NullPointerException("The primary key is null. Cannot get the bean entry"));
         }
-        BeanEntry entry = getBeanIndex().get(primaryKey);
+        BeanEntry entry = getBeanIndex(callContext).get(primaryKey);
         if (entry == null) {
             Object bean = this.obtainInstance(primaryKey, ThreadContext.getThreadContext());
-            this.poolInstance(primaryKey, bean);
-            entry = getBeanIndex().get(primaryKey);
+            this.poolInstance(callContext, bean);
+            entry = getBeanIndex(callContext).get(primaryKey);
         }
         return entry;
     }
 
-    private Hashtable<Object, BeanEntry> getBeanIndex() {
-        // TODO:
-//        ThreadContext threadContext = null;
-//        DeploymentInfo deployment = threadContext.getDeploymentInfo();
-//        StatefulInstanceManager.Data data = deployment.get(StatefulInstanceManager.Data.class);
-//        return data.getBeanIndex();
-        return beanIndex;
+    private Hashtable<Object, BeanEntry> getBeanIndex(ThreadContext threadContext) {
+        CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
+        Data data = (Data) deployment.getContainerData();
+        return data.getBeanIndex();
     }
 
     private static class Data {
+        private final Index<Method, StatefulContainer.MethodType> methodIndex;
         private final Hashtable<Object, BeanEntry> beanIndex = new Hashtable<Object, BeanEntry>();
+
+        private Data(Index<Method, StatefulContainer.MethodType> methodIndex) {
+            this.methodIndex = methodIndex;
+        }
+
+        public Index<Method, StatefulContainer.MethodType> getMethodIndex() {
+            return methodIndex;
+        }
 
         public Hashtable<Object, BeanEntry> getBeanIndex() {
             return beanIndex;
@@ -579,7 +595,7 @@ public class StatefulInstanceManager {
         }
 
         /* [3] Discard the instance */
-        freeInstance(callContext.getPrimaryKey());
+        freeInstance(callContext);
 
         /* [4] throw the java.rmi.RemoteException to the client */
         if (transaction == null) {

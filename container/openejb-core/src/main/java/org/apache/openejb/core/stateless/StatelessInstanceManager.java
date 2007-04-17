@@ -16,6 +16,19 @@
  */
 package org.apache.openejb.core.stateless;
 
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
@@ -35,22 +48,9 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
 
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
-    protected java.util.HashMap poolMap = new HashMap();
     protected int poolLimit = 0;
     protected int beanCount = 0;
     protected boolean strictPooling = false;
@@ -78,15 +78,10 @@ public class StatelessInstanceManager {
 
     public Object getInstance(ThreadContext callContext)
             throws OpenEJBException {
-        Object bean = null;
-        Object deploymentId = callContext.getDeploymentInfo().getDeploymentID();
-        Stack pool = (Stack) poolMap.get(deploymentId);
-        if (pool == null) {
-            pool = new LinkedListStack(poolLimit);
-            poolMap.put(deploymentId, pool);
-        } else {
-            bean = pool.pop();
-        }
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Data data = (Data) deploymentInfo.getContainerData();
+        Stack pool = data.getPool();
+        Object bean = pool.pop();
 
         while (strictPooling && bean == null && pool.size() >= poolLimit) {
             poolQueue.waitForAvailableInstance();
@@ -95,7 +90,6 @@ public class StatelessInstanceManager {
 
         if (bean == null) {
 
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class beanClass = deploymentInfo.getBeanClass();
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
             objectRecipe.allow(Option.FIELD_INJECTION);
@@ -107,7 +101,7 @@ public class StatelessInstanceManager {
 
             try {
                 Context ctx = deploymentInfo.getJndiEnc();
-                SessionContext sessionContext = null;
+                SessionContext sessionContext;
                 try {
                     sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e1) {
@@ -178,7 +172,7 @@ public class StatelessInstanceManager {
                         callContext.setCurrentOperation(Operation.CREATE);
                         callContext.setCurrentAllowedStates(StatelessContext.getStates());
                         Method create = deploymentInfo.getCreateMethod();
-                        InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
+                        InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
                         interceptorStack.invoke();
                     }
                 } catch (Exception e) {
@@ -219,9 +213,9 @@ public class StatelessInstanceManager {
             throw new SystemException("Invalid arguments");
         }
 
-        Object deploymentId = callContext.getDeploymentInfo().getDeploymentID();
-
-        Stack pool = (Stack) poolMap.get(deploymentId);
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Data data = (Data) deploymentInfo.getContainerData();
+        Stack pool = data.getPool();
 
         if (strictPooling) {
             pool.push(bean);
@@ -257,6 +251,19 @@ public class StatelessInstanceManager {
 
     }
 
+    public void deploy(CoreDeploymentInfo deploymentInfo) {
+        Data data = new Data(poolLimit);
+        deploymentInfo.setContainerData(data);
+    }
+
+    public void undeploy(CoreDeploymentInfo deploymentInfo) {
+        Data data = (Data) deploymentInfo.getContainerData();
+        Stack pool = data.getPool();
+        //TODO ejbRemove on each bean in pool.
+        //clean pool
+        deploymentInfo.setContainerData(null);
+    }
+
     static class PoolQueue {
         private final long waitPeriod;
 
@@ -275,6 +282,18 @@ public class StatelessInstanceManager {
 
         public synchronized void notifyWaitingThreads() {
             notify();
+        }
+    }
+
+    private static final class Data {
+        private final Stack pool;
+
+        public Data(int poolLimit) {
+            pool = new LinkedListStack(poolLimit);
+        }
+
+        public Stack getPool() {
+            return pool;
         }
     }
 

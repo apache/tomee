@@ -117,7 +117,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
                 SessionSynchronization bean = (SessionSynchronization) instance.bean;
                 bean.beforeCompletion();
-                instanceManager.poolInstance(callContext.getPrimaryKey(), instance);
+                instanceManager.poolInstance(callContext, instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {
@@ -182,7 +182,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 SessionSynchronization bean = (SessionSynchronization) instance.bean;
 
                 bean.afterCompletion(status == Status.STATUS_COMMITTED);
-                instanceManager.poolInstance(callContext.getPrimaryKey(), instance);
+                instanceManager.poolInstance(callContext, instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
             } catch (Exception e) {
@@ -220,7 +220,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
 
     protected void discardInstance(StatefulInstanceManager instanceManager, ThreadContext callContext) {
         try {
-            instanceManager.freeInstance(callContext.getPrimaryKey());
+            instanceManager.freeInstance(callContext);
         } catch (org.apache.openejb.OpenEJBException oee) {
 
         }

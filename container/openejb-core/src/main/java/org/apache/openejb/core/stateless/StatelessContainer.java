@@ -92,6 +92,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
     public void deploy(DeploymentInfo info) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+        instanceManager.deploy(deploymentInfo);
         String id = (String) deploymentInfo.getDeploymentID();
         synchronized (this) {
             deploymentRegistry.put(id, deploymentInfo);
@@ -109,6 +110,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
     }
 
     private void undeploy(CoreDeploymentInfo deploymentInfo) {
+        instanceManager.undeploy(deploymentInfo);
         EjbTimerService timerService = deploymentInfo.getEjbTimerService();
         if (timerService != null) {
             timerService.stop();
