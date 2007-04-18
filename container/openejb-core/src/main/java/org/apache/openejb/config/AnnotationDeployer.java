@@ -1066,14 +1066,26 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, Member member) {
 
-            ServiceRef serviceRef = new ServiceRef();
+            ServiceRef serviceRef = null;
 
             String refName = webService.name();
             if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
-            serviceRef.setServiceRefName(refName);
+            
+            List<ServiceRef> serviceRefEntries = consumer.getServiceRef();
+            for (ServiceRef serviceRefEntry : serviceRefEntries) {
+                if (serviceRefEntry.getName().equals(refName)) {
+                    serviceRef = serviceRefEntry;
+                    break;
+                }
+            }
 
+            if (serviceRef == null) {
+                serviceRef = new ServiceRef();
+                serviceRef.setServiceRefName(refName);
+                serviceRefEntries.add(serviceRef);
+            }
 
             if (member != null) {
                 // Set the member name where this will be injected
@@ -1083,31 +1095,35 @@ public class AnnotationDeployer implements DynamicDeployer {
                 serviceRef.getInjectionTarget().add(target);
             }
 
-            Class<?> interfce = webService.type();
-            if (interfce.equals(Object.class)) {
-                if (member != null) {
-                    interfce = member.getType();
-                } else {
-                    interfce = webService.value();
+            // Set service interface
+            if (serviceRef.getServiceInterface() == null) {
+                Class<?> interfce = webService.type();
+                if (interfce.equals(Object.class)) {
+                    if (member != null) {
+                        interfce = member.getType();
+                    } else {
+                        interfce = webService.value();
+                    }
+                }
+                serviceRef.setServiceInterface(interfce.getName());
+            }
+
+            // Set the mappedName
+            if (serviceRef.getMappedName() == null) {
+                String mappedName = webService.mappedName();
+                if (mappedName.equals("")) {
+                    mappedName = null;
+                }
+                serviceRef.setMappedName(mappedName);
+            }
+            
+            // Set wsdl file
+            if (serviceRef.getWsdlFile() == null) {
+                String wsdlLocation = webService.wsdlLocation();
+                if (!wsdlLocation.equals("")) {
+                    serviceRef.setWsdlFile(wsdlLocation);
                 }
             }
-            serviceRef.setServiceInterface(interfce.getName());
-
-            // Set the mappedName, if any
-            String mappedName = webService.mappedName();
-            if (mappedName.equals("")) {
-                mappedName = null;
-            }
-            serviceRef.setMappedName(mappedName);
-
-
-            String wsdlLocation = webService.wsdlLocation();
-            if (!wsdlLocation.equals("")) {
-                serviceRef.setWsdlFile(wsdlLocation);
-            }
-
-            consumer.getServiceRef().add(serviceRef);
-
         }
 
         /**
