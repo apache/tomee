@@ -1044,4 +1044,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public String toString() {
         return "DeploymentInfo(id="+getDeploymentID()+")";
     }
+
+    public void setServiceEndpointInterface(Class serviceEndpointInterface) {
+        this.serviceEndpointInterface = serviceEndpointInterface;
+        mapObjectInterface(serviceEndpointInterface);
+    }
 }

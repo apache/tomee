@@ -60,4 +60,5 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
 
     public String containerId;
+    public String serviceEndpoint;
 }

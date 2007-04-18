@@ -63,7 +63,7 @@ import java.lang.reflect.Method;
 public class JaxRpcWebServiceInvocationTest extends TestCase {
 
     public void testNothing(){}
-    public void TODO_test() throws Exception {
+    public void testWebServiceInvocations() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         ConfigurationFactory config = new ConfigurationFactory();
@@ -71,7 +71,7 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class,"PseudoSecurityService",null,"PseudoSecurityService",null));
 
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
@@ -103,7 +103,7 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
         // web service provider.  Instead of writing "fake" marshalling
         // code that would pull the arguments from the soap message, we'll
         // just give it the argument values directly.
-        Object webServiceProviderInterceptor = new FakeWebServiceProviderInterceptor();
+        Object webServiceProviderInterceptor = new FakeWebServiceProviderInterceptor("Hello world");
 
         // Ok, now we have the two arguments expected on a JAX-RPC Web Service
         // invocation as per the OpenEJB-specific agreement between OpenEJB
@@ -116,12 +116,12 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
 
         Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        container.invoke("EchoBean", echoMethod, args, null);
+        String value = (String)container.invoke("EchoBean", echoMethod, args, null);
 
         assertCalls(Call.values());
-
         calls.clear();
-
+        assertEquals("Hello world" , value);
+        
     }
 
     private void assertCalls(Call... expectedCalls) {
@@ -178,7 +178,7 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
             return o;
         }
 
-        public List echo(List data){
+        public String echo(String data){
             calls.add(Call.Bean_Invoke);
             return data;
         }

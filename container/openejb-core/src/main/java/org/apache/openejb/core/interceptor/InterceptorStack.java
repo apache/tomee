@@ -74,8 +74,8 @@ public class InterceptorStack {
         return value;
     }
 
-    public Object invoke(javax.xml.rpc.handler.MessageContext messageContext) throws Exception {
-        InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext);
+    public Object invoke(javax.xml.rpc.handler.MessageContext messageContext, Object... parameters) throws Exception {
+        InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
         Object value = invocationContext.proceed();
         return value;
     }

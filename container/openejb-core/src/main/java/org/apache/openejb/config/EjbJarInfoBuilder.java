@@ -470,6 +470,7 @@ public class EjbJarInfoBuilder {
         bean.businessRemote.addAll(s.getBusinessRemote());
         TransactionType txType = s.getTransactionType();
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.serviceEndpoint = s.getServiceEndpoint();
 
         return bean;
     }
