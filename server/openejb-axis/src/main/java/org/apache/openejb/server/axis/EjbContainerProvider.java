@@ -99,7 +99,7 @@ public class EjbContainerProvider extends RPCProvider {
      *
      * @see org.apache.axis.providers.java.RPCProvider
      */
-    private class AxisRpcInterceptor {
+    public class AxisRpcInterceptor {
 
         private OperationDesc operation;
         private MessageContext messageContext;

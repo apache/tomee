@@ -122,11 +122,7 @@ class EnterpriseBeanBuilder {
         }
         if (BeanType.STATELESS == ejbType){
             if(bean.serviceEndpoint != null){
-                try {                
-                    deployment.setServiceEndpointInterface(Class.forName(bean.serviceEndpoint));                
-                } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Could not find the Service Endpoint Interface class " + bean.serviceEndpoint,e);
-                }
+                deployment.setServiceEndpointInterface(loadClass(bean.serviceEndpoint, "classNotFound.sei"));
             }
         }
         
