@@ -270,8 +270,13 @@ public class EJBRequest implements Request {
                 try {
                     Context initialContext = new InitialContext();
                     orb = (ORB) initialContext.lookup("java:comp/ORB");
-                } catch (NamingException e) {
-                    throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
+                } catch (Throwable e) {
+                    try {
+                        // any orb will do if we can't get a context one. 
+                        orb = ORB.init(); 
+                    } catch (Throwable ex) {
+                        throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
+                    }
                 }
             }
             return orb; 
