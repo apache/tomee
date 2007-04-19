@@ -194,13 +194,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         try {
             if (isWebServiceCall(deploymentInfo, callMethod, args)){
                 callContext.setCurrentOperation(Operation.BUSINESS_WS);                                   
-                Class cls = null;                    
-                try {
-                     cls = Class.forName("javax.xml.rpc.handler.MessageContext");
-                } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Cannot find class javax.xml.rpc.handler.MessageContext",e);
-                }
-                ThreadContext.getThreadContext().set(cls,args[0]);                                    
                 returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);                
             } else {
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
@@ -261,9 +254,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
         Object[] params = new Object[runMethod.getParameterTypes().length];
         if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
+            ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
             returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
         } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
-            returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext);
+            returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
         }
         return returnValue;
     }

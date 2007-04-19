@@ -68,8 +68,8 @@ public class InterceptorStack {
         return value;
     }
 
-    public Object invoke(javax.xml.ws.handler.MessageContext messageContext) throws Exception {
-        InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext);
+    public Object invoke(javax.xml.ws.handler.MessageContext messageContext, Object... parameters) throws Exception {
+        InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
         Object value = invocationContext.proceed();
         return value;
     }
