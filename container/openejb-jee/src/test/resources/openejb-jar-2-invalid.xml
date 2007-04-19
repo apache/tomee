@@ -546,6 +546,24 @@
                 <password>String</password>
             </named-username-password-credential>
         </default-principal>
+        <role-mappings>
+            <role role-name="r1">
+                <realm realm-name="realm">
+                    <principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="foo"/>
+            </realm>
+          </role>
+            <role role-name="r2">
+                <realm realm-name="realm">
+                    <principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="bar"/>
+            </realm>
+          </role>
+            <role role-name="r3">
+                <realm realm-name="realm">
+                    <principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="foo"/>
+                    <principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="bar"/>
+            </realm>
+          </role>
+        </role-mappings>
     </security>
     <gbean name="String" class="String">
         <attribute type="String" name="String">String</attribute>

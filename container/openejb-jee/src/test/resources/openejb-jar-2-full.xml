@@ -543,6 +543,24 @@
                 <ns6:password>String</ns6:password>
             </ns6:named-username-password-credential>
         </ns6:default-principal>
+        <ns6:role-mappings xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+            <ns6:role xmlns:ns10="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns="" role-name="r1">
+                <ns6:realm realm-name="realm">
+                    <ns6:principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="foo"/>
+            </ns6:realm>
+          </ns6:role>
+            <ns6:role xmlns:ns10="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns="" role-name="r2">
+                <ns6:realm realm-name="realm">
+                    <ns6:principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="bar"/>
+            </ns6:realm>
+          </ns6:role>
+            <ns6:role xmlns:ns10="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns="" role-name="r3">
+                <ns6:realm realm-name="realm">
+                    <ns6:principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="foo"/>
+                    <ns6:principal class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal" name="bar"/>
+            </ns6:realm>
+          </ns6:role>
+        </ns6:role-mappings>
     </ns6:security>
     <gbean name="String" class="String">
         <attribute type="String" name="String">String</attribute>

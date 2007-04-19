@@ -16,19 +16,21 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAnyElement;
 
 /**
  * @version $Rev$ $Date$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "securityType", namespace = "http://geronimo.apache.org/xml/ns/security-1.2", propOrder = {
-    "data"
+    "defaultPrincipal", "roleMappings"
 })
 public class SecurityType extends AbstractSecurityType {
-    @XmlAnyElement(lax = true)
-    protected Object data;
+    @XmlElement(name="default-principal", namespace = "http://geronimo.apache.org/xml/ns/security-1.2")
+    protected Object defaultPrincipal;
+    @XmlElement(name="role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-1.2")
+    protected Object roleMappings;
 }
