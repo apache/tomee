@@ -327,6 +327,15 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
     }
 
+    private TransactionPolicy getTransactionPolicy(CoreDeploymentInfo deploymentInfo, Method callMethod) {
+        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        // for CMP1 convert non-transactional policies to Required
+        if (!deploymentInfo.isCmp2() && !(txPolicy instanceof TxRequired) && !(txPolicy instanceof TxRequiresNew) && !(txPolicy instanceof TxManditory)) {
+            txPolicy = new TxRequired(this);
+        }
+        return txPolicy;
+    }
+
     private ThreadContext createThreadContext(EntityBean entityBean) {
         if (entityBean == null) throw new NullPointerException("entityBean is null");
 
@@ -506,7 +515,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
         txPolicy.beforeInvoke(null, txContext);
@@ -549,7 +558,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
         txPolicy.beforeInvoke(null, txContext);
@@ -604,7 +613,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         EntityBean bean = null;
         Object primaryKey = null;
 
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
         if (!(txPolicy instanceof TxRequired) && !(txPolicy instanceof TxRequiresNew) && !(txPolicy instanceof TxManditory)) {
             throw new IllegalArgumentException("Only required, requires new, and manditory transaction policies are supported for CMP beans: " + txPolicy.getClass().getName());
         }
@@ -680,7 +689,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         // Get the transaction policy assigned to this method
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
         txPolicy.beforeInvoke(null, txContext);
@@ -711,7 +720,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         // Get the transaction policy assigned to this method
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
         txPolicy.beforeInvoke(null, txContext);
@@ -842,7 +851,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         TransactionContext txContext = new TransactionContext(callContext, transactionManager);
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
+        TransactionPolicy txPolicy = getTransactionPolicy(deploymentInfo, callMethod);
 
         txPolicy.beforeInvoke(null, txContext);
         try {
