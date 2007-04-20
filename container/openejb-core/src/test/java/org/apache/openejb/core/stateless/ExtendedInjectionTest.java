@@ -130,6 +130,7 @@ public class ExtendedInjectionTest extends TestCase {
 
         EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
         HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
+        builder.deploy(ejbs);
         return ejbs;
     }
 

@@ -423,6 +423,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
 
+                // now that everything is configured, deploy to the container
+                ejbJarBuilder.deploy(deployments);
+
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     logger.info("Created Ejb(deployment-id="+beanInfo.ejbDeploymentId+", ejb-name="+beanInfo.ejbName+", container="+beanInfo.containerId+")");
                 }

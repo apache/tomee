@@ -59,12 +59,22 @@ public class EjbJarBuilder {
 
                 Container container = (Container) props.get(ejbInfo.containerId);
                 if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + deployment.getDeploymentID());
-                container.deploy(deployment);
+                // Don't deploy to the container, yet. That will be done by deploy() once Assembler as finished configuring the DeploymentInfo
                 deployment.setContainer(container);
             } catch (Throwable e) {
                 throw new OpenEJBException("Error building bean '" + ejbInfo.ejbName + "'.  Exception: " + e.getClass() + ": " + e.getMessage(), e);
             }
         }
         return deployments;
+    }
+    
+    public void deploy(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+        for (DeploymentInfo deployment : deployments.values()) {
+            try {
+                deployment.getContainer().deploy(deployment);
+            } catch (Throwable t) {
+                throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
+            }
+        }
     }
 }

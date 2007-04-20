@@ -348,7 +348,15 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             //    IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
             //    NullPointerException - if the specified object is null and the method is an instance method.
             //    ExceptionInInitializerError - if the initialization provoked by this method fails.
-            mdbCallContext.txPolicy.handleSystemException(re, instance, mdbCallContext.txContext);
+            if (!isApplicationException(deploymentInfo, re)) {
+                //
+                /// System Exception ****************************
+                mdbCallContext.txPolicy.handleSystemException(re, instance, mdbCallContext.txContext);
+            } else {
+                //
+                // Application Exception ***********************
+                mdbCallContext.txPolicy.handleApplicationException(re, false, mdbCallContext.txContext);
+            }
         }
         throw new AssertionError("Should not get here");
     }
