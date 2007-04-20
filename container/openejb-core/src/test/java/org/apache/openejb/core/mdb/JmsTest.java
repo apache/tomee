@@ -62,6 +62,7 @@ public class JmsTest extends TestCase {
         ra.setServerUrl("tcp://localhost:61616");
         ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
 
+
         // create a thead pool for ActiveMQ
         Executor threadPool = Executors.newFixedThreadPool(30);
 
@@ -104,6 +105,7 @@ public class JmsTest extends TestCase {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void createSender(Connection connection, Destination requestQueue) throws JMSException {
         Session session = null;
         MessageProducer producer = null;
@@ -137,7 +139,7 @@ public class JmsTest extends TestCase {
             Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
-            Map response = (Map) object;
+            Map<String, String> response = (Map<String, String>) object;
 
             // process results
             String returnValue = (String) response.get("return");
@@ -149,6 +151,7 @@ public class JmsTest extends TestCase {
         }
     }
 
+    
     private Destination createListener(Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
@@ -156,6 +159,7 @@ public class JmsTest extends TestCase {
         Destination requestQueue = session.createQueue(REQUEST_QUEUE_NAME);
         MessageConsumer consumer = session.createConsumer(requestQueue);
         consumer.setMessageListener(new MessageListener() {
+            @SuppressWarnings("unchecked")
             public void onMessage(Message message) {
                 // if we got a dummy (non ObjectMessage) return
                 if (!(message instanceof ObjectMessage)) return;
@@ -164,7 +168,7 @@ public class JmsTest extends TestCase {
                 try {
                     // process request
                     ObjectMessage requestMessage = (ObjectMessage) message;
-                    Map request = (Map) requestMessage.getObject();
+                    Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
                     Object[] args = (Object[]) request.get("args");
                     String returnValue = "test-" + args[0];
 
