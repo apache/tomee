@@ -527,6 +527,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.apache.geronimo.javamail</groupId>
+        <artifactId>geronimo-javamail_1.4_mail</artifactId>
+        <version>1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-activation_1.1_spec</artifactId>
         <version>1.0-M1</version>
@@ -565,11 +570,6 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jacc_1.1_spec</artifactId>
         <version>1.0-M2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-javamail_1.4_spec</artifactId>
-        <version>1.0-M1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>

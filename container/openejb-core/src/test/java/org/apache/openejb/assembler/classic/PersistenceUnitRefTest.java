@@ -17,12 +17,10 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.Map;
-import java.util.TreeMap;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 
 import junit.framework.TestCase;
-import org.apache.openejb.BeanType;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -67,16 +65,11 @@ public class PersistenceUnitRefTest extends TestCase {
         referenceInfo.persistenceUnitName = "../some/./other.jar#two";
         jndiEncInfo.persistenceContextRefs.add(referenceInfo);
 
-        Map<String, Map<String, EntityManagerFactory>> allFactories = new TreeMap<String, Map<String, EntityManagerFactory>>();
-        Map<String, EntityManagerFactory> myModuleFactories = new TreeMap<String, EntityManagerFactory>();
-        allFactories.put("my/module.jar", myModuleFactories);
-        myModuleFactories.put("one", new MockEntityManagerFactory());
+        LinkResolver<EntityManagerFactory> emfLinkResolver = new LinkResolver<EntityManagerFactory>();
+        emfLinkResolver.add("my/module.jar", "one", new MockEntityManagerFactory());
+        emfLinkResolver.add("some/other.jar", "two", new MockEntityManagerFactory());
 
-        Map<String, EntityManagerFactory> otherModuleFactories = new TreeMap<String, EntityManagerFactory>();
-        allFactories.put("some/other.jar", otherModuleFactories);
-        otherModuleFactories.put("two", new MockEntityManagerFactory());
-
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(jndiEncInfo, null, BeanType.STATELESS, allFactories, "my/module.jar");
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(jndiEncInfo, null, emfLinkResolver, "my/module.jar");
         jndiEncBuilder.build();
     }
 

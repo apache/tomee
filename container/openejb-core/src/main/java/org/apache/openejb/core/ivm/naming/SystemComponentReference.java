@@ -20,6 +20,7 @@ package org.apache.openejb.core.ivm.naming;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.NamingException;
+import javax.naming.NameNotFoundException;
 
 /**
  * @version $Rev: 497833 $ $Date: 2007-01-19 06:41:45 -0800 (Fri, 19 Jan 2007) $
@@ -35,7 +36,7 @@ public class SystemComponentReference extends Reference {
     public Object getObject() throws NamingException {
         Object component = SystemInstance.get().getComponent(type);
         if (component == null) {
-            throw new NamingException("No " + type.getSimpleName() + " registered with the OpenEJB system");
+            throw new NameNotFoundException("No " + type.getSimpleName() + " registered with the OpenEJB system");
         }
         return component;
     }

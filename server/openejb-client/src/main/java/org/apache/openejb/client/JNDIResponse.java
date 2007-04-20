@@ -58,6 +58,7 @@ public class JNDIResponse implements Response {
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
             case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
             case ResponseCodes.JNDI_ERROR:
+            case ResponseCodes.JNDI_RESOURCE:
                 result = in.readObject();
                 break;
             case ResponseCodes.JNDI_CONTEXT:
@@ -91,6 +92,7 @@ public class JNDIResponse implements Response {
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
             case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
             case ResponseCodes.JNDI_ERROR:
+            case ResponseCodes.JNDI_RESOURCE:
                 out.writeObject(result);
                 break;
             case ResponseCodes.JNDI_CONTEXT:

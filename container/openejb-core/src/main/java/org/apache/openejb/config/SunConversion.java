@@ -34,6 +34,7 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -73,6 +74,7 @@ import org.apache.openejb.jee.sun.EjbRef;
 import org.apache.openejb.jee.sun.SunApplicationClient;
 import org.apache.openejb.jee.sun.ResourceEnvRef;
 import org.apache.openejb.jee.sun.MessageDestinationRef;
+import org.apache.openejb.jee.sun.ResourceRef;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -193,18 +195,39 @@ public class SunConversion implements DynamicDeployer {
             }
         }
 
-        // map resource-env-refs
-        Map<String,org.apache.openejb.jee.ResourceEnvRef> resEnvMap = new TreeMap<String,org.apache.openejb.jee.ResourceEnvRef>();
-        for (org.apache.openejb.jee.ResourceEnvRef envRef : applicationClient.getResourceEnvRef()) {
-            resEnvMap.put(envRef.getResourceEnvRefName(), envRef);
+        // map resource-env-refs and message-destination-refs
+        Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        for (JndiReference envRef : applicationClient.getResourceEnvRef()) {
+            resEnvMap.put(envRef.getName(), envRef);
+        }
+        for (JndiReference envRef : applicationClient.getMessageDestinationRef()) {
+            resEnvMap.put(envRef.getName(), envRef);
         }
 
+        for (ResourceRef ref : sunApplicationClient.getResourceRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getResRefName();
+                JndiReference resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setMappedName(ref.getJndiName());
+                }
+            }
+        }
         for (ResourceEnvRef ref : sunApplicationClient.getResourceEnvRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResourceEnvRefName();
-                org.apache.openejb.jee.ResourceEnvRef resEnvRef = resEnvMap.get(refName);
+                JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
-                    resEnvRef.setId(ref.getJndiName());
+                    resEnvRef.setMappedName(ref.getJndiName());
+                }
+            }
+        }
+        for (MessageDestinationRef ref : sunApplicationClient.getMessageDestinationRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getMessageDestinationRefName();
+                JndiReference resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
@@ -264,6 +287,20 @@ public class SunConversion implements DynamicDeployer {
             }
 
             Map<String, ResourceLink> resourceLinksMap = deployment.getResourceLinksMap();
+            for (ResourceRef ref : ejb.getResourceRef()) {
+                if (ref.getJndiName() != null) {
+                    String refName = ref.getResRefName();
+                    ResourceLink link = resourceLinksMap.get(refName);
+                    if (link == null) {
+                        link = new ResourceLink();
+                        link.setResRefName(refName);
+                        resourceLinksMap.put(refName, link);
+                        deployment.getResourceLink().add(link);
+                    }
+                    link.setResId(ref.getJndiName());
+                }
+            }
+
             for (ResourceEnvRef ref : ejb.getResourceEnvRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getResourceEnvRefName();

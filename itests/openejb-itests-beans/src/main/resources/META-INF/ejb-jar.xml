@@ -5789,5 +5789,26 @@
       </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>
+    <message-destination>
+      <message-destination-name>BasicMdb</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>BasicBmtMdb</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>EncMdbBean</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>ContextLookupMdbBean</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>ContextLookupMdbPojoBean</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>FieldInjectionMdbBean</message-destination-name>
+    </message-destination>
+    <message-destination>
+      <message-destination-name>SetterInjectionMdbBean</message-destination-name>
+    </message-destination>
   </assembly-descriptor>
 </ejb-jar>

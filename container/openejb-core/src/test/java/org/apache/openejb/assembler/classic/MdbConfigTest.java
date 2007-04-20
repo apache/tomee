@@ -20,7 +20,6 @@ package org.apache.openejb.assembler.classic;
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbJar;
@@ -43,10 +42,7 @@ public class MdbConfigTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // JMS
-        Resource resource = new Resource();
-        resource.setId("Default JMS Resource Adapter");
-        resource.setProvider("Default JMS Resource Adapter");
-        assembler.createResource(config.configureService(resource, ResourceInfo.class));
+        assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
 
         // containers
         MdbContainerInfo mdbContainerInfo = config.configureService(MdbContainerInfo.class);

@@ -16,11 +16,14 @@
  */
 package org.apache.openejb.client;
 
+import org.omg.CORBA.ORB;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+import java.util.Properties;
 import java.lang.reflect.Constructor;
 import javax.naming.AuthenticationException;
 import javax.naming.ConfigurationException;
@@ -178,6 +181,10 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             return parseEntry(prop, value);
         }
 
+        if (name.equals("comp/ORB")) {
+            return getDefaultOrb();
+        }
+
         JNDIRequest req = new JNDIRequest();
         req.setRequestMethod(RequestMethodConstants.JNDI_LOOKUP);
         req.setRequestString(name);
@@ -212,6 +219,14 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             case ResponseCodes.JNDI_DATA_SOURCE:
                 return createDataSource((DataSourceMetaData) res.getResult());
 
+            case ResponseCodes.JNDI_RESOURCE:
+                String type = (String) res.getResult();
+                value = System.getProperty("Resource/" + type);
+                if (value == null) {
+                    return null;
+                }
+                return parseEntry(prop, value);
+
             case ResponseCodes.JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
 
@@ -233,7 +248,13 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         try {
             URI uri = new URI(value);
             String scheme = uri.getScheme();
-            if (scheme.equals("datasource")) {
+            if (scheme.equals("link")) {
+                value = System.getProperty(uri.getSchemeSpecificPart());
+                if (value == null) {
+                    return null;
+                }
+                return parseEntry(name, value);
+            } else if (scheme.equals("datasource")) {
                 uri = new URI(uri.getSchemeSpecificPart());
                 String driver = uri.getScheme();
                 String url = uri.getSchemeSpecificPart();
@@ -253,6 +274,10 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 } catch (Exception e) {
                     throw new IllegalStateException("Cannot use ConnectionFactory in client VM without the classh: "+driver, e);
                 }
+            } else if (scheme.equals("javamail")) {
+                return javax.mail.Session.getDefaultInstance(new Properties());
+            } else if (scheme.equals("orb")) {
+                return getDefaultOrb();
             } else {
                 throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }
@@ -263,6 +288,10 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     private DataSource createDataSource(DataSourceMetaData dataSourceMetaData) {
         return new ClientDataSource(dataSourceMetaData);
+    }
+
+    private ORB getDefaultOrb() {
+        return ORB.init();
     }
 
     public Object lookup(Name name) throws NamingException {

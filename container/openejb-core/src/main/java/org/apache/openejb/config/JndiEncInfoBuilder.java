@@ -29,9 +29,9 @@ import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
-import org.apache.openejb.assembler.classic.MessageDestinationReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
@@ -61,8 +61,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.TreeMap;
-import java.util.Set;
-import java.util.TreeSet;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -138,21 +136,21 @@ public class JndiEncInfoBuilder {
         for (ResourceRef res : enterpriseBean.getResourceRef()) {
             ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
             if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                res.setResLink(resourceLink.getResId());
+                res.setMappedName(resourceLink.getResId());
             }
         }
 
         for (ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
             ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getResourceEnvRefName());
             if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                ref.setId(resourceLink.getResId());
+                ref.setMappedName(resourceLink.getResId());
             }
         }
 
         for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
             ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getMessageDestinationRefName());
             if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                ref.setMessageDestinationLink(resourceLink.getResId());
+                ref.setMappedName(resourceLink.getResId());
             }
         }
 
@@ -174,8 +172,7 @@ public class JndiEncInfoBuilder {
 
     private final Map<String,EnterpriseBeanInfo> allDeployments = new TreeMap<String,EnterpriseBeanInfo>();
 
-    private final Map<String, String> byFullName = new TreeMap<String, String>();
-    private final Map<String, Set<String>> byShortName = new TreeMap<String, Set<String>>();
+    private final LinkResolver<String> ejbLinkResolver = new LinkResolver<String>();
     private final Map<Interfaces, String> remoteInterfaces = new TreeMap<Interfaces, String>();
     private final Map<Interfaces, String> localInterfaces = new TreeMap<Interfaces, String>();
 
@@ -195,16 +192,8 @@ public class JndiEncInfoBuilder {
         // All deployments: deploymentId -> bean
         allDeployments.put(bean.ejbDeploymentId, bean);
 
-        // Full name: moduleId#ejbName -> deploymentId
-        byFullName.put(moduleId + "#" + bean.ejbName, bean.ejbDeploymentId);
-
-        // Short name: ejbName -> Set(deploymentIds)
-        Set<String> deploymentIds = byShortName.get(bean.ejbName);
-        if (deploymentIds == null) {
-            deploymentIds = new TreeSet<String>();
-            byShortName.put(bean.ejbName, deploymentIds);
-        }
-        deploymentIds.add(bean.ejbDeploymentId);
+        // add to the link resolver
+        ejbLinkResolver.add(moduleId, bean.ejbName, bean.ejbDeploymentId);
 
         // Remote: Interfaces(home,object) -> deploymentId
         if (bean.remote != null) {
@@ -238,6 +227,9 @@ public class JndiEncInfoBuilder {
         /* Build Environment entries *****************/
         jndi.envEntries.addAll(buildEnvEntryInfos(jndiConsumer));
 
+        // URLs resource references become env entried
+        jndi.envEntries.addAll(buildUrlRefInfos(jndiConsumer));
+
         /* Build Resource References *****************/
         jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
 
@@ -254,8 +246,6 @@ public class JndiEncInfoBuilder {
 
         jndi.persistenceContextRefs.addAll(buildPersistenceContextRefInfos(jndiConsumer));
 
-        jndi.messageDestinationRefs.addAll(buildMessageDestinationRefInfos(jndiConsumer));
-
         jndi.serviceRefs.addAll(buildServiceRefInfos(jndiConsumer));
 
         return jndi;
@@ -267,19 +257,6 @@ public class JndiEncInfoBuilder {
             ServiceReferenceInfo info = new ServiceReferenceInfo();
             info.referenceName = ref.getName();
             info.location = buildLocationInfo(ref);
-            info.targets.addAll(buildInjectionInfos(ref));
-            infos.add(info);
-        }
-        return infos;
-    }
-
-    private List<MessageDestinationReferenceInfo> buildMessageDestinationRefInfos(JndiConsumer jndiConsumer) {
-        ArrayList<MessageDestinationReferenceInfo> infos = new ArrayList<MessageDestinationReferenceInfo>();
-        for (MessageDestinationRef ref : jndiConsumer.getMessageDestinationRef()) {
-            MessageDestinationReferenceInfo info = new MessageDestinationReferenceInfo();
-            info.referenceName = ref.getName();
-            info.location = buildLocationInfo(ref);
-            info.messageDestinationLink = ref.getMessageDestinationLink();
             info.targets.addAll(buildInjectionInfos(ref));
             infos.add(info);
         }
@@ -329,7 +306,7 @@ public class JndiEncInfoBuilder {
 
             EnterpriseBeanInfo otherBean = null;
             if (ejb.getEjbLink() != null) {
-                String deploymentId = lookupEjbLink(ejb.getEjbLink(), moduleId);
+                String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
                 if (deploymentId != null) {
                     otherBean = allDeployments.get(deploymentId);
                 }
@@ -373,7 +350,7 @@ public class JndiEncInfoBuilder {
                     // mapped name is the deployment id
                     info.ejbDeploymentId = ejb.getMappedName();
                 } else if (ejb.getEjbLink() != null && !ejb.getEjbLink().equals(""))  {
-                    String deploymentId = lookupEjbLink(ejb.getEjbLink(), moduleId);
+                    String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
 
                     // didn't find an ejb
                     if (deploymentId == null) {
@@ -425,7 +402,7 @@ public class JndiEncInfoBuilder {
                         info.externalReference = true;
                     }
                 } else if (ejb.getEjbLink() != null && !ejb.getEjbLink().equals(""))  {
-                    String deploymentId = lookupEjbLink(ejb.getEjbLink(), moduleId);
+                    String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
 
                     // didn't find an ejb
                     if (deploymentId == null) {
@@ -453,35 +430,14 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private String lookupEjbLink(String ejbLink, URI moduleId) {
-        if (!ejbLink.contains("#")) {
-            // check for a name in the current module
-            String deploymentId = byFullName.get(moduleId.toString() + "#" + ejbLink);
-            if (deploymentId != null) {
-                return deploymentId;
-            }
-
-            // short name
-            Collection<String> otherBeans = byShortName.get(ejbLink);
-            if (otherBeans.size() != 1) {
-                return null;
-            }
-            deploymentId = otherBeans.iterator().next();
-            return deploymentId;
-        } else if (moduleId != null) {
-            // full (absolute) name
-            String fullName = moduleId.resolve(ejbLink).toString();
-            String deploymentId = byFullName.get(fullName);
-            return deploymentId;
-        } else {
-            // Absolute reference in a standalone module
-            return null;
-        }
-    }
-
     private List<ResourceReferenceInfo> buildResourceRefInfos(JndiConsumer item) {
         List<ResourceReferenceInfo> infos = new ArrayList<ResourceReferenceInfo>();
         for (ResourceRef res : item.getResourceRef()) {
+            // skip URLs which are converted to env entries
+            if (res.getResType().equals("java.net.URL")) {
+                continue;
+            }
+
             ResourceReferenceInfo info = new ResourceReferenceInfo();
 
             if (res.getResAuth() != null) {
@@ -491,7 +447,7 @@ public class JndiEncInfoBuilder {
             }
             info.referenceName = res.getResRefName();
             info.referenceType = res.getResType();
-            info.resourceID = res.getResLink();
+            info.resourceID = res.getMappedName();
             info.location = buildLocationInfo(res);
             info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
@@ -505,7 +461,16 @@ public class JndiEncInfoBuilder {
             ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
             info.resourceEnvRefName = res.getResourceEnvRefName();
             info.resourceEnvRefType = res.getResourceEnvRefType();
-            info.resourceID = res.getId();
+            info.resourceID = res.getMappedName();
+            info.location = buildLocationInfo(res);
+            info.targets.addAll(buildInjectionInfos(res));
+            infos.add(info);
+        }
+        for (MessageDestinationRef res : item.getMessageDestinationRef()) {
+            ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
+            info.resourceEnvRefName = res.getMessageDestinationRefName();
+            info.resourceEnvRefType = res.getMessageDestinationType();
+            info.resourceID = res.getMappedName();
             info.location = buildLocationInfo(res);
             info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
@@ -528,6 +493,31 @@ public class JndiEncInfoBuilder {
             info.value = env.getEnvEntryValue();
             info.location = buildLocationInfo(env);
             info.targets.addAll(buildInjectionInfos(env));
+            infos.add(info);
+        }
+        return infos;
+    }
+
+    private List<EnvEntryInfo> buildUrlRefInfos(JndiConsumer item) {
+        List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
+        for (ResourceRef res : item.getResourceRef()) {
+            // only process URLs
+            if (!res.getResType().equals("java.net.URL")) {
+                continue;
+            }
+
+            // ignore env entries without a mapped name
+            if (res.getMappedName() == null) {
+                continue;
+            }
+            
+            EnvEntryInfo info = new EnvEntryInfo();
+
+            info.name = res.getResRefName();
+            info.type = res.getResType();
+            info.value = res.getMappedName();
+            info.location = buildLocationInfo(res);
+            info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
         }
         return infos;

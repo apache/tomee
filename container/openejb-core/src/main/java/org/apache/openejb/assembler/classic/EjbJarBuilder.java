@@ -17,17 +17,16 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.Container;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.Messages;
 
 import javax.persistence.EntityManagerFactory;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -43,14 +42,14 @@ public class EjbJarBuilder {
         this.classLoader = classLoader;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, Map<String, Map<String, EntityManagerFactory>> allFactories) throws OpenEJBException {
+    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, LinkResolver<EntityManagerFactory> emfLinkResolver) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
 
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
-        for (EnterpriseBeanInfo ejbInfo: ejbJar.enterpriseBeans) {
+        for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList(),allFactories);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList<String>(), emfLinkResolver);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);
@@ -59,11 +58,11 @@ public class EjbJarBuilder {
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 
                 Container container = (Container) props.get(ejbInfo.containerId);
-                if (container == null) throw new IllegalStateException("Container does not exist: "+ejbInfo.containerId +".  Referenced by deployment: "+deployment.getDeploymentID());
+                if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + deployment.getDeploymentID());
                 container.deploy(deployment);
                 deployment.setContainer(container);
             } catch (Throwable e) {
-                throw new OpenEJBException("Error building bean '"+ejbInfo.ejbName+"'.  Exception: "+e.getClass()+": "+e.getMessage(), e);
+                throw new OpenEJBException("Error building bean '" + ejbInfo.ejbName + "'.  Exception: " + e.getClass() + ": " + e.getMessage(), e);
             }
         }
         return deployments;

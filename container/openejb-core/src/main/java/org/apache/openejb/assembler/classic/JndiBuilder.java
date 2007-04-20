@@ -18,17 +18,15 @@ package org.apache.openejb.assembler.classic;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.Reference;
 import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.Topic;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
-import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.command.ActiveMQTopic;
+import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -202,20 +200,14 @@ public class JndiBuilder {
 
         try {
             if (MessageListener.class.equals(deployment.getMdbInterface())) {
-                String name = deployment.getMessageDestination();
-                String destination = deployment.getActivationProperties().get("destination");
-                if (destination != null) {
-                    String destinationType = deployment.getActivationProperties().get("destinationType");
-                    if (Queue.class.getName().equals(destinationType)) {
-                        Queue queue = new ActiveMQQueue(destination);
-                        bindings.add(name);
-                        context.bind("openejb/ejb/" + name, queue);
-                    } else if (Topic.class.getName().equals(destinationType)) {
-                        Topic topic = new ActiveMQTopic(destination);
-                        bindings.add(name);
-                        context.bind("openejb/ejb/" + name, topic);
-                    }
-                }
+                String name = deployment.getDeploymentID().toString();
+
+                String destinationId = deployment.getDestinationId();
+                String jndiName = "java:openejb/Resource/" + destinationId;
+                Reference reference = new IntraVmJndiReference(jndiName);
+
+                bindings.add(name);
+                context.bind("openejb/ejb/" + name, reference);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind mdb destination in jndi.", e);

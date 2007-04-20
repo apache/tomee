@@ -100,7 +100,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private BusinessLocalHome businessLocalHomeRef;
     private BusinessRemoteHome businessRemoteHomeRef;
-    private String messageDestination;
+    private String destinationId;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
 
     private String ejbName;
@@ -529,12 +529,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, interfaces);
     }
 
-    public String getMessageDestination() {
-        return messageDestination;
+    public String getDestinationId() {
+        return destinationId;
     }
 
-    public void setMessageDestination(String messageDestination) {
-        this.messageDestination = messageDestination;
+    public void setDestinationId(String destinationId) {
+        this.destinationId = destinationId;
     }
 
     public void setBeanManagedTransaction(boolean value) {

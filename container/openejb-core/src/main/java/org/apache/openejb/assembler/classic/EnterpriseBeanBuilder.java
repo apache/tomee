@@ -47,10 +47,10 @@ class EnterpriseBeanBuilder {
     private final List<String> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
-    private final Map<String, Map<String, EntityManagerFactory>> factories;
+    private final LinkResolver<EntityManagerFactory> emfLinkResolver;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors, Map<String, Map<String, EntityManagerFactory>> factories) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors, LinkResolver<EntityManagerFactory> emfLinkResolver) {
         this.bean = bean;
         this.moduleId = moduleId;
         this.defaultInterceptors = defaultInterceptors;
@@ -68,7 +68,7 @@ class EnterpriseBeanBuilder {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }
         this.cl = cl;
-        this.factories = factories;
+        this.emfLinkResolver = emfLinkResolver;
     }
 
     public Object build() throws OpenEJBException {
@@ -107,7 +107,7 @@ class EnterpriseBeanBuilder {
 
         final String transactionType = bean.transactionType;
 
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, ejbType, factories, moduleId);
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, emfLinkResolver, moduleId);
         Context root = jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
@@ -118,7 +118,7 @@ class EnterpriseBeanBuilder {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
             deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
-            deployment.setMessageDestination(messageDrivenBeanInfo.messageDestinationLink);
+            deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
         if (BeanType.STATELESS == ejbType){
             if(bean.serviceEndpoint != null){
@@ -253,7 +253,7 @@ class EnterpriseBeanBuilder {
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
             for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
-                    EntityManagerFactory entityManagerFactory = jndiEncBuilder.findEntityManagerFactory(info.persistenceUnitName);
+                    EntityManagerFactory entityManagerFactory = emfLinkResolver.resolveLink(info.persistenceUnitName, moduleId);
                     extendedEntityManagerFactories.put(entityManagerFactory, info.properties);
                 }
             }

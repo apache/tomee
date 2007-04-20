@@ -34,7 +34,7 @@ public class BasicMdbTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("BasicMdb");
+        Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
         basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
     }
 

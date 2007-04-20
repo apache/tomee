@@ -175,7 +175,7 @@ class EjbRequestHandler {
 
             this.daemon.logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
         } catch (java.lang.Throwable t) {
-
+            // todo this causes the response to be written twice but the code below
             replyWithFatalError
                     (out, t, "Unknown error in container");
             return;

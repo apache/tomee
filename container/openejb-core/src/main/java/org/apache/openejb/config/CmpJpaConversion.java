@@ -120,8 +120,8 @@ public class CmpJpaConversion implements DynamicDeployer {
                 persistenceUnit = new PersistenceUnit();
                 persistenceUnit.setName(CMP_PERSISTENCE_UNIT_NAME);
                 persistenceUnit.setTransactionType(TransactionType.JTA);
-                persistenceUnit.setJtaDataSource("java:openejb/Connector/Default JDBC Database");
-                persistenceUnit.setNonJtaDataSource("java:openejb/Connector/Default Unmanaged JDBC Database");
+                persistenceUnit.setJtaDataSource("java:openejb/Resource/Default JDBC Database");
+                persistenceUnit.setNonJtaDataSource("java:openejb/Resource/Default Unmanaged JDBC Database");
                 // todo paramterize this
                 Properties properties = new Properties();
                 properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");

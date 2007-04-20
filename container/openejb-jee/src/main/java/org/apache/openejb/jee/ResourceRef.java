@@ -92,9 +92,6 @@ public class ResourceRef implements JndiReference {
     protected String id;
 
     @XmlTransient
-    protected String resLink;
-
-    @XmlTransient
     public String getName() {
         return getResRefName();
     }
@@ -174,13 +171,4 @@ public class ResourceRef implements JndiReference {
     public void setId(String value) {
         this.id = value;
     }
-
-    public String getResLink() {
-        return resLink;
-    }
-
-    public void setResLink(String resLink) {
-        this.resLink = resLink;
-    }
-
 }

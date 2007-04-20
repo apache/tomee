@@ -238,7 +238,7 @@
   -->
   <ServiceProvider
           id="Default JDBC Database"
-          provider-type="Connector"
+          provider-type="Resource"
           constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
           class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
 
@@ -269,7 +269,7 @@
 
   <ServiceProvider
           id="Default Unmanaged JDBC Database"
-          provider-type="Connector"
+          provider-type="Resource"
           constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
           class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
 
@@ -321,12 +321,28 @@
 
   <ServiceProvider
           id="Default JMS Connection Factory"
-          provider-type="Connector"
+          provider-type="Resource"
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
     
     ResourceAdapter Default JMS Resource Adapter
 
     ConnectionInterface javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default Queue"
+          provider-type="Resource"
+          constructor="destination"
+          class-name="org.apache.activemq.command.ActiveMQQueue">
+
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default Topic"
+          provider-type="Resource"
+          constructor="destination"
+          class-name="org.apache.activemq.command.ActiveMQTopic">
+
   </ServiceProvider>
 
   <!--
@@ -339,5 +355,32 @@
           provider-type="ConnectionManager"
           constructor="transactionManager"
           class-name="org.apache.openejb.resource.SharedLocalConnectionManager"/>
+
+  <!--
+  # ================================================
+  # Default ORB
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default ORB"
+          provider-type="Resource"
+          factory-name="create"
+          class-name="org.apache.openejb.core.OrbFactory">
+
+  </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default ORB
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default Mail Session"
+          provider-type="Resource"
+          factory-name="create"
+          class-name="org.apache.openejb.core.MailSessionFactory">
+
+  </ServiceProvider>
+
 
 </ServiceJar>

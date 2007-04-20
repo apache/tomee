@@ -73,7 +73,7 @@ public class BmtMdbAllowedOperationsTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("BasicBmtMdb");
+        Destination destination = (Destination) initialContext.lookup("Basic BMT Mdb Bean");
         basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
         basicMdbObject.businessMethod("foo");
     }

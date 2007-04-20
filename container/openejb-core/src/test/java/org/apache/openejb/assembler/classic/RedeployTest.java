@@ -19,8 +19,6 @@ package org.apache.openejb.assembler.classic;
 import junit.framework.TestCase;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.sys.Connector;
-import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateful.EncStatefulHome;
@@ -53,24 +51,14 @@ public class RedeployTest extends TestCase {
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // managed JDBC
-        assembler.createConnector(config.configureService(ConnectorInfo.class));
+        assembler.createResource(config.configureService("Default JDBC Database", ResourceInfo.class));
 
         // unmanaged JDBC
-        Connector connector = new Connector();
-        connector.setId("Default Unmanaged JDBC Database");
-        connector.setProvider("Default Unmanaged JDBC Database");
-        assembler.createConnector(config.configureService(connector, ConnectorInfo.class));
+        assembler.createResource(config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class));
 
         // JMS
-        Resource resource = new Resource();
-        resource.setId("Default JMS Resource Adapter");
-        resource.setProvider("Default JMS Resource Adapter");
-        assembler.createResource(config.configureService(resource, ResourceInfo.class));
-
-        connector = new Connector();
-        connector.setId("Default JMS Connection Factory");
-        connector.setProvider("Default JMS Connection Factory");
-        assembler.createConnector(config.configureService(connector, ConnectorInfo.class));
+        assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
+        assembler.createResource(config.configureService("Default JMS Connection Factory", ResourceInfo.class));
 
         // containers
         assembler.createContainer(config.configureService(BmpEntityContainerInfo.class));

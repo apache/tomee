@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,20 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core;
 
-import java.util.Map;
-import java.util.HashMap;
+import javax.mail.Session;
+import java.util.Properties;
 
-/**
- * @version $Rev$ $Date$
- */
-public class MessageDrivenBeanInfo extends EnterpriseBeanInfo {
-    public String mdbInterface;
-    public String destinationId;
-    public final Map<String, String> activationProperties = new HashMap<String, String>();
-
-    public MessageDrivenBeanInfo() {
-        type = MESSAGE;
+public class MailSessionFactory {
+    public Session create() {
+        // todo add support for args and properties
+        return Session.getDefaultInstance(new Properties());
     }
 }

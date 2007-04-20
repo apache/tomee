@@ -75,7 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -284,12 +283,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             createResource(resourceInfo);
         }
 
-        for (ConnectorInfo connectorInfo : configInfo.facilities.connectors) {
-            createConnector(connectorInfo);
-        }
-
-//        AssemblerTool.RoleMapping roleMapping = new AssemblerTool.RoleMapping(configInfo.facilities.securityService.roleMappings);
-
         // Containers
         for (ContainerInfo serviceInfo : containerSystemInfo.containers) {
             createContainer(serviceInfo);
@@ -388,17 +381,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
-            HashMap<String, Map<String, EntityManagerFactory>> allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
+            LinkResolver<EntityManagerFactory> emfLinkResolver = new LinkResolver<EntityManagerFactory>();
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {
                     EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
-                    Map<String, EntityManagerFactory> factories = allFactories.get(info.persistenceUnitRootUrl);
-                    if (factories == null) {
-                        factories = new TreeMap<String, EntityManagerFactory>();
-                        allFactories.put(info.persistenceUnitRootUrl, factories);
-                    }
-                    factories.put(info.name, factory);
+                    emfLinkResolver.add(info.persistenceUnitRootUrl, info.name, factory);
                 } catch (Exception e) {
                     throw new OpenEJBException(e);
                 }
@@ -407,7 +395,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, allFactories);
+                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, emfLinkResolver);
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
@@ -462,6 +450,28 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         try {
                             Class targetClass = classLoader.loadClass(target.className);
                             Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                            injections.add(injection);
+                        } catch (ClassNotFoundException e) {
+                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
+                        }
+                    }
+                }
+                for (ResourceReferenceInfo info : jndiEnc.resourceRefs) {
+                    for (InjectionInfo target : info.targets) {
+                        try {
+                            Class targetClass = classLoader.loadClass(target.className);
+                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                            injections.add(injection);
+                        } catch (ClassNotFoundException e) {
+                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
+                        }
+                    }
+                }
+                for (ResourceEnvReferenceInfo info : jndiEnc.resourceEnvRefs) {
+                    for (InjectionInfo target : info.targets) {
+                        try {
+                            Class targetClass = classLoader.loadClass(target.className);
+                            Injection injection = new Injection(info.resourceEnvRefName, target.propertyName, targetClass);
                             injections.add(injection);
                         } catch (ClassNotFoundException e) {
                             logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
@@ -626,7 +636,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
         }
 
-        SystemInstance.get().setComponent(interfce, service);
+        setSystemInstanceComponent(interfce, service);
 
         props.put(interfce.getName(), service);
         props.put(serviceInfo.serviceType, service);
@@ -669,7 +679,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
         }
 
-        SystemInstance.get().setComponent(interfce, service);
+        setSystemInstanceComponent(interfce, service);
 
         getContext().put(interfce.getName(), service);
 
@@ -681,55 +691,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         config.facilities.intraVmServer = serviceInfo;
     }
 
-    public void createConnector(ConnectorInfo serviceInfo) throws OpenEJBException {
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
-        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-
-        replaceResourceAdapterProperty(serviceRecipe);
-
-        Object service = serviceRecipe.create();
-
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
-
-        ConnectionManager connectionManager;
-        if ((ManagedConnectionFactory) service instanceof JdbcManagedConnectionFactory) {
-            connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
-        } else {
-            GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
-            // default transaction support is "local" and that doesn't seem to work
-            connectionManagerFactory.setTransactionSupport("xa");
-            connectionManagerFactory.setTransactionManager(transactionManager);
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader == null) classLoader = getClass().getClassLoader();
-            if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
-            connectionManagerFactory.setClassLoader(classLoader);
-            connectionManager = connectionManagerFactory.create();
-        }
-
-        if (connectionManager == null) {
-            throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
-        }
-
-        ConnectorReference reference = new ConnectorReference(connectionManager, (ManagedConnectionFactory) service);
-
-        try {
-            containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, reference);
-        } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
-        }
-
-        // Update the config tree
-        config.facilities.connectors.add(serviceInfo);
-    }
-
     private void replaceResourceAdapterProperty(ObjectRecipe serviceRecipe) throws OpenEJBException {
         Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
         if (resourceAdapterId instanceof String)  {
             Object resourceAdapter = null;
             try {
-                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/resourceAdapter/" + resourceAdapterId);
+                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/Resource/" + resourceAdapterId);
             } catch (NamingException e) {
                 // handled below
             }
@@ -746,43 +713,70 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createResource(ResourceInfo serviceInfo) throws OpenEJBException {
-        // resource adapters only work with a geronimo transaction manager
-        if (!(transactionManager instanceof GeronimoTransactionManager)) {
-            throw new OpenEJBException("The use of a resource adapter requires a Geronimo transaction manager");
-        }
-        GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
-
-        // create the service
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+
+        replaceResourceAdapterProperty(serviceRecipe);
+
         Object service = serviceRecipe.create();
 
-        // check the interface
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
-        ResourceAdapter resourceAdapter = (ResourceAdapter) service;
+        // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
+        if (service instanceof ResourceAdapter) {
+            ResourceAdapter resourceAdapter = (ResourceAdapter) service;
 
-        // create a thead pool
-        int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
-        if (threadPoolSize <= 0) throw new IllegalArgumentException("threadPoolSizes <= 0: " + threadPoolSize);
-        Executor threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
+            // resource adapters only work with a geronimo transaction manager
+            if (!(transactionManager instanceof GeronimoTransactionManager)) {
+                throw new OpenEJBException("The use of a resource adapter requires a Geronimo transaction manager");
+            }
+            GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
 
-        // create a work manager which the resource adapter can use to dispatch messages or perform tasks
-        WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
+            // create a thead pool
+            int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
+            if (threadPoolSize <= 0) throw new IllegalArgumentException("threadPoolSizes <= 0: " + threadPoolSize);
+            Executor threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
 
-        // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
-        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, geronimoTransactionManager);
+            // create a work manager which the resource adapter can use to dispatch messages or perform tasks
+            WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
 
-        // start the resource adapter
-        try {
-            resourceAdapter.start(bootstrapContext);
-        } catch (ResourceAdapterInternalException e) {
-            throw new OpenEJBException(e);
+            // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
+            BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, geronimoTransactionManager);
+
+            // start the resource adapter
+            try {
+                resourceAdapter.start(bootstrapContext);
+            } catch (ResourceAdapterInternalException e) {
+                throw new OpenEJBException(e);
+            }            
+        } else if (service instanceof ManagedConnectionFactory) {
+            ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
+
+            // get the connection manager
+            ConnectionManager connectionManager;
+            if ((ManagedConnectionFactory) service instanceof JdbcManagedConnectionFactory) {
+                connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
+            } else {
+                GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
+                // default transaction support is "local" and that doesn't seem to work
+                connectionManagerFactory.setTransactionSupport("xa");
+                connectionManagerFactory.setTransactionManager(transactionManager);
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                if (classLoader == null) classLoader = getClass().getClassLoader();
+                if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+                connectionManagerFactory.setClassLoader(classLoader);
+                connectionManager = connectionManagerFactory.create();
+            }
+
+            if (connectionManager == null) {
+                throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
+            }
+
+            // service becomes a ConnectorReference which merges connection manager and mcf
+            service = new ConnectorReference(connectionManager, managedConnectionFactory);
         }
 
         try {
-            containerSystem.getJNDIContext().bind("java:openejb/resourceAdapter/" + serviceInfo.id, resourceAdapter);
+            containerSystem.getJNDIContext().bind("java:openejb/Resource/" + serviceInfo.id, service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
         }
@@ -822,7 +816,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
         }
 
-        SystemInstance.get().setComponent(interfce, service);
+        setSystemInstanceComponent(interfce, service);
 
         getContext().put(interfce.getName(), service);
 
@@ -850,7 +844,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
         }
 
-        SystemInstance.get().setComponent(interfce, service);
+        setSystemInstanceComponent(interfce, service);
 
         getContext().put(interfce.getName(), service);
 
@@ -880,7 +874,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
         }
 
-        SystemInstance.get().setComponent(interfce, service);
+        setSystemInstanceComponent(interfce, service);
 
         getContext().put(interfce.getName(), service);
 
@@ -911,6 +905,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
         Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
         SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private void setSystemInstanceComponent(Class interfce, Object service) {
+        SystemInstance.get().setComponent(interfce, service);
     }
 
     private URL toUrl(String jarPath) throws OpenEJBException {

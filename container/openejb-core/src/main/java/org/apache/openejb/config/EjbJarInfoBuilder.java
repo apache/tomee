@@ -73,6 +73,7 @@ import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -509,8 +510,11 @@ public class EjbJarInfoBuilder {
             bean.mdbInterface = "javax.jms.MessageListener";
         }
 
-        bean.messageDestinationLink = mdb.getMessageDestinationLink();
-        
+        ResourceLink resourceLink = d.getResourceLink("openejb/destination");
+        if (resourceLink != null) {
+            bean.destinationId = resourceLink.getResId();
+        }
+
         if (mdb.getMessageDestinationType() != null) {
             bean.activationProperties.put("destinationType", mdb.getMessageDestinationType());
         }

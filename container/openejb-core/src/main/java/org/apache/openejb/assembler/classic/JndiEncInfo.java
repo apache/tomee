@@ -21,7 +21,6 @@ import java.util.List;
 
 
 public class JndiEncInfo extends InfoObject {
-
     public final List<EnvEntryInfo> envEntries = new ArrayList<EnvEntryInfo>();
     public final List<EjbReferenceInfo> ejbReferences = new ArrayList<EjbReferenceInfo>();
     public final List<EjbLocalReferenceInfo> ejbLocalReferences = new ArrayList<EjbLocalReferenceInfo>();
@@ -29,6 +28,5 @@ public class JndiEncInfo extends InfoObject {
     public final List<PersistenceUnitReferenceInfo> persistenceUnitRefs = new ArrayList<PersistenceUnitReferenceInfo>();
     public final List<PersistenceContextReferenceInfo> persistenceContextRefs = new ArrayList<PersistenceContextReferenceInfo>();
     public final List<ResourceEnvReferenceInfo> resourceEnvRefs = new ArrayList<ResourceEnvReferenceInfo>();
-    public final List<MessageDestinationReferenceInfo> messageDestinationRefs = new ArrayList<MessageDestinationReferenceInfo>();
     public final List<ServiceReferenceInfo> serviceRefs = new ArrayList<ServiceReferenceInfo>();
 }

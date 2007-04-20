@@ -19,7 +19,6 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
@@ -47,20 +46,17 @@ public class JdbcConfigTest extends TestCase {
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // managed JDBC
-        assembler.createConnector(config.configureService(ConnectorInfo.class));
+        assembler.createResource(config.configureService("Default JDBC Database", ResourceInfo.class));
 
         // unmanaged JDBC
-        Connector connector = new Connector();
-        connector.setId("Default Unmanaged JDBC Database");
-        connector.setProvider("Default Unmanaged JDBC Database");
-        assembler.createConnector(config.configureService(connector, ConnectorInfo.class));
+        assembler.createResource(config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class));
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        DataSource managedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Connector/Default JDBC Database");
+        DataSource managedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Resource/Default JDBC Database");
         assertNotNull("managedDS is null", managedDS);
 
-        DataSource unmanagedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Connector/Default Unmanaged JDBC Database");
+        DataSource unmanagedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Resource/Default Unmanaged JDBC Database");
         assertNotNull("unmanagedDS is null", unmanagedDS);
 
         List<Connection> managedConnections = new ArrayList<Connection>();

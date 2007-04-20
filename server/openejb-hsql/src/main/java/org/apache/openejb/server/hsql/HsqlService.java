@@ -88,7 +88,7 @@ public class HsqlService implements ServerService, SelfManaging {
 
         boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
         if (!disabled) {
-            NamingEnumeration<Binding> bindings = new InitialContext().listBindings("java:openejb/Connector/");
+            NamingEnumeration<Binding> bindings = new InitialContext().listBindings("java:openejb/Resource/");
             int dbIndex = 0;
             for (Binding binding : Collections.list(bindings)) {
                 Object value = binding.getObject();

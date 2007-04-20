@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
@@ -34,8 +33,6 @@ import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.xbean.naming.context.WritableContext;
-import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.command.ActiveMQTopic;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.EJBContext;
@@ -47,16 +44,14 @@ import javax.naming.Name;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import javax.transaction.UserTransaction;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -68,56 +63,28 @@ import java.net.URISyntaxException;
 public class JndiEncBuilder {
 
     private final boolean beanManagedTransactions;
-    private final String moduleId;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
 
     // JPA factory indexes
-    private final Map<String, EntityManagerFactory> localFactories;
-    private final Map<String, EntityManagerFactory> absoluteFactories = new TreeMap<String,EntityManagerFactory>();
-    private final Map<String, SortedSet<String>> factoryPaths = new TreeMap<String,SortedSet<String>>();
+    private final LinkResolver<EntityManagerFactory> emfLinkResolver;
 
     private boolean useCrossClassLoaderRef = true;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, String moduleId) throws OpenEJBException {
-        this(jndiEnc, null, null, null, moduleId);
+        this(jndiEnc, null, null, moduleId);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, BeanType ejbType, Map<String, Map<String, EntityManagerFactory>> allFactories, String moduleId) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, LinkResolver<EntityManagerFactory> emfLinkResolver, String moduleId) throws OpenEJBException {
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
-        this.moduleId = moduleId;
         try {
             moduleUri = new URI(moduleId);
         } catch (URISyntaxException e) {
             throw new OpenEJBException(e);
         }
         this.jndiEnc = jndiEnc;
-
-        // build map of path#untiName --> EMF
-        // and map of unitName --> TreeSet(path#untiName)
-        if (allFactories == null) allFactories = new HashMap<String, Map<String, EntityManagerFactory>>();
-        for (Map.Entry<String, Map<String, EntityManagerFactory>> entry : allFactories.entrySet()) {
-            String path = entry.getKey();
-            Map<String, EntityManagerFactory> entityManagers = entry.getValue();
-            for (Map.Entry<String, EntityManagerFactory> entityManagersEntry : entityManagers.entrySet()) {
-                String unitName = entityManagersEntry.getKey();
-                EntityManagerFactory entityManagerFactory = entityManagersEntry.getValue();
-                String absolutePath = path + "#" + unitName;
-                absoluteFactories.put(absolutePath, entityManagerFactory);
-
-                SortedSet<String> absolutePaths = factoryPaths.get(unitName);
-                if (absolutePaths == null) {
-                    absolutePaths = new TreeSet<String>();
-                    factoryPaths.put(unitName, absolutePaths);
-                }
-                absolutePaths.add(absolutePath);
-            }
-        }
-
-        Map<String, EntityManagerFactory> factories = allFactories.get(moduleId);
-        if (factories == null) factories = new HashMap<String, EntityManagerFactory>();
-        localFactories = factories;
+        this.emfLinkResolver = emfLinkResolver;
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -171,8 +138,9 @@ public class JndiEncBuilder {
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
         // bind UserTransaction if bean managed transactions
+        UserTransaction userTransaction = null;
         if (beanManagedTransactions) {
-            Object userTransaction = new CoreUserTransaction(transactionManager);
+            userTransaction = new CoreUserTransaction(transactionManager);
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
 
@@ -236,6 +204,8 @@ public class JndiEncBuilder {
                 } else if (type == Character.class) {
                     StringBuilder sb = new StringBuilder(entry.value + " ");
                     obj = new Character(sb.charAt(0));
+                } else if (type == URL.class) {
+                    obj = new URL(entry.value);
                 } else {
                     throw new IllegalArgumentException("Invalid env-ref-type " + type);
                 }
@@ -245,6 +215,8 @@ public class JndiEncBuilder {
                 throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.name);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("The env-entry-value for entry " + entry.name + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage());
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException("URL for reference " + entry.name + " was not a valid URL: " + entry.value);
             }
         }
 
@@ -254,10 +226,10 @@ public class JndiEncBuilder {
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
-                String jndiName = "java:openejb/Connector/" + referenceInfo.resourceID;
+                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "java:openejb/Connector/" + referenceInfo.referenceName;
+                String jndiName = "java:openejb/Resource/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
@@ -274,28 +246,23 @@ public class JndiEncBuilder {
                     continue;
                 }
             } catch (ClassNotFoundException e) {
-//                throw new OpenEJBException(e);
             }
 
             Object reference = null;
-            if (referenceInfo.location != null){
+            if (UserTransaction.class.getName().equals(referenceInfo.resourceEnvRefType)) {
+                reference = userTransaction;
+            } else if (referenceInfo.location != null){
                 reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.resourceID != null) {
+                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceID;
+                reference = new IntraVmJndiReference(jndiName);
             } else {
-                String destination = referenceInfo.resourceID;
-                if (destination == null) destination = referenceInfo.resourceEnvRefName;
-
-                String destinationType = referenceInfo.resourceEnvRefType;
-                if (Queue.class.getName().equals(destinationType)) {
-                    reference = new ActiveMQQueue(destination);
-                } else if (Topic.class.getName().equals(destinationType)) {
-                    reference = new ActiveMQTopic(destination);
-                }
+                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceEnvRefName;
+                reference = new IntraVmJndiReference(jndiName);
             }
             if (reference != null) {
                 bindings.put(normalize(referenceInfo.resourceEnvRefName), reference);
             }
-
-            //TODO code for handling other resource-env-refs need to be added here.
         }
 
         for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
@@ -305,7 +272,7 @@ public class JndiEncBuilder {
                 continue;
             }
 
-            EntityManagerFactory factory = findEntityManagerFactory(referenceInfo.persistenceUnitName);
+            EntityManagerFactory factory = emfLinkResolver.resolveLink(referenceInfo.persistenceUnitName, moduleUri);
             if (factory == null) {
                 throw new IllegalArgumentException("Persistence unit " + referenceInfo.persistenceUnitName + " for persistence-unit-ref " +
                         referenceInfo.referenceName + " not found");
@@ -322,7 +289,7 @@ public class JndiEncBuilder {
                 continue;
             }
 
-            EntityManagerFactory factory = findEntityManagerFactory(contextInfo.persistenceUnitName);
+            EntityManagerFactory factory = emfLinkResolver.resolveLink(contextInfo.persistenceUnitName, moduleUri);
             if (factory == null) {
                 throw new IllegalArgumentException("Persistence unit " + contextInfo.persistenceUnitName + " for persistence-context-ref " +
                         contextInfo.referenceName + " not found");
@@ -331,20 +298,6 @@ public class JndiEncBuilder {
             JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
             Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), reference);
-        }
-
-        for (MessageDestinationReferenceInfo referenceInfo : jndiEnc.messageDestinationRefs) {
-            Reference reference;
-            if (referenceInfo.location != null){
-                reference = buildReferenceLocation(referenceInfo.location);
-            } else if (referenceInfo.messageDestinationLink != null) {
-                String jndiName = "java:openejb/ejb/" + referenceInfo.messageDestinationLink;
-                reference = new IntraVmJndiReference(jndiName);
-            } else {
-                String jndiName = "java:openejb/ejb/" + referenceInfo.referenceName;
-                reference = new IntraVmJndiReference(jndiName);
-            }
-            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
@@ -405,33 +358,5 @@ public class JndiEncBuilder {
                 name = "java:comp/env/" + name;
         }
         return name;
-    }
-
-    public EntityManagerFactory findEntityManagerFactory(String persistenceName) throws OpenEJBException {
-        if (persistenceName != null && !"".equals(persistenceName)) {
-            if (persistenceName.indexOf("#") == -1 ) {
-                EntityManagerFactory factory = localFactories.get(persistenceName);
-                if (factory != null) return factory;
-
-                // search for a unique match in allFactories;
-                SortedSet<String> absolutePaths = factoryPaths.get(persistenceName);
-                if (absolutePaths == null || absolutePaths.size() != 1) {
-                    // todo warn with valid names
-                    return null;
-                }
-
-                String absolutePath = absolutePaths.iterator().next();
-                factory = absoluteFactories.get(absolutePath);
-                return factory;
-            } else {
-                String absoluteName = moduleUri.resolve(persistenceName).toString();
-                EntityManagerFactory factory = absoluteFactories.get(absoluteName);
-                return factory;
-            }
-        } else if (localFactories.size() == 1) {
-            return localFactories.values().toArray(new EntityManagerFactory[1])[0];
-        } else {
-            throw new OpenEJBException("Deployment failed as the Persistence Unit could not be located. Try adding the 'persistence-unit-name' tag in ejb-jar.xml ");
-        }
     }
 }

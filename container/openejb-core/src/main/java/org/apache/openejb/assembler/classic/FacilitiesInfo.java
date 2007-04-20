@@ -24,7 +24,6 @@ public class FacilitiesInfo extends InfoObject {
     public ProxyFactoryInfo intraVmServer;
     public final List<JndiContextInfo> remoteJndiContexts = new ArrayList<JndiContextInfo>();
     public final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
-    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
     public final List<ConnectionManagerInfo> connectionManagers = new ArrayList<ConnectionManagerInfo>();
     public TransactionServiceInfo transactionService;
     public SecurityServiceInfo securityService;

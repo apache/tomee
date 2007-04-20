@@ -117,7 +117,7 @@ public class CastorCmpEngine implements CmpEngine {
                 jdoManagerBuilder.addMapping(url);
             }
 
-            String jdbcName = "java:openejb/Connector/" + connectorName;
+            String jdbcName = "java:openejb/Resource/" + connectorName;
             DataSource connectionFactory = (DataSource) new InitialContext().lookup(jdbcName);
             if (connectionFactory == null) {
                 throw new OpenEJBException(jdbcName + " does not exist");
