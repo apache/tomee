@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 import javax.ejb.EJBObject;
 
-public interface EJBObjectProxy extends Serializable, EJBObject {
+public interface EJBObjectProxy extends Serializable {
 
     public EJBObjectHandler getEJBObjectHandler();
 

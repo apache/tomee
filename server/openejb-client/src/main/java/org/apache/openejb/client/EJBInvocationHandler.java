@@ -87,7 +87,13 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (isInvalidReference) throw new NoSuchObjectException("reference is invalid");
+        if (isInvalidReference) {
+            if (remote || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
+                throw new NoSuchObjectException("reference is invalid");
+            } else {
+                throw new NoSuchEJBException("reference is invalid");
+            }
+        }
 
         Object returnObj = null;
         returnObj = _invoke(proxy, method, args);

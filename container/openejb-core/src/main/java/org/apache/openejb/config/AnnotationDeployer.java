@@ -113,6 +113,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Properties;
+import java.util.HashMap;
 
 /**
  * @version $Rev$ $Date$
@@ -773,10 +774,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 List<Method> removeMethods = classFinder.findAnnotatedMethods(Remove.class);
+                Map<NamedMethod,RemoveMethod> declaredRemoveMethods = new HashMap<NamedMethod,RemoveMethod>();
+                for (RemoveMethod removeMethod : session.getRemoveMethod()) {
+                    declaredRemoveMethods.put(removeMethod.getBeanMethod(), removeMethod);
+                }
                 for (Method method : removeMethods) {
                     Remove remove = method.getAnnotation(Remove.class);
+                    RemoveMethod removeMethod = new RemoveMethod(method, remove.retainIfException());
 
-                    session.getRemoveMethod().add(new RemoveMethod(method, remove.retainIfException()));
+                    RemoveMethod declaredRemoveMethod = declaredRemoveMethods.get(removeMethod.getBeanMethod());
+
+                    if (declaredRemoveMethod == null) {
+                        session.getRemoveMethod().add(removeMethod);
+                    } else if (!declaredRemoveMethod.isExplicitlySet()){
+                        declaredRemoveMethod.setRetainIfException(remove.retainIfException());
+                    }
                 }
             }
         }
@@ -1101,7 +1113,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
-            
+
             List<ServiceRef> serviceRefEntries = consumer.getServiceRef();
             for (ServiceRef serviceRefEntry : serviceRefEntries) {
                 if (serviceRefEntry.getName().equals(refName)) {
@@ -1145,7 +1157,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 serviceRef.setMappedName(mappedName);
             }
-            
+
             // Set wsdl file
             if (serviceRef.getWsdlFile() == null) {
                 String wsdlLocation = webService.wsdlLocation();

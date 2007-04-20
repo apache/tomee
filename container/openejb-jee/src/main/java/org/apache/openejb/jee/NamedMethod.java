@@ -94,4 +94,29 @@ public class NamedMethod {
         this.id = value;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final NamedMethod that = (NamedMethod) o;
+
+        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) return false;
+
+        if (nullOrEmpty(this.methodParams) && nullOrEmpty(that.methodParams)) return true;
+
+        if (methodParams != null ? !methodParams.equals(that.methodParams) : that.methodParams != null) return false;
+
+        return true;
+    }
+
+    private boolean nullOrEmpty(MethodParams methodParams) {
+        return methodParams == null || methodParams.getMethodParam().size() == 0;
+    }
+
+    public int hashCode() {
+        int result;
+        result = (methodName != null ? methodName.hashCode() : 0);
+        result = 29 * result + (methodParams != null ? methodParams.hashCode() : 0);
+        return result;
+    }
 }

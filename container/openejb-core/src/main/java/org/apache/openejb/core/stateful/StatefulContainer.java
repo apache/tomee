@@ -90,8 +90,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         for (Method removeMethod : removeMethods) {
             methods.put(removeMethod, MethodType.REMOVE);
 
-            Class businessLocal = deploymentInfo.getBusinessLocalInterface();
-            if (businessLocal != null) {
+            for (Class businessLocal : deploymentInfo.getBusinessLocalInterfaces()) {
                 try {
                     Method method = businessLocal.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
@@ -99,8 +98,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 }
             }
 
-            Class businessRemote = deploymentInfo.getBusinessRemoteInterface();
-            if (businessRemote != null) {
+            for (Class businessRemote : deploymentInfo.getBusinessRemoteInterfaces()) {
                 try {
                     Method method = businessRemote.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
@@ -320,7 +318,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 throw e;
             } catch(ApplicationException e){
                 retain = deploymentInfo.retainIfExeption(runMethod);
-                throw e;
+                if (retain) return;
+                else throw e;
             } finally {
                 if (retain){
                     instanceManager.poolInstance(callContext, instance);

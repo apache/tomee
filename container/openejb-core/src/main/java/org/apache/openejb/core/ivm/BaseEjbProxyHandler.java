@@ -38,6 +38,7 @@ import javax.ejb.EJBException;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.ejb.Remote;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
@@ -137,10 +138,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (isInvalidReference) {
-            if (isLocal) {
-                throw new EJBException("reference is invalid");
-            } else {
+            if (interfaceType.isComponent() && interfaceType.isLocal()){
+                throw new NoSuchObjectLocalException("reference is invalid");
+            } else if (interfaceType.isComponent() || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
                 throw new NoSuchObjectException("reference is invalid");
+            } else {
+                throw new javax.ejb.NoSuchEJBException("reference is invalid");
             }
         }
         getDeploymentInfo(); // will throw an exception if app has been undeployed.

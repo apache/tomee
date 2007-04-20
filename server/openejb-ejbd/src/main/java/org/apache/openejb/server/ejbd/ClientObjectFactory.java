@@ -154,7 +154,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, sMetaData, cMetaData, primKey);
 
-        return hanlder.createEJBObjectProxy();
+        return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
 
     protected javax.ejb.EJBHome _getEJBHome(CallContext call, ProxyInfo info) {

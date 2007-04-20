@@ -40,7 +40,7 @@ public class RemoveMethod {
     @XmlElement(name = "bean-method", required = true)
     protected NamedMethod beanMethod;
     @XmlElement(name = "retain-if-exception", required = true)
-    protected boolean retainIfException;
+    protected Boolean retainIfException;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -66,8 +66,12 @@ public class RemoveMethod {
         this.beanMethod = value;
     }
 
+    public boolean isExplicitlySet() {
+        return retainIfException != null;
+    }
+
     public boolean getRetainIfException() {
-        return retainIfException;
+        return retainIfException != null && retainIfException;
     }
 
     public void setRetainIfException(boolean value) {
@@ -82,4 +86,18 @@ public class RemoveMethod {
         this.id = value;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final RemoveMethod that = (RemoveMethod) o;
+
+        if (beanMethod != null ? !beanMethod.equals(that.beanMethod) : that.beanMethod != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        return (beanMethod != null ? beanMethod.hashCode() : 0);
+    }
 }

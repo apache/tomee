@@ -42,7 +42,7 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
     }
 
     public EJBObject getEJBObject() throws RemoteException {
-        return ejbObjectProxy;
+        return (EJBObject) ejbObjectProxy;
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
