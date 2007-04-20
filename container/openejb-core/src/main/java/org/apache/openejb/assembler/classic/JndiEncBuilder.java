@@ -183,22 +183,11 @@ public class JndiEncBuilder {
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else {
-                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                if (referenceInfo.homeType == null){
-                    String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessRemote";
-                    if (useCrossClassLoaderRef && referenceInfo.externalReference) {
-                        reference = new CrossClassLoaderJndiReference(jndiName);
-                    } else {
-                        reference = new IntraVmJndiReference(jndiName);
-                    }
+                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.remoteType;
+                if (useCrossClassLoaderRef && referenceInfo.externalReference) {
+                    reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {
-                    // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                    String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId;
-                    if (useCrossClassLoaderRef && referenceInfo.externalReference) {
-                        reference = new CrossClassLoaderJndiReference(jndiName);
-                    } else {
-                        reference = new IntraVmJndiReference(jndiName);
-                    }
+                    reference = new IntraVmJndiReference(jndiName);
                 }
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
@@ -210,12 +199,8 @@ public class JndiEncBuilder {
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
-            } else if (referenceInfo.homeType == null){
-                // TODO: Before JndiNameStrategy can be used, this assumption has to be updated
-                String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "BusinessLocal";
-                reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "java:openejb/ejb/" + referenceInfo.ejbDeploymentId + "Local";
+                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.localType;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);

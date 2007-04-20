@@ -361,6 +361,7 @@ public class JndiEncInfoBuilder {
             EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
 
             info.homeType = ejb.getLocalHome();
+            info.localType = ejb.getLocal();
             info.referenceName = ejb.getEjbRefName();
 
             // assign location to a global jndi name

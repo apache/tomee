@@ -39,6 +39,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -315,6 +316,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
                 _invoke(callMethod, interceptorStack, args, instance, callContext);
 
+            } catch(InvalidateReferenceException e){
+                throw e;
             } catch(ApplicationException e){
                 retain = deploymentInfo.retainIfExeption(runMethod);
                 throw e;

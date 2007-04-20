@@ -97,7 +97,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         return createHomeProxy(deploymentInfo, interfaceType, null);
     }
 
-    public static Object createHomeProxy(DeploymentInfo deploymentInfo, InterfaceType interfaceType, ArrayList<Class> objectInterfaces) {
+    public static Object createHomeProxy(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> objectInterfaces) {
         if (!interfaceType.isHome()) throw new IllegalArgumentException("InterfaceType is not a Home type: " + interfaceType);
 
         try {
@@ -105,7 +105,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             List<Class> proxyInterfaces = new ArrayList<Class>(2);
 
-            proxyInterfaces.add(deploymentInfo.getInterface(interfaceType));
+            Class homeInterface = deploymentInfo.getInterface(interfaceType);
+            proxyInterfaces.add(homeInterface);
             proxyInterfaces.add(IntraVmProxy.class);
 
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);

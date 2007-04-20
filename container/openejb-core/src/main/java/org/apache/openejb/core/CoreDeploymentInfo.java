@@ -506,7 +506,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        return (BusinessLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCAL_HOME);
+        return (BusinessLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCAL_HOME, interfaces);
     }
 
     public BusinessRemoteHome getBusinessRemoteHome() {
@@ -526,7 +526,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-        return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME);
+        return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, interfaces);
     }
 
     public String getMessageDestination() {

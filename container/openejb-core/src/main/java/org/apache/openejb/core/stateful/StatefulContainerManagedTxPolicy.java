@@ -54,7 +54,10 @@ public class StatefulContainerManagedTxPolicy extends TransactionPolicy {
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         try {
             policy.handleSystemException(sysException, instance, context);
+        } catch (InvalidateReferenceException e) {
+            throw e;
         } catch (ApplicationException e) {
+            // DMB: Not sure we want this here
             throw new InvalidateReferenceException(e.getRootCause());
         }
     }

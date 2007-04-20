@@ -162,7 +162,7 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1, deployment.getBusinessRemoteInterfaces());
+                        -1, proxyInfo.getInterfaces());
                 Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                 res.setResult(data);
                 break;
@@ -172,11 +172,11 @@ class JndiRequestHandler {
                 if (property.equalsIgnoreCase("remotable")) {
                     res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                     EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                            deployment.getBusinessLocalInterface(),
+                            null,
                             deployment.getPrimaryKeyClass(),
                             deployment.getComponentType().toString(),
                             deploymentID,
-                            -1, null);
+                            -1, proxyInfo.getInterfaces());
                     Object[] data = {metaData, proxyInfo.getPrimaryKey()};
                     res.setResult(data);
                 } else {
