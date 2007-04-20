@@ -505,7 +505,7 @@ public class AutoConfig implements DynamicDeployer {
 
 
             // mdb message destination id
-            if (bean instanceof MessageDrivenBean) {
+            if (autoCreateResources && bean instanceof MessageDrivenBean) {
                 MessageDrivenBean mdb = (MessageDrivenBean) bean;
 
                 ResourceLink resourceLink = ejbDeployment.getResourceLink("openejb/destination");
