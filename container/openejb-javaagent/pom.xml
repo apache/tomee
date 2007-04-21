@@ -25,6 +25,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-javaagent</artifactId>
   <name>OpenEJB :: Container :: Java Agent</name>
+  <properties>
+    <maven.test.skip>true</maven.test.skip>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -49,12 +52,4 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>
