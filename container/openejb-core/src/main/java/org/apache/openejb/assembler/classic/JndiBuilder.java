@@ -22,14 +22,18 @@ import javax.naming.Reference;
 import javax.jms.MessageListener;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
+import org.codehaus.swizzle.stream.StringTemplate;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 
 /**
@@ -42,6 +46,20 @@ public class JndiBuilder {
 
     public JndiBuilder(Context context) {
         this.context = context;
+
+        String strategyClass = SystemInstance.get().getProperty("openejb.jndiname.strategy.class", LegacyAddedSuffixStrategy.class.getName());
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            strategy = (JndiNameStrategy) classLoader.loadClass(strategyClass).newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalStateException("Could not instantiate JndiNameStrategy: "+strategyClass, e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Could not access JndiNameStrategy: "+strategyClass, e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Could not load JndiNameStrategy: "+strategyClass, e);
+        } catch (Throwable t){
+            throw new IllegalStateException("Could not create JndiNameStrategy: "+strategyClass, t);
+        }
     }
 
     public static interface JndiNameStrategy {
@@ -55,6 +73,30 @@ public class JndiBuilder {
     }
 
     // TODO: put these into the classpath and get them with xbean-finder
+    public static class TemplatedStrategy implements JndiNameStrategy {
+        private org.codehaus.swizzle.stream.StringTemplate template;
+
+        public TemplatedStrategy() {
+            String format = SystemInstance.get().getProperty("openejb.jndiname.format", "{deploymentId}/{interfaceClass.simpleName}");
+            this.template = new StringTemplate(format);
+        }
+
+
+        public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
+            Map<String,String> contextData = new HashMap<String,String>();
+            contextData.put("moduleId", deploymentInfo.getModuleID());
+            contextData.put("ejbType", deploymentInfo.getComponentType().name());
+            contextData.put("ejbClass", deploymentInfo.getBeanClass().getName());
+            contextData.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
+            contextData.put("ejbName", deploymentInfo.getEjbName());
+            contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
+            contextData.put("interfaceType", deploymentInfo.getInterfaceType(interfce).name());
+            contextData.put("interfaceClass", interfce.getName());
+            contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
+            return template.apply(contextData);
+        }
+    }
+
     public static class LegacyAddedSuffixStrategy implements JndiNameStrategy {
 
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
@@ -129,7 +171,12 @@ public class JndiBuilder {
         }
     }
 
+    public JndiNameStrategy getStrategy() {
+        return strategy;
+    }
+
     public void bind(DeploymentInfo deploymentInfo) {
+        JndiNameStrategy strategy = getStrategy();
         CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentInfo;
 
         Bindings bindings = new Bindings();
@@ -173,7 +220,13 @@ public class JndiBuilder {
 
                 for (Class interfce : deployment.getBusinessLocalInterfaces()) {
                     DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(asList(interfce));
-                    context.bind("openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName(), new BusinessLocalReference(home));
+                    BusinessLocalReference ref = new BusinessLocalReference(home);
+                    context.bind("openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName(), ref);
+                    try {
+                        name = strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                        context.bind("openejb/ejb/" + name, ref);
+                    } catch (NamingException dontCareJustYet) {
+                    }
                 }
             }
         } catch (NamingException e) {
@@ -191,7 +244,14 @@ public class JndiBuilder {
 
                 for (Class interfce : deployment.getBusinessRemoteInterfaces()) {
                     DeploymentInfo.BusinessRemoteHome home = deployment.getBusinessRemoteHome(asList(interfce));
-                    context.bind("openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName(), new BusinessRemoteReference(home));
+                    ref = new BusinessRemoteReference(home);
+                    context.bind("openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName(), ref);
+
+                    try {
+                        name = strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
+                        context.bind("openejb/ejb/" + name, ref);
+                    } catch (NamingException dontCareJustYet) {
+                    }
                 }
             }
         } catch (NamingException e) {
