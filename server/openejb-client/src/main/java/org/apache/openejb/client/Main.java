@@ -22,6 +22,9 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -139,10 +142,46 @@ public class Main {
     private static void loadJassLoginConfig(ClassLoader classLoader) {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = classLoader.getResource("client.login.config");
+            URL resource = classLoader.getResource("client.login.conf");
             if (resource != null) {
+                if (!resource.getProtocol().equals("file")) {
+                    resource = copyToTempFile(resource);
+                }
+
                 path = resource.getFile();
                 System.setProperty("java.security.auth.login.config", path);
+            }
+        }
+    }
+
+    private static URL copyToTempFile(URL resource) {
+        InputStream in = null;
+        FileOutputStream out = null;
+        try {
+            File tempFile = File.createTempFile("client.login", ".config");
+            in = resource.openStream();
+            out = new FileOutputStream(tempFile);
+            byte[] buf = new byte[4096];
+            int count;
+            while ((count = in.read(buf)) > 0) {
+                out.write(buf, 0, count);
+            }
+            out.flush();
+            return tempFile.toURL();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to copy " + resource + " to temp directory", e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+            }
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
             }
         }
     }
