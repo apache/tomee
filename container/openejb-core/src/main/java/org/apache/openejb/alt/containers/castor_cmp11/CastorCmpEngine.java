@@ -186,6 +186,10 @@ public class CastorCmpEngine implements CmpEngine {
         }
     }
 
+    public void storeBeanIfNoTx(ThreadContext callContext, Object bean) {
+        throw new UnsupportedOperationException();
+    }
+
     public void removeBean(ThreadContext callContext) {
         try {
             Database db = getDatabase();

@@ -35,6 +35,8 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.transaction.TransactionManager;
+import javax.transaction.Status;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -55,6 +57,7 @@ public class JpaCmpEngine implements CmpEngine {
     public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
 
     private final CmpCallback cmpCallback;
+    private final TransactionManager transactionManager;
     private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
     private final Map<Object, CoreDeploymentInfo> deployments = new HashMap<Object, CoreDeploymentInfo>();
@@ -64,8 +67,9 @@ public class JpaCmpEngine implements CmpEngine {
         }
     };
 
-    public JpaCmpEngine(CmpCallback cmpCallback) {
+    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager) {
         this.cmpCallback = cmpCallback;
+        this.transactionManager = transactionManager;
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -129,6 +133,7 @@ public class JpaCmpEngine implements CmpEngine {
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
         // TODO verify that extract primary key requires a flush followed by a merge
+        boolean startedTx = startTransaction("persist");
         creating.get().add(bean);
         try {
             entityManager.persist(bean);
@@ -136,6 +141,7 @@ public class JpaCmpEngine implements CmpEngine {
             bean = entityManager.merge(bean);
         } finally {
             creating.get().remove(bean);
+            commitTransaction(startedTx, "persist");
         }
 
         // extract the primary key from the bean
@@ -146,20 +152,44 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getCmpImplClass();
-        EntityManager entityManager = getEntityManager(deploymentInfo);
-        Object bean = entityManager.find(beanClass, primaryKey);
-        return bean;
+        boolean startedTx = startTransaction("load");
+        try {
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Class<?> beanClass = deploymentInfo.getCmpImplClass();
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+            Object bean = entityManager.find(beanClass, primaryKey);
+            return bean;
+        } finally {
+            commitTransaction(startedTx, "load");
+        }
+    }
+
+    public void storeBeanIfNoTx(ThreadContext callContext, Object bean) {
+        boolean startedTx = startTransaction("store");
+        if (startedTx) {
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+
+            try {
+                EntityManager entityManager = getEntityManager(deploymentInfo);
+                entityManager.merge(bean);
+            } finally {
+                commitTransaction(startedTx, "store");
+            }
+        }
     }
 
     public void removeBean(ThreadContext callContext) {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Class<?> beanClass = deploymentInfo.getCmpImplClass();
+        boolean startedTx = startTransaction("remove");
+        try {
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
-        EntityManager entityManager = getEntityManager(deploymentInfo);
-        Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
-        entityManager.remove(bean);
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+            Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
+            entityManager.remove(bean);
+        } finally {
+            commitTransaction(startedTx, "remove");
+        }
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
@@ -180,32 +210,43 @@ public class JpaCmpEngine implements CmpEngine {
             queryName.append(')');
 
         }
-        String fullName = queryName.toString();
-        Query query = createNamedQuery(entityManager, fullName);
-        if (query == null) {
-            query = createNamedQuery(entityManager, shortName);
+
+        boolean startedTx = startTransaction("query");
+        try {
+            String fullName = queryName.toString();
+            Query query = createNamedQuery(entityManager, fullName);
             if (query == null) {
-                throw new FinderException("No query defined for method " + fullName);
+                query = createNamedQuery(entityManager, shortName);
+                if (query == null) {
+                    throw new FinderException("No query defined for method " + fullName);
+                }
             }
+            return executeQuery(query, args);
+        } finally {
+            commitTransaction(startedTx, "query");
         }
-        return executeQuery(query, args);
     }
 
     public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
-        Query query = createNamedQuery(entityManager, signature);
-        if (query == null) {
-            int parenIndex = signature.indexOf('(');
-            if (parenIndex > 0) {
-                String shortName = signature.substring(0, parenIndex);
-                query = createNamedQuery(entityManager, shortName);
-            }
+        boolean startedTx = startTransaction("query");
+        try {
+            Query query = createNamedQuery(entityManager, signature);
             if (query == null) {
-                throw new FinderException("No query defined for method " + signature);
+                int parenIndex = signature.indexOf('(');
+                if (parenIndex > 0) {
+                    String shortName = signature.substring(0, parenIndex);
+                    query = createNamedQuery(entityManager, shortName);
+                }
+                if (query == null) {
+                    throw new FinderException("No query defined for method " + signature);
+                }
             }
+            return executeQuery(query, args);
+        } finally {
+            commitTransaction(startedTx, "query");
         }
-        return executeQuery(query, args);
     }
 
     private List<Object> executeQuery(Query query, Object[] args) {
@@ -232,6 +273,7 @@ public class JpaCmpEngine implements CmpEngine {
             if (value instanceof EntityBean) {
                 // todo don't activate beans already activated
                 EntityBean entity = (EntityBean) value;
+                cmpCallback.setEntityContext(entity);
                 cmpCallback.ejbActivate(entity);
             }
         }
@@ -246,6 +288,29 @@ public class JpaCmpEngine implements CmpEngine {
             // soooo lame that jpa throws an exception instead of returning null....
             ignored.printStackTrace();
             return null;
+        }
+    }
+
+    private boolean startTransaction(String operation) {
+        try {
+            if (Status.STATUS_NO_TRANSACTION == transactionManager.getStatus()) {
+                transactionManager.begin();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new EJBException("Unable to start transaction for " + operation + " operation", e);
+        }
+    }
+
+    private void commitTransaction(boolean startedTx, String operation) {
+        try {
+            if (startedTx) {
+                transactionManager.commit();
+            }
+        } catch (Exception e) {
+            //noinspection ThrowFromFinallyBlock
+            throw new EJBException("Unable to complete transaction for " + operation + " operation");
         }
     }
 

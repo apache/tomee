@@ -26,6 +26,7 @@ import javax.persistence.EntityTransaction;
 import javax.ejb.EntityBean;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.transaction.TransactionManager;
 import java.util.List;
 import java.lang.reflect.Method;
 
@@ -34,6 +35,8 @@ public interface CmpEngine {
     Object createBean(EntityBean entity, ThreadContext callContext) throws CreateException;
 
     Object loadBean(ThreadContext callContext, Object primaryKey);
+
+    void storeBeanIfNoTx(ThreadContext callContext, Object bean);
 
     void removeBean(ThreadContext callContext);
 

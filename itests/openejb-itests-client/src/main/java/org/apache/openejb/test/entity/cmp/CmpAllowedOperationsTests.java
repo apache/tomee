@@ -266,7 +266,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
         OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        policy.allow( OperationsPolicy.Context_getRollbackOnly );
+//        policy.allow( OperationsPolicy.Context_getRollbackOnly );
         policy.allow( OperationsPolicy.Context_isCallerInRole );
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
@@ -306,7 +306,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
         OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        policy.allow( OperationsPolicy.Context_getRollbackOnly );
+//        policy.allow( OperationsPolicy.Context_getRollbackOnly );
         policy.allow( OperationsPolicy.Context_isCallerInRole );
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.Context_getEJBObject );
@@ -427,7 +427,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
         OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        policy.allow( OperationsPolicy.Context_getRollbackOnly );
+//        policy.allow( OperationsPolicy.Context_getRollbackOnly );
         policy.allow( OperationsPolicy.Context_isCallerInRole );
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
@@ -657,7 +657,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
         OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        policy.allow( OperationsPolicy.Context_getRollbackOnly );
+//        policy.allow( OperationsPolicy.Context_getRollbackOnly );
         policy.allow( OperationsPolicy.Context_isCallerInRole );
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.Context_getEJBObject );
