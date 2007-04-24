@@ -186,7 +186,7 @@ public class JndiBuilder {
         try {
             Class homeInterface = deployment.getHomeInterface();
             if (homeInterface != null) {
-                String name = strategy.getName(deployment, homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
+                String name = strategy.getName(deployment, deploymentInfo.getRemoteInterface(), JndiNameStrategy.Interface.REMOTE_HOME);
                 bindings.add(name);
                 ObjectReference ref = new ObjectReference(deployment.getEJBHome());
                 context.bind("openejb/ejb/" + name, ref);
@@ -200,7 +200,7 @@ public class JndiBuilder {
         try {
             Class localHomeInterface = deployment.getLocalHomeInterface();
             if (localHomeInterface != null) {
-                String name = strategy.getName(deployment, localHomeInterface, JndiNameStrategy.Interface.LOCAL_HOME);
+                String name = strategy.getName(deployment, deploymentInfo.getLocalInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 bindings.add(name);
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
                 context.bind("openejb/ejb/" + name, ref);
