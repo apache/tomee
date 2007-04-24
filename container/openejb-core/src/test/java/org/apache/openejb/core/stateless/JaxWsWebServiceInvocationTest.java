@@ -187,11 +187,13 @@ public class JaxWsWebServiceInvocationTest extends TestCase {
                 // that's expected since it's JAX-WS
             }
             
-            // TODO: this is not implemented yet
-            /*
-            junit.framework.Assert.assertNotNull("web service context should not be null", wsContext);
-            */
-
+            // test @Resource WebServiceContext injection
+            junit.framework.Assert.assertNotNull("web service context should not be null", wsContext);  
+            junit.framework.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
+            
+            junit.framework.Assert.assertFalse("user in role 'foo'", wsContext.isUserInRole("foo"));
+            junit.framework.Assert.assertNull("user principal", wsContext.getUserPrincipal());
+            
             calls.add(Call.Bean_Invoke_BEFORE);
             Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);
