@@ -38,7 +38,9 @@ import javax.ejb.EJBException;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.ejb.Remote;
+import javax.ejb.EJBTransactionRequiredException;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.NoSuchEJBException;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
@@ -81,7 +83,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     */
     protected boolean doIntraVmCopy;
     protected boolean doCrossClassLoaderCopy;
-    private boolean isLocal;
     protected final InterfaceType interfaceType;
     protected final List<Class> interfaces;
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
@@ -100,7 +101,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         this.interfaces = Collections.unmodifiableList(interfaces);
 
-        setLocal(interfaceType.isLocal());
+        this.doIntraVmCopy = !interfaceType.isLocal();
 
         if (!interfaceType.isLocal()){
             doIntraVmCopy = REMOTE_COPY_ENABLED;
@@ -256,25 +257,33 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
                 return _invoke(proxy, method, args);
             } catch (TransactionRequiredException e) {
-                if (this.isLocal()) {
+                if (interfaceType.isBusiness()) {
+                    throw new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
+                } else if (interfaceType.isLocal()) {
                     throw new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
                 } else {
                     throw e;
                 }
             } catch (TransactionRolledbackException e) {
-                if (this.isLocal()) {
+                if (interfaceType.isBusiness()) {
+                    throw new EJBTransactionRolledbackException(e.getMessage()).initCause(getCause(e));
+                } else if (interfaceType.isLocal()) {
                     throw new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
                 } else {
                     throw e;
                 }
             } catch (NoSuchObjectException  e) {
-                if (this.isLocal()) {
+                if (interfaceType.isBusiness()) {
+                    throw new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
+                } else if (interfaceType.isLocal()) {
                     throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
                 } else {
                     throw e;
                 }
             } catch (RemoteException e) {
-                if (this.isLocal()) {
+                if (interfaceType.isBusiness()) {
+                    throw new EJBException(e.getMessage()).initCause(getCause(e));
+                } else if (interfaceType.isLocal()) {
                     throw new EJBException(e.getMessage()).initCause(getCause(e));
                 } else {
                     throw e;
@@ -414,15 +423,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public abstract org.apache.openejb.ProxyInfo getProxyInfo();
-
-    public boolean isLocal() {
-        return isLocal;
-    }
-
-    public void setLocal(boolean isLocal) {
-        this.isLocal = isLocal;
-        this.doIntraVmCopy = !isLocal;
-    }
 
     public CoreDeploymentInfo getDeploymentInfo() {
         CoreDeploymentInfo info = deploymentInfo.get();

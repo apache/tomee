@@ -108,7 +108,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                 if (interfaceType.isBusiness()) {
                     throw exc;
                 } else {
-                    if (this.isLocal()) {
+                    if (interfaceType.isLocal()) {
                         throw new AccessLocalException(exc.getMessage()).initCause(exc.getCause());
                     } else {
                         throw new AccessException(exc.getMessage());
