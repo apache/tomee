@@ -45,6 +45,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
+import javax.xml.ws.WebServiceContext;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -241,6 +243,11 @@ public class JndiEncBuilder {
                 Class<?> type = Class.forName(referenceInfo.resourceEnvRefType, true, EJBContext.class.getClassLoader());
                 if (EJBContext.class.isAssignableFrom(type)) {
                     String jndiName = "java:comp/EJBContext";
+                    linkRef = new LinkRef(jndiName);
+                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    continue;
+                } else if (WebServiceContext.class.equals(type)) {
+                    String jndiName = "java:comp/WebServiceContext";
                     linkRef = new LinkRef(jndiName);
                     bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
                     continue;

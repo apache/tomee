@@ -28,6 +28,7 @@ import javax.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
+import javax.xml.ws.WebServiceContext;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
@@ -100,7 +101,7 @@ public class StatelessInstanceManager {
             BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
             try {
-                Context ctx = deploymentInfo.getJndiEnc();
+                Context ctx = deploymentInfo.getJndiEnc();                
                 SessionContext sessionContext;
                 try {
                     sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
@@ -108,15 +109,24 @@ public class StatelessInstanceManager {
                     sessionContext = createSessionContext();
                     // TODO: This should work
                     ctx.bind("java:comp/EJBContext", sessionContext);
-                }
+                }                              
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
                     callContext.setCurrentAllowedStates(StatelessContext.getStates());                    
                     objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
+                }     
+                
+                WebServiceContext wsContext;
+                try {
+                    wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
+                } catch (NamingException e) {
+                    wsContext = new EjbWebServiceContext(sessionContext);
+                    ctx.bind("java:comp/WebServiceContext", wsContext);
                 }
+                
                 for (Injection injection : deploymentInfo.getInjections()) {
                     try {
-                        String jndiName = injection.getJndiName();
+                        String jndiName = injection.getJndiName();    
                         Object object = ctx.lookup("java:comp/env/" + jndiName);
                         if (object instanceof String) {
                             String string = (String) object;

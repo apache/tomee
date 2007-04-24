@@ -127,7 +127,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.ejb.MessageDrivenContext",
             "javax.transaction.UserTransaction",
             "javax.jms.Queue",
-            "javax.jms.Topic"
+            "javax.jms.Topic",
+            "javax.xml.ws.WebServiceContext"
     ));
 
     public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(

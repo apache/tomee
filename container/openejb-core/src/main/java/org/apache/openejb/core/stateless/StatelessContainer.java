@@ -257,6 +257,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
             returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
         } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
+            ThreadContext.getThreadContext().set(javax.xml.ws.handler.MessageContext.class, (javax.xml.ws.handler.MessageContext) messageContext);
             returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
         }
         return returnValue;
