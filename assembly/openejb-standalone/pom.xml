@@ -164,7 +164,6 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.2.1.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
