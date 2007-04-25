@@ -194,60 +194,50 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-        boolean startedTx = startTransaction("query");
-        try {
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-            EntityManager entityManager = getEntityManager(deploymentInfo);
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        EntityManager entityManager = getEntityManager(deploymentInfo);
 
-            StringBuilder queryName = new StringBuilder();
-            queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
-            String shortName = queryName.toString();
-            if (queryMethod.getParameterTypes().length > 0) {
-                queryName.append('(');
-                boolean first = true;
-                for (Class<?> parameterType : queryMethod.getParameterTypes()) {
-                    if (!first) queryName.append(',');
-                    queryName.append(parameterType.getCanonicalName());
-                    first = false;
-                }
-                queryName.append(')');
-
+        StringBuilder queryName = new StringBuilder();
+        queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
+        String shortName = queryName.toString();
+        if (queryMethod.getParameterTypes().length > 0) {
+            queryName.append('(');
+            boolean first = true;
+            for (Class<?> parameterType : queryMethod.getParameterTypes()) {
+                if (!first) queryName.append(',');
+                queryName.append(parameterType.getCanonicalName());
+                first = false;
             }
+            queryName.append(')');
 
-            String fullName = queryName.toString();
-            Query query = createNamedQuery(entityManager, fullName);
-            if (query == null) {
-                query = createNamedQuery(entityManager, shortName);
-                if (query == null) {
-                    throw new FinderException("No query defined for method " + fullName);
-                }
-            }
-            return executeQuery(query, args);
-        } finally {
-            commitTransaction(startedTx, "query");
         }
+
+        String fullName = queryName.toString();
+        Query query = createNamedQuery(entityManager, fullName);
+        if (query == null) {
+            query = createNamedQuery(entityManager, shortName);
+            if (query == null) {
+                throw new FinderException("No query defined for method " + fullName);
+            }
+        }
+        return executeQuery(query, args);
     }
 
     public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
-        boolean startedTx = startTransaction("query");
-        try {
-            EntityManager entityManager = getEntityManager(deploymentInfo);
+        EntityManager entityManager = getEntityManager(deploymentInfo);
 
-            Query query = createNamedQuery(entityManager, signature);
-            if (query == null) {
-                int parenIndex = signature.indexOf('(');
-                if (parenIndex > 0) {
-                    String shortName = signature.substring(0, parenIndex);
-                    query = createNamedQuery(entityManager, shortName);
-                }
-                if (query == null) {
-                    throw new FinderException("No query defined for method " + signature);
-                }
+        Query query = createNamedQuery(entityManager, signature);
+        if (query == null) {
+            int parenIndex = signature.indexOf('(');
+            if (parenIndex > 0) {
+                String shortName = signature.substring(0, parenIndex);
+                query = createNamedQuery(entityManager, shortName);
             }
-            return executeQuery(query, args);
-        } finally {
-            commitTransaction(startedTx, "query");
+            if (query == null) {
+                throw new FinderException("No query defined for method " + signature);
+            }
         }
+        return executeQuery(query, args);
     }
 
     private List<Object> executeQuery(Query query, Object[] args) {

@@ -166,55 +166,44 @@ public class JtaEntityManager implements EntityManager {
     }
 
     public boolean contains(Object entity) {
-        if (!isTransactionActive()) {
-            return false;
-        }
-        return getEntityManager().contains(entity);
+        return isTransactionActive() && getEntityManager().contains(entity);
     }
 
     public Query createQuery(String qlString) {
         EntityManager entityManager = getEntityManager();
-        try {
-            return entityManager.createQuery(qlString);
-        } finally {
-            closeIfNoTx(entityManager);
-        }
+        Query query = entityManager.createQuery(qlString);
+        return proxyIfNoTx(entityManager, query);
     }
 
     public Query createNamedQuery(String name) {
         EntityManager entityManager = getEntityManager();
-        try {
-            return entityManager.createNamedQuery(name);
-        } finally {
-            closeIfNoTx(entityManager);
-        }
+        Query query = entityManager.createNamedQuery(name);
+        return proxyIfNoTx(entityManager, query);
     }
 
     public Query createNativeQuery(String sqlString) {
         EntityManager entityManager = getEntityManager();
-        try {
-            return entityManager.createNativeQuery(sqlString);
-        } finally {
-            closeIfNoTx(entityManager);
-        }
+        Query query = entityManager.createNativeQuery(sqlString);
+        return proxyIfNoTx(entityManager, query);
     }
 
     public Query createNativeQuery(String sqlString, Class resultClass) {
         EntityManager entityManager = getEntityManager();
-        try {
-            return entityManager.createNativeQuery(sqlString, resultClass);
-        } finally {
-            closeIfNoTx(entityManager);
-        }
+        Query query = entityManager.createNativeQuery(sqlString, resultClass);
+        return proxyIfNoTx(entityManager, query);
     }
 
     public Query createNativeQuery(String sqlString, String resultSetMapping) {
         EntityManager entityManager = getEntityManager();
-        try {
-            return entityManager.createNativeQuery(sqlString, resultSetMapping);
-        } finally {
-            closeIfNoTx(entityManager);
+        Query query = entityManager.createNativeQuery(sqlString, resultSetMapping);
+        return proxyIfNoTx(entityManager, query);
+    }
+
+    private Query proxyIfNoTx(EntityManager entityManager, Query query) {
+        if (!extended && !isTransactionActive()) {
+            return new JtaQuery(entityManager, query);
         }
+        return query;
     }
 
     public void joinTransaction() {
