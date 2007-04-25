@@ -49,6 +49,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.TreeSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -131,6 +133,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         try {
             // initialize the object recipe
             ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
+            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
             Map<String, String> activationProperties = deploymentInfo.getActivationProperties();
@@ -140,6 +143,15 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
             // create the activationSpec
             ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(deploymentInfo.getClassLoader());
+
+            // verify all properties except "destination" and "destinationType" were consumed
+            Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
+            unusedProperties.remove("destination");
+            unusedProperties.remove("destinationType");
+            if (!unusedProperties.isEmpty()) {
+                throw new IllegalArgumentException("No setter found for the activation spec properties: " + unusedProperties);
+            }
+
 
             // validate the activation spec
             try {
