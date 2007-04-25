@@ -194,8 +194,8 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-//        boolean startedTx = startTransaction("query");
-//        try {
+        boolean startedTx = startTransaction("query");
+        try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             EntityManager entityManager = getEntityManager(deploymentInfo);
 
@@ -223,14 +223,14 @@ public class JpaCmpEngine implements CmpEngine {
                 }
             }
             return executeQuery(query, args);
-//        } finally {
-//            commitTransaction(startedTx, "query");
-//        }
+        } finally {
+            commitTransaction(startedTx, "query");
+        }
     }
 
     public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
-//        boolean startedTx = startTransaction("query");
-//        try {
+        boolean startedTx = startTransaction("query");
+        try {
             EntityManager entityManager = getEntityManager(deploymentInfo);
 
             Query query = createNamedQuery(entityManager, signature);
@@ -245,9 +245,9 @@ public class JpaCmpEngine implements CmpEngine {
                 }
             }
             return executeQuery(query, args);
-//        } finally {
-//            commitTransaction(startedTx, "query");
-//        }
+        } finally {
+            commitTransaction(startedTx, "query");
+        }
     }
 
     private List<Object> executeQuery(Query query, Object[] args) {
