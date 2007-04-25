@@ -144,44 +144,7 @@ public class Main {
         if (path == null) {
             URL resource = classLoader.getResource("client.login.conf");
             if (resource != null) {
-                if (!resource.getProtocol().equals("file")) {
-                    resource = copyToTempFile(resource);
-                }
-
-                path = resource.getFile();
-                System.setProperty("java.security.auth.login.config", path);
-            }
-        }
-    }
-
-    private static URL copyToTempFile(URL resource) {
-        InputStream in = null;
-        FileOutputStream out = null;
-        try {
-            File tempFile = File.createTempFile("client.login", ".config");
-            in = resource.openStream();
-            out = new FileOutputStream(tempFile);
-            byte[] buf = new byte[4096];
-            int count;
-            while ((count = in.read(buf)) > 0) {
-                out.write(buf, 0, count);
-            }
-            out.flush();
-            return tempFile.toURL();
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to copy " + resource + " to temp directory", e);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-            }
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
+                System.setProperty("java.security.auth.login.config", resource.toExternalForm());
             }
         }
     }
