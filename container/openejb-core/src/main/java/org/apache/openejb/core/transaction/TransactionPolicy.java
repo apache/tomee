@@ -21,6 +21,7 @@ import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.Logger;
+import org.apache.openjpa.persistence.InvalidStateException;
 
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -30,6 +31,7 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.NotSupportedException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 
 public abstract class TransactionPolicy {
     public Type getPolicyType() {
@@ -215,7 +217,17 @@ public abstract class TransactionPolicy {
     }
 
     protected void logSystemException(Throwable sysException) {
-
+        if (sysException instanceof InvalidStateException) {
+            InvalidStateException invalidStateException = (InvalidStateException) sysException;
+            System.out.println("===== FailedObject" + invalidStateException.getFailedObject());
+            if (invalidStateException.getFailedObject() instanceof Throwable) {
+                Throwable throwable = (Throwable) invalidStateException.getFailedObject();
+                System.out.println("==============================================");
+                throwable.printStackTrace();
+                System.out.println("==============================================");                
+            }
+            System.out.println("===== NestedThrowables" + Arrays.toString(invalidStateException.getNestedThrowables()));
+        }
         logger.error("The bean instances business method encountered a system exception: " + sysException.getMessage(), sysException);
     }
 
