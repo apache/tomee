@@ -129,26 +129,26 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        EntityManager entityManager = getEntityManager(deploymentInfo);
-
         // TODO verify that extract primary key requires a flush followed by a merge
         boolean startedTx = startTransaction("persist");
         creating.get().add(bean);
         try {
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+
             entityManager.persist(bean);
             entityManager.flush();
             bean = entityManager.merge(bean);
+
+            // extract the primary key from the bean
+            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+            Object primaryKey = kg.getPrimaryKey(bean);
+
+            return primaryKey;
         } finally {
             creating.get().remove(bean);
             commitTransaction(startedTx, "persist");
         }
-
-        // extract the primary key from the bean
-        KeyGenerator kg = deploymentInfo.getKeyGenerator();
-        Object primaryKey = kg.getPrimaryKey(bean);
-
-        return primaryKey;
     }
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
@@ -156,6 +156,7 @@ public class JpaCmpEngine implements CmpEngine {
         try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
+
             EntityManager entityManager = getEntityManager(deploymentInfo);
             Object bean = entityManager.find(beanClass, primaryKey);
             return bean;
@@ -193,26 +194,26 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        EntityManager entityManager = getEntityManager(deploymentInfo);
-
-        StringBuilder queryName = new StringBuilder();
-        queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
-        String shortName = queryName.toString();
-        if (queryMethod.getParameterTypes().length > 0) {
-            queryName.append('(');
-            boolean first = true;
-            for (Class<?> parameterType : queryMethod.getParameterTypes()) {
-                if (!first) queryName.append(',');
-                queryName.append(parameterType.getCanonicalName());
-                first = false;
-            }
-            queryName.append(')');
-
-        }
-
         boolean startedTx = startTransaction("query");
         try {
+            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+
+            StringBuilder queryName = new StringBuilder();
+            queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
+            String shortName = queryName.toString();
+            if (queryMethod.getParameterTypes().length > 0) {
+                queryName.append('(');
+                boolean first = true;
+                for (Class<?> parameterType : queryMethod.getParameterTypes()) {
+                    if (!first) queryName.append(',');
+                    queryName.append(parameterType.getCanonicalName());
+                    first = false;
+                }
+                queryName.append(')');
+
+            }
+
             String fullName = queryName.toString();
             Query query = createNamedQuery(entityManager, fullName);
             if (query == null) {
@@ -228,10 +229,10 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
-        EntityManager entityManager = getEntityManager(deploymentInfo);
-
         boolean startedTx = startTransaction("query");
         try {
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+
             Query query = createNamedQuery(entityManager, signature);
             if (query == null) {
                 int parenIndex = signature.indexOf('(');
