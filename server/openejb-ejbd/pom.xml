@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev$ $Date$ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
@@ -30,16 +33,11 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
-
-        <!-- TODO switch to maven version of plugin when it is released -->
-        <!--groupId>org.apache.maven.plugins</groupId-->
-        <!--artifactId>maven-dependency-plugin</artifactId-->
-
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
+            <id>copy</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy</goal>
