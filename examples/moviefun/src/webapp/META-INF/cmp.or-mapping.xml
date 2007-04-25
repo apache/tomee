@@ -1,0 +1,39 @@
+<!DOCTYPE databases PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" "http://castor.exolab.org/mapping.dtd">
+
+<!--
+======================================================
+Mapping for Container-Managed Persistence EntityBeans
+======================================================
+
+The Syntax of this file is defined by Castor
+
+-->
+<mapping>
+
+    <class name="org.acme.movie.MovieBean" identity="movieId" key-generator="MAX">
+
+        <map-to table="movie"/>
+
+        <field name="movieId" type="integer" direct="true">
+            <sql name="movieId" type="integer"/>
+        </field>
+
+        <field name="title" type="string" direct="true">
+            <sql name="title" type="char" dirty="check"/>
+        </field>
+        <field name="director" type="string" direct="true">
+            <sql name="director" type="char" dirty="check"/>
+        </field>
+        <field name="genre" type="string" direct="true">
+            <sql name="genre" type="char" dirty="check"/>
+        </field>
+        <field name="rating" type="integer" direct="true">
+            <sql name="rating" type="integer" dirty="check"/>
+        </field>
+        <field name="releaseDate" type="date" direct="true">
+            <sql name="release_date" type="date" dirty="check"/>
+        </field>
+    </class>
+
+</mapping>
+

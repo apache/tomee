@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Rev: 54661 $ $Date$ -->
+
+<project default="default"
+    xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
+    xmlns:ant="jelly:ant">
+
+    <goal name="default">
+        <attainGoal name="war:install"/>
+    </goal>
+
+    <goal name="jar:deploy">
+        <attainGoal name="war:deploy"/>
+    </goal>
+</project>
