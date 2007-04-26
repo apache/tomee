@@ -43,6 +43,7 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
+            <id>create-empty-directory</id>
             <phase>process-classes</phase>
             <goals>
               <goal>run</goal>
@@ -60,6 +61,7 @@
         <version>2.2-beta-1</version>
         <executions>
           <execution>
+            <id>assembly-bin-distributions</id>
             <phase>package</phase>
             <goals>
               <goal>attached</goal>
@@ -196,6 +198,9 @@
   <profiles>
     <profile>
       <id>itest</id>
+      <properties>
+        <openejb.debug.suspend>n</openejb.debug.suspend>
+      </properties>
       <dependencies>
         <dependency>
           <groupId>org.apache.openejb</groupId>
@@ -273,10 +278,12 @@
                 </goals>
                 <configuration>
                   <executable>java</executable>
+                  <workingDirectory>${project.build.directory}</workingDirectory>
                   <arguments>
-                    <argument>-Dopenejb.home=target/openejb-${pom.version}</argument>
+                    <argument>-Dopenejb.home=openejb-${pom.version}</argument>
                     <argument>-classpath</argument>
                     <classpath />
+                    <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=5005</argument>
                     <argument>org.apache.openejb.test.Main</argument>
                     <argument>local</argument>
                   </arguments>
