@@ -34,28 +34,37 @@ public class TestManager {
     private static TestJms jms;
     private static boolean warn = true;
 
+    // TODO: Move it to a central place where all system properties are managed in a unified way
+    final static String TESTSUITE_PROPERTY_FILENAME = "openejb.testsuite.properties";
+    final static String TEST_SERVER_CLASSNAME = "openejb.test.server";
+    final static String TEST_DATABASE_CLASSNAME = "openejb.test.database";
+    final static String TEST_JMS_CLASSNAME = "openejb.test.jms";
+
     public static void init(String propertiesFileName) throws Exception{
         Properties props = null;
 
         try{
             props = new Properties(System.getProperties());
-            warn = props.getProperty("openejb.test.nowarn") != null;
+            warn = props.getProperty("openejb.test.nowarn") == null;
         } catch (SecurityException e){
             throw new IllegalArgumentException("Cannot access the system properties: "+e.getClass().getName()+" "+e.getMessage());
         }
         
         if (propertiesFileName == null) {
             try{
-                propertiesFileName = System.getProperty("openejb.testsuite.properties");
-                
+                propertiesFileName = System.getProperty(TESTSUITE_PROPERTY_FILENAME);
                 if (propertiesFileName == null) {
-                    if (warn) System.out.println("Warning: No test suite configuration file specified, assuming system properties contain all needed information.  To specify a test suite configuration file by setting its location using the system property \"openejb.testsuite.properties\"");
+                    if (warn) {
+                        // TODO: Avoid using System.out
+                        // TODO: i18n
+                        System.out.println("WARNING: No test suite configuration file specified, assuming system properties contain all needed information.  To specify a test suite configuration file by setting its location using the system property \"" + TESTSUITE_PROPERTY_FILENAME + "\"");
+                    }
                 } else {
                     props.putAll( getProperties( propertiesFileName ) );
                 }
 
             } catch (SecurityException e){
-                throw new IllegalArgumentException("Cannot access the system property \"openejb.testsuite.properties\": "+e.getClass().getName()+" "+e.getMessage());
+                throw new IllegalArgumentException("Cannot access the system property \"" + TESTSUITE_PROPERTY_FILENAME + "\": "+e.getClass().getName()+" "+e.getMessage());
             }
         } else {
             props.putAll( getProperties( propertiesFileName ) );
@@ -122,8 +131,11 @@ public class TestManager {
     private static void initServer(Properties props){
         try{
 
-            String className = props.getProperty("openejb.test.server");
-            if (className == null) throw new IllegalArgumentException("Must specify a test server by setting its class name using the system property \"openejb.test.server\"");
+            String className = props.getProperty(TEST_SERVER_CLASSNAME);
+            if (className == null) {
+                throw new IllegalArgumentException(
+                        "Must specify a test server by setting its class name using the system property \"" + TEST_SERVER_CLASSNAME + "\"");
+            }
             ClassLoader cl = getContextClassLoader();
             Class<?> testServerClass = Class.forName( className, true, cl );
             server = (TestServer)testServerClass.newInstance();
@@ -137,8 +149,8 @@ public class TestManager {
 
     private static void initDatabase(Properties props){
         try{
-            String className = props.getProperty("openejb.test.database");
-            if (className == null) throw new IllegalArgumentException("Must specify a test database by setting its class name  using the system property \"openejb.test.database\"");
+            String className = props.getProperty(TEST_DATABASE_CLASSNAME);
+            if (className == null) throw new IllegalArgumentException("Must specify a test database by setting its class name  using the system property \"" + TEST_DATABASE_CLASSNAME + "\"");
             ClassLoader cl = getContextClassLoader();
             Class<?> testDatabaseClass = Class.forName( className , true, cl);
             database = (TestDatabase)testDatabaseClass.newInstance();
@@ -151,7 +163,7 @@ public class TestManager {
 
     private static void initJms(Properties props){
         try{
-            String className = props.getProperty("openejb.test.jms");
+            String className = props.getProperty(TEST_JMS_CLASSNAME);
             if (className == null) className = "org.apache.openejb.test.ActiveMqTestJms";
             ClassLoader cl = getContextClassLoader();
             Class<?> testJmsClass = Class.forName( className , true, cl);
