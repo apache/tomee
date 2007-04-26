@@ -69,6 +69,40 @@ public class StatefulContext extends BaseSessionContext {
     }
 
     /**
+     * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
+     */
+    public static class LifecycleSessionState extends SessionState {
+
+        public MessageContext getMessageContext() throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public Class getInvokedBusinessInterface() {
+            throw new IllegalStateException();
+        }
+
+        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+            throw new IllegalStateException();
+        }
+
+        public boolean isMessageContextAccessAllowed() {
+            return false;
+        }
+
+        public boolean isTimerAccessAllowed() {
+            return false;
+        }
+
+        public boolean isTimerMethodAllowed() {
+            return false;
+        }
+    }
+
+    /**
      * afterBegin
      * beforeCompletion
      */
