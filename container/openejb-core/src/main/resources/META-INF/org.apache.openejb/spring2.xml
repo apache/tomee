@@ -78,8 +78,8 @@
     #cmpEngineFactory org.apache.openejb.alt.containers.castor_cmp11.CastorCmpEngineFactory
     cmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
 
-    #engine derby
-    engine instantdb
+    engine derby
+    #engine instantdb
 
     connectorName Default JDBC Database
 

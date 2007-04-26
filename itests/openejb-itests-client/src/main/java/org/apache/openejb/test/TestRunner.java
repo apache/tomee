@@ -29,6 +29,8 @@ import java.util.Map;
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
+ *
+ * @version $Rev$ $Date$
  */
 public class TestRunner extends junit.textui.TestRunner {
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
@@ -81,8 +83,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
             try {
                 TestRunner aTestRunner = new TestRunner();
-                TestResult r = aTestRunner
-                        .start(new String[]{"org.apache.openejb.test.ClientTestSuite"});
+                TestResult r = aTestRunner.start(new String[]{"org.apache.openejb.test.ClientTestSuite"});
 
                 System.out.println("");
                 System.out.println("_________________________________________________");
@@ -108,8 +109,8 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runLocalTests() {
         setDefault("openejb.test.server", "org.apache.openejb.test.IvmTestServer");
-//        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
-        setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
+        //setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
