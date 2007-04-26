@@ -17,6 +17,7 @@
 package org.apache.openejb.core;
 
 import java.io.Serializable;
+import java.io.ObjectStreamException;
 import java.security.Identity;
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +36,8 @@ import javax.transaction.UserTransaction;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
+import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.spi.SecurityService;
 
 
@@ -264,5 +267,9 @@ public abstract class BaseContext implements EJBContext, Serializable {
             return true;
         }
 
+    }
+
+    protected Object writeReplace() throws ObjectStreamException {
+        return new IntraVmArtifact(this, true);
     }
 }

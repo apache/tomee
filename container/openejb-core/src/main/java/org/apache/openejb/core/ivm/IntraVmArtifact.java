@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntraVmArtifact implements Externalizable {
-    private static final ThreadLocal<List<Object>> handles = new ThreadLocal<List<Object>>() {
+    private static final List<Object> staticHandles = new ArrayList<Object>();
+
+    private static final ThreadLocal<List<Object>> threadHandles = new ThreadLocal<List<Object>>() {
         protected List<Object> initialValue() {
             return new ArrayList<Object>();
         }
@@ -36,11 +38,21 @@ public class IntraVmArtifact implements Externalizable {
     private static final String NO_ARTIFACT_ERROR = "The artifact this object represents could not be found.";
 
     private int instanceHandle;
+    private boolean staticArtifact;
 
     public IntraVmArtifact(Object obj) {
-        List<Object> list = handles.get();
+        this(obj, false);
+    }
+
+    public IntraVmArtifact(Object obj, boolean storeStatically) {
+        this.staticArtifact = storeStatically;
+        List<Object> list = getHandles(storeStatically);
         instanceHandle = list.size();
         list.add(obj);
+    }
+
+    private static List<Object> getHandles(boolean staticArtifact) {
+        return (staticArtifact)? staticHandles: threadHandles.get();
     }
 
     public IntraVmArtifact() {
@@ -55,7 +67,7 @@ public class IntraVmArtifact implements Externalizable {
     }
 
     protected Object readResolve() throws ObjectStreamException {
-        List<Object> list = handles.get();
+        List<Object> list = getHandles(staticArtifact);
         Object artifact = list.get(instanceHandle);
         if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
         // todo WHY?
