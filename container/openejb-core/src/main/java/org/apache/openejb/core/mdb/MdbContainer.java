@@ -192,10 +192,10 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod, args, primKey);
+        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deploymentId, Method method, Object[] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deploymentId, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
         // get the target deployment (MDB)
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
         if (deployInfo == null) throw new SystemException("Unknown deployment " + deploymentId);

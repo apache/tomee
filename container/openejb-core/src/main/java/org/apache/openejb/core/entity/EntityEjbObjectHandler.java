@@ -17,7 +17,6 @@
 package org.apache.openejb.core.entity;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.openejb.Container;
@@ -86,9 +85,9 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
 
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        Object value = container.invoke(deploymentID, method, args, primaryKey);
+        Object value = container.invoke(deploymentID, interfce, method, args, primaryKey);
         /* 
         * This operation takes care of invalidating all the EjbObjectProxyHanders associated with 
         * the same RegistryId. See this.createProxy().

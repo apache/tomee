@@ -25,6 +25,6 @@ public interface RpcContainer extends Container {
      */
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException;
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws OpenEJBException;
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException;
 
 }

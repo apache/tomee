@@ -86,6 +86,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected final InterfaceType interfaceType;
     protected final List<Class> interfaces;
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
+    protected final Class mainInterface;
 
     public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
         this.container = (RpcContainer) deploymentInfo.getContainer();
@@ -106,6 +107,49 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (!interfaceType.isLocal()){
             doIntraVmCopy = REMOTE_COPY_ENABLED;
         }
+
+        if (interfaceType.isHome()){
+            mainInterface = deploymentInfo.getInterface(interfaceType);
+        } else {
+            // Then arbitrarily pick the first interface
+            mainInterface = interfaces.get(0);
+        }
+    }
+
+    /**
+     * This method should be called to determine the corresponding
+     * business interface class to name as the invoking interface.
+     * This method should NOT be called on non-business-interface
+     * methods the proxy has such as java.lang.Object or IntraVmProxy.
+     * @param method
+     * @return the business (or component) interface matching this method
+     */
+    protected Class<?> getInvokedInterface(Method method) {
+        // Home's only have one interface ever.  We don't
+        // need to verify that the method invoked is in
+        // it's interface.
+        if (interfaceType.isHome()) return mainInterface;
+
+        Class declaringClass = method.getDeclaringClass();
+
+        // If our "main" interface is or extends the method's declaring class
+        // then we're good.  We know the main interface has the method being
+        // invoked and it's safe to return it as the invoked interface.
+        if (declaringClass.isAssignableFrom(mainInterface)){
+            return mainInterface;
+        }
+
+        // If the method being invoked isn't in the "main" interface
+        // we need to find a suitable interface or throw an exception.
+        for (Class secondaryInterface : interfaces) {
+            if (declaringClass.isAssignableFrom(secondaryInterface)){
+                return secondaryInterface;
+            }
+        }
+
+        // We couldn't find an implementing interface.  Where did this
+        // method come from???  Freak occurence.  Throw an exception.
+        throw new IllegalStateException("Received method invocation and cannot determine corresponding business interface: method=" + method);
     }
 
     private static boolean parseRemoteCopySetting() {
@@ -165,9 +209,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 throw new UnsupportedOperationException("Unkown method: " + method);
         }
 
-
-        String jndiEnc = System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
-//        System.setProperty(javax.naming.Context.URL_PKG_PREFIXES,"org.apache.openejb.core.ivm.naming");
+        Class interfce = getInvokedInterface(method);
 
         // Should we copy arguments as required by the specification?
         if (doIntraVmCopy && !doCrossClassLoaderCopy) {
@@ -182,7 +224,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
             Object returnObj = null;
             try {
-                returnObj = _invoke(proxy, method, args);
+                returnObj = _invoke(proxy, interfce, method, args);
             } catch (Throwable throwable) {
                 // exceptions are return values and must be coppied
                 IntraVmCopyMonitor.preCopyOperation();
@@ -213,6 +255,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     args = copyArgs(args);
                 }
                 method = copyMethod(method);
+                interfce = (Class) copyObj(interfce);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldClassLoader);
                 IntraVmCopyMonitor.postCrossClassLoaderOperation();
@@ -221,7 +264,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             // invoke method
             Object returnObj = null;
             try {
-                returnObj = _invoke(proxy, method, args);
+                returnObj = _invoke(proxy, interfce, method, args);
             } catch (Throwable throwable) {
                 // exceptions are return values and must be coppied
                 IntraVmCopyMonitor.preCrossClassLoaderOperation();
@@ -255,7 +298,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                      * property in the static block for this class.
                      */
 
-                return _invoke(proxy, method, args);
+                return _invoke(proxy, interfce, method, args);
             } catch (TransactionRequiredException e) {
                 if (interfaceType.isBusiness()) {
                     throw new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
@@ -306,6 +349,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
     }
+
+    /**
+     * Method instance on proxies that come from a classloader outside
+     * the bean's classloader need to be swapped out for the identical
+     * method in the bean's classloader.
+     *
+     * @param method
+     * @return return's the same method but loaded from the beans classloader
+     */
 
     private Method copyMethod(Method method) throws Exception {
         int parameterCount = method.getParameterTypes().length;
@@ -361,7 +413,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
     }
 
-    protected abstract Object _invoke(Object proxy, Method method, Object[] args) throws Throwable;
+    protected abstract Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable;
 
     protected Object[] copyArgs(Object[] objects) throws IOException, ClassNotFoundException {
         /* 

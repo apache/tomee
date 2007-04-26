@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.ejb.EJBAccessException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -196,7 +194,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -210,7 +208,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -224,7 +222,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -246,7 +244,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -322,7 +320,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -344,7 +342,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -358,7 +356,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodInstance(),
+                req.getMethodClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );

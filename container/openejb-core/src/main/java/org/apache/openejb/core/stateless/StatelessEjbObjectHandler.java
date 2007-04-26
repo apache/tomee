@@ -17,7 +17,6 @@
 package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.Container;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -25,7 +24,6 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
@@ -63,7 +61,7 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
         // stateless can't be removed
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         // stateless can't be removed
         return null;
     }

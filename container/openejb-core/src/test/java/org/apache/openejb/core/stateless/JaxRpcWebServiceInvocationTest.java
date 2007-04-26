@@ -116,7 +116,7 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
 
         Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        String value = (String)container.invoke("EchoBean", echoMethod, args, null);
+        String value = (String) container.invoke("EchoBean", echoMethod.getDeclaringClass(), echoMethod, args, null);
 
         assertCalls(Call.values());
         calls.clear();

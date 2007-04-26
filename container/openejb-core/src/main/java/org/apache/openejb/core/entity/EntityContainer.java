@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.List;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -137,10 +136,10 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod, args, primKey);
+        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws org.apache.openejb.OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws org.apache.openejb.OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
         

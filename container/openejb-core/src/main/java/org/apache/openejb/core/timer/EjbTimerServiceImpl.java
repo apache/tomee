@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.lang.reflect.Method;
 
 public class EjbTimerServiceImpl implements EjbTimerService {
     private static final Logger log = Logger.getInstance("Timer", "org.apache.openejb.util.resources");
@@ -143,7 +144,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         // make sure it was removed from the strore
         timerStore.removeTimer(timerData.getId());
     }
-    
+
     /**
      * Returns a timerData to the TimerStore, if a cancel() is rolled back.
      * @param timerData the timer to be returned to the timer store
@@ -249,7 +250,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             throw new IllegalStateException("TimerService method not permitted for current operation " + ThreadContext.getThreadContext().getCurrentOperation().name());
         }
     }
-    
+
     /**
      * This method calls the ejbTimeout method and starts a transaction if the timeout is transacted.
      *
@@ -278,7 +279,8 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 // call the timeout method
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
-                    container.invoke(deployment.getDeploymentID(), deployment.getEjbTimeout(), new Object[] {timer}, timerData.getPrimaryKey());
+                    Method ejbTimeout = deployment.getEjbTimeout();
+                    container.invoke(deployment.getDeploymentID(), ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] {timer}, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     // exception from a timer does not necessairly mean failure
                     log.warning("RuntimeException from ejbTimeout on " + deployment.getDeploymentID(), e);

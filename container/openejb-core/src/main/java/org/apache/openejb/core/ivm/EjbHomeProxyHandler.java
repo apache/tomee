@@ -136,7 +136,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected abstract EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces);
 
-    protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    protected Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable {
 
         if (logger.isInfoEnabled()) {
             logger.info("invoking method " + method.getName() + " on " + deploymentID);
@@ -149,15 +149,15 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             MethodType operation = dispatchTable.get(methodName);
 
             if (operation == null) {
-                retValue = homeMethod(method, args, proxy);
+                retValue = homeMethod(interfce, method, args, proxy);
             } else {
                 switch (operation) {
                     /*-- CREATE ------------- <HomeInterface>.create(<x>) ---*/
                     case CREATE:
-                        retValue = create(method, args, proxy);
+                        retValue = create(interfce, method, args, proxy);
                         break;
                     case FIND:
-                        retValue = findX(method, args, proxy);
+                        retValue = findX(interfce, method, args, proxy);
                         break;
                         /*-- GET EJB METADATA ------ EJBHome.getEJBMetaData() ---*/
                     case META_DATA:
@@ -173,10 +173,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
                         /*-- HANDLE ------- EJBHome.remove(Handle handle) ---*/
                         if (javax.ejb.Handle.class.isAssignableFrom(type)) {
-                            retValue = removeWithHandle(method, args, proxy);
+                            retValue = removeWithHandle(interfce, method, args, proxy);
                         } else {
                             /*-- PRIMARY KEY ----- EJBHome.remove(Object key) ---*/
-                            retValue = removeByPrimaryKey(method, args, proxy);
+                            retValue = removeByPrimaryKey(interfce, method, args, proxy);
                         }
                         break;
                     }
@@ -257,18 +257,18 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     /*  Home interface methods                         */
     /*-------------------------------------------------*/
 
-    protected Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object homeMethod(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return container.invoke(deploymentID, method, args, null);
+        return container.invoke(deploymentID, interfce, method, args, null);
     }
 
-    protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
-        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, method, args, null);
+    protected Object create(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, interfce, method, args, null);
         assert proxyInfo != null : "Container returned a null ProxyInfo: ContainerID=" + container.getContainerID();
         return createProxy(proxyInfo.getPrimaryKey());
     }
 
-    protected abstract Object findX(Method method, Object[] args, Object proxy) throws Throwable;
+    protected abstract Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 
     /*-------------------------------------------------*/
     /*  EJBHome methods                                */
@@ -319,7 +319,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         }
     }
 
-    protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeWithHandle(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
 
         IntraVmHandle handle = (IntraVmHandle) args[0];
         Object primKey = handle.getPrimaryKey();
@@ -331,7 +331,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, method, args, primKey);
+        container.invoke(deploymentID, interfce, method, args, primKey);
 
         /*
          * This operation takes care of invalidating all the EjbObjectProxyHanders associated with
@@ -343,5 +343,5 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         return null;
     }
 
-    protected abstract Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
+    protected abstract Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 }

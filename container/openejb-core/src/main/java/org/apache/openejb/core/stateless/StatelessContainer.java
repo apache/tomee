@@ -128,10 +128,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod, args, primKey);
+        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
 

@@ -51,7 +51,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     public abstract Object getRegistryId();
 
-    public Object _invoke(Object p, Method m, Object[] a) throws Throwable {
+    public Object _invoke(Object p, Class interfce, Method m, Object[] a) throws Throwable {
         java.lang.Object retValue = null;
         java.lang.Throwable exc = null;
 
@@ -62,7 +62,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             Integer operation = (Integer) dispatchTable.get(m.getName());
 
             if (operation == null) {
-                retValue = businessMethod(m, a, p);
+                retValue = businessMethod(interfce, m, a, p);
             } else {
                 switch (operation.intValue()) {
                     case 1:
@@ -75,7 +75,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         retValue = isIdentical(m, a, p);
                         break;
                     case 4:
-                        retValue = remove(m, a, p);
+                        retValue = remove(interfce, m, a, p);
                         break;
                     case 5:
                         retValue = getEJBHome(m, a, p);
@@ -200,11 +200,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected abstract Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable;
 
-    protected abstract Object remove(Method method, Object[] args, Object proxy) throws Throwable;
+    protected abstract Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 
-    protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object businessMethod(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
 //        checkAuthorization(method);
-        return container.invoke(deploymentID, method, args, primaryKey);
+        return container.invoke(deploymentID, interfce, method, args, primaryKey);
     }
 
     public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType) {

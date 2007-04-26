@@ -32,11 +32,11 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
     }
 
     public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return container.invoke(deployID, callMethod, args, primKey);
+        return container.invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
-        return container.invoke(deployID, callMethod, args, primKey);
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
+        return container.invoke(deployID, callInterface, callMethod, args, primKey);
     }
 
     public ContainerType getContainerType() {

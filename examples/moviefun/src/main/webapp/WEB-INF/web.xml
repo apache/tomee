@@ -6,11 +6,11 @@
 
     <servlet>
         <servlet-name>loader</servlet-name>
-        <servlet-class>org.openejb.loader.LoaderServlet</servlet-class>
+        <servlet-class>org.apache.openejb.loader.LoaderServlet</servlet-class>
 
         <init-param>
             <param-name>openejb.home</param-name>
-            <param-value>/Users/dblevins/work/openejb1/target/openejb-1.0-SNAPSHOT</param-value>
+            <param-value>/Users/dblevins/work/openejb3/assembly-standalone/target/openejb-3.0-SNAPSHOT-incubating</param-value>
         </init-param>
 
         <init-param>

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -24,7 +23,6 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
@@ -47,9 +45,9 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         return new Boolean(primaryKey.equals(handler.primaryKey));
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        Object value = container.invoke(deploymentID, method, args, primaryKey);
+        Object value = container.invoke(deploymentID, interfce, method, args, primaryKey);
 
         invalidateAllHandlers(getRegistryId());
         return value;

@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.lang.reflect.Method;
 
 /**
@@ -121,7 +120,7 @@ public class JaxWsWebServiceInvocationTest extends TestCase {
 
         Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        String value = (String)container.invoke("EchoBean", echoMethod, args, null);
+        String value = (String) container.invoke("EchoBean", echoMethod.getDeclaringClass(), echoMethod, args, null);
 
         assertCalls(Call.values());
         calls.clear();
@@ -188,12 +187,12 @@ public class JaxWsWebServiceInvocationTest extends TestCase {
             }
             
             // test @Resource WebServiceContext injection
-            junit.framework.Assert.assertNotNull("web service context should not be null", wsContext);  
+            junit.framework.Assert.assertNotNull("web service context should not be null", wsContext);
             junit.framework.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
-            
+
             junit.framework.Assert.assertFalse("user in role 'foo'", wsContext.isUserInRole("foo"));
             junit.framework.Assert.assertNull("user principal", wsContext.getUserPrincipal());
-            
+
             calls.add(Call.Bean_Invoke_BEFORE);
             Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);

@@ -71,7 +71,7 @@ public class EjbContainerProvider extends RPCProvider {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = handlerInfos;
     }
-    
+
     public void processMessage(MessageContext msgContext, SOAPEnvelope reqEnv, SOAPEnvelope resEnv, Object obj) throws Exception {
 
         RPCElement body = getBody(reqEnv, msgContext);
@@ -88,8 +88,9 @@ public class EjbContainerProvider extends RPCProvider {
 
             Object[] arguments = {msgContext, interceptor};
 
-            Object result = container.invoke(ejbDeployment.getDeploymentID(), operation.getMethod(), arguments, null);
-            
+            Class callInterface = ejbDeployment.getServiceEndpointInterface();
+            Object result = container.invoke(ejbDeployment.getDeploymentID(), callInterface, operation.getMethod(), arguments, null);
+
             interceptor.createResult(result);
         } catch (InvalidateReferenceException e) {
             interceptor.createExceptionResult(e.getCause());
@@ -119,7 +120,7 @@ public class EjbContainerProvider extends RPCProvider {
             this.messageContext = msgContext;
             this.operation = operation;
         }
-        
+
         @AroundInvoke
         public Object intercept(InvocationContext context) throws Exception {
             HandlerChain handlerChain = new HandlerChainImpl(handlerInfos);
@@ -151,10 +152,10 @@ public class EjbContainerProvider extends RPCProvider {
                 }
 
                 handlerChain.handleResponse(messageContext);
-                
+
                 if (!handlerChain.isEmpty()) {
-                    /* 
-                     * Deserialize the result value from soap msg as handers could have 
+                    /*
+                     * Deserialize the result value from soap msg as handers could have
                      * changed it.
                      */
                     try {
@@ -169,7 +170,7 @@ public class EjbContainerProvider extends RPCProvider {
                 handlerChain.destroy();
             }
         }
-        
+
         public Object[] getArguments() {
             try {
                 return demarshallArguments();
@@ -177,7 +178,7 @@ public class EjbContainerProvider extends RPCProvider {
                 throw (IllegalStateException) new IllegalStateException("Cannot demarshal the soap parts into arguments").initCause(e);
             }
         }
-        
+
         private Object[] demarshallArguments() throws Exception {
             SOAPMessage message = messageContext.getMessage();
             messageContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION, Boolean.TRUE);
@@ -205,7 +206,7 @@ public class EjbContainerProvider extends RPCProvider {
                 for (int i = 0; i < args.size(); i++) {
                     RPCParam rpcParam = (RPCParam) args.get(i);
                     Object value = rpcParam.getObjectValue();
-                    
+
                     ParameterDesc paramDesc = rpcParam.getParamDesc();
 
                     if (paramDesc != null && paramDesc.getJavaType() != null) {
@@ -223,7 +224,7 @@ public class EjbContainerProvider extends RPCProvider {
 
         private Object demarshallResult() throws Exception {
             Message resMsg = messageContext.getResponseMessage();
-            
+
             /*
              * This is not the most efficient way to deserialize the result
              * but could not find better or more reliable way to do this.
@@ -231,17 +232,17 @@ public class EjbContainerProvider extends RPCProvider {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             resMsg.writeTo(out);
             ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            
-            DeserializationContext dser = 
+
+            DeserializationContext dser =
                 new DeserializationContext(new InputSource(in), resMsg.getMessageContext(), null);
             dser.parse();
             SOAPEnvelope responseEnvelope = dser.getEnvelope();
-            
+
             SOAPBodyElement bodyEl = responseEnvelope.getFirstBody();
             if (bodyEl == null) {
                 return null;
             }
-            
+
             QName returnType = operation.getReturnType();
             if (XMLType.AXIS_VOID.equals(returnType)) {
                 return null;
@@ -290,7 +291,7 @@ public class EjbContainerProvider extends RPCProvider {
             if (operation.getReturnClass() != null) {
                 result = JavaUtils.convert(result, operation.getReturnClass());
             }
-            
+
             return result;
         }
 
@@ -315,7 +316,7 @@ public class EjbContainerProvider extends RPCProvider {
 
         public void createExceptionResult(Throwable exception) {
             messageContext.setPastPivot(true);
-            
+
             AxisFault axisFault = null;
             if (exception instanceof Exception) {
                 axisFault = AxisFault.makeFault((Exception)exception);
@@ -323,7 +324,7 @@ public class EjbContainerProvider extends RPCProvider {
             } else {
                 axisFault = new AxisFault("Server", "Server Error", null, null);
             }
-            
+
             SOAPFault fault = new SOAPFault(axisFault);
             SOAPEnvelope envelope = new SOAPEnvelope();
             envelope.addBodyElement(fault);

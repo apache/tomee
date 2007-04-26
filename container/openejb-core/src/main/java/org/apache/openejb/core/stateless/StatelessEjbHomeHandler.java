@@ -17,7 +17,6 @@
 package org.apache.openejb.core.stateless;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.RemoveException;
@@ -33,15 +32,15 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
         super(deploymentInfo, interfaceType, interfaces);
     }
 
-    protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         throw new UnsupportedOperationException("Stateful beans may not have find methods");
     }
 
-    protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeWithHandle(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         // stateless can't be removed
         return null;
     }

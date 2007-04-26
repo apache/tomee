@@ -43,11 +43,11 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
     }
 
-    protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         throw new UnsupportedOperationException("Stateful beans may not have find methods");
     }
 
-    protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
