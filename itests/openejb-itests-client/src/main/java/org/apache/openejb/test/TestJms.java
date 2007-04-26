@@ -20,6 +20,9 @@ package org.apache.openejb.test;
 import javax.jms.ConnectionFactory;
 import java.util.Properties;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public interface TestJms {
     void init(Properties props);
     ConnectionFactory getConnectionFactory();

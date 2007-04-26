@@ -30,7 +30,7 @@ public class JaxbUnmarshallerTest extends TestCase {
 
     public final void testUnmarshalURL() {
         try {
-            final URL applicationXmlUrl = new File("target/test-classes/META-INF/application.xml").toURL();
+            final URL applicationXmlUrl = getClass().getClassLoader().getResource("META-INF/application.xml");
             JaxbUnmarshaller unmarshaller = new JaxbUnmarshaller(Application.class, "META-INF/application.xml");
             unmarshaller.unmarshal(applicationXmlUrl);
         } catch (Exception e) {

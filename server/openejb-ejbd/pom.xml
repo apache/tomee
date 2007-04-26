@@ -60,14 +60,15 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- DEBUG: Uncomment this line and comment out the next -->
-          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar=foo=bar</argLine>
+          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
+          <argLine>-javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>
           <systemProperties>
             <property>
               <name>openejb.home</name>
-              <value>${basedir}/target/test-classes</value>
+              <value>${project.build.directory}/test-classes</value>
             </property>
           </systemProperties>
+          <basedir>${project.build.directory}</basedir>
         </configuration>
       </plugin>
     </plugins>

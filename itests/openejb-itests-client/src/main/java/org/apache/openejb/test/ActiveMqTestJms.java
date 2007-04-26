@@ -22,6 +22,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import javax.jms.ConnectionFactory;
 import java.util.Properties;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class ActiveMqTestJms implements TestJms {
     public void init(Properties props) {
     }

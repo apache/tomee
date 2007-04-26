@@ -24,6 +24,8 @@ import org.apache.openejb.test.TestManager;
  * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
+ *
+ * @version $Rev$ $Date$
  */
 public class StatelessJndiEncTests extends StatelessTestClient{
 
