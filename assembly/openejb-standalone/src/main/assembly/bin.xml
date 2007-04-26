@@ -73,7 +73,6 @@
       <scope>runtime</scope>
       <excludes>
           <exclude>junit:junit</exclude>
-          <exclude>org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
