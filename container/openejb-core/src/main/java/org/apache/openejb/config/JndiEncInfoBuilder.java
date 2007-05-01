@@ -198,6 +198,7 @@ public class JndiEncInfoBuilder {
         // Remote: Interfaces(home,object) -> deploymentId
         if (bean.remote != null) {
             remoteInterfaces.put(new Interfaces(bean.home, bean.remote), bean.ejbDeploymentId);
+            remoteInterfaces.put(new Interfaces(bean.remote), bean.ejbDeploymentId);
         }
         for (String businessRemote : bean.businessRemote) {
             remoteInterfaces.put(new Interfaces(businessRemote), bean.ejbDeploymentId);
@@ -206,6 +207,7 @@ public class JndiEncInfoBuilder {
         // Local: Interfaces(home,object) -> deploymentId
         if (bean.local != null) {
             localInterfaces.put(new Interfaces(bean.localHome, bean.local), bean.ejbDeploymentId);
+            localInterfaces.put(new Interfaces(bean.local), bean.ejbDeploymentId);
         }
         for (String businessLocal : bean.businessLocal) {
             localInterfaces.put(new Interfaces(businessLocal), bean.ejbDeploymentId);
