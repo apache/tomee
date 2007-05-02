@@ -109,6 +109,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         }
 
         public Object getBusinessObject(Class interfce) {
+            if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
+
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
@@ -116,7 +118,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             InterfaceType interfaceType = di.getInterfaceType(interfce);
 
             if (interfaceType == null){
-                throw new IllegalArgumentException("Component has no such interface: " + interfce.getName());
+                throw new IllegalStateException("Component has no such interface: " + interfce.getName());
             }
 
             if (!interfaceType.isBusiness()) {
@@ -148,12 +150,14 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
         public Class getInvokedBusinessInterface() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-            Class methodClass = threadContext.get(Method.class).getDeclaringClass();
+            Class invokedInterface = threadContext.getInvokedInterface();
+            InterfaceType type = threadContext.getDeploymentInfo().getInterfaceType(invokedInterface);
+            if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
 
-            if (di.getBusinessLocalInterface() != null && di.getBusinessLocalInterface().isAssignableFrom(methodClass)) return di.getBusinessLocalInterface();
-            else if (di.getBusinessRemoteInterface() != null && di.getBusinessRemoteInterface().isAssignableFrom(methodClass)) return di.getBusinessRemoteInterface();
-            else throw new InternalErrorException("Should have found some business interface");
+            if (invokedInterface == null){
+                throw new IllegalStateException("Business interface not set into ThreadContext.");
+            }
+            return invokedInterface;
         }
     }
 

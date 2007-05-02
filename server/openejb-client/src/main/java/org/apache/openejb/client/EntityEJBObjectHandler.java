@@ -58,13 +58,7 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
 
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE);
-
-        req.setMethodParameters(args);
-        req.setMethodInstance(method);
-        req.setDeploymentCode(ejb.deploymentCode);
-        req.setDeploymentId(ejb.deploymentID);
-        req.setPrimaryKey(primaryKey);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey);
 
         EJBResponse res = request(req);
 

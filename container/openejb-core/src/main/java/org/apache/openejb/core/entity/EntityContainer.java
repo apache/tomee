@@ -146,7 +146,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, null);
+            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 

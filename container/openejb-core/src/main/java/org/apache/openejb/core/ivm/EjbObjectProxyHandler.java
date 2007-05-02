@@ -192,7 +192,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             */
         } else {
             ApplicationServer applicationServer = ServerFederation.getApplicationServer();
-            return applicationServer.getEJBObject(this.getProxyInfo());
+            if (interfaceType.isBusiness()){
+                return applicationServer.getBusinessObject(this.getProxyInfo());
+            } else {
+                return applicationServer.getEJBObject(this.getProxyInfo());
+            }
         }
     }
 

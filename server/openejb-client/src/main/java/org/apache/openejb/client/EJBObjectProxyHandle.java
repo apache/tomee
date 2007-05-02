@@ -37,13 +37,8 @@ public class EJBObjectProxyHandle implements Externalizable {
 
         handler.client.writeExternal(out);
 
-        EJBMetaDataImpl ejb = handler.ejb;
-        out.writeObject(ejb.homeClass);
-        out.writeObject(ejb.remoteClass);
-        out.writeObject(ejb.keyClass);
-        out.writeByte(ejb.type);
-        out.writeUTF(ejb.deploymentID);
-        out.writeShort(ejb.deploymentCode);
+        handler.ejb.writeExternal(out);
+
         handler.server.writeExternal(out);
         out.writeObject(handler.primaryKey);
     }
@@ -55,14 +50,10 @@ public class EJBObjectProxyHandle implements Externalizable {
 
         client.readExternal(in);
 
-        ejb.homeClass = (Class) in.readObject();
-        ejb.remoteClass = (Class) in.readObject();
-        ejb.keyClass = (Class) in.readObject();
-        ejb.type = in.readByte();
-        ejb.deploymentID = in.readUTF();
-        ejb.deploymentCode = in.readShort();
+        ejb.readExternal(in);
 
         server.readExternal(in);
+
         Object primaryKey = in.readObject();
 
         handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);

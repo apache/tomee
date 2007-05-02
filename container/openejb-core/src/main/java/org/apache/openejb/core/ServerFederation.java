@@ -52,6 +52,10 @@ public class ServerFederation implements ApplicationServer {
         return getApplicationServer().getEJBHome(proxyInfo);
     }
 
+    public Object getBusinessObject(ProxyInfo proxyInfo) {
+        return getApplicationServer().getBusinessObject(proxyInfo);
+    }
+
     public static void setApplicationServer(ApplicationServer server) {
         // todo why do we restrict null?  This makes call to setApplicationServer non symetrical. Throw an exception?
         if (server != null) {

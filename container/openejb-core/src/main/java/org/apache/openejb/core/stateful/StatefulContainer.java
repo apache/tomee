@@ -235,18 +235,18 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         switch (methodType) {
             case CREATE:
-                ProxyInfo proxyInfo = createEJBObject(deployInfo, callMethod, args);
+                ProxyInfo proxyInfo = createEJBObject(deployInfo, callInterface, callMethod, args);
                 return proxyInfo;
             case REMOVE:
-                removeEJBObject(deployInfo, primKey, callMethod, args);
+                removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
                 return null;
             default:
-                Object value = businessMethod(deployInfo, primKey, callMethod, args);
+                Object value = businessMethod(deployInfo, primKey, callInterface, callMethod, args);
                 return value;
         }
     }
 
-    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object [] args) throws OpenEJBException {
+    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Class callInterface, Method callMethod, Object [] args) throws OpenEJBException {
         // generate a new primary key
         Object primaryKey = newPrimaryKey();
 
@@ -257,7 +257,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
 
         try {
-            checkAuthorization(deploymentInfo, callMethod);
+            checkAuthorization(deploymentInfo, callMethod, callInterface);
 
             // create the extended entity managers
             Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
@@ -289,11 +289,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         return new VMID();
     }
 
-    protected void removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Method callMethod, Object[] args) throws OpenEJBException {
+    protected void removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            checkAuthorization(deploymentInfo, callMethod);
+            checkAuthorization(deploymentInfo, callMethod, callInterface);
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
             StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
 
@@ -301,9 +301,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             boolean retain = false;
             try {
-                    callContext.setCurrentAllowedStates(StatefulContext.getStates());
-                    
+                callContext.setCurrentAllowedStates(StatefulContext.getStates());
                 callContext.setCurrentOperation(Operation.REMOVE);
+                callContext.setInvokedInterface(callInterface);
 
                 Class<?> declaringClass = callMethod.getDeclaringClass();
                 if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
@@ -349,15 +349,16 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    private Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Method callMethod, Object[] args) throws OpenEJBException {
+    private Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            checkAuthorization(deploymentInfo, callMethod);
+            checkAuthorization(deploymentInfo, callMethod, callInterface);
 
             Object bean = instanceManager.obtainInstance(primKey, callContext);
             callContext.setCurrentOperation(Operation.BUSINESS);
             callContext.setCurrentAllowedStates(StatefulContext.getStates());
+            callContext.setInvokedInterface(callInterface);
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -376,8 +377,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod) throws ApplicationException {
-        boolean authorized = securityService.isCallerAuthorized(callMethod, null);
+    private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod, Class callInterface) throws ApplicationException {
+        boolean authorized = securityService.isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
         if (!authorized) {
             throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
         }

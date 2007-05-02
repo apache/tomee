@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 import java.rmi.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import javax.rmi.CORBA.Tie;
 import javax.rmi.CORBA.Stub;
@@ -46,16 +45,22 @@ public class EJBRequest implements Request {
     public static final int ENTITY_CM_PERSISTENCE = 9;
 
     public EJBRequest() {
-        body = new Body();
+        body = new Body(null);
     }
 
-    public EJBRequest(int requestMethod) {
-        body = new Body();
+    public EJBRequest(int requestMethod, EJBMetaDataImpl ejb, Method method, Object[] args, Object primaryKey) {
+        body = new Body(ejb);
+
         this.requestMethod = requestMethod;
+        setDeploymentCode(ejb.deploymentCode);
+        setDeploymentId(ejb.deploymentID);
+        setMethodInstance(method);
+        setMethodParameters(args);
+        setPrimaryKey(primaryKey);
     }
 
-    public Class getMethodClass() {
-        return body.getMethodClass();
+    public Class getInterfaceClass() {
+        return body.getInterfaceClass();
     }
 
     public Method getMethodInstance() {
@@ -99,13 +104,19 @@ public class EJBRequest implements Request {
     }
 
     public static class Body implements java.io.Externalizable {
+        private transient EJBMetaDataImpl ejb;
         private transient ORB orb; 
         private transient Method methodInstance;
-        private transient Class methodClass;
+        private transient Class interfaceClass;
+//        private transient Class methodClass;
         private transient String methodName;
         private transient Class[] methodParamTypes;
         private transient Object[] methodParameters;
         private transient Object primaryKey;
+
+        public Body(EJBMetaDataImpl ejb) {
+            this.ejb = ejb;
+        }
 
         public Method getMethodInstance() {
             return methodInstance;
@@ -119,8 +130,8 @@ public class EJBRequest implements Request {
             return primaryKey;
         }
 
-        public Class getMethodClass() {
-            return methodClass;
+        public Class getInterfaceClass() {
+            return interfaceClass;
         }
 
         public String getMethodName() {
@@ -133,9 +144,30 @@ public class EJBRequest implements Request {
 
         public void setMethodInstance(Method methodInstance) {
             this.methodInstance = methodInstance;
-            this.methodClass = methodInstance.getDeclaringClass();
             this.methodName = methodInstance.getName();
             this.methodParamTypes = methodInstance.getParameterTypes();
+            Class methodClass = methodInstance.getDeclaringClass();
+
+            if (ejb.homeClass != null) {
+                if (methodClass.isAssignableFrom(ejb.homeClass)){
+                    this.interfaceClass = ejb.homeClass;
+                    return;
+                }
+            }
+
+            if (ejb.remoteClass != null) {
+                if (methodClass.isAssignableFrom(ejb.remoteClass)){
+                    this.interfaceClass = ejb.remoteClass;
+                    return;
+                }
+            }
+
+            for (Class businessClass : ejb.businessClasses) {
+                if (methodClass.isAssignableFrom(businessClass)){
+                    this.interfaceClass = businessClass;
+                    return;
+                }
+            }
         }
 
         public void setMethodParameters(Object[] methodParameters) {
@@ -149,12 +181,13 @@ public class EJBRequest implements Request {
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             ClassNotFoundException result = null;
             primaryKey = null;
-            methodClass = null;
+//            methodClass = null;
             methodName = null;
             methodInstance = null;
             try {
                 primaryKey = in.readObject();
-                methodClass = (Class) in.readObject();
+                interfaceClass = (Class) in.readObject();
+//                methodClass = (Class) in.readObject();
             } catch (ClassNotFoundException cnfe) {
                 if (result == null) result = cnfe;
             }
@@ -166,9 +199,9 @@ public class EJBRequest implements Request {
                 if (result == null) result = cnfe;
             }
 
-            if (methodClass != null) {
+            if (interfaceClass != null) {
                 try {
-                    methodInstance = methodClass.getDeclaredMethod(methodName, methodParamTypes);
+                    methodInstance = interfaceClass.getMethod(methodName, methodParamTypes);
                 } catch (NoSuchMethodException nsme) {
                     //if (result == null) result = nsme;
                 }
@@ -180,7 +213,8 @@ public class EJBRequest implements Request {
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeObject(primaryKey);
 
-            out.writeObject(methodClass);
+            out.writeObject(interfaceClass);
+//            out.writeObject(methodClass);
             out.writeUTF(methodName);
 
             writeMethodParameters(out, methodParamTypes, methodParameters);

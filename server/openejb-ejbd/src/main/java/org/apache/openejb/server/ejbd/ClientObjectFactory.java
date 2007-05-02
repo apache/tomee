@@ -46,30 +46,6 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
-        return _getEJBMetaData(call, info);
-    }
-
-    public javax.ejb.Handle getHandle(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        return _getHandle(call, info);
-    }
-
-    public javax.ejb.HomeHandle getHomeHandle(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        return _getHomeHandle(call, info);
-    }
-
-    public javax.ejb.EJBObject getEJBObject(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        return _getEJBObject(call, info);
-    }
-
-    public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        return _getEJBHome(call, info);
-    }
-
-    protected javax.ejb.EJBMetaData _getEJBMetaData(CallContext call, ProxyInfo info) {
 
         DeploymentInfo deployment = info.getDeploymentInfo();
         int idCode = -1;
@@ -83,7 +59,8 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return metaData;
     }
 
-    protected javax.ejb.Handle _getHandle(CallContext call, ProxyInfo info) {
+    public javax.ejb.Handle getHandle(ProxyInfo info) {
+        CallContext call = CallContext.getCallContext();
         DeploymentInfo deployment = info.getDeploymentInfo();
 
         int idCode = -1;
@@ -108,7 +85,8 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return new EJBObjectHandle(hanlder.createEJBObjectProxy());
     }
 
-    protected javax.ejb.HomeHandle _getHomeHandle(CallContext call, ProxyInfo info) {
+    public javax.ejb.HomeHandle getHomeHandle(ProxyInfo info) {
+        CallContext call = CallContext.getCallContext();
         DeploymentInfo deployment = info.getDeploymentInfo();
 
         int idCode = -1;
@@ -132,7 +110,8 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return new EJBHomeHandle(hanlder.createEJBHomeProxy());
     }
 
-    protected javax.ejb.EJBObject _getEJBObject(CallContext call, ProxyInfo info) {
+    public javax.ejb.EJBObject getEJBObject(ProxyInfo info) {
+        CallContext call = CallContext.getCallContext();
         DeploymentInfo deployment = info.getDeploymentInfo();
 
         int idCode = -1;
@@ -157,7 +136,33 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
 
-    protected javax.ejb.EJBHome _getEJBHome(CallContext call, ProxyInfo info) {
+    public Object getBusinessObject(ProxyInfo info) {
+        CallContext call = CallContext.getCallContext();
+        DeploymentInfo deployment = info.getDeploymentInfo();
+
+        int idCode = -1;
+
+        Object securityIdentity = null;
+        try {
+            securityIdentity = call.getEJBRequest().getClientIdentity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
+                deployment.getPrimaryKeyClass(),
+                deployment.getComponentType().toString(),
+                deployment.getDeploymentID().toString(),
+                idCode, info.getInterfaces());
+        Object primKey = info.getPrimaryKey();
+
+        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, sMetaData, cMetaData, primKey);
+
+        return hanlder.createEJBObjectProxy();
+    }
+
+    public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
+        CallContext call = CallContext.getCallContext();
         DeploymentInfo deployment = info.getDeploymentInfo();
 
         int idCode = -1;
@@ -180,4 +185,5 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
         return hanlder.createEJBHomeProxy();
     }
+
 }

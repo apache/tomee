@@ -86,6 +86,8 @@ public interface ApplicationServer {
 
     public EJBObject getEJBObject(ProxyInfo proxyInfo);
 
+    public Object getBusinessObject(ProxyInfo proxyInfo);
+
     public EJBHome getEJBHome(ProxyInfo proxyInfo);
 
 }

@@ -268,7 +268,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
 
-            boolean authorized = securityService.isCallerAuthorized(callMethod, null);
+            boolean authorized = securityService.isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
             if (!authorized) {
                 throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
             }

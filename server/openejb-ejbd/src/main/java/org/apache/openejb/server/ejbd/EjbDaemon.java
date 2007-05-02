@@ -173,6 +173,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         return clientObjectFactory.getEJBObject(info);
     }
 
+    public Object getBusinessObject(ProxyInfo info) {
+        return clientObjectFactory.getBusinessObject(info);
+    }
+
     public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
         return clientObjectFactory.getEJBHome(info);
     }

@@ -95,6 +95,7 @@ public class ThreadContext {
     private ClassLoader oldClassLoader;
     private Operation currentOperation;
     private BaseContext.State[] currentAllowedStates;
+    private Class invokedInterface;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey) {
         this(deploymentInfo, primaryKey, null);
@@ -130,6 +131,14 @@ public class ThreadContext {
 
     public void setCurrentOperation(Operation operation) {
         currentOperation = operation;
+    }
+
+    public Class getInvokedInterface() {
+        return invokedInterface;
+    }
+
+    public void setInvokedInterface(Class invokedInterface) {
+        this.invokedInterface = invokedInterface;
     }
 
     public BaseContext.State[] getCurrentAllowedStates() {

@@ -22,8 +22,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.ejb.EJBAccessException;
-
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
@@ -194,7 +192,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -208,7 +206,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -222,7 +220,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -244,7 +242,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -320,7 +318,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -342,7 +340,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -356,7 +354,7 @@ class EjbRequestHandler {
         RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
-                req.getMethodClass(), req.getMethodInstance(),
+                req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -365,17 +363,17 @@ class EjbRequestHandler {
     }
 
     protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
-
-        SecurityService sec = SystemInstance.get().getComponent(SecurityService.class);
-        CallContext caller = CallContext.getCallContext();
-        DeploymentInfo di = caller.getDeploymentInfo();
-
-        if (sec.isCallerAuthorized(req.getMethodInstance(), null)) {
-            res.setResponse(ResponseCodes.EJB_OK, null);
-        } else {
-            this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
-            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new EJBAccessException("Unauthorized Access by Principal Denied")));
-        }
+        res.setResponse(ResponseCodes.EJB_OK, null);
+//        SecurityService sec = SystemInstance.get().getComponent(SecurityService.class);
+//        CallContext caller = CallContext.getCallContext();
+//        DeploymentInfo di = caller.getDeploymentInfo();
+//
+//        if (sec.isCallerAuthorized(req.getMethodInstance(), null)) {
+//            res.setResponse(ResponseCodes.EJB_OK, null);
+//        } else {
+//            this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
+//            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new EJBAccessException("Unauthorized Access by Principal Denied")));
+//        }
     }
 
     private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {

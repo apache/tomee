@@ -51,12 +51,7 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
             throw new SystemException(new IllegalArgumentException("The handle is not from the same deployment"));
         }
 
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE);
-        req.setDeploymentCode(handler.ejb.deploymentCode);
-        req.setDeploymentId(handler.ejb.deploymentID);
-        req.setMethodInstance(method);
-        req.setMethodParameters(args);
-        req.setPrimaryKey(primKey);
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey);
 
         EJBResponse res = request(req);
 

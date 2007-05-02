@@ -46,7 +46,12 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
         return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces());
     }
 
+    public Object getBusinessObject(ProxyInfo pi) {
+        return EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces());
+    }
+
     public EJBHome getEJBHome(ProxyInfo pi) {
         return (EJBHome) EjbHomeProxyHandler.createHomeProxy(pi.getDeploymentInfo(), pi.getInterfaceType());
     }
+
 }

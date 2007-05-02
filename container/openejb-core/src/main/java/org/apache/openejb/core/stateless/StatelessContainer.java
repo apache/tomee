@@ -138,7 +138,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, null);
+            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -160,7 +160,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
-
+            callContext.setInvokedInterface(callInterface);
             Object retValue = _invoke(callMethod, runMethod, args, bean, callContext);
             instanceManager.poolInstance(callContext, bean);
 

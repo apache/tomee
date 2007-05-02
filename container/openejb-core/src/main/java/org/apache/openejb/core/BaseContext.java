@@ -28,6 +28,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.TimerService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.Context;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
@@ -115,11 +116,27 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Object lookup(String name) {
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        Context jndiEnc = deploymentInfo.getJndiEnc();
         try {
-            return (new InitialContext()).lookup("java:comp/env/" + name);
-        } catch (NamingException ne) {
-            throw new IllegalArgumentException(ne);
+            jndiEnc = (Context) jndiEnc.lookup("java:comp/env");
+            return jndiEnc.lookup(name);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException(e);
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException(e);
         }
+
+//        try {
+//            InitialContext initialContext = new InitialContext();
+//            Context ctx = (Context) initialContext.lookup("java:comp/env");
+//            return ctx.lookup(name);
+//        } catch (NamingException e) {
+//            throw new IllegalArgumentException(e);
+//        } catch (RuntimeException e) {
+//            throw new IllegalArgumentException(e);
+//        }
     }
 
     public boolean isUserTransactionAccessAllowed() {

@@ -85,6 +85,10 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
         return server.getEJBObject(info);
     }
 
+    public Object getBusinessObject(ProxyInfo info) {
+        return server.getBusinessObject(info);   
+    }
+
     public EJBHome getEJBHome(ProxyInfo info) {
         return server.getEJBHome(info);
     }
