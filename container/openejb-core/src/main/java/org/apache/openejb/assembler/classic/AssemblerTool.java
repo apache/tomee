@@ -81,7 +81,12 @@ public class AssemblerTool {
                             if(deploymentInfo.getMdbInterface() != null) {
                             	resolveMethods(methods, deploymentInfo.getMdbInterface(), methodInfo);
                             }
-
+                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                                resolveMethods(methods, intf, methodInfo);
+                            }
+                            for (Class intf : deploymentInfo.getBusinessLocalInterfaces()) {
+                                resolveMethods(methods, intf, methodInfo);
+                            }
                         } else if (methodInfo.methodIntf.equals("Home")) {
                             resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {

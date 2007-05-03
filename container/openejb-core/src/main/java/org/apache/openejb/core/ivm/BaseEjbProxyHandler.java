@@ -27,6 +27,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -41,6 +42,8 @@ import javax.ejb.TransactionRolledbackLocalException;
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.NoSuchEJBException;
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
@@ -229,7 +232,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 // exceptions are return values and must be coppied
                 IntraVmCopyMonitor.preCopyOperation();
                 try {
-                    throw (Throwable) copyObj(throwable);
+                    throwable = (Throwable) copyObj(throwable);
+                    throw convertException(throwable, method);
                 } finally {
                     IntraVmCopyMonitor.postCopyOperation();
                 }
@@ -269,7 +273,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 // exceptions are return values and must be coppied
                 IntraVmCopyMonitor.preCrossClassLoaderOperation();
                 try {
-                    throw (Throwable) copyObj(throwable);
+                    throwable = (Throwable) copyObj(throwable);
+                    throw convertException(throwable, method);
                 } finally {
                     IntraVmCopyMonitor.postCrossClassLoaderOperation();
                 }
@@ -299,55 +304,77 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                      */
 
                 return _invoke(proxy, interfce, method, args);
-            } catch (TransactionRequiredException e) {
-                if (interfaceType.isBusiness()) {
-                    throw new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
-                } else if (interfaceType.isLocal()) {
-                    throw new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
-                } else {
-                    throw e;
-                }
-            } catch (TransactionRolledbackException e) {
-                if (interfaceType.isBusiness()) {
-                    throw new EJBTransactionRolledbackException(e.getMessage()).initCause(getCause(e));
-                } else if (interfaceType.isLocal()) {
-                    throw new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
-                } else {
-                    throw e;
-                }
-            } catch (NoSuchObjectException  e) {
-                if (interfaceType.isBusiness()) {
-                    throw new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
-                } else if (interfaceType.isLocal()) {
-                    throw new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
-                } else {
-                    throw e;
-                }
-            } catch (RemoteException e) {
-                if (interfaceType.isBusiness()) {
-                    throw new EJBException(e.getMessage()).initCause(getCause(e));
-                } else if (interfaceType.isLocal()) {
-                    throw new EJBException(e.getMessage()).initCause(getCause(e));
-                } else {
-                    throw e;
-                }
             } catch (Throwable t) {
-                //t.printStackTrace();
-                Class[] etypes = method.getExceptionTypes();
-                for (int i = 0; i < etypes.length; i++) {
-
-                    if (etypes[i].isAssignableFrom(t.getClass())) {
-                        throw t;
-                    }
-                }
-                // Exception is undeclared
-                // Try and find a runtime exception in there
-                while (t.getCause() != null && !(t instanceof RuntimeException)) {
-                    t = t.getCause();
-                }
-                throw t;
+                throw convertException(t, method);
             }
         }
+    }
+
+    /**
+     * Renamed method so it shows up with a much more understandable purpose as it
+     * will be the top element in the stacktrace
+     * @param e
+     * @param method
+     */
+    protected Throwable convertException(Throwable e, Method method) {
+        if (e instanceof TransactionRequiredException) {
+            if (interfaceType.isBusiness()) {
+                return new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
+            } else if (interfaceType.isLocal()) {
+                return new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
+            } else {
+                return e;
+            }
+        }
+        if (e instanceof TransactionRolledbackException) {
+            if (interfaceType.isBusiness()) {
+                return new EJBTransactionRolledbackException(e.getMessage()).initCause(getCause(e));
+            } else if (interfaceType.isLocal()) {
+                return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
+            } else {
+                return e;
+            }
+        }
+        if (e instanceof NoSuchObjectException) {
+            if (interfaceType.isBusiness()) {
+                return new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
+            } else if (interfaceType.isLocal()) {
+                return new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
+            } else {
+                return e;
+            }
+        }
+        if (e instanceof RemoteException) {
+            if (interfaceType.isBusiness()) {
+                return new EJBException(e.getMessage()).initCause(getCause(e));
+            } else if (interfaceType.isLocal()) {
+                return new EJBException(e.getMessage()).initCause(getCause(e));
+            } else {
+                return e;
+            }
+        }
+        if (e instanceof AccessException) {
+            if (interfaceType.isBusiness()) {
+                return new AccessLocalException(e.getMessage()).initCause(getCause(e));
+            } else if (interfaceType.isLocal()) {
+                return new AccessLocalException(e.getMessage()).initCause(getCause(e));
+            } else {
+                return e;
+            }
+        }
+
+        for (Class<?> type : method.getExceptionTypes()) {
+            if (type.isAssignableFrom(e.getClass())) {
+                return e;
+            }
+        }
+
+        // Exception is undeclared
+        // Try and find a runtime exception in there
+        while (e.getCause() != null && !(e instanceof RuntimeException)) {
+            e = e.getCause();
+        }
+        return e;
     }
 
     /**
@@ -374,7 +401,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         return targetMethod;
     }
 
-    private Throwable getCause(RemoteException e) {
+    protected Throwable getCause(Throwable e) {
         if (e != null && e.getCause() != null) {
             return e.getCause();
         }
