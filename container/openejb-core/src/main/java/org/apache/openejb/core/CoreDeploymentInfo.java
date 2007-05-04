@@ -737,9 +737,14 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             mapObjectInterface(remoteInterface);
             mapHomeInterface(homeInterface);
         }
+
         if (localInterface != null) {
             mapObjectInterface(localInterface);
             mapHomeInterface(localHomeInterface);
+        }
+
+        if (serviceEndpointInterface != null) {
+            mapObjectInterface(serviceEndpointInterface);
         }
 
         for (Class businessLocal : businessLocals) {
@@ -859,7 +864,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     private void mapObjectInterface(Class intrface) {
-        if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class){
+        if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class || intrface == ServiceEndpoint.class){
             return;
         }
 

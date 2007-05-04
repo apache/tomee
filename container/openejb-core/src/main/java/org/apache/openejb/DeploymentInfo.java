@@ -136,6 +136,9 @@ public interface DeploymentInfo {
         Object create();
     }
 
+    public interface ServiceEndpoint {
+    }
+
     public <T> T get(Class<T> type);
 
     public <T> T set(Class<T> type, T value);

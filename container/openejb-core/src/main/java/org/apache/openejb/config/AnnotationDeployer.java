@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
@@ -101,6 +102,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
+import javax.jws.WebService;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -605,22 +607,25 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
-                        // todo This is not a real JEE annotation
-                        // List<Class<?>> endpoints = new ArrayList<Class<?>>();
-                        ServiceEndpoint endpoint = clazz.getAnnotation(ServiceEndpoint.class);
-                        if (endpoint != null) {
-                            for (Class<?> interfce : endpoint.value()) {
-                                // endpoints.add(interfce);
-                                interfaces.remove(interfce);
+                        WebService webService = clazz.getAnnotation(WebService.class);
+                        if (webService != null && sessionBean.getServiceEndpoint() == null){
+                            String endpointInterfaceName = webService.endpointInterface();
+                            if (!endpointInterfaceName.equals("")){
+                                try {
+                                    sessionBean.setServiceEndpoint(endpointInterfaceName);
+                                    Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
+                                    interfaces.remove(endpointInterface);
+                                } catch (ClassNotFoundException e) {
+                                    throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
+                                }
+                            } else {
+                                sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
                             }
                         }
 
                         for (Class interfce : copy(interfaces)) {
                             if (interfce.isAnnotationPresent(Remote.class)) {
                                 remotes.add(interfce);
-                                interfaces.remove(interfce);
-                            } else if (interfce.isAnnotationPresent(ServiceEndpoint.class)) {
-                                // endpoints.add(interfce);
                                 interfaces.remove(interfce);
                             } else {
                                 locals.add(interfce);

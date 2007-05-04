@@ -81,6 +81,9 @@ public class AssemblerTool {
                             if(deploymentInfo.getMdbInterface() != null) {
                             	resolveMethods(methods, deploymentInfo.getMdbInterface(), methodInfo);
                             }
+                            if(deploymentInfo.getServiceEndpointInterface() != null) {
+                            	resolveMethods(methods, deploymentInfo.getServiceEndpointInterface(), methodInfo);
+                            }
                             for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
                                 resolveMethods(methods, intf, methodInfo);
                             }
@@ -91,10 +94,18 @@ public class AssemblerTool {
                             resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Remote")) {
                             resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
+                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                                resolveMethods(methods, intf, methodInfo);
+                            }
                         } else if (methodInfo.methodIntf.equals("LocalHome")) {
                             resolveMethods(methods, deploymentInfo.getLocalHomeInterface(), methodInfo);
                         } else if (methodInfo.methodIntf.equals("Local")) {
                             resolveMethods(methods, deploymentInfo.getLocalInterface(), methodInfo);
+                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                                resolveMethods(methods, intf, methodInfo);
+                            }
+                        } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
+                            resolveMethods(methods, deploymentInfo.getServiceEndpointInterface(), methodInfo);
                         }
 
                         for (Method method : methods) {
