@@ -98,6 +98,12 @@ class EnterpriseBeanBuilder {
             businessRemotes.add(loadClass(businessRemote, "classNotFound.businessRemote"));
         }
 
+        Class serviceEndpoint = null;
+        if (BeanType.STATELESS == ejbType){
+            if(bean.serviceEndpoint != null){
+                serviceEndpoint = loadClass(bean.serviceEndpoint, "classNotFound.sei");
+            }
+        }
 
         Class primaryKey = null;
         if (ejbType.isEntity() && ((EntityBeanInfo) bean).primKeyClass != null) {
@@ -113,19 +119,14 @@ class EnterpriseBeanBuilder {
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, businessLocals, businessRemotes, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
             deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
-        if (BeanType.STATELESS == ejbType){
-            if(bean.serviceEndpoint != null){
-                deployment.setServiceEndpointInterface(loadClass(bean.serviceEndpoint, "classNotFound.sei"));
-            }
-        }
-        
+
         deployment.setEjbName(bean.ejbName);
 
         deployment.setModuleId(moduleId);

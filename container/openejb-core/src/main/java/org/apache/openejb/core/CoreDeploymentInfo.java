@@ -174,7 +174,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class remoteInterface,
                               Class localHomeInterface,
                               Class localInterface,
-                              List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
+                              Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType
     ) throws SystemException {
 
@@ -194,6 +194,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.remoteInterface = remoteInterface;
         this.beanClass = beanClass;
         this.pkClass = pkClass;
+        this.serviceEndpointInterface = serviceEndpointInterface;
 
         this.componentType = componentType;
 

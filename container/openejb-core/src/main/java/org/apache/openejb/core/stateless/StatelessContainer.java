@@ -34,6 +34,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -161,7 +162,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            Object retValue = _invoke(callMethod, runMethod, args, bean, callContext);
+            Object retValue = _invoke(callInterface, callMethod, runMethod, args, bean, callContext);
             instanceManager.poolInstance(callContext, bean);
 
             return retValue;
@@ -179,7 +180,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return instanceManager;
     }
 
-    protected Object _invoke(Method callMethod, Method runMethod, Object [] args, Object object, ThreadContext callContext)
+    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object [] args, Object object, ThreadContext callContext)
             throws org.apache.openejb.OpenEJBException {
         Instance instance = (Instance) object;
 
@@ -192,9 +193,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
         Object returnValue = null;
         try {
-            if (isWebServiceCall(deploymentInfo, callMethod, args)){
-                callContext.setCurrentOperation(Operation.BUSINESS_WS);                                   
-                returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);                
+            InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
+            if (type == InterfaceType.SERVICE_ENDPOINT){
+                callContext.setCurrentOperation(Operation.BUSINESS_WS);
+                returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);
             } else {
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
@@ -261,13 +263,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
         }
         return returnValue;
-    }
-
-    private boolean isWebServiceCall(DeploymentInfo deployment, Method callMethod, Object[] args) {
-        Class serviceEndpointInterface = deployment.getServiceEndpointInterface();
-        // DMB: This will be a problem if the calling method is in an interface and the
-        // service-endpoint interface extends that interface.
-        return (serviceEndpointInterface != null && serviceEndpointInterface.isAssignableFrom(callMethod.getDeclaringClass()));
     }
 
     private TransactionManager getTransactionManager() {

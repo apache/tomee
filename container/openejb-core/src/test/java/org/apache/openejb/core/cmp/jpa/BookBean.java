@@ -39,7 +39,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
                     null,
                     BookHome.class,
                     Book.class,
-                    null,
+                    null, null,
                     null,
                     String.class,
                     BeanType.CMP_ENTITY);
