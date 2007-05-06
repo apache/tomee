@@ -45,8 +45,8 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         BEFORE_CALLED,
 
         /**
-         * The message delivery method has been called successfully, and the next method called must be afterDelivery
-         * or release.
+         * The message delivery method has been called successfully, and the next method called must be 
+         * another message delivery method, afterDelivery, or release.
          */
         METHOD_CALLED,
 
@@ -198,27 +198,28 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     public Object deliverMessage(Method method, Object[] args) throws Throwable {
+        
+        boolean callBeforeAfter = false;
+        
         // verify current state
         switch (state) {
-            case RELEASED:
-                throw new IllegalStateException("Message endpoint factory has been released");
+            case NONE:
+                try {
+                    beforeDelivery(method);
+                } catch (ApplicationServerInternalException e) {
+                    throw (EJBException) new EJBException().initCause(e.getCause());
+                }
+                callBeforeAfter = true;
+                state = State.METHOD_CALLED;
+                break;
             case BEFORE_CALLED:
                 state = State.METHOD_CALLED;
                 break;
+            case RELEASED:
+                throw new IllegalStateException("Message endpoint factory has been released");
             case METHOD_CALLED:
             case SYSTEM_EXCEPTION:
                 throw new IllegalStateException("The last message delivery must be completed with an afterDeliver before another message can be delivered");
-        }
-
-
-        // if beforeDelivery was not called, call it now
-        boolean callBeforeAfter = (state == State.NONE);
-        if (callBeforeAfter) {
-            try {
-                beforeDelivery(method);
-            } catch (ApplicationServerInternalException e) {
-                throw (EJBException) new EJBException().initCause(e.getCause());
-            }
         }
 
         Throwable throwable = null;

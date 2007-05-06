@@ -157,7 +157,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             try {
                 activationSpec.validate();
             } catch (UnsupportedOperationException uoe) {
-                logger.info("ActivationSpec does not support validate. Implementation of validate is optional", uoe);
+                logger.info("ActivationSpec does not support validate. Implementation of validate is optional");
             }
             
 
