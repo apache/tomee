@@ -102,6 +102,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
+import javax.xml.ws.WebServiceProvider;
 import javax.jws.WebService;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -607,18 +608,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
 
-                        WebService webService = clazz.getAnnotation(WebService.class);
-                        if (webService != null && sessionBean.getServiceEndpoint() == null){
-                            String endpointInterfaceName = webService.endpointInterface();
-                            if (!endpointInterfaceName.equals("")){
-                                try {
-                                    sessionBean.setServiceEndpoint(endpointInterfaceName);
-                                    Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
-                                    interfaces.remove(endpointInterface);
-                                } catch (ClassNotFoundException e) {
-                                    throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
+                        if (sessionBean.getServiceEndpoint() == null) {
+                            WebService webService = clazz.getAnnotation(WebService.class);
+                            if (webService != null) {
+                                String endpointInterfaceName = webService.endpointInterface();
+                                if (!endpointInterfaceName.equals("")){
+                                    try {
+                                        sessionBean.setServiceEndpoint(endpointInterfaceName);
+                                        Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
+                                        interfaces.remove(endpointInterface);
+                                    } catch (ClassNotFoundException e) {
+                                        throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
+                                    }
+                                } else {
+                                    sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
                                 }
-                            } else {
+                            } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
                                 sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
                             }
                         }
