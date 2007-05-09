@@ -127,7 +127,20 @@ public class Jdk13ProxyFactory implements ProxyFactory {
             throw new IllegalArgumentException("It's boring to implement 0 interfaces!");
         }
         Jdk13InvocationHandler handler = new Jdk13InvocationHandler(h);
-        return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
+        try {
+            return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
+        } catch (IllegalArgumentException e) {
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                Class tcclHomeClass = tccl.loadClass(interfaces[0].getName());
+                if (tcclHomeClass == interfaces[0]) {
+                    return Proxy.newProxyInstance(tccl, interfaces, handler);
+                }
+            } catch (ClassNotFoundException e1) {
+                throw e;
+            }
+            throw e;
+        }
     }
 }
 

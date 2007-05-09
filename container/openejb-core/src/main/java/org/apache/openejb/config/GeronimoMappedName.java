@@ -62,6 +62,9 @@ public class GeronimoMappedName implements DynamicDeployer {
                     String refName = ref.getEjbRefName();
                     ref.setMappedName(MAPPED_NAME_PREFIX + refName);
                 }
+                if (null == mappedName && ref.getEjbRefName().equals("ejb/MEJB")) {
+                	ref.setMappedName("MEJBGBean/MEJB");
+                }
             }
             for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
                 String refName = ref.getMessageDestinationRefName();
