@@ -196,45 +196,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     }
 
     public Object invoke(Object deploymentId, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
-        // get the target deployment (MDB)
-        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
-        if (deployInfo == null) throw new SystemException("Unknown deployment " + deploymentId);
-
-        // create instance
-        Object instance = null;
-        try {
-            EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
-            instance = endpointFactory.getInstanceFactory().createInstance(true);
-        } catch (UnavailableException e) {
-            throw new SystemException("Unable to create new MDB instance: ", e);
-        }
-
-        try {
-            // before
-            beforeDelivery(deployInfo, instance, method, null);
-
-            boolean exceptionThrown = false;
-            try {
-                // deliver the message
-                return invoke(instance, method, args);
-            } catch (OpenEJBException e) {
-                exceptionThrown = true;
-                throw e;
-            } finally {
-                try {
-                    // after
-                    afterDelivery(instance);
-                } catch (SystemException e) {
-                    if (!exceptionThrown) {
-                        //noinspection ThrowFromFinallyBlock
-                        throw e;
-                    }
-                    logger.error("Unexpected exception from afterDelivery");
-                }
-            }
-        } finally {
-            release(deployInfo, instance);
-        }
+        throw new OpenEJBException("This MdbContainer.invoke should not be used!");
     }
 
     public void beforeDelivery(CoreDeploymentInfo deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
@@ -254,10 +216,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
         // call the tx before method
         try {
+            boolean adapterTransaction = transactionManager.getTransaction() != null;
             mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
 
-            // enrole the xaresource in the transaction
-            if (xaResource != null) {
+            // if we have an xaResource and a transaction was not imported from the adapter, enlist the xaResource
+            if (xaResource != null && !adapterTransaction) {
                 Transaction transaction = transactionManager.getTransaction();
                 if (transaction != null) {
                     transaction.enlistResource(xaResource);
