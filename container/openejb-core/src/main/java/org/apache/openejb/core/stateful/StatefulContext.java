@@ -23,6 +23,7 @@ import javax.xml.rpc.handler.MessageContext;
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.RestrictedUserTransaction;
 import org.apache.openejb.spi.SecurityService;
 
 import java.security.Principal;
@@ -56,22 +57,10 @@ public class StatefulContext extends BaseSessionContext {
         return state;
     }
 
-    static {
-        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
-        states[Operation.CREATE.ordinal()] = new LifecycleSessionState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
-        states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
-        states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
-        states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
-        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleSessionState();
-        states[Operation.REMOVE.ordinal()] = new LifecycleSessionState();
-    }
-
     /**
      * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
      */
-    public static class LifecycleSessionState extends SessionState {
+    public static class LifecycleStatefulSessionState extends SessionState {
 
         public MessageContext getMessageContext() throws IllegalStateException {
             throw new IllegalStateException();
@@ -133,14 +122,6 @@ public class StatefulContext extends BaseSessionContext {
             throw new IllegalStateException();
         }
 
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            throw new IllegalStateException();
-        }
-
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            throw new IllegalStateException();
-        }
-
         public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
             throw new IllegalStateException();
         }
@@ -173,4 +154,18 @@ public class StatefulContext extends BaseSessionContext {
             return false;
         }
     }
+
+    static {
+        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
+        states[Operation.CREATE.ordinal()] = new LifecycleStatefulSessionState();
+        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
+        states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
+        states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
+        states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
+        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
+        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleStatefulSessionState();
+        states[Operation.REMOVE.ordinal()] = new LifecycleStatefulSessionState();
+        states[Operation.POST_CONSTRUCT.ordinal()] = new LifecycleStatefulSessionState();
+    }
+
 }

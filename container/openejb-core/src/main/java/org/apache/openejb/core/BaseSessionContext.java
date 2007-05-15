@@ -26,6 +26,11 @@ import javax.ejb.SessionContext;
 import javax.ejb.TimerService;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
 import javax.xml.rpc.handler.MessageContext;
 
 import org.apache.openejb.DeploymentInfo;
@@ -79,26 +84,17 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
-            try {
-                Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
-                return (EJBLocalObject) ProxyManager.newProxyInstance(interfaces, handler);
-            } catch (IllegalAccessException iae) {
-                throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
-            }
+            if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
+
+            return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL);
         }
 
         public EJBObject getEJBObject() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
+            if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
 
-            EjbObjectProxyHandler handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
-            try {
-                Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
-                return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
-            } catch (IllegalAccessException iae) {
-                throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
-            }
+            return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT);
         }
 
         public MessageContext getMessageContext() throws IllegalStateException {
@@ -229,6 +225,10 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         public boolean isTimerAccessAllowed() {
             return false;
         }
+
+        public boolean isTimerMethodAllowed() {
+            return false;
+        }
     }
 
     /**
@@ -286,6 +286,13 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
         public boolean isTimerMethodAllowed() {
             return false;
+        }
+    }
+
+    public static class PostConstructSessionState extends LifecycleSessionState {
+
+        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
+            return new RestrictedUserTransaction(super.getUserTransaction(userTransaction));
         }
     }
 

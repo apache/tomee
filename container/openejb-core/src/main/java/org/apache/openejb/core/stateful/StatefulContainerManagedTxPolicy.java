@@ -23,6 +23,16 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 
+/**
+ * Wraps the TxPolicies for Stateful Session beans with container-managed
+ * transaction demarkation that do not implement the SessionSynchronization
+ * interface.
+ *
+ * The following method TxPolicies are wrapped regardless:
+ *
+ * TX_NEVER
+ * TX_NOT_SUPPORTED
+ */
 public class StatefulContainerManagedTxPolicy extends TransactionPolicy {
 
     protected TransactionPolicy policy;

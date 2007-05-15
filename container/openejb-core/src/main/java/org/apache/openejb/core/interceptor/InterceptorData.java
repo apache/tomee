@@ -76,6 +76,9 @@ public class InterceptorData {
             case PRE_DESTROY: return getPreDestroy();
             case ACTIVATE: return getPostActivate();
             case PASSIVATE: return getPrePassivate();
+            case AFTER_BEGIN: return getAroundInvoke();
+            case AFTER_COMPLETION: return getAroundInvoke();
+            case BEFORE_COMPLETION: return getAroundInvoke();
         }
         return Collections.EMPTY_LIST;
     }

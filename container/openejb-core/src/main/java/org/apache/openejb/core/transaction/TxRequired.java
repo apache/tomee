@@ -21,6 +21,27 @@ import javax.transaction.Status;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
+/**
+ * 17.6.2.2 Required
+ *
+ * The Container must invoke an enterprise Bean method whose transaction
+ * attribute is set to Required with a valid transaction context.
+ *
+ * If a client invokes the enterprise Bean's method while the client is
+ * associated with a transaction context, the container invokes the enterprise
+ * Bean's method in the client's transaction context.
+ *
+ * If the client invokes the enterprise Bean's method while the client is not
+ * associated with a transaction context, the container automatically starts a
+ * new transaction before delegating a method call to the enterprise Bean
+ * business method. The Container automatically enlists all the resource
+ * managers accessed by the business method with the transaction. If the
+ * business method invokes other enterprise beans, the Container passes the
+ * transaction context with the invocation. The Container attempts to commit
+ * the transaction when the business method has completed. The container
+ * performs the commit protocol before the method result is sent to the client.
+ *
+ */
 public class TxRequired extends TransactionPolicy {
 
     public TxRequired(TransactionContainer container) {

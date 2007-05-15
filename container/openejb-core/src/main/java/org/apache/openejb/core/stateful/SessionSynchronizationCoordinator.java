@@ -22,6 +22,8 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.stateful.StatefulContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.util.Logger;
 
@@ -31,6 +33,8 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.lang.reflect.Method;
 
 public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {
     private static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
@@ -44,7 +48,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         this.transactionManager = transactionManager;
     }
 
-    public static void registerSessionSynchronization(SessionSynchronization session, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException {
+    public static void registerSessionSynchronization(StatefulInstanceManager.Instance instance, TransactionContext context) throws javax.transaction.SystemException, javax.transaction.RollbackException {
         SessionSynchronizationCoordinator coordinator = null;
 
         coordinator = coordinators.get(context.currentTx);
@@ -61,10 +65,10 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
             coordinators.put(context.currentTx, coordinator);
         }
 
-        coordinator._registerSessionSynchronization(session, context.callContext);
+        coordinator._registerSessionSynchronization(instance, context.callContext);
     }
 
-    private void _registerSessionSynchronization(SessionSynchronization session, ThreadContext callContext) {
+    private void _registerSessionSynchronization(StatefulInstanceManager.Instance instance, ThreadContext callContext) {
         boolean registered = sessionSynchronizations.containsKey(callContext.getPrimaryKey());
 
         if (registered) return;
@@ -80,7 +84,11 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(StatefulContext.getStates());
         try {
 
-            session.afterBegin();
+            Method afterBegin = SessionSynchronization.class.getMethod("afterBegin");
+
+            List<InterceptorData> interceptors = callContext.getDeploymentInfo().getMethodInterceptors(afterBegin);
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterBegin, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
+            interceptorStack.invoke();
 
         } catch (Exception e) {
             String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object: " + e.getClass().getName() + " " + e.getMessage();
@@ -115,8 +123,13 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 callContext.setCurrentAllowedStates(StatefulContext.getStates());
 
                 StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
-                SessionSynchronization bean = (SessionSynchronization) instance.bean;
-                bean.beforeCompletion();
+
+                Method beforeCompletion = SessionSynchronization.class.getMethod("beforeCompletion");
+
+                List<InterceptorData> interceptors = callContext.getDeploymentInfo().getMethodInterceptors(beforeCompletion);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, beforeCompletion, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
+                interceptorStack.invoke();
+
                 instanceManager.poolInstance(callContext, instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 
@@ -179,9 +192,13 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
                 callContext.setCurrentAllowedStates(StatefulContext.getStates());
 
                 StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(callContext.getPrimaryKey(), callContext);
-                SessionSynchronization bean = (SessionSynchronization) instance.bean;
 
-                bean.afterCompletion(status == Status.STATUS_COMMITTED);
+                Method afterCompletion = SessionSynchronization.class.getMethod("afterCompletion", boolean.class);
+
+                List<InterceptorData> interceptors = callContext.getDeploymentInfo().getMethodInterceptors(afterCompletion);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterCompletion, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
+                interceptorStack.invoke(status == Status.STATUS_COMMITTED);
+
                 instanceManager.poolInstance(callContext, instance);
             } catch (org.apache.openejb.InvalidateReferenceException inv) {
 

@@ -21,6 +21,23 @@ import org.apache.openejb.SystemException;
 
 import javax.transaction.TransactionRequiredException;
 
+/**
+ * 17.6.2.5 Mandatory
+ *
+ * The Container must invoke an enterprise Bean method whose transaction
+ * attribute is set to Mandatory in a client's transaction context. The client
+ * is required to call with a transaction context.
+ *
+ * ¥ If the client calls with a transaction context, the container invokes the
+ *   enterprise Bean's method in the client's transaction context.
+ *
+ * ¥ If the client calls without a transaction context, the Container throws
+ *   the javax.transaction.TransactionRequiredException exception if the
+ *   client is a remote client, or the
+ *   javax.ejb.TransactionRequiredLocalException if the client is a local
+ *   client.
+ *
+ */
 public class TxManditory extends TransactionPolicy {
 
     public TxManditory(TransactionContainer container) {

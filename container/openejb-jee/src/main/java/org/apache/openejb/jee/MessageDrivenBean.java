@@ -106,7 +106,7 @@ import java.util.List;
         "preDestroy",
         "securityIdentity"
         })
-public class MessageDrivenBean implements EnterpriseBean {
+public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
 
     @XmlTransient
     protected TextMap description = new TextMap();

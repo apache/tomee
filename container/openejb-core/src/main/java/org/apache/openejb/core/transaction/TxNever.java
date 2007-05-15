@@ -21,6 +21,21 @@ import org.apache.openejb.SystemException;
 
 import java.rmi.RemoteException;
 
+/**
+ * 17.6.2.6 Never
+ *
+ * The Container invokes an enterprise Bean method whose transaction attribute
+ * is set to Never without a transaction context defined by the EJB spec.
+ *
+ * The client is required to call without a transaction context.
+ *
+ * ¥ If the client calls with a transaction context, the Container throws the
+ *   java.rmi.RemoteException exception if the client is a remote client, or
+ *   the javax.ejb.EJBException if the client is a local client.
+ * ¥ If the client calls without a transaction context, the Container performs
+ *   the same steps as described in the NotSupported case.
+ *
+ */
 public class TxNever extends TransactionPolicy {
 
     public TxNever(TransactionContainer container) {

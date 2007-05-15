@@ -21,6 +21,26 @@ import org.apache.openejb.SystemException;
 
 import javax.transaction.InvalidTransactionException;
 
+/**
+ * 17.6.2.1 NotSupported
+ *
+ * The Container invokes an enterprise Bean method whose transaction attribute
+ * is set to NotSupported with an unspecified transaction context.
+ *
+ * If a client calls with a transaction context, the container suspends the
+ * association of the transaction context with the current thread before
+ * invoking the enterprise bean's business method. The container resumes the
+ * suspended association when the business method has completed. The suspended
+ * transaction context of the client is not passed to the resource managers or
+ * other enterprise Bean objects that are invoked from the business method.
+ *
+ * If the business method invokes other enterprise beans, the Container passes
+ * no transaction context with the invocation.
+ *
+ * Refer to Subsection 17.6.5 for more details of how the Container can
+ * implement this case.
+ *
+ */
 public class TxNotSupported extends TransactionPolicy {
 
     public TxNotSupported(TransactionContainer container) {

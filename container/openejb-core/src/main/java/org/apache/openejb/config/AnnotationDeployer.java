@@ -60,6 +60,8 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.SecurityRoleRef;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
@@ -218,6 +220,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
                 }
+                if (enterpriseBean instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) enterpriseBean;
+                    sessionBean.setSessionType(SessionType.STATELESS);
+                }
             }
 
             classes = finder.findAnnotatedClasses(Stateful.class);
@@ -231,6 +237,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
+                }
+                if (enterpriseBean instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) enterpriseBean;
+                    sessionBean.setSessionType(SessionType.STATEFUL);
                 }
             }
 
@@ -752,6 +762,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (aroundInvoke == null) {
                 for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
                     bean.getAroundInvoke().add(new AroundInvoke(method));
+                }
+            }
+
+            if (bean instanceof TimerConsumer) {
+                TimerConsumer timerConsumer = (TimerConsumer) bean;
+                if (timerConsumer.getTimeoutMethod() == null) {
+                    List<Method> timeoutMethods = classFinder.findAnnotatedMethods(javax.ejb.Timeout.class);
+                    for (Method method : timeoutMethods) {
+                        timerConsumer.setTimeoutMethod(new NamedMethod(method));
+                    }
                 }
             }
 

@@ -375,7 +375,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 }
             } else if (componentType == BeanType.STATEFUL) {
                 policy = new TxRequired((TransactionContainer) container);
-                policy = new StatefulContainerManagedTxPolicy(policy);
+                if (!isBeanManagedTransaction && SessionSynchronization.class.isAssignableFrom(beanClass)) {
+                    policy = new SessionSynchronizationTxPolicy(policy);
+                } else {
+                    policy = new StatefulContainerManagedTxPolicy(policy);
+                }
             } else {
                 // default transaction policy is required
                 policy = new TxRequired((TransactionContainer) container);
@@ -635,11 +639,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
             if (SessionSynchronization.class.isAssignableFrom(beanClass)) {
                 if (!transAttribute.equals("Never") && !transAttribute.equals("NotSupported")) {
-
                     policy = new SessionSynchronizationTxPolicy(policy);
                 }
             } else {
-
                 policy = new StatefulContainerManagedTxPolicy(policy);
             }
         }

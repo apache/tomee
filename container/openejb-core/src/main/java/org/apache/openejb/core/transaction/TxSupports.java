@@ -19,6 +19,25 @@ package org.apache.openejb.core.transaction;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
+/**
+ * 17.6.2.3 Supports
+ *
+ * The Container invokes an enterprise Bean method whose transaction attribute
+ * is set to Supports as follows.
+ *
+ * ¥ If the client calls with a transaction context, the Container performs
+ *   the same steps as described in the Required case.
+ *
+ * ¥ If the client calls without a transaction context, the Container performs
+ *   the same steps as described in the NotSupported case.
+ *
+ * The Supports transaction attribute must be used with caution. This is
+ * because of the different transactional semantics provided by the two
+ * possible modes of execution. Only the enterprise beans that will
+ * execute correctly in both modes should use the Supports transaction
+ * attribute.
+ *
+ */
 public class TxSupports extends TransactionPolicy {
 
     public TxSupports(TransactionContainer container) {
