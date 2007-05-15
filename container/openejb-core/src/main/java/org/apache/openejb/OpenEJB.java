@@ -16,23 +16,24 @@
  */
 package org.apache.openejb;
 
+import java.util.Date;
+import java.util.Properties;
+
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.Assembler;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.JarUtils;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.util.SafeToolkit;
 
-import javax.transaction.TransactionManager;
-import java.net.URL;
-import java.util.Date;
-import java.util.Properties;
-
+/**
+ * @version $Rev$ $Date$
+ */
 public final class OpenEJB {
 
     private static Instance instance;
@@ -273,7 +274,7 @@ public final class OpenEJB {
      */
     public static void init(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
         if (isInitialized()) {
-            String msg = messages.message("startup.alreadyInitialzied");
+            String msg = messages.message("startup.alreadyInitialized");
             logger.i18n.error(msg);
             throw new OpenEJBException(msg);
         } else {
