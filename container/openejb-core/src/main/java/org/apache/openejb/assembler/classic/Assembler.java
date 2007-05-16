@@ -291,7 +291,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (AppInfo appInfo : containerSystemInfo.applications) {
 
             try {
-                createApplication(appInfo, createAppClassLoader(appInfo));
+                createApplication(appInfo, null, createAppClassLoader(appInfo));
             } catch (DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (Throwable e) {
@@ -316,14 +316,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createApplication(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        createEjbJar(ejbJar, classLoader);    
+        createEjbJar(ejbJar, null, classLoader);
     }
 
-    public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public void createEjbJar(EjbJarInfo ejbJar, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = ejbJar.jarPath;
         appInfo.ejbJars.add(ejbJar);
-        createApplication(appInfo, classLoader);
+        createApplication(appInfo, emfLinkResolver, classLoader);
     }
 
     public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
@@ -337,14 +337,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
-        createApplication(appInfo, classLoader);
+        createApplication(appInfo, null, classLoader);
     }
 
     public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, createAppClassLoader(appInfo));
+        createApplication(appInfo, null, createAppClassLoader(appInfo));
     }
 
-    public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+    public void createApplication(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
 
         logger.info("Assembling app: "+appInfo.jarPath);
         
@@ -381,7 +381,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
-            LinkResolver<EntityManagerFactory> emfLinkResolver = new LinkResolver<EntityManagerFactory>();
+            emfLinkResolver = emfLinkResolver == null? new UniqueDefaultLinkResolver<EntityManagerFactory>(): emfLinkResolver;
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {

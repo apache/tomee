@@ -261,6 +261,14 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
             // create the extended entity managers
             Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
+            // register them
+            if (entityManagers != null) {
+                try {
+                    entityManagerRegistry.addEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
+                } catch (EntityManagerAlreadyRegisteredException e) {
+                    throw new EJBException(e);
+                }
+            }
 
             // allocate a new instance
             Object o = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());

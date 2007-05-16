@@ -78,4 +78,13 @@ public class LinkResolver<E> {
             return null;
         }
     }
+
+    protected E getUniqueMember() {
+        if (byFullName.size() == 1) {
+            return byFullName.values().iterator().next();
+        } else {
+            return null;
+        }
+    }
+
 }

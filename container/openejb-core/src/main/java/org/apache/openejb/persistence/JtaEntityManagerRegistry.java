@@ -183,8 +183,11 @@ public class JtaEntityManagerRegistry {
                     EntityManagerFactory entityManagerFactory = entry.getKey();
                     EntityManager entityManager = entry.getValue();
                     EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
-
-                    if (transactionRegistry.getResource(txKey) == null) {
+                    EntityManager oldEntityManager = (EntityManager) transactionRegistry.getResource(txKey);
+                    if (entityManager == oldEntityManager) {
+                        break;
+                    }
+                    if (oldEntityManager != null) {
                         throw new EntityManagerAlreadyRegisteredException("Another entity manager is already registered for this persistence unit");
                     }
 
