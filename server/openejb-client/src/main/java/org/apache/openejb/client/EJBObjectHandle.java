@@ -50,9 +50,9 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
         handler.client.writeExternal(out);
 
         EJBMetaDataImpl ejb = handler.ejb;
-        out.writeObject(ejb.homeClass);
-        out.writeObject(ejb.remoteClass);
-        out.writeObject(ejb.keyClass);
+        out.writeObject(getClassName(ejb.homeClass));
+        out.writeObject(getClassName(ejb.remoteClass));
+        out.writeObject(getClassName(ejb.keyClass));
         out.writeByte(ejb.type);
         out.writeUTF(ejb.deploymentID);
         out.writeShort(ejb.deploymentCode);
@@ -67,9 +67,14 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
 
         client.readExternal(in);
 
-        ejb.homeClass = (Class) in.readObject();
-        ejb.remoteClass = (Class) in.readObject();
-        ejb.keyClass = (Class) in.readObject();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = this.getClass().getClassLoader();
+        }
+
+        ejb.homeClass = loadClass(classLoader, (String) in.readObject());
+        ejb.remoteClass = loadClass(classLoader, (String) in.readObject());
+        ejb.keyClass = loadClass(classLoader, (String) in.readObject());
         ejb.type = in.readByte();
         ejb.deploymentID = in.readUTF();
         ejb.deploymentCode = in.readShort();
@@ -81,4 +86,11 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
         ejbObjectProxy = handler.createEJBObjectProxy();
     }
 
+    private static String getClassName(Class clazz) {
+        return (clazz == null) ? null: clazz.getName();
+    }
+
+    private static Class loadClass(ClassLoader classLoader, String homeClassName) throws ClassNotFoundException {
+        return (homeClassName == null) ? null : Class.forName(homeClassName, true, classLoader);
+    }
 }
