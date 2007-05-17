@@ -216,9 +216,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
         }
 
-
-        addInterface(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
-
         addInterface(javax.ejb.EJBHome.class, InterfaceType.EJB_HOME);
         addInterface(javax.ejb.EJBObject.class, InterfaceType.EJB_OBJECT);
 
@@ -240,6 +237,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         for (Class businessLocal : this.businessLocals) {
             addInterface(businessLocal, InterfaceType.BUSINESS_LOCAL);
         }
+
+        addInterface(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
     }
 
     /**
