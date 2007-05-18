@@ -43,10 +43,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "referenceType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
 public class ReferenceType
-    extends PatternType
+    extends DepPatternType
 {
 
-    @XmlAttribute
+    @XmlAttribute(name = "name")
     protected String nameAttribute;
 
     /**

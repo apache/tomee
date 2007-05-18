@@ -90,8 +90,8 @@ public class JaxbOpenejbJar2 {
                 super.afterUnmarshal(object, object1);
             }
 
-            public void beforeUnmarshal(Object object, Object object1) {
-                super.beforeUnmarshal(object, object1);
+            public void beforeUnmarshal(Object target, Object parent) {
+                super.beforeUnmarshal(target, parent);
             }
         });
 

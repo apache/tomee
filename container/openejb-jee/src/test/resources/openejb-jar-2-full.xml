@@ -563,6 +563,9 @@
         </ns6:role-mappings>
     </ns6:security>
     <gbean name="String" class="String">
+        <reference name="TransactionManager">
+            <name>TransactionManager</name>
+        </reference>
         <attribute type="String" name="String">String</attribute>
         <attribute type="String" name="String">String</attribute>
     </gbean>

@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ReferencesType {
 
     @XmlElement(name="pattern", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
-    protected List<PatternType> pattern;
+    protected List<DepPatternType> pattern;
     @XmlAttribute
     protected String name;
 
@@ -79,9 +79,9 @@ public class ReferencesType {
      * 
      * 
      */
-    public List<PatternType> getPattern() {
+    public List<DepPatternType> getPattern() {
         if (pattern == null) {
-            pattern = new ArrayList<PatternType>();
+            pattern = new ArrayList<DepPatternType>();
         }
         return this.pattern;
     }
