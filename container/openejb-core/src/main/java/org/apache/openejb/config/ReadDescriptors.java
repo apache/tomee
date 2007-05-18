@@ -26,19 +26,18 @@ import org.apache.openejb.jee.oejb2.*;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.xml.sax.SAXException;
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -186,11 +185,29 @@ public class ReadDescriptors implements DynamicDeployer {
                     } catch (Exception dontCare) {
                     }
 
+                    String filePath = "<error: could not be written>";
+                    try {
+                        File tempFile = File.createTempFile("openejb-jar-", ".xml");
+                        try {
+                            FileOutputStream out = new FileOutputStream(tempFile);
+                            InputStream in = source.get();
+                            int b = in.read();
+                            while (b != -1){
+                                out.write(b);
+                                b = in.read();
+                            }
+                            out.close();
+                        } catch (IOException e) {
+                        }
+                        filePath = tempFile.getAbsolutePath();
+                    } catch (IOException e) {
+                    }
+
                     Exception e = realIssue[0];
                     if (e instanceof SAXException) {
-                        throw new OpenEJBException("Cannot parse the openejb-jar.xml.", e);
+                        throw new OpenEJBException("Cannot parse the openejb-jar.xml. Xml content written to: "+filePath, e);
                     } else if (e instanceof JAXBException) {
-                        throw new OpenEJBException("Cannot unmarshall the openejb-jar.xml.", e);
+                        throw new OpenEJBException("Cannot unmarshall the openejb-jar.xml. Xml content written to: "+filePath, e);
                     } else if (e instanceof IOException) {
                         throw new OpenEJBException("Cannot read the openejb-jar.xml.", e);
                     } else {
