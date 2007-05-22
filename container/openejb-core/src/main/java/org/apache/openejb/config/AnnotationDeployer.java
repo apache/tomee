@@ -179,6 +179,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+            if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
+
             ClassFinder finder;
             if (ejbModule.getJarURI() != null) {
                 try {
@@ -287,6 +289,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+            if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
+
             ClassLoader classLoader = clientModule.getClassLoader();
             Class<?> clazz = null;
             try {
@@ -302,6 +306,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+            if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
 
             ClassLoader classLoader = ejbModule.getClassLoader();
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();

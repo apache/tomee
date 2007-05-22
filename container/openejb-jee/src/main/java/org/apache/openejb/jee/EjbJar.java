@@ -220,7 +220,7 @@ public class EjbJar {
     }
 
     public Boolean isMetadataComplete() {
-        return metadataComplete;
+        return metadataComplete != null && metadataComplete;
     }
 
     public void setMetadataComplete(Boolean value) {

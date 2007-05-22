@@ -242,7 +242,7 @@ public class ApplicationClient implements JndiConsumer {
     }
 
     public Boolean isMetadataComplete() {
-        return metadataComplete;
+        return metadataComplete != null && metadataComplete;
     }
 
     public void setMetadataComplete(Boolean value) {
