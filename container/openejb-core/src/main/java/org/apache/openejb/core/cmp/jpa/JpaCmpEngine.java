@@ -300,8 +300,7 @@ public class JpaCmpEngine implements CmpEngine {
                 transactionManager.commit();
             }
         } catch (Exception e) {
-            //noinspection ThrowFromFinallyBlock
-            throw new EJBException("Unable to complete transaction for " + operation + " operation");
+            throw new EJBException("Unable to complete transaction for " + operation + " operation", e);
         }
     }
 
