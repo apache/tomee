@@ -96,4 +96,9 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return value;
     }
 
+    public void invalidateReference() {
+        // entity bean object references should not be invalidated since they
+        // will automatically hook up to a new instance of the bean using the
+        // primary key (we will load a new instance from the db)
+    }
 }
