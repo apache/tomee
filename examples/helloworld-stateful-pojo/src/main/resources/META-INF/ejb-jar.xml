@@ -16,7 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="flase">
     <enterprise-beans>
         <session>
             <ejb-name>FriendlyPerson</ejb-name>
