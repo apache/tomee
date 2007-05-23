@@ -40,6 +40,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -238,8 +239,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 ProxyInfo proxyInfo = createEJBObject(deployInfo, callInterface, callMethod, args);
                 return proxyInfo;
             case REMOVE:
-                removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
-                return null;
+                Object o = removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
+                return o;
             default:
                 Object value = businessMethod(deployInfo, primKey, callInterface, callMethod, args);
                 return value;
@@ -297,7 +298,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         return new VMID();
     }
 
-    protected void removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
+    protected Object removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -320,14 +321,18 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
-                _invoke(callMethod, interceptorStack, args, instance, callContext);
+                return _invoke(callMethod, interceptorStack, args, instance, callContext);
 
             } catch(InvalidateReferenceException e){
                 throw e;
             } catch(ApplicationException e){
-                retain = deploymentInfo.retainIfExeption(runMethod);
-                if (retain) return;
-                else throw e;
+                InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
+                if (type.isBusiness()){
+                    retain = deploymentInfo.retainIfExeption(runMethod);
+                    throw e;
+                } else {
+                    return null;
+                }
             } finally {
                 if (retain){
                     instanceManager.poolInstance(callContext, instance);
