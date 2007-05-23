@@ -32,7 +32,6 @@
         <include>README*</include>
         <include>LICENSE.txt</include>
         <include>NOTICE.txt</include>
-        <include>DISCLAIMER.txt</include>
       </includes>
     </fileSet>
     <fileSet>
