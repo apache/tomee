@@ -22,6 +22,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.Operation;
 
 import javax.ejb.SessionSynchronization;
 
@@ -45,6 +46,8 @@ public class SessionSynchronizationTxPolicy extends TransactionPolicy {
 
         if (context.currentTx == null) return;
 
+        if (context.callContext.getCurrentOperation() == Operation.CREATE) return;
+        
         try {
             StatefulInstanceManager.Instance instance2 = (StatefulInstanceManager.Instance) instance;
             SessionSynchronizationCoordinator.registerSessionSynchronization(instance2, context);

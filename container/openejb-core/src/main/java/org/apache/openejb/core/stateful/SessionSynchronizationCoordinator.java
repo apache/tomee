@@ -106,6 +106,8 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         Object[] contexts = sessionSynchronizations.values().toArray();
 
         for (int i = 0; i < contexts.length; i++) {
+            // don't call beforeCompletion when transaction is marked rollback only
+            if (getTransactionStatus() == Status.STATUS_MARKED_ROLLBACK) return;
 
             ThreadContext callContext = (ThreadContext) contexts[i];
 
@@ -256,8 +258,14 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
     }
 
     protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {
-
         throw new ApplicationException(sysException);
+    }
 
+    protected int getTransactionStatus() {
+        try {
+            return transactionManager.getStatus();
+        } catch (javax.transaction.SystemException e) {
+            return Status.STATUS_NO_TRANSACTION;
+        }
     }
 }
