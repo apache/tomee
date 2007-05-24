@@ -539,12 +539,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
             for (String name : bindings.getBindings()) {
                 try {
-                    globalContext.unbind("/openejb/ejb/" + name);
-                    try {
-                        globalContext.lookup("openejb/ejb/" + name);
-                        throw new OpenEJBException("Unbind failed: " + name);
-                    } catch (NamingException goodAndExpected) {
-                    }
+                    globalContext.unbind(name);
                 } catch (Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
