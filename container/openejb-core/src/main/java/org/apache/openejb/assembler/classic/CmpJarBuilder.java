@@ -70,6 +70,7 @@ public class CmpJarBuilder {
                 }
             }
             if (appInfo.cmpMappingsXml != null) {
+                // System.out.println(appInfo.cmpMappingsXml);
                 addJarEntry(jarOutputStream, "META-INF/openejb-cmp-generated-orm.xml", appInfo.cmpMappingsXml.getBytes());
             }
         } catch (IOException e) {

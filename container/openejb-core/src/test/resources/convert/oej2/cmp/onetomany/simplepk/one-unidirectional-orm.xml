@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <entity name="onetomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyA">
-        <description>A</description>
+        <description>TestModule#A</description>
         <table name="A"/>
         <named-query name="onetomanyA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(A) FROM onetomanyA A</query>
@@ -21,7 +21,7 @@
         </attributes>
     </entity>
     <entity name="onetomanyB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetomany.onetomanyB">
-        <description>B</description>
+        <description>TestModule#B</description>
         <table name="B"/>
         <named-query name="onetomanyB.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
             <query>SELECT OBJECT(B) FROM onetomanyB B</query>

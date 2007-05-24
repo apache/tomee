@@ -71,7 +71,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             if (altDD instanceof OpenejbJarType) {
                 convertEjbRefs(ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
                 convertMdbConfigs(ejbModule.getEjbJar(), (OpenejbJarType) altDD);
-                mergeEntityMappings(appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
+                mergeEntityMappings(ejbModule.getModuleId(), appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
             }
         }
         return appModule;
@@ -218,7 +218,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         }
     }
 
-    public void mergeEntityMappings(EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
+    public void mergeEntityMappings(String moduleId, EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
         for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new EntityData(entity));
@@ -228,7 +228,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 continue;
             }
             EntityBeanType bean = (EntityBeanType) enterpriseBean;
-            EntityData entityData = entities.get(bean.getEjbName());
+            EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
@@ -295,7 +295,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 EjbRelationshipRoleType leftRole = roles.get(0);
                 EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
                 String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
-                EntityData leftEntityData = entities.get(leftEjbName);
+                EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
                 String leftFieldName = leftRole.getCmrField().getCmrFieldName();
 
                 RelationField field;
@@ -352,7 +352,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 RelationField left = null;
                 if (leftRole.getRelationshipRoleSource() != null) {
                     String leftEjbName = leftRole.getRelationshipRoleSource().getEjbName();
-                    EntityData leftEntityData = entities.get(leftEjbName);
+                    EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
                     if (leftEntityData == null) {
                         // todo warn no such entity in ejb-jar.xml
                         continue;
@@ -387,7 +387,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                             }
                             if (rightRole.getRelationshipRoleSource() != null) {
                                 String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
-                                EntityData rightEntityData = entities.get(rightEjbName);
+                                EntityData rightEntityData = entities.get(moduleId + "#" + rightEjbName);
                                 if (rightEntityData == null) {
                                     // todo warn no such entity in ejb-jar.xml
                                     continue;

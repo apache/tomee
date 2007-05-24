@@ -200,7 +200,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             Entity entity = new Entity();
 
             // description: contains the name of the entity bean
-            entity.setDescription(bean.getEjbName());
+            entity.setDescription(ejbModule.getModuleId() + "#" + bean.getEjbName());
 
             // name: the name of the entity in queries
             String entityName = bean.getAbstractSchemaName();

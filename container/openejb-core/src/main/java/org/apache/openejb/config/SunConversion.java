@@ -242,13 +242,13 @@ public class SunConversion implements DynamicDeployer {
         // merge data from sun-ejb-jar.xml file
         SunEjbJar sunEjbJar = getSunEjbJar(ejbModule);
         mergeEjbConfig(ejbModule.getOpenejbJar(), sunEjbJar);
-        mergeEntityMappings(entities, ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), sunEjbJar);
+        mergeEntityMappings(entities, ejbModule.getModuleId(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), sunEjbJar);
 
         // merge data from sun-cmp-mappings.xml file
         SunCmpMappings sunCmpMappings = getSunCmpMappings(ejbModule);
         if (sunCmpMappings != null) {
             for (SunCmpMapping sunCmpMapping : sunCmpMappings.getSunCmpMapping()) {
-                mergeEntityMappings(entities, ejbModule, entityMappings, sunCmpMapping);
+                mergeEntityMappings(entities, ejbModule.getModuleId(), ejbModule, entityMappings, sunCmpMapping);
             }
         }
     }
@@ -331,7 +331,7 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    private void mergeEntityMappings(Map<String, EntityData> entities, EjbJar ejbJar, OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
+    private void mergeEntityMappings(Map<String, EntityData> entities, String moduleId, EjbJar ejbJar, OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
         if (openejbJar == null) return;
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
@@ -350,7 +350,7 @@ public class SunConversion implements DynamicDeployer {
                 continue;
             }
             EntityBean bean = (EntityBean) enterpriseBean;
-            EntityData entityData = entities.get(ejb.getEjbName());
+            EntityData entityData = entities.get(moduleId + "#" + ejb.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
@@ -390,9 +390,9 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    public void mergeEntityMappings(Map<String, EntityData> entities, EjbModule ejbModule, EntityMappings entityMappings, SunCmpMapping sunCmpMapping) {
+    public void mergeEntityMappings(Map<String, EntityData> entities, String moduleId, EjbModule ejbModule, EntityMappings entityMappings, SunCmpMapping sunCmpMapping) {
         for (EntityMapping bean : sunCmpMapping.getEntityMapping()) {
-            SunConversion.EntityData entityData = entities.get(bean.getEjbName());
+            SunConversion.EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <entity name="Holding" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Holding">
-        <description>HoldingEJB</description>
+        <description>TestModule#HoldingEJB</description>
         <table name="HOLDINGEJB"/>
         <named-query name="Holding.ejbSelectQuoteFromSymbol(java.lang.String)">
             <query>SELECT OBJECT(q) from Quote q WHERE q.symbol = ?1</query>
@@ -41,7 +41,7 @@
         </attributes>
     </entity>
     <entity name="AccountProfile" class="openejb.org.apache.geronimo.samples.daytrader.ejb.AccountProfile">
-        <description>AccountProfileEJB</description>
+        <description>TestModule#AccountProfileEJB</description>
         <table name="AccountProfileEJB"/>
         <named-query name="AccountProfile.findAll">
             <query>SELECT OBJECT(a) FROM AccountProfile a</query>
@@ -72,7 +72,7 @@
         </attributes>
     </entity>
     <entity name="Quote" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Quote">
-        <description>QuoteEJB</description>
+        <description>TestModule#QuoteEJB</description>
         <table name="QuoteEJB"/>
         <named-query name="Quote.findAll">
             <query>SELECT OBJECT(q) FROM Quote q</query>
@@ -129,7 +129,7 @@
         </attributes>
     </entity>
     <entity name="KeyGen" class="openejb.org.apache.geronimo.samples.daytrader.ejb.KeyGen">
-        <description>KeyGenEJB</description>
+        <description>TestModule#KeyGenEJB</description>
         <table name="KeyGenEJB"/>
         <named-query name="KeyGen.findByPrimaryKeyForUpdate(java.lang.String)">
             <query>SELECT OBJECT(kg) FROM KeyGen kg where kg.keyName = ?1</query>
@@ -144,7 +144,7 @@
         </attributes>
     </entity>
     <entity name="Account" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Account">
-        <description>AccountEJB</description>
+        <description>TestModule#AccountEJB</description>
         <table name="AccountEJB"/>
         <named-query name="Account.findByUserID(java.lang.String)">
             <query>SELECT OBJECT(a) FROM Account a WHERE a.profile.userID = ?1</query>
@@ -202,7 +202,7 @@
         </attributes>
     </entity>
     <entity name="Orders" class="openejb.org.apache.geronimo.samples.daytrader.ejb.Orders">
-        <description>OrderEJB</description>
+        <description>TestModule#OrderEJB</description>
         <table name="OrderEJB"/>
         <named-query name="Orders.findAll">
             <query>SELECT OBJECT(o) FROM Orders o</query>
