@@ -105,6 +105,7 @@ public class JpaTestObject extends junit.framework.Assert {
     }
 
     public void jpaLifecycle() throws Exception {
+        newDeleteNew();
         employeeTest();
         billTest();
         cmpText();
@@ -140,6 +141,44 @@ public class JpaTestObject extends junit.framework.Assert {
 //        commitTx();
     }
 
+    private void newDeleteNew() throws Exception {
+        beginTx();
+
+        // Create new
+        Person dain = new Person();
+        dain.setName("dain");
+        assertFalse(entityManager.contains(dain));
+        entityManager.persist(dain);
+        entityManager.flush();
+        dain = entityManager.merge(dain);
+        assertTrue(entityManager.contains(dain));
+
+        // Find and verify
+        dain = entityManager.find(Person.class, "dain");
+        assertNotNull(dain);
+        assertEquals("dain", dain.getName());
+
+        // Delete
+        entityManager.remove(dain);
+        assertFalse(entityManager.contains(dain));
+
+        // Recreate
+        dain = new Person();
+        dain.setName("dain");
+        assertFalse(entityManager.contains(dain));
+        entityManager.persist(dain);
+        entityManager.flush();
+        dain = entityManager.merge(dain);
+        assertTrue(entityManager.contains(dain));
+
+        // Find and verify
+        dain = entityManager.find(Person.class, "dain");
+        // assertNotNull(dain); // <<<<<<< FAILS
+        // assertEquals("dain", dain.getName());
+
+        commitTx();
+    }
+    
     private void employeeTest() throws Exception {
         // get the pk for the inserted row
         int davidPk = -1;

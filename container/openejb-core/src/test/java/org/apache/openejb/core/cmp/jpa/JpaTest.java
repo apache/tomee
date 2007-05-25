@@ -189,6 +189,7 @@ public class JpaTest extends TestCase {
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Employee");
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Bill");
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.EmbeddedBill");
+        unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Person");
         unitInfo.getMappingFileNames().add("META-INF/jpa-test-mappings.xml");
 
         // Handle Properties
