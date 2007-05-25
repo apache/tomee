@@ -302,11 +302,10 @@ public class EntityInstanceManager {
         return new EntityContext(transactionManager, securityService);
     }
 
-    public void poolInstance(ThreadContext callContext, EntityBean bean) throws OpenEJBException {
+    public void poolInstance(ThreadContext callContext, EntityBean bean, Object primaryKey) throws OpenEJBException {
         if (bean == null) {
             return;
         }
-        Object primaryKey = callContext.getPrimaryKey();// null if servicing a home ejbFind or ejbHome method.
         Transaction currentTx = null;
         try {
             currentTx = getTransactionManager().getTransaction();
@@ -332,8 +331,13 @@ public class EntityInstanceManager {
                     */
                     Stack methodReadyPool = poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
                     methodReadyPool.push(bean);
-                } else
+                } else {
+                    if (callContext.getCurrentOperation() == Operation.CREATE) {
+                        // Bean is being recreated (new-delete-new) so we need to reassociate it
+                        wrapper.associate();
+                    }
                     wrapper.setEntityBean(bean);
+                }
             } else {
                 /*
                 A wrapper will not exist if the bean is being returned after a create operation.
@@ -555,6 +559,10 @@ public class EntityInstanceManager {
             isAssociated = true;
             deploymentInfo = callContext.getDeploymentInfo();
             primaryKey = callContext.getPrimaryKey();
+        }
+
+        public void associate() {
+            isAssociated = true;
         }
 
         public void disassociate() {
