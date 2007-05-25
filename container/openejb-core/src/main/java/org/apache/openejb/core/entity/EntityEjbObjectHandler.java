@@ -49,13 +49,14 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     * handler for the same bean identity so that they can removed together when one of the remove() operations
     * is called.
     */
-    public static Object getRegistryId(Object primKey, Object deployId, Container contnr) {
-        return "" + primKey + deployId + contnr.getContainerID();
+    public static Object getRegistryId(Container container, Object deploymentId, Object primaryKey) {
+        return new RegistryId(container, deploymentId, primaryKey);
     }
 
     public Object getRegistryId() {
-        if (registryId == null)
-            registryId = getRegistryId(primaryKey, deploymentID, container);
+        if (registryId == null) {
+            registryId = getRegistryId(container, deploymentID, primaryKey);
+        }
         return registryId;
     }
 
@@ -66,11 +67,16 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
 
-        Object hndr = ProxyManager.getInvocationHandler(proxy);
+        if (args.length != 1) {
+            throw new IllegalArgumentException("Expected one argument to isIdentical, but received " + args.length);
+        }
 
-        if (hndr instanceof EntityEjbObjectHandler) {
+        Object that = args[0];
+        Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
-            EntityEjbObjectHandler handler = (EntityEjbObjectHandler) hndr;
+        if (invocationHandler instanceof EntityEjbObjectHandler) {
+
+            EntityEjbObjectHandler handler = (EntityEjbObjectHandler) invocationHandler;
 
             /*
             * The registry id is a compound key composed of the bean's primary key, deployment id, and
@@ -100,5 +106,44 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         // entity bean object references should not be invalidated since they
         // will automatically hook up to a new instance of the bean using the
         // primary key (we will load a new instance from the db)
+    }
+
+    private static class RegistryId {
+        private final Object containerId;
+        private final Object deploymentId;
+        private final Object primaryKey;
+
+        public RegistryId(Container container, Object deploymentId, Object primaryKey) {
+            if (container == null) throw new NullPointerException("container is null");
+            if (deploymentId == null) throw new NullPointerException("deploymentId is null");
+
+            this.containerId = container.getContainerID();
+            this.deploymentId = deploymentId;
+            this.primaryKey = primaryKey;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RegistryId that = (RegistryId) o;
+
+            return containerId.equals(that.containerId) &&
+                    deploymentId.equals(that.deploymentId) &&
+                    !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
+        }
+
+        public int hashCode() {
+            int result;
+            result = containerId.hashCode();
+            result = 31 * result + deploymentId.hashCode();
+            result = 31 * result + (primaryKey != null ? primaryKey.hashCode() : 0);
+            return result;
+        }
+
+
+        public String toString() {
+            return "[" + containerId + ", " + deploymentId + ", " + primaryKey + "]";
+        }
     }
 }

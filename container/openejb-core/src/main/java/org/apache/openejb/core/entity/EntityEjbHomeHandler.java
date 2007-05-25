@@ -101,7 +101,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         * This operation takes care of invalidating all the EjbObjectProxyHanders associated with 
         * the same RegistryId. See this.createProxy().
         */
-        invalidateAllHandlers(EntityEjbObjectHandler.getRegistryId(primKey, deploymentID, container));
+        invalidateAllHandlers(EntityEjbObjectHandler.getRegistryId(container, deploymentID, primKey));
         return null;
     }
 
