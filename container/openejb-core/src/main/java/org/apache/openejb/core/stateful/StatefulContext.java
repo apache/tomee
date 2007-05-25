@@ -153,6 +153,10 @@ public class StatefulContext extends BaseSessionContext {
         public boolean isTimerAccessAllowed() {
             return false;
         }
+
+        public boolean isTimerMethodAllowed() {
+            return false;
+        }
     }
 
     static {
