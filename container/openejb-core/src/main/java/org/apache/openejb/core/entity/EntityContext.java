@@ -83,6 +83,10 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
+            if (di.getLocalInterface() == null) {
+                throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a local interface");
+            }
+
             EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>());
 
             try {
@@ -97,12 +101,16 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
+            if (di.getRemoteInterface() == null) {
+                throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a remote interface");
+            }
+
             EjbObjectProxyHandler handler = new EntityEjbObjectHandler(((RpcContainer) di.getContainer()).getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
             try {
                 Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
                 return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
             } catch (IllegalAccessException iae) {
-                throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
+                throw new InternalErrorException("Could not create IVM proxy for " + di.getRemoteInterface() + " interface", iae);
             }
         }
 
