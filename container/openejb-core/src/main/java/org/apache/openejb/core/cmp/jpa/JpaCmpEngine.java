@@ -37,8 +37,10 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.transaction.TransactionManager;
 import javax.transaction.Status;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
@@ -58,6 +60,7 @@ public class JpaCmpEngine implements CmpEngine {
 
     private final CmpCallback cmpCallback;
     private final TransactionManager transactionManager;
+    private final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
     private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
     private final Map<Object, CoreDeploymentInfo> deployments = new HashMap<Object, CoreDeploymentInfo>();
@@ -144,6 +147,9 @@ public class JpaCmpEngine implements CmpEngine {
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
             Object primaryKey = kg.getPrimaryKey(bean);
 
+            // add to transaction cache
+            getTransactionCache().put(deploymentInfo.getCmpImplClass(), primaryKey, bean);
+
             return primaryKey;
         } finally {
             creating.get().remove(bean);
@@ -157,8 +163,13 @@ public class JpaCmpEngine implements CmpEngine {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
-            EntityManager entityManager = getEntityManager(deploymentInfo);
-            Object bean = entityManager.find(beanClass, primaryKey);
+            // First check the transaction cache
+            Object bean = getTransactionCache().get(beanClass, primaryKey);
+            if (bean == null) {
+                // Try to load it from the entity manager
+                EntityManager entityManager = getEntityManager(deploymentInfo);
+                bean = entityManager.find(beanClass, primaryKey);
+            }
             return bean;
         } finally {
             commitTransaction(startedTx, "load");
@@ -186,8 +197,18 @@ public class JpaCmpEngine implements CmpEngine {
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
             EntityManager entityManager = getEntityManager(deploymentInfo);
-            Object bean = entityManager.find(beanClass, callContext.getPrimaryKey());
+            Object primaryKey = callContext.getPrimaryKey();
+
+            // First check the transaction cache
+            Object bean = getTransactionCache().get(beanClass, primaryKey);
+            if (bean == null) {
+                // Try to load it from the entity manager
+                bean = entityManager.find(beanClass, primaryKey);
+            }
+
+            // remove the bean
             entityManager.remove(bean);
+            getTransactionCache().remove(beanClass, primaryKey);
         } finally {
             commitTransaction(startedTx, "remove");
         }
@@ -317,6 +338,41 @@ public class JpaCmpEngine implements CmpEngine {
             } else {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }
+        }
+    }
+
+    // todo remove when OpenJPA fixes the new-remove-new-find bug
+    private TransactionCache getTransactionCache() {
+        TransactionCache transactionCache = (TransactionCache) synchronizationRegistry.getResource(TransactionCache.class);
+        if (transactionCache == null) {
+            transactionCache = new TransactionCache();
+            synchronizationRegistry.putResource(TransactionCache.class, transactionCache);
+        }
+        return transactionCache;
+    }
+
+    private static class TransactionCache {
+        private final Map<Class,Map<Object,Object>> cache = new HashMap<Class,Map<Object,Object>>();
+
+        public Object get(Class clazz, Object primaryKey) {
+            Map<Object, Object> instances = cache.get(clazz);
+            if (instances == null) return null;
+            return instances.get(primaryKey);
+        }
+
+        public void put(Class clazz, Object primaryKey, Object value) {
+            Map<Object, Object> instances = cache.get(clazz);
+            if (instances == null) {
+                instances = new HashMap<Object, Object>();
+                cache.put(clazz, instances);
+            }
+            instances.put(primaryKey, value);
+        }
+
+        public Object remove(Class clazz, Object primaryKey) {
+            Map<Object, Object> instances = cache.get(clazz);
+            if (instances == null) return null;
+            return instances.remove(primaryKey);
         }
     }
 
