@@ -18,14 +18,117 @@ package org.apache.openejb.core.ivm.naming;
 
 import junit.framework.TestCase;
 
+import java.util.Map;
+
+import org.apache.openejb.util.Debug;
+
 import javax.naming.*;
 
 /**
  * @version $Rev$ $Date$
  */
 public class IvmContextTest extends TestCase {
+    public void test1() throws Exception {
+
+        IvmContext context = new IvmContext();
+        context.bind("root/one", 1);
+        context.bind("root/two", 2);
+        context.bind("root/three", 3);
+
+        assertContextEntry(context, "one", 1);
+        assertContextEntry(context, "two", 2);
+        assertContextEntry(context, "three", 3);
+
+        context.unbind("root/one");
+
+        try {
+            context.lookup("one");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException e) {
+            // pass
+        }
+
+        // The other entries should still be there
+//        assertContextEntry(context, "one", 1);
+        assertContextEntry(context, "two", 2);
+        assertContextEntry(context, "three", 3);
+
+        Map<String, Object> map = Debug.contextToMap(context);
+        assertFalse("name should not appear in bindings list", map.containsKey("one"));
+    }
+
+    public void test2() throws Exception {
+
+        IvmContext context = new IvmContext();
+        context.bind("root/one", 1);
+        context.bind("root/two", 2);
+        context.bind("root/three", 3);
+
+        assertContextEntry(context, "one", 1);
+        assertContextEntry(context, "two", 2);
+        assertContextEntry(context, "three", 3);
+
+        context.unbind("root/two");
+
+        try {
+            context.lookup("two");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException e) {
+            // pass
+        }
+
+        // The other entries should still be there
+        assertContextEntry(context, "one", 1);
+        assertContextEntry(context, "three", 3);
+
+        Map<String, Object> map = Debug.contextToMap(context);
+        assertFalse("name should not appear in bindings list", map.containsKey("two"));
+    }
+
+    public void test3() throws Exception {
+
+        IvmContext context = new IvmContext();
+        context.bind("root/veggies/tomato/roma", 33);
+        context.bind("root/fruit/apple/grannysmith", 22);
+        context.bind("root/fruit/orange/mandarin", 44);
+
+        assertContextEntry(context, "veggies/tomato/roma", 33);
+        assertContextEntry(context, "fruit/apple/grannysmith", 22);
+        assertContextEntry(context, "fruit/orange/mandarin", 44);
+
+        context.unbind("root/fruit/apple/grannysmith");
+        context.prune("fruit");
+
+        context.unbind("root/veggies/tomato/roma");
+        context.prune("veggies");
+
+        try {
+            context.lookup("fruit/apple/grannysmith");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException pass) {
+        }
+        try {
+            context.lookup("veggies/tomato/roma");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException pass) {
+        }
+        try {
+            context.lookup("veggies/tomato");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException pass) {
+        }
+
+        try {
+            context.lookup("veggies/fruit");
+            fail("name should be unbound");
+        } catch (javax.naming.NameNotFoundException pass) {
+        }
+
+        Map<String, Object> map = Debug.contextToMap(context);
+        assertFalse("name should not appear in bindings list", map.containsKey("veggies/tomato/roma"));
+    }
+
     public void test() throws Exception {
-        String str3 = "root/comp/env/rate/work/doc/lot";
 
         IvmContext context = new IvmContext();
         context.bind("root/comp/env/rate/work/doc/lot/pop", new Integer(1));
@@ -46,5 +149,19 @@ public class IvmContextTest extends TestCase {
             // pass
         }
 
+        Map<String, Object> map = Debug.contextToMap(context);
+        assertFalse("name should not appear in bindings list", map.containsKey("comp/env/rate/work/doc/lot/pop"));
     }
+
+    private void assertContextEntry(Context context, String s, Object value) throws javax.naming.NamingException {
+        try {
+            Object two = context.lookup(s);
+            assertNotNull(two);
+            assertEquals(two, value);
+            // pass
+        } catch (NameNotFoundException e) {
+            fail("name '"+ s +"' not found.");
+        }
+    }
+
 }

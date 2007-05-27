@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,8 +34,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.TreeMap;
-import java.util.Iterator;
 import javax.naming.Binding;
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -72,15 +69,15 @@ public class IvmContext implements Context, Serializable {
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
-        return new IvmContext(new NameNode(null, new ParsedName("/"), null));
+        return new IvmContext(new NameNode(null, new ParsedName("/"), null, null));
     }
 
     public IvmContext() {
-        this(new NameNode(null, new ParsedName("root"), null));
+        this(new NameNode(null, new ParsedName("root"), null, null));
     }
 
     public IvmContext(String nodeName) {
-        this(new NameNode(null, new ParsedName(nodeName), null));
+        this(new NameNode(null, new ParsedName(nodeName), null, null));
     }
 
     public IvmContext(NameNode node) {
@@ -115,7 +112,7 @@ public class IvmContext implements Context, Serializable {
               component of the name is a context of a peer node or the same node, so we have
               to prepend the current context name to the relative lookup path.
             */
-            compoundName = mynode.atomicName + '/' + compositName;
+            compoundName = mynode.getAtomicName() + '/' + compositName;
         }
 
         /*
@@ -272,8 +269,10 @@ public class IvmContext implements Context, Serializable {
         }
         if (fastCache.containsKey(name))
             throw new javax.naming.NameAlreadyBoundException();
-        else
-            mynode.bind(new ParsedName(name), obj);
+        else {
+            ParsedName parsedName = new ParsedName(name);
+            mynode.bind(parsedName, obj);
+        }
     }
 
     public void bind(Name name, Object obj) throws NamingException {
@@ -306,6 +305,15 @@ public class IvmContext implements Context, Serializable {
 
     public void unbind(Name name) throws NamingException {
         unbind(name.toString());
+    }
+
+    public void prune(String name) throws NamingException {
+        IvmContext ctx = (IvmContext) lookup(name);
+        ctx.prune();
+    }
+
+    public void prune() throws NamingException {
+        mynode.prune();
     }
 
     public void rename(String oldname, String newname) throws NamingException {
@@ -441,7 +449,7 @@ public class IvmContext implements Context, Serializable {
             for (int i = 0; i < vect.size(); i++) {
                 NameNode node = (NameNode) vect.elementAt(i);
                 String className = node.getBinding().getClass().getName();
-                vect.setElementAt(new Binding(node.atomicName, className, node.getBinding()), i);
+                vect.setElementAt(new Binding(node.getAtomicName(), className, node.getBinding()), i);
             }
             myEnum = vect.elements();
         }
@@ -458,7 +466,7 @@ public class IvmContext implements Context, Serializable {
             for (int i = 0; i < vect.size(); i++) {
                 NameNode node = (NameNode) vect.elementAt(i);
                 String className = node.getBinding().getClass().getName();
-                vect.setElementAt(new NameClassPair(node.atomicName, className), i);
+                vect.setElementAt(new NameClassPair(node.getAtomicName(), className), i);
             }
             myEnum = vect.elements();
         }
@@ -472,7 +480,7 @@ public class IvmContext implements Context, Serializable {
         public MyNamingEnumeration(NameNode parentNode) {
             Vector vect = new Vector();
 
-            NameNode node = parentNode.subTree;
+            NameNode node = parentNode.getSubTree();
 
             if (node == null) {
                 node = parentNode;
@@ -488,13 +496,13 @@ public class IvmContext implements Context, Serializable {
         abstract protected void buildEnumeration(Vector<NameNode> vect);
 
         protected void gatherNodes(NameNode node, Vector vect) {
-            if (node.lessTree != null) {
-                vect.addElement(node.lessTree);
-                gatherNodes(node.lessTree, vect);
+            if (node.getLessTree() != null) {
+                vect.addElement(node.getLessTree());
+                gatherNodes(node.getLessTree(), vect);
             }
-            if (node.grtrTree != null) {
-                vect.addElement(node.grtrTree);
-                gatherNodes(node.grtrTree, vect);
+            if (node.getGrtrTree() != null) {
+                vect.addElement(node.getGrtrTree());
+                gatherNodes(node.getGrtrTree(), vect);
             }
         }
 
@@ -573,36 +581,4 @@ public class IvmContext implements Context, Serializable {
     // Helper methods for debugging
     //
 
-    public static Map<String,Object> print(Context context) throws NamingException {
-        return print(context, System.out);
-    }
-
-    public static Map<String,Object> print(Context context, PrintStream out) throws NamingException {
-        Map<String, Object> map = buildMap(context);
-        for (Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<String, Object> entry = iterator.next();
-            out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
-        }
-        return map;
-    }
-
-    public static Map<String,Object> buildMap(Context context) throws NamingException {
-        Map<String, Object> map = new TreeMap<String, Object>();
-        buildMap(context, "", map);
-        return map;
-    }
-
-    public static void buildMap(Context context, String baseName, Map<String,Object> results) throws NamingException {
-        NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
-        while (namingEnumeration.hasMoreElements()) {
-            Binding binding = namingEnumeration.nextElement();
-            String name = binding.getName();
-            String fullName = baseName + name;
-            Object object = binding.getObject();
-            results.put(fullName, object);
-            if (object instanceof Context) {
-                buildMap((Context) object, fullName + "/", results);
-            }
-        }
-    }
 }

@@ -16,9 +16,15 @@
  */
 package org.apache.openejb.util;
 
-import java.io.ByteArrayInputStream;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Iterator;
 
 /**
  * @version $Rev$ $Date$
@@ -29,5 +35,38 @@ public class Debug {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         t.printStackTrace(new PrintStream(baos));
         return new String(baos.toByteArray());
+    }
+
+    public static Map<String,Object> contextToMap(Context context) throws NamingException {
+        Map<String, Object> map = new TreeMap<String, Object>();
+        contextToMap(context, "", map);
+        return map;
+    }
+
+    public static void contextToMap(Context context, String baseName, Map<String,Object> results) throws NamingException {
+        NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
+        while (namingEnumeration.hasMoreElements()) {
+            Binding binding = namingEnumeration.nextElement();
+            String name = binding.getName();
+            String fullName = baseName + name;
+            Object object = binding.getObject();
+            results.put(fullName, object);
+            if (object instanceof Context) {
+                contextToMap((Context) object, fullName + "/", results);
+            }
+        }
+    }
+
+    public static Map<String,Object> printContext(Context context) throws NamingException {
+        return printContext(context, System.out);
+    }
+
+    public static Map<String,Object> printContext(Context context, PrintStream out) throws NamingException {
+        Map<String, Object> map = contextToMap(context);
+        for (Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<String, Object> entry = iterator.next();
+            out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
+        }
+        return map;
     }
 }

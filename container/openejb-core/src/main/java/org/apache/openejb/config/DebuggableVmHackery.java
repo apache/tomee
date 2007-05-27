@@ -32,7 +32,8 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -44,12 +45,15 @@ import java.util.List;
 class DebuggableVmHackery implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             EjbJar ejbJar = ejbModule.getEjbJar();
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
             Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
             ejbJar.setRelationships(null);
+
+            List<String> removed = new ArrayList();
 
             for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
@@ -87,6 +91,7 @@ class DebuggableVmHackery implements DynamicDeployer {
 
                 ejbJar.removeEnterpriseBean(ejbName);
                 openejbJar.removeEjbDeployment(ejbDeployment);
+                removed.add(ejbName);
 
                 AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
                 if (assemblyDescriptor != null){
@@ -119,6 +124,20 @@ class DebuggableVmHackery implements DynamicDeployer {
                     }
                 }
             }
+
+            for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+                for (EjbLocalRef ref : copy(bean.getEjbLocalRef())) {
+                    if (removed.contains(ref.getEjbLink())){
+                        bean.getEjbLocalRef().remove(ref);
+                    }
+                }
+                for (EjbRef ref : copy(bean.getEjbRef())) {
+                    if (removed.contains(ref.getEjbLink())){
+                        bean.getEjbRef().remove(ref);
+                    }
+                }
+            }
+
         }
         return appModule;
     }

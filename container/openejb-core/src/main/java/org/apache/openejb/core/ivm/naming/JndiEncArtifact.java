@@ -35,8 +35,8 @@ public class JndiEncArtifact implements java.io.Serializable {
     public JndiEncArtifact(IvmContext context) {
         NameNode node = context.mynode;
         do {
-            path = node.atomicName + "/" + path;
-            node = node.parent;
+            path = node.getAtomicName() + "/" + path;
+            node = node.getParent();
         } while (node != null);
     }
 

@@ -327,7 +327,7 @@ public class JndiEncBuilder {
     }
 
     private IvmContext createIvmContext() {
-        IvmContext context = new IvmContext(new NameNode(null, new ParsedName("comp"), null));
+        IvmContext context = new IvmContext(new NameNode(null, new ParsedName("comp"), null, null));
         try {
             context.createSubcontext("comp").createSubcontext("env");
             // todo remove this... IvmContext seems to drop empty nodes

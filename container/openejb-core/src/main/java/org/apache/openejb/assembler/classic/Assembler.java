@@ -32,6 +32,7 @@ import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -544,6 +545,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
             }
+        }
+
+        try {
+            IvmContext ivmContext = (IvmContext) globalContext;
+            ivmContext.prune("openejb/Deployment");
+            ivmContext.prune("openejb/ejb");
+        } catch (NamingException e) {
+            undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/ejb namespaces, this could cause future deployments to fail.", e));
         }
 
         for (CoreDeploymentInfo deployment : deployments) {

@@ -186,10 +186,12 @@ public class JndiBuilder {
         try {
             Class homeInterface = deployment.getHomeInterface();
             if (homeInterface != null) {
+
                 String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getRemoteInterface(), JndiNameStrategy.Interface.REMOTE_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBHome());
                 context.bind(name, ref);
                 bindings.add(name);
+
                 name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + deployment.getRemoteInterface().getName();
                 context.bind(name, ref);
                 bindings.add(name);
@@ -201,10 +203,12 @@ public class JndiBuilder {
         try {
             Class localHomeInterface = deployment.getLocalHomeInterface();
             if (localHomeInterface != null) {
+
                 String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getLocalInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
                 context.bind(name, ref);
                 bindings.add(name);
+
                 name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + deployment.getLocalInterface().getName();
                 context.bind(name, ref);
                 bindings.add(name);
@@ -216,6 +220,7 @@ public class JndiBuilder {
         try {
             Class businessLocalInterface = deployment.getBusinessLocalInterface();
             if (businessLocalInterface != null) {
+
                 String name = "openejb/ejb/" + strategy.getName(deployment, businessLocalInterface, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 DeploymentInfo.BusinessLocalHome businessLocalHome = deployment.getBusinessLocalHome();
                 context.bind(name, new BusinessLocalReference(businessLocalHome));
@@ -224,9 +229,11 @@ public class JndiBuilder {
                 for (Class interfce : deployment.getBusinessLocalInterfaces()) {
                     DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(asList(interfce));
                     BusinessLocalReference ref = new BusinessLocalReference(home);
+
                     name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
                     context.bind(name, ref);
                     bindings.add(name);
+
                     try {
                         name = "openejb/ejb/" + strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                         context.bind(name, ref);
@@ -242,15 +249,18 @@ public class JndiBuilder {
         try {
             Class businessRemoteInterface = deployment.getBusinessRemoteInterface();
             if (businessRemoteInterface != null) {
-                String name = "openejb/ejb/" + strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_REMOTE);
+
                 DeploymentInfo.BusinessRemoteHome businessRemoteHome = deployment.getBusinessRemoteHome();
                 BusinessRemoteReference ref = new BusinessRemoteReference(businessRemoteHome);
+
+                String name = "openejb/ejb/" + strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 context.bind(name, ref);
                 bindings.add(name);
 
                 for (Class interfce : deployment.getBusinessRemoteInterfaces()) {
                     DeploymentInfo.BusinessRemoteHome home = deployment.getBusinessRemoteHome(asList(interfce));
                     ref = new BusinessRemoteReference(home);
+
                     name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
                     context.bind(name, ref);
                     bindings.add(name);
