@@ -152,7 +152,7 @@ public class EntityInstanceManager {
                 * so it needs to be enrolled in the transaction.
                 */
                 EntityBean bean = getPooledInstance(callContext);
-                wrapper = new SyncronizationWrapper(bean, key, false, callContext);
+                wrapper = new SyncronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, false, key);
 
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
@@ -346,7 +346,7 @@ public class EntityInstanceManager {
                 tx ready pool
                 */
 
-                wrapper = new SyncronizationWrapper(bean, key, true, callContext);
+                wrapper = new SyncronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, true, key);
 
                 try {
                     currentTx.registerSynchronization(wrapper);
@@ -499,7 +499,8 @@ public class EntityInstanceManager {
     * identifiers is required to uniquely identify a bean in the tx method ready pool.
     */
     public static class Key {
-        private final Object deploymentID, primaryKey;
+        private final Object deploymentID;
+        private final Object primaryKey;
         private final Transaction transaction;
 
         public Key(Transaction tx, Object depID, Object prKey) {
@@ -543,52 +544,54 @@ public class EntityInstanceManager {
         * or if the bean instance is discarded, the wrapper will not longer be associated with a bean instances
         * and therefore its beforeCompletion method will not process the ejbStore method.
         */
-        private boolean isAvailable;
-        private boolean isAssociated;
-        private final Key myIndex;
+        private boolean available;
+        private boolean associated;
+        private final Key readyPoolIndex;
         private final CoreDeploymentInfo deploymentInfo;
         private final Object primaryKey;
 
-        public SyncronizationWrapper(EntityBean bean, Key key, boolean available, ThreadContext callContext) throws OpenEJBException {
-            if (bean == null || callContext == null || key == null) {
-                throw new IllegalArgumentException();
-            }
+        public SyncronizationWrapper(CoreDeploymentInfo deploymentInfo, Object primaryKey, EntityBean bean, boolean available, Key readyPoolIndex) {
+            if (bean == null) throw new IllegalArgumentException("bean is null");
+            if (readyPoolIndex == null) throw new IllegalArgumentException("key is null");
+            if (deploymentInfo == null) throw new IllegalArgumentException("deploymentInfo is null");
+            if (primaryKey == null) throw new IllegalArgumentException("primaryKey is null");
+
+            this.deploymentInfo = deploymentInfo;
             this.bean = bean;
-            isAvailable = available;
-            myIndex = key;
-            isAssociated = true;
-            deploymentInfo = callContext.getDeploymentInfo();
-            primaryKey = callContext.getPrimaryKey();
+            this.primaryKey = primaryKey;
+            this.available = available;
+            this.readyPoolIndex = readyPoolIndex;
+            associated = true;
         }
 
         public void associate() {
-            isAssociated = true;
+            associated = true;
         }
 
         public void disassociate() {
-            isAssociated = false;
+            associated = false;
         }
 
         public boolean isAssociated() {
-            return isAssociated;
+            return associated;
         }
 
         public synchronized boolean isAvailable() {
-            return isAvailable;
+            return available;
         }
 
         public synchronized void setEntityBean(EntityBean ebean) {
-            isAvailable = true;
+            available = true;
             bean = ebean;
         }
 
         public synchronized EntityBean getEntityBean() {
-            isAvailable = false;
+            available = false;
             return bean;
         }
 
         public void beforeCompletion() {
-            if (isAssociated) {
+            if (associated) {
                 EntityBean bean;
                 synchronized (this) {
                     bean = this.bean;
@@ -618,7 +621,7 @@ public class EntityInstanceManager {
         }
 
         public void afterCompletion(int status) {
-            txReadyPool.remove(myIndex);
+            txReadyPool.remove(readyPoolIndex);
         }
     }
 }
