@@ -75,7 +75,6 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
         if (invocationHandler instanceof EntityEjbObjectHandler) {
-
             EntityEjbObjectHandler handler = (EntityEjbObjectHandler) invocationHandler;
 
             /*
@@ -83,12 +82,9 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
             * container id.  It uniquely identifies the entity bean that is proxied by the EntityEjbObjectHandler
             * within the IntraVM.
             */
-            if (this.getRegistryId().equals(handler.getRegistryId())) {
-                return Boolean.TRUE;
-            }
+            return this.getRegistryId().equals(handler.getRegistryId());
         }
-        return Boolean.FALSE;
-
+        return false;
     }
 
     protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
