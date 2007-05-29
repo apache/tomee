@@ -28,6 +28,7 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.RemoveException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
@@ -303,6 +304,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             checkAuthorization(deploymentInfo, callMethod, callInterface);
+
+            if (instanceManager.getBeanTransaction(callContext) != null) {
+                throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
+            }
+
             Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
             StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
 

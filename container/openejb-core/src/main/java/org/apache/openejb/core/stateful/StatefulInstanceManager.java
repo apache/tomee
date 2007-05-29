@@ -116,6 +116,7 @@ public class StatefulInstanceManager {
 
     public Transaction getBeanTransaction(ThreadContext callContext) throws OpenEJBException {
         BeanEntry entry = getBeanEntry(callContext);
+        if (entry == null) return null;
         return entry.beanTransaction;
     }
 
