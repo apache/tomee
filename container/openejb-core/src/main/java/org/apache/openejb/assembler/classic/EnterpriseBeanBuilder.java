@@ -422,7 +422,7 @@ class EnterpriseBeanBuilder {
 
     private Class load(String className, String messageCode) throws OpenEJBException {
         try {
-            return cl.loadClass(className);
+            return Class.forName(className, true, cl);
         } catch (ClassNotFoundException e) {
             String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
             throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message));

@@ -33,7 +33,6 @@ import java.util.Properties;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins </a>
  */
 public class LoaderServlet extends HttpServlet {
-
     private Loader loader;
 
     public void init(ServletConfig config) throws ServletException {
@@ -76,12 +75,31 @@ public class LoaderServlet extends HttpServlet {
                 loader = new LoaderWrapper(instance);
             }
 
-            loader.init(config);
+            // loader created, now finish adding all properties
+            if (embeddingStyle.endsWith("tomcat-webapp")) {
+                ServletContext ctx = config.getServletContext();
+                File webInf = new File(ctx.getRealPath("WEB-INF"));
+                File webapp = webInf.getParentFile();
+                String webappPath = webapp.getAbsolutePath();
+
+                setPropertyIfNUll(p, "openejb.base", webappPath);
+                setPropertyIfNUll(p, "openejb.configuration", "META-INF/openejb.xml");
+                setPropertyIfNUll(p, "openejb.container.decorators", "org.apache.openejb.tomcat.TomcatJndiSupport");
+                setPropertyIfNUll(p, "log4j.configuration", "META-INF/log4j.properties");
+            } else if (embeddingStyle.endsWith("tomcat-system")) {
+                String catalinaHome = System.getProperty("catalina.home");
+                p.setProperty("openejb.home", catalinaHome);
+
+                String catalinaBase = System.getProperty("catalina.base");
+                p.setProperty("openejb.base", catalinaBase);
+            }
+
+            // initialize the loader
+            loader.init(p);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         loader.service(request, response);
@@ -140,24 +158,22 @@ public class LoaderServlet extends HttpServlet {
             this.loader = loader;
             try {
                 Class loaderClass = loader.getClass();
-                this.init = loaderClass.getMethod("init", new Class[]{ServletConfig.class});
-                this.service = loaderClass.getMethod("service", new Class[]{HttpServletRequest.class, HttpServletResponse.class});
+                this.init = loaderClass.getMethod("init", Properties.class);
+                this.service = loaderClass.getMethod("service", HttpServletRequest.class, HttpServletResponse.class);
             } catch (NoSuchMethodException e) {
                 throw (IllegalStateException) new IllegalStateException("Signatures for Loader are no longer correct.").initCause(e);
             }
         }
 
-        public void init(ServletConfig servletConfig) throws ServletException {
+        public void init(Properties properties) throws Exception {
             try {
-                init.invoke(loader, new Object[]{servletConfig});
+                init.invoke(loader, properties);
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
-                if (cause instanceof RuntimeException) {
-                    throw (RuntimeException) cause;
-                } else if (cause instanceof Error) {
+                if (cause instanceof Error) {
                     throw (Error) cause;
                 } else {
-                    throw (ServletException) cause;
+                    throw (Exception) cause;
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Loader.init: " + e.getMessage() + e.getClass().getName() + ": " + e.getMessage(), e);
@@ -166,7 +182,7 @@ public class LoaderServlet extends HttpServlet {
 
         public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             try {
-                service.invoke(loader, new Object[]{request, response});
+                service.invoke(loader, request, response);
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
                 if (cause instanceof RuntimeException) {

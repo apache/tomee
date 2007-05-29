@@ -205,6 +205,17 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>tomcat-private-repository</id>
+      <name>Tomcat Private Repository</name>
+      <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>

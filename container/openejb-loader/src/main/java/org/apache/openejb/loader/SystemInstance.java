@@ -156,6 +156,10 @@ public class SystemInstance {
 
     private static boolean initialized;
 
+    public static boolean isInitialized() {
+        return initialized;
+    }
+
     public static void init(Properties properties) throws Exception {
         if (initialized) return;
         system = new SystemInstance(properties);

@@ -17,36 +17,50 @@
     limitations under the License.
 -->
 <assembly>
-  <id>test</id>
+  <id>itests</id>
   <formats>
-    <format>jar</format>
+    <format>war</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>README*</include>
+        <include>LICENSE.txt</include>
+        <include>NOTICE.txt</include>
+      </includes>
+    </fileSet>
+    <!--<fileSet>-->
+      <!--<directory>target/classes</directory>-->
+      <!--<outputDirectory>openejb</outputDirectory>-->
+      <!--<excludes>-->
+          <!--<exclude>org/**</exclude>-->
+      <!--</excludes>-->
+    <!--</fileSet>-->
+    <!--<fileSet>-->
+      <!--<directory>target</directory>-->
+      <!--<outputDirectory>openejb/lib</outputDirectory>-->
+      <!--<includes>-->
+        <!--<include>openejb-tomcat*.jar</include>-->
+      <!--</includes>-->
+    <!--</fileSet>-->
+  </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
-      <unpack>true</unpack>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
       <includes>
-          <include>org.apache.geronimo.specs:geronimo-ejb_3.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-interceptor_3.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
-          <include>org.apache.xbean:xbean-finder</include>
-          <include>asm:asm</include>
           <include>junit:junit</include>
           <include>org.apache.openejb:openejb-itests-beans</include>
-          <include>org.apache.openejb:openejb-itests-client</include>
-          <include>org.apache.openejb:openejb-client</include>
-
-          <!-- ActiveMQ -->
-          <include>org.apache.activemq:activemq-core</include>
-          <include>backport-util-concurrent:backport-util-concurrent</include>
-          <include>commons-logging:commons-logging</include>
-          <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec</include>
       </includes>
       <scope>test</scope>
     </dependencySet>
+    <!--<dependencySet>-->
+      <!--<outputDirectory>openejb/WEB-INF/lib</outputDirectory>-->
+      <!--<scope>runtime</scope>-->
+      <!--<includes>-->
+          <!--<include>org.apache.openejb:openejb-loader</include>-->
+      <!--</includes>-->
+    <!--</dependencySet>-->
   </dependencySets>
 </assembly>
 

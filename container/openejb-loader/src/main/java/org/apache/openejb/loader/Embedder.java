@@ -18,25 +18,56 @@
 package org.apache.openejb.loader;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
  */
 public class Embedder {
-
     private final String className;
+    private Class loaderClass;
 
     public Embedder(String className) {
         this.className = className;
     }
 
     public Class load() throws Exception {
-        ClassPath classPath = SystemInstance.get().getClassPath();
-        ClassLoader classLoader = classPath.getClassLoader();
+        if (loaderClass == null) {
+            ClassPath classPath = SystemInstance.get().getClassPath();
+            ClassLoader classLoader = classPath.getClassLoader();
+            try {
+                loaderClass = classLoader.loadClass(className);
+            } catch (Exception e) {
+                loaderClass = forcefulLoad(classPath, classLoader);
+            }
+        }
+        return loaderClass;
+    }
+
+    public Object init(Properties properties) throws Exception {
+        Class loaderClass = load();
+
         try {
-            return  classLoader.loadClass(className);
-        } catch (Exception e) {
-            return forcefulLoad(classPath, classLoader);
+            // get the init method
+            Method init = loaderClass.getMethod("init", Properties.class);
+
+            // create the instance
+            Object instance = loaderClass.newInstance();
+
+            // invoke init method
+            Object value = init.invoke(instance, properties);
+            return value;
+        } catch (NoSuchMethodException e) {
+            throw (IllegalStateException) new IllegalStateException("Signatures for Loader are no longer correct.").initCause(e);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Error) {
+                throw (Error) cause;
+            } else {
+                throw (Exception) cause;
+            }
         }
     }
 

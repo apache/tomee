@@ -175,7 +175,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (str == null) {
                 str = naming;
             } else if (str.indexOf(naming) == -1) {
-                str = naming + ":" + str;
+                str = str + ":" + naming;
             }
             systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
         }
@@ -343,6 +343,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
         createApplication(appInfo, null, createAppClassLoader(appInfo));
+    }
+
+    public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+        createApplication(appInfo, null, classLoader);        
     }
 
     public void createApplication(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {

@@ -28,8 +28,9 @@
 
     <goal name="tomcat55">
       <j:set var="tomcat.branch" value="5"/>
-      <j:set var="tomcat.version" value="5.5.15"/>
+      <j:set var="tomcat.version" value="5.5.23"/>
       <j:set var="tomcat.prefix" value="apache"/>
+      <j:set var="tomcat.server.lib" value="server/lib"/>
       <attainGoal name="tomcat.env"/>
     </goal>
 
@@ -37,6 +38,8 @@
       <j:set var="tomcat.branch" value="6"/>
       <j:set var="tomcat.version" value="6.0.10"/>
       <j:set var="tomcat.prefix" value="apache"/>
+      <j:set var="tomcat.server.lib" value="lib"/>
+      <j:set var="tomcat.server.webapps" value="webapps"/>
       <attainGoal name="tomcat.env"/>
     </goal>
 
@@ -44,6 +47,8 @@
       <j:set var="tomcat.branch" value="5"/>
       <j:set var="tomcat.version" value="5.0.30"/>
       <j:set var="tomcat.prefix" value="jakarta"/>
+      <j:set var="tomcat.server.lib" value="server/lib"/>
+      <j:set var="tomcat.server.webapps" value="server/webapps"/>
       <attainGoal name="tomcat.env"/>
     </goal>
 
@@ -51,12 +56,16 @@
       <j:set var="tomcat.branch" value="4"/>
       <j:set var="tomcat.version" value="4.1.31"/>
       <j:set var="tomcat.prefix" value="jakarta"/>
+      <j:set var="tomcat.server.lib" value="server/lib"/>
+      <j:set var="tomcat.server.webapps" value="server/webapps"/>
       <attainGoal name="tomcat.env"/>
     </goal>
 
     <goal name="tomcat.env">
       <j:set var="targetDir" value="${basedir}/target/"/>
       <j:set var="tomcat.home" value="${targetDir}/${tomcat.prefix}-tomcat-${tomcat.version}"/>
+      <j:set var="tomcat.lib" value="${tomcat.home}/${tomcat.server.lib}"/>
+      <j:set var="tomcat.webapps" value="${tomcat.home}/${tomcat.server.webapps}"/>
       <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
     </goal>
 
@@ -66,8 +75,7 @@
 
     <goal name="setup:tomcat">
       <j:set var="targetDir" value="${basedir}/target/"/>
-
-      <j:set var="tomcat.download" value="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-${tomcat.branch}/v${tomcat.version}/bin/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
+      <j:set var="tomcat.download" value="http://www.apache.org/dist/tomcat/tomcat-${tomcat.branch}/v${tomcat.version}/bin/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
 
       <j:set var="tomcat.src" value="${maven.repo.local}/tomcat/distributions/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
       <j:set var="tomcat.dist" value="${maven.repo.local}/tomcat/distributions/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
@@ -87,12 +95,17 @@
         <unjar src="${tomcat.dist}" dest="${targetDir}"/>
         <chmod dir="${tomcat.home}/bin" perm="u+x" includes="**/*.sh"/>
       </j:if>
+
+      <!-- Add OpenEJBListener -->
+      <replace file="${tomcat.home}/conf/server.xml" token='shutdown="SHUTDOWN">' value='shutdown="SHUTDOWN"  > &lt;Listener className="org.apache.openejb.loader.OpenEJBListener" />'/>
+      <!-- Add openejb loader jar -->
+      <copy file="${user.home}/.m2/repository/org/apache/openejb/openejb-loader/${openejb.version}/openejb-loader-${openejb.version}.jar" todir="${tomcat.lib}" />
     </goal>
 
     <goal name="setup:tomcat-src">
       <j:set var="targetDir" value="${basedir}/src/"/>
 
-      <j:set var="tomcat.download" value="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-${tomcat.branch}/v${tomcat.version}/src/${tomcat.prefix}-tomcat-${tomcat.version}-src.zip"/>
+      <j:set var="tomcat.download" value="http://www.apache.org/dist/tomcat/tomcat-${tomcat.branch}/v${tomcat.version}/src/${tomcat.prefix}-tomcat-${tomcat.version}-src.zip"/>
       <j:set var="tomcat.dist" value="${maven.repo.local}/tomcat/distributions/${tomcat.prefix}-tomcat-${tomcat.version}-src.zip"/>
 
       <!-- Download tomcat if it isn't in the repo -->
@@ -117,11 +130,14 @@
       <j:choose>
         <j:when test="${systemScope['os.name'].startsWith('Windows')}">
           <exec executable="${tomcat.home}/bin/startup.bat" os="Windows NT,Windows 2000,Windows XP">
+            <env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar"/>
             <env key="CATALINA_HOME" value="${tomcat.home}"/>
           </exec>
         </j:when>
         <j:otherwise>
-          <exec executable="${tomcat.home}/bin/startup.sh"/>
+          <exec executable="${tomcat.home}/bin/startup.sh">
+            <env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar"/>
+          </exec>
         </j:otherwise>
       </j:choose>
     </goal>
@@ -130,13 +146,13 @@
       <j:choose>
         <j:when test="${systemScope['os.name'].startsWith('Windows')}">
           <exec executable="${tomcat.home}/bin/startup.bat" os="Windows NT,Windows 2000,Windows XP">
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
+            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar"/>
             <env key="CATALINA_HOME" value="${tomcat.home}"/>
           </exec>
         </j:when>
         <j:otherwise>
           <exec executable="${tomcat.home}/bin/startup.sh">
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
+            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar"/>
           </exec>
         </j:otherwise>
       </j:choose>
@@ -163,11 +179,13 @@
 
     <goal name="setup:loader-webapp">
       <!-- Unzip webapp and set openejb.home -->
-      <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}-bin.zip" dest="${tomcat.home}/server/webapps"/>
-      <u:file var="fileAsFile" name="${tomcat.dist}/conf/Catalina/localhost"/>
-      <j:if test="${!(fileAsFile.exists())}">
-        <move file="${tomcat.home}/server/webapps/openejb/openejb.xml" todir="${tomcat.home}/conf/Catalina/localhost"/>
-      </j:if>
+      <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}-bin.zip" dest="${tomcat.webapps}"/>
+      <delete file="${tomcat.home}/lib/annotations-api.jar"/>
+      
+      <!--<u:file var="fileAsFile" name="${tomcat.dist}/conf/Catalina/localhost"/>-->
+      <!--<j:if test="${!(fileAsFile.exists())}">-->
+        <!--<move file="${tomcat.webapps}/openejb/openejb.xml" todir="${tomcat.home}/conf/Catalina/localhost"/>-->
+      <!--</j:if>-->
     </goal>
 
     <goal name="setup:itests">
@@ -178,6 +196,17 @@
       <u:file var="fileAsFile" name="${tomcat.home}/beans/${itests.jar}"/>
       <j:if test="${!(fileAsFile.exists())}">
         <copy file="${targetDir}/${itests.jar}" todir="${tomcat.home}/beans" />
+      </j:if>
+    </goal>
+
+    <goal name="setup:itests-war">
+      <j:set var="targetDir" value="${basedir}/target/"/>
+      <j:set var="itests.war" value="openejb-tomcat-${openejb.version}-itests.war"/>
+      <mkdir dir="${tomcat.home}/beans"/>
+
+      <u:file var="fileAsFile" name="${tomcat.home}/webapps/itests.war"/>
+      <j:if test="${!(fileAsFile.exists())}">
+        <copy file="${targetDir}/${itests.war}" toFile="${tomcat.home}/webapps/itests.war" />
       </j:if>
     </goal>
 
@@ -194,7 +223,7 @@
       <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
-        <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
+          <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
         <arg value="tomcat"/>
       </java>
       <attainGoal name="stop:tomcat"/>

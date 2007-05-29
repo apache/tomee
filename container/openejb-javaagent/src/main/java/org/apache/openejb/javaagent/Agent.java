@@ -66,11 +66,10 @@ public class Agent {
                 Field agentArgsField = systemAgentClass.getDeclaredField("agentArgs");
                 agentArgsField.setAccessible(true);
                 agentArgs = (String) agentArgsField.get(null);
-
-                initialized = true;
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to initialize agent", e);
+                new IllegalStateException("Unable to initialize agent", e).printStackTrace();
             }
+            initialized = true;
         }
     }
 }

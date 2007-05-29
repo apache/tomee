@@ -18,77 +18,42 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
  */
 public class TomcatLoader implements Loader {
-
     private EjbServer ejbServer;
 
-    public void init(ServletConfig config) throws ServletException {
+    public void init(Properties props) throws Exception {
         // Not thread safe
         if (OpenEJB.isInitialized()) {
             ejbServer = SystemInstance.get().getComponent(EjbServer.class);
             return;
         }
 
-        Properties p = new Properties();
-        p.setProperty("openejb.loader", "tomcat");
+        ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
-        Enumeration enumeration = config.getInitParameterNames();
-        System.out.println("OpenEJB init-params:");
-        while (enumeration.hasMoreElements()) {
-            String name = (String) enumeration.nextElement();
-            String value = config.getInitParameter(name);
-            p.put(name, value);
-            System.out.println("\tparam-name: " + name + ", param-value: " + value);
+        TomcatWarBuilder warBuilder = SystemInstance.get().getComponent(TomcatWarBuilder.class);
+        if (warBuilder == null) {
+            TomcatWarBuilder tomcatWarBuilder = new TomcatWarBuilder();
+            tomcatWarBuilder.start();
         }
 
-        String loader = p.getProperty("openejb.loader"); // Default loader set above
-        if (loader.endsWith("tomcat-webapp")) {
-            ServletContext ctx = config.getServletContext();
-            File webInf = new File(ctx.getRealPath("WEB-INF"));
-            File webapp = webInf.getParentFile();
-            String webappPath = webapp.getAbsolutePath();
-
-            setPropertyIfNUll(p, "openejb.base", webappPath);
-            setPropertyIfNUll(p, "openejb.configuration", "META-INF/openejb.xml");
-            setPropertyIfNUll(p, "openejb.container.decorators", TomcatJndiSupport.class.getName());
-            setPropertyIfNUll(p, "log4j.configuration", "META-INF/log4j.properties");
-        } else if (loader.endsWith("tomcat-system")) {
-            String catalinaHome = System.getProperty("catalina.home");
-            p.setProperty("openejb.home", catalinaHome);
-
-            String catalinaBase = System.getProperty("catalina.base");
-            p.setProperty("openejb.base", catalinaBase);
-        }
-
-        try {
-            init(p);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void init(Properties props) throws Exception {
         SystemInstance.init(props);
 
         // DMB: This is ugly here, all this code could use some cleaning
@@ -99,14 +64,6 @@ public class TomcatLoader implements Loader {
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
         OpenEJB.init(props, new ServerFederation());
         ejbServer.init(props);
-    }
-
-    private Object setPropertyIfNUll(Properties properties, String key, String value) {
-        String currentValue = properties.getProperty(key);
-        if (currentValue == null) {
-            properties.setProperty(key, value);
-        }
-        return currentValue;
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

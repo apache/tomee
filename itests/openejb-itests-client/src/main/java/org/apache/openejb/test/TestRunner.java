@@ -109,8 +109,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runLocalTests() {
         setDefault("openejb.test.server", "org.apache.openejb.test.IvmTestServer");
-        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
-        //setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -126,8 +125,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runRemoteTests() {
         setDefault("openejb.test.server", "org.apache.openejb.test.RemoteTestServer");
-//        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
-        setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -138,8 +136,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runRemoteHttpTests() {
         setDefault("openejb.test.server", "org.apache.openejb.test.RemoteHttpTestServer");
-//        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
-        setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out
@@ -150,8 +147,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
     private static void runTomcatRemoteHttpTests() {
         setDefault("openejb.test.server", TomcatRemoteTestServer.class.getName());
-//        setDefault("openejb.test.database", "org.apache.openejb.test.DerbyTestDatabase");
-        setDefault("openejb.test.database", "org.apache.openejb.test.InstantDbTestDatabase");
+        setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
 
         System.out.println("_________________________________________________");
         System.out

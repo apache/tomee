@@ -45,6 +45,7 @@
           <descriptors>
             <descriptor>src/main/assembly/bin.xml</descriptor>
             <descriptor>src/main/assembly/test.xml</descriptor>
+            <descriptor>src/main/assembly/itests.xml</descriptor>
           </descriptors>
           <archive>
             <manifest>
@@ -163,6 +164,12 @@
       <artifactId>openejb-itests-beans</artifactId>
       <version>${version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>catalina</artifactId>
+      <version>6.0.10</version>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>

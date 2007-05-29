@@ -35,7 +35,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     private Method addURLMethod;
 
     public TomcatClassPath() {
-        this(getCommonLoader(getContextClassLoader()).getParent());
+        this(getCommonLoader(getContextClassLoader()));
     }
 
     public TomcatClassPath(ClassLoader classLoader) {
@@ -53,11 +53,24 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     private static ClassLoader getCommonLoader(ClassLoader loader) {
-        if (loader.getClass().getName().equals("org.apache.catalina.loader.StandardClassLoader")) {
-            return loader;
-        } else {
-            return getCommonLoader(loader.getParent());
+        ClassLoader bootstrapCL;
+        try {
+            bootstrapCL = loader.loadClass("org.apache.catalina.startup.Bootstrap").getClassLoader();
+        } catch (ClassNotFoundException e) {
+            bootstrapCL = ClassLoader.getSystemClassLoader();
         }
+
+        if (loader == bootstrapCL) {
+            // this shouldn't happen...
+            // means all the tomcat classes are on the system classpath
+            // maybe we are in a junit test case?
+            return loader;
+        }
+
+        while (loader.getParent() != bootstrapCL && loader.getParent() != null) {
+            loader = loader.getParent();
+        }
+        return loader;
     }
 
     public ClassLoader getClassLoader() {
