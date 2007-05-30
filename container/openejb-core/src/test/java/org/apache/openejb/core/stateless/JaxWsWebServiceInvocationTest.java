@@ -191,7 +191,7 @@ public class JaxWsWebServiceInvocationTest extends TestCase {
             junit.framework.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
 
             junit.framework.Assert.assertFalse("user in role 'foo'", wsContext.isUserInRole("foo"));
-            junit.framework.Assert.assertNull("user principal", wsContext.getUserPrincipal());
+            junit.framework.Assert.assertNotNull("user principal", wsContext.getUserPrincipal());
 
             calls.add(Call.Bean_Invoke_BEFORE);
             Object o = context.proceed();

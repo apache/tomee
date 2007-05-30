@@ -20,13 +20,11 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.security.Identity;
 import java.security.Principal;
-import java.util.List;
 import java.util.Properties;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.TimerService;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.Context;
 import javax.transaction.Status;
@@ -37,7 +35,6 @@ import javax.transaction.UserTransaction;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
-import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.spi.SecurityService;
 
@@ -88,7 +85,9 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Principal getCallerPrincipal() {
-        return getState().getCallerPrincipal(securityService);
+        Principal callerPrincipal = getState().getCallerPrincipal(securityService);
+        if (callerPrincipal == null) callerPrincipal = new UnauthenticatedPrincipal();
+        return callerPrincipal;
     }
 
     public final boolean isCallerInRole(Identity identity) {
