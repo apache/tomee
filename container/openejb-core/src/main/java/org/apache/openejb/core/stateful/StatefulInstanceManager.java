@@ -382,10 +382,12 @@ public class StatefulInstanceManager {
         }
 
         if (entry.beanTransaction == null) {
-            try {
-                entry.beanTransaction = transactionManager.getTransaction();
-            } catch (javax.transaction.SystemException se) {
-                throw new SystemException("TransactionManager failure");
+            if (callContext.getCurrentOperation() != Operation.CREATE){
+                try {
+                    entry.beanTransaction = transactionManager.getTransaction();
+                } catch (javax.transaction.SystemException se) {
+                    throw new SystemException("TransactionManager failure");
+                }
             }
 
             // only put in LRU if no current transaction

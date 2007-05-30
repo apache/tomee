@@ -65,7 +65,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
 
     private final Object containerID;
-    private final TransactionManager transactionManager;  
+    private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final StatefulInstanceManager instanceManager;
     // todo this should be part of the constructor
@@ -305,7 +305,8 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         try {
             checkAuthorization(deploymentInfo, callMethod, callInterface);
 
-            if (instanceManager.getBeanTransaction(callContext) != null) {
+            InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
+            if (type.isComponent() && instanceManager.getBeanTransaction(callContext) != null) {
                 throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
             }
 
@@ -332,7 +333,6 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
             } catch(InvalidateReferenceException e){
                 throw e;
             } catch(ApplicationException e){
-                InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
                 if (type.isBusiness()){
                     retain = deploymentInfo.retainIfExeption(runMethod);
                     throw e;
