@@ -294,7 +294,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
-                this.ejbTimeout = beanClass.getMethod("ejbTimeout");
+                this.ejbTimeout = beanClass.getMethod("ejbTimeout", Timer.class);
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }
