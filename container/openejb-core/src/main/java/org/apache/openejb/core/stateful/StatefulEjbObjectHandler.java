@@ -25,6 +25,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.io.Serializable;
 
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
@@ -72,7 +73,9 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         return value;
     }
 
-    private static class RegistryId {
+    private static class RegistryId implements Serializable {
+        private static final long serialVersionUID = 5037368364299042022L;
+
         private final Object containerId;
         private final Object deploymentId;
         private final Object primaryKey;

@@ -18,6 +18,7 @@ package org.apache.openejb.core.entity;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.io.Serializable;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.InterfaceType;
@@ -104,7 +105,9 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         // primary key (we will load a new instance from the db)
     }
 
-    private static class RegistryId {
+    private static class RegistryId implements Serializable {
+        private static final long serialVersionUID = -6009230402616418827L;
+
         private final Object containerId;
         private final Object deploymentId;
         private final Object primaryKey;
