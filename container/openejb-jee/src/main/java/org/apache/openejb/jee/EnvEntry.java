@@ -69,8 +69,11 @@ public class EnvEntry implements JndiReference {
     protected String envEntryName;
     @XmlElement(name = "env-entry-type")
     protected String envEntryType;
+
+    @XmlJavaTypeAdapter(StringAdapter.class)
     @XmlElement(name = "env-entry-value")
     protected String envEntryValue;
+
     @XmlElement(name = "mapped-name")
     protected String mappedName;
     @XmlElement(name = "injection-target", required = true)
