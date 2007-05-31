@@ -22,6 +22,12 @@ import java.security.Principal;
  * @version $Rev$ $Date$
  */
 public class UnauthenticatedPrincipal implements Principal {
+
+    public final static UnauthenticatedPrincipal INSTANCE = new UnauthenticatedPrincipal();
+
+    private UnauthenticatedPrincipal() {
+    }
+
     public String getName() {
         return "Unauthenticated";
     }

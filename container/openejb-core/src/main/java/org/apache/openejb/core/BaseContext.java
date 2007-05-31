@@ -86,7 +86,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public Principal getCallerPrincipal() {
         Principal callerPrincipal = getState().getCallerPrincipal(securityService);
-        if (callerPrincipal == null) callerPrincipal = new UnauthenticatedPrincipal();
+        if (callerPrincipal == null) callerPrincipal = UnauthenticatedPrincipal.INSTANCE;
         return callerPrincipal;
     }
 
