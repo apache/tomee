@@ -194,7 +194,7 @@ public class StatefulContainerTest extends TestCase {
         }
 
         @Resource
-        public void setSessionContext(SessionContext sessionContext){
+        public void setContext(SessionContext context){
             lifecycle.push(Lifecycle.INJECTION);
         }
 

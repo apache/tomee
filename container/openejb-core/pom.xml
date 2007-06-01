@@ -68,7 +68,7 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <!-- DEBUG: Uncomment this line and comment out the next -->
-          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar</argLine>-->
+          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>-->
           <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemProperties>

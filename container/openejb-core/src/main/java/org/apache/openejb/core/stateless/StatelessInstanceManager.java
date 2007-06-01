@@ -123,23 +123,8 @@ public class StatelessInstanceManager {
                     wsContext = new EjbWebServiceContext(sessionContext);
                     ctx.bind("java:comp/WebServiceContext", wsContext);
                 }
-                
-                for (Injection injection : deploymentInfo.getInjections()) {
-                    try {
-                        String jndiName = injection.getJndiName();    
-                        Object object = ctx.lookup("java:comp/env/" + jndiName);
-                        if (object instanceof String) {
-                            String string = (String) object;
-                            // Pass it in raw so it could be potentially converted to
-                            // another data type by an xbean-reflect property editor
-                            objectRecipe.setProperty(injection.getName(), string);
-                        } else {
-                            objectRecipe.setProperty(injection.getName(), new StaticRecipe(object));
-                        }
-                    } catch (NamingException e) {
-                        logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
-                    }
-                }
+
+                fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
 
                 bean = objectRecipe.create(beanClass.getClassLoader());
                 Map unsetProperties = objectRecipe.getUnsetProperties();
@@ -155,6 +140,12 @@ public class StatelessInstanceManager {
 
                     Class clazz = interceptorData.getInterceptorClass();
                     ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
+                    interceptorRecipe.allow(Option.FIELD_INJECTION);
+                    interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
+                    interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+
+                    fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
+
                     try {
                         Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
                         interceptorInstances.put(clazz.getName(), interceptorInstance);
@@ -203,6 +194,26 @@ public class StatelessInstanceManager {
             }
         }
         return bean;
+    }
+
+    private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
+        for (Injection injection : deploymentInfo.getInjections()) {
+            if (!injection.getTarget().isAssignableFrom(clazz)) continue;
+            try {
+                String jndiName = injection.getJndiName();
+                Object object = context.lookup("java:comp/env/" + jndiName);
+                if (object instanceof String) {
+                    String string = (String) object;
+                    // Pass it in raw so it could be potentially converted to
+                    // another data type by an xbean-reflect property editor
+                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), string);
+                } else {
+                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), new StaticRecipe(object));
+                }
+            } catch (NamingException e) {
+                logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
+            }
+        }
     }
 
     private boolean hasSetSessionContext(Class beanClass) {

@@ -731,6 +731,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                     ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
                     processCallbacks(interceptor, inheritedClassFinder);
+
+                    buildAnnotatedRefs(interceptor, inheritedClassFinder);
+
+                    for (EnterpriseBean bean : enterpriseBeans) {
+                        // DMB: TODO, we should actually check to see if the ref exists in the bean's enc.
+                        bean.getEnvEntry().addAll(interceptor.getEnvEntry());
+                        bean.getEjbRef().addAll(interceptor.getEjbRef());
+                        bean.getEjbLocalRef().addAll(interceptor.getEjbLocalRef());
+                        bean.getResourceRef().addAll(interceptor.getResourceRef());
+                        bean.getResourceEnvRef().addAll(interceptor.getResourceEnvRef());
+                        bean.getPersistenceContextRef().addAll(interceptor.getPersistenceContextRef());
+                        bean.getPersistenceUnitRef().addAll(interceptor.getPersistenceUnitRef());
+                        bean.getMessageDestinationRef().addAll(interceptor.getMessageDestinationRef());
+                    }
                 }
             }
 
