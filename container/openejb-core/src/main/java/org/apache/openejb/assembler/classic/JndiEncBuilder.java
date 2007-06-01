@@ -316,7 +316,16 @@ public class JndiEncBuilder {
         return bindings;
     }
 
-    private WritableContext createXBeanWritableContext(Map bindings) {
+    private WritableContext createXBeanWritableContext(Map<String, Object> bindings) {
+        boolean hasEnv = false;
+        for (String name : bindings.keySet()) {
+            if (name.startsWith("java:comp/env")) {
+                hasEnv = true;
+                break;
+            }
+        }
+        if (!hasEnv) bindings.put("java:comp/env/dummy", "dummy");
+
         WritableContext context = null;
         try {
             context = new WritableContext("", bindings);
