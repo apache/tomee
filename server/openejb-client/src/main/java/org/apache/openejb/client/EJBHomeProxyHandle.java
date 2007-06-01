@@ -24,6 +24,8 @@ import java.io.ObjectStreamException;
 
 public class EJBHomeProxyHandle implements Externalizable {
 
+    public static ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+
     EJBHomeHandler handler;
 
     public EJBHomeProxyHandle() {
@@ -63,15 +65,21 @@ public class EJBHomeProxyHandle implements Externalizable {
         ejb.deploymentCode = in.readShort();
 
         server.readExternal(in);
-
         handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client);
-//        handler.primaryKey = in.readObject();
-
-        handler.ejb.ejbHomeProxy = handler.createEJBHomeProxy();
     }
 
     private Object readResolve() throws ObjectStreamException {
-        return handler.ejb.ejbHomeProxy;
+        return resolver.get().resolve(handler);
     }
 
+    public static interface Resolver {
+        Object resolve(EJBHomeHandler handler);
+    }
+
+    public static class ClientSideResovler implements Resolver {
+        public Object resolve(EJBHomeHandler handler) {
+            handler.ejb.ejbHomeProxy = handler.createEJBHomeProxy();
+            return handler.ejb.ejbHomeProxy;
+        }
+    }
 }

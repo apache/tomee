@@ -47,7 +47,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     protected transient Class keyClass;
 
-    protected transient EJBHomeProxy ejbHomeProxy;
+    protected transient EJBHome ejbHomeProxy;
 
     public EJBMetaDataImpl() {
 
@@ -119,6 +119,18 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         ejbHomeProxy = home;
     }
 
+    public String getDeploymentID() {
+        return deploymentID;
+    }
+
+    public Class getHomeClass() {
+        return homeClass;
+    }
+
+    public List<Class> getBusinessClasses() {
+        return businessClasses;
+    }
+
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(homeClass);
         out.writeObject(remoteClass);
@@ -137,7 +149,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         homeClass = (Class) in.readObject();
         remoteClass = (Class) in.readObject();
         keyClass = (Class) in.readObject();
-        ejbHomeProxy = (EJBHomeProxy) in.readObject();
+        ejbHomeProxy = (EJBHome) in.readObject();
         type = in.readByte();
         deploymentID = in.readUTF();
         deploymentCode = in.readShort();

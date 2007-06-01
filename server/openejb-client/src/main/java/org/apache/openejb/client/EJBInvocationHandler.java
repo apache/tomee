@@ -77,6 +77,22 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         this.primaryKey = primaryKey;
     }
 
+    public EJBMetaDataImpl getEjb() {
+        return ejb;
+    }
+
+    public ServerMetaData getServer() {
+        return server;
+    }
+
+    public ClientMetaData getClient() {
+        return client;
+    }
+
+    public Object getPrimaryKey() {
+        return primaryKey;
+    }
+
     protected static Method getMethod(Class c, String method, Class... params) {
         try {
             return c.getMethod(method, params);

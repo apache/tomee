@@ -30,10 +30,14 @@ import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
+import org.apache.openejb.client.EJBHomeProxyHandle;
+import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 class EjbRequestHandler {
+    public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
+
     private final EjbDaemon daemon;
 
     EjbRequestHandler(EjbDaemon daemon) {
@@ -42,6 +46,11 @@ class EjbRequestHandler {
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
+        // Setup the client proxy replacement to replace
+        // the proxies with the IntraVM proxy implementations
+        EJBHomeProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
+        EJBObjectProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
+
         EJBRequest req = new EJBRequest();
         EJBResponse res = new EJBResponse();
 
@@ -183,6 +192,9 @@ class EjbRequestHandler {
                 this.daemon.logger.fatal("Couldn't write EjbResponse to output stream", ie);
             }
             call.reset();
+            EJBHomeProxyHandle.resolver.set(null);
+            EJBObjectProxyHandle.resolver.set(null);
+
         }
     }
 

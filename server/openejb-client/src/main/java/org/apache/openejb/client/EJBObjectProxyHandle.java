@@ -24,6 +24,8 @@ import java.io.ObjectStreamException;
 
 public class EJBObjectProxyHandle implements Externalizable {
 
+    public static ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+
     EJBObjectHandler handler;
 
     public EJBObjectProxyHandle() {
@@ -61,7 +63,16 @@ public class EJBObjectProxyHandle implements Externalizable {
     }
 
     private Object readResolve() throws ObjectStreamException {
-        return handler.createEJBObjectProxy();
+        return resolver.get().resolve(handler);
     }
 
+    public static interface Resolver {
+        Object resolve(EJBObjectHandler handler);
+    }
+
+    public static class ClientSideResovler implements Resolver {
+        public Object resolve(EJBObjectHandler handler) {
+            return handler.createEJBObjectProxy();
+        }
+    }
 }
