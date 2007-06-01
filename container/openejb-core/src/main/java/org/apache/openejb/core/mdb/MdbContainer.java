@@ -27,6 +27,7 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -127,6 +128,12 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
             throw new OpenEJBException(e);
         }
+
+        // start the timer service
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
 
     private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
@@ -196,7 +203,25 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     }
 
     public Object invoke(Object deploymentId, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
-        throw new OpenEJBException("This MdbContainer.invoke should not be used!");
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
+
+        EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
+        MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
+        Instance instance = null;
+        try {
+            instance = (Instance) instanceFactory.createInstance(true);
+        } catch (UnavailableException e) {
+            throw new SystemException("Unable to create instance for invocation", e);
+        }
+
+        try {
+            beforeDelivery(deploymentInfo, instance, method, null);
+            Object value = invoke(instance, method, args);
+            afterDelivery(instance);
+            return value;
+        } finally {
+            instanceFactory.freeInstance(instance, true);
+        }
     }
 
     public void beforeDelivery(CoreDeploymentInfo deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {

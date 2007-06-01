@@ -265,7 +265,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 return;
             }
 
-            for (int tries = 0; tries < retryAttempts; tries++) {
+            for (int tries = 0; tries < (1 + retryAttempts); tries++) {
                 // if transacted, begin the transaction
                 if (transacted) {
                     try {

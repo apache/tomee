@@ -130,7 +130,7 @@ public class MdbInstanceFactory {
      * Frees an instance no longer needed by the resource adapter.  This method makes all the necessary lifecycle
      * callbacks and decrements the instance count.  This method should not be used to disposed of beans that have
      * thrown a system exception.  Instead the discardInstance method should be called.
-     * @param bean the bean instance to free
+     * @param instance the bean instance to free
      * @param ignoredInstanceCount
      */
     public void freeInstance(Instance instance, boolean ignoredInstanceCount) {

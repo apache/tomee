@@ -66,6 +66,7 @@ public class AssemblerTool {
                         List<Method> methods = new ArrayList<Method>();
 
                         if (methodInfo.methodIntf == null) {
+                            resolveMethods(methods, deploymentInfo.getBeanClass(), methodInfo);
                             if (deploymentInfo.getRemoteInterface() != null) {
                                 resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
                             }

@@ -25,6 +25,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.core.ConnectorReference;
@@ -32,6 +33,8 @@ import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
@@ -68,6 +71,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -408,6 +412,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     jaccPermissionsBuilder.install(policyContext);
                 }
 
+                // process transaction attributes
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
                     containerSystem.addDeployment(deploymentInfo);
@@ -415,6 +420,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
 
+                // setup timers - must be after transaction attibutes are set
+                for (DeploymentInfo deploymentInfo : deployments.values()) {
+                    CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+                    if (coreDeploymentInfo.getComponentType() != BeanType.STATEFUL) {
+                        Method ejbTimeout = coreDeploymentInfo.getEjbTimeout();
+                        if (ejbTimeout != null) {
+                            // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
+                            if (coreDeploymentInfo.getTransactionAttribute(ejbTimeout) == CoreDeploymentInfo.TX_REQUIRES_NEW) {
+                                coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, "Required");
+                            }
+
+                            // Create the timer
+                            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(coreDeploymentInfo);
+                            coreDeploymentInfo.setEjbTimerService(timerService);
+                        } else {
+                            coreDeploymentInfo.setEjbTimerService(new NullEjbTimerServiceImpl());
+                        }
+                    }
+                }
                 // process application exceptions
                 for (ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
                     try {

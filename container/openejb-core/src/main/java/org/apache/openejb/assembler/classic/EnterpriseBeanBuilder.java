@@ -211,18 +211,8 @@ class EnterpriseBeanBuilder {
             }
         }
 
-        // Timer
+        // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
-        
-        // This is a change in behavor from OpenEJB 2.x, which required an ejbTimeout method
-        if (!(bean instanceof StatefulBeanInfo)) {
-            if (deployment.getEjbTimeout() != null) {
-                EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(deployment);
-                deployment.setEjbTimerService(timerService);
-            } else {
-                deployment.setEjbTimerService(new NullEjbTimerServiceImpl());
-            }
-        }
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
@@ -367,7 +357,7 @@ class EnterpriseBeanBuilder {
         Method timeout = null;
         try {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
-                timeout = TimedObject.class.getMethod("ejbTimeout", Timer.class);
+                timeout = ejbClass.getMethod("ejbTimeout", Timer.class);
             } else if (info.methodParams != null) {
                 timeout = toMethod(ejbClass, info);
             }
