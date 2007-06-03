@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-main.class = org.apache.openejb.alt.config.Deploy
+main.class = org.apache.openejb.config.Deploy
 name = deploy
 description = Deploy an ejb jar into OpenEJB.
 description.pl = Zainstaluj ejb jar w OpenEJB

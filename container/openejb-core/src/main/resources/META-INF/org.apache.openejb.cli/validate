@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-main.class = org.apache.openejb.alt.config.EjbValidator
+main.class = org.apache.openejb.config.EjbValidator
 name = validate
 description = Validate an ejb jar
 description.pl = Sprawd\u017a poprawno\u015b\u0107 ejb jar
