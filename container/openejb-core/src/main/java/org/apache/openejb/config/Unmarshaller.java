@@ -105,14 +105,14 @@ public class Unmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, jarLocation);
         } catch (IOException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
                 if (jar != null) jar.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", jarLocation, e.getLocalizedMessage()), e);
             }
         }
     }
@@ -129,13 +129,13 @@ public class Unmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, directory.getPath());
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, directory.getPath()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, directory.getPath()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", directory.getPath(), e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", directory.getPath(), e.getLocalizedMessage()), e);
             }
         }
     }
@@ -152,15 +152,15 @@ public class Unmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, fullURL.getPath());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, url.getPath()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, url.getPath()), e);
         } catch (IOException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, url.getPath(), e.getLocalizedMessage()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, url.getPath(), e.getLocalizedMessage()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", url.getPath(), e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", url.getPath(), e.getLocalizedMessage()), e);
             }
         }
     }
@@ -173,19 +173,18 @@ public class Unmarshaller {
             return unmarshaller.unmarshal(reader);
         } catch (MarshalException e) {
             if (e.getCause() instanceof UnknownHostException) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("xml.unkownHost", file, jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("xml.unkownHost", file, jarLocation, e.getLocalizedMessage()), e);
             } else if (e.getCause() instanceof org.xml.sax.SAXException) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotParse", file, jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotParse", file, jarLocation, e.getLocalizedMessage()), e);
             } else if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()), e);
             } else if (e.getCause() instanceof ValidationException) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()), e);
             } else {
-                e.printStackTrace();
-                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()));
+                throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
             }
         } catch (ValidationException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()));
+            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotValidate", file, jarLocation, e.getLocalizedMessage()), e);
         }
     }
 }
