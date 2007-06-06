@@ -35,7 +35,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources/</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>*.bat</include>
@@ -44,7 +44,7 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources/</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>openejb</include>
