@@ -40,6 +40,7 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatefulPojoLocalJndiTests());
         suite.addTest(new StatefulHomeIntfcTests());
         suite.addTest(new StatefulPojoLocalHomeIntfcTests());
+        suite.addTest(new StatefulPojoLocalIntfcTests());
         suite.addTest(new StatefulLocalBusinessIntfcTests());
         // MNour: Why we put this remote test into the suite for local tests ???
         suite.addTest(new StatefulRemoteBusinessIntfcTests());
