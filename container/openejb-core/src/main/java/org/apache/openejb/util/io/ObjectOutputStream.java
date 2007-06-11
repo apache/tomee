@@ -436,7 +436,7 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
                                             throw new InvalidClassException(clazz.getName());
                                     }
                                 } catch (IllegalAccessException e) {
-                                    throw new InvalidClassException(clazz.getName(), e.getMessage());
+                                    throw (InvalidClassException)new InvalidClassException(clazz.getName(), e.getMessage()).initCause(e);
                                 } finally {
                                 }
                             }

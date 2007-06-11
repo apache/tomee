@@ -93,12 +93,12 @@ public class CmpJarBuilder {
             return;
         }
 
-        // load the bean class, which is used buy the generator
+        // load the bean class, which is used by the generator
         Class<?> beanClass = null;
         try {
             beanClass = tempClassLoader.loadClass(entityBeanInfo.ejbClass);
         } catch (ClassNotFoundException e) {
-            throw new IOException("Could not find entity bean class " + beanClass);
+            throw (IOException)new IOException("Could not find entity bean class " + beanClass).initCause(e);
         }
 
         Class<?> primKeyClass = null;
@@ -106,7 +106,7 @@ public class CmpJarBuilder {
             try {
                 primKeyClass = tempClassLoader.loadClass(entityBeanInfo.primKeyClass);
             } catch (ClassNotFoundException e) {
-                throw new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass);
+                throw (IOException)new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass).initCause(e);
             }
         }
 

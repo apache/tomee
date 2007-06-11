@@ -36,7 +36,7 @@ public class Handler extends java.net.URLStreamHandler {
 
                 clz = Class.forName(cln, true, cl);
             } catch (ClassNotFoundException ex) {
-                throw new java.net.MalformedURLException("Class " + cln + " cannot be found (" + ex + ")");
+                throw (java.io.IOException)new java.net.MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
             }
 
             realURL = cl.getResource(resrce);

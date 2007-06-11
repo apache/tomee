@@ -69,7 +69,7 @@ public class Cmp2Generator implements Opcodes {
                 CmpField cmpField = new CmpField(cmpFieldName, type);
                 cmpFields.put(cmpFieldName, cmpField);
             } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
+                throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName, e);
             }
         }
 

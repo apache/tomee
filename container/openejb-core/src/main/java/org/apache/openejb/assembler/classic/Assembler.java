@@ -828,7 +828,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             return Integer.parseInt(propertyValue);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(propertyName + " is not an integer " + propertyValue);
+            throw new IllegalArgumentException(propertyName + " is not an integer " + propertyValue, e);
         }
     }
 
@@ -951,7 +951,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             return new File(jarPath).toURL();
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()));
+            throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()), e);
         }
     }
 

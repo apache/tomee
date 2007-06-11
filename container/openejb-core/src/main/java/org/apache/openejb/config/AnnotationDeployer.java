@@ -317,7 +317,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(bean.getEjbClass());
                 } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Unable to load bean class: " + bean.getEjbClass());
+                    throw new OpenEJBException("Unable to load bean class: " + bean.getEjbClass(), e);
                 }
                 ClassFinder classFinder = new ClassFinder(clazz);
 
@@ -725,7 +725,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     try {
                         clazz = classLoader.loadClass(interceptor.getInterceptorClass());
                     } catch (ClassNotFoundException e) {
-                        throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass());
+                        throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass(), e);
                     }
 
                     ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);

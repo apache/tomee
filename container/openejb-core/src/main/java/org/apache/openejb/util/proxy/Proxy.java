@@ -169,7 +169,7 @@ public abstract class Proxy implements java.io.Serializable {
                 method = interfce.getMethod(methodName, argTypes);
                 methodMap[index] = method;
             } catch (NoSuchMethodException nsme) {
-                throw new RuntimeException("Method not found:  " + nsme.getMessage());
+                throw new RuntimeException("Method not found:  " + nsme.getMessage(), nsme);
             }
         }
         return method;

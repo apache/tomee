@@ -323,7 +323,7 @@ public class CheckMethods implements ValidationRule {
         try {
             return cl.loadClass(clazz);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()));
+            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()), cnfe);
         }
     }
 }

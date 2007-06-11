@@ -94,7 +94,7 @@ public class OpenEJBErrorHandler {
 
     public static void classCodebaseNotFound(String systemLocation, String className, String codebase, Exception e) throws OpenEJBException {
 
-        throw new OpenEJBException(_messages.format("ge0010", systemLocation, className, codebase, e.getMessage()));
+        throw new OpenEJBException(_messages.format("ge0010", systemLocation, className, codebase, e.getMessage(), e));
     }
 
     public static void configurationParsingError(String messageType, String message, String line, String column) {

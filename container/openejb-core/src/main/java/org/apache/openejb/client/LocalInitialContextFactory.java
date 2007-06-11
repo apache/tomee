@@ -107,8 +107,8 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
             factory = (InitialContextFactory) ivmFactoryClass.newInstance();
             context = factory.getInitialContext(env);
         } catch (Exception e) {
-            throw new javax.naming.NamingException("Cannot instantiate an IntraVM InitialContext. Exception: "
-                    + e.getClass().getName() + " " + e.getMessage());
+            throw (NamingException)new javax.naming.NamingException("Cannot instantiate an IntraVM InitialContext. Exception: "
+                    + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
         return context;

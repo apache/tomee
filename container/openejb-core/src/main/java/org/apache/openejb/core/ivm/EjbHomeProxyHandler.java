@@ -111,7 +111,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
         } catch (Exception e) {
-            throw new RuntimeException("Can't create EJBHome stub" + e.getMessage());
+            throw new RuntimeException("Can't create EJBHome stub" + e.getMessage(), e);
         }
     }
 
@@ -130,7 +130,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
 
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + interfaces.get(0));
+            throw new RuntimeException("Could not create IVM proxy for " + interfaces.get(0), iae);
         }
     }
 
@@ -223,9 +223,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     throw exc;
                 } else {
                     if (interfaceType.isLocal()) {
-                        throw new AccessLocalException(exc.getMessage());
+                        throw (AccessLocalException)new AccessLocalException(exc.getMessage()).initCause(exc);
                     } else {
-                        throw new AccessException(exc.getMessage());
+                        throw (AccessException)new AccessException(exc.getMessage()).initCause(exc);
                     }
                 }
 

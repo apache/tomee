@@ -93,7 +93,7 @@ public class SessionSynchronizationCoordinator implements javax.transaction.Sync
         } catch (Exception e) {
             String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object: " + e.getClass().getName() + " " + e.getMessage();
             logger.error(message, e);
-            throw new RuntimeException(message);
+            throw new RuntimeException(message, e);
 
         } finally {
             callContext.setCurrentOperation(currentOperation);

@@ -297,7 +297,7 @@ public class StatelessInstanceManager {
             try {
                 wait(waitPeriod);
             } catch (InterruptedException ie) {
-                throw new org.apache.openejb.InvalidateReferenceException(new RemoteException("No instance available to service request"));
+                throw new org.apache.openejb.InvalidateReferenceException(new RemoteException("No instance available to service request", ie));
             }
         }
 

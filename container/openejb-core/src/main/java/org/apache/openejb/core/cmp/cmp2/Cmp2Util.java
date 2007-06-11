@@ -92,7 +92,7 @@ public class Cmp2Util {
             deploymentInfo = (CoreDeploymentInfo) deploymentInfoField.get(null);
         } catch (Exception e) {
             throw new IllegalArgumentException("EntityBean class " + type.getName() +
-                    " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?");
+                    " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?", e);
         }
         return deploymentInfo;
     }

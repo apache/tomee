@@ -57,9 +57,9 @@ public class JarUtils {
             oldJar.delete();
             tempJar.renameTo(oldJar);
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()));
+            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()), e);
         } catch (IOException e) {
-            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()));
+            throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()), e);
         }
 
     }
@@ -72,9 +72,9 @@ public class JarUtils {
             File file = new File(jarFile);
             jar = new JarFile(file);
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(messages.format("file.0001", jarFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("file.0001", jarFile, e.getLocalizedMessage()), e);
         } catch (IOException e) {
-            throw new OpenEJBException(messages.format("file.0002", jarFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("file.0002", jarFile, e.getLocalizedMessage()), e);
         }
         return jar;
     }

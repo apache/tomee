@@ -215,7 +215,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             try {
                 transactionManager.setRollbackOnly();
             } catch (SystemException se) {
-                throw new RuntimeException("Transaction service has thrown a SystemException");
+                throw new RuntimeException("Transaction service has thrown a SystemException", se);
             }
         }
 
@@ -238,7 +238,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
                     return false;
                 }
             } catch (SystemException se) {
-                throw new RuntimeException("Transaction service has thrown a SystemException");
+                throw new RuntimeException("Transaction service has thrown a SystemException", se);
             }
         }
 

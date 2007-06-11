@@ -145,14 +145,14 @@ public class MainImpl implements Main {
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(mainClass);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Command " + commandName + " main.class does not exist: " + mainClass);
+            throw new IllegalStateException("Command " + commandName + " main.class does not exist: " + mainClass, e);
         }
 
         Method mainMethod = null;
         try {
             mainMethod = clazz.getMethod("main", new Class[]{String[].class});
         } catch (Exception e) {
-            throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass);
+            throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass, e);
         }
 
         argsList.clear();

@@ -44,7 +44,7 @@ public class JdbcLocalTransaction implements LocalTransaction {
             isActiveTransaction = true;
         } catch (java.sql.SQLException sqlE) {
             isActiveTransaction = false;
-            throw new javax.resource.spi.ResourceAdapterInternalException("Can not begin transaction demarcation. Setting auto-commit to false for transaction chaining failed");
+            throw new javax.resource.spi.ResourceAdapterInternalException("Can not begin transaction demarcation. Setting auto-commit to false for transaction chaining failed", sqlE);
         }
         managedConn.localTransactionStarted();
     }
@@ -57,13 +57,13 @@ public class JdbcLocalTransaction implements LocalTransaction {
             } catch (java.sql.SQLException sqlE) {
                 String msg = messages.format("jdbc.commit.failed", formatSqlException(sqlE));
                 logger.error(msg);
-                throw new javax.resource.spi.LocalTransactionException(msg);
+                throw new javax.resource.spi.LocalTransactionException(msg, sqlE);
             }
             managedConn.localTransactionCommitted();
             try {
                 sqlConn.setAutoCommit(true);
             } catch (java.sql.SQLException sqlE) {
-                throw new javax.resource.spi.ResourceAdapterInternalException("Setting auto-commit to true to end transaction chaining failed");
+                throw new javax.resource.spi.ResourceAdapterInternalException("Setting auto-commit to true to end transaction chaining failed", sqlE);
             }
         } else {
             throw new javax.resource.spi.LocalTransactionException("Invalid transaction context. No active transaction");
@@ -79,7 +79,7 @@ public class JdbcLocalTransaction implements LocalTransaction {
             } catch (java.sql.SQLException sqlE) {
                 String msg = messages.format("jdbc.rollback.failed", formatSqlException(sqlE));
                 logger.error(msg);
-                throw new javax.resource.spi.LocalTransactionException(msg);
+                throw new javax.resource.spi.LocalTransactionException(msg, sqlE);
             }
 
             managedConn.localTransactionRolledback();
@@ -87,7 +87,7 @@ public class JdbcLocalTransaction implements LocalTransaction {
             try {
                 sqlConn.setAutoCommit(true);
             } catch (java.sql.SQLException sqlE) {
-                throw new javax.resource.spi.ResourceAdapterInternalException("Setting auto-commit to true to end transaction chaining failed");
+                throw new javax.resource.spi.ResourceAdapterInternalException("Setting auto-commit to true to end transaction chaining failed", sqlE);
             }
         } else {
             throw new javax.resource.spi.LocalTransactionException("Invalid transaction context. No active transaction");

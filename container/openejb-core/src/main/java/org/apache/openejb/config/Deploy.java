@@ -326,7 +326,7 @@ public class Deploy {
         try {
             return classLoader.loadClass(className);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, this.jarLocation));
+            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", className, this.jarLocation), cnfe);
         }
     }
 
@@ -413,7 +413,7 @@ public class Deploy {
                     }
 
                 } catch (Exception e) {
-                    throw new OpenEJBException(e.getMessage());
+                    throw new OpenEJBException(e.getMessage(), e);
                 }
 
                 if (answer != null && !answer.equals("")) {
@@ -472,7 +472,7 @@ public class Deploy {
                 }
             }
         } catch (Exception e) {
-            throw new OpenEJBException(e.getMessage());
+            throw new OpenEJBException(e.getMessage(), e);
         }
         return answer;
     }
@@ -557,7 +557,7 @@ public class Deploy {
                 }
             }
         } catch (Exception e) {
-            throw new OpenEJBException(e.getMessage());
+            throw new OpenEJBException(e.getMessage(), e);
         }
         return cs[choice - 1].getId();
     }
@@ -658,7 +658,7 @@ public class Deploy {
                 }
             }
         } catch (Exception e) {
-            throw new OpenEJBException(e.getMessage());
+            throw new OpenEJBException(e.getMessage(), e);
         }
 
         ResourceLink link = new ResourceLink();

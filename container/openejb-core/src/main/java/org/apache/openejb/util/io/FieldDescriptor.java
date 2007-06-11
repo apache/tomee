@@ -161,7 +161,7 @@ public class FieldDescriptor implements java.io.Serializable, Comparable {
             }
         }
         catch (IllegalAccessException e) {
-            throw new InvalidClassException(classDesc.forClass().getName(), e.getMessage());
+            throw (InvalidClassException)new InvalidClassException(classDesc.forClass().getName(), e.getMessage()).initCause(e);
         }
     }
 }

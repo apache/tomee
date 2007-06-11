@@ -51,7 +51,7 @@ public class JdbcUnmanagedConnection implements ManagedConnection {
         try {
             metaData = new JdbcManagedConnectionMetaData(sqlConn.getMetaData());
         } catch (java.sql.SQLException sqlE) {
-            throw new javax.resource.spi.ResourceAdapterInternalException("Problem while attempting to access meta data from physical connection", ErrorCode.JDBC_0004);
+            throw (javax.resource.spi.ResourceAdapterInternalException)new javax.resource.spi.ResourceAdapterInternalException("Problem while attempting to access meta data from physical connection", ErrorCode.JDBC_0004).initCause(sqlE);
         }
     }
 

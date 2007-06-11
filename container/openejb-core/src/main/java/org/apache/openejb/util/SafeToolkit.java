@@ -88,7 +88,7 @@ public class SafeToolkit {
         try {
             clazz = cl.loadClass(className);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(messages.format("cl0007", className, codebase));
+            throw new OpenEJBException(messages.format("cl0007", className, codebase), cnfe);
         }
         return clazz;
     }
@@ -109,9 +109,9 @@ public class SafeToolkit {
 //cl = SafeToolkit.class.getClassLoader();
                         codebases.put(codebase, cl);
                     } catch (java.net.MalformedURLException mue) {
-                        throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()));
+                        throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()), mue);
                     } catch (SecurityException se) {
-                        throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()));
+                        throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()), se);
                     }
                 }
             }
@@ -127,9 +127,9 @@ public class SafeToolkit {
 
             cl = new java.net.URLClassLoader(urlCodebase, SafeToolkit.class.getClassLoader());
         } catch (java.net.MalformedURLException mue) {
-            throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()));
+            throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()), mue);
         } catch (SecurityException se) {
-            throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()));
+            throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()), se);
         }
         return cl;
     }

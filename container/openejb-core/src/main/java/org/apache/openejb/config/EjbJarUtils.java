@@ -159,7 +159,7 @@ public class EjbJarUtils {
         try {
             beansDir = SystemInstance.get().getBase().getDirectory("beans");
         } catch (java.io.IOException ioe) {
-            throw new OpenEJBException(messages.format("deploy.m.040", origFile.getAbsolutePath(), ioe.getMessage()));
+            throw new OpenEJBException(messages.format("deploy.m.040", origFile.getAbsolutePath(), ioe.getMessage()), ioe);
         }
 
         File newFile = new File(beansDir, jarName);
@@ -175,7 +175,7 @@ public class EjbJarUtils {
             }
             moved = origFile.renameTo(newFile);
         } catch (SecurityException se) {
-            throw new OpenEJBException(messages.format("deploy.m.050", origFile.getAbsolutePath(), se.getMessage()));
+            throw new OpenEJBException(messages.format("deploy.m.050", origFile.getAbsolutePath(), se.getMessage()), se);
         }
 
         if (!moved) {
@@ -207,7 +207,7 @@ public class EjbJarUtils {
         try {
             beansDir = SystemInstance.get().getBase().getDirectory("beans");
         } catch (java.io.IOException ioe) {
-            throw new OpenEJBException(messages.format("deploy.c.040", origFile.getAbsolutePath(), ioe.getMessage()));
+            throw new OpenEJBException(messages.format("deploy.c.040", origFile.getAbsolutePath(), ioe.getMessage()), ioe);
         }
 
         File newFile = new File(beansDir, jarName);
@@ -234,9 +234,9 @@ public class EjbJarUtils {
             out.close();
 
         } catch (SecurityException e) {
-            throw new OpenEJBException(messages.format("deploy.c.050", origFile.getAbsolutePath(), beansDir.getAbsolutePath(), e.getMessage()));
+            throw new OpenEJBException(messages.format("deploy.c.050", origFile.getAbsolutePath(), beansDir.getAbsolutePath(), e.getMessage()), e);
         } catch (IOException e) {
-            handleException("deploy.c.060", origFile.getAbsolutePath(), newFile.getAbsolutePath(), e.getClass().getName(), e.getMessage());
+            handleException("deploy.c.060", origFile.getAbsolutePath(), newFile.getAbsolutePath(), e.getClass().getName(), e.getMessage(), e);
         }
 
         return newFile.getAbsolutePath();
@@ -274,6 +274,10 @@ public class EjbJarUtils {
     /*------------------------------------------------------*/
     public static void handleException(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3) throws OpenEJBException {
         throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2, arg3));
+    }
+    
+    public static void handleException(String errorCode, Object arg0, Object arg1, Object arg2, Object arg3, Throwable cause) throws OpenEJBException {
+        throw new OpenEJBException(messages.format(errorCode, arg0, arg1, arg2, arg3), cause);
     }
 
     public static void handleException(String errorCode, Object arg0) throws OpenEJBException {

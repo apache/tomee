@@ -99,7 +99,7 @@ public class EntityInstanceManager {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure", se);
         }
 
         Object primaryKey = callContext.getPrimaryKey();// null if its a servicing a home methods (create, find, ejbHome)
@@ -288,7 +288,7 @@ public class EntityInstanceManager {
                     logger.error("Transaction Manager getTransaction() failed.", se);
                     throw new SystemException(se);
                 }
-                throw new ApplicationException(new RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage()));
+                throw new ApplicationException(new RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage(), e));
             } finally {
                 callContext.setCurrentOperation(currentOp);
                 callContext.setCurrentAllowedStates(originalStates);
@@ -311,7 +311,7 @@ public class EntityInstanceManager {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure", se);
         }
         if (currentTx != null && primaryKey != null) {// primary key is null for find and home methods
             Key key = new Key(currentTx, callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
@@ -396,7 +396,7 @@ public class EntityInstanceManager {
                         logger.error("Transaction Manager getTransaction() failed.", se);
                         throw new SystemException(se);
                     }
-                    throw new ApplicationException(new RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage()));
+                    throw new ApplicationException(new RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage(), e));
                 } finally {
                     callContext.setCurrentOperation(currentOp);
                     callContext.setCurrentAllowedStates(originalStates);
@@ -455,7 +455,7 @@ public class EntityInstanceManager {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
             logger.error("Transaction Manager getTransaction() failed.", se);
-            throw new SystemException("TransactionManager failure");
+            throw new SystemException("TransactionManager failure", se);
         }
         if (currentTx != null) {
             if (callContext.getPrimaryKey() == null)

@@ -65,12 +65,12 @@ public class ConfigUtils {
             writer = new FileWriter(file);
             confObject.marshal(writer);
         } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()), e);
         } catch (MarshalException e) {
             if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()));
+                throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()), e);
             } else {
-                throw new OpenEJBException(messages.format("conf.1050", confFile, e.getLocalizedMessage()));
+                throw new OpenEJBException(messages.format("conf.1050", confFile, e.getLocalizedMessage()), e);
             }
         } catch (ValidationException e) {
             /* TODO: Implement informative error handling here. 
@@ -84,12 +84,12 @@ public class ConfigUtils {
              * is invalid, the MarshalException is thrown, not this one as you
              * would think.
              */
-            throw new OpenEJBException(messages.format("conf.1060", confFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.1060", confFile, e.getLocalizedMessage()), e);
         }
         try {
             writer.close();
         } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", confFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("file.0020", confFile, e.getLocalizedMessage()), e);
         }
     }
 

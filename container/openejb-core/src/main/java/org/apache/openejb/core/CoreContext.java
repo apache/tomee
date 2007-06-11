@@ -107,7 +107,7 @@ public abstract class CoreContext implements java.io.Serializable {
             Class[] interfaces = new Class[]{di.getRemoteInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
             newProxy = ProxyManager.newProxyInstance(interfaces, handler);
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + di.getRemoteInterface() + " interface");
+            throw new RuntimeException("Could not create IVM proxy for " + di.getRemoteInterface() + " interface", iae);
         }
         return (javax.ejb.EJBObject) newProxy;
     }
@@ -123,7 +123,7 @@ public abstract class CoreContext implements java.io.Serializable {
             Class[] interfaces = new Class[]{di.getLocalInterface(), org.apache.openejb.core.ivm.IntraVmProxy.class};
             newProxy = ProxyManager.newProxyInstance(interfaces, handler);
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + di.getLocalInterface() + " interface");
+            throw new RuntimeException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
         }
         return (EJBLocalObject) newProxy;
     }
@@ -194,7 +194,7 @@ public abstract class CoreContext implements java.io.Serializable {
                 return false;
             }
         } catch (javax.transaction.SystemException se) {
-            throw new RuntimeException("Transaction service has thrown a SystemException");
+            throw new RuntimeException("Transaction service has thrown a SystemException", se);
         }
     }
 
@@ -210,7 +210,7 @@ public abstract class CoreContext implements java.io.Serializable {
         try {
             getTransactionManager().setRollbackOnly();
         } catch (javax.transaction.SystemException se) {
-            throw new RuntimeException("Transaction service has thrown a SystemException");
+            throw new RuntimeException("Transaction service has thrown a SystemException", se);
         }
 
     }

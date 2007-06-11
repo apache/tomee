@@ -145,12 +145,12 @@ public class ServiceUtils {
             writer = new FileWriter(file);
             servicesJarObject.marshal(writer);
         } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()), e);
         } catch (MarshalException e) {
             if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()));
+                throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()), e);
             } else {
-                throw new OpenEJBException(messages.format("conf.4050", xmlFile, e.getLocalizedMessage()));
+                throw new OpenEJBException(messages.format("conf.4050", xmlFile, e.getLocalizedMessage()), e);
             }
         } catch (ValidationException e) {
 
@@ -167,13 +167,13 @@ public class ServiceUtils {
              * would think.
              */
 
-            throw new OpenEJBException(messages.format("conf.4060", xmlFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.4060", xmlFile, e.getLocalizedMessage()), e);
         }
 
         try {
             writer.close();
         } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()), e);
         }
     }
 
@@ -195,16 +195,16 @@ public class ServiceUtils {
                 */
                 defaults.load(in);
             } catch (IOException ex) {
-                throw new OpenEJBException(messages.format("conf.0012", ex.getLocalizedMessage()));
+                throw new OpenEJBException(messages.format("conf.0012", ex.getLocalizedMessage()), ex);
             }
 
             return defaults;
         } catch (FileNotFoundException ex) {
-            throw new OpenEJBException(messages.format("conf.0006", propertiesFile, ex.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.0006", propertiesFile, ex.getLocalizedMessage()), ex);
         } catch (IOException ex) {
-            throw new OpenEJBException(messages.format("conf.0007", propertiesFile, ex.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.0007", propertiesFile, ex.getLocalizedMessage()), ex);
         } catch (SecurityException ex) {
-            throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()));
+            throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()), ex);
         }
     }
 

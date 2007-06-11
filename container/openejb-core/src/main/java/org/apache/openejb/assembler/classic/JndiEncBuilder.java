@@ -214,11 +214,11 @@ public class JndiEncBuilder {
 
                 bindings.put(normalize(entry.name), obj);
             } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.name);
+                throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.name, e);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The env-entry-value for entry " + entry.name + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage());
+                throw new IllegalArgumentException("The env-entry-value for entry " + entry.name + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage(), e);
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("URL for reference " + entry.name + " was not a valid URL: " + entry.value);
+                throw new IllegalArgumentException("URL for reference " + entry.name + " was not a valid URL: " + entry.value, e);
             }
         }
 

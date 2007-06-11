@@ -375,7 +375,7 @@ public class DeploymentLoader {
             URL[] urls = new URL[]{jarFile.toURL()};
             return new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()));
+            throw new OpenEJBException(messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()), e);
         }
     }
 

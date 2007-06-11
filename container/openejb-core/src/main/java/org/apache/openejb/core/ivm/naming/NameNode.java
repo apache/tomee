@@ -255,7 +255,7 @@ public class NameNode implements java.io.Serializable {
         }
         catch (javax.naming.NameNotFoundException exception) {
             exception.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(exception);
         }
     }
 

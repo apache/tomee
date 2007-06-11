@@ -99,13 +99,13 @@ public class Jdk13ProxyFactory implements ProxyFactory {
             Constructor cons = proxyClass.getConstructor(constructorParams);
             return (Object) cons.newInstance(new Object[]{new Jdk13InvocationHandler()});
         } catch (NoSuchMethodException e) {
-            throw new InternalError(e.toString());
+            throw (InternalError) new InternalError(e.toString()).initCause(e);
         } catch (IllegalAccessException e) {
-            throw new InternalError(e.toString());
+            throw (InternalError) new InternalError(e.toString()).initCause(e);
         } catch (InstantiationException e) {
-            throw new InternalError(e.toString());
+            throw (InternalError) new InternalError(e.toString()).initCause(e);
         } catch (InvocationTargetException e) {
-            throw new InternalError(e.toString());
+            throw (InternalError) new InternalError(e.toString()).initCause(e);
         }
     }
 

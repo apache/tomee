@@ -54,7 +54,7 @@ public class SimplePassivater implements PassivationStrategy {
             }
             logger.info("Using directory " + sessionDirectory + " for stateful session passivation");
         } catch (java.io.IOException e) {
-            throw new org.apache.openejb.SystemException(getClass().getName() + ".init(): can't use directory prefix " + dir + ":" + e);
+            throw new org.apache.openejb.SystemException(getClass().getName() + ".init(): can't use directory prefix " + dir + ":" + e, e);
         }
     }
 

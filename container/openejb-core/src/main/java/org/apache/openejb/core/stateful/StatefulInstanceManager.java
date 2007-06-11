@@ -400,7 +400,7 @@ public class StatefulInstanceManager {
                 try {
                     entry.beanTransaction = transactionManager.getTransaction();
                 } catch (javax.transaction.SystemException se) {
-                    throw new SystemException("TransactionManager failure");
+                    throw new SystemException("TransactionManager failure", se);
                 }
             }
 

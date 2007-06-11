@@ -580,12 +580,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 try {
                     declaredProperties.load(in);
                 } catch (IOException ex) {
-                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()));
+                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()), ex);
                 }
 
             }
         } catch (OpenEJBException ex) {
-            throw new OpenEJBException(ServiceUtils.messages.format("conf.0014", service.getClass().getSimpleName(), service.getId(), configLocation, ex.getLocalizedMessage()));
+            throw new OpenEJBException(ServiceUtils.messages.format("conf.0014", service.getClass().getSimpleName(), service.getId(), configLocation, ex.getLocalizedMessage()), ex);
         }
         return declaredProperties;
     }
@@ -607,12 +607,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 try {
                     props.load(in);
                 } catch (IOException ex) {
-                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()));
+                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()), ex);
                 }
 
             }
         } catch (OpenEJBException ex) {
-            throw new OpenEJBException(ServiceUtils.messages.format("conf.0013", provider.getId(), null, ex.getLocalizedMessage()));
+            throw new OpenEJBException(ServiceUtils.messages.format("conf.0013", provider.getId(), null, ex.getLocalizedMessage()), ex);
         }
         return props;
     }

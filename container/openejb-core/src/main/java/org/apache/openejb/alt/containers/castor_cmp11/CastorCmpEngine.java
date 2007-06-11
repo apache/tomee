@@ -168,7 +168,7 @@ public class CastorCmpEngine implements CmpEngine {
 
             return primaryKey;
         } catch (org.exolab.castor.jdo.DuplicateIdentityException e) {
-            throw new DuplicateKeyException("Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage());
+            throw (DuplicateKeyException) new DuplicateKeyException("Attempt to create an entity bean (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\") with an primary key that already exsists. Castor nested exception message = " + e.getMessage()).initCause(e);
         } catch (PersistenceException e) {
             throw (CreateException) new CreateException("Unable to create ejb (DeploymentID=\"" + callContext.getDeploymentInfo().getDeploymentID() + "\")").initCause(e);
         }
@@ -246,7 +246,7 @@ public class CastorCmpEngine implements CmpEngine {
                         queryArgs[i] = ((EJBObject) queryArgs[i]).getPrimaryKey();
                     } catch (RemoteException re) {
 
-                        throw new FinderException("Could not extract primary key from EJBObject reference; argument number " + i);
+                        throw (FinderException)new FinderException("Could not extract primary key from EJBObject reference; argument number " + i).initCause(re);
                     }
                 }
 
@@ -398,7 +398,7 @@ public class CastorCmpEngine implements CmpEngine {
                 CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
                 bean = (EntityBean) deploymentInfo.getBeanClass().newInstance();
             } catch (Exception e) {
-                throw new EJBException("Unable to create new entity bean instance");
+                throw new EJBException("Unable to create new entity bean instance", e);
             }
 
             cmpCallback.setEntityContext(bean);

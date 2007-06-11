@@ -54,7 +54,7 @@ public class JdbcManagedConnection implements ManagedConnection {
         try {
             metaData = new JdbcManagedConnectionMetaData(sqlConn.getMetaData());
         } catch (java.sql.SQLException sqlE) {
-            throw new javax.resource.spi.ResourceAdapterInternalException("Problem while attempting to access meta data from physical connection", ErrorCode.JDBC_0004);
+            throw (javax.resource.spi.ResourceAdapterInternalException)new javax.resource.spi.ResourceAdapterInternalException("Problem while attempting to access meta data from physical connection", ErrorCode.JDBC_0004).initCause(sqlE);
         }
         localTransaction = new JdbcLocalTransaction(this);
     }
@@ -97,7 +97,7 @@ public class JdbcManagedConnection implements ManagedConnection {
         try {
             sqlConn.close();
         } catch (java.sql.SQLException sqlE) {
-            throw new javax.resource.spi.ResourceAdapterInternalException("Problem attempting to close physical JDBC connection", ErrorCode.JDBC_0003);
+            throw (javax.resource.spi.ResourceAdapterInternalException)new javax.resource.spi.ResourceAdapterInternalException("Problem attempting to close physical JDBC connection", ErrorCode.JDBC_0003).initCause(sqlE);
         }
         sqlConn = null;
         listeners.clear();

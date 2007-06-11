@@ -63,7 +63,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
             try {
                 transaction.registerSynchronization(new RemoveTransactionResources(transaction));
             } catch (Exception e) {
-                throw new IllegalStateException("No transaction active");
+                throw new IllegalStateException("No transaction active", e);
             }
             resources = new HashMap<Object,Object>();
             transactionResources.put(transaction,resources);
@@ -98,7 +98,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         try {
             return transaction.getStatus() == Status.STATUS_MARKED_ROLLBACK;
         } catch (Exception e) {
-            throw new IllegalStateException("No transaction active");
+            throw new IllegalStateException("No transaction active", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         try {
             transaction.setRollbackOnly();
         } catch (Exception e) {
-            throw new IllegalStateException("No transaction active");
+            throw new IllegalStateException("No transaction active", e);
         }
     }
     private Transaction getActiveTransaction() {
@@ -122,7 +122,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
             }
             return transaction;
         } catch (SystemException e) {
-            throw new IllegalStateException("No transaction active");
+            throw new IllegalStateException("No transaction active", e);
         }
     }
 

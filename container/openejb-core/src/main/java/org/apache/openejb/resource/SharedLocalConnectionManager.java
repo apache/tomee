@@ -95,9 +95,9 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
                     tx.registerSynchronization(new Synchronizer(conn.getLocalTransaction()));
                 }
             } catch (SystemException se) {
-                throw new ApplicationServerInternalException("Can not obtain a Transaction object from TransactionManager. " + se.getMessage());
+                throw new ApplicationServerInternalException("Can not obtain a Transaction object from TransactionManager. " + se.getMessage(), se);
             } catch (RollbackException re) {
-                throw new ApplicationServerInternalException("Can not register org.apache.openejb.resource.LocalTransacton with transaciton manager. Transaction has already been rolled back" + re.getMessage());
+                throw new ApplicationServerInternalException("Can not register org.apache.openejb.resource.LocalTransacton with transaciton manager. Transaction has already been rolled back" + re.getMessage(), re);
             }
 
             if (connectionCache != null) {
@@ -187,13 +187,13 @@ public class SharedLocalConnectionManager implements ConnectionManager, Connecti
                 try {
                     localTx.commit();
                 } catch (ResourceException re) {
-                    throw new RuntimeException("JDBC driver failed to commit transaction. " + re.getMessage());
+                    throw new RuntimeException("JDBC driver failed to commit transaction. " + re.getMessage(), re);
                 }
             } else {
                 try {
                     localTx.rollback();
                 } catch (ResourceException re) {
-                    throw new RuntimeException("JDBC driver failed to rollback transaction. " + re.getMessage());
+                    throw new RuntimeException("JDBC driver failed to rollback transaction. " + re.getMessage(), re);
                 }
             }
         }
