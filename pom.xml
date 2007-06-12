@@ -37,13 +37,13 @@
   <name>OpenEJB</name>
   <packaging>pom</packaging>
 
-  <version>3.0-incubating-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
 
   <description>
     Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
   </description>
 
-  <url>http://incubator.apache.org/openejb</url>
+  <url>http://openejb.apache.org</url>
 
   <issueManagement>
     <system>jira</system>
@@ -53,24 +53,24 @@
   <mailingLists>
     <mailingList>
       <name>OpenEJB Commits List</name>
-      <subscribe>openejb-commits-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>openejb-commits-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>openejb-commits@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-openejb-commits/</archive>
+      <subscribe>commits-subscribe@openejb.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@openejb.apache.org</unsubscribe>
+      <post>commits@openejb.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/openejb-commits/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Developer List</name>
-      <subscribe>openejb-dev-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>openejb-dev-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>openejb-dev@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-openejb-dev/</archive>
+      <subscribe>dev-subscribe@openejb.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@openejb.apache.org</unsubscribe>
+      <post>dev@openejb.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/openejb-dev/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Users List</name>
-      <subscribe>openejb-users-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>openejb-users-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>openejb-users@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-openejb-users/</archive>
+      <subscribe>users-subscribe@openejb.apache.org</subscribe>
+      <unsubscribe>users-unsubscribe@openejb.apache.org</unsubscribe>
+      <post>users@openejb.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/openejb-users/</archive>
     </mailingList>
   </mailingLists>
   <ciManagement>
@@ -79,16 +79,16 @@
     <notifiers>
       <notifier>
         <configuration>
-          <address>openejb-commits@incubator.apache.org</address>
+          <address>commits@openejb.apache.org</address>
         </configuration>
       </notifier>
     </notifiers>
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/</connection>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb3/</connection>
     <developerConnection>
-      scm:svn:https://${maven.username}@svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/
+      scm:svn:https://${maven.username}@svn.apache.org/repos/asf/openejb/trunk/openejb3/
     </developerConnection>
     <url>http://svn.apache.org/viewvc/incubator/openejb/trunk/openejb3</url>
   </scm>
@@ -101,8 +101,8 @@
               This value *must* be kept in sync with the value of the <version>
               element, and it will need to be changed manually before a release,
               as the maven-release-plugin will not update this value.
+    <version>3.0-SNAPSHOT</version>
         -->
-    <version>3.0-incubating-SNAPSHOT</version>
   </properties>
 
   <build>
@@ -945,7 +945,7 @@
   <distributionManagement>
     <site>
       <id>openejb-website</id>
-      <url>scp://people.apache.org/www/incubator.apache.org/openejb/maven</url>
+      <url>scp://people.apache.org/www/openejb.apache.org/openejb/maven</url>
     </site>
   </distributionManagement>
   <reporting>
