@@ -538,14 +538,10 @@
         </pattern>
     </message-destination>
     <security>
-        <default-principal>
-            <principal class="String" name="String"/>
-            <named-username-password-credential>
-                <name>String</name>
-                <username>String</username>
-                <password>String</password>
-            </named-username-password-credential>
-        </default-principal>
+        <default-subject>
+            <realm>foo</realm>
+            <id>bar</id>
+        </default-subject>
         <role-mappings>
             <role role-name="r1">
                 <realm realm-name="realm">

@@ -103,7 +103,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("resource-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("resource-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("return-type", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("security", "http://geronimo.apache.org/xml/ns/security-1.2");
+        ns.put("security", "http://geronimo.apache.org/xml/ns/security-2.0");
         ns.put("sequence-name", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("sequence-table", "http://openejb.apache.org/xml/ns/pkgen-2.1");
         ns.put("server-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
@@ -133,7 +133,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         duplicates.put("artifactId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("groupId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("module", Arrays.asList("http://geronimo.apache.org/xml/ns/j2ee/application-1.2", "http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
-        duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2", "http://geronimo.apache.org/xml/ns/security-1.2"));
+        duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2", "http://geronimo.apache.org/xml/ns/security-2.0"));
         duplicates.put("pattern", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("version", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("table-name", Arrays.asList("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "http://openejb.apache.org/xml/ns/pkgen-2.1"));

@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Rev$ $Date$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "securityType", namespace = "http://geronimo.apache.org/xml/ns/security-1.2", propOrder = {
-    "defaultPrincipal", "roleMappings"
+@XmlType(name = "securityType", namespace = "http://geronimo.apache.org/xml/ns/security-2.0", propOrder = {
+    "defaultSubject", "roleMappings"
 })
 public class SecurityType extends AbstractSecurityType {
-    @XmlElement(name="default-principal", namespace = "http://geronimo.apache.org/xml/ns/security-1.2")
-    protected Object defaultPrincipal;
-    @XmlElement(name="role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-1.2")
+    @XmlElement(name="default-subject", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    protected Object defaultSubject;
+    @XmlElement(name="role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected Object roleMappings;
 }

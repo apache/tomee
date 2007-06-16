@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns4:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-1.2" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://openejb.apache.org/xml/ns/pkgen-2.1">
+<ns4:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-2.0" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://openejb.apache.org/xml/ns/pkgen-2.1">
     <environment>
         <moduleId>
             <groupId>String</groupId>
@@ -391,14 +391,10 @@
         <ns4:jndi-name>String</ns4:jndi-name>
     </ns4:tss-link>
     <ns6:security>
-        <ns6:default-principal xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
-            <ns6:principal xmlns:ns10="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns="" class="String" name="String"/>
-            <ns6:named-username-password-credential>
-                <ns6:name>String</ns6:name>
-                <ns6:username>String</ns6:username>
-                <ns6:password>String</ns6:password>
-            </ns6:named-username-password-credential>
-        </ns6:default-principal>
+        <ns6:default-subject xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+            <ns6:realm>foo</ns6:realm>
+            <ns6:id>bar</ns6:id>
+        </ns6:default-subject>
         <ns6:role-mappings xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
             <ns6:role xmlns:ns10="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns="" role-name="r1">
                 <ns6:realm realm-name="realm">

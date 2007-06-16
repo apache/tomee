@@ -59,7 +59,7 @@ public class ObjectFactory {
     private final static QName _KeyGenerator_QNAME = new QName("http://openejb.apache.org/xml/ns/pkgen-2.1", "key-generator");
     private final static QName _Environment_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "environment");
     private final static QName _Security_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/application-1.2", "security");
-    private final static QName _Security2_QNAME = new QName("http://geronimo.apache.org/xml/ns/security-1.2", "security");
+    private final static QName _Security2_QNAME = new QName("http://geronimo.apache.org/xml/ns/security-2.0", "security");
     private final static QName _ResourceAdapter_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "resource-adapter");
     private final static QName _EjbLocalRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "ejb-local-ref");
     private final static QName _ServerEnvironment_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "server-environment");
@@ -795,7 +795,7 @@ public class ObjectFactory {
         return new JAXBElement<GbeanType>(_Gbean_QNAME, GbeanType.class, null, value);
     }
 
-    @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/security-1.2", name = "security", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "security")
+    @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/security-2.0", name = "security", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "security")
     public JAXBElement<SecurityType> createSecurity(SecurityType value) {
         return new JAXBElement<SecurityType>(_Security2_QNAME, SecurityType.class, null, value);
     }
