@@ -63,6 +63,7 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
@@ -77,6 +78,8 @@ import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
 import javax.ejb.EJBs;
 import javax.ejb.Init;
 import javax.ejb.Local;
@@ -594,10 +597,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 if (interfaces.get(0).getAnnotation(Local.class) != null)
                                     throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the business interface itself must not be annotated as @Local.");
 
+                                validateInterface(interfaces.get(0));                                                                    
                                 remotes.add(interfaces.get(0));
                                 interfaces.remove(0);
                             }
                             for (Class interfce : remote.value()) {
+                                validateInterface(interfce);                                    
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             }
@@ -614,10 +619,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 if (interfaces.get(0).getAnnotation(Remote.class) != null)
                                     throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the business interface itself must not be annotated as @Remote.");
 
+                                validateInterface(interfaces.get(0));
                                 locals.add(interfaces.get(0));
                                 interfaces.remove(0);
                             }
                             for (Class interfce : local.value()) {
+                                validateInterface(interfce);
                                 locals.add(interfce);
                                 interfaces.remove(interfce);
                             }
@@ -645,9 +652,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         for (Class interfce : copy(interfaces)) {
                             if (interfce.isAnnotationPresent(Remote.class)) {
+                                validateInterface(interfce);
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             } else {
+                                validateInterface(interfce);
                                 locals.add(interfce);
                                 interfaces.remove(interfce);
                             }
@@ -1414,6 +1423,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return list.get(0);
             }
             return null;
+        }
+        
+        private void validateInterface(Class interfce) {
+            if (EJBHome.class.isAssignableFrom(interfce) || EJBObject.class.isAssignableFrom(interfce)){
+                throw new IllegalStateException(SafeToolkit.messages.format("conf.3901", interfce.getName() ));
+            }
+            if (EJBLocalHome.class.isAssignableFrom(interfce) || EJBLocalObject.class.isAssignableFrom(interfce)){
+                throw new IllegalStateException(SafeToolkit.messages.format("conf.3902", interfce.getName() ));
+            }
         }
     }
 
