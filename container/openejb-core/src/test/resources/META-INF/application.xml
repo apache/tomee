@@ -29,6 +29,9 @@
   <module>
     <ejb>openejb-itests-beans-3.0-incubating-SNAPSHOT.jar</ejb>
   </module>
+   <module>
+    <ejb>openejb-itests-interceptor-beans-3.0-incubating-SNAPSHOT.jar</ejb>
+  </module>
   <module>
     <java>openejb-itests-client-3.0-incubating-SNAPSHOT.jar</java>
   </module>

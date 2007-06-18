@@ -37,7 +37,7 @@ import junit.framework.Test;
 public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
-        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
+        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-*.*");
         return iTest.suite();
     }
 }

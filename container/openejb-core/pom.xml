@@ -81,6 +81,11 @@
               <value>file:///${basedir}/target/classes/default.logging.conf</value>
             </property>
           </systemProperties>
+          <!--
+          <includes>
+            <include>**/SomeoneBrokeSurefireAndThisIsADirtyHackForItTest.java</include>
+          </includes>
+          -->
         </configuration>
       </plugin>
       <plugin>
@@ -157,6 +162,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
+      <version>${version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-interceptor-beans</artifactId>
       <version>${version}</version>
       <scope>test</scope>
     </dependency>

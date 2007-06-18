@@ -30,6 +30,42 @@
     This ejb-jar file contains assembled enterprise beans that are
     part of employee self-service application.
   </description>
+  
+  <interceptors>
+  <interceptor>
+  	<interceptor-class>
+  		org.apache.openejb.test.interceptor.SecondClassInterceptor
+  	</interceptor-class>
+  </interceptor>
+  <interceptor>
+  		<interceptor-class>
+  			org.apache.openejb.test.interceptor.DDInterceptor
+  		</interceptor-class>
+  		<around-invoke>
+  			<method-name>ddInterceptor</method-name>
+  		</around-invoke>
+  		<post-construct>
+  			<lifecycle-callback-method>
+  				ddInterceptorPostConstruct
+  			</lifecycle-callback-method>
+  		</post-construct>
+  		<post-activate>
+  			<lifecycle-callback-method>
+  				ddInterceptorPostActivate
+  			</lifecycle-callback-method>
+  		</post-activate>
+  		<pre-passivate>
+  			<lifecycle-callback-method>
+  				ddInterceptorPrePassivate
+  			</lifecycle-callback-method>
+  		</pre-passivate>
+  		<pre-destroy>
+  			<lifecycle-callback-method>
+  				ddInterceptorPreDestroy
+  			</lifecycle-callback-method>
+  		</pre-destroy>
+  	</interceptor>
+  </interceptors>  
 
   <enterprise-beans>
     <!--
@@ -5547,7 +5583,8 @@
       </ejb-relationship-role>
     </ejb-relation>
   </relationships>
-
+  
+  
   <assembly-descriptor>
     <security-role>
       <description>The description</description>
@@ -5810,5 +5847,58 @@
     <message-destination>
       <message-destination-name>SetterInjectionMdbBean</message-destination-name>
     </message-destination>
+    
+     <!-- test01_interceptorChaining   
+     to test specifying an interceptor from a DD at the method level.
+     It should be invoked only after any method level interceptors defined by annotations on that method.
+     -->
+     <interceptor-binding>
+     	<ejb-name>BasicStatefulIntercepted</ejb-name>
+     	<interceptor-class>
+     		org.apache.openejb.test.interceptor.DDInterceptor
+     	</interceptor-class>
+     	<method>
+     		<method-name>reverse</method-name>
+     	</method>
+     </interceptor-binding>
+ 
+      <!-- test04_excludeClassInterceptors_02
+        to test exclude-class-interceptor on a method level -->        
+     <interceptor-binding>
+     	<ejb-name>BasicStatefulIntercepted</ejb-name>
+     	<exclude-class-interceptors>true</exclude-class-interceptors>
+     	<method>
+     		<method-name>concat</method-name>
+     	</method>
+     </interceptor-binding>
+     
+         
+     <!--  test01_interceptorChaining  
+     This interceptor applies and also changes the order of class level interceptors invoked on BasicStatelessIntercepted.
+     -->
+     <interceptor-binding>
+     	<ejb-name>BasicStatelessIntercepted</ejb-name>
+     	<interceptor-order>    	
+     	    <interceptor-class>
+     			org.apache.openejb.test.interceptor.DDInterceptor
+     		</interceptor-class>    		
+     		<interceptor-class>
+     			org.apache.openejb.test.interceptor.SecondClassInterceptor
+     		</interceptor-class>
+     		<interceptor-class>
+     			org.apache.openejb.test.interceptor.ClassInterceptor
+     		</interceptor-class>
+     	</interceptor-order>
+     </interceptor-binding>
+     
+     <!-- test04_excludeClassInterceptors_02
+     to test exclude-class-interceptor on a method level -->        
+     <interceptor-binding>
+     	<ejb-name>BasicStatelessIntercepted</ejb-name>
+     	<exclude-class-interceptors>true</exclude-class-interceptors>
+     	<method>
+     		<method-name>concat</method-name>
+     	</method>
+     </interceptor-binding>       
   </assembly-descriptor>
 </ejb-jar>

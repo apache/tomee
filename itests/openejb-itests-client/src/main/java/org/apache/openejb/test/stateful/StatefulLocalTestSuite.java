@@ -62,6 +62,8 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatefulSetterInjectionTests());
         // suite.addTest(new StatefulPersistenceContextTests());
         suite.addTest(new StatefulRmiIiopTests());
+        //suite.addTest(new StatefulInterceptorTests());
+        suite.addTest(new StatefulDefaultInterceptorTests());
         
         /*///////////////////////////
          * Annotated test clients

@@ -55,6 +55,10 @@
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-beans</artifactId>
             </ejbModule>
+            <ejbModule>
+              <groupId>org.apache.openejb</groupId>
+              <artifactId>openejb-itests-interceptor-beans</artifactId>
+            </ejbModule>            
             <javaModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-client</artifactId>
@@ -79,6 +83,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-interceptor-beans</artifactId>
+      <version>${version}</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>      
       <artifactId>openejb-itests-client</artifactId>
       <version>${version}</version>
     </dependency>
