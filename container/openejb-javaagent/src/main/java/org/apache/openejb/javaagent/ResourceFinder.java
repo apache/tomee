@@ -79,11 +79,9 @@ public class ResourceFinder {
         }
         this.classLoader = classLoader;
 
-        System.out.println("ResourceFinder urls = " + urls);
-
         for (int i = 0; urls != null && i < urls.length; i++) {
             URL url = urls[i];
-            System.out.println("url.toExternalForm() = " + url.toExternalForm());
+
             if (url == null || isDirectory(url) || url.getProtocol().equals("jar")) {
                 continue;
             }
@@ -948,7 +946,6 @@ public class ResourceFinder {
 
     private Enumeration<URL> getResources(String fulluri) throws IOException {
         if (urls == null) {
-            System.out.println("fulluri: " + fulluri);
             return classLoader.getResources(fulluri);
         }
         Vector<URL> resources = new Vector();
