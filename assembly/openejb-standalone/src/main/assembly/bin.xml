@@ -34,7 +34,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>*.bat</include>
@@ -53,21 +53,21 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources</directory>
       <includes>
         <include>*.conf</include>
       </includes>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources</directory>
       <includes>
         <include>README*</include>
       </includes>
       <outputDirectory>logs/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/</directory>
+      <directory>src/main/resources</directory>
       <includes>
         <include>README*</include>
       </includes>
