@@ -29,16 +29,16 @@
   <fileSets>
     <fileSet>
       <includes>
-        <include>README*</include>
         <include>LICENSE.txt</include>
         <include>NOTICE.txt</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>src/main/resources/</directory>
+      <directory>target/classes/</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>*.bat</include>
+        <include>README*</include>
       </includes>
       <lineEnding>dos</lineEnding>
       <fileMode>0755</fileMode>
@@ -53,15 +53,24 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>src/main/conf</directory>
+      <directory>target/classes/</directory>
+      <includes>
+        <include>*.conf</include>
+      </includes>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>target/classes/</directory>
+      <includes>
+        <include>README*</include>
+      </includes>
       <outputDirectory>logs/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>target/classes/</directory>
+      <includes>
+        <include>README*</include>
+      </includes>
       <outputDirectory>beans/</outputDirectory>
     </fileSet>
   </fileSets>
