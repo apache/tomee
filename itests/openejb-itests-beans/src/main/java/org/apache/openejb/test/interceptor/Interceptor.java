@@ -68,10 +68,13 @@ public class Interceptor {
         
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
         innerMap = updateInterceptorsList(innerMap);
-        
-        Object[] params = ctx.getParameters();
-        innerMap.put("PARAMETERS", params);
-        
+
+        // don't try to get parameters for call back methods (you'll get an IllegalStateException)
+        if (ctx.getMethod() != null) {
+            Object[] params = ctx.getParameters();
+            innerMap.put("PARAMETERS", params);
+        }
+
         ctxData.put(KEY, innerMap);
         
         return ctxData; 
