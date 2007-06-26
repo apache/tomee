@@ -97,6 +97,25 @@
           <finalName>openejb-${pom.version}</finalName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>cleanup-target</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <delete dir='${basedir}/target/classes' />
+                <delete dir='${basedir}/target/archive-tmp' />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>

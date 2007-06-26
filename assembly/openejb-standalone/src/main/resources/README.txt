@@ -1,7 +1,7 @@
 ===============================================
 OpenEJB -- EJB Container System and EJB Server
 
-OpenEJB v1.0-beta1      http://www.openejb.org/
+OpenEJB ${pom.version}      http://openejb.apache.org/
 -----------------------------------------------
 ___________________
 Installation
@@ -66,8 +66,6 @@ Support
 ===================
  
  Any problems with this release can be reported to our user
- mailing list.
-
- Send email to subscribe-user@openejb.org or follow this link
- for other subscription and list information:
- http://www.openejb.org/Mailing+Lists#user
+ mailing list at users@openejb.apache.org 
+ Follow this link for other subscription and list information:
+ http://openejb.apache.org/mailing-lists.html
