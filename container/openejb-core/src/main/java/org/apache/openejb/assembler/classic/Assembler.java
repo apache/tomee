@@ -92,7 +92,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
 
-
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
     private final JndiBuilder jndiBuilder;
