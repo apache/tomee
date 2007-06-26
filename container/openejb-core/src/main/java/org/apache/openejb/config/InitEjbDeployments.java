@@ -25,6 +25,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.codehaus.swizzle.stream.StringTemplate;
 
 public class InitEjbDeployments implements DynamicDeployer {
@@ -59,10 +60,7 @@ public class InitEjbDeployments implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
-        Bean[] beans = EjbJarUtils.getBeans(ejbModule.getEjbJar());
-
-        for (Bean bean : beans) {
-
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
             if (ejbDeployment == null) {
 
@@ -79,7 +77,7 @@ public class InitEjbDeployments implements DynamicDeployer {
         return ejbModule;
     }
 
-    private String autoAssignDeploymentId(Bean bean, Map<String, String> contextData) {
+    private String autoAssignDeploymentId(EnterpriseBean bean, Map<String, String> contextData) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
         contextData.put("ejbClass", bean.getClass().getName());
         contextData.put("ejbClass.simpleName", bean.getClass().getSimpleName());

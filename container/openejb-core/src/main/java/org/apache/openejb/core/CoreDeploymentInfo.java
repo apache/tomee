@@ -785,23 +785,23 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 }
 
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
                 Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
                 clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
-                methodMap.put(clientMethod, beanMethod);
+                mapMethods(clientMethod, beanMethod);
             }
         } catch (java.lang.NoSuchMethodException nsme) {
             throw new org.apache.openejb.SystemException(nsme);
@@ -853,7 +853,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     beanMethod = beanClass.getMethod(beanMethodName, method.getParameterTypes());
                 }
                 if (beanMethod != null) {
-                    methodMap.put(homeMethods[i], beanMethod);
+                    mapMethods(homeMethods[i], beanMethod);
                 }
             } catch (NoSuchMethodException nsme) {
 //                throw new RuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
@@ -879,7 +879,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             }
             try {
                 Method beanMethod = beanClass.getMethod(method.getName(), method.getParameterTypes());
-                methodMap.put(method, beanMethod);
+                mapMethods(method, beanMethod);
             } catch (NoSuchMethodException nsme) {
                 throw new RuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
             }

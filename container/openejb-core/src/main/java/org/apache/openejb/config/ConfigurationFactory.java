@@ -483,7 +483,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * 2.  If this fails, throw NoSuchProviderException
      * 3.  If providerId is null, attempt to load the specified provider using the 'serviceId' as the 'providerId'
      * 4.  If this fails, check the hardcoded defaults for a default providerId using the supplied 'type'
-     * 5.  If this fails, throw NoSuchProviderException 
+     * 5.  If this fails, throw NoSuchProviderException
      */
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
         if (type == null) throw new NullPointerException("type");
@@ -621,11 +621,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
 
     static {
-        containerTypes.put(Bean.STATELESS, StatelessSessionContainerInfo.class);
-        containerTypes.put(Bean.STATEFUL, StatefulSessionContainerInfo.class);
-        containerTypes.put(Bean.BMP_ENTITY, BmpEntityContainerInfo.class);
-        containerTypes.put(Bean.CMP_ENTITY, CmpEntityContainerInfo.class);
-        containerTypes.put(Bean.MESSAGE, MdbContainerInfo.class);
+        containerTypes.put(BeanTypes.STATELESS, StatelessSessionContainerInfo.class);
+        containerTypes.put(BeanTypes.STATEFUL, StatefulSessionContainerInfo.class);
+        containerTypes.put(BeanTypes.BMP_ENTITY, BmpEntityContainerInfo.class);
+        containerTypes.put(BeanTypes.CMP_ENTITY, CmpEntityContainerInfo.class);
+        containerTypes.put(BeanTypes.MESSAGE, MdbContainerInfo.class);
     }
 
     protected static Class<? extends ContainerInfo> getContainerInfoType(String ctype) {

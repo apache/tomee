@@ -17,10 +17,11 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.Bean;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.config.EjbSet;
-import org.apache.openejb.config.EntityBean;
-import org.apache.openejb.config.SessionBean;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.config.ValidationRule;
 import org.apache.openejb.config.ValidationWarning;
@@ -37,9 +38,10 @@ public class CheckMethods implements ValidationRule {
 
         this.set = set;
 
-        Bean[] beans = set.getBeans();
-        for (int i = 0; i < beans.length; i++) {
-            Bean b = beans[i];
+        for (EnterpriseBean bean : set.getEjbJar().getEnterpriseBeans()) {
+            if (!(bean instanceof RemoteBean)) continue;
+            RemoteBean b = (RemoteBean) bean;
+
             if (b.getHome() != null) {
                 check_remoteInterfaceMethods(b);
                 check_homeInterfaceMethods(b);
@@ -51,7 +53,7 @@ public class CheckMethods implements ValidationRule {
         }
     }
 
-    private void check_localHomeInterfaceMethods(Bean b) {
+    private void check_localHomeInterfaceMethods(RemoteBean b) {
         Class home = null;
         Class bean = null;
         try {
@@ -69,7 +71,7 @@ public class CheckMethods implements ValidationRule {
         check_unusedCreateMethods(b, bean, home);
     }
 
-    private void check_localInterfaceMethods(Bean b) {
+    private void check_localInterfaceMethods(RemoteBean b) {
         Class intrface = null;
         Class beanClass = null;
         try {
@@ -92,7 +94,7 @@ public class CheckMethods implements ValidationRule {
 
                 ValidationFailure failure = new ValidationFailure("no.busines.method");
                 failure.setDetails(interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
-                failure.setBean(b);
+                failure.setComponentName(b.getEjbName());
 
                 set.addFailure(failure);
 
@@ -101,7 +103,7 @@ public class CheckMethods implements ValidationRule {
 
     }
 
-    private void check_remoteInterfaceMethods(Bean b) {
+    private void check_remoteInterfaceMethods(RemoteBean b) {
 
         Class intrface = null;
         Class beanClass = null;
@@ -125,7 +127,7 @@ public class CheckMethods implements ValidationRule {
 
                 ValidationFailure failure = new ValidationFailure("no.busines.method");
                 failure.setDetails(interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
-                failure.setBean(b);
+                failure.setComponentName(b.getEjbName());
 
                 set.addFailure(failure);
 
@@ -133,7 +135,7 @@ public class CheckMethods implements ValidationRule {
         }
     }
 
-    private void check_homeInterfaceMethods(Bean b) {
+    private void check_homeInterfaceMethods(RemoteBean b) {
         Class home = null;
         Class bean = null;
         try {
@@ -151,9 +153,9 @@ public class CheckMethods implements ValidationRule {
         check_unusedCreateMethods(b, bean, home);
     }
 
-    public boolean check_hasCreateMethod(Bean b, Class bean, Class home) {
+    public boolean check_hasCreateMethod(RemoteBean b, Class bean, Class home) {
 
-        if (b instanceof org.apache.openejb.config.SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)){
+        if (b instanceof SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)){
             // This is a pojo-style bean
             return false;
         }
@@ -175,7 +177,7 @@ public class CheckMethods implements ValidationRule {
 
             ValidationFailure failure = new ValidationFailure("no.home.create");
             failure.setDetails(b.getHome(), b.getRemote());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
 
@@ -184,20 +186,38 @@ public class CheckMethods implements ValidationRule {
         return hasCreateMethod;
     }
 
-    public boolean check_createMethodsAreImplemented(Bean b, Class bean, Class home) {
+    public static boolean paramsMatch(Method methodA, Method methodB) {
+        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
+            return false;
+        }
+
+        for (int i = 0; i < methodA.getParameterTypes().length; i++) {
+            Class<?> a = methodA.getParameterTypes()[i];
+            Class<?> b = methodB.getParameterTypes()[i];
+            if (!a.equals(b)) return false;
+        }
+        return true;
+    }
+
+    public boolean check_createMethodsAreImplemented(RemoteBean b, Class bean, Class home) {
         boolean result = true;
 
         Method[] homeMethods = home.getMethods();
-        Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
             if (!homeMethods[i].getName().startsWith("create")) continue;
+
             Method create = homeMethods[i];
 
             StringBuilder ejbCreateName = new StringBuilder(create.getName());
             ejbCreateName.replace(0,1, "ejbC");
+
             try {
-                bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
+                if (EnterpriseBean.class.isAssignableFrom(bean)) {
+                    bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
+                } else {
+                    // TODO: Check for Init method in pojo session bean class
+                }
             } catch (NoSuchMethodException e) {
                 result = false;
 
@@ -207,8 +227,8 @@ public class CheckMethods implements ValidationRule {
                     EntityBean entity = (EntityBean) b;
 
                     ValidationFailure failure = new ValidationFailure("entity.no.ejb.create");
-                    failure.setDetails(b.getEjbClass(), entity.getPrimaryKey(), ejbCreateName.toString(), paramString);
-                    failure.setBean(b);
+                    failure.setDetails(b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
+                    failure.setComponentName(b.getEjbName());
 
                     set.addFailure(failure);
 
@@ -216,7 +236,7 @@ public class CheckMethods implements ValidationRule {
 
                     ValidationFailure failure = new ValidationFailure("session.no.ejb.create");
                     failure.setDetails(b.getEjbClass(), ejbCreateName.toString(), paramString);
-                    failure.setBean(b);
+                    failure.setComponentName(b.getEjbName());
 
                     set.addFailure(failure);
 
@@ -227,7 +247,7 @@ public class CheckMethods implements ValidationRule {
         return result;
     }
 
-    public boolean check_postCreateMethodsAreImplemented(Bean b, Class bean, Class home) {
+    public boolean check_postCreateMethodsAreImplemented(RemoteBean b, Class bean, Class home) {
         boolean result = true;
 
         if (b instanceof SessionBean) return true;
@@ -249,7 +269,7 @@ public class CheckMethods implements ValidationRule {
 
                 ValidationFailure failure = new ValidationFailure("no.ejb.post.create");
                 failure.setDetails(b.getEjbClass(), ejbPostCreateName.toString(), paramString);
-                failure.setBean(b);
+                failure.setComponentName(b.getEjbName());
 
                 set.addFailure(failure);
 
@@ -259,7 +279,7 @@ public class CheckMethods implements ValidationRule {
         return result;
     }
 
-    public boolean check_unusedCreateMethods(Bean b, Class bean, Class home) {
+    public boolean check_unusedCreateMethods(RemoteBean b, Class bean, Class home) {
         boolean result = true;
 
         Method[] homeMethods = home.getMethods();
@@ -279,7 +299,7 @@ public class CheckMethods implements ValidationRule {
 
                 ValidationWarning warning = new ValidationWarning("unused.ejb.create");
                 warning.setDetails(b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
-                warning.setBean(b);
+                warning.setComponentName(b.getEjbName());
 
                 set.addWarning(warning);
 

@@ -69,7 +69,7 @@ public class EjbValidator {
         EjbSet set = null;
 
         try {
-            set = new EjbSet(ejbModule.getJarLocation(), ejbModule.getEjbJar(), EjbJarUtils.getBeans(ejbModule.getEjbJar()), ejbModule.getClassLoader());
+            set = new EjbSet(ejbModule.getJarLocation(), ejbModule.getEjbJar(), ejbModule.getClassLoader());
             ValidationRule[] rules = getValidationRules();
             for (int i = 0; i < rules.length; i++) {
                 rules[i].validate(set);
@@ -78,69 +78,6 @@ public class EjbValidator {
             e.printStackTrace(System.out);
             ValidationError err = new ValidationError("cannot.validate");
             err.setCause(e);
-            err.setBean(new Bean(){
-
-                public String getType() {
-                    return "Ejb-jar";
-                }
-
-                public Object getBean() {
-                    return null;
-                }
-
-                public String getEjbName() {
-                    String name = ejbModule.getEjbJar().getDisplayName();
-                    if (name == null){
-                        File jar = new File(ejbModule.getJarLocation());
-                        jar = jar.getAbsoluteFile();
-                        name = jar.getName();
-                        if (name.equals(".")){
-                            name = jar.getParentFile().getName();
-                        }
-                    }
-                    return name;
-                }
-
-                public String getEjbClass() {
-                    return null;
-                }
-
-                public String getHome() {
-                    return null;
-                }
-
-                public String getRemote() {
-                    return null;
-                }
-
-                public String getLocalHome() {
-                    return null;
-                }
-
-                public String getLocal() {
-                    return null;
-                }
-
-                public EjbRef[] getEjbRef() {
-                    return new EjbRef[0];
-                }
-
-                public EjbLocalRef[] getEjbLocalRef() {
-                    return new EjbLocalRef[0];
-                }
-
-                public EnvEntry[] getEnvEntry() {
-                    return new EnvEntry[0];
-                }
-
-                public ResourceRef[] getResourceRef() {
-                    return new ResourceRef[0];
-                }
-
-                public SecurityRoleRef[] getSecurityRoleRef() {
-                    return new SecurityRoleRef[0];
-                }
-            });
             err.setDetails(e.getMessage());
             set.addError(err);
         }
@@ -177,7 +114,7 @@ public class EjbValidator {
             System.out.print(exceptions[i].getPrefix());
             System.out.print(" ... ");
             if (!(exceptions[i] instanceof ValidationError)) {
-                System.out.print(exceptions[i].getBean().getEjbName());
+                System.out.print(exceptions[i].getComponentName());
                 System.out.print(": ");
             }
             if (LEVEL > 2) {
@@ -225,7 +162,7 @@ public class EjbValidator {
             System.out.println(">");
             if (!(exceptions[i] instanceof ValidationError)) {
                 System.out.print("      <ejb-name>");
-                System.out.print(exceptions[i].getBean().getEjbName());
+                System.out.print(exceptions[i].getComponentName());
                 System.out.println("</ejb-name>");
             }
             System.out.print("      <summary>");

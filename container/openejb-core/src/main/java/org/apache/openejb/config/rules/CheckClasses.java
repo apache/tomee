@@ -17,7 +17,10 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.Bean;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.config.EjbSet;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.config.ValidationRule;
@@ -34,11 +37,11 @@ public class CheckClasses implements ValidationRule {
     public void validate(EjbSet set) {
         this.set = set;
 
-        Bean[] beans = set.getBeans();
-        Bean b = null;
-        try {
-            for (int i = 0; i < beans.length; i++) {
-                b = beans[i];
+        for (EnterpriseBean bean : set.getJar().getEnterpriseBeans()) {
+            try {
+                if (!(bean instanceof RemoteBean)) continue;
+                RemoteBean b = (RemoteBean) bean;
+
                 check_hasEjbClass(b);
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
@@ -58,13 +61,13 @@ public class CheckClasses implements ValidationRule {
                     check_hasDependentClasses(b, b.getLocalHome(), "<local-home>");
                     check_hasDependentClasses(b, b.getLocal(), "<local>");
                 }
+            } catch (RuntimeException e) {
+                throw new RuntimeException(bean.getEjbName(), e);
             }
-        } catch (RuntimeException e) {
-            throw new RuntimeException(b.getEjbName(), e);
         }
     }
 
-    private void check_hasDependentClasses(Bean b, String className, String type) {
+    private void check_hasDependentClasses(RemoteBean b, String className, String type) {
         try {
             ClassLoader cl = set.getClassLoader();
             Class clazz = cl.loadClass(className);
@@ -84,7 +87,7 @@ public class CheckClasses implements ValidationRule {
             */
             ValidationFailure failure = new ValidationFailure("missing.dependent.class");
             failure.setDetails(className, e.getMessage(), type, b.getEjbName());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
         } catch (NoClassDefFoundError e) {
@@ -97,47 +100,47 @@ public class CheckClasses implements ValidationRule {
 
             ValidationFailure failure = new ValidationFailure("missing.dependent.class");
             failure.setDetails(className, e.getMessage(), type, b.getEjbName());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
         }
     }
 
-    private void check_hasLocalClass(Bean b) {
+    private void check_hasLocalClass(RemoteBean b) {
         lookForClass(b, b.getLocal(), "<local>");
     }
 
-    private void check_hasLocalHomeClass(Bean b) {
+    private void check_hasLocalHomeClass(RemoteBean b) {
         lookForClass(b, b.getLocalHome(), "<local-home>");
     }
 
-    public void check_hasEjbClass(Bean b) {
+    public void check_hasEjbClass(RemoteBean b) {
 
         lookForClass(b, b.getEjbClass(), "<ejb-class>");
 
     }
 
-    public void check_hasHomeClass(Bean b) {
+    public void check_hasHomeClass(RemoteBean b) {
 
         lookForClass(b, b.getHome(), "<home>");
 
     }
 
-    public void check_hasRemoteClass(Bean b) {
+    public void check_hasRemoteClass(RemoteBean b) {
 
         lookForClass(b, b.getRemote(), "<remote>");
 
     }
 
-    public void check_isEjbClass(Bean b) {
+    public void check_isEjbClass(RemoteBean b) {
 
-        if (b instanceof org.apache.openejb.config.SessionBean) {
+        if (b instanceof SessionBean) {
 
             // DMB: Beans in ejb 3 are not required to implement javax.ejb.SessionBean
             // but it would still be nice to think of some sort of check to do here.
             // compareTypes(b, b.getEjbClass(), javax.ejb.SessionBean.class);
 
-        } else if (b instanceof org.apache.openejb.config.EntityBean) {
+        } else if (b instanceof EntityBean) {
 
             compareTypes(b, b.getEjbClass(), javax.ejb.EntityBean.class);
 
@@ -145,27 +148,27 @@ public class CheckClasses implements ValidationRule {
 
     }
 
-    private void check_isLocalInterface(Bean b) {
+    private void check_isLocalInterface(RemoteBean b) {
         compareTypes(b, b.getLocal(), EJBLocalObject.class);
     }
 
-    private void check_isLocalHomeInterface(Bean b) {
+    private void check_isLocalHomeInterface(RemoteBean b) {
         compareTypes(b, b.getLocalHome(), EJBLocalHome.class);
     }
 
-    public void check_isHomeInterface(Bean b) {
+    public void check_isHomeInterface(RemoteBean b) {
 
         compareTypes(b, b.getHome(), javax.ejb.EJBHome.class);
 
     }
 
-    public void check_isRemoteInterface(Bean b) {
+    public void check_isRemoteInterface(RemoteBean b) {
 
         compareTypes(b, b.getRemote(), javax.ejb.EJBObject.class);
 
     }
 
-    private void lookForClass(Bean b, String clazz, String type) {
+    private void lookForClass(RemoteBean b, String clazz, String type) {
         try {
             loadClass(clazz);
         } catch (OpenEJBException e) {
@@ -177,7 +180,7 @@ public class CheckClasses implements ValidationRule {
 
             ValidationFailure failure = new ValidationFailure("missing.class");
             failure.setDetails(clazz, type, b.getEjbName());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
 
@@ -190,7 +193,7 @@ public class CheckClasses implements ValidationRule {
              */
             ValidationFailure failure = new ValidationFailure("misslocated.class");
             failure.setDetails(clazz, type, b.getEjbName(), e.getMessage());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
             throw e;
@@ -198,7 +201,7 @@ public class CheckClasses implements ValidationRule {
 
     }
 
-    private void compareTypes(Bean b, String clazz1, Class class2) {
+    private void compareTypes(RemoteBean b, String clazz1, Class class2) {
         Class class1 = null;
         try {
             class1 = loadClass(clazz1);
@@ -209,7 +212,7 @@ public class CheckClasses implements ValidationRule {
         if (class1 != null && !class2.isAssignableFrom(class1)) {
             ValidationFailure failure = new ValidationFailure("wrong.class.type");
             failure.setDetails(clazz1, class2.getName());
-            failure.setBean(b);
+            failure.setComponentName(b.getEjbName());
 
             set.addFailure(failure);
 

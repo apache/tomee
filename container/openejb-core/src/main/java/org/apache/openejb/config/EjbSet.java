@@ -28,14 +28,12 @@ public class EjbSet {
 
     private final String jarPath;
     private final EjbJar jar;
-    private final Bean[] beans;
 
     private final ClassLoader classLoader;
 
-    public EjbSet(String jarPath, EjbJar jar, Bean[] beans, ClassLoader classLoader) {
+    public EjbSet(String jarPath, EjbJar jar, ClassLoader classLoader) {
         this.jarPath = jarPath;
         this.jar = jar;
-        this.beans = beans;
         this.classLoader = classLoader;
     }
 
@@ -87,10 +85,6 @@ public class EjbSet {
 
     public boolean hasErrors() {
         return errors.size() > 0;
-    }
-
-    public Bean[] getBeans() {
-        return beans;
     }
 
     public EjbJar getEjbJar() {

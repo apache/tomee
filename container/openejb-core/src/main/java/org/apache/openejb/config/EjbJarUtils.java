@@ -28,7 +28,6 @@ import java.util.jar.JarFile;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.loader.SystemInstance;
@@ -240,33 +239,6 @@ public class EjbJarUtils {
         }
 
         return newFile.getAbsolutePath();
-    }
-
-    public static Container[] getUsableContainers(Container[] containers, Bean bean) {
-        List<Container> c = new ArrayList<Container>();
-
-        for (int i = 0; i < containers.length; i++) {
-            if (containers[i].getCtype().equals(bean.getType())) {
-                c.add(containers[i]);
-            }
-        }
-
-        Container[] useableContainers = c.toArray(new Container[c.size()]);
-        return useableContainers;
-    }
-
-    public static Bean[] getBeans(EjbJar ejbJar) {
-        List<Bean> beans = new ArrayList<Bean>();
-        for (JndiConsumer enterpriseBean : ejbJar.getEnterpriseBeans()) {
-            if (enterpriseBean instanceof org.apache.openejb.jee.EntityBean) {
-                beans.add(new EntityBean((org.apache.openejb.jee.EntityBean) enterpriseBean));
-            } else if (enterpriseBean instanceof org.apache.openejb.jee.SessionBean) {
-                beans.add(new SessionBean((org.apache.openejb.jee.SessionBean) enterpriseBean));
-            } else if (enterpriseBean instanceof org.apache.openejb.jee.MessageDrivenBean) {
-                beans.add(new MessageBean((org.apache.openejb.jee.MessageDrivenBean) enterpriseBean));
-            }
-        }
-        return beans.toArray(new Bean[]{});
     }
 
     /*------------------------------------------------------*/

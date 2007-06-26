@@ -52,13 +52,15 @@ public class ValidateEjbModule implements DynamicDeployer {
             ValidationError[] errors = set.getErrors();
             for (int j = 0; j < errors.length; j++) {
                 ValidationError e = errors[j];
-                String ejbName = (e.getBean() != null)? e.getBean().getEjbName(): "null";
+                String ejbName = e.getComponentName();
                 logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
+                System.out.println(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
             }
             ValidationFailure[] failures = set.getFailures();
             for (int j = 0; j < failures.length; j++) {
                 ValidationFailure e = failures[j];
-                logger.error(e.getPrefix() + " ... " + e.getBean().getEjbName() + ":\t" + e.getMessage(2));
+                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
+                System.out.println(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
             }
 
             throw new OpenEJBException("Jar failed validation.  Use the validation tool for more details");

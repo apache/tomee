@@ -619,18 +619,18 @@ public class AutoConfig implements DynamicDeployer {
     private static String getType(EnterpriseBean enterpriseBean) throws OpenEJBException {
         if (enterpriseBean instanceof org.apache.openejb.jee.EntityBean) {
             if (((org.apache.openejb.jee.EntityBean)enterpriseBean).getPersistenceType() == PersistenceType.CONTAINER) {
-                return Bean.CMP_ENTITY;
+                return BeanTypes.CMP_ENTITY;
             } else {
-                return Bean.BMP_ENTITY;
+                return BeanTypes.BMP_ENTITY;
             }
         } else if (enterpriseBean instanceof org.apache.openejb.jee.SessionBean) {
             if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.STATEFUL) {
-                return Bean.STATEFUL;
+                return BeanTypes.STATEFUL;
             } else {
-                return Bean.STATELESS;
+                return BeanTypes.STATELESS;
             }
         } else if (enterpriseBean instanceof org.apache.openejb.jee.MessageDrivenBean) {
-            return Bean.MESSAGE;
+            return BeanTypes.MESSAGE;
         }
         throw new OpenEJBException("Unknown enterprise bean type " + enterpriseBean.getClass().getName());
     }
