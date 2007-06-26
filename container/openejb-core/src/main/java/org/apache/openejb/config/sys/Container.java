@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,117 +9,63 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-/*
- * This class was automatically generated with 
- * <a href="http://www.castor.org">Castor 0.9.5.3</a>, using an XML
- * Schema.
- * $Id$
- */
-
 package org.apache.openejb.config.sys;
 
-//---------------------------------/
-
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.Unmarshaller;
-
-public class Container implements java.io.Serializable, org.apache.openejb.config.Service {
-
-
-    private java.lang.String _id;
-
-    private java.lang.String _provider;
-
-    private java.lang.String _ctype;
-
-    private java.lang.String _jar;
-
-    private java.lang.String _content = "";
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
-    public Container() {
-        super();
-        setContent("");
+/**
+ * <p>Java class for anonymous complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType>
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+ *       &lt;attribute name="ctype" use="required" type="{http://www.openejb.org/System/Configuration}ContainerTypes" />
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="jar" type="{http://www.openejb.org/System/Configuration}JarFileLocation" />
+ *       &lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *     &lt;/extension>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "")
+@XmlRootElement(name = "Container")
+public class Container extends AbstractService {
+    @XmlAttribute(required = true)
+    protected String ctype;
+
+    /**
+     * Gets the value of the ctype property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getCtype() {
+        return ctype;
     }
 
-
-    public java.lang.String getContent() {
-        return this._content;
+    /**
+     * Sets the value of the ctype property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setCtype(String value) {
+        this.ctype = value;
     }
-
-    public java.lang.String getCtype() {
-        return this._ctype;
-    }
-
-    public java.lang.String getId() {
-        return this._id;
-    }
-
-    public java.lang.String getJar() {
-        return this._jar;
-    }
-
-    public java.lang.String getProvider() {
-        return this._provider;
-    }
-
-    public boolean isValid() {
-        try {
-            validate();
-        }
-        catch (org.exolab.castor.xml.ValidationException vex) {
-            return false;
-        }
-        return true;
-    }
-
-    public void marshal(java.io.Writer out)
-            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-
-        Marshaller.marshal(this, out);
-    }
-
-    public void marshal(org.xml.sax.ContentHandler handler)
-            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-
-        Marshaller.marshal(this, handler);
-    }
-
-    public void setContent(java.lang.String content) {
-        this._content = content;
-    }
-
-    public void setCtype(java.lang.String ctype) {
-        this._ctype = ctype;
-    }
-
-    public void setId(java.lang.String id) {
-        this._id = id;
-    }
-
-    public void setJar(java.lang.String jar) {
-        this._jar = jar;
-    }
-
-    public void setProvider(java.lang.String provider) {
-        this._provider = provider;
-    }
-
-    public static java.lang.Object unmarshal(java.io.Reader reader)
-            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-        return (org.apache.openejb.config.sys.Container) Unmarshaller.unmarshal(org.apache.openejb.config.sys.Container.class, reader);
-    }
-
-    public void validate()
-            throws org.exolab.castor.xml.ValidationException {
-        org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
-        validator.validate(this);
-    }
-
 }

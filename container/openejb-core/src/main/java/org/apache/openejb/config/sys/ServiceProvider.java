@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,167 +9,223 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-/*
- * This class was automatically generated with 
- * <a href="http://www.castor.org">Castor 0.9.5.3</a>, using an XML
- * Schema.
- * $Id$
- */
-
 package org.apache.openejb.config.sys;
 
-//---------------------------------/
-
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.Unmarshaller;
-
-public class ServiceProvider implements java.io.Serializable {
-
-
-    private java.lang.String _id;
-
-    private java.lang.String _providerType;
-
-    private java.lang.String _displayName;
-
-    private java.lang.String _description;
-
-    private java.lang.String _className;
-
-    private java.lang.String _factoryName;
-
-    private java.lang.String _constructor;
-
-    private java.lang.String _content = "";
-
-    private org.apache.openejb.config.sys.PropertiesFile _propertiesFile;
-
-    private org.apache.openejb.config.sys.Lookup _lookup;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 
-    public ServiceProvider() {
-        super();
-        setContent("");
+/**
+ * <p>Java class for anonymous complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType>
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+ *       &lt;attribute name="class-name" type="{http://www.openejb.org/Service/Configuration}ClassName" />
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="display-name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="provider-type" use="required" type="{http://www.openejb.org/Service/Configuration}ProviderTypes" />
+ *       &lt;attribute name="constructor" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="factory-name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *     &lt;/extension>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "")
+@XmlRootElement(name = "ServiceProvider")
+public class ServiceProvider {
+
+    @XmlValue
+    protected String content;
+    @XmlAttribute(name = "class-name")
+    protected String className;
+    @XmlAttribute(name = "constructor")
+    protected String constructor;
+    @XmlAttribute
+    protected String description;
+    @XmlAttribute(name = "display-name")
+    protected String displayName;
+    @XmlAttribute(name = "factory-name")
+    protected String factoryName;
+    @XmlAttribute(required = true)
+    protected String id;
+    @XmlAttribute(name = "provider-type", required = true)
+    protected String providerType;
+
+    /**
+     * Gets the value of the value property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getContent() {
+        return content;
     }
 
+    /**
+     * Sets the value of the value property.
+     *
+     * @param content allowed object is
+     *                {@link String }
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
 
+    /**
+     * Gets the value of the className property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * Sets the value of the className property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setClassName(String value) {
+        this.className = value;
+    }
+
+    /**
+     * Gets the value of the constructor property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
     public String getConstructor() {
-        return _constructor;
+        return constructor;
     }
 
-    public java.lang.String getClassName() {
-        return this._className;
+    /**
+     * Sets the value of the constructor property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setConstructor(String value) {
+        this.constructor = value;
     }
 
+    /**
+     * Gets the value of the description property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
+
+    /**
+     * Gets the value of the displayName property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the value of the displayName property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setDisplayName(String value) {
+        this.displayName = value;
+    }
+
+    /**
+     * Gets the value of the factoryName property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
     public String getFactoryName() {
-        return _factoryName;
+        return factoryName;
     }
 
-    public java.lang.String getContent() {
-        return this._content;
+    /**
+     * Sets the value of the factoryName property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setFactoryName(String value) {
+        this.factoryName = value;
     }
 
-    public java.lang.String getDescription() {
-        return this._description;
+    /**
+     * Gets the value of the id property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getId() {
+        return id;
     }
 
-    public java.lang.String getDisplayName() {
-        return this._displayName;
+    /**
+     * Sets the value of the id property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setId(String value) {
+        this.id = value;
     }
 
-    public java.lang.String getId() {
-        return this._id;
+    /**
+     * Gets the value of the providerType property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getProviderType() {
+        return providerType;
     }
 
-    public org.apache.openejb.config.sys.Lookup getLookup() {
-        return this._lookup;
-    }
-
-    public org.apache.openejb.config.sys.PropertiesFile getPropertiesFile() {
-        return this._propertiesFile;
-    }
-
-    public java.lang.String getProviderType() {
-        return this._providerType;
-    }
-
-    public boolean isValid() {
-        try {
-            validate();
-        }
-        catch (org.exolab.castor.xml.ValidationException vex) {
-            return false;
-        }
-        return true;
-    }
-
-    public void marshal(java.io.Writer out)
-            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-
-        Marshaller.marshal(this, out);
-    }
-
-    public void marshal(org.xml.sax.ContentHandler handler)
-            throws java.io.IOException, org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-
-        Marshaller.marshal(this, handler);
-    }
-
-    public void setConstructor(String constructor) {
-        this._constructor = constructor;
-    }
-
-    public void setClassName(java.lang.String className) {
-        this._className = className;
-    }
-
-    public void setFactoryName(String factoryName) {
-        this._factoryName = factoryName;
-    }
-
-    public void setContent(java.lang.String content) {
-        this._content = content;
-    }
-
-    public void setDescription(java.lang.String description) {
-        this._description = description;
-    }
-
-    public void setDisplayName(java.lang.String displayName) {
-        this._displayName = displayName;
-    }
-
-    public void setId(java.lang.String id) {
-        this._id = id;
-    }
-
-    public void setLookup(org.apache.openejb.config.sys.Lookup lookup) {
-        this._lookup = lookup;
-    }
-
-    public void setPropertiesFile(org.apache.openejb.config.sys.PropertiesFile propertiesFile) {
-        this._propertiesFile = propertiesFile;
-    }
-
-    public void setProviderType(java.lang.String providerType) {
-        this._providerType = providerType;
-    }
-
-    public static java.lang.Object unmarshal(java.io.Reader reader)
-            throws org.exolab.castor.xml.MarshalException, org.exolab.castor.xml.ValidationException {
-        return (org.apache.openejb.config.sys.ServiceProvider) Unmarshaller.unmarshal(org.apache.openejb.config.sys.ServiceProvider.class, reader);
-    }
-
-    public void validate()
-            throws org.exolab.castor.xml.ValidationException {
-        org.exolab.castor.xml.Validator validator = new org.exolab.castor.xml.Validator();
-        validator.validate(this);
+    /**
+     * Sets the value of the providerType property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setProviderType(String value) {
+        this.providerType = value;
     }
 
 }

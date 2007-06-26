@@ -23,32 +23,44 @@
   <!--
   -->
   <xsd:element name="Connector">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="Resource">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
-      <xsd:attribute name="jndi" type="xsd:string"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+          <xsd:attribute name="jndi" type="xsd:string"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="Container">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="ctype" type="ContainerTypes" use="required"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="ctype" type="ContainerTypes" use="required"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -64,55 +76,75 @@
   <!--
   -->
   <xsd:element name="JndiProvider">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="ProxyFactory">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="SecurityService">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="TransactionManager">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <xsd:element name="ConnectionManager">
-    <xsd:complexType mixed='true'>
-      <xsd:attribute name="id" type="xsd:string" use="required"/>
-      <xsd:attribute name="provider" type="xsd:string"/>
-      <xsd:attribute name="jar" type="JarFileLocation"/>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider" type="xsd:string"/>
+          <xsd:attribute name="jar" type="JarFileLocation"/>
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
   <!--
   -->
   <xsd:element name="openejb">
-    <xsd:complexType mixed='true'>
+    <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="Container" maxOccurs="unbounded"/>
         <xsd:element ref="JndiProvider" minOccurs="0" maxOccurs="unbounded"/>

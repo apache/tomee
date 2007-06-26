@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.UrlSet;
@@ -121,7 +122,7 @@ public class DeploymentsResolver {
         //// getOption /////////////////////////////////  END  ////////////////////
 
         if (searchClassPath) {
-            Deployments deployment = new Deployments();
+            Deployments deployment = JaxbOpenejb.createDeployments();
             deployment.setClasspath(Thread.currentThread().getContextClassLoader());
             deployments.add(deployment);
         }
@@ -203,7 +204,7 @@ public class DeploymentsResolver {
                 try {
                     Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, !requireDescriptors);
                     if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
-                        deployment = new Deployments();
+                        deployment = JaxbOpenejb.createDeployments();
                         if (url.getProtocol().equals("jar")) {
                             url = new URL(url.getFile().replaceFirst("!.*$", ""));
                             File file = new File(url.getFile());

@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.config;
 
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -29,69 +28,16 @@ import org.apache.xbean.finder.ResourceFinder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Properties;
 
 public class ConfigUtils {
 
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
-
-    /**
-     * @param config configuration file to read
-     * @return unmarshalled configuration of type {@link org.apache.openejb.OpenEJB}
-     * @throws OpenEJBException something wrong with file reading
-     */
-    public static Openejb readConfig(String config) throws OpenEJBException {
-        return (Openejb) Unmarshaller.unmarshal(Openejb.class, config);
-    }
-
-    public static void writeConfig(String confFile, Openejb confObject) throws OpenEJBException {
-        /* TODO:  Just to be picky, the xml file created by
-        Castor is really hard to read -- it is all on one line.
-        People might want to edit this in the future by hand, so if Castor can 
-        make the output look better that would be great!  Otherwise we could
-        just spruce the output up by adding a few new lines and tabs.
-        */
-        Writer writer = null;
-        try {
-            File file = new File(confFile);
-            writer = new FileWriter(file);
-            confObject.marshal(writer);
-        } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()), e);
-        } catch (MarshalException e) {
-            if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.1040", confFile, e.getLocalizedMessage()), e);
-            } else {
-                throw new OpenEJBException(messages.format("conf.1050", confFile, e.getLocalizedMessage()), e);
-            }
-        } catch (ValidationException e) {
-            /* TODO: Implement informative error handling here. 
-               The exception will say "X doesn't match the regular 
-               expression Y" 
-               This should be checked and more relevant information
-               should be given -- not everyone understands regular 
-               expressions. 
-             */
-            /* NOTE: This doesn't seem to ever happen. When the object graph
-             * is invalid, the MarshalException is thrown, not this one as you
-             * would think.
-             */
-            throw new OpenEJBException(messages.format("conf.1060", confFile, e.getLocalizedMessage()), e);
-        }
-        try {
-            writer.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", confFile, e.getLocalizedMessage()), e);
-        }
-    }
 
     public static String searchForConfiguration() throws OpenEJBException {
         return searchForConfiguration(SystemInstance.get().getProperty("openejb.configuration"));
@@ -224,12 +170,10 @@ public class ConfigUtils {
     }
 
     public static boolean addDeploymentEntryToConfig(String jarLocation, Openejb config) {
-        Enumeration enumeration = config.enumerateDeployments();
         File jar = new File(jarLocation);
 
         /* Check to see if the entry is already listed */
-        while (enumeration.hasMoreElements()) {
-            Deployments d = (Deployments) enumeration.nextElement();
+        for (Deployments d : config.getDeploymentsArray()) {
 
             if (d.getJar() != null) {
                 try {
@@ -268,7 +212,7 @@ public class ConfigUtils {
         }
 
         /* Create a new Deployments entry */
-        Deployments dep = new Deployments();
+        Deployments dep = JaxbOpenejb.createDeployments();
         dep.setJar(jarLocation);
         config.addDeployments(dep);
         return true;

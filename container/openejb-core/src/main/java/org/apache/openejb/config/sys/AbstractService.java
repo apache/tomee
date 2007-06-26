@@ -17,25 +17,25 @@
  */
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.config.Service;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for Service complex type.
  * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="Service">
  *   &lt;simpleContent>
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="jar" type="{http://www.openejb.org/System/Configuration}JarFileLocation" />
- *       &lt;attribute name="jndi" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/extension>
  *   &lt;/simpleContent>
@@ -43,29 +43,94 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "Resource")
-public class Resource extends AbstractService {
+@XmlType(name = "Service")
+public abstract class AbstractService implements Service {
+    @XmlValue
+    protected String content;
+    @XmlAttribute(required = true)
+    protected String id;
     @XmlAttribute
-    protected String jndi;
+    protected String jar;
+    @XmlAttribute
+    protected String provider;
 
     /**
-     * Gets the value of the jndi property.
+     * Gets the value of the value property.
      *
      * @return possible object is
      *         {@link String }
      */
-    public String getJndi() {
-        return jndi;
+    public String getContent() {
+        return content;
     }
 
     /**
-     * Sets the value of the jndi property.
+     * Sets the value of the value property.
+     *
+     * @param content allowed object is
+     *                {@link String }
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     * Gets the value of the id property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
      *
      * @param value allowed object is
      *              {@link String }
      */
-    public void setJndi(String value) {
-        this.jndi = value;
+    public void setId(String value) {
+        this.id = value;
+    }
+
+    /**
+     * Gets the value of the jar property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getJar() {
+        return jar;
+    }
+
+    /**
+     * Sets the value of the jar property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setJar(String value) {
+        this.jar = value;
+    }
+
+    /**
+     * Gets the value of the provider property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * Sets the value of the provider property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setProvider(String value) {
+        this.provider = value;
     }
 }

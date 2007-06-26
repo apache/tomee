@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.config;
 
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.ServicesJar;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
-import org.apache.xbean.finder.ResourceFinder;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -85,11 +85,12 @@ public class ServiceUtils {
     private static Map<String, ServiceProvider> getServices(String packageName) throws OpenEJBException {
         Map<String, ServiceProvider> services = loadedServiceJars.get(packageName);
         if (services == null) {
-            ServicesJar servicesJar = readServicesJar(packageName);
+            ServicesJar servicesJar = JaxbOpenejb.readServicesJar(packageName);
 
             // index services by provider id
-            services = new HashMap<String, ServiceProvider>(servicesJar.getServiceProviderCount());
-            for (ServiceProvider serviceProvider : servicesJar.getServiceProvider()) {
+            ServiceProvider[] serviceProviders = servicesJar.getServiceProviderArray();
+            services = new HashMap<String, ServiceProvider>(serviceProviders.length);
+            for (ServiceProvider serviceProvider : serviceProviders) {
                 services.put(serviceProvider.getId(), serviceProvider);
 
             }
@@ -115,66 +116,6 @@ public class ServiceUtils {
         }
 
         return new ProviderInfo(providerName, serviceName);
-    }
-
-    public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {
-        try {
-            Unmarshaller unmarshaller = new Unmarshaller(ServicesJar.class, "service-jar.xml");
-            ResourceFinder finder = new ResourceFinder("META-INF/", Thread.currentThread().getContextClassLoader());
-            URL url = finder.find(providerName + "/");
-            return (ServicesJar) unmarshaller.unmarshal(url);
-        } catch (MalformedURLException e) {
-            throw new OpenEJBException(e);
-        } catch (IOException e) {
-            throw new OpenEJBException(e);
-        }
-    }
-
-    public static void writeServicesJar(String xmlFile, ServicesJar servicesJarObject) throws OpenEJBException {
-
-        /* TODO:  Just to be picky, the xml file created by
-        Castor is really hard to read -- it is all on one line.
-        People might want to edit this in the future by hand, so if Castor can
-        make the output look better that would be great!  Otherwise we could
-        just spruce the output up by adding a few new lines and tabs.
-        */
-        Writer writer = null;
-
-        try {
-            File file = new File(xmlFile);
-            writer = new FileWriter(file);
-            servicesJarObject.marshal(writer);
-        } catch (IOException e) {
-            throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()), e);
-        } catch (MarshalException e) {
-            if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(messages.format("conf.4040", xmlFile, e.getLocalizedMessage()), e);
-            } else {
-                throw new OpenEJBException(messages.format("conf.4050", xmlFile, e.getLocalizedMessage()), e);
-            }
-        } catch (ValidationException e) {
-
-            /* TODO: Implement informative error handling here.
-               The exception will say "X doesn't match the regular
-               expression Y"
-               This should be checked and more relevant information
-               should be given -- not everyone understands regular
-               expressions.
-             */
-
-            /* NOTE: This doesn't seem to ever happen. When the object graph
-             * is invalid, the MarshalException is thrown, not this one as you
-             * would think.
-             */
-
-            throw new OpenEJBException(messages.format("conf.4060", xmlFile, e.getLocalizedMessage()), e);
-        }
-
-        try {
-            writer.close();
-        } catch (Exception e) {
-            throw new OpenEJBException(messages.format("file.0020", xmlFile, e.getLocalizedMessage()), e);
-        }
     }
 
     public static Properties loadProperties(String pFile) throws OpenEJBException {

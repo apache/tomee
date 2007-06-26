@@ -42,6 +42,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.sys.ConnectionManager;
+import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
@@ -50,7 +51,7 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
-import org.apache.openejb.config.sys.Connector;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -193,9 +194,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
         if (configLocation != null) {
-            openejb = ConfigUtils.readConfig(configLocation);
+            openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
-            openejb = new Openejb();
+            openejb = JaxbOpenejb.createOpenejb();
         }
 
         sys = new OpenEjbConfiguration();
@@ -203,7 +204,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities = new FacilitiesInfo();
 
 
-        for (JndiProvider provider : openejb.getJndiProvider()) {
+        for (JndiProvider provider : openejb.getJndiProviderArray()) {
 
             JndiContextInfo info = configureService(provider, JndiContextInfo.class);
             sys.facilities.remoteJndiContexts.add(info);
@@ -211,11 +212,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.securityService = configureService(openejb.getSecurityService(), SecurityServiceInfo.class);
 
-        sys.facilities.transactionService = configureService(openejb.getTransactionService(), TransactionServiceInfo.class);
+        sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
         // convert legacy connector declarations to resource declarations
-        for (Connector connector : openejb.getConnector()) {
-            Resource resource = new Resource();
+        for (Connector connector : openejb.getConnectorArray()) {
+            Resource resource = JaxbOpenejb.createResource();
             resource.setJar(connector.getJar());
             resource.setId(connector.getId());
             resource.setProvider(connector.getProvider());
@@ -223,7 +224,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             openejb.addResource(resource);
         }
 
-        for (Resource resource : openejb.getResource()) {  
+        for (Resource resource : openejb.getResourceArray()) {
             ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             sys.facilities.resources.add(resourceInfo);
         }
@@ -233,7 +234,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
 
-        for (Container declaration : openejb.getContainer()) {
+        for (Container declaration : openejb.getContainerArray()) {
 
             Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getCtype());
 
@@ -247,7 +248,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
+        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeploymentsArray());
 
         for (String pathname : jarList) {
 
@@ -450,7 +451,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         Service service = null;
         try {
-            service = defaultService.type.newInstance();
+            service = JaxbOpenejb.create(defaultService.type);
             service.setProvider(defaultService.id);
             service.setId(defaultService.id);
         } catch (Exception e) {
@@ -664,7 +665,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null) {
-                for (Resource resource : openejb.getResource()) {
+                for (Resource resource : openejb.getResourceArray()) {
                     if (isResourceType(resource, type)) {
                         resourceIds.add(resource.getId());
                     }
@@ -722,7 +723,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null) {
-                for (Container container : openejb.getContainer()) {
+                for (Container container : openejb.getContainerArray()) {
                     containerIds.add(container.getId());
                 }
             }

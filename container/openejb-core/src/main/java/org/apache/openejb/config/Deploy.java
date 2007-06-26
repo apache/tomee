@@ -35,9 +35,10 @@ import org.apache.openejb.jee.oejb3.MethodParams;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.QueryMethod;
 import org.apache.openejb.jee.oejb3.ResourceLink;
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarUtils;
@@ -126,13 +127,13 @@ public class Deploy {
             if (configFile == null) {
                 configFile = ConfigUtils.searchForConfiguration();
             }
-            config = ConfigUtils.readConfig(configFile);
+            config = JaxbOpenejb.readConfig(configFile);
 
             /* Load container list */
-            containers = config.getContainer();
+            containers = config.getContainerArray();
 
             /* Load resource list */
-            resources = config.getConnector();
+            resources = config.getConnectorArray();
 
         } catch (Exception e) {
             throw new OpenEJBException(e);
@@ -692,7 +693,7 @@ public class Deploy {
 
         if (configChanged) {
             out.print("Updating your system config...");
-            ConfigUtils.writeConfig(configFile, config);
+            JaxbOpenejb.writeConfig(configFile, config);
 
             out.println("done");
         }

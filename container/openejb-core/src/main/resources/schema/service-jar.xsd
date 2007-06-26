@@ -17,77 +17,58 @@
     limitations under the License.
 -->
 <xsd:schema xmlns="http://www.openejb.org/Service/Configuration"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-		targetNamespace="http://www.openejb.org/Service/Configuration">
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.openejb.org/Service/Configuration">
 
-    <!--
-    -->
-	<xsd:element name="ServicesJar">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="ServiceProvider" maxOccurs="unbounded"/>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-    
-    <!--
-    
-    -->
-	<xsd:element name="ServiceProvider">
-        <xsd:complexType mixed='true'>
-			<xsd:choice minOccurs="0" maxOccurs="1">
-				<xsd:element ref="properties-file" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="lookup" minOccurs="0" maxOccurs="1"/>
-			</xsd:choice>
-			<xsd:attribute name="id" type="xsd:string" use="required" />
-			<xsd:attribute name="provider-type" type="ProviderTypes" use="required" />
-            <xsd:attribute name="display-name" type="xsd:string"  use="optional"/>
-			<xsd:attribute name="description" type="xsd:string" use="optional"/>
-			<xsd:attribute name="class-name" type="ClassName"/>
-        </xsd:complexType>
-	</xsd:element>
-    
-    
-    <!--
-    -->
-	<xsd:element name="properties-file">
-		<xsd:complexType>
-			<xsd:attribute name="file" type="xsd:string" use="required" />
-		</xsd:complexType>
-	</xsd:element>
-    
+  <!--
+  -->
+  <xsd:element name="ServiceJar">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ServiceProvider" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
 
-    <!--
-    All the information needed to lookup this service provider
-    from another JNDI namespace.
-    -->
-	<xsd:element name="lookup">
-		<xsd:complexType>
-			<xsd:attribute name="jndi-name" type="xsd:string"/>
-			<xsd:attribute name="jndi-provider-id" type="xsd:string"/>
-		</xsd:complexType>
-	</xsd:element>
+  <!--
 
-    <!--
-    #############################################
-    #                                           #
-    #  Data types that validate the input       #
-    #                                           #
-    #############################################
-    -->
+  -->
+  <xsd:element name="ServiceProvider">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:string" use="required"/>
+          <xsd:attribute name="provider-type" type="ProviderTypes" use="required"/>
+          <xsd:attribute name="display-name" type="xsd:string" use="optional"/>
+          <xsd:attribute name="description" type="xsd:string" use="optional"/>
+          <xsd:attribute name="class-name" type="ClassName"/>
+          <xsd:attribute name="constructor" type="xsd:string" use="optional"/>
+          <xsd:attribute name="factory-name" type="xsd:string" use="optional"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
 
-    <!-- Class name -->
-    <xsd:simpleType name="ClassName">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[a-zA-Z0-9_$.]+"/>
-        </xsd:restriction>
-    </xsd:simpleType> 
-    
-    <!-- ProviderTypes -->
-    <xsd:simpleType name="ProviderTypes">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="Container|Proxy|Security|Transaction|Resource|Connector|ConnectionManager|JNDI"/>
-        </xsd:restriction>
-    </xsd:simpleType> 
-    
+  <!--
+  #############################################
+  #                                           #
+  #  Data types that validate the input       #
+  #                                           #
+  #############################################
+  -->
+
+  <!-- Class name -->
+  <xsd:simpleType name="ClassName">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-zA-Z0-9_$.]+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- ProviderTypes -->
+  <xsd:simpleType name="ProviderTypes">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="Container|Proxy|Security|Transaction|Resource|Connector|ConnectionManager|JNDI"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
 </xsd:schema>

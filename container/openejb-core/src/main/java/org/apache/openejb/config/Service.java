@@ -17,21 +17,19 @@
 package org.apache.openejb.config;
 
 public interface Service {
-    public java.lang.String getContent();
+    public String getContent();
 
-    public java.lang.String getId();
+    public void setContent(String content);
 
-    public java.lang.String getJar();
+    public String getId();
 
-    public java.lang.String getProvider();
+    public void setId(String id);
 
-    public void setContent(java.lang.String content);
+    public String getJar();
 
-    public void setId(java.lang.String id);
+    public void setJar(String jar);
 
-    public void setJar(java.lang.String jar);
+    public String getProvider();
 
-    public void setProvider(java.lang.String provider);
-
-    public void validate() throws org.exolab.castor.xml.ValidationException;
+    public void setProvider(String provider);
 }

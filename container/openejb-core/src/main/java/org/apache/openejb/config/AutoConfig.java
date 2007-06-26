@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.LinkResolver;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.ActivationConfig;
@@ -701,12 +702,12 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // look for a default resource based on the type
-        Service service = getDefaultResource(type);
-        if (service == null) {
+        Resource resource = getDefaultResource(type);
+        if (resource == null) {
             // no default resource for this type... give up
             throw new OpenEJBException("No default resource defined for reference '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.");
         }
-        ResourceInfo resourceInfo = configFactory.configureService(service, ResourceInfo.class);
+        ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
         logger.warning("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
         return installResource(beanName, resourceInfo);
     }
@@ -724,15 +725,15 @@ public class AutoConfig implements DynamicDeployer {
         return resourceInfo.id;
     }
 
-    private Service getDefaultResource(String type) {
+    private Resource getDefaultResource(String type) {
         String providerId = defaultResourceIds.get(type);
         if (providerId == null) {
             return null;
         }
-        Service service = new Resource();
-        service.setProvider(providerId);
-        service.setId(providerId);
-        return service;
+        Resource resource = JaxbOpenejb.createResource();
+        resource.setProvider(providerId);
+        resource.setId(providerId);
+        return resource;
     }
 
     private String getResourceEnvId(String beanName, String resourceId, String type) throws OpenEJBException {
