@@ -173,7 +173,7 @@ public class ConfigUtils {
         File jar = new File(jarLocation);
 
         /* Check to see if the entry is already listed */
-        for (Deployments d : config.getDeploymentsArray()) {
+        for (Deployments d : config.getDeployments()) {
 
             if (d.getJar() != null) {
                 try {
@@ -214,7 +214,7 @@ public class ConfigUtils {
         /* Create a new Deployments entry */
         Deployments dep = JaxbOpenejb.createDeployments();
         dep.setJar(jarLocation);
-        config.addDeployments(dep);
+        config.getDeployments().add(dep);
         return true;
     }
 }

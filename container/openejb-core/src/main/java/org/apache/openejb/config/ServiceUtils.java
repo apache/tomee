@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.List;
 
 public class ServiceUtils {
     public static final String defaultProviderURL = "org.apache.openejb";
@@ -88,8 +89,8 @@ public class ServiceUtils {
             ServicesJar servicesJar = JaxbOpenejb.readServicesJar(packageName);
 
             // index services by provider id
-            ServiceProvider[] serviceProviders = servicesJar.getServiceProviderArray();
-            services = new HashMap<String, ServiceProvider>(serviceProviders.length);
+            List<ServiceProvider> serviceProviders = servicesJar.getServiceProvider();
+            services = new HashMap<String, ServiceProvider>(serviceProviders.size());
             for (ServiceProvider serviceProvider : serviceProviders) {
                 services.put(serviceProvider.getId(), serviceProvider);
 

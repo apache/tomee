@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Properties;
 
 /**
  * <p>Java class for Service complex type.
@@ -46,7 +48,8 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "Service")
 public abstract class AbstractService implements Service {
     @XmlValue
-    protected String content;
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
     @XmlAttribute(required = true)
     protected String id;
     @XmlAttribute
@@ -54,24 +57,30 @@ public abstract class AbstractService implements Service {
     @XmlAttribute
     protected String provider;
 
-    /**
-     * Gets the value of the value property.
-     *
-     * @return possible object is
-     *         {@link String }
-     */
-    public String getContent() {
-        return content;
-    }
 
     /**
-     * Sets the value of the value property.
-     *
-     * @param content allowed object is
-     *                {@link String }
+     * Gets the value of the properties property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live Properties Object,
+     * not a snapshot. Therefore any modification you make to the
+     * returned Properties will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the properties property.
+     * <p/>
+     * <p/>
+     * For example, to add a new value, do as follows:
+     * <pre>
+     *    getProperties().setProperty(key, value);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
      */
-    public void setContent(String content) {
-        this.content = content;
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 
     /**

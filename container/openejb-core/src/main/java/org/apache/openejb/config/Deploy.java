@@ -16,37 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.MethodParams;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.QueryMethod;
-import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.config.sys.Openejb;
-import org.apache.openejb.config.sys.Connector;
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.JarUtils;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.OpenEjbVersion;
-
 /**
  * Deploy EJB beans
  */

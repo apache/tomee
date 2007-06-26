@@ -65,9 +65,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
 import javax.xml.bind.JAXBException;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,8 +202,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities = new FacilitiesInfo();
 
 
-        for (JndiProvider provider : openejb.getJndiProviderArray()) {
-
+        for (JndiProvider provider : openejb.getJndiProvider()) {
             JndiContextInfo info = configureService(provider, JndiContextInfo.class);
             sys.facilities.remoteJndiContexts.add(info);
         }
@@ -215,16 +212,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
         // convert legacy connector declarations to resource declarations
-        for (Connector connector : openejb.getConnectorArray()) {
+        for (Connector connector : openejb.getConnector()) {
             Resource resource = JaxbOpenejb.createResource();
             resource.setJar(connector.getJar());
             resource.setId(connector.getId());
             resource.setProvider(connector.getProvider());
-            resource.setContent(connector.getContent());
-            openejb.addResource(resource);
+
+            resource.getProperties().clear();
+            resource.getProperties().putAll(connector.getProperties());
+
+            openejb.getResource().add(resource);
         }
 
-        for (Resource resource : openejb.getResourceArray()) {
+        for (Resource resource : openejb.getResource()) {
             ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             sys.facilities.resources.add(resourceInfo);
         }
@@ -234,8 +234,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
 
-        for (Container declaration : openejb.getContainerArray()) {
-
+        for (Container declaration : openejb.getContainer()) {
             Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getCtype());
 
             if (infoClass == null) {
@@ -248,8 +247,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeploymentsArray());
-
+        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
         for (String pathname : jarList) {
 
             try {
@@ -271,12 +269,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         AppInfo appInfo = null;
         try {
-
             AppModule appModule = deploymentLoader.load(jarFile);
-
             appInfo = configureApplication(appModule);
-
-
         } catch (OpenEJBException e) {
             String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
@@ -343,7 +337,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
 
         for (ClientModule clientModule : appModule.getClientModules()) {
-
             ApplicationClient applicationClient = clientModule.getApplicationClient();
             ClientInfo clientInfo = new ClientInfo();
             clientInfo.description = applicationClient.getDescription();
@@ -467,7 +460,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return configureService(type);
         }
 
-        Properties declaredProperties = getDeclaredProperties(service);
+        Properties declaredProperties = new Properties();
+        declaredProperties.putAll(service.getProperties());
 
         return configureService(type, service.getId(), declaredProperties, service.getProvider(), service.getClass().getSimpleName());
     }
@@ -510,9 +504,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         logger.info("Configuring Service(id=" + serviceId + ", type=" + provider.getProviderType() + ", provider-id=" + provider.getId() + ")");
-        Properties props = getDefaultProperties(provider);
-
-
+        Properties props = new Properties();
+        props.putAll(provider.getProperties());
         props.putAll(declaredProperties);
 
         Properties serviceProperties = getSystemProperties(serviceId);
@@ -568,56 +561,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return serviceProperties;
     }
 
-    private Properties getDeclaredProperties(Service service) throws OpenEJBException {
-        /* 3. Load properties from the content in the Container
-        *    element of the configuration file.
-        */
-        Properties declaredProperties = new Properties();
-        try {
-            if (service.getContent() != null) {
-                String content = service.getContent();
-                ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
-
-                try {
-                    declaredProperties.load(in);
-                } catch (IOException ex) {
-                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()), ex);
-                }
-
-            }
-        } catch (OpenEJBException ex) {
-            throw new OpenEJBException(ServiceUtils.messages.format("conf.0014", service.getClass().getSimpleName(), service.getId(), configLocation, ex.getLocalizedMessage()), ex);
-        }
-        return declaredProperties;
-    }
-
-    private Properties getDefaultProperties(ServiceProvider provider) throws OpenEJBException {
-        Properties props = new Properties();
-
-        try {
-            /*
-            * 2. Load properties from the content in the service provider
-            *    element of the service-jar.xml
-            */
-
-            if (provider.getContent() != null) {
-                String content = provider.getContent();
-
-                ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
-
-                try {
-                    props.load(in);
-                } catch (IOException ex) {
-                    throw new OpenEJBException(ServiceUtils.messages.format("conf.0012", ex.getLocalizedMessage()), ex);
-                }
-
-            }
-        } catch (OpenEJBException ex) {
-            throw new OpenEJBException(ServiceUtils.messages.format("conf.0013", provider.getId(), null, ex.getLocalizedMessage()), ex);
-        }
-        return props;
-    }
-
     static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
 
     static {
@@ -665,8 +608,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null) {
-                for (Resource resource : openejb.getResourceArray()) {
-                    if (isResourceType(resource, type)) {
+                for (Resource resource : openejb.getResource()) {
+                    if (isResourceType(resource.getProperties(), type)) {
                         resourceIds.add(resource.getId());
                     }
                 }
@@ -687,24 +630,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return false;
     }
 
-    private static boolean isResourceType(Resource resource, String type) {
-        if (type == null) return true;
-
-        Properties properties = new Properties();
-        if (resource.getContent() != null) {
-            String content = resource.getContent();
-            ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
-
-            try {
-                properties.load(in);
-            } catch (IOException ex) {
-            }
-
-        }
-
-        return isResourceType(properties, type);
-    }
-
     protected List<String> getContainerIds() {
         List<String> containerIds = new ArrayList<String>();
 
@@ -723,7 +648,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // The only time we'd have one of these is if we were building
             // the above sys instance
             if (openejb != null) {
-                for (Container container : openejb.getContainerArray()) {
+                for (Container container : openejb.getContainer()) {
                     containerIds.add(container.getId());
                 }
             }

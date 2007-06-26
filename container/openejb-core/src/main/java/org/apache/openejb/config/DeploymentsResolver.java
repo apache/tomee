@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +39,7 @@ public class DeploymentsResolver {
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
 
-    private static void loadFrom(Deployments dep, FileUtils path, List jarList) {
+    private static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
 
         ////////////////////////////////
         //
@@ -113,8 +112,9 @@ public class DeploymentsResolver {
         }
     }
 
-    public static List<String> resolveAppLocations(Deployments... deploymentsArray) {
-        List<Deployments> deployments = new ArrayList<Deployments>(Arrays.asList(deploymentsArray));
+    public static List<String> resolveAppLocations(List<Deployments> deployments) {
+        // make a copy of the list because we update it
+        deployments = new ArrayList<Deployments>(deployments);
 
         //// getOption /////////////////////////////////  BEGIN  ////////////////////
         String flag = SystemInstance.get().getProperty("openejb.deployments.classpath", "true").toLowerCase();
@@ -130,7 +130,7 @@ public class DeploymentsResolver {
 
         FileUtils base = SystemInstance.get().getBase();
 
-        List<String> jarList = new ArrayList(deployments.size());
+        List<String> jarList = new ArrayList<String>(deployments.size());
         try {
             for (Deployments deployment : deployments) {
                 if (deployment.getClasspath() != null) {
@@ -139,9 +139,9 @@ public class DeploymentsResolver {
                     loadFrom(deployment, base, jarList);
                 }
             }
-        } catch (SecurityException se) {
-
+        } catch (SecurityException ignored) {
         }
+
         return jarList;
     }
 

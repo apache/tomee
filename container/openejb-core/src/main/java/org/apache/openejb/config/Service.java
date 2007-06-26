@@ -16,10 +16,28 @@
  */
 package org.apache.openejb.config;
 
-public interface Service {
-    public String getContent();
+import java.util.Properties;
 
-    public void setContent(String content);
+public interface Service {
+    /**
+     * Gets the value of the properties property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live Properties Object,
+     * not a snapshot. Therefore any modification you make to the
+     * returned Properties will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the properties property.
+     * <p/>
+     * <p/>
+     * For example, to add a new value, do as follows:
+     * <pre>
+     *    getProperties().setProperty(key, value);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     */
+    public Properties getProperties();
 
     public String getId();
 

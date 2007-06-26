@@ -77,15 +77,4 @@ public class ServicesJar {
         }
         return this.serviceProvider;
     }
-
-    public void addServiceProvider(ServiceProvider serviceProvider) throws IndexOutOfBoundsException {
-        this.serviceProvider.add(serviceProvider);
-    }
-
-    /**
-     * @deprecated use collections version
-     */
-    public ServiceProvider[] getServiceProviderArray() {
-        return getServiceProvider().toArray(new ServiceProvider[serviceProvider.size()]);
-    }
 }
