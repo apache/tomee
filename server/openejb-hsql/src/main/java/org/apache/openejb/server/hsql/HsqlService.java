@@ -33,6 +33,8 @@ import org.hsqldb.persist.HsqlProperties;
 import javax.naming.Binding;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,26 +90,30 @@ public class HsqlService implements ServerService, SelfManaging {
 
         boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
         if (!disabled) {
-            NamingEnumeration<Binding> bindings = new InitialContext().listBindings("java:openejb/Resource/");
-            int dbIndex = 0;
-            for (Binding binding : Collections.list(bindings)) {
-                Object value = binding.getObject();
-                if (value instanceof ConnectorReference) {
-                    Object connectionFactory = ((ConnectorReference)value).getObject();
-                    if (connectionFactory instanceof JdbcConnectionFactory) {
-                        JdbcConnectionFactory jdbc = (JdbcConnectionFactory) connectionFactory;
-                        String path = getPath(jdbc);
-                        if (path != null) {
-                            if (dbIndex > 9) {
-                                throw new ServiceException("Hsql Server can only host 10 database connections");
+            NamingEnumeration<Binding> bindings = null;
+            try {
+                bindings = new InitialContext().listBindings("java:openejb/Resource/");
+                int dbIndex = 0;
+                for (Binding binding : Collections.list(bindings)) {
+                    Object value = binding.getObject();
+                    if (value instanceof ConnectorReference) {
+                        Object connectionFactory = ((ConnectorReference)value).getObject();
+                        if (connectionFactory instanceof JdbcConnectionFactory) {
+                            JdbcConnectionFactory jdbc = (JdbcConnectionFactory) connectionFactory;
+                            String path = getPath(jdbc);
+                            if (path != null) {
+                                if (dbIndex > 9) {
+                                    throw new ServiceException("Hsql Server can only host 10 database connections");
+                                }
+                                String dbname = path.substring(path.lastIndexOf('/') + 1);
+                                properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbIndex, dbname);
+                                properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbIndex, path);
+                                dbIndex++;
                             }
-                            String dbname = path.substring(path.lastIndexOf('/') + 1);
-                            properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbIndex, dbname);
-                            properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbIndex, path);
-                            dbIndex++;
                         }
                     }
                 }
+            } catch (NameNotFoundException e) {
             }
 
             // create the server
