@@ -53,25 +53,16 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
-      <includes>
-        <include>*.conf</include>
-      </includes>
+      <directory>target/classes/empty</directory>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
-      <includes>
-        <include>README*</include>
-      </includes>
+      <directory>target/classes/empty</directory>
       <outputDirectory>logs/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
-      <includes>
-        <include>README*</include>
-      </includes>
-      <outputDirectory>beans/</outputDirectory>
+      <directory>target/classes/empty</directory>
+      <outputDirectory>apps/</outputDirectory>
     </fileSet>
   </fileSets>
   <dependencySets>

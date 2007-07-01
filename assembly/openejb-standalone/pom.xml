@@ -38,7 +38,11 @@
       </resource>
     </resources>
     <plugins>
-      <!-- Why we need an empty directory
+      <!--
+      Create an empty directory which will be copied
+      twice by the assembly plugin to create the
+      conf/ and logs/ directories
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -57,7 +61,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.2</version>

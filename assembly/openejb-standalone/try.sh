@@ -23,6 +23,6 @@ cd target/
 
 tar xzvf openejb-3.0.0-SNAPSHOT-bin.tar.gz
 cd openejb-3.0.0-SNAPSHOT
-cp $JAR beans/
+cp $JAR apps/
 ./bin/openejb start
 
