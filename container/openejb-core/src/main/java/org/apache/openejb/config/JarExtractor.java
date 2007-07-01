@@ -53,14 +53,7 @@ public class JarExtractor {
     public static File extract(URL jar, String pathname, File file)
             throws IOException {
 
-        // Make sure that there is no such directory already existing
-        FileUtils base = SystemInstance.get().getBase();
-        File appBase = base.getDirectory("apps", true);
-        if (!appBase.exists() || !appBase.isDirectory()) {
-            throw new IOException("" + appBase.getAbsolutePath());
-        }
-
-        File docBase = new File(appBase, pathname);
+        File docBase = new File(file.getParentFile(), pathname);
         if (docBase.exists()) {
             // Ear file is already installed
             return docBase;
