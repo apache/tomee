@@ -17,24 +17,23 @@
  */
 package org.apache.openejb.resource;
 
-import junit.framework.TestCase;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import javax.transaction.TransactionManager;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
 
-import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
+import junit.framework.TestCase;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class GeronimoConnectionManagerTest extends TestCase {
     public void test() throws Exception {
-        TransactionManager transactionManager = new GeronimoTransactionManagerJTA11();
+        TransactionManager transactionManager = new GeronimoTransactionManager();
 
         GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
         connectionManagerFactory.setTransactionManager(transactionManager);
