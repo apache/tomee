@@ -30,7 +30,7 @@ import javax.resource.spi.ResourceAdapterInternalException;
 
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.openejb.OpenEJBException;
@@ -46,7 +46,7 @@ public class JmsProxyTest extends TestCase {
         super.setUp();
 
         // create a transaction manager
-        GeronimoTransactionManagerJTA11 transactionManager = new GeronimoTransactionManagerJTA11();
+        GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
 
         // create the ActiveMQ resource adapter instance
         ra = new ActiveMQResourceAdapter();

@@ -24,30 +24,31 @@ import java.security.ProtectionDomain;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Properties;
 import java.util.Collections;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.persistence.spi.PersistenceProvider;
+import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.naming.Context;
-import javax.naming.spi.InitialContextFactory;
 
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.resource.SharedLocalConnectionManager;
 import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
 import org.apache.xbean.naming.context.ImmutableContext;
@@ -63,7 +64,7 @@ public class JpaTest extends TestCase {
     private static final String PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
     private PersistenceUnitTransactionType transactionType;
-    private GeronimoTransactionManagerJTA11 transactionManager;
+    private GeronimoTransactionManager transactionManager;
     private DataSource jtaDs;
     private DataSource nonJtaDs;
     private EntityManagerFactory entityManagerFactory;
@@ -73,7 +74,7 @@ public class JpaTest extends TestCase {
 
 
         // setup tx mgr
-        transactionManager = new GeronimoTransactionManagerJTA11();
+        transactionManager = new GeronimoTransactionManager();
         SystemInstance.get().setComponent(TransactionSynchronizationRegistry.class, transactionManager);
 
         // setup naming

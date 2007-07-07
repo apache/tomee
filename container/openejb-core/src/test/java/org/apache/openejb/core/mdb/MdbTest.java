@@ -17,18 +17,12 @@
  */
 package org.apache.openejb.core.mdb;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import junit.framework.TestCase;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.ra.ActiveMQActivationSpec;
-import org.apache.activemq.ra.ActiveMQResourceAdapter;
-import org.apache.geronimo.connector.GeronimoBootstrapContext;
-import org.apache.geronimo.connector.work.GeronimoWorkManager;
-import org.apache.geronimo.transaction.jta11.GeronimoTransactionManagerJTA11;
-import org.apache.openejb.OpenEJBException;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -48,10 +42,15 @@ import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.xa.XAResource;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.TreeMap;
+
+import junit.framework.TestCase;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ra.ActiveMQActivationSpec;
+import org.apache.activemq.ra.ActiveMQResourceAdapter;
+import org.apache.geronimo.connector.GeronimoBootstrapContext;
+import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.OpenEJBException;
 
 public class MdbTest extends TestCase {
     private static final String REQUEST_QUEUE_NAME = "request";
@@ -62,7 +61,7 @@ public class MdbTest extends TestCase {
         super.setUp();
 
         // create a transaction manager
-        GeronimoTransactionManagerJTA11 transactionManager = new GeronimoTransactionManagerJTA11();
+        GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
 
         // create the ActiveMQ resource adapter instance
         ra = new ActiveMQResourceAdapter();
