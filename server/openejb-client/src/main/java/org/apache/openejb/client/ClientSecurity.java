@@ -121,12 +121,12 @@ public class ClientSecurity {
      * @throws FailedLoginException if the username password combination is not valid
      */
     public static Object directAuthentication(String username, String password, ServerMetaData server) throws FailedLoginException {
-        return directAuthentication("PropertiesLogin", username, password, server);
+        return directAuthentication(null, username, password, server);
     }
 
     public static Object directAuthentication(String securityRealm, String username, String password, ServerMetaData server) throws FailedLoginException {
         // authenticate
-        AuthenticationRequest authReq = new AuthenticationRequest(new RealmPrincipalInfo(securityRealm, username), password);
+        AuthenticationRequest authReq = new AuthenticationRequest(securityRealm, username, password);
         AuthenticationResponse authRes;
         try {
             authRes = (AuthenticationResponse) Client.request(authReq, new AuthenticationResponse(), server);

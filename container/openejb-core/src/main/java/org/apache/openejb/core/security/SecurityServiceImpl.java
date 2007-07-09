@@ -63,6 +63,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     private final Subject defaultSubject;
 
     private final SecurityContext defaultContext;
+    private String realmName = "PropertiesLogin";
 
     public SecurityServiceImpl() {
 
@@ -88,15 +89,22 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
         }
     }
 
+    public void setRealmName(String realmName) {
+        this.realmName = realmName;
+    }
+
     public void init(Properties props) throws Exception {
     }
 
     public Object login(String username, String password) throws LoginException {
-        return login("PropertiesLogin", username, password);
+        return login(realmName, username, password);
     }
 
-    public Object login(String securityRealm, String username, String password) throws LoginException {
-        LoginContext context = new LoginContext(securityRealm, new UsernamePasswordCallbackHandler(username, password));
+    public Object login(String realmName, String username, String password) throws LoginException {
+        if (realmName == null){
+            realmName = this.realmName;
+        }
+        LoginContext context = new LoginContext(realmName, new UsernamePasswordCallbackHandler(username, password));
         context.login();
 
         Subject subject = context.getSubject();

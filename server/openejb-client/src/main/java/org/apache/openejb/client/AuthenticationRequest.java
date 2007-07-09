@@ -22,14 +22,20 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
-    private transient Object principal;
-    private transient Object credentials;
+    private transient String realm;
+    private transient String username;
+    private transient String credentials;
 
     public AuthenticationRequest() {
     }
 
-    public AuthenticationRequest(Object principal, Object credentials) {
-        this.principal = principal;
+    public AuthenticationRequest(String principal, String credentials) {
+        this(null, principal, credentials);
+    }
+
+    public AuthenticationRequest(String realm, String principal, String credentials) {
+        this.realm = realm;
+        this.username = principal;
         this.credentials = credentials;
     }
 
@@ -37,29 +43,27 @@ public class AuthenticationRequest implements Request {
         return RequestMethodConstants.AUTH_REQUEST;
     }
 
-    public Object getPrincipal() {
-        return principal;
+    public String getRealm() {
+        return realm;
     }
 
-    public Object getCredentials() {
+    public String getUsername() {
+        return username;
+    }
+
+    public String getCredentials() {
         return credentials;
     }
 
-    public void setPrincipal(Object principal) {
-        this.principal = principal;
-    }
-
-    public void setCredentials(Object credentials) {
-        this.credentials = credentials;
-    }
-
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        principal = in.readObject();
-        credentials = in.readObject();
+        realm = (String) in.readObject();
+        username = (String) in.readObject();
+        credentials = (String) in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(principal);
+        out.writeObject(realm);
+        out.writeObject(username);
         out.writeObject(credentials);
     }
 }

@@ -20,7 +20,6 @@ import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
 import org.apache.openejb.client.ResponseCodes;
-import org.apache.openejb.client.RealmPrincipalInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Messages;
@@ -47,18 +46,9 @@ class AuthRequestHandler {
         try {
             req.readExternal(in);
 
-            String securityRealm = null;
-            String username;
-            if (req.getPrincipal() instanceof String) {
-                username = (String) req.getPrincipal();
-            } else if (req.getPrincipal() instanceof RealmPrincipalInfo) {
-                RealmPrincipalInfo info = (RealmPrincipalInfo)req.getPrincipal();
-                securityRealm = info.getSecurityRealm();
-                username = info.getPrincipalName();
-            } else {
-                throw new LoginException("Unkown message principal object: " + req.getPrincipal());
-            }
-            String password = (String) req.getCredentials();
+            String securityRealm = req.getRealm();
+            String username = req.getUsername();
+            String password = req.getCredentials();
 
             SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
             Object token = securityService.login(securityRealm, username, password);
