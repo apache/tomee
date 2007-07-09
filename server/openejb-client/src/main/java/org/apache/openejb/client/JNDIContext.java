@@ -127,7 +127,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     public void authenticate(String userID, String psswrd) throws AuthenticationException {
 
-        AuthenticationRequest req = new AuthenticationRequest(userID, psswrd);
+        String securityRealm = "PropertiesLogin";
+        AuthenticationRequest req = new AuthenticationRequest(new RealmPrincipalInfo(securityRealm, userID), psswrd);
         AuthenticationResponse res = null;
 
         try {

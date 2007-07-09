@@ -47,6 +47,7 @@ public interface SecurityService extends Service {
      * Active
      */
     public Object login(String user, String pass) throws LoginException;
+    public Object login(String securityRealm, String user, String pass) throws LoginException;
 
     /**
      * Active

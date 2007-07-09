@@ -121,8 +121,12 @@ public class ClientSecurity {
      * @throws FailedLoginException if the username password combination is not valid
      */
     public static Object directAuthentication(String username, String password, ServerMetaData server) throws FailedLoginException {
+        return directAuthentication("PropertiesLogin", username, password, server);
+    }
+
+    public static Object directAuthentication(String securityRealm, String username, String password, ServerMetaData server) throws FailedLoginException {
         // authenticate
-        AuthenticationRequest authReq = new AuthenticationRequest(username, password);
+        AuthenticationRequest authReq = new AuthenticationRequest(new RealmPrincipalInfo(securityRealm, username), password);
         AuthenticationResponse authRes;
         try {
             authRes = (AuthenticationResponse) Client.request(authReq, new AuthenticationResponse(), server);
@@ -132,7 +136,7 @@ public class ClientSecurity {
 
         // check the response
         if (authRes.getResponseCode() != ResponseCodes.AUTH_GRANTED) {
-            throw new FailedLoginException("This principle is not authorized.");
+            throw new FailedLoginException("This principal is not authenticated.");
         }
 
         // return the response object

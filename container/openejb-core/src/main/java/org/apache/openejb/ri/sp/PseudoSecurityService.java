@@ -70,6 +70,10 @@ public class PseudoSecurityService implements SecurityService {
         return null;
     }
 
+    public Object login(String securityRealm, String user, String pass) throws LoginException {
+        return null;
+    }
+
     public void associate(Object securityIdentity) throws LoginException {
     }
 

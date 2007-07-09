@@ -41,7 +41,7 @@ public class ClientLoginTest extends TestCase {
         // Verify stored server request
         assertTrue("serverRequest should be an instance of AuthenticationRequest", LoginTestUtil.serverRequest instanceof AuthenticationRequest);
         AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
-        assertEquals("jonathan", authenticationRequest.getPrincipal());
+        assertEquals("jonathan", ((RealmPrincipalInfo)authenticationRequest.getPrincipal()).getPrincipalName());
         assertEquals("secret", authenticationRequest.getCredentials());
 
         // get the subject

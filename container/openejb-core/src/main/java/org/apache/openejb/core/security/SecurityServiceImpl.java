@@ -92,7 +92,11 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     }
 
     public Object login(String username, String password) throws LoginException {
-        LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler(username, password));
+        return login("PropertiesLogin", username, password);
+    }
+
+    public Object login(String securityRealm, String username, String password) throws LoginException {
+        LoginContext context = new LoginContext(securityRealm, new UsernamePasswordCallbackHandler(username, password));
         context.login();
 
         Subject subject = context.getSubject();
