@@ -21,6 +21,7 @@ import org.omg.CORBA.ORB;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.ConnectException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -35,6 +36,7 @@ import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
+import javax.naming.ServiceUnavailableException;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
 
@@ -194,7 +196,11 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         try {
             res = request(req);
         } catch (Exception e) {
-            throw (NamingException) new NamingException("Cannot lookup " + name + ": Received error: " + e.getMessage()).initCause(e);
+            if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
+                e = (Exception) e.getCause();
+                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
+            }
+            throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
 
         switch (res.getResponseCode()) {

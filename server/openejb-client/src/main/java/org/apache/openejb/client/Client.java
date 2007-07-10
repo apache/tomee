@@ -59,9 +59,13 @@ public class Client {
                 try {
                     conn = ConnectionManager.getConnection(uri);
                 } catch (IOException e) {
-                    logger.log(Level.WARNING, "Cannot access server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ", e);
+                    if (uris.length == 1){
+                        throw new RemoteException("Cannot connect to server '"+uri+'"', e);                        
+                    } else {
+                        logger.log(Level.WARNING, "Cannot connect to server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ", e);
+                    }
                 } catch (Throwable e) {
-                    throw new RemoteException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
+                    throw new RemoteException("Cannot connect to server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
                 }
             }
             
@@ -72,7 +76,7 @@ public class Client {
                     URI uri = uris[i];
                     buffer.append((i != 0 ? ", " : "") + "Server #" + i + ": " + uri);
                 }
-                throw new RemoteException("Cannot access servers: " + buffer.toString());
+                throw new RemoteException("Cannot connect to any servers: " + buffer.toString());
             }
 
             /*----------------------------------*/
@@ -165,6 +169,8 @@ public class Client {
                 throw new RemoteException("Error reading response from server: ", e);
             }
 
+        } catch (RemoteException e) {
+            throw e;
         } catch (Throwable error) {
             throw new RemoteException("Error while communicating with server: ", error);
 

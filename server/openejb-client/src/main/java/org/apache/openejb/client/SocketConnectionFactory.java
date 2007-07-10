@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.URI;
+import java.net.ConnectException;
 import java.util.Properties;
 
 public class SocketConnectionFactory implements ConnectionFactory {
@@ -50,14 +51,17 @@ public class SocketConnectionFactory implements ConnectionFactory {
             try {
                 socket = new Socket(uri.getHost(), uri.getPort());
                 socket.setTcpNoDelay(true);
+            } catch (ConnectException e) {
+                throw new ConnectException("Cannot connect to server '"+uri.toString()+"'.  Check that the server is started and that the specified serverURL is correct.");
+
             } catch (IOException e) {
-                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " Exception: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot connect to server: '"+uri.toString()+"'.  Exception: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (SecurityException e) {
-                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: '"+uri.toString()+"' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (Throwable e) {
-                throw new IOException("Cannot access server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot  connect to server: '"+uri.toString()+"' due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
             }
 
         }
