@@ -54,10 +54,8 @@
       <outputDirectory>openejb/lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-          <exclude>junit:junit</exclude>
           <exclude>org.apache.tomcat:catalina</exclude>
           <exclude>org.apache.tomcat:annotations-api</exclude>
-          <exclude>org.apache.geronimo.specs:geronimo-servlet_2.4_spec</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
