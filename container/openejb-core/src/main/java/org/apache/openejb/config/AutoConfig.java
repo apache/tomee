@@ -292,7 +292,7 @@ public class AutoConfig implements DynamicDeployer {
 
                 for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
                     // skip destination refs with a resource link already assigned
-                    if (ejbDeployment.getResourceLink(ref.getName()) == null) {
+                    if (ref.getMappedName() == null && ejbDeployment.getResourceLink(ref.getName()) == null) {
                         String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
                         if (destinationId != null) {
                             // build the link and add it
