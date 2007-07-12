@@ -85,11 +85,15 @@
       <artifactId>openejb-itests-beans</artifactId>
       <version>${pom.version}</version>
     </dependency>
+<!--
+   - breaks openejb-core module
+   -
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${pom.version}</version>
     </dependency>
+-->
     <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
