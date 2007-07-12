@@ -18,12 +18,14 @@ package org.apache.openejb.test;
 
 import java.util.Properties;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 
 /**
- *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
+ * 
+ * @version $Rev$ $Date$ 
  */
 public class IvmTestServer implements TestServer {
 
@@ -31,13 +33,15 @@ public class IvmTestServer implements TestServer {
 
     public void init(Properties props){
         
-        properties = props;
+        properties = new Properties();
+        properties.putAll(props);
         
         try{
-            props.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
-            Properties p = new Properties(props);
+            props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+            Properties p = new Properties();
+            p.putAll(props);
             p.put("openejb.loader", "embed");
-            new InitialContext( p );
+            new InitialContext( p );    // initialize openejb via constructing jndi tree
             
         //OpenEJB.init(properties);
         }catch(Exception oe){

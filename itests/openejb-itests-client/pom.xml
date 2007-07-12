@@ -31,6 +31,12 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests Client</name>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -39,9 +45,33 @@
           <archive>
             <manifest>
               <mainClass>org.apache.openejb.test.Main</mainClass>
+              <addClasspath>true</addClasspath>
             </manifest>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <tstamp>
+                  <format property="TSTAMP" pattern="hh:mm"/>
+                </tstamp>
+                <replace file="target/classes/META-INF/openejb-version.properties"
+                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
+                <replace file="target/classes/META-INF/openejb-version.properties"
+                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -53,6 +83,11 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>

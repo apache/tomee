@@ -8,8 +8,8 @@ OPTIONS:
   remote    Runs the test suite against OpenEJB in client/server
             mode using the OpenEJB Remote Server.                   
             
-OpenEJB -- EJB Container System and EJB Server.
+Apache OpenEJB -- EJB Container System and EJB Server.
 For updates and additional information, visit
-http://www.openejb.org
+http://openejb.apache.org
 
-Bug Reports to <http://jira.codehaus.org/browse/OPENEJB>
+Bug Reports to http://issues.apache.org/jira/browse/OPENEJB

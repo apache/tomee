@@ -33,7 +33,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class TestRunner extends junit.textui.TestRunner {
-    private static final String helpBase = "META-INF/org.apache.openejb.cli/";
+    private static final String helpBase = "/META-INF/org.apache.openejb.cli/";
 
     /**
      * Constructs a TestRunner.
@@ -159,9 +159,9 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void printHelp() {
         String header = "OpenEJB Compliance Tests ";
         try {
-            URL resource = TestRunner.class.getResource("openejb-version.properties");
+            InputStream is = TestRunner.class.getResourceAsStream("/META-INF/openejb-version.properties");
             Properties versionInfo = new Properties();
-            versionInfo.load(resource.openConnection().getInputStream());
+            versionInfo.load(is);
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }
@@ -170,10 +170,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
         // Internationalize this
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader()
-                    .getResource(helpBase + "test.help").openConnection()
-                    .getInputStream();
-
+            InputStream in = TestRunner.class.getResourceAsStream(helpBase + "test.help");
             int b = in.read();
             while (b != -1) {
                 System.out.write(b);
