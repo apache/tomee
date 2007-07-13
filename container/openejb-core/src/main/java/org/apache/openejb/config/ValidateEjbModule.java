@@ -45,7 +45,7 @@ public class ValidateEjbModule implements DynamicDeployer {
     public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
 
         EjbValidator validator = new EjbValidator();
-        EjbSet set = validator.validateJar(ejbModule);
+        ValidationResults set = validator.validateJar(ejbModule);
         if (set.hasErrors() || set.hasFailures()) {
             Logger logger = Logger.getInstance("OpenEJB.startup.validation", "org.apache.openejb.config.rules");
 
@@ -54,17 +54,16 @@ public class ValidateEjbModule implements DynamicDeployer {
                 ValidationError e = errors[j];
                 String ejbName = e.getComponentName();
                 logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
-                System.out.println(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
             }
             ValidationFailure[] failures = set.getFailures();
             for (int j = 0; j < failures.length; j++) {
                 ValidationFailure e = failures[j];
                 logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
-                System.out.println(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
             }
 
-            throw new OpenEJBException("Jar failed validation.  Use the validation tool for more details");
+            throw new ValidationFailedException("Jar failed validation.", set);
         }
         return ejbModule;
     }
+
 }

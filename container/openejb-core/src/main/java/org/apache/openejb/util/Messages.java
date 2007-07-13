@@ -34,6 +34,15 @@ public class Messages {
     private Locale _locale;
     private String _resourceName;
 
+    public Messages(Class clazz) {
+        this(packageName(clazz));
+    }
+
+    private static String packageName(Class clazz) {
+        String name = clazz.getName();
+        return name.substring(0, name.lastIndexOf("."));
+    }
+
     public Messages(String resourceName) {
         synchronized (Messages.class) {
             _locale = _globalLocale;

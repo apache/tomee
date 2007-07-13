@@ -20,7 +20,7 @@ import java.util.Vector;
 
 import org.apache.openejb.jee.EjbJar;
 
-public class EjbSet {
+public class EjbSet implements ValidationResults {
 
     private final Vector failures = new Vector();
     private final Vector warnings = new Vector();

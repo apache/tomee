@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.util.Connect;
+
 import java.io.File;
 
 import java.io.InputStream;
@@ -23,8 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.lang.reflect.Method;
-
-import java.net.Socket;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class Start {
 
             forkServerProcess();
 
-            return connect(10);
+            return Connect.connect(10, "localhost", 4201);
 
         } else {
 
@@ -168,45 +168,9 @@ public class Start {
 
     }
 
-    private boolean connect() {
+    public static boolean connect() {
 
-        return connect(1);
-
-    }
-
-    private boolean connect(int tries) {
-
-        try {
-
-            Socket socket = new Socket("localhost", 4201);
-
-            OutputStream out = socket.getOutputStream();
-
-        } catch (Exception e) {
-
-            if (tries < 2) {
-
-                return false;
-
-            } else {
-
-                try {
-
-                    Thread.sleep(2000);
-
-                } catch (Exception e2) {
-
-                    e.printStackTrace();
-
-                }
-
-                return connect(--tries);
-
-            }
-
-        }
-
-        return true;
+        return Connect.connect(1, "localhost", 4201);
 
     }
 

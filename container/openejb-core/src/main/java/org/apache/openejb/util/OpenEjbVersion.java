@@ -18,8 +18,8 @@ package org.apache.openejb.util;
 
 import org.apache.xbean.finder.ResourceFinder;
 
-import java.net.URL;
 import java.util.Properties;
+import java.io.PrintStream;
 
 /**
  * @version $Rev$ $Date$
@@ -73,5 +73,10 @@ public class OpenEjbVersion {
 
     public String getVersion() {
         return version;
+    }
+
+    public void print(PrintStream out) {
+        out.println("Apache OpenEJB " + getVersion() + "    build: " + getDate() + "-" + getTime());
+        out.println(getUrl());
     }
 }

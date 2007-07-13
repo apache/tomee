@@ -24,11 +24,6 @@ import java.net.MalformedURLException;
 import java.util.Vector;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckMethods;
@@ -42,7 +37,6 @@ public class EjbValidator {
     protected static final Messages _messages = new Messages("org.apache.openejb.config.rules");
 
     int LEVEL = 2;
-    boolean PRINT_DETAILS = false;
     boolean PRINT_XML = false;
     boolean PRINT_WARNINGS = true;
     boolean PRINT_COUNT = false;
@@ -55,12 +49,19 @@ public class EjbValidator {
     public EjbValidator() throws OpenEJBException {
     }
 
-    public void addEjbSet(EjbSet set) {
+    public EjbValidator(int LEVEL, boolean PRINT_XML, boolean PRINT_WARNINGS, boolean PRINT_COUNT) {
+        this.LEVEL = LEVEL;
+        this.PRINT_XML = PRINT_XML;
+        this.PRINT_WARNINGS = PRINT_WARNINGS;
+        this.PRINT_COUNT = PRINT_COUNT;
+    }
+
+    public void addValidationResults(ValidationResults set) {
         sets.add(set);
     }
 
-    public EjbSet[] getEjbSets() {
-        EjbSet[] ejbSets = new EjbSet[sets.size()];
+    public ValidationResults[] getValidationResultsSets() {
+        ValidationResults[] ejbSets = new ValidationResults[sets.size()];
         sets.copyInto(ejbSets);
         return ejbSets;
     }
@@ -92,7 +93,7 @@ public class EjbValidator {
         return rules;
     }
 
-    public void printResults(EjbSet set) {
+    public void printResults(ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
             return;
         }
@@ -136,7 +137,7 @@ public class EjbValidator {
 
     }
 
-    public void printResultsXML(EjbSet set) {
+    public void printResultsXML(ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
             return;
         }
@@ -177,7 +178,7 @@ public class EjbValidator {
         }
     }
 
-    public void displayResults(EjbSet[] sets) {
+    public void displayResults(ValidationResults[] sets) {
         if (PRINT_XML) {
             System.out.println("<results>");
             for (int i = 0; i < sets.length; i++) {
@@ -305,7 +306,7 @@ public class EjbValidator {
                             }
                             final EjbModule ejbModule = new EjbModule(classLoader, ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
                             EjbSet set = v.validateJar(ejbModule);
-                            v.addEjbSet(set);
+                            v.addValidationResults(set);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -313,7 +314,7 @@ public class EjbValidator {
                 }
             }
 
-            EjbSet[] sets = v.getEjbSets();
+            ValidationResults[] sets = v.getValidationResultsSets();
             v.displayResults(sets);
 
             for (int i = 0; i < sets.length; i++) {

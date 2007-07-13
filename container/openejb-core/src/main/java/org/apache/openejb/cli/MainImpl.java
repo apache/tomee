@@ -51,6 +51,21 @@ public class MainImpl implements Main {
     public void main(String[] args) {
         ArrayList<String> argsList = new ArrayList<String>();
 
+        // We have to pre-screen for openejb.base as it has a direct affect
+        // on where we look for the conf/system.properties file which we
+        // need to read in and apply before we apply the command line -D
+        // properties.  Once SystemInstance.init() is called in the next
+        // section of code, the openejb.base value is cemented and cannot
+        // be changed.
+        for (String arg : args) {
+            if (arg.indexOf("-Dopenejb.base") != -1) {
+                String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
+                String val = arg.substring(arg.indexOf("=") + 1);
+
+                System.setProperty(prop, val);
+            }
+        }
+
         // get SystemInstance (the only static class in the system)
         // so we'll set up all the props in it
         SystemInstance systemInstance = null;
@@ -62,6 +77,7 @@ public class MainImpl implements Main {
             return;
         }
 
+        // Read in and apply the conf/system.properties
         try {
             File conf = systemInstance.getBase().getDirectory("conf");
             File file = new File(conf, "system.properties");
@@ -76,15 +92,16 @@ public class MainImpl implements Main {
             System.out.println("Processing conf/system.properties failed: "+e.getMessage());
         }
 
+        // Now read in and apply the properties specified on the command line
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.indexOf("-D") == -1) {
-                argsList.add(arg);
-            } else {
+            if (arg.indexOf("-D") != -1) {
                 String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
                 String val = arg.substring(arg.indexOf("=") + 1);
 
                 System.setProperty(prop, val);
+            } else {
+                argsList.add(arg);
             }
         }
 

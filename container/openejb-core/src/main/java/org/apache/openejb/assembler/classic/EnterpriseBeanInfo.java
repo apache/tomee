@@ -61,4 +61,6 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public String containerId;
     public String serviceEndpoint;
+
+    public List<String> jndiNames = new ArrayList<String>();
 }

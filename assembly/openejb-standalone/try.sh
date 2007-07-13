@@ -21,8 +21,12 @@ JAR=$PWD/../../itests/openejb-itests-app/target/openejb-itests-app-3.0.0-SNAPSHO
 
 cd target/
 
-tar xzvf openejb-3.0.0-SNAPSHOT-bin.tar.gz
+#tar xzvf openejb-3.0.0-SNAPSHOT-bin.tar.gz
 cd openejb-3.0.0-SNAPSHOT
-cp $JAR apps/
-./bin/openejb start
+#cp $JAR apps/
+#./bin/openejb start &
+#sleep 14
+./bin/openejb deploy -h
+#$JAR
+
 

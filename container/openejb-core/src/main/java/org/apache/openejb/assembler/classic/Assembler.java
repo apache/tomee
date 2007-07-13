@@ -366,17 +366,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         if (used.size() > 0) {
-            String message = "Application cannot be deployed as it contains deployment-ids which are already deployed: app: " + appInfo.jarPath;
+            String message = "Application cannot be deployed as it contains deployment-ids which are in use: app: " + appInfo.jarPath;
             logger.error(message);
-            OpenEJBException openEJBException = new DuplicateDeploymentIdException(message);
-            Exception e = openEJBException;
             for (String id : used) {
                 logger.debug("DeploymentId already used: " + id);
-                DuplicateDeploymentIdException e2 = new DuplicateDeploymentIdException(id);
-                e.initCause(e2);
-                e = e2;
+                message += "\n    "+id;
             }
-            throw openEJBException;
+            throw new DuplicateDeploymentIdException(message);
         }
 
         try {
@@ -411,13 +407,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     jaccPermissionsBuilder.install(policyContext);
                 }
 
+
                 // process transaction attributes
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
                     containerSystem.addDeployment(deploymentInfo);
-                    jndiBuilder.bind(deploymentInfo);
-
                 }
+
+                jndiBuilder.build(ejbJar, deployments);
 
                 // setup timers - must be after transaction attibutes are set
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
