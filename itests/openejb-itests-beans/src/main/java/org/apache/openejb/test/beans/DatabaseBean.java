@@ -16,17 +16,22 @@
  */
 package org.apache.openejb.test.beans;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class DatabaseBean implements javax.ejb.SessionBean {
 
+    private static final long serialVersionUID = 1L;
+    
     public SessionContext context;
     public InitialContext jndiContext;
 

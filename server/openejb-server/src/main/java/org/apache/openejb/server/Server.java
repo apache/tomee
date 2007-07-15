@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.server;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.Service;
 import org.apache.openejb.util.PropertiesService;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.openejb.util.PropertiesService;
  *
  * @version $Rev$ $Date$
  */
-public class Server implements org.apache.openejb.spi.Service {
+public class Server implements Service {
     // FIXME: Remove it completely once we ensure PropertiesService (below) works well
     Properties props;
     
@@ -51,7 +51,7 @@ public class Server implements org.apache.openejb.spi.Service {
     }
 
     // TODO: Remove it once init() suits our (initialisation) needs 
-    public void init(java.util.Properties props) throws Exception {
+    public void init(Properties props) throws Exception {
         this.props = props;
 
         SystemInstance system = SystemInstance.get();

@@ -26,7 +26,7 @@ public class OpenEJBInstance {
     private final Method isInitialized;
 
     public OpenEJBInstance() throws Exception {
-        Class openejb = loadOpenEJBClass();
+        Class<?> openejb = loadOpenEJBClass();
         this.init = openejb.getMethod("init", Properties.class);
         this.isInitialized = openejb.getMethod("isInitialized");
     }
@@ -43,8 +43,7 @@ public class OpenEJBInstance {
 
     public boolean isInitialized() {
         try {
-            Boolean b = (Boolean) isInitialized.invoke(null);
-            return b.booleanValue();
+            return (Boolean) isInitialized.invoke(null);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("OpenEJB.isInitialized: ", e.getCause());
         } catch (Exception e) {
@@ -52,7 +51,7 @@ public class OpenEJBInstance {
         }
     }
 
-    private Class loadOpenEJBClass() throws Exception {
+    private Class<?> loadOpenEJBClass() throws Exception {
         ClassPath classPath = SystemInstance.get().getClassPath();
         ClassLoader classLoader = classPath.getClassLoader();
         try {

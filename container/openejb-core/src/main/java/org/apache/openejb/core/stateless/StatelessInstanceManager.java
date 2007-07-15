@@ -187,7 +187,7 @@ public class StatelessInstanceManager {
                 }
                 String t = "The bean instance " + bean + " threw a system exception:" + e;
                 logger.error(t, e);
-                throw new org.apache.openejb.ApplicationException(new RemoteException("Can not obtain a free instance.", e));
+                throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
             } finally {
                 callContext.setCurrentOperation(originalOperation);
                 callContext.setCurrentAllowedStates(originalAllowedStates);

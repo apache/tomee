@@ -28,6 +28,9 @@ import java.util.Properties;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
 
     static Context intraVmContext;

@@ -455,7 +455,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
 
-    public <T extends ServiceInfo>T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
+    public <T extends ServiceInfo> T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
         if (service == null) {
             return configureService(type);
         }

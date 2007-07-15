@@ -25,6 +25,8 @@ import org.apache.openejb.loader.SystemInstance;
 
 /**
  * Assemble OpenEJB instance and boot it up
+ * 
+ * @version $Rev$ $Date$
  */
 public class Main {
 
@@ -39,8 +41,7 @@ public class Main {
             File libs = system.getHome().getDirectory("lib");
             system.getClassPath().addJarsToPath(libs);
             initServer(props);
-        } catch (DontStartServerException e) {
-
+        } catch (DontStartServerException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -181,4 +182,6 @@ public class Main {
     }
 }
 
-class DontStartServerException extends Exception {}
+class DontStartServerException extends Exception {
+    private static final long serialVersionUID = 1L;
+}

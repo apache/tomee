@@ -40,11 +40,15 @@ import java.net.JarURLConnection;
  * architecture explained here:
  *
  * @link http://docs.codehaus.org/display/OPENEJB/Executables
+ * 
+ * @version $Rev$ $Date$
  */
 public class MainImpl implements Main {
 
-    private static ResourceFinder finder = null;
     private static final String BASE_PATH = "META-INF/org.apache.openejb.cli/";
+    private static final String MAIN_CLASS_PROPERTY_NAME = "main.class";
+
+    private static ResourceFinder finder = null;
     private static String locale = "";
     private static String descriptionBase = "description";
 
@@ -153,16 +157,16 @@ public class MainImpl implements Main {
             return;
         }
 
-        String mainClass = props.getProperty("main.class");
+        String mainClass = props.getProperty(MAIN_CLASS_PROPERTY_NAME);
         if (mainClass == null) {
-            throw new NullPointerException("Command " + commandName + " did not specify a main.class property");
+            throw new NullPointerException("Command " + commandName + " did not specify a " + MAIN_CLASS_PROPERTY_NAME + " property");
         }
 
-        Class clazz = null;
+        Class<?> clazz = null;
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(mainClass);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Command " + commandName + " main.class does not exist: " + mainClass, e);
+        } catch (ClassNotFoundException cnfe) {
+            throw new IllegalStateException("Main class of command " + commandName + " does not exist: " + mainClass, cnfe);
         }
 
         Method mainMethod = null;
@@ -200,7 +204,7 @@ public class MainImpl implements Main {
     }
 
     //DMB: TODO: Delete me
-    public static Enumeration doFindCommands() throws IOException {
+    public static Enumeration<URL> doFindCommands() throws IOException {
         return Thread.currentThread().getContextClassLoader().getResources(BASE_PATH);
     }
 
@@ -208,18 +212,17 @@ public class MainImpl implements Main {
         System.out.println("COMMANDS:");
 
         try {
-            Enumeration commandHomes = doFindCommands();
+            Enumeration<URL> commandHomes = doFindCommands();
 
             if (commandHomes != null) {
                 for (; commandHomes.hasMoreElements();) {
-                    URL cHomeURL = (URL) commandHomes.nextElement();
+                    URL cHomeURL = commandHomes.nextElement();
                     JarURLConnection conn = (JarURLConnection) cHomeURL.openConnection();
                     JarFile jarfile = conn.getJarFile();
-                    Enumeration commands = jarfile.entries();
-
+                    Enumeration<JarEntry> commands = jarfile.entries();
                     if (commands != null) {
                         while (commands.hasMoreElements()) {
-                            JarEntry je = (JarEntry) commands.nextElement();
+                            JarEntry je = commands.nextElement();
 
                             if (je.getName().indexOf(BASE_PATH) > -1 && !je.getName().equals(BASE_PATH) && !je.getName().endsWith(".help") && !je.getName().endsWith(".examples"))
                             {
@@ -233,7 +236,7 @@ public class MainImpl implements Main {
                     }
                 }
             } else {
-                System.out.println("No available commands!");
+                System.out.println("No commands available!");
             }
         } catch (IOException e) {
             e.printStackTrace();

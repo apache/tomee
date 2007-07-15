@@ -22,18 +22,26 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class Bootstrap {
+    
+    private final static String OPENEJB_VERSION_PROPERTIES_FILE_NAME = "openejb-version.properties";
+    private final static String OPENEJB_HOME_PROPERTY_NAME = "openejb.home";
+    private final static String OPENEJB_BASE_PROPERTY_NAME = "openejb.base";
+    private final static String OPENEJB_CLI_MAIN_CLASS_NAME = "org.apache.openejb.cli.MainImpl";
 
     private static void setupHome(String[] args) {
         for (String arg : args) {
-            if (arg.startsWith("-Dopenejb.home")){
+            if (arg.startsWith("-D" + OPENEJB_HOME_PROPERTY_NAME)){
                 addProperty(arg);
-            } else if (arg.startsWith("-Dopenejb.base")){
+            } else if (arg.startsWith("-D" + OPENEJB_BASE_PROPERTY_NAME)){
                 addProperty(arg);
             }
         }
 
-        String homeProperty = System.getProperty("openejb.home");
+        String homeProperty = System.getProperty(OPENEJB_HOME_PROPERTY_NAME);
         if (homeProperty != null){
             if (new File(homeProperty).exists()){
                 return;
@@ -41,7 +49,7 @@ public class Bootstrap {
         }
 
         try {
-            URL classURL = Thread.currentThread().getContextClassLoader().getResource("openejb-version.properties");
+            URL classURL = Thread.currentThread().getContextClassLoader().getResource(OPENEJB_VERSION_PROPERTIES_FILE_NAME);
 
             if (classURL != null) {
                 String propsString = classURL.getFile();
@@ -56,11 +64,11 @@ public class Bootstrap {
                     File lib = jarFile.getParentFile();
                     File home = lib.getParentFile();
 
-                    System.setProperty("openejb.home", home.getAbsolutePath());
+                    System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error setting openejb.home :" + e.getClass() + ": " + e.getMessage());
+            System.err.println("Error setting " + OPENEJB_HOME_PROPERTY_NAME + " property: " + e.getClass() + ": " + e.getMessage());
         }
     }
 
@@ -73,7 +81,7 @@ public class Bootstrap {
 
     private static void setupClasspath() {
         try {
-            File lib = new File(System.getProperty("openejb.home") + File.separator + "lib");
+            File lib = new File(System.getProperty(OPENEJB_HOME_PROPERTY_NAME) + File.separator + "lib");
             SystemClassPath systemCP = new SystemClassPath();
             systemCP.addJarsToPath(lib);
         } catch (Exception e) {
@@ -88,7 +96,7 @@ public class Bootstrap {
         setupHome(args);
         setupClasspath();
 
-        Class clazz = Bootstrap.class.getClassLoader().loadClass("org.apache.openejb.cli.MainImpl");
+        Class<?> clazz = Bootstrap.class.getClassLoader().loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
         Main main = (Main) clazz.newInstance();
         main.main(args);
     }

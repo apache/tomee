@@ -53,20 +53,20 @@ public class NameNode implements java.io.Serializable {
 
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {// hashcodes and String valuse are equal
             if (name.next()) {
-                if (subTree == null) throw new javax.naming.NameNotFoundException("Can not resolve " + name);
+                if (subTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
                 return subTree.resolve(name);
             } else if (unbound){
-                throw new javax.naming.NameNotFoundException("Can not resolve " + name);
+                throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
             } else {
                 return getBinding();
             }
         } else if (compareResult == ParsedName.IS_LESS) {// parsed hash is less than
-            if (lessTree == null) throw new javax.naming.NameNotFoundException("Can not resolve " + name);
+            if (lessTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
             return lessTree.resolve(name);
 
         } else {//ParsedName.IS_GREATER
 
-            if (grtrTree == null) throw new javax.naming.NameNotFoundException("Can not resolve " + name);
+            if (grtrTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
             return grtrTree.resolve(name);
         }
     }
