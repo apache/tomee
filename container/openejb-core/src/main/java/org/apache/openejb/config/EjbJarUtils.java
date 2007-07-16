@@ -98,12 +98,7 @@ public class EjbJarUtils {
     }
 
     public void writeEjbJar(String xmlFile) throws OpenEJBException {
-//        /* TODO:  Just to be picky, the xml file created by
-//        Castor is really hard to read -- it is all on one line.
-//        People might want to edit this in the future by hand, so if Castor can
-//        make the output look better that would be great!  Otherwise we could
-//        just spruce the output up by adding a few new lines and tabs.
-//        */
+//        todo rewrite using JaxB or remove
 //        Writer writer = null;
 //        try {
 //            File file = new File(xmlFile);
@@ -271,12 +266,7 @@ public class EjbJarUtils {
     }
 
     public static void writeOpenejbJar(String xmlFile, OpenejbJar openejbJarObject) throws OpenEJBException {
-//        /* TODO:  Just to be picky, the xml file created by
-//        Castor is really hard to read -- it is all on one line.
-//        People might want to edit this in the future by hand, so if Castor can
-//        make the output look better that would be great!  Otherwise we could
-//        just spruce the output up by adding a few new lines and tabs.
-//        */
+//        todo rewrite using JaxB or remove
 //        Writer writer = null;
 //        try {
 //            File file = new File(xmlFile);

@@ -773,13 +773,6 @@ public class Logger {
         private org.apache.log4j.Logger doFallbackConfiguration() {
             set("org.apache.activemq", Level.INFO);
             set("openjpa", Level.WARN);
-            set("CastorCMP", Level.ERROR);
-            set("org.exolab.castor", Level.ERROR);
-            java.util.logging.Logger.getLogger("org.exolab.castor.jdo.engine.DatabaseImpl").setLevel(java.util.logging.Level.SEVERE);
-            set("org.exolab.castor.jdo.engine.DatabaseImpl", Level.ERROR);
-            //org/exolab/castor.jdo.engine.DatabaseImpl
-            set("org.castor", Level.ERROR);
-            set("org.apache.openejb", Level.WARN);
             set("Transaction", Level.WARN);
             set("OpenEJB.startup", Level.INFO);
             set("OpenEJB.startup.config", Level.WARN);

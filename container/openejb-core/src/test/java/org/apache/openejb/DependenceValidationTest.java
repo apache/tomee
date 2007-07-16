@@ -79,8 +79,7 @@ public class DependenceValidationTest extends TestCase {
         // TODO: This needs fixing... containers are supposed to be pluggable
 //        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateless", springAssembler, dynamicAssembler);
 //        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateful", springAssembler, dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", "org.apache.openejb.alt.containers.castor_cmp11", springAssembler, dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.alt.containers.castor_cmp11", springAssembler, dynamicAssembler);
+//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", springAssembler, dynamicAssembler);
     }
 
     private void assertNotDependentOn(String referringPacakge, String referredPackage, String... exemptionsArray) {

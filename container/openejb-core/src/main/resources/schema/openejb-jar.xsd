@@ -171,12 +171,11 @@
     <xsd:element name="description" type="xsd:string"/>
 
     <!--
-    An OQL query string. The OQL syntax is a subset of the syntax 
-    described in the ODMG 3.0 specification section 4.12, with some 
-    additional constructs. 
-    
-    Full details of the OQL Syntax at: 
-    http://www.castor.org/oql.html
+    A CMP container specific query string for query method. Typically,
+    this is EJB-QL, but can be any query supported by the CMP
+    container implementation.  The EHB-QL syntax is defined in JSR
+    220: Enterprise JavaBeansTM, Version 3.0: Java Persistence API
+    chapter 4.
     
     Used in: query
     -->
