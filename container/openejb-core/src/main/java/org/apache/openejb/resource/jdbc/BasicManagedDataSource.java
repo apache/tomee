@@ -17,6 +17,13 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.loader.SystemInstance;
+
+import javax.sql.DataSource;
+import java.io.File;
+import java.sql.SQLException;
+import java.util.Properties;
+
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
     public synchronized String getJdbcDriver() {
         return super.getDriverClassName();
@@ -32,5 +39,37 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     public synchronized void setJdbcUrl(String string) {
         super.setUrl(string);
+    }
+
+    protected synchronized DataSource createDataSource() throws SQLException {
+        if (dataSource != null) {
+            return dataSource;
+        }
+
+        // get the plugin
+        DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(getUrl());
+
+        // configure this
+        if (helper != null) {
+            helper.configure(this);
+        }
+
+        // creat the data source
+        if (helper == null || !helper.enableUserDirHack()) {
+            return super.createDataSource();
+        } else {
+            // wrap super call with code that sets user.dir to openejb.base and then resets it
+            Properties systemProperties = System.getProperties();
+            synchronized (systemProperties) {
+                String userDir = systemProperties.getProperty("user.dir");
+                try {
+                    File base = SystemInstance.get().getBase().getDirectory();
+                    systemProperties.setProperty("user.dir", base.getAbsolutePath());
+                    return super.createDataSource();
+                } finally {
+                    systemProperties.setProperty("user.dir", userDir);
+                }
+            }
+        }
     }
 }
