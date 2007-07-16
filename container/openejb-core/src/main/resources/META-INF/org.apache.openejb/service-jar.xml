@@ -239,8 +239,7 @@
   <ServiceProvider
           id="Default JDBC Database"
           provider-type="Resource"
-          constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
-          class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
+          class-name="org.apache.openejb.resource.jdbc.BasicManagedDataSource">
 
     # Driver class name
 
@@ -262,16 +261,13 @@
     #Password pass
     Password  
 
-    Unmanaged false
-
     ConnectionInterface javax.sql.DataSource
   </ServiceProvider>
 
   <ServiceProvider
           id="Default Unmanaged JDBC Database"
           provider-type="Resource"
-          constructor="JdbcDriver,JdbcUrl,UserName,Password,Unmanaged"
-          class-name="org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory">
+          class-name="org.apache.openejb.resource.jdbc.BasicDataSource">
 
     # Driver class name
 
@@ -292,8 +288,6 @@
 
     #Password pass
     Password
-
-    Unmanaged true
 
     ConnectionInterface javax.sql.DataSource
   </ServiceProvider>

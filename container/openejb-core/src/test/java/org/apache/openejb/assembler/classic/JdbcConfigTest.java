@@ -23,6 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -59,10 +60,28 @@ public class JdbcConfigTest extends TestCase {
         DataSource unmanagedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Resource/Default Unmanaged JDBC Database");
         assertNotNull("unmanagedDS is null", unmanagedDS);
 
+        // test without a transaction
+        // NOTE: without a transaction all connections work as unmanaged
+        verifyUnmanagedConnections(managedDS);
+        verifyUnmanagedConnections(unmanagedDS);
+
+        // test in the context of a transaction
+        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        transactionManager.begin();
+        try {
+            verifyManagedConnections(managedDS);
+            verifyUnmanagedConnections(unmanagedDS);
+        } finally {
+            // commit the transaction
+            transactionManager.commit();
+        }
+    }
+
+    private void verifyManagedConnections(DataSource dataSource) throws SQLException {
         List<Connection> managedConnections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 4; i++) {
-                Connection connection = managedDS.getConnection();
+                Connection connection = dataSource.getConnection();
                 managedConnections.add(connection);
 
                 try {
@@ -83,11 +102,13 @@ public class JdbcConfigTest extends TestCase {
                 close(connection);
             }
         }
+    }
 
+    private void verifyUnmanagedConnections(DataSource dataSource) throws SQLException {
         List<Connection> unmanagedConnections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 4; i++) {
-                Connection connection = unmanagedDS.getConnection();
+                Connection connection = dataSource.getConnection();
                 unmanagedConnections.add(connection);
                 assertTrue("Expected connection.getAutoCommit() to be true", connection.getAutoCommit());
                 connection.setAutoCommit(true);
@@ -105,7 +126,6 @@ public class JdbcConfigTest extends TestCase {
                 close(connection);
             }
         }
-
     }
 
     private static void close(Connection connection) {
