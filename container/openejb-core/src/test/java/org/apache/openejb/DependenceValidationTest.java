@@ -55,13 +55,9 @@ public class DependenceValidationTest extends TestCase {
 
         depsOfPackages = dependencyVisitor.groups;
 
-        // Nothing may depend on the Assembler except the config code or spring assembler
-        String springAssembler = "org.apache.openejb.assembler.spring";
+        // Nothing may depend on the Assembler except the config code
         String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", springAssembler, "org.apache.openejb.assembler.dynamic");
-
-        // Nothing may depend on the Spring Assembler
-        assertNotDependentOn("org.apache.openejb", springAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic");
 
         // Nothing may depend on the Dynamic Assembler
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);
@@ -69,17 +65,17 @@ public class DependenceValidationTest extends TestCase {
         // Nothing may depend on the JAXB Tree except the Config code
         assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules");
 
-        // Nothing may depend on the Config code except it's subpackages and the Spring Assembler
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler", springAssembler, dynamicAssembler);
+        // Nothing may depend on the Config code except it's subpackages
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler",  dynamicAssembler);
 
         // The assembler may not be dependent on the config factory Implementation
         assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");
 
-        // Nothing should be dependent on any one particular container implementation   (except the Spring and Dynamic Assembler)
+        // Nothing should be dependent on any one particular container implementation   (except the Dynamic Assembler)
         // TODO: This needs fixing... containers are supposed to be pluggable
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateless", springAssembler, dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateful", springAssembler, dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", springAssembler, dynamicAssembler);
+//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateless", dynamicAssembler);
+//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateful", dynamicAssembler);
+//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", dynamicAssembler);
     }
 
     private void assertNotDependentOn(String referringPacakge, String referredPackage, String... exemptionsArray) {

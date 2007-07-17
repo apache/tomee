@@ -29,8 +29,6 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransact
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTrackingCoordinator;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 
-import org.springframework.beans.FatalBeanException;
-
 import javax.transaction.TransactionManager;
 
 public class GeronimoConnectionManagerFactory   {
@@ -176,7 +174,7 @@ public class GeronimoConnectionManagerFactory   {
         } else if ("xa".equalsIgnoreCase(transactionSupport)) {
             return new XATransactions(true, false);
         } else {
-            throw new FatalBeanException("Unknown transaction type " + transactionSupport);
+            throw new IllegalArgumentException("Unknown transaction type " + transactionSupport);
         }
     }
 
@@ -223,7 +221,7 @@ public class GeronimoConnectionManagerFactory   {
                     false,
                     true);
         } else {
-            throw new FatalBeanException("Unknown partition strategy " + partitionStrategy);
+            throw new IllegalArgumentException("Unknown partition strategy " + partitionStrategy);
         }
     }
 }
