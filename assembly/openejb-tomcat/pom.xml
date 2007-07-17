@@ -87,10 +87,6 @@
           <groupId>org.apache.geronimo.modules</groupId>
           <artifactId>geronimo-security</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.tranql</groupId>
-          <artifactId>tranql</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

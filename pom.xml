@@ -464,37 +464,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.modules</groupId>
-        <artifactId>geronimo-transaction</artifactId>
-        <version>2.0-SNAPSHOT</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.modules</groupId>
-            <artifactId>geronimo-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.modules</groupId>
-            <artifactId>geronimo-j2ee</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ejb_2.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.objectweb.howl</groupId>
-            <artifactId>howl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
         <artifactId>geronimo-javamail_1.4_mail</artifactId>
         <version>1.1-SNAPSHOT</version>
@@ -615,30 +584,6 @@
         <groupId>org.codehaus.swizzle</groupId>
         <artifactId>swizzle-stream</artifactId>
         <version>1.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.tranql</groupId>
-        <artifactId>tranql</artifactId>
-        <version>1.4.1</version>
-        <exclusions>
-          <exclusion>
-            <groupId>axion</groupId>
-            <artifactId>axion</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ejb_2.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>qdox</groupId>
-        <artifactId>qdox</artifactId>
-        <version>1.6</version>
       </dependency>
       <dependency>
         <groupId>com.thoughtworks.xstream</groupId>
