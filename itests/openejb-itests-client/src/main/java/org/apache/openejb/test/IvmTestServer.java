@@ -33,8 +33,7 @@ public class IvmTestServer implements TestServer {
 
     public void init(Properties props){
         
-        properties = new Properties();
-        properties.putAll(props);
+        properties = props;
         
         try{
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
