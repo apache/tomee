@@ -242,23 +242,179 @@
 
     # Driver class name
 
-    #JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
     JdbcDriver org.hsqldb.jdbcDriver
 
     # Url for creating connections
 
-    #JdbcUrl jdbc:derby:derbyDB;create=true
     JdbcUrl jdbc:hsqldb:file:hsqldb
 
     # Default user name
 
-    #UserName admin
     UserName sa
 
     # Default password
 
-    #Password pass
     Password  
+
+    # The connection properties that will be sent to the JDBC
+    # driver when establishing new connections
+    #
+    # Format of the string must be [propertyName=property;]*
+    #
+    # NOTE - The "user" and "password" properties will be passed
+    # explicitly, so they do not need to be included here.
+
+    ConnectionProperties
+
+    # The default auto-commit state of new connections
+
+    DefaultAutoCommit true
+
+    # The default read-only state of new connections
+    # If not set then the setReadOnly method will not be called.
+    # (Some drivers don't support read only mode, ex: Informix)
+
+    # DefaultReadOnly
+
+
+    # The default TransactionIsolation state of new connections
+    # If not set then the setTransactionIsolation method will not
+    # be called. The allowed values for this property are:
+    #     NONE
+    #     READ_COMMITTED
+    #     READ_UNCOMMITTED
+    #     REPEATABLE_READ
+    #     SERIALIZABLE
+    #
+    # Note: Most JDBC drivers do not support all isolation levels
+
+    # DefaultTransactionIsolation
+
+
+    # The initial number of connections that are created when the
+    # pool is started
+
+    InitialSize	0
+
+    # The maximum number of active connections that can be
+    # allocated from this pool at the same time, or a negative
+    # number for no limit.
+
+    MaxActive	20
+
+    # The maximum number of connections that can remain idle in
+    # the pool, without extra ones being released, or a negative
+    # number for no limit.
+
+    MaxIdle	20
+
+    # The minimum number of connections that can remain idle in
+    # the pool, without extra ones being created, or zero to
+    # create none.
+
+    MinIdle	0
+
+    # The maximum number of milliseconds that the pool will wait
+    # (when there are no available connections) for a connection
+    # to be returned before throwing an exception, or -1 to wait
+    # indefinitely.
+
+    MaxWait	-1
+
+    # The SQL query that will be used to validate connections from
+    # this pool before returning them to the caller. If specified,
+    # this query MUST be an SQL SELECT statement that returns at
+    # least one row.
+
+    # ValidationQuery
+
+    # If true connections will be validated before being returned
+    # from the pool. If the validation fails, the connection is
+    # destroyed, and a new conection will be retrieved from the
+    # pool (and validated).
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnBorrow	true
+
+    # If true connections will be validated before being returned
+    # to the pool.  If the validation fails, the connection is
+    # destroyed instead of being returned to the pool.
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnReturn	false
+
+    # If true connections will be validated by the idle connection
+    # evictor (if any). If the validation fails, the connection is
+    # destroyed and removed from the pool
+    #
+    # NOTE - for a true value to have any effect, the
+    # timeBetweenEvictionRunsMillis property must be a positive
+    # number and the ValidationQuery parameter must be set.
+
+    TestWhileIdle	false
+
+    # The number of milliseconds to sleep between runs of the idle
+    # connection evictor thread. When set to a negative number, no
+    # idle connection evictor thread will be run.
+
+    TimeBetweenEvictionRunsMillis	-1
+
+    # The number of connectionss to examine during each run of the
+    # idle connection evictor thread (if any).
+
+    NumTestsPerEvictionRun	3
+
+    # The minimum amount of time a connection may sit idle in the
+    # pool before it is eligable for eviction by the idle
+    # connection evictor (if any).
+
+    MinEvictableIdleTimeMillis	1800000
+
+    # If true, a statement pool is created for each Connection and
+    # PreparedStatements created by one of the following methods are
+    # pooled:
+    #    public PreparedStatement prepareStatement(String sql);
+    #    public PreparedStatement prepareStatement(String sql,
+    #            int resultSetType,
+    #            int resultSetConcurrency)
+
+    PoolPreparedStatements false
+
+    # The maximum number of open statements that can be allocated
+    # from the statement pool at the same time, or zero for no
+    # limit.
+    #
+    # NOTE - Some drivers have limits on the number of open
+    # statements, so make sure there are some resources left 
+    # for the other (non-prepared) statements.
+
+    MaxOpenPreparedStatements 0
+
+    # If true the raw physical connection to the database can be
+    # accessed using the following construct:
+    #     Connection conn = ds.getConnection();
+    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    #     ...
+    #     conn.close()
+    #
+    # Default is false, because misbehaving programs can do harmfull
+    # things to the raw connection shuch as closing the raw
+    # connection or continuing to use the raw connection after it
+    # has been assigned to another logical connection.  Be carefull
+    # and only use when you need direct access to driver specific
+    # extentions.
+    #
+    # NOTE: Do NOT close the underlying connection, only the
+    # original logical connection wrapper.
+    
+    AccessToUnderlyingConnectionAllowed	false
+
+    # Interface type of this factory
+    # This is used to auto map resource references
 
     ConnectionInterface javax.sql.DataSource
   </ServiceProvider>
@@ -287,6 +443,166 @@
 
     #Password pass
     Password
+
+    # The connection properties that will be sent to the JDBC
+    # driver when establishing new connections
+    #
+    # Format of the string must be [propertyName=property;]*
+    #
+    # NOTE - The "user" and "password" properties will be passed
+    # explicitly, so they do not need to be included here.
+
+    ConnectionProperties
+
+    # The default auto-commit state of new connections
+
+    DefaultAutoCommit true
+
+    # The default read-only state of new connections
+    # If not set then the setReadOnly method will not be called.
+    # (Some drivers don't support read only mode, ex: Informix)
+
+    # DefaultReadOnly
+
+
+    # The default TransactionIsolation state of new connections
+    # If not set then the setTransactionIsolation method will not
+    # be called. The allowed values for this property are:
+    #     NONE
+    #     READ_COMMITTED
+    #     READ_UNCOMMITTED
+    #     REPEATABLE_READ
+    #     SERIALIZABLE
+    #
+    # Note: Most JDBC drivers do not support all isolation levels
+
+    # DefaultTransactionIsolation
+
+
+    # The initial number of connections that are created when the
+    # pool is started
+
+    InitialSize	0
+
+    # The maximum number of active connections that can be
+    # allocated from this pool at the same time, or a negative
+    # number for no limit.
+
+    MaxActive	10
+
+    # The maximum number of connections that can remain idle in
+    # the pool, without extra ones being released, or a negative
+    # number for no limit.
+
+    MaxIdle	10
+
+    # The minimum number of connections that can remain idle in
+    # the pool, without extra ones being created, or zero to
+    # create none.
+
+    MinIdle	0
+
+    # The maximum number of milliseconds that the pool will wait
+    # (when there are no available connections) for a connection
+    # to be returned before throwing an exception, or -1 to wait
+    # indefinitely.
+
+    MaxWait	-1
+
+    # The SQL query that will be used to validate connections from
+    # this pool before returning them to the caller. If specified,
+    # this query MUST be an SQL SELECT statement that returns at
+    # least one row.
+
+    # ValidationQuery
+
+    # If true connections will be validated before being returned
+    # from the pool. If the validation fails, the connection is
+    # destroyed, and a new conection will be retrieved from the
+    # pool (and validated).
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnBorrow	true
+
+    # If true connections will be validated before being returned
+    # to the pool.  If the validation fails, the connection is
+    # destroyed instead of being returned to the pool.
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnReturn	false
+
+    # If true connections will be validated by the idle connection
+    # evictor (if any). If the validation fails, the connection is
+    # destroyed and removed from the pool
+    #
+    # NOTE - for a true value to have any effect, the
+    # timeBetweenEvictionRunsMillis property must be a positive
+    # number and the ValidationQuery parameter must be set.
+
+    TestWhileIdle	false
+
+    # The number of milliseconds to sleep between runs of the idle
+    # connection evictor thread. When set to a negative number, no
+    # idle connection evictor thread will be run.
+
+    TimeBetweenEvictionRunsMillis	-1
+
+    # The number of connectionss to examine during each run of the
+    # idle connection evictor thread (if any).
+
+    NumTestsPerEvictionRun	3
+
+    # The minimum amount of time a connection may sit idle in the
+    # pool before it is eligable for eviction by the idle
+    # connection evictor (if any).
+
+    MinEvictableIdleTimeMillis	1800000
+
+    # If true, a statement pool is created for each Connection and
+    # PreparedStatements created by one of the following methods are
+    # pooled:
+    #    public PreparedStatement prepareStatement(String sql);
+    #    public PreparedStatement prepareStatement(String sql,
+    #            int resultSetType,
+    #            int resultSetConcurrency)
+
+    PoolPreparedStatements false
+
+    # The maximum number of open statements that can be allocated
+    # from the statement pool at the same time, or zero for no
+    # limit.
+    #
+    # NOTE - Some drivers have limits on the number of open
+    # statements, so make sure there are some resources left
+    # for the other (non-prepared) statements.
+
+    MaxOpenPreparedStatements 0
+
+    # If true the raw physical connection to the database can be
+    # accessed using the following construct:
+    #     Connection conn = ds.getConnection();
+    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    #     ...
+    #     conn.close()
+    #
+    # Default is false, because misbehaving programs can do harmfull
+    # things to the raw connection shuch as closing the raw
+    # connection or continuing to use the raw connection after it
+    # has been assigned to another logical connection.  Be carefull
+    # and only use when you need direct access to driver specific
+    # extentions.
+    #
+    # NOTE: Do NOT close the underlying connection, only the
+    # original logical connection wrapper.
+
+    AccessToUnderlyingConnectionAllowed	false
+
+    # Interface type of this factory
+    # This is used to auto map resource references
 
     ConnectionInterface javax.sql.DataSource
   </ServiceProvider>
