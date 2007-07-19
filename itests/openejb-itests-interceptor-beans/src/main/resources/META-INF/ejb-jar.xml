@@ -55,7 +55,11 @@
     	</exclude-default-interceptors>
     </interceptor-binding>
     
-    --><interceptor-binding>
+    -->
+    <!-- For some reason the beans associated with these bindings
+         are not present.  Commenting the bindings out as the validation
+         code now checks for valid bindings
+    <interceptor-binding>
     	<ejb-name>SecondStatefulIntercepted</ejb-name>
     	<exclude-default-interceptors>
     		true
@@ -81,6 +85,7 @@
     		<method-name>getContextData</method-name>
     	</method>
     </interceptor-binding>
-
+    -->
+    
   </assembly-descriptor>
 </ejb-jar>

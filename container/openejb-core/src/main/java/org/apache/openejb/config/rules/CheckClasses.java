@@ -21,15 +21,15 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.config.EjbSet;
 import org.apache.openejb.config.ValidationFailure;
-import org.apache.openejb.config.ValidationRule;
 import org.apache.openejb.util.SafeToolkit;
 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 
-public class CheckClasses implements ValidationRule {
+public class CheckClasses extends ValidationBase {
 
     private EjbSet set;
     private ClassLoader classLoader;
@@ -39,10 +39,11 @@ public class CheckClasses implements ValidationRule {
 
         for (EnterpriseBean bean : set.getJar().getEnterpriseBeans()) {
             try {
+                check_hasEjbClass(bean);
+
                 if (!(bean instanceof RemoteBean)) continue;
                 RemoteBean b = (RemoteBean) bean;
 
-                check_hasEjbClass(b);
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
                 if (b.getHome() != null) {
@@ -64,6 +65,10 @@ public class CheckClasses implements ValidationRule {
             } catch (RuntimeException e) {
                 throw new RuntimeException(bean.getEjbName(), e);
             }
+        }
+
+        for (Interceptor interceptor : set.getEjbJar().getInterceptors()) {
+            check_hasInterceptorClass(interceptor);
         }
     }
 
@@ -107,28 +112,34 @@ public class CheckClasses implements ValidationRule {
     }
 
     private void check_hasLocalClass(RemoteBean b) {
-        lookForClass(b, b.getLocal(), "<local>");
+        lookForClass(b.getLocal(), "<local>", b.getEjbName());
     }
 
     private void check_hasLocalHomeClass(RemoteBean b) {
-        lookForClass(b, b.getLocalHome(), "<local-home>");
+        lookForClass(b.getLocalHome(), "<local-home>", b.getEjbName());
     }
 
-    public void check_hasEjbClass(RemoteBean b) {
+    public void check_hasEjbClass(EnterpriseBean b) {
 
-        lookForClass(b, b.getEjbClass(), "<ejb-class>");
+        lookForClass(b.getEjbClass(), "<ejb-class>", b.getEjbName());
+
+    }
+
+    public void check_hasInterceptorClass(Interceptor i) {
+
+        lookForClass(i.getInterceptorClass(), "<interceptor-class>", "Interceptor");
 
     }
 
     public void check_hasHomeClass(RemoteBean b) {
 
-        lookForClass(b, b.getHome(), "<home>");
+        lookForClass(b.getHome(), "<home>", b.getEjbName());
 
     }
 
     public void check_hasRemoteClass(RemoteBean b) {
 
-        lookForClass(b, b.getRemote(), "<remote>");
+        lookForClass(b.getRemote(), "<remote>", b.getEjbName());
 
     }
 
@@ -168,7 +179,7 @@ public class CheckClasses implements ValidationRule {
 
     }
 
-    private void lookForClass(RemoteBean b, String clazz, String type) {
+    private void lookForClass(String clazz, String type, String ejbName) {
         try {
             loadClass(clazz);
         } catch (OpenEJBException e) {
@@ -178,11 +189,7 @@ public class CheckClasses implements ValidationRule {
             # 2 - Bean name
             */
 
-            ValidationFailure failure = new ValidationFailure("missing.class");
-            failure.setDetails(clazz, type, b.getEjbName());
-            failure.setComponentName(b.getEjbName());
-
-            set.addFailure(failure);
+            fail(ejbName, "missing.class", clazz, type, ejbName);
 
         } catch (NoClassDefFoundError e) {
             /*
@@ -191,11 +198,8 @@ public class CheckClasses implements ValidationRule {
              # 2 - Bean name
              # 3 - Misslocated Class name
              */
-            ValidationFailure failure = new ValidationFailure("misslocated.class");
-            failure.setDetails(clazz, type, b.getEjbName(), e.getMessage());
-            failure.setComponentName(b.getEjbName());
+            fail(ejbName, "misslocated.class", clazz, type, ejbName, e.getMessage());
 
-            set.addFailure(failure);
             throw e;
         }
 
@@ -219,10 +223,10 @@ public class CheckClasses implements ValidationRule {
         }
     }
 
-    private Class loadClass(String clazz) throws OpenEJBException {
+    protected Class loadClass(String clazz) throws OpenEJBException {
         ClassLoader cl = set.getClassLoader();
         try {
-            return cl.loadClass(clazz);
+            return Class.forName(clazz, true, cl);
         } catch (ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()), cnfe);
         }

@@ -260,7 +260,7 @@ public class EjbJarInfoBuilder {
     }
 
     private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar, Map<String, EnterpriseBeanInfo> beanInfos) throws OpenEJBException {
-        if (jar.getEjbJar().getInterceptors() == null) return;
+        if (jar.getEjbJar().getInterceptors().length == 0) return;
         if (jar.getEjbJar().getAssemblyDescriptor() == null) return;
         if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) return;
 

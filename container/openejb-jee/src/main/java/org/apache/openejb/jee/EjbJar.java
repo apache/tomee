@@ -170,7 +170,7 @@ public class EjbJar {
     }
     
     public Interceptor[] getInterceptors() {
-        if (interceptors == null) return null;
+        if (interceptors == null) return new Interceptor[]{};
         return interceptors.getInterceptor();
     }
 

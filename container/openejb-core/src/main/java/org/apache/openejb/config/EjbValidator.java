@@ -27,6 +27,10 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckMethods;
+import org.apache.openejb.config.rules.CheckAssemblyBindings;
+import org.apache.openejb.config.rules.CheckCallbacks;
+import org.apache.openejb.config.rules.CheckInjectionTargets;
+import org.apache.openejb.config.rules.CheckServiceRefs;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -88,7 +92,11 @@ public class EjbValidator {
     protected ValidationRule[] getValidationRules() {
         ValidationRule[] rules = new ValidationRule[]{
                 new CheckClasses(),
-                new CheckMethods()
+                new CheckMethods(),
+                new CheckCallbacks(),
+                new CheckAssemblyBindings(),
+                new CheckInjectionTargets(),
+                new CheckServiceRefs()
         };
         return rules;
     }

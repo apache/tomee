@@ -25,14 +25,13 @@ import org.apache.openejb.config.EjbSet;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.config.ValidationRule;
 import org.apache.openejb.config.ValidationWarning;
+import org.apache.openejb.config.ValidationError;
 import org.apache.openejb.util.SafeToolkit;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Method;
 
-public class CheckMethods implements ValidationRule {
-
-    EjbSet set;
+public class CheckMethods extends ValidationBase {
 
     public void validate(EjbSet set) {
 
@@ -92,12 +91,7 @@ public class CheckMethods implements ValidationRule {
                 Method beanMethod = beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
 
-                ValidationFailure failure = new ValidationFailure("no.busines.method");
-                failure.setDetails(interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
-                failure.setComponentName(b.getEjbName());
-
-                set.addFailure(failure);
-
+                fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
             }
         }
 
@@ -125,15 +119,12 @@ public class CheckMethods implements ValidationRule {
                 Method beanMethod = beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
 
-                ValidationFailure failure = new ValidationFailure("no.busines.method");
-                failure.setDetails(interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
-                failure.setComponentName(b.getEjbName());
-
-                set.addFailure(failure);
+                fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
 
             }
         }
     }
+
 
     private void check_homeInterfaceMethods(RemoteBean b) {
         Class home = null;
@@ -175,28 +166,11 @@ public class CheckMethods implements ValidationRule {
 
         if (!hasCreateMethod) {
 
-            ValidationFailure failure = new ValidationFailure("no.home.create");
-            failure.setDetails(b.getHome(), b.getRemote());
-            failure.setComponentName(b.getEjbName());
-
-            set.addFailure(failure);
+            fail(b, "no.home.create", b.getHome(), b.getRemote());
 
         }
 
         return hasCreateMethod;
-    }
-
-    public static boolean paramsMatch(Method methodA, Method methodB) {
-        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
-            return false;
-        }
-
-        for (int i = 0; i < methodA.getParameterTypes().length; i++) {
-            Class<?> a = methodA.getParameterTypes()[i];
-            Class<?> b = methodB.getParameterTypes()[i];
-            if (!a.equals(b)) return false;
-        }
-        return true;
     }
 
     public boolean check_createMethodsAreImplemented(RemoteBean b, Class bean, Class home) {
@@ -226,19 +200,11 @@ public class CheckMethods implements ValidationRule {
                 if (b instanceof EntityBean) {
                     EntityBean entity = (EntityBean) b;
 
-                    ValidationFailure failure = new ValidationFailure("entity.no.ejb.create");
-                    failure.setDetails(b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
-                    failure.setComponentName(b.getEjbName());
-
-                    set.addFailure(failure);
+                    fail(b, "entity.no.ejb.create", b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
 
                 } else {
 
-                    ValidationFailure failure = new ValidationFailure("session.no.ejb.create");
-                    failure.setDetails(b.getEjbClass(), ejbCreateName.toString(), paramString);
-                    failure.setComponentName(b.getEjbName());
-
-                    set.addFailure(failure);
+                    fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);
 
                 }
             }
@@ -267,11 +233,7 @@ public class CheckMethods implements ValidationRule {
 
                 String paramString = getParameters(create);
 
-                ValidationFailure failure = new ValidationFailure("no.ejb.post.create");
-                failure.setDetails(b.getEjbClass(), ejbPostCreateName.toString(), paramString);
-                failure.setComponentName(b.getEjbName());
-
-                set.addFailure(failure);
+                fail(b, "no.ejb.post.create", b.getEjbClass(), ejbPostCreateName.toString(), paramString);
 
             }
         }
@@ -297,11 +259,7 @@ public class CheckMethods implements ValidationRule {
 
                 String paramString = getParameters(ejbCreate);
 
-                ValidationWarning warning = new ValidationWarning("unused.ejb.create");
-                warning.setDetails(b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
-                warning.setComponentName(b.getEjbName());
-
-                set.addWarning(warning);
+                fail(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
 
             }
         }
@@ -322,29 +280,5 @@ public class CheckMethods implements ValidationRule {
 ///     beanMethod = beanClass.getMethod(beanMethodName,method.getParameterTypes());
 /// }
 
-    private String getParameters(Method method) {
-        Class[] params = method.getParameterTypes();
-        StringBuffer paramString = new StringBuffer(512);
-
-        if (params.length > 0) {
-            paramString.append(params[0].getName());
-        }
-
-        for (int i = 1; i < params.length; i++) {
-            paramString.append(", ");
-            paramString.append(params[i]);
-        }
-
-        return paramString.toString();
-    }
-
-    private Class loadClass(String clazz) throws OpenEJBException {
-        ClassLoader cl = set.getClassLoader();
-        try {
-            return cl.loadClass(clazz);
-        } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()), cnfe);
-        }
-    }
 }
 
