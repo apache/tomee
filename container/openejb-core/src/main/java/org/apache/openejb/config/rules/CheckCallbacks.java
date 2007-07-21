@@ -108,7 +108,7 @@ public class CheckCallbacks extends ValidationBase {
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Object.class)) {
-                fail(componentName, "aroundInvoke.badReturnType", aroundInvoke.getMethodName(), returnType.getName());
+                fail(componentName, "aroundInvoke.badReturnType", aroundInvoke.getMethodName(), returnType.getName(),aroundInvoke.getClassName());
             }
 
             boolean throwsException = false;
@@ -119,18 +119,18 @@ public class CheckCallbacks extends ValidationBase {
             }
 
             if (!throwsException) {
-                fail(componentName, "aroundInvoke.mustThrowException", aroundInvoke.getMethodName());
+                fail(componentName, "aroundInvoke.mustThrowException", aroundInvoke.getMethodName(), aroundInvoke.getClassName());
             }
 
         } catch (NoSuchMethodException e) {
             List<Method> possibleMethods = getMethods(ejbClass, aroundInvoke.getMethodName());
 
             if (possibleMethods.size() == 0) {
-                fail(componentName, "aroundInvoke.missing", aroundInvoke.getMethodName());
+                fail(componentName, "aroundInvoke.missing", aroundInvoke.getMethodName(), aroundInvoke.getClassName());
             } else if (possibleMethods.size() == 1) {
-                fail(componentName, "aroundInvoke.invalidArguments", aroundInvoke.getMethodName(), getParameters(possibleMethods.get(0)));
+                fail(componentName, "aroundInvoke.invalidArguments", aroundInvoke.getMethodName(), getParameters(possibleMethods.get(0)), aroundInvoke.getClassName());
             } else {
-                fail(componentName, "aroundInvoke.missing.possibleTypo", aroundInvoke.getMethodName(), possibleMethods.size());
+                fail(componentName, "aroundInvoke.missing.possibleTypo", aroundInvoke.getMethodName(), possibleMethods.size(), aroundInvoke.getClassName());
             }
         }
     }
@@ -142,17 +142,17 @@ public class CheckCallbacks extends ValidationBase {
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
-                fail(bean, "callback.badReturnType", type, callback.getMethodName(), returnType.getName());
+                fail(bean, "callback.badReturnType", type, callback.getMethodName(), returnType.getName(), callback.getClassName());
             }
         } catch (NoSuchMethodException e) {
             List<Method> possibleMethods = getMethods(ejbClass, callback.getMethodName());
 
             if (possibleMethods.size() == 0) {
-                fail(bean, "callback.missing", callback.getMethodName());
+                fail(bean, "callback.missing", type, callback.getMethodName(), callback.getClassName());
             } else if (possibleMethods.size() == 1) {
-                fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)));
+                fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), callback.getClassName());
             } else {
-                fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size());
+                fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), callback.getClassName());
             }
         }
     }
@@ -164,17 +164,17 @@ public class CheckCallbacks extends ValidationBase {
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
-                fail("Interceptor", "interceptor.callback.badReturnType", type, callback.getMethodName(), returnType.getName());
+                fail("Interceptor", "interceptor.callback.badReturnType", interceptorClass, type, callback.getMethodName(), returnType.getName());
             }
         } catch (NoSuchMethodException e) {
             List<Method> possibleMethods = getMethods(interceptorClass, callback.getMethodName());
 
             if (possibleMethods.size() == 0) {
-                fail("Interceptor", "interceptor.callback.missing", interceptorClass.getName(), callback.getMethodName());
+                fail("Interceptor", "interceptor.callback.missing", type, callback.getMethodName(), interceptorClass.getName());
             } else if (possibleMethods.size() == 1) {
-                fail("Interceptor", "interceptor.callback.invalidArguments", interceptorClass.getName(), type, callback.getMethodName(), getParameters(possibleMethods.get(0)));
+                fail("Interceptor", "interceptor.callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), interceptorClass.getName());
             } else {
-                fail("Interceptor", "interceptor.callback.missing.possibleTypo", interceptorClass.getName(), type, callback.getMethodName(), possibleMethods.size());
+                fail("Interceptor", "interceptor.callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), interceptorClass.getName());
             }
         }
     }
