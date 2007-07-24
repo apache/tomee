@@ -21,6 +21,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
@@ -28,6 +29,8 @@ import java.util.logging.Logger;
 
 public class Client {
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
+
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.0");
 
     private static Client client = new Client();
 
@@ -94,6 +97,17 @@ public class Client {
             }
 
             /*----------------------------------*/
+            /* Write the protocol magic         */
+            /*----------------------------------*/
+            try{
+
+                PROTOCOL_VERSION.writeExternal(out);
+
+            } catch (Throwable e){
+                throw new RemoteException("Cannot write the protocol metadata to the server: " , e );
+            }
+
+            /*----------------------------------*/
             /* Write request type */
             /*----------------------------------*/
             try {
@@ -141,16 +155,33 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Get input streams */
+            /* Get input streams               */
             /*----------------------------------*/
+            InputStream in = null;
             try {
 
-                objectIn = new EjbObjectInputStream(conn.getInputStream());
-            } catch (IOException e) {
-                throw new RemoteException("Cannot open object input stream to server: ", e);
+                in = conn.getInputStream();
 
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot open object input stream to server: ", e);
+            } catch (IOException e) {
+                throw new RemoteException("Cannot open input stream to server: " , e );
+            }
+
+            ProtocolMetaData protocolMetaData = null;
+            try {
+
+                protocolMetaData = new ProtocolMetaData();
+                protocolMetaData.readExternal(in);
+
+            } catch (IOException e) {
+                throw new RemoteException("Cannot deternmine server protocol version: Received "+protocolMetaData.getSpec() , e );
+            }
+
+            try{
+
+                objectIn = new EjbObjectInputStream(in);
+
+            } catch (Throwable e){
+                throw new RemoteException("Cannot open object input stream to server ("+protocolMetaData.getSpec() +") : "+e.getMessage() , e );
             }
 
             /*----------------------------------*/
@@ -162,13 +193,13 @@ public class Client {
             } catch (ClassNotFoundException e) {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
-            } catch (IOException e) {
-                throw new RemoteException("Cannot read the response from the server.", e);
+            } catch (IOException e){
+                throw new RemoteException("Cannot read the response from the server ("+protocolMetaData.getSpec() +") : "+e.getMessage() , e );
 
-            } catch (Throwable e) {
-                throw new RemoteException("Error reading response from server: ", e);
+            } catch (Throwable e){
+                throw new RemoteException("Error reading response from server ("+protocolMetaData.getSpec() +") : "+e.getMessage() , e );
             }
-
+ 
         } catch (RemoteException e) {
             throw e;
         } catch (Throwable error) {

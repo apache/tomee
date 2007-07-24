@@ -32,19 +32,22 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.EjbObjectInputStream;
+import org.apache.openejb.client.ProtocolMetaData;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    Messages _messages = new Messages("org.apache.openejb.server.util.resources");
-    Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("2.0");
 
-    ClientObjectFactory clientObjectFactory;
+    private static final Messages _messages = new Messages("org.apache.openejb.server.util.resources");
+    static final Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+
+    private ClientObjectFactory clientObjectFactory;
 //    DeploymentIndex deploymentIndex;
-    EjbRequestHandler ejbHandler;
-    JndiRequestHandler jndiHandler;
-    AuthRequestHandler authHandler;
+    private EjbRequestHandler ejbHandler;
+    private JndiRequestHandler jndiHandler;
+    private AuthRequestHandler authHandler;
 
     boolean stop = false;
 
@@ -88,10 +91,17 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public void service(InputStream in, OutputStream out) throws IOException {
+        ProtocolMetaData protocolMetaData = new ProtocolMetaData();
+        String requestTypeName = null;
+
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
 
         try {
+
+            protocolMetaData.readExternal(in);
+
+            PROTOCOL_VERSION.writeExternal(out);
 
             byte requestType = (byte) in.read();
 
@@ -102,38 +112,42 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             ois = new EjbObjectInputStream(in);
             oos = new ObjectOutputStream(out);
 
+            // Exceptions should not be thrown from these methods
+            // They should handle their own exceptions and clean
+            // things up with the client accordingly.
             switch (requestType) {
                 case RequestMethodConstants.EJB_REQUEST:
+                    requestTypeName = "EJB_REQUEST";
                     processEjbRequest(ois, oos);
                     break;
                 case RequestMethodConstants.JNDI_REQUEST:
+                    requestTypeName = "JNDI_REQUEST";
                     processJndiRequest(ois, oos);
                     break;
                 case RequestMethodConstants.AUTH_REQUEST:
+                    requestTypeName = "AUTH_REQUEST";
                     processAuthRequest(ois, oos);
                     break;
                 default:
-                    logger.error("Unknown request type " + requestType);
-            }
-            try {
-                if (oos != null) {
-                    oos.flush();
-                }
-            } catch (Throwable t) {
-                logger.error("Encountered problem while communicating with client: " + t.getMessage());
-            }
+                    requestTypeName = requestType+" (UNKNOWN)";
+                    logger.error("\"" + requestTypeName + " " + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
 
+            }
         } catch (SecurityException e) {
-            logger.error("Security error: " + e.getMessage());
+            logger.error("\""+requestTypeName +" "+ protocolMetaData.getSpec() + "\" FAIL \"Security error - "+e.getMessage()+"\"",e);
         } catch (Throwable e) {
-            logger.error("Unexpected error", e);
+            logger.error("\""+requestTypeName +" "+ protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - "+e.getMessage()+"\"",e);
         } finally {
             try {
                 if (oos != null) {
                     oos.flush();
+                    oos.close();
+                } else if (out != null) {
+                    out.flush();
+                    out.close();
                 }
             } catch (Throwable t) {
-                logger.error("Encountered problem while flushing connection with client: " + t.getMessage());
+                logger.error("\""+requestTypeName +" "+ protocolMetaData.getSpec() + "\" FAIL \""+t.getMessage()+"\"");
             }
         }
     }
