@@ -253,13 +253,14 @@ public class CheckMethods extends ValidationBase {
             StringBuilder create = new StringBuilder(ejbCreate.getName());
             create.replace(0,4, "c");
             try {
+                // TODO, don't just check the remote home interface, there is a local too
                 home.getMethod(create.toString(), ejbCreate.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 result = false;
 
                 String paramString = getParameters(ejbCreate);
 
-                fail(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
+                warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
 
             }
         }
