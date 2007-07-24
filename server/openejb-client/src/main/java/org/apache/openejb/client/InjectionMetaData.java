@@ -40,6 +40,8 @@ public class InjectionMetaData implements Externalizable {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         int size = in.readInt();
         for (int i = 0; i < size; i++) {
             String jndiName = (String) in.readObject();
@@ -50,6 +52,9 @@ public class InjectionMetaData implements Externalizable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
+
         out.writeInt(injections.size());
         for (Injection injection : injections) {
             out.writeObject(injection.getJndiName());

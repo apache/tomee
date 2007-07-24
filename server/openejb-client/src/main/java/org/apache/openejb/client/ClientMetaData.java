@@ -41,10 +41,15 @@ public class ClientMetaData implements Externalizable {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         this.clientIdentity = in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
+
         out.writeObject(clientIdentity);
     }
 }

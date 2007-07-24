@@ -41,6 +41,8 @@ public class DataSourceMetaData implements Externalizable {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         jdbcDriver = (String) in.readObject();
         jdbcUrl = (String) in.readObject();
         defaultUserName = (String) in.readObject();
@@ -48,6 +50,9 @@ public class DataSourceMetaData implements Externalizable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
+
         out.writeObject(jdbcDriver);
         out.writeObject(jdbcUrl);
         out.writeObject(defaultUserName);

@@ -50,6 +50,8 @@ public class JNDIResponse implements Response {
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         responseCode = in.readByte();
 
         switch (responseCode) {
@@ -83,6 +85,8 @@ public class JNDIResponse implements Response {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
 
         out.writeByte((byte) responseCode);
 

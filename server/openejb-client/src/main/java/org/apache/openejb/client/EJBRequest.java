@@ -179,6 +179,8 @@ public class EJBRequest implements Request {
         }
 
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            byte version = in.readByte(); // future use
+
             ClassNotFoundException result = null;
             primaryKey = null;
 //            methodClass = null;
@@ -211,6 +213,9 @@ public class EJBRequest implements Request {
         }
 
         public void writeExternal(ObjectOutput out) throws IOException {
+            // write out the version of the serialized data for future use
+            out.writeByte(1);
+
             out.writeObject(primaryKey);
 
             out.writeObject(interfaceClass);
