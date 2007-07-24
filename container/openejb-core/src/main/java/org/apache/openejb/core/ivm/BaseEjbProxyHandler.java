@@ -25,9 +25,11 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -459,6 +461,30 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     /* change dereference to copy */
     protected Object copyObj(Object object) throws IOException, ClassNotFoundException {
+    	// Check for primitive and other known class types that are immutable.  If detected
+    	// we can safely return them.
+    	Class ooc = object.getClass();
+        if ((ooc == int.class         ) ||
+            (ooc == String.class      ) ||
+            (ooc == long.class        ) ||
+            (ooc == boolean.class     ) ||
+            (ooc == byte.class        ) ||
+            (ooc == float.class       ) ||
+            (ooc == double.class      ) ||
+            (ooc == short.class       ) ||
+            (ooc == Long.class        ) ||
+            (ooc == Boolean.class     ) ||
+            (ooc == Byte.class        ) ||
+            (ooc == Character.class   ) ||
+            (ooc == Float.class       ) ||
+            (ooc == Double.class      ) ||
+            (ooc == Short.class       ) ||
+            (ooc == BigDecimal.class  ))
+        {
+            return object;
+        }
+
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
         ObjectOutputStream out = new ObjectOutputStream(baos);
         out.writeObject(object);
