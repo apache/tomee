@@ -132,6 +132,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
+
         out.writeObject(homeClass);
         out.writeObject(remoteClass);
         out.writeObject(keyClass);
@@ -146,6 +149,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         homeClass = (Class) in.readObject();
         remoteClass = (Class) in.readObject();
         keyClass = (Class) in.readObject();

@@ -46,6 +46,9 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
+        // write out the version of the serialized data for future use
+        out.writeByte(1);
+
 
         handler.client.writeExternal(out);
 
@@ -61,6 +64,8 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        byte version = in.readByte(); // future use
+
         ClientMetaData client = new ClientMetaData();
         EJBMetaDataImpl ejb = new EJBMetaDataImpl();
         ServerMetaData server = new ServerMetaData();
