@@ -463,6 +463,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected Object copyObj(Object object) throws IOException, ClassNotFoundException {
     	// Check for primitive and other known class types that are immutable.  If detected
     	// we can safely return them.
+    	if (object == null) return null;
     	Class ooc = object.getClass();
         if ((ooc == int.class         ) ||
             (ooc == String.class      ) ||
