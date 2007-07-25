@@ -226,7 +226,7 @@ public class CheckClasses extends ValidationBase {
     protected Class loadClass(String clazz) throws OpenEJBException {
         ClassLoader cl = set.getClassLoader();
         try {
-            return Class.forName(clazz, true, cl);
+            return Class.forName(clazz, false, cl);
         } catch (ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()), cnfe);
         }
