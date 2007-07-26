@@ -249,7 +249,7 @@ public class Deploy {
 
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("deploy [options] <file> [<file>...]", "\nConnects to the server and deploys the application.  Note that full remote deployment is not yet supported, deployment can only be done on the same machine as the server.  Track OPENEJB-609 for development of full remote deployment feature.\n\nOptions:", options, "\n");
+        formatter.printHelp("deploy [options] <file> [<file>...]", "\n"+i18n("cmd.deploy.description"), options, "\n");
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {
