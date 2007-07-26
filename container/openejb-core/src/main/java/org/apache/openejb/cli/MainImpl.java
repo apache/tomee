@@ -18,22 +18,30 @@ package org.apache.openejb.cli;
 
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Enumeration;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
+import java.util.Map;
+import java.util.List;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.net.JarURLConnection;
 
 /**
  * Entry point for ALL things OpenEJB.  This will use the new service
@@ -51,8 +59,103 @@ public class MainImpl implements Main {
     private static ResourceFinder finder = null;
     private static String locale = "";
     private static String descriptionBase = "description";
+    private static String descriptionI18n;
 
     public void main(String[] args) {
+        args = processSystemProperties(args);
+
+        finder = new ResourceFinder(BASE_PATH);
+        locale = Locale.getDefault().getLanguage();
+        descriptionI18n = descriptionBase + "." + locale;
+
+
+        CommandLineParser parser = new PosixParser();
+
+        // create the Options
+        Options options = new Options();
+        options.addOption(null, "version", false, "");
+        options.addOption("h", "help", false, "");
+
+        CommandLine line = null;
+        String commandName = null;
+        try {
+            // parse the arguments up until the first
+            // command, then let the rest fall into
+            // the arguments array.
+            line = parser.parse(options, args, true);
+
+            // Get and remove the commandName (first arg)
+            List<String> list = line.getArgList();
+            if (list.size() > 0){
+                commandName = list.get(0);
+                list.remove(0);
+            }
+
+            // The rest of the args will be passed to the command
+            args = line.getArgs();
+        } catch (ParseException exp) {
+            exp.printStackTrace();
+            System.exit(-1);
+        }
+
+        if (line.hasOption("version")) {
+            OpenEjbVersion.get().print(System.out);
+            System.exit(0);
+        } else if (line.hasOption("help") || commandName == null || commandName.equals("help")) {
+            help();
+            System.exit(0);
+        }
+
+
+        Properties props = null;
+        try {
+            props = finder.findProperties(commandName);
+        } catch (IOException e1) {
+            System.out.println("Unavailable command: " + commandName);
+
+            help(false);
+
+            System.exit(1);
+        }
+
+        if (props == null) {
+            System.out.println("Unavailable command: " + commandName);
+            help(false);
+
+            System.exit(1);
+        }
+
+        // Shift the command name itself off the args list
+
+        String mainClass = props.getProperty(MAIN_CLASS_PROPERTY_NAME);
+        if (mainClass == null) {
+            throw new NullPointerException("Command " + commandName + " did not specify a " + MAIN_CLASS_PROPERTY_NAME + " property");
+        }
+
+        Class<?> clazz = null;
+        try {
+            clazz = Thread.currentThread().getContextClassLoader().loadClass(mainClass);
+        } catch (ClassNotFoundException cnfe) {
+            throw new IllegalStateException("Main class of command " + commandName + " does not exist: " + mainClass, cnfe);
+        }
+
+        Method mainMethod = null;
+        try {
+            mainMethod = clazz.getMethod("main", String[].class);
+        } catch (Exception e) {
+            throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass, e);
+        }
+
+        try {
+            // WARNING, Definitely do *not* unwrap 'new Object[]{args}' to 'args'
+            mainMethod.invoke(clazz, new Object[]{args});
+        } catch (Throwable e) {
+            e.printStackTrace();
+            System.exit(-10);
+        }
+    }
+
+    private String[] processSystemProperties(String[] args) {
         ArrayList<String> argsList = new ArrayList<String>();
 
         // We have to pre-screen for openejb.base as it has a direct affect
@@ -78,7 +181,7 @@ public class MainImpl implements Main {
             systemInstance = SystemInstance.get();
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            System.exit(2);
         }
 
         // Read in and apply the conf/system.properties
@@ -110,97 +213,7 @@ public class MainImpl implements Main {
         }
 
         args = (String[]) argsList.toArray(new String[argsList.size()]);
-
-        finder = new ResourceFinder(BASE_PATH);
-        locale = Locale.getDefault().getLanguage();
-
-
-        if (args.length == 0 || args[0].equals("--help")) {
-            System.out.println("Usage: openejb help [command]");
-
-            printAvailableCommands();
-
-            return;
-        }
-
-        boolean help = false;
-        int argIndex = 0;
-
-        if (args[0].equals("help")) {
-            if (args.length < 2) {
-                printAvailableCommands();
-
-                return;
-            }
-
-            help = true;
-
-            argIndex = 1;
-        }
-
-        String commandName = args[argIndex];
-
-        Properties props = null;
-        try {
-            props = finder.findProperties(commandName);
-        } catch (IOException e1) {
-            System.out.println("Unavailable command: " + commandName);
-
-            printAvailableCommands();
-
-            return;
-        }
-
-        if (props == null) {
-            System.out.println("Unavailable command: " + commandName);
-            printAvailableCommands();
-            return;
-        }
-
-        String mainClass = props.getProperty(MAIN_CLASS_PROPERTY_NAME);
-        if (mainClass == null) {
-            throw new NullPointerException("Command " + commandName + " did not specify a " + MAIN_CLASS_PROPERTY_NAME + " property");
-        }
-
-        Class<?> clazz = null;
-        try {
-            clazz = Thread.currentThread().getContextClassLoader().loadClass(mainClass);
-        } catch (ClassNotFoundException cnfe) {
-            throw new IllegalStateException("Main class of command " + commandName + " does not exist: " + mainClass, cnfe);
-        }
-
-        Method mainMethod = null;
-        try {
-            mainMethod = clazz.getMethod("main", new Class[]{String[].class});
-        } catch (Exception e) {
-            throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass, e);
-        }
-
-        argsList.clear();
-
-        int startPoint = 1;
-
-        if (help) {
-            startPoint = 2;
-
-            argsList.add("--help");
-        }
-
-        for (int i = startPoint; i < args.length; i++) {
-            argsList.add(args[i]);
-        }
-
-        args = (String[]) argsList.toArray(new String[argsList.size()]);
-
-        try {
-            mainMethod.invoke(clazz, new Object[]{args});
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        return args;
     }
 
     //DMB: TODO: Delete me
@@ -208,44 +221,66 @@ public class MainImpl implements Main {
         return Thread.currentThread().getContextClassLoader().getResources(BASE_PATH);
     }
 
-    private static void printAvailableCommands() {
-        System.out.println("COMMANDS:");
 
+    private static class Foo {
+        public static void main(String[] args) {
+            MainImpl main = new MainImpl();
+            main.main(args);
+        }
+    }
+
+
+    private static void help() {
+        help(true);
+    }
+    private static void help(boolean printHeader) {
+
+        // Here we are using commons-cli to create the list of available commands
+        // We actually use a different Options object to parse the 'openejb' command
         try {
-            Enumeration<URL> commandHomes = doFindCommands();
+            Options options = new Options();
 
-            if (commandHomes != null) {
-                for (; commandHomes.hasMoreElements();) {
-                    URL cHomeURL = commandHomes.nextElement();
-                    JarURLConnection conn = (JarURLConnection) cHomeURL.openConnection();
-                    JarFile jarfile = conn.getJarFile();
-                    Enumeration<JarEntry> commands = jarfile.entries();
-                    if (commands != null) {
-                        while (commands.hasMoreElements()) {
-                            JarEntry je = commands.nextElement();
-
-                            if (je.getName().indexOf(BASE_PATH) > -1 && !je.getName().equals(BASE_PATH) && !je.getName().endsWith(".help") && !je.getName().endsWith(".examples"))
-                            {
-                                Properties props = finder.findProperties(je.getName().substring(je.getName().lastIndexOf("/") + 1));
-
-                                String key = locale.equals("en") ? descriptionBase : descriptionBase + "." + locale;
-
-                                System.out.println("\n  " + props.getProperty("name") + " - " + props.getProperty(key));
-                            }
-                        }
-                    }
-                }
-            } else {
-                System.out.println("No commands available!");
+            ResourceFinder commandFinder = new ResourceFinder("META-INF");
+            Map<String, Properties> commands = commandFinder.mapAvailableProperties("org.apache.openejb.cli");
+            for (Map.Entry<String, Properties> command : commands.entrySet()) {
+                if (command.getKey().contains(".")) continue;
+                Properties p = command.getValue();
+                String description = p.getProperty(descriptionI18n, p.getProperty(descriptionBase));
+                options.addOption(command.getKey(), false, description);
             }
+
+            HelpFormatter formatter = new HelpFormatter();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            String syntax = "openejb <command> [options] [args]";
+
+            String header = "\nAvailable commands:";
+
+            String footer = "\n" +
+                    "Try 'openejb <command> --help' for help on a specific command.\n" +
+                    "For example 'openejb deploy --help'.\n" +
+                    "\n" +
+                    "Apache OpenEJB -- EJB Container System and Server.\n" +
+                    "For additional information, see http://openejb.apache.org\n" +
+                    "Bug Reports to <users@openejb.apache.org>";
+
+
+            if (!printHeader){
+                pw.append(header).append("\n\n");
+                formatter.printOptions(pw, 74, options, 1, 3);
+            } else {
+                formatter.printHelp(pw, 74, syntax, header, options, 1, 3, footer, false);
+            }
+
+            pw.flush();
+
+            // Fix up the commons-cli output to our liking.
+            String text = sw.toString().replaceAll("\n -", "\n  ");
+            text = text.replace("\nApache OpenEJB","\n\nApache OpenEJB");
+            System.out.print(text);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("\nTry 'openejb help <command>' for more information about the command.\n");
-        System.out.println("Apache OpenEJB -- EJB Container System and EJB Server.");
-        System.out.println("For updates and additional information, visit\n");
-        System.out.println("   http://incubator.apache.org/openejb\n");
-        System.out.println("Bug Reports to <openejb-user@incubator.apache.org>");
     }
 }
