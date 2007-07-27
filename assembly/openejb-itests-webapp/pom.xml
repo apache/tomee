@@ -66,7 +66,7 @@
           <artifactId>geronimo-kernel</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
+          <groupId>org.apache.geronimo.components</groupId>
           <artifactId>geronimo-transaction</artifactId>
         </exclusion>
         <exclusion>

@@ -37,8 +37,6 @@ public class GeronimoConnectionManagerFactory   {
 
     private TransactionManager transactionManager;
 
-    private boolean containerManagedSecurity;
-
     // Type of transaction used by the ConnectionManager
     // local, none, or xa
     private String transactionSupport;
@@ -74,14 +72,6 @@ public class GeronimoConnectionManagerFactory   {
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-    }
-
-    public boolean isContainerManagedSecurity() {
-        return containerManagedSecurity;
-    }
-
-    public void setContainerManagedSecurity(boolean containerManagedSecurity) {
-        this.containerManagedSecurity = containerManagedSecurity;
     }
 
     public String getTransactionSupport() {
@@ -158,7 +148,7 @@ public class GeronimoConnectionManagerFactory   {
         GenericConnectionManager connectionManager = new GenericConnectionManager(
                 createTransactionSupport(),
                 poolingSupport,
-                containerManagedSecurity,
+                null,
                 new ConnectionTrackingCoordinator(true),
                 (RecoverableTransactionManager)transactionManager,
                 name,
