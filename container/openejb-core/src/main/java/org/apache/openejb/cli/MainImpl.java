@@ -221,15 +221,6 @@ public class MainImpl implements Main {
         return Thread.currentThread().getContextClassLoader().getResources(BASE_PATH);
     }
 
-
-    private static class Foo {
-        public static void main(String[] args) {
-            MainImpl main = new MainImpl();
-            main.main(args);
-        }
-    }
-
-
     private static void help() {
         help(true);
     }

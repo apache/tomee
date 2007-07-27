@@ -28,4 +28,6 @@ public class FacilitiesInfo extends InfoObject {
     public TransactionServiceInfo transactionService;
     public SecurityServiceInfo securityService;
 
+    // Don't add anything here unless it's overridable using the -DserviceId.property=value convention
+    public final List<ServiceInfo> services = new ArrayList<ServiceInfo>();
 }

@@ -21,6 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.xbean.finder.ResourceFinder;
 
 import javax.naming.NamingException;
@@ -140,6 +142,7 @@ public class ServiceManager {
         Map availableServices = serviceFinder.mapAvailableServices(ServerService.class);
         List enabledServers = new ArrayList();
 
+        OpenEjbConfiguration conf = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
         for (Iterator iterator = availableServices.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             String serviceName = (String) entry.getKey();
@@ -147,6 +150,16 @@ public class ServiceManager {
 
             overrideProperties(serviceName, serviceProperties);
             serviceProperties.setProperty("name", serviceName);
+
+            if (conf != null && conf.facilities != null){
+                ServiceInfo info = new ServiceInfo();
+                info.className = ((Class) serviceProperties.get(ServerService.class)).getName();
+                info.serviceType = "ServerService";
+                info.id = serviceName;
+                info.properties = serviceProperties;
+                conf.facilities.services.add(info);
+            }
+
 
             if (isEnabled(serviceProperties)) {
 
