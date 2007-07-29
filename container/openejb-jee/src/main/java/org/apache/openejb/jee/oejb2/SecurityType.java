@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee.oejb2;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,9 +28,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "securityType", namespace = "http://geronimo.apache.org/xml/ns/security-2.0", propOrder = {
-    "defaultSubject", "roleMappings"
+    "description", "credentialStoreRef", "defaultSubject", "roleMappings"
 })
 public class SecurityType extends AbstractSecurityType {
+    @XmlElement(name="description", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    protected List<Object> description;
+    @XmlElement(name="credential-store-ref", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    protected Object credentialStoreRef;
     @XmlElement(name="default-subject", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected Object defaultSubject;
     @XmlElement(name="role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
