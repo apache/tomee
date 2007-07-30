@@ -29,7 +29,6 @@ import java.math.BigDecimal;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -45,7 +44,6 @@ import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.AccessLocalException;
-import javax.ejb.EJBAccessException;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
@@ -59,7 +57,11 @@ import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
-    protected static final Hashtable liveHandleRegistry = new Hashtable();
+
+    private static class ProxyRegistry {
+
+        protected final Hashtable liveHandleRegistry = new Hashtable();
+    }
 
     public final Object deploymentID;
 
@@ -503,8 +505,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.isInvalidReference = true;
     }
 
-    protected static void invalidateAllHandlers(Object key) {
-        HashSet<BaseEjbProxyHandler> set = (HashSet) liveHandleRegistry.remove(key);
+    protected void invalidateAllHandlers(Object key) {
+        HashSet<BaseEjbProxyHandler> set = (HashSet) getLiveHandleRegistry().remove(key);
         if (set == null) return;
         synchronized (set) {
             for (BaseEjbProxyHandler handler : set) {
@@ -515,8 +517,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected abstract Object _writeReplace(Object proxy) throws ObjectStreamException;
 
-    protected static void registerHandler(Object key, BaseEjbProxyHandler handler) {
-        HashSet set = (HashSet) liveHandleRegistry.get(key);
+    protected void registerHandler(Object key, BaseEjbProxyHandler handler) {
+        HashSet set = (HashSet) getLiveHandleRegistry().get(key);
         if (set != null) {
             synchronized (set) {
                 set.add(handler);
@@ -524,7 +526,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         } else {
             set = new HashSet();
             set.add(handler);
-            liveHandleRegistry.put(key, set);
+            getLiveHandleRegistry().put(key, set);
         }
     }
 
@@ -542,4 +544,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     public void setDeploymentInfo(CoreDeploymentInfo deploymentInfo) {
         this.deploymentInfo = new WeakReference<CoreDeploymentInfo>(deploymentInfo);
     }
+
+    public Hashtable getLiveHandleRegistry() {
+        CoreDeploymentInfo deploymentInfo = getDeploymentInfo();
+        ProxyRegistry proxyRegistry = deploymentInfo.get(ProxyRegistry.class);
+        if (proxyRegistry == null){
+            proxyRegistry = new ProxyRegistry();
+            deploymentInfo.set(ProxyRegistry.class, proxyRegistry);
+        }
+        return proxyRegistry.liveHandleRegistry;
+    }
+
 }
