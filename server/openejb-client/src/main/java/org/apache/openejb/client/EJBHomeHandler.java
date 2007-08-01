@@ -167,9 +167,9 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             }
         } catch (Throwable oe) {
             if (remote) {
-                throw new RemoteException("Unknown Container Exception", oe.getCause());
+                throw new RemoteException("Unknown Client Exception", oe);
             } else {
-                throw new EJBException("Unknown Container Exception").initCause(oe.getCause());
+                throw new EJBException("Unknown Client Exception").initCause(oe);
             }
         }
 
