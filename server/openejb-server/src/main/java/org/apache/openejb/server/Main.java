@@ -17,11 +17,25 @@
 package org.apache.openejb.server;
 
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.IOException;
 import java.util.Properties;
+import java.util.Map;
+import java.util.Set;
+import java.util.Collections;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.cli.SystemExitException;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.xbean.finder.ResourceFinder;
 
 /**
  * Assemble OpenEJB instance and boot it up
@@ -30,154 +44,115 @@ import org.apache.openejb.loader.SystemInstance;
  */
 public class Main {
 
-    private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
+    private static Messages messages = new Messages(Main.class);
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws SystemExitException {
+        CommandLineParser parser = new PosixParser();
+
+        // create the Options
+        Options options = new Options();
+        options.addOption(option("v", "version", "cmd.start.opt.version"));
+        options.addOption(option("h", "help", "cmd.start.opt.help"));
+        options.addOption(option(null, "conf", "file", "cmd.start.opt.conf"));
+        options.addOption(option(null, "local-copy", "boolean", "cmd.start.opt.localCopy"));
+        options.addOption(option(null, "examples", "cmd.start.opt.examples"));
+
+        ResourceFinder finder = new ResourceFinder("META-INF/");
+
+        Set<String> services = null;
+        try {
+            Map<String, Properties> serviceEntries = finder.mapAvailableProperties(ServerService.class.getName());
+            services = serviceEntries.keySet();
+            for (String service : services) {
+                options.addOption(option(null, service+"-port", "int", "cmd.start.opt.port", service));
+                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt.bind", service));
+            }
+        } catch (IOException e) {
+            services = Collections.EMPTY_SET;
+        }
+
+        CommandLine line = null;
+        try {
+            // parse the command line arguments
+            line = parser.parse(options, args);
+        } catch (ParseException exp) {
+            help(options);
+            throw new SystemExitException(-1);
+        }
+
+        if (line.hasOption("help")) {
+            help(options);
+            return;
+        } else if (line.hasOption("version")) {
+            OpenEjbVersion.get().print(System.out);
+            return;
+        } else if (line.hasOption("examples")) {
+            try {
+                String text = finder.findString("org.apache.openejb.cli/start.examples");
+                System.out.println(text);
+                return;
+            } catch (IOException e) {
+                System.err.println("Unable to print examples:");
+                e.printStackTrace();
+                throw new SystemExitException(-2);
+            }
+        }
+
+        Properties props = SystemInstance.get().getProperties();
+
+        if (line.hasOption("conf")) {
+            props.setProperty("openejb.configuration", line.getOptionValue("conf"));
+        } else if (line.hasOption("local-copy")) {
+            String value = line.getOptionValue("local-copy");
+            if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("no") || value.equalsIgnoreCase("off")) {
+                props.setProperty("openejb.localcopy", "false");
+            } else {
+                props.setProperty("openejb.localcopy", "true");
+            }
+        }
+
+        for (String service : services) {
+            String[] opts = {"port", "bind"};
+            for (String opt : opts) {
+                String option = service + "-" + opt;
+                if (line.hasOption(option)){
+                    props.setProperty(service+"."+opt, line.getOptionValue(option));
+                }
+            }
+        }
 
         try {
-            Properties props = parseArguments(args);
-            SystemInstance.init(props);
             SystemInstance system = SystemInstance.get();
             File libs = system.getHome().getDirectory("lib");
             system.getClassPath().addJarsToPath(libs);
-            initServer(props);
+            initServer();
         } catch (DontStartServerException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Parse arguments and override any {@link System} properties returned via
-     * {@link System#getProperties()}.
-     *
-     * @param args
-     *            command line arguments
-     * @return properties as defined in System and on the command line
-     * @throws DontStartServerException
-     *             thrown as an indication to not boot up OpenEJB instance, e.g.
-     *             after printing out properties, help, etc.
-     */
-    private static Properties parseArguments(String args[]) throws DontStartServerException {
-        Properties props = new Properties();
-        props.putAll(System.getProperties());
-
-        props.put("openejb.server.ip", "127.0.0.1");
-        props.put("openejb.server.port", "4201");
-        props.put("openejb.server.threads", "20");
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-h")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.server.ip", args[++i]);
-                }
-            } else if (args[i].equals("-p")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.server.port", args[++i]);
-                }
-            } else if (args[i].equals("-t")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.server.threads", args[++i]);
-                }
-            } else if (args[i].equals("-conf")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.configuration", args[++i]);
-                }
-            } else if (args[i].equals("-l")) {
-                if (args.length > i + 1) {
-                    props.setProperty("log4j.configuration", args[++i]);
-                }
-            } else if (args[i].equals("-d")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.home", args[++i]);
-                }
-            } else if (args[i].equals("--admin-ip")) {
-                if (args.length > i + 1) {
-                    props.setProperty("openejb.server.admin-ip", args[++i]);
-                }
-            } else if (args[i].startsWith("--local-copy")) {
-                if (args[i].endsWith("false") || args[i].endsWith("FALSE") || args[i].endsWith("no")
-                        || args[i].endsWith("NO")) {
-                    props.setProperty("openejb.localcopy", "false");
-                } else {
-                    props.setProperty("openejb.localcopy", "true");
-                }
-            } else if (args[i].equals("--help")) {
-                printHelp();
-                throw new DontStartServerException();
-            } else if (args[i].equals("-version")) {
-                printVersion();
-                throw new DontStartServerException();
-            } else if (args[i].equals("-examples")) {
-                printExamples();
-                throw new DontStartServerException();
-            }
-        }
-
-        props.setProperty("org/openejb/configuration_factory", "org.apache.openejb.config.ConfigurationFactory");
-
-        return props;
+    private static void help(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("start [options]", "\n"+i18n("cmd.start.description"), options, "\n");
     }
 
-    private static void printVersion() {
-        /*
-         * Output startup message
-         */
-        Properties versionInfo = new Properties();
-
-        try {
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-        } catch (java.io.IOException e) {}
-        System.out.println("OpenEJB Remote Server " + versionInfo.get("version") + "    build: "
-                + versionInfo.get("date") + "-" + versionInfo.get("time"));
-        System.out.println("" + versionInfo.get("url"));
+    private static Option option(String shortOpt, String longOpt, String description) {
+        return OptionBuilder.withLongOpt(longOpt).withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static void printHelp() {
-        String header = "OpenEJB Remote Server ";
-        try {
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {}
-
-        System.out.println(header);
-
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "start.help").openConnection().getInputStream();
-
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
-            }
-        } catch (java.io.IOException e) {}
+    private static Option option(String shortOpt, String longOpt, String argName, String description, Object... details) {
+        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static void printExamples() {
-        String header = "OpenEJB Remote Server ";
-        try {
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
-            header += versionInfo.get("version");
-        } catch (java.io.IOException e) {}
-
-        System.out.println(header);
-
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "start.examples").openConnection().getInputStream();
-
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
-            }
-        } catch (java.io.IOException e) {}
+    private static String i18n(String key, Object... details) {
+        return messages.format(key, details);
     }
 
-    private static void initServer(Properties props) throws Exception {
+
+    private static void initServer() throws Exception {
         Server server = new Server();
-        server.init(props);
+        server.init(SystemInstance.get().getProperties());
         server.start();
     }
 }

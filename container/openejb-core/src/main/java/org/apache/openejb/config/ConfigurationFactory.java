@@ -124,7 +124,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new InitEjbDeployments());
 
-//        chain.add(new DebuggableVmHackery());
+        chain.add(new DebuggableVmHackery());
 
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2Conversion());

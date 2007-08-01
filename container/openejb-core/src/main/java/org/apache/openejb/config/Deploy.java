@@ -25,6 +25,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -58,7 +59,7 @@ public class Deploy {
     private static final int BUF_SIZE = 8192;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SystemExitException {
 
         CommandLineParser parser = new PosixParser();
 
@@ -78,15 +79,15 @@ public class Deploy {
             line = parser.parse(options, args);
         } catch (ParseException exp) {
             help(options);
-            System.exit(-1);
+            throw new SystemExitException(-1);
         }
 
         if (line.hasOption("help")) {
             help(options);
-            System.exit(0);
+            return;
         } else if (line.hasOption("version")) {
             OpenEjbVersion.get().print(System.out);
-            System.exit(0);
+            return;
         }
 
         if (line.getArgList().size() == 0) {
@@ -102,7 +103,7 @@ public class Deploy {
             String dir = line.getOptionValue("dir", "apps");
             apps = SystemInstance.get().getBase().getDirectory(dir);
         } catch (IOException e) {
-
+            throw new SystemExitException(-1);
         }
 
         if (!apps.exists()) {
@@ -125,10 +126,10 @@ public class Deploy {
         } catch (javax.naming.ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(messages.format("cmd.deploy.serverOffline"));
-            System.exit(1);
+            throw new SystemExitException(1);
         } catch (javax.naming.NamingException e) {
             System.out.println("DeployerEjb does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
-            System.exit(2);
+            throw new SystemExitException(2);
         }
 
         int exitCode = 0;
@@ -202,7 +203,9 @@ public class Deploy {
             }
         }
 
-        System.exit(exitCode);
+        if (exitCode != 0){
+            throw new SystemExitException(exitCode);
+        }
     }
 
     private static void checkSource(File file) throws DeploymentTerminatedException {

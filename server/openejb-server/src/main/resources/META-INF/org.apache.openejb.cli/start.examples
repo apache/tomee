@@ -14,9 +14,9 @@ Example: Simplest scenario
    java.naming.security.principal   = myuser
    java.naming.security.credentials = mypass
 
-Example: -conf file
+Example: --conf=file
 
- openejb start -conf C:\openejb\conf\mytest.conf
+ openejb start --conf=C:\openejb\conf\mytest.conf
 
  Sets the openejb.configuration system variable to the file
  C:\openejb\conf\mytest.conf.  When the server starts up and
@@ -148,4 +148,4 @@ Example: -D<service>.disabled=<true/false>
  OpenEJB Server starts.
 
 
-Bug Reports to <user@openejb.org>
+Bug Reports to <users@apache.openejb.org>

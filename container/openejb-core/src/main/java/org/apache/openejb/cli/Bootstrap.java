@@ -98,7 +98,11 @@ public class Bootstrap {
 
         Class<?> clazz = Bootstrap.class.getClassLoader().loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
         Main main = (Main) clazz.newInstance();
-        main.main(args);
+        try {
+            main.main(args);
+        } catch (SystemExitException e) {
+            System.exit(e.getExitCode());
+        }
     }
 
 }
