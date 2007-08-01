@@ -120,17 +120,17 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             InterfaceType objectInterfaceType = this.interfaceType.getCounterpart();
 
-            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), primaryKey, objectInterfaceType, this.interfaces);
+            EjbObjectProxyHandler handler = newEjbObjectHandler(getDeploymentInfo(), primaryKey, objectInterfaceType, this.getInterfaces());
 
-            List<Class> proxyInterfaces = new ArrayList<Class>(handler.interfaces.size() + 1);
+            List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
 
-            proxyInterfaces.addAll(handler.interfaces);
+            proxyInterfaces.addAll(handler.getInterfaces());
             proxyInterfaces.add(IntraVmProxy.class);
 
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
 
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + interfaces.get(0), iae);
+            throw new RuntimeException("Could not create IVM proxy for " + getInterfaces().get(0), iae);
         }
     }
 
