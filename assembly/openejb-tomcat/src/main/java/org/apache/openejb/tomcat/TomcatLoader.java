@@ -58,7 +58,7 @@ public class TomcatLoader implements Loader {
 
         // DMB: This is ugly here, all this code could use some cleaning
         if ("tomcat-system".equals(props.getProperty("openejb.loader"))){
-            SystemInstance.get().getBase().getDirectory("beans", true);
+            SystemInstance.get().getBase().getDirectory("apps", true);
         }
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
