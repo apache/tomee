@@ -90,10 +90,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     */
     protected boolean doIntraVmCopy;
     protected boolean doCrossClassLoaderCopy;
-    protected final InterfaceType interfaceType;
-    private final WeakReference<List<Class>> interfaces;
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
-    private final WeakReference<Class> mainInterface;
+    protected final InterfaceType interfaceType;
+    private transient WeakReference<List<Class>> interfaces;
+    private transient WeakReference<Class> mainInterface;
 
     public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
         this.container = (RpcContainer) deploymentInfo.getContainer();
@@ -174,19 +174,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             value = properties.getProperty(org.apache.openejb.core.EnvProps.INTRA_VM_COPY);
         }
         return value == null || !value.equalsIgnoreCase("FALSE");
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException, NoSuchMethodException {
-
-        in.defaultReadObject();
-
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        setDeploymentInfo((CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID));
-        container = (RpcContainer) getDeploymentInfo().getContainer();
-
-        if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
-            doCrossClassLoaderCopy = true;
-        }
     }
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {
@@ -561,6 +548,29 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             deploymentInfo.set(ProxyRegistry.class, proxyRegistry);
         }
         return proxyRegistry.liveHandleRegistry;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+
+        out.writeObject(interfaces.get());
+        out.writeObject(mainInterface.get());
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+
+        in.defaultReadObject();
+
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        setDeploymentInfo((CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID));
+        container = (RpcContainer) getDeploymentInfo().getContainer();
+
+        if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
+            doCrossClassLoaderCopy = true;
+        }
+
+        interfaces = new WeakReference<List<Class>>((List<Class>) in.readObject());
+        mainInterface = new WeakReference<Class>((Class) in.readObject());
     }
 
 }

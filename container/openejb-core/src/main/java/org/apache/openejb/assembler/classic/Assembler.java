@@ -407,10 +407,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     jaccPermissionsBuilder.install(policyContext);
                 }
 
+                MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
+                methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
 
-                // process transaction attributes
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, ejbJar.methodTransactions);
                     containerSystem.addDeployment(deploymentInfo);
                 }
 

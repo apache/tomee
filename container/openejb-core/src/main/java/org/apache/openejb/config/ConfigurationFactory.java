@@ -128,7 +128,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (debuggableVmHackery.equalsIgnoreCase("true")){
             chain.add(new DebuggableVmHackery());
         }
-        
+
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2Conversion());
         chain.add(new SunConversion());
