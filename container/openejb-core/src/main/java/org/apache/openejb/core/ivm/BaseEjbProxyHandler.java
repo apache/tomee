@@ -35,6 +35,8 @@ import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.WeakHashMap;
+import java.util.Set;
 
 import javax.ejb.EJBException;
 import javax.ejb.NoSuchObjectLocalException;
@@ -92,7 +94,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected boolean doCrossClassLoaderCopy;
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
     protected final InterfaceType interfaceType;
-    private transient WeakReference<List<Class>> interfaces;
+    private transient WeakHashMap<Class,Object> interfaces;
     private transient WeakReference<Class> mainInterface;
 
     public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
@@ -107,19 +109,19 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
         }
 
-        this.interfaces = new WeakReference(Collections.unmodifiableList(interfaces));
-
         this.doIntraVmCopy = !interfaceType.isLocal();
 
         if (!interfaceType.isLocal()){
             doIntraVmCopy = REMOTE_COPY_ENABLED;
         }
 
+        setInterfaces(interfaces);
+
         if (interfaceType.isHome()){
-            mainInterface = new WeakReference(deploymentInfo.getInterface(interfaceType));
+            setMainInterface(deploymentInfo.getInterface(interfaceType));
         } else {
             // Then arbitrarily pick the first interface
-            mainInterface = new WeakReference(interfaces.get(0));
+            setMainInterface(interfaces.get(0));
         }
     }
 
@@ -135,20 +137,21 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         // Home's only have one interface ever.  We don't
         // need to verify that the method invoked is in
         // it's interface.
-        if (interfaceType.isHome()) return getMainInterface();
+        Class mainInterface = getMainInterface();
+        if (interfaceType.isHome()) return mainInterface;
 
         Class declaringClass = method.getDeclaringClass();
 
         // If our "main" interface is or extends the method's declaring class
         // then we're good.  We know the main interface has the method being
         // invoked and it's safe to return it as the invoked interface.
-        if (declaringClass.isAssignableFrom(getMainInterface())){
-            return getMainInterface();
+        if (declaringClass.isAssignableFrom(mainInterface)){
+            return mainInterface;
         }
 
         // If the method being invoked isn't in the "main" interface
         // we need to find a suitable interface or throw an exception.
-        for (Class secondaryInterface : getInterfaces()) {
+        for (Class secondaryInterface : interfaces.keySet()) {
             if (declaringClass.isAssignableFrom(secondaryInterface)){
                 return secondaryInterface;
             }
@@ -159,14 +162,26 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         throw new IllegalStateException("Received method invocation and cannot determine corresponding business interface: method=" + method);
     }
 
-    public List<Class> getInterfaces() {
-        return interfaces.get();
-    }
-
     public Class getMainInterface() {
         return mainInterface.get();
     }
-    
+
+    private void setMainInterface(Class referent) {
+        mainInterface = new WeakReference<Class>(referent);
+    }
+
+    private void setInterfaces(List<Class> interfaces) {
+        this.interfaces = new WeakHashMap<Class,Object>(interfaces.size());
+        for (Class clazz : interfaces) {
+            this.interfaces.put(clazz, null);
+        }
+    }
+
+    public List<Class> getInterfaces() {
+        Set<Class> classes = interfaces.keySet();
+        return new ArrayList(classes);
+    }
+
     private static boolean parseRemoteCopySetting() {
         Properties properties = SystemInstance.get().getProperties();
         String value = properties.getProperty("openejb.localcopy");
@@ -553,8 +568,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
 
-        out.writeObject(interfaces.get());
-        out.writeObject(mainInterface.get());
+        out.writeObject(getInterfaces());
+        out.writeObject(getMainInterface());
     }
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
@@ -569,8 +584,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             doCrossClassLoaderCopy = true;
         }
 
-        interfaces = new WeakReference<List<Class>>((List<Class>) in.readObject());
-        mainInterface = new WeakReference<Class>((Class) in.readObject());
+        setInterfaces((List<Class>) in.readObject());
+        setMainInterface((Class) in.readObject());
     }
 
 }
