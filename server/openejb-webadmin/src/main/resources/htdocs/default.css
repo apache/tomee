@@ -1,0 +1,278 @@
+BODY { 
+	background: #ffffff; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	font-size: 12px;
+}
+
+A:link, 
+A:visited, 
+A:active { 
+	text-decoration: none 
+}
+
+.userdata	{ 
+	behavior: url('#default#userdata'); 
+}
+
+.bg { 
+	background-repeat: no-repeat
+}
+
+.pageTitle {
+	font-size: 18px; 
+	font-family: arial, "Helvetica", "Arial", "sans-serif"; 
+	line-height: 28px; 
+	font-weight: bold; 
+	color: #666666;
+}
+
+.pageSubTitle {
+	font-size: 15px; 
+	font-family: arial, "Helvetica", "Arial", "sans-serif"; 
+	line-height: 40px; 
+	font-weight: bold; 
+	color: #444444;
+}
+
+.bodyGrey { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.bodyBlack { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.option { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.option-flag { 
+	font-size: 12px; 
+	font-family: courier new, arial, helvetica, sans-serif;
+	line-height: 16px; color: #7270c2;
+	font-weight: bold; 
+}
+
+.option-param { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #7270c2;
+}
+
+.note { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.note-caption { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #FFFFFF;
+	font-weight: bold; 
+}
+
+.toc { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.bodyBlackOLD { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #222222;
+}
+
+
+h1 { 
+	font-size: 17px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 20px; color: #000000;
+}
+
+h2 { 
+	font-size: 15px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 20px; color: #000000;
+}
+
+h3 { 
+	font-size: 13px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 17px; color: #000000;
+}
+
+h4 { 
+	font-size: 11px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 15px; color: #000000;
+}
+
+.log4j-info {
+	font-size: 12px;
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px;
+	color: Black;
+}
+
+.log4j-debug {
+	font-size: 12px;
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px;
+	color: Green;
+}
+
+.log4j-warn {
+	font-size: 12px;
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px;
+	color: #B7B700;
+}
+
+.log4j-error {
+	font-size: 12px;
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px;
+	color: Red;
+}
+
+.log4j-fatal {
+	font-size: 12px;
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	font-weight: bold;
+	line-height: 16px;
+	color: Red;
+}
+
+.bodyCode { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #757585;
+}
+
+.command { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #757585;
+}
+
+.code-title { 
+	font-size: 12px; 
+	font-family: arial, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 12px; color: #666666;
+}
+
+.code-block { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px; color: #757585;
+}
+
+.code-comment { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px; color: #8888CC;
+}
+
+.legalBlack { 
+	font-size: 10px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #000000;
+}
+
+.legalGrey { 
+	font-size: 9px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #999999;
+}
+
+.bigGrey { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.projectBlack { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 11px; color: #000000;
+}
+
+.header { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #181818;
+}
+
+.teamMember { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #181818;
+}
+
+.teamMemberRole { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #A8A8A8;
+}
+
+.menuTopOn { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 0px; 
+	color: #6763a9;
+}
+
+.menuTopOff { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 0px; 
+	color: #999999;
+}
+
+.menuProjectOn { 
+	font-size: 12px; 
+	font-family: "Helvetica", "Arial", "sans-serif"; 
+	line-height: 20px; 
+	font-weight: bold; 
+	color: #cbcbeb;
+}
+
+.menuProjectOff { 
+	font-size: 12px; 
+	font-family: "Helvetica", "Arial", "sans-serif"; 
+	line-height: 20px; 
+	font-weight: bold; 
+	color: #ffffff;
+}
+
+.subMenuOn { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 20px; 
+	font-weight: bold; 
+	color: #4d4b7e;
+}
+
+.subMenuOff { 
+	font-size: 10px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 16px; 
+	font-weight: bold; 
+	color: #cbcbeb;
+}
+
+

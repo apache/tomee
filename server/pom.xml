@@ -30,6 +30,7 @@
   <modules>
     <module>openejb-ejbd</module>
     <module>openejb-admin</module>
+    <module>openejb-webadmin</module>
     <module>openejb-server</module>
     <module>openejb-client</module>
     <module>openejb-http</module>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+  <display-name>OpenEJB Loader Application</display-name>
+
+  <!-- OpenEJB Loader Servlet Configuration -->
+  <servlet>
+    <servlet-name>loader</servlet-name>
+    <servlet-class>org.openejb.loader.LoaderServlet</servlet-class>
+    
+    <init-param>
+      
+      <param-name>openejb.home</param-name>
+      <param-value>@OPENEJB_HOME@</param-value>
+      
+      <description>
+        Set this to the exact path where OpenEJB is installed.
+        
+        If you are using Tomcat, setting this variable means you no 
+        longer will need to set the CATALINA_OPTS or JAVA_OPTS system 
+        variable to include the OPENEJB_HOME variable.
+      </description>
+    
+    </init-param>
+ 
+    <!--
+    <init-param>
+      
+      <param-name>openejb.configuration</param-name>
+      <param-value>conf/openejb.conf</param-value>
+      
+      <description>
+        Sets the OpenEJB configuration to the specified file.        
+        
+        This will be resolved relative to the openejb.home if 
+        it is not an absolute path.
+      </description>
+    
+    </init-param>
+    -->
+
+ 
+    <!--
+    <init-param>
+      
+      <param-name>openejb.localcopy</param-name>
+      <param-value>true</param-value>
+      
+      <description>
+        When set to true, the container system will marshall
+        (ie, copy) all calls between beans are required by 
+        the EJB 1.1 specification.  
+        
+        When set to false, the container system will pass 
+        parameters and return values without copying or 
+        marshalling as is required for EJB 2.0 Local 
+        interfaces.  
+        
+        Default is true. 
+      </description>
+    
+    </init-param>
+    -->
+    
+    <load-on-startup>0</load-on-startup>
+
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>loader</servlet-name>
+    <url-pattern>/remote/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

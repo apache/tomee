@@ -1,0 +1,6 @@
+    server      = org.apache.openejb.webadmin.httpd.HttpServer
+    bind        = 127.0.0.1
+    port        = 4203
+    disabled    = false
+    threads     = 50
+
