@@ -52,6 +52,7 @@ import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.EjbLink;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -167,7 +168,7 @@ public class JndiEncInfoBuilder {
         beanInfo.jndiEnc = jndi;
     }
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private final Map<String,EnterpriseBeanInfo> allDeployments = new TreeMap<String,EnterpriseBeanInfo>();

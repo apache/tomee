@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class DirectoryMonitor {
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.deploy", DirectoryMonitor.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DirectoryMonitor.class.getPackage().getName());
 
     private boolean run;
 

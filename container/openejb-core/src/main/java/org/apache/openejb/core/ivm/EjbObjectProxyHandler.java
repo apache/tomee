@@ -28,11 +28,12 @@ import javax.ejb.AccessLocalException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.spi.ApplicationServer;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     static final java.util.HashMap dispatchTable;
 
     static {

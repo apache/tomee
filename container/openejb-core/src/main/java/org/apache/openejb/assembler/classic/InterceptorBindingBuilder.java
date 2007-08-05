@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.openejb.util.Classes;
@@ -40,7 +41,7 @@ import java.lang.reflect.Modifier;
  */
 public class InterceptorBindingBuilder {
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", InterceptorBindingBuilder.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, InterceptorBindingBuilder.class.getPackage().getName());
     private final List<InterceptorBindingInfo> packageAndClassBindings;
 
     public static enum Level {

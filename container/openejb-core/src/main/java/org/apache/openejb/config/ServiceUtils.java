@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.ServicesJar;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -37,7 +38,7 @@ public class ServiceUtils {
     public static final String defaultProviderURL = "org.apache.openejb";
     private static Map<String, Map<String, ServiceProvider>> loadedServiceJars = new HashMap<String, Map<String, ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
-    public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     public static class ProviderInfo {
         private final String packageName;

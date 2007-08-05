@@ -32,13 +32,14 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarUtils;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
 public class EjbJarUtils {
 
     public static final Messages messages = new Messages("org.apache.openejb.util.resources");
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
     private final EjbJar ejbJar;
     private final String jarLocation;

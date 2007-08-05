@@ -17,6 +17,7 @@
 package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.core.EnvProps;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.resource.ResourceException;
@@ -34,7 +35,7 @@ import java.util.Set;
  */
 public class JdbcManagedConnectionFactory implements javax.resource.spi.ManagedConnectionFactory, java.io.Serializable {
     private static final long serialVersionUID = 8797357228901190014L;
-    protected Logger logger = Logger.getInstance("OpenEJB.connector", "org.apache.openejb.alt.util.resources");
+    protected Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, "org.apache.openejb.alt.util.resources");
     private ManagedConnectionFactory factory;
     private String defaultUserName;
     private String defaultPassword;

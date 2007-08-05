@@ -25,6 +25,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.transaction.TransactionContext;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.ejb.SessionSynchronization;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.lang.reflect.Method;
 
 public class SessionSynchronizationCoordinator implements javax.transaction.Synchronization {
-    private static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private static Map<Transaction,SessionSynchronizationCoordinator> coordinators = new HashMap<Transaction,SessionSynchronizationCoordinator>();
 

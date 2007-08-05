@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
@@ -47,7 +48,7 @@ public class ValidateEjbModule implements DynamicDeployer {
         EjbValidator validator = new EjbValidator();
         ValidationResults set = validator.validateJar(ejbModule);
         if (set.hasErrors() || set.hasFailures()) {
-            Logger logger = Logger.getInstance("OpenEJB.startup.validation", "org.apache.openejb.config.rules");
+            Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
 
             ValidationError[] errors = set.getErrors();
             for (int j = 0; j < errors.length; j++) {

@@ -43,6 +43,7 @@ import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
@@ -90,7 +91,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", Assembler.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class.getPackage().getName());
 
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;

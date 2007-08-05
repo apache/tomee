@@ -17,6 +17,7 @@
 package org.apache.openejb.core.security.jaas;
 
 import org.apache.openejb.util.ConfUtils;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.security.auth.Subject;
@@ -44,7 +45,7 @@ public class PropertiesLoginModule implements LoginModule {
     private final String USER_FILE = "UsersFile";
     private final String GROUP_FILE = "GroupsFile";
 
-    private static Logger log = Logger.getInstance("OpenEJB.security", "org.apache.openejb.util.resources");
+    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     private Subject subject;
     private CallbackHandler callbackHandler;

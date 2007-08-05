@@ -21,6 +21,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.xml.bind.JAXBException;
@@ -32,7 +33,7 @@ import java.io.FileOutputStream;
  * @version $Rev$ $Date$
  */
 public class OutputGeneratedDescriptors implements DynamicDeployer {
-    private static final Logger logger = Logger.getInstance("OpenEJB.startup.config", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         for (EjbModule ejbModule : appModule.getEjbModules()) {

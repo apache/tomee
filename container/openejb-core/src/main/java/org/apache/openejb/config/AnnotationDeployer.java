@@ -62,6 +62,7 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.finder.ClassFinder;
@@ -127,7 +128,7 @@ import java.util.HashMap;
  * @version $Rev$ $Date$
  */
 public class AnnotationDeployer implements DynamicDeployer {
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", AnnotationDeployer.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
             "javax.ejb.SessionContext",

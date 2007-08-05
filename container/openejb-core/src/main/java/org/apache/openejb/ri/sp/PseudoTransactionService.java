@@ -34,13 +34,14 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.openejb.spi.TransactionService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
  * @org.apache.xbean.XBean element="pseudoTransactionService"
  */
 public class PseudoTransactionService implements TransactionService, TransactionManager, TransactionSynchronizationRegistry {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.core.cmp");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.core.cmp");
     private final ThreadLocal<MyTransaction> threadTransaction = new ThreadLocal<MyTransaction>();
 
     public void init(Properties props) {

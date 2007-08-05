@@ -34,6 +34,7 @@ import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -56,7 +57,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MdbContainer implements RpcContainer, TransactionContainer {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;

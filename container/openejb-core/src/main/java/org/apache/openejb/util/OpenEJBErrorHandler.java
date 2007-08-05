@@ -23,7 +23,7 @@ import org.apache.openejb.OpenEJBException;
 
 public class OpenEJBErrorHandler {
 
-    private static Logger _logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static Logger _logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static Messages _messages = new Messages("org.apache.openejb.util.resources");
 
     public static void handleUnknownError(Throwable error, String systemLocation) {

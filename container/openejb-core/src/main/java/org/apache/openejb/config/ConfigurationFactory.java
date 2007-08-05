@@ -61,6 +61,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.Property;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -78,7 +79,7 @@ import java.util.Properties;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
-    private static final Logger logger = Logger.getInstance("OpenEJB.startup.config", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private String configLocation = "";

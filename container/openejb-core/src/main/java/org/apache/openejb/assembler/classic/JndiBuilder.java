@@ -22,6 +22,7 @@ import javax.naming.Reference;
 import javax.jms.MessageListener;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -42,7 +43,7 @@ import java.util.HashMap;
  */
 public class JndiBuilder {
 
-    public static final Logger logger = Logger.getInstance("OpenEJB.startup", JndiBuilder.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
     private JndiNameStrategy strategy = new LegacyAddedSuffixStrategy();
     private final Context context;

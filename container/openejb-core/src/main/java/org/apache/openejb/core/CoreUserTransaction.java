@@ -24,6 +24,7 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.Status;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.openejb.util.Logger;
  */
 public class CoreUserTransaction implements javax.transaction.UserTransaction, java.io.Serializable {
     private static final long serialVersionUID = 9203248912222645965L;
-    private static final Logger transactionLogger = Logger.getInstance("Transaction", "org.apache.openejb.util.resources");
+    private static final Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
 
     private transient TransactionManager transactionManager;
 

@@ -20,6 +20,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.transaction.Transaction;
@@ -51,8 +52,8 @@ public abstract class TransactionPolicy {
     protected final TransactionContainer container;
     private TransactionManager manager;
 
-    protected final static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
-    protected final static Logger txLogger = Logger.getInstance("Transaction", "org.apache.openejb.util.resources");
+    protected final static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    protected final static Logger txLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
 
     public TransactionPolicy(Type policyType, TransactionContainer container) {
         this.policyType = policyType;

@@ -18,6 +18,7 @@ package org.apache.openejb.resource.jdbc;
 
 import javax.resource.spi.LocalTransaction;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -28,7 +29,7 @@ public class JdbcLocalTransaction implements LocalTransaction {
     protected boolean isActiveTransaction = false;
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
-    protected static final Logger logger = Logger.getInstance("OpenEJB.resource.jdbc", "org.apache.openejb.util.resources");
+    protected static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, "org.apache.openejb.util.resources");
 
     public JdbcLocalTransaction(JdbcManagedConnection managedConn) {
         this.sqlConn = managedConn.getSQLConnection();

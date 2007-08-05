@@ -28,10 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class DatabaseTimerStore implements TimerStore {
-    private static final Logger log = Logger.getInstance("Timer", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     private static final String createSequenceSQL = "create sequence timertasks_seq";
     private static final String createTableSQLWithSequence = "create table timertasks (id long primary key, serverid varchar(256) not null, timerkey varchar(256) not null, userid varchar(4096), userinfo varchar(4096), firsttime long not null, period long)";

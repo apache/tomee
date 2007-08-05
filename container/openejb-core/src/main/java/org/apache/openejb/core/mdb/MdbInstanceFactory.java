@@ -26,6 +26,7 @@ import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.Injection;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -54,7 +55,7 @@ import java.util.HashMap;
  * resource adapter.
  */
 public class MdbInstanceFactory {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final CoreDeploymentInfo deploymentInfo;
     private final TransactionManager transactionManager;

@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
@@ -30,7 +31,7 @@ import org.codehaus.swizzle.stream.StringTemplate;
 
 public class InitEjbDeployments implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
-    public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final StringTemplate deploymentIdTemplate;
 

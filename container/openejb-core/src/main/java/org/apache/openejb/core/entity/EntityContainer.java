@@ -55,6 +55,7 @@ import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
@@ -68,7 +69,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
     private Object containerID = null;
 
-    public Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private TransactionManager transactionManager;
     private SecurityService securityService;
 

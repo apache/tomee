@@ -21,6 +21,7 @@ import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ResourceFinder;
@@ -37,7 +38,7 @@ import java.util.Properties;
 public class ConfigUtils {
 
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
-    public static Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     public static String searchForConfiguration() throws OpenEJBException {
         return searchForConfiguration(SystemInstance.get().getProperty("openejb.configuration"));

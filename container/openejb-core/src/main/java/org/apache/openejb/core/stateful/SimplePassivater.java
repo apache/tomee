@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.SystemException;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.loader.SystemInstance;
@@ -32,7 +33,7 @@ import java.util.Properties;
 
 public class SimplePassivater implements PassivationStrategy {
     private File sessionDirectory;
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     public SimplePassivater() throws SystemException {
         init(null);

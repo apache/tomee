@@ -41,6 +41,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Stack;
@@ -50,7 +51,7 @@ import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
 
 public class StatelessInstanceManager {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     protected int poolLimit = 0;
     protected int beanCount = 0;

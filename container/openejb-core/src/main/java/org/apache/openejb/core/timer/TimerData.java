@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.ejb.Timer;
@@ -27,7 +28,7 @@ import java.util.Date;
 import java.util.TimerTask;
 
 public class TimerData {
-    private static final Logger log = Logger.getInstance("Timer", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
     private final long id;
     private final EjbTimerServiceImpl timerService;
     private final String deploymentId;

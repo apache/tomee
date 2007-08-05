@@ -29,6 +29,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.NoSuchObjectException;
 import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.util.LinkedListStack;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Stack;
@@ -65,7 +66,7 @@ public class EntityInstanceManager {
     */
     protected Map<Object,LinkedListStack> poolMap = null;
 
-    public Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("EntityInstanceManager");
     private TransactionManager transactionManager;

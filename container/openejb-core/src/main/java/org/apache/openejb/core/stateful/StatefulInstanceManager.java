@@ -34,6 +34,7 @@ import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -60,7 +61,7 @@ import java.util.List;
 import java.io.Serializable;
 
 public class StatefulInstanceManager {
-    public static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final long timeOut;
 

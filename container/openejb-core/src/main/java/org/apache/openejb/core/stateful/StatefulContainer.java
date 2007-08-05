@@ -56,13 +56,14 @@ import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
  */
 public class StatefulContainer implements RpcContainer, TransactionContainer {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final Object containerID;
     private final TransactionManager transactionManager;

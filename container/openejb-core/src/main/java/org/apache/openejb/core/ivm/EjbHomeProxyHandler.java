@@ -38,11 +38,12 @@ import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
-    private static final Logger logger = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final Map<String, MethodType> dispatchTable;
 

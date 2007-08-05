@@ -22,6 +22,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.Executors;
 import java.lang.reflect.Method;
 
 public class EjbTimerServiceImpl implements EjbTimerService {
-    private static final Logger log = Logger.getInstance("Timer", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     private final TransactionManager transactionManager;
     private final DeploymentInfo deployment;

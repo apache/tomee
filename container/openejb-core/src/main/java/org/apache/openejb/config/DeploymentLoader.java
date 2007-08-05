@@ -23,6 +23,7 @@ import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ClassFinder;
@@ -51,7 +52,7 @@ public class DeploymentLoader {
 
     private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap<Class<?>, JaxbUnmarshaller>();
 
-    public static Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     public DeploymentLoader() {

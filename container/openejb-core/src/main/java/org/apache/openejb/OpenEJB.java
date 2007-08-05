@@ -26,6 +26,7 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.Assembler;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -64,7 +65,7 @@ public final class OpenEJB {
 
             Logger.initialize(initProps);
 
-            Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+            Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
             try {
                 SystemInstance.init(initProps);
@@ -267,7 +268,7 @@ public final class OpenEJB {
     }
 
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
-    private static Logger logger = Logger.getInstance("OpenEJB.startup", "org.apache.openejb.util.resources");
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
     /**
      * 2 usages

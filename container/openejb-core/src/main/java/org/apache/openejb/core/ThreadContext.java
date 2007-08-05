@@ -20,10 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class ThreadContext {
-    private static final Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
 

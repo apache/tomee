@@ -61,6 +61,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 /**
@@ -360,7 +361,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public TransactionPolicy getTransactionPolicy(Method method) {
         TransactionPolicy policy = methodTransactionPolicies.get(method);
         if (policy == null && !isBeanManagedTransaction) {
-            Logger log = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+            Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
             log.info("The following method doesn't have a transaction policy assigned: " + method);
         }
         if (policy == null && container instanceof TransactionContainer) {
