@@ -330,7 +330,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 appInfo.ejbJars.add(ejbJarInfo);
 
             } catch (OpenEJBException e) {
-                ConfigUtils.logger.i18n.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
+                ConfigUtils.logger.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
                 throw e;
             }
         }

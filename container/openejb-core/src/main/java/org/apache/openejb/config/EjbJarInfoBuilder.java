@@ -109,7 +109,7 @@ public class EjbJarInfoBuilder {
             Map<String, EjbDeployment> deployed = jar.getOpenejbJar().getDeploymentsByEjbName();
             for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
                 if (!deployed.containsKey(bean.getEjbName())){
-                    ConfigUtils.logger.i18n.warning("conf.0018", bean.getEjbName(), jar.getJarURI());
+                    ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarURI());
                 }
             }
             String message = messages.format("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
@@ -328,7 +328,7 @@ public class EjbJarInfoBuilder {
             info.roleName = sr.getRoleName();
 
             if (securityRoles.contains(sr.getRoleName())) {
-                ConfigUtils.logger.i18n.warning("conf.0102", jar.getJarURI(), sr.getRoleName());
+                ConfigUtils.logger.warning("conf.0102", jar.getJarURI(), sr.getRoleName());
             } else {
                 securityRoles.add(sr.getRoleName());
             }

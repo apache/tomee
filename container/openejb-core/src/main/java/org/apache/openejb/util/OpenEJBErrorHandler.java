@@ -34,7 +34,7 @@ public class OpenEJBErrorHandler {
         pw.flush();
         pw.close();
 
-        _logger.i18n.error("ge0001", systemLocation, new String(baos.toByteArray()));
+        _logger.error("ge0001", systemLocation, new String(baos.toByteArray()));
 
         /*
          * An error broadcasting system is under development.
@@ -99,7 +99,7 @@ public class OpenEJBErrorHandler {
 
     public static void configurationParsingError(String messageType, String message, String line, String column) {
 
-        _logger.i18n.error("as0001", messageType, message, line, column);
+        _logger.error("as0001", messageType, message, line, column);
         /*
          * An error broadcasting system is under development.
          * At this point an appropriate error would be broadcast to all listeners.

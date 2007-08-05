@@ -92,7 +92,7 @@ public final class OpenEJB {
             }
 
             Logger logger2 = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
-            logger2.i18n.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
+            logger2.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
                     versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
 
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
@@ -101,7 +101,7 @@ public final class OpenEJB {
             Properties props = new Properties(SystemInstance.get().getProperties());
 
             if (initProps == null) {
-                logger.i18n.debug("startup.noInitializationProperties");
+                logger.debug("startup.noInitializationProperties");
             } else {
                 props.putAll(initProps);
             }
@@ -114,20 +114,20 @@ public final class OpenEJB {
             if (className == null) {
                 className = props.getProperty("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
             } else {
-                logger.i18n.warning("startup.deprecatedPropertyName", EnvProps.ASSEMBLER);
+                logger.warning("startup.deprecatedPropertyName", EnvProps.ASSEMBLER);
             }
 
-            logger.i18n.debug("startup.instantiatingAssemberClass", className);
+            logger.debug("startup.instantiatingAssemberClass", className);
             Assembler assembler = null;
 
             try {
                 assembler = (Assembler) toolkit.newInstance(className);
             } catch (OpenEJBException oe) {
-                logger.i18n.fatal("startup.assemblerCannotBeInstanitated", oe);
+                logger.fatal("startup.assemblerCannotBeInstanitated", oe);
                 throw oe;
             } catch (Throwable t) {
                 String msg = messages.message("startup.openEjbEncounterUnexpectedError");
-                logger.i18n.fatal(msg, t);
+                logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
 
@@ -136,22 +136,22 @@ public final class OpenEJB {
             try {
                 assembler.init(props);
             } catch (OpenEJBException oe) {
-                logger.i18n.fatal("startup.assemblerFailedToInitialize", oe);
+                logger.fatal("startup.assemblerFailedToInitialize", oe);
                 throw oe;
             } catch (Throwable t) {
                 String msg = messages.message("startup.assemblerEncounterUnexpectedError");
-                logger.i18n.fatal(msg, t);
+                logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
 
             try {
                 assembler.build();
             } catch (OpenEJBException oe) {
-                logger.i18n.fatal("startup.assemblerFailedToBuild", oe);
+                logger.fatal("startup.assemblerFailedToBuild", oe);
                 throw oe;
             } catch (Throwable t) {
                 String msg = messages.message("startup.assemblerEncounterUnexpectedBuildError");
-                logger.i18n.fatal(msg, t);
+                logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
 
@@ -159,18 +159,18 @@ public final class OpenEJB {
 
             if (containerSystem == null) {
                 String msg = messages.message("startup.assemblerReturnedNullContainer");
-                logger.i18n.fatal(msg);
+                logger.fatal(msg);
                 throw new OpenEJBException(msg);
             }
 
             system.setComponent(ContainerSystem.class, containerSystem);
 
             if (logger.isDebugEnabled()) {
-                logger.i18n.debug("startup.debugContainers", containerSystem.containers().length);
+                logger.debug("startup.debugContainers", containerSystem.containers().length);
 
                 if (containerSystem.containers().length > 0) {
                     Container[] c = containerSystem.containers();
-                    logger.i18n.debug("startup.debugContainersType");
+                    logger.debug("startup.debugContainersType");
                     for (int i = 0; i < c.length; i++) {
                         String entry = "   ";
                         switch (c[i].getContainerType()) {
@@ -191,13 +191,13 @@ public final class OpenEJB {
                                 break;
                         }
                         entry += c[i].getContainerID();
-                        logger.i18n.debug("startup.debugEntry", entry);
+                        logger.debug("startup.debugEntry", entry);
                     }
                 }
 
-                logger.i18n.debug("startup.debugDeployments", containerSystem.deployments().length);
+                logger.debug("startup.debugDeployments", containerSystem.deployments().length);
                 if (containerSystem.deployments().length > 0) {
-                    logger.i18n.debug("startup.debugDeploymentsType");
+                    logger.debug("startup.debugDeploymentsType");
                     DeploymentInfo[] d = containerSystem.deployments();
                     for (int i = 0; i < d.length; i++) {
                         String entry = "   ";
@@ -219,7 +219,7 @@ public final class OpenEJB {
                                 break;
                         }
                         entry += d[i].getDeploymentID();
-                        logger.i18n.debug("startup.debugEntry", entry);
+                        logger.debug("startup.debugEntry", entry);
                     }
                 }
             }
@@ -227,24 +227,24 @@ public final class OpenEJB {
             SecurityService securityService = assembler.getSecurityService();
             if (securityService == null) {
                 String msg = messages.message("startup.assemblerReturnedNullSecurityService");
-                logger.i18n.fatal(msg);
+                logger.fatal(msg);
                 throw new OpenEJBException(msg);
             } else {
-                logger.i18n.debug("startup.securityService", securityService.getClass().getName());
+                logger.debug("startup.securityService", securityService.getClass().getName());
             }
             system.setComponent(SecurityService.class, securityService);
 
             TransactionManager transactionManager = assembler.getTransactionManager();
             if (transactionManager == null) {
                 String msg = messages.message("startup.assemblerReturnedNullTransactionManager");
-                logger.i18n.fatal(msg);
+                logger.fatal(msg);
                 throw new OpenEJBException(msg);
             } else {
-                logger.i18n.debug("startup.transactionManager", transactionManager.getClass().getName());
+                logger.debug("startup.transactionManager", transactionManager.getClass().getName());
             }
             SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
 
-            logger.i18n.info("startup.ready");
+            logger.info("startup.ready");
 
             String loader = initProps.getProperty("openejb.loader");
             String nobanner = initProps.getProperty("openejb.nobanner");
@@ -275,7 +275,7 @@ public final class OpenEJB {
     public static void init(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
         if (isInitialized()) {
             String msg = messages.message("startup.alreadyInitialized");
-            logger.i18n.error(msg);
+            logger.error(msg);
             throw new OpenEJBException(msg);
         } else {
             instance = new Instance(initProps, appServer);
