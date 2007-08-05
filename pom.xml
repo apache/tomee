@@ -37,7 +37,7 @@
   <name>OpenEJB</name>
   <packaging>pom</packaging>
 
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0-r562820</version>
 
   <description>
     Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
@@ -400,7 +400,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
-        <version>2.0</version>
+        <version>2.0-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.modules</groupId>
@@ -447,7 +447,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>2.0</version>
+        <version>2.0-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.modules</groupId>
