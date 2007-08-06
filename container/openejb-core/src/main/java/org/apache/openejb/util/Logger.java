@@ -198,7 +198,15 @@ public class Logger {
             logger.baseName = baseName;
             return logger;
         }
+    }
 
+    public static Logger getInstance(String name, Class clazz) {
+        return getInstance(name, packageName(clazz));
+    }
+
+    private static String packageName(Class clazz) {
+        String name = clazz.getName();
+        return name.substring(0, name.lastIndexOf("."));
     }
 
     /**
