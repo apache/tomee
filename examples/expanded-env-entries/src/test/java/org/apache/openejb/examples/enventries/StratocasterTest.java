@@ -53,7 +53,7 @@ public class StratocasterTest extends TestCase {
 
         assertEquals("Stratocaster.getMyClass()", Stratocaster.class, stratocaster.getMyClass());
 
-        Date date = DateFormat.getDateInstance().parse("Jan 1, 1954");
+        Date date = DateFormat.getDateInstance().parse("Mar 1, 1954");
         assertEquals("Stratocaster.getMyDate()", date, stratocaster.getMyDate());
 
         File file = new File("/tmp/play-history.txt").getCanonicalFile();
