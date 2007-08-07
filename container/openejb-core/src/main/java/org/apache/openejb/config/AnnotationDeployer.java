@@ -130,43 +130,46 @@ import java.util.HashMap;
 public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
 
-    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
-            "javax.ejb.SessionContext",
-            "javax.ejb.EntityContext",
-            "javax.ejb.MessageDrivenContext",
-            "javax.transaction.UserTransaction",
-            "javax.jms.Queue",
-            "javax.jms.Topic",
-            "javax.xml.ws.WebServiceContext"
-    ));
 
-    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
-            "boolean", "java.lang.Boolean",
-            "char",    "java.lang.Character",
-            "byte",    "java.lang.Byte",
-            "short",   "java.lang.Short",
-            "int",     "java.lang.Integer",
-            "long",    "java.lang.Long",
-            "float",   "java.lang.Float",
-            "double",  "java.lang.Double",
-            "java.lang.String"
-    ));
-
-    private final DiscoverBeansInClassLoader discoverBeansInClassLoader;
+    private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
+    private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
 
     public AnnotationDeployer() {
-        discoverBeansInClassLoader = new DiscoverBeansInClassLoader();
+        discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
+        envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        appModule = discoverBeansInClassLoader.deploy(appModule);
+        appModule = discoverAnnotatedBeans.deploy(appModule);
+        appModule = envEntriesPropertiesDeployer.deploy(appModule);
         appModule = processAnnotatedBeans.deploy(appModule);
         return appModule;
     }
 
-    public static class DiscoverBeansInClassLoader implements DynamicDeployer {
+    public static class DiscoverAnnotatedBeans implements DynamicDeployer {
+        public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
+                "javax.ejb.SessionContext",
+                "javax.ejb.EntityContext",
+                "javax.ejb.MessageDrivenContext",
+                "javax.transaction.UserTransaction",
+                "javax.jms.Queue",
+                "javax.jms.Topic",
+                "javax.xml.ws.WebServiceContext"
+        ));
+
+        public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
+                "boolean", "java.lang.Boolean",
+                "char",    "java.lang.Character",
+                "byte",    "java.lang.Byte",
+                "short",   "java.lang.Short",
+                "int",     "java.lang.Integer",
+                "long",    "java.lang.Long",
+                "float",   "java.lang.Float",
+                "double",  "java.lang.Double",
+                "java.lang.String"
+        ));
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
@@ -281,6 +284,27 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
+        public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
+                "javax.ejb.SessionContext",
+                "javax.ejb.EntityContext",
+                "javax.ejb.MessageDrivenContext",
+                "javax.transaction.UserTransaction",
+                "javax.jms.Queue",
+                "javax.jms.Topic",
+                "javax.xml.ws.WebServiceContext"
+        ));
+
+        public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
+                "boolean", "java.lang.Boolean",
+                "char",    "java.lang.Character",
+                "byte",    "java.lang.Byte",
+                "short",   "java.lang.Short",
+                "int",     "java.lang.Integer",
+                "long",    "java.lang.Long",
+                "float",   "java.lang.Float",
+                "double",  "java.lang.Double",
+                "java.lang.String"
+        ));
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
