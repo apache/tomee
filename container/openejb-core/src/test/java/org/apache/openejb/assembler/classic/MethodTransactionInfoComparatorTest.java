@@ -45,7 +45,8 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         info = add(expected, new MethodTransactionInfo());
         info.transAttribute = "Required";
         method = new MethodInfo();
-        method.ejbName = "*";
+        method.ejbName = "PingEJB";
+        method.methodName = "*";
         info.methods.add(method);
 
         // Method Interceptors (no params) ///////////////////////////////
