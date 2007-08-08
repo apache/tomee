@@ -79,7 +79,7 @@
             </property>
             <property>
               <name>log4j.configuration</name>
-              <value>file:///${basedir}/target/classes/default.logging.conf</value>
+              <value>file:///${basedir}/target/classes/embedded.logging.properties</value>
             </property>
           </systemProperties>
           <!--

@@ -515,7 +515,7 @@ public class Logger {
                 String configData = null;
                 try {
                     ResourceFinder finder = new ResourceFinder("");
-                    configData = finder.findString("default.logging.conf");
+                    configData = finder.findString("embedded.logging.properties");
                     properties = new Properties();
                     properties.load(new ByteArrayInputStream(configData
                             .getBytes()));
