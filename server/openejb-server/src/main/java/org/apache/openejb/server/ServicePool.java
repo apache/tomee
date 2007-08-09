@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class ServicePool implements ServerService {
-    private static final Logger log = Logger.getInstance("ServicePool", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.SERVICEPOOL, "org.apache.openejb.util.resources");
 
     private final ServerService next;
     private final Executor executor;

@@ -23,6 +23,7 @@ import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.client.EJBObjectHandler;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
  */
 public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjectProxyHandle.Resolver {
 
-    private static Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     public Object resolve(EJBHomeHandler handler) {
         try {

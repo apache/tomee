@@ -22,6 +22,7 @@ import org.apache.openejb.client.ClientMetaData;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
 
@@ -34,7 +35,7 @@ import javax.security.auth.login.LoginException;
 class AuthRequestHandler {
 
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
-    Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+    Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     AuthRequestHandler(EjbDaemon daemon) {
     }

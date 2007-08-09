@@ -18,6 +18,7 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.spi.ContainerSystem;
@@ -47,7 +48,7 @@ import java.util.Properties;
 public class ServiceManager {
 
     static Messages messages = new Messages("org.apache.openejb.server.util.resources");
-    static Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     private static ServiceManager manager;
 

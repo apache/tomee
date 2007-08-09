@@ -41,9 +41,7 @@ public class ServiceLogger implements ServerService {
 
     public void init(Properties props) throws Exception {
 
-        String logCategory = "OpenEJB.server.service." + getName();
-
-        logger = Logger.getInstance(logCategory, "org.apache.openejb.server.util.resources");
+        logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("service."+getName()), "org.apache.openejb.server.util.resources");
 
         next.init(props);
     }

@@ -44,7 +44,7 @@ import java.util.ResourceBundle;
 public class Logger {
 
     protected org.apache.log4j.Logger _logger = null;
-
+    private LogCategory category;
     private String baseName;
 
     private static final String SUFFIX = ".Messages";
@@ -79,12 +79,13 @@ public class Logger {
     /**
      * Builds a Logger object and returns it
      */
-    private static final Computable<String[], Logger> loggerResolver = new Computable<String[], Logger>() {
-        public Logger compute(String[] args) throws InterruptedException {
+    private static final Computable<Object[], Logger> loggerResolver = new Computable<Object[], Logger>() {
+        public Logger compute(Object[] args) throws InterruptedException {
 
             Logger logger = new Logger();
-            logger._logger = org.apache.log4j.Logger.getLogger(args[0]);
-            logger.baseName = args[1];
+            logger.category = (LogCategory) args[0];
+            logger._logger = org.apache.log4j.Logger.getLogger(logger.category.getName());
+            logger.baseName = (String) args[1];
             return logger;
 
         }
@@ -113,7 +114,7 @@ public class Logger {
     /**
      * Cache of Loggers
      */
-    private static final Computable<String[], Logger> loggerCache = new Memoizer<String[], Logger>(
+    private static final Computable<Object[], Logger> loggerCache = new Memoizer<Object[], Logger>(
             loggerResolver);
     /**
      * Cache of MessageFormats
@@ -178,14 +179,14 @@ public class Logger {
     /**
      * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
      *
-     * @param name     - The name of the logger
+     * @param category     - The category of the logger
      * @param baseName - The baseName for the ResourceBundle
      * @return Logger
      */
-    public static Logger getInstance(String name, String baseName) {
+    public static Logger getInstance(LogCategory category, String baseName) {
         try {
             Logger logger = loggerCache
-                    .compute(new String[]{name, baseName});
+                    .compute(new Object[]{category, baseName});
             return logger;
         } catch (InterruptedException e) {
             /*
@@ -194,21 +195,26 @@ public class Logger {
                 * same Logger would probably end up in the cache
                 */
             Logger logger = new Logger();
-            logger._logger = org.apache.log4j.Logger.getLogger(name);
+            logger.category = category;
+            logger._logger = org.apache.log4j.Logger.getLogger(category.getName());
             logger.baseName = baseName;
             return logger;
         }
     }
 
-    public static Logger getInstance(String name, Class clazz) {
-        return getInstance(name, packageName(clazz));
+    public static Logger getInstance(LogCategory category, Class clazz) {
+        return getInstance(category, packageName(clazz));
     }
 
     private static String packageName(Class clazz) {
         String name = clazz.getName();
         return name.substring(0, name.lastIndexOf("."));
     }
-
+    
+    public Logger getLogger(String moduleId){
+    	return Logger.getInstance(this.category,this.baseName);
+    	
+    }
     /**
      * Formats a given message
      *

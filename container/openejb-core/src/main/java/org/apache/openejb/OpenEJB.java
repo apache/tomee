@@ -92,7 +92,7 @@ public final class OpenEJB {
                 System.out.println("" + versionInfo.getUrl());
             }
 
-            Logger logger2 = Logger.getInstance("OpenEJB", "org.apache.openejb.util.resources");
+            Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
             logger2.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
                     versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
 

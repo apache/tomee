@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
@@ -36,7 +37,7 @@ import java.util.Properties;
  */
 public class HttpServer implements ServerService {
 
-    private static final Logger log = Logger.getInstance("HttpServer", "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, "org.apache.openejb.util.resources");
 
     private HttpListener listener;
 

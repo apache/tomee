@@ -26,11 +26,12 @@ import java.io.PrintStream;
 
 import java.util.Properties;
 
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class TextConsole {
 
-    Logger logger = Logger.getInstance("OpenEJB.admin", "org.apache.openejb.server.util.resources");
+    Logger logger = Logger.getInstance(LogCategory.OPENEJB_ADMIN, "org.apache.openejb.server.util.resources");
 
     Properties props;
 

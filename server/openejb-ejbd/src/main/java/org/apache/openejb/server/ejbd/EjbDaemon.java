@@ -33,6 +33,7 @@ import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.EjbObjectInputStream;
 import org.apache.openejb.client.ProtocolMetaData;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -41,7 +42,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("2.0");
 
     private static final Messages _messages = new Messages("org.apache.openejb.server.util.resources");
-    static final Logger logger = Logger.getInstance("OpenEJB.server.remote", "org.apache.openejb.server.util.resources");
+    static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     private ClientObjectFactory clientObjectFactory;
 //    DeploymentIndex deploymentIndex;

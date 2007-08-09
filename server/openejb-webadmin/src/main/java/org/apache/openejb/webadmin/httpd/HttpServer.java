@@ -58,6 +58,7 @@ import javax.naming.InitialContext;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.webadmin.HttpHome;
 import org.apache.openejb.webadmin.HttpObject;
 
@@ -71,7 +72,7 @@ import org.apache.openejb.webadmin.HttpObject;
  */
 public class HttpServer implements ServerService{
 
-    private static final Logger logger = Logger.getInstance( "OpenEJB.server", "org.apache.openejb.server.util.resources" );
+    private static final Logger logger = Logger.getInstance( LogCategory.OPENEJB_SERVER, HttpServer.class );
     private InitialContext jndiContext;
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
