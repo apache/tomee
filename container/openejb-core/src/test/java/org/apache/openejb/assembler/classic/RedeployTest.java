@@ -23,10 +23,16 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateful.EncStatefulHome;
 import org.apache.openejb.test.stateful.EncStatefulObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -36,8 +42,8 @@ import java.util.Properties;
 public class RedeployTest extends TestCase {
     public void test() throws Exception {
         // create reference to openejb itests
-        File file = new File(System.getProperty("user.home") + "/.m2/repository/org/apache/openejb/openejb-itests-beans/3.0-incubating-SNAPSHOT/openejb-itests-beans-3.0-incubating-SNAPSHOT.jar");
-        if (!file.canRead()) return;
+        File file = getFile("org/apache/openejb/openejb-itests-beans/3.0.0-SNAPSHOT/openejb-itests-beans-3.0.0-SNAPSHOT.jar");
+        if (file == null) return;
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -98,5 +104,41 @@ public class RedeployTest extends TestCase {
             // this also should happen
         }
     }
-
+    /**
+     * This method tries to find a file in the default maven repository i.e. user.home/.m2/repository. If it cannot find the repository in this location
+     * then it tries to find user.home/settings.xml and obtains the value of the <localRepository> element from the settings.xml file. Once the local
+     * repository is obtained from the settings.xml file, it tries to search for the file in this repository and returns it. If it cannot find the 
+     * specified file here also, then it returns null
+     * @param fileName -- the name of the file to be searched
+     * @return -- java.io.File
+     */
+	private static File getFile(String fileName) {
+		String userHome = System.getProperty("user.home");
+		File file = new File(userHome + "/.m2/repository/" + fileName);
+		if (!file.canRead()) {
+			File f = new File(userHome + "/.m2/settings.xml");
+			if (f.canRead()) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				try {
+					DocumentBuilder builder = factory.newDocumentBuilder();
+					Document document = builder.parse(f);
+					NodeList localRepository = document
+							.getElementsByTagName("localRepository");
+					Node node = localRepository.item(0);
+					file = new File(node.getFirstChild().getNodeValue() + "/"
+							+ fileName);
+					if (file.canRead())
+						return file;
+					else
+						return null;
+				} catch (Exception e) {
+					return null;
+				}
+			}
+		} else {
+			return file;
+		}
+		return null;
+	}
 }
