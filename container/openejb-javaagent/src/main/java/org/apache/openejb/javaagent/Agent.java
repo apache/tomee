@@ -18,18 +18,9 @@
 package org.apache.openejb.javaagent;
 
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.lang.reflect.ReflectPermission;
 import java.lang.reflect.Field;
+import java.lang.reflect.ReflectPermission;
 import java.security.Permission;
-import java.security.ProtectionDomain;
-import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.io.IOException;
 
 public class Agent {
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
@@ -41,43 +32,6 @@ public class Agent {
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
         initialized = true;
-//        System.out.println("Agent startup");
-
-//        ClassFileTransformer transformer = new SurefireTransformer();
-//        instrumentation.addTransformer(transformer);
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        executeExtentions(classLoader, agentArgs, instrumentation);
-    }
-
-    private static void executeExtentions(ClassLoader classLoader, String agentArgs, Instrumentation instrumentation) {
-        try {
-            ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
-            Map<String, Class> extentions = finder.mapAvailableImplementations(AgentExtention.class);
-//            System.out.println("Agents found: " + extentions.size());
-            List<String> resourcesNotLoaded = finder.getResourcesNotLoaded();
-            for (String className : resourcesNotLoaded) {
-                System.out.println("Agent not loaded: " + className);
-            }
-
-
-            for (Map.Entry<String, Class> entry : extentions.entrySet()) {
-                AgentExtention extention = null;
-                try {
-                    extention = (AgentExtention) entry.getValue().newInstance();
-                } catch (Throwable e) {
-                    new RuntimeException("AgentExtention instantiation failed: AgentExtention(name="+entry.getKey()+", class="+entry.getValue().getName()+")", e).printStackTrace();
-                }
-
-                try {
-                    extention.premain(agentArgs, instrumentation);
-                } catch (Throwable e) {
-                    new RuntimeException("AgentExtention premain failed: AgentExtention(name="+entry.getKey()+", class="+entry.getValue().getName()+")", e).printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            new RuntimeException("Failed searching for AgentExtentions: "+e.getMessage(), e).printStackTrace();
-        }
     }
 
     public static synchronized String getAgentArgs() {
@@ -119,16 +73,4 @@ public class Agent {
         }
     }
 
-    private static class SurefireTransformer implements ClassFileTransformer {
-        private boolean surefirePathEnhanced;
-
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            if (!surefirePathEnhanced && loader.getClass().getName().equals("org.apache.maven.surefire.booter.IsolatedClassLoader")){
-                surefirePathEnhanced = true;
-                executeExtentions(loader, agentArgs, instrumentation);
-            }
-
-            return classfileBuffer;
-        }
-    }
 }

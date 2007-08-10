@@ -136,8 +136,14 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         return deploymentsById.get(deploymentID);
     }
 
-    private DeploymentInfo getDeploymentInfoByClass(Class beanType) {
-        return deploymentsByClass.get(beanType);
+    private DeploymentInfo getDeploymentInfoByClass(Class type) {
+        DeploymentInfo deploymentInfo = null;
+        while (type != null && deploymentInfo == null) {
+            deploymentInfo = deploymentsByClass.get(type);
+            type = type.getSuperclass();
+        }
+
+        return deploymentInfo;
     }
 
     public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -802,7 +808,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 if (value instanceof EntityBean) {
                     EntityBean entityBean = (EntityBean) value;
                     if (proxyFactory == null) {
-                        CoreDeploymentInfo resultInfo = (CoreDeploymentInfo) deploymentsByClass.get(entityBean.getClass());
+                        CoreDeploymentInfo resultInfo = (CoreDeploymentInfo) getDeploymentInfoByClass(entityBean.getClass());
                         if (resultInfo != null) {
                             proxyFactory = new ProxyFactory(resultInfo);
                         }

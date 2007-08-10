@@ -16,21 +16,24 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.javaagent.AgentExtention;
-import org.apache.openejb.core.TemporaryClassLoader;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.PersistenceBuilder;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.javaagent.AgentExtention;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.Property;
+import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.xbean.finder.ResourceFinder;
 
-import javax.naming.NamingException;
-import java.lang.instrument.Instrumentation;
-import java.lang.instrument.ClassFileTransformer;
 import java.io.IOException;
-import java.io.File;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
 import java.net.URL;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,18 +56,75 @@ public class EmbeddedJpaEnhancher implements AgentExtention {
         }
 
         try {
-            ConfigurationFactory configFactory = new ConfigurationFactory();
-            AppInfo appInfo = configFactory.configureApplication(appModule);
+            // read the persistence.xml files
+            ReadDescriptors readDescriptors = new ReadDescriptors();
+            readDescriptors.deploy(appModule);
 
-            Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-            if (assembler == null) {
-                assembler = new Assembler();
+            // convert the xml to info objects
+            Collection<PersistenceUnitInfo> infos = createPersistenceUnitInfos(appModule);
+
+
+            // create the factories
+            PersistenceBuilder persistenceBuilder = new PersistenceBuilder(new PersistenceClassLoaderHandlerImpl());
+            for (PersistenceUnitInfo info : infos) {
+                try {
+                    // For OpenJPA we only need to create the EMF to cause the enhancer to
+                    // be added.  This may not work for other JPA implementations.
+                    persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                } catch (Exception e) {
+                    throw new OpenEJBException(e);
+                }
             }
-
-            assembler.createApplication(appInfo);
-            assembler.destroyApplication(appInfo.jarPath);
         } catch (Exception e) {
             throw new IllegalStateException("Enhancement failed: "+ e.getMessage(), e);
+        }
+    }
+
+    private Collection<PersistenceUnitInfo> createPersistenceUnitInfos(AppModule appModule) {
+        Collection<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            String rootUrl = persistenceModule.getRootUrl();
+            Persistence persistence = persistenceModule.getPersistence();
+            for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+                PersistenceUnitInfo info = new PersistenceUnitInfo();
+                info.name = persistenceUnit.getName();
+                info.persistenceUnitRootUrl = rootUrl;
+                info.provider = persistenceUnit.getProvider();
+                info.transactionType = persistenceUnit.getTransactionType().toString();
+
+                Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
+                info.excludeUnlistedClasses = excludeUnlistedClasses != null && excludeUnlistedClasses;
+
+                info.jarFiles.addAll(persistenceUnit.getJarFile());
+                info.classes.addAll(persistenceUnit.getClazz());
+                info.mappingFiles.addAll(persistenceUnit.getMappingFile());
+
+                // Handle Properties
+                // todo Do we really want the properties?  This could cause the engine to do bad things
+                org.apache.openejb.jee.jpa.unit.Properties puiProperties = persistenceUnit.getProperties();
+                if (puiProperties != null) {
+                    for (Property property : puiProperties.getProperty()) {
+                        info.properties.put(property.getName(), property.getValue());
+                    }
+                }
+
+                // Persistence Unit Root Url
+                persistenceUnits.add(info);
+            }
+        }
+        return persistenceUnits;
+    }
+
+    private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
+        public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+            Instrumentation instrumentation = Agent.getInstrumentation();
+            if (instrumentation != null) {
+                instrumentation.addTransformer(classFileTransformer);
+            }
+        }
+
+        public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+            return new TemporaryClassLoader(classLoader);
         }
     }
 }
