@@ -76,8 +76,8 @@ fi
 
 OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
 
-OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${pom.version}.jar"
-OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${pom.version}.jar"
+OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar"
+OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
 
 java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR "$@"

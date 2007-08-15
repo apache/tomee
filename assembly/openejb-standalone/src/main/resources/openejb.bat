@@ -32,8 +32,8 @@ REM================================================
 
 SETLOCAL
 
-set OPENEJB_CORE_JAR=%OPENEJB_HOME%/lib/openejb-core-${pom.version}.jar
-set OPENEJB_JAVAAGENT_JAR=%OPENEJB_HOME%/lib/openejb-javaagent-${pom.version}.jar
+set OPENEJB_CORE_JAR=%OPENEJB_HOME%/lib/openejb-core-${version}.jar
+set OPENEJB_JAVAAGENT_JAR=%OPENEJB_HOME%/lib/openejb-javaagent-${version}.jar
 
 rem find OPENEJB_HOME if it does not exist due to either an invalid value passed
 rem by the user or the %0 problem on Windows 9x
