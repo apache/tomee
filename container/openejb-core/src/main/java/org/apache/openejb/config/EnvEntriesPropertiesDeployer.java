@@ -108,7 +108,12 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             InputStream in = propsUrl.openStream();
             Properties envEntriesProps = new Properties();
             envEntriesProps.load(in);
-            HashMap<String, String> envEntriesMap = new HashMap<String, String>((Map<? extends String, ? extends String>) envEntriesProps);
+
+            HashMap<String, String> envEntriesMap = new HashMap<String, String>();
+            for (Map.Entry<Object, Object> entry : envEntriesProps.entrySet()) {
+                envEntriesMap.put((String)entry.getKey(), (String)entry.getValue());
+            }
+
             return envEntriesMap;
         } catch (IOException e) {
             log.error("envprops.notLoaded", e, propsUrl.toExternalForm());
