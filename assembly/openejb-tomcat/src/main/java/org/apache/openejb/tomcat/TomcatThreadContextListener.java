@@ -21,12 +21,13 @@ import org.apache.naming.ContextBindings;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 
 import javax.naming.NamingException;
 import java.lang.reflect.Method;
 
 public class TomcatThreadContextListener implements ThreadContextListener {
-    private static final Logger logger = Logger.getInstance("OpenEJB.tomcat", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
     private static final String OPENEJB_CONTEXT = "OpenEJBContext";
     protected Method method;
 

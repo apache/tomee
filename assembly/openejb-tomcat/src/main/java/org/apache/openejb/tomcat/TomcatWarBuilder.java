@@ -29,6 +29,7 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openjpa.lib.util.TemporaryClassLoader;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TomcatWarBuilder implements ContextListener {
-    private static final Logger logger = Logger.getInstance("OpenEJB.tomcat", "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
     private final StandardServer standardServer;
     private final MBeanServer mbeanServer;
