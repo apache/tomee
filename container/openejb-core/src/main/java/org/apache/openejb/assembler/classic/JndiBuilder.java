@@ -19,9 +19,11 @@ package org.apache.openejb.assembler.classic;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.naming.NameAlreadyBoundException;
 import javax.jms.MessageListener;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.SystemInstance;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Comparator;
 
 
 /**
@@ -77,7 +80,58 @@ public class JndiBuilder {
 
         public static enum Interface {
 
-            REMOTE_HOME, LOCAL_HOME, BUSINESS_LOCAL, BUSINESS_REMOTE, SERVICE_ENDPOINT
+            REMOTE_HOME(InterfaceType.EJB_HOME, "RemoteHome", "home", ""),
+            LOCAL_HOME(InterfaceType.EJB_LOCAL_HOME, "LocalHome", "local-home", "Local"),
+            BUSINESS_LOCAL(InterfaceType.BUSINESS_LOCAL, "Local", "business-local", "BusinessLocal"),
+            BUSINESS_REMOTE(InterfaceType.BUSINESS_REMOTE, "Remote", "business-remote", "BusinessRemote"),
+            SERVICE_ENDPOINT(InterfaceType.SERVICE_ENDPOINT, "Endpoint", "service-endpoint", "ServiceEndpoint");
+
+            private final InterfaceType type;
+            private final String annotatedName;
+            private final String xmlName;
+            private final String xmlNameCc;
+            private final String openejbLegacy;
+
+            Interface(InterfaceType type, String annotatedName, String xmlName, String openejbLegacy) {
+                this.type = type;
+                this.annotatedName = annotatedName;
+                this.xmlName = xmlName;
+                this.xmlNameCc = camelCase(xmlName);
+                this.openejbLegacy = openejbLegacy;
+            }
+
+            private String camelCase(String string){
+                StringBuilder sb = new StringBuilder();
+                String[] strings = string.split("-");
+                for (String s : strings) {
+                    int l = sb.length();
+                    sb.append(s);
+                    sb.setCharAt(l, Character.toUpperCase(sb.charAt(l)));
+                }
+                return sb.toString();
+            }
+
+
+            public InterfaceType getType() {
+                return type;
+            }
+
+            public String getAnnotatedName() {
+                return annotatedName;
+            }
+
+            public String getXmlName() {
+                return xmlName;
+            }
+
+            public String getXmlNameCc() {
+                return xmlNameCc;
+            }
+
+            public String getOpenejbLegacy() {
+                return openejbLegacy;
+            }
+
         }
 
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type);
@@ -101,7 +155,10 @@ public class JndiBuilder {
             contextData.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
             contextData.put("ejbName", deploymentInfo.getEjbName());
             contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
-            contextData.put("interfaceType", deploymentInfo.getInterfaceType(interfce).name());
+            contextData.put("interfaceType", type.annotatedName);
+            contextData.put("interfaceType.xmlName", type.getXmlName());
+            contextData.put("interfaceType.xmlNameCc", type.getXmlNameCc());
+            contextData.put("interfaceType.openejbLegacyName", type.getOpenejbLegacy());
             contextData.put("interfaceClass", interfce.getName());
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
             return template.apply(contextData);
@@ -198,7 +255,7 @@ public class JndiBuilder {
             Class homeInterface = deployment.getHomeInterface();
             if (homeInterface != null) {
 
-                String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getRemoteInterface(), JndiNameStrategy.Interface.REMOTE_HOME);
+                String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getHomeInterface(), JndiNameStrategy.Interface.REMOTE_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBHome());
                 bind(name, ref, bindings, beanInfo);
 
@@ -213,7 +270,7 @@ public class JndiBuilder {
             Class localHomeInterface = deployment.getLocalHomeInterface();
             if (localHomeInterface != null) {
 
-                String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getLocalInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
+                String name = "openejb/ejb/" + strategy.getName(deployment, deploymentInfo.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
                 bind(name, ref, bindings, beanInfo);
 
@@ -225,25 +282,22 @@ public class JndiBuilder {
         }
 
         try {
-            Class businessLocalInterface = deployment.getBusinessLocalInterface();
-            if (businessLocalInterface != null) {
+            List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
+            Class beanClass = deployment.getBeanClass();
 
-                String name = "openejb/ejb/" + strategy.getName(deployment, businessLocalInterface, JndiNameStrategy.Interface.BUSINESS_LOCAL);
-                DeploymentInfo.BusinessLocalHome businessLocalHome = deployment.getBusinessLocalHome();
-                bind(name, new BusinessLocalReference(businessLocalHome), bindings, beanInfo);
+            for (Class interfce : deployment.getBusinessLocalInterfaces()) {
 
-                for (Class interfce : deployment.getBusinessLocalInterfaces()) {
-                    DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(asList(interfce));
-                    BusinessLocalReference ref = new BusinessLocalReference(home);
+                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
+                DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces);
+                BusinessLocalReference ref = new BusinessLocalReference(home);
 
-                    name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
-                    bind(name, ref, bindings, beanInfo);
+                String internalName = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
+                bind(internalName, ref, bindings, beanInfo);
 
-                    try {
-                        name = "openejb/ejb/" + strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
-                        bind(name, ref, bindings, beanInfo);
-                    } catch (NamingException dontCareJustYet) {
-                    }
+                try {
+                    String externalName = "openejb/ejb/" + strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                    bind(externalName, ref, bindings, beanInfo);
+                } catch (NamingException dontCareJustYet) {
                 }
             }
         } catch (NamingException e) {
@@ -251,27 +305,23 @@ public class JndiBuilder {
         }
 
         try {
-            Class businessRemoteInterface = deployment.getBusinessRemoteInterface();
-            if (businessRemoteInterface != null) {
 
-                DeploymentInfo.BusinessRemoteHome businessRemoteHome = deployment.getBusinessRemoteHome();
-                BusinessRemoteReference ref = new BusinessRemoteReference(businessRemoteHome);
+            List<Class> remoteInterfaces = deployment.getBusinessRemoteInterfaces();
+            Class beanClass = deployment.getBeanClass();
 
-                String name = "openejb/ejb/" + strategy.getName(deployment, businessRemoteInterface, JndiNameStrategy.Interface.BUSINESS_REMOTE);
-                bind(name, ref, bindings, beanInfo);
+            for (Class interfce : deployment.getBusinessRemoteInterfaces()) {
 
-                for (Class interfce : deployment.getBusinessRemoteInterfaces()) {
-                    DeploymentInfo.BusinessRemoteHome home = deployment.getBusinessRemoteHome(asList(interfce));
-                    ref = new BusinessRemoteReference(home);
+                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, remoteInterfaces);
+                DeploymentInfo.BusinessRemoteHome home = deployment.getBusinessRemoteHome(interfaces);
+                BusinessRemoteReference ref = new BusinessRemoteReference(home);
 
-                    name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
-                    bind(name, ref, bindings, beanInfo);
+                String internalName = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
+                bind(internalName, ref, bindings, beanInfo);
 
-                    try {
-                        name = "openejb/ejb/" + strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
-                        bind(name, ref, bindings, beanInfo);
-                    } catch (NamingException dontCareJustYet) {
-                    }
+                try {
+                    String externalName = "openejb/ejb/" + strategy.getName(deployment, interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
+                    bind(externalName, ref, bindings, beanInfo);
+                } catch (NamingException dontCareJustYet) {
                 }
             }
         } catch (NamingException e) {
@@ -295,14 +345,26 @@ public class JndiBuilder {
 
 
     private void bind(String name, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo) throws NamingException {
-        context.bind(name, ref);
-        bindings.add(name);
+
         if (name.startsWith("openejb/ejb/")) {
-            name = name.replaceFirst("openejb/ejb/", "");
-            logger.info("Jndi(name=" + name+")");
-            if (!beanInfo.jndiNames.contains(name)){
-                beanInfo.jndiNames.add(name);
+
+            String externalName = name.replaceFirst("openejb/ejb/", "");
+
+            if (beanInfo.jndiNames.contains(externalName)){
+                logger.debug("Duplicate: Jndi(name=" + externalName +")");
+                return;
             }
+
+            beanInfo.jndiNames.add(externalName);
+            logger.info("Jndi(name=" + externalName +")");
+        }
+
+        try {
+            context.bind(name, ref);
+            bindings.add(name);
+        } catch (NameAlreadyBoundException e) {
+            logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name +")");
+            throw e;
         }
     }
 
@@ -321,6 +383,17 @@ public class JndiBuilder {
 
         public boolean add(String o) {
             return bindings.add(o);
+        }
+    }
+
+    public static class RemoteInterfaceComparator implements Comparator<Class> {
+
+        public int compare(java.lang.Class a, java.lang.Class b) {
+            boolean aIsRmote = java.rmi.Remote.class.isAssignableFrom(a);
+            boolean bIsRmote = java.rmi.Remote.class.isAssignableFrom(b);
+
+            if (aIsRmote == bIsRmote) return 0;
+            return (aIsRmote)? 1: -1;
         }
     }
 }
