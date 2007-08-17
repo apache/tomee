@@ -99,7 +99,7 @@ public class DeploymentsResolver {
 
         ////////////////////////////////
         //
-        //  Directory container Jar files
+        //  Directory contains Jar files
         //
         ////////////////////////////////
         for (String fileName : files.keySet()) {
