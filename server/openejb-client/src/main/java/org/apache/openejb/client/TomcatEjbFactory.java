@@ -27,7 +27,7 @@ import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
-public final class TomcatEjbFactory implements ObjectFactory {
+public class TomcatEjbFactory implements ObjectFactory {
     private final static String OPENEJB_PREFIX = "openejb.";
 
     private final static String JAVA_PREFIX = "java.";
