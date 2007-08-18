@@ -42,8 +42,9 @@ public class InitEjbDeployments implements DynamicDeployer {
 
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
         Map<String,String> contextData = new HashMap<String,String>();
-        contextData.put("appId", appModule.getJarLocation());
+        contextData.put("appId", appModule.getModuleId());
         for (EjbModule ejbModule : appModule.getEjbModules()) {
+            contextData.put("ejbJarId", ejbModule.getModuleId());
             deploy(ejbModule, contextData);
         }
         contextData.clear();
