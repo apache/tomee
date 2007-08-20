@@ -64,8 +64,8 @@ public class Main {
             Map<String, Properties> serviceEntries = finder.mapAvailableProperties(ServerService.class.getName());
             services = serviceEntries.keySet();
             for (String service : services) {
-                options.addOption(option(null, service+"-port", "int", "cmd.start.opt.port", service));
-                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt.bind", service));
+                options.addOption(option(null, service+"-port", "int", "cmd.start.opt."+service+".port", service));
+                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt."+service+".bind", service));
             }
         } catch (IOException e) {
             services = Collections.EMPTY_SET;

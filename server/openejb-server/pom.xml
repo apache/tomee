@@ -31,6 +31,13 @@
   <artifactId>openejb-server</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Core</name>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>    
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
