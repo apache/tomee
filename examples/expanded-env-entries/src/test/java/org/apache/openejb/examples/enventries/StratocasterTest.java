@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 
 import javax.naming.InitialContext;
 import javax.naming.Context;
+
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Date;
 import java.util.LinkedList;
@@ -53,23 +55,23 @@ public class StratocasterTest extends TestCase {
 
         assertEquals("Stratocaster.getMyClass()", Stratocaster.class, stratocaster.getMyClass());
 
-        Date date = DateFormat.getDateInstance().parse("Mar 1, 1954");
+        Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1954");
         assertEquals("Stratocaster.getMyDate()", date, stratocaster.getMyDate());
 
-        File file = new File("/tmp/play-history.txt").getCanonicalFile();
+        File file = new File("/tmp/play-history.txt");
         assertEquals("Stratocaster.getMyFile()", file, stratocaster.getMyFile());
 
         InetAddress host = InetAddress.getByName("localhost");
         assertEquals("Stratocaster.getMyInetAddress()", host, stratocaster.getMyInetAddress());
 
-        List<String> list = new LinkedList();
+        List<String> list = new LinkedList<String>();
         list.add("Stevie Ray Vaughan");
         list.add("Eric Johnson");
         list.add("Mark Knopfler");
         list.add("Buddy Guy");
         assertEquals("Stratocaster.getMyList()", list, stratocaster.getMyList());
 
-        Map<String,String> map = new LinkedHashMap();
+        Map<String,String> map = new LinkedHashMap<String,String>();
         map.put("color", "3-Color Sunburst");
         map.put("neck", "maple");
         map.put("fretboard", "African rosewood");
