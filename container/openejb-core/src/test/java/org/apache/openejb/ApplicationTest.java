@@ -25,8 +25,8 @@ import junit.framework.Test;
 public class ApplicationTest extends TestCase {
     public static Test suite() {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
-        System.setProperty("openejb.deployments.classpath", "true");
         System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-app.*");
+        System.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         return iTest.suite();
     }
 }

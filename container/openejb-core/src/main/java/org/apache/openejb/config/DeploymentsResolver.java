@@ -38,6 +38,7 @@ public class DeploymentsResolver {
     private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
+    private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
 
     private static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
 
@@ -171,6 +172,7 @@ public class DeploymentsResolver {
         include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
         exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
         boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
+        boolean filterDescriptors = SystemInstance.get().getProperty(CLASSPATH_FILTER_DESCRIPTORS, "false").equalsIgnoreCase("true");
         try {
             UrlSet urlSet = new UrlSet(classLoader);
             UrlSet includes = urlSet.matching(include);
@@ -180,6 +182,7 @@ public class DeploymentsResolver {
             urlSet = urlSet.excludeJavaHome();
             urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
+            UrlSet prefiltered = urlSet;
             urlSet = urlSet.exclude(exclude);
             urlSet = urlSet.include(includes);
 
@@ -188,7 +191,7 @@ public class DeploymentsResolver {
             if (size == 0 && include.length() > 0) {
                 DeploymentLoader.logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 return;
-            } else if (size == 0) {
+            } else if (size == 0 && (!filterDescriptors && prefiltered.getUrls().size() == 0)) {
                 return;
             } else if (size < 10) {
                 DeploymentLoader.logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
@@ -200,35 +203,17 @@ public class DeploymentsResolver {
             }
 
             long begin = System.currentTimeMillis();
-            for (URL url : urls) {
-                try {
-                    Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, !requireDescriptors);
-                    if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
-                        deployment = JaxbOpenejb.createDeployments();
-                        if (url.getProtocol().equals("jar")) {
-                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                            File file = new File(url.getFile());
-                            path = file.getAbsolutePath();
-                            deployment.setJar(path);
-                        } else if (url.getProtocol().equals("file")) {
-                            File file = new File(url.getFile());
-                            path = file.getAbsolutePath();
-                            deployment.setDir(path);
-                        } else {
-                            DeploymentLoader.logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
-                            continue;
-                        }
-                        DeploymentLoader.logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
-                        loadFrom(deployment, base, jarList);
-                    }
-                } catch (IOException e) {
-                    DeploymentLoader.logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
-                } catch (UnknownModuleTypeException ignore) {
-                }
-            }
+            processUrls(urls, classLoader, !requireDescriptors, base, jarList);
             long end = System.currentTimeMillis();
             long time = end - begin;
 
+            if (!filterDescriptors){
+                UrlSet unchecked = prefiltered.exclude(urlSet);
+                processUrls(unchecked.getUrls(), classLoader, false, base, jarList);
+            }
+
+            if (urls.size() == 0) return;
+            
             if (time < 1000) {
                 DeploymentLoader.logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {
@@ -253,5 +238,36 @@ public class DeploymentsResolver {
             DeploymentLoader.logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
 
+    }
+
+    private static void processUrls(List<URL> urls, ClassLoader classLoader, boolean desc, FileUtils base, List<String> jarList) {
+        Deployments deployment;
+        String path;
+        for (URL url : urls) {
+            try {
+                Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, desc);
+                if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
+                    deployment = JaxbOpenejb.createDeployments();
+                    if (url.getProtocol().equals("jar")) {
+                        url = new URL(url.getFile().replaceFirst("!.*$", ""));
+                        File file = new File(url.getFile());
+                        path = file.getAbsolutePath();
+                        deployment.setJar(path);
+                    } else if (url.getProtocol().equals("file")) {
+                        File file = new File(url.getFile());
+                        path = file.getAbsolutePath();
+                        deployment.setDir(path);
+                    } else {
+                        DeploymentLoader.logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
+                        continue;
+                    }
+                    DeploymentLoader.logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
+                    loadFrom(deployment, base, jarList);
+                }
+            } catch (IOException e) {
+                DeploymentLoader.logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
+            } catch (UnknownModuleTypeException ignore) {
+            }
+        }
     }
 }

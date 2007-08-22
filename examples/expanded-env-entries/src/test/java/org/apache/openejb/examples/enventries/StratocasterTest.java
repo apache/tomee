@@ -44,7 +44,7 @@ public class StratocasterTest extends TestCase {
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        properties.setProperty("openejb.deployments.classpath.include", ".*expanded-env-entries.*");
+//        properties.setProperty("openejb.deployments.classpath.include", ".*expanded-env-entries.*");
 
         initialContext = new InitialContext(properties);
     }
