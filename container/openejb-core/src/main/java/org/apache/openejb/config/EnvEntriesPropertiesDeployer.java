@@ -111,7 +111,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
             return new HashMap(envEntriesProps);
         } catch (IOException e) {
-            log.error("envprops.notLoaded", e, propsUrl.toExternalForm());
+            log.error("envprops.notLoaded", e, module.getModuleId(), propsUrl.toExternalForm());
             return Collections.EMPTY_MAP;
         }
     }
