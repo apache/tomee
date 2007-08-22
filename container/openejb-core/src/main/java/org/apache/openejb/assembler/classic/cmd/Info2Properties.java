@@ -176,6 +176,13 @@ public class Info2Properties {
             copyOpenEjbProperties(System.getProperties(), p);
             copyOpenEjbProperties(SystemInstance.get().getProperties(), p);
             p.store(new Filter(System.out), null);
+
+
+            p = System.getProperties();
+            String[] misc = {"os.version", "os.name", "os.arch", "java.version", "java.vendor"};
+            for (String prop : misc) {
+                comment(prop + "=" + p.get(prop));
+            }
         } catch (IOException e) {
             e.printStackTrace(new PrintWriter(new CommentsFilter(System.out)));
         }
