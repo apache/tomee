@@ -16,27 +16,22 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.SimpleLayout;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -122,6 +117,85 @@ public class Logger {
     private static final Computable<String, MessageFormat> messageFormatCache = new Memoizer<String, MessageFormat>(
             messageFormatResolver);
 
+	private static final String LOGGING_PROPERTIES_FILE = "logging.properties";
+	private static final String EMBEDDED_PROPERTIES_FILE = "embedded.logging.properties";
+	static {
+		try {
+			configure();
+
+		} catch (IOException e) {
+         // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used. 
+			
+		}
+	}
+
+	private static void configure() throws IOException {
+
+		System.setProperty("openjpa.Log", "log4j");
+		SystemInstance system = SystemInstance.get();
+		FileUtils base = system.getBase();
+		File confDir = base.getDirectory("conf");
+		File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
+		if (confDir.exists()) {
+			if (loggingPropertiesFile.exists()) {
+				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
+				Properties props = new Properties();
+				props.load(bis);
+				PropertyConfigurator.configure(props);
+				try{
+					bis.close();
+				}catch(IOException e){
+					
+				}
+			} else {
+				installLoggingPropertiesFile(loggingPropertiesFile);
+			}
+		}else{
+			configureEmbedded();
+		} 
+	}
+    private static void configureEmbedded(){
+    	URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
+    	if(resource != null)
+    		PropertyConfigurator.configure(resource);
+    	else
+    		System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
+    }
+    private static void installLoggingPropertiesFile(File loggingPropertiesFile) throws IOException {
+    	URL resource = Thread.currentThread().getContextClassLoader().getResource(LOGGING_PROPERTIES_FILE);
+        if(resource == null){
+        	System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING logging.properties FILE ");
+        	return;
+        }
+    	InputStream in = resource.openStream();
+    	in = new BufferedInputStream(in);
+    	ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        byte buf[] = new byte[4096];
+        int i = in.read(buf);
+        while(i != -1){
+        	bao.write(buf);
+        	i = in.read(buf);
+        }
+        byte[] byteArray = bao.toByteArray();
+        ByteArrayInputStream bis = new ByteArrayInputStream(byteArray);
+        
+        Properties props = new Properties();
+        props.load(bis);
+		BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(loggingPropertiesFile));
+		bout.write(byteArray);
+        PropertyConfigurator.configure(props);
+        try {
+			bout.close();
+		} catch (IOException e) {
+			
+		}
+        try {
+			in.close();
+		} catch (IOException e) {
+
+		}
+
+    }
     /**
      * Given a key and a baseName, this method computes a message for a key. if
      * the key is not found in this ResourceBundle for this baseName, then it
@@ -160,21 +234,6 @@ public class Logger {
         return key;
     }
 
-    /**
-     * @deprecated Use {@link #init()} instead
-     */
-    public static void initialize(Properties props) {
-        Log4jConfigUtils log4j = new Logger.Log4jConfigUtils(props);
-
-        log4j.configure();
-    }
-
-    /**
-     * Initialise using {@link SystemInstance} as the source of properties
-     */
-    public static void init() {
-        initialize(SystemInstance.get().getProperties());
-    }
 
     /**
      * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
@@ -460,170 +519,4 @@ public class Logger {
         return message;
     }
 
-    static class Log4jConfigUtils {
-
-        Properties props;
-
-        public Log4jConfigUtils(Properties props) {
-            this.props = props;
-        }
-
-        public void configure() {
-            // make openjpa use log4j
-            System.setProperty("openjpa.Log", "log4j");
-
-            Properties properties = null;
-
-            String config = props.getProperty("log4j.configuration");
-            String[] search = {config, "logging.properties", "logging.conf"};
-
-            FileUtils base = SystemInstance.get().getBase();
-            File confDir = new File(base.getDirectory(), "conf");
-            File baseDir = base.getDirectory();
-            File userDir = new File("foo").getParentFile();
-
-            File[] paths = {confDir, baseDir, userDir};
-
-            for (int i = 0; i < search.length && properties == null; i++) {
-                String fileName = search[i];
-                if (fileName == null) {
-                    continue;
-                }
-
-                for (int j = 0; j < paths.length; j++) {
-                    File path = paths[j];
-
-                    File configFile = new File(path, fileName);
-
-                    if (configFile.exists()) {
-
-                        InputStream in = null;
-                        try {
-                            in = new FileInputStream(configFile);
-                            in = new BufferedInputStream(in);
-                            properties = new Properties();
-                            properties.load(in);
-                        } catch (IOException e) {
-                            org.apache.log4j.Logger logger = doFallbackConfiguration();
-                            logger.error("Unable to read logging config file "
-                                    + configFile.getAbsolutePath(), e);
-                        } finally {
-                            try {
-                                in.close();
-                            } catch (IOException e) {
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (properties == null) {
-                String configData = null;
-                try {
-                    ResourceFinder finder = new ResourceFinder("");
-                    configData = finder.findString("embedded.logging.properties");
-                    properties = new Properties();
-                    properties.load(new ByteArrayInputStream(configData
-                            .getBytes()));
-                } catch (IOException e) {
-                    org.apache.log4j.Logger logger = doFallbackConfiguration();
-                    logger.error("Unable to read default logging config file.",
-                            e);
-                    return;
-                }
-
-                if (confDir.exists()) {
-                    OutputStream out = null;
-                    File configFile = new File(confDir, "logging.properties");
-                    try {
-                        out = new FileOutputStream(configFile);
-                        out.write(configData.getBytes());
-                    } catch (IOException e) {
-                        org.apache.log4j.Logger logger = doFallbackConfiguration();
-                        logger.warn(
-                                "Unable write default logging config file to "
-                                        + configFile.getAbsolutePath(), e);
-                    } finally {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                }
-            }
-
-            List missing = new ArrayList();
-
-            for (Iterator iterator = properties.entrySet().iterator(); iterator
-                    .hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String key = (String) entry.getKey();
-                String value = (String) entry.getValue();
-
-                if (key.endsWith(".File")) {
-
-                    boolean found = false;
-                    for (int i = 0; i < paths.length && !found; i++) {
-                        File path = paths[i];
-                        File logfile = new File(path, value);
-                        if (logfile.getParentFile().exists()) {
-                            properties.setProperty(key, logfile
-                                    .getAbsolutePath());
-                            found = true;
-                        }
-                    }
-
-                    if (!found) {
-                        File logfile = new File(paths[0], value);
-                        missing.add(logfile);
-                    }
-                }
-            }
-
-            if (missing.size() > 0) {
-                org.apache.log4j.Logger logger = doFallbackConfiguration();
-
-                logger
-                        .warn("Unable use logging config as there are "
-                                + missing.size()
-                                + " file references containing directories which have not been created.  See the list below.");
-                for (int i = 0; i < missing.size(); i++) {
-                    File file = (File) missing.get(i);
-                    logger.warn("[" + i + "] " + file.getAbsolutePath());
-                }
-            } else {
-                PropertyConfigurator.configure(properties);
-            }
-
-        }
-
-        private org.apache.log4j.Logger doFallbackConfiguration() {
-            set("org.apache.activemq", Level.INFO);
-            set("openjpa", Level.WARN);
-            set("Transaction", Level.WARN);
-            set("OpenEJB.startup", Level.INFO);
-            set("OpenEJB.startup.config", Level.WARN);
-            set("OpenEJB", Level.WARN);
-
-            org.apache.log4j.Logger logger = org.apache.log4j.Logger
-                    .getLogger("OpenEJB");
-
-            SimpleLayout simpleLayout = new SimpleLayout();
-            ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
-            logger.addAppender(newAppender);
-            return logger;
-
-        }
-
-        private void set(String category, Level level) {
-            org.apache.log4j.Logger.getLogger(category).setLevel(level);
-            // Enumeration allAppenders =
-            // org.apache.log4j.Logger.getLogger(category).getAllAppenders();
-            // while (allAppenders.hasMoreElements()) {
-            // Object object = allAppenders.nextElement();
-            // System.out.println(category +" = " + object);
-            // }
-		}
-
-	}
 }

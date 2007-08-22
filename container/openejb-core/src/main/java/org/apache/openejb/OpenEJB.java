@@ -63,7 +63,6 @@ public final class OpenEJB {
          */
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
 
-            Logger.initialize(initProps);
 
             Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 

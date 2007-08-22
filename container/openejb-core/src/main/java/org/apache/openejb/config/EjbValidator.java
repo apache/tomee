@@ -32,7 +32,7 @@ import org.apache.openejb.config.rules.CheckCallbacks;
 import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckServiceRefs;
 import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.Logger;
+
 import org.apache.openejb.util.OpenEjbVersion;
 
 public class EjbValidator {
@@ -271,7 +271,7 @@ public class EjbValidator {
         } catch (Exception e) {
 
         }
-        Logger.initialize(SystemInstance.get().getProperties());
+
 
         try {
             EjbValidator v = new EjbValidator();
