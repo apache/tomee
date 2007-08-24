@@ -64,8 +64,8 @@ public class Main {
             Map<String, Properties> serviceEntries = finder.mapAvailableProperties(ServerService.class.getName());
             services = serviceEntries.keySet();
             for (String service : services) {
-                options.addOption(option(null, service+"-port", "int", "cmd.start.opt."+service+".port", service));
-                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt."+service+".bind", service));
+                options.addOption(option(null, service+"-port", "int", "cmd.start.opt.port", service));
+                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt.bind", service));
             }
         } catch (IOException e) {
             services = Collections.EMPTY_SET;
@@ -142,7 +142,7 @@ public class Main {
     }
 
     private static Option option(String shortOpt, String longOpt, String argName, String description, Object... details) {
-        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description)).create(shortOpt);
+        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description,details)).create(shortOpt);
     }
 
     private static String i18n(String key, Object... details) {
