@@ -46,10 +46,12 @@ class JndiRequestHandler {
 
     private Context ejbJndiTree;
     private Context clientJndiTree;
+    private Context deploymentsJndiTree;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
+        deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
         } catch (NamingException e) {
@@ -68,14 +70,23 @@ class JndiRequestHandler {
 
             Object object = null;
             try {
-                if (req.getModuleId()!= null && clientJndiTree != null){
+                if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
+
+                    object = deploymentsJndiTree.lookup(name);
+
+                } else if (req.getModuleId() != null && clientJndiTree != null) {
+
                     Context moduleContext = (Context) clientJndiTree.lookup(req.getModuleId());
-                    if (name.startsWith("comp/env/")){
+
+                    if (name.startsWith("comp/env/")) {
+
                         Context ctx = (Context) moduleContext.lookup("comp");
                         ctx = (Context) ctx.lookup("env");
-                        name = name.replaceFirst("comp/env/","");
+                        name = name.replaceFirst("comp/env/", "");
                         object = ctx.lookup(name);
-                    } else if (name.equals("comp/injections")){
+
+                    } else if (name.equals("comp/injections")) {
+
                         //noinspection unchecked
                         List<Injection> injections = (List<Injection>) moduleContext.lookup(name);
                         InjectionMetaData metaData = new InjectionMetaData();
