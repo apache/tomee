@@ -168,8 +168,8 @@ public class JndiEncInfoBuilder {
         beanInfo.jndiEnc = jndi;
     }
 
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
-    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncInfoBuilder.class);
+    protected static final Messages messages = new Messages(JndiEncInfoBuilder.class);
 
     private final Map<String,EnterpriseBeanInfo> allDeployments = new TreeMap<String,EnterpriseBeanInfo>();
 

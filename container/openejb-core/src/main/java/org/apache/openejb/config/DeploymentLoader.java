@@ -23,6 +23,8 @@ import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -182,9 +184,17 @@ public class DeploymentLoader {
                     try {
                         URL ejbUrl = ejbModules.get(moduleName);
                         File ejbFile = new File(ejbUrl.getPath());
-                        EjbModule ejbModule = new EjbModule(appClassLoader, moduleName, ejbFile.getAbsolutePath(), null, null);
 
-                        fillDescriptors(ejbUrl, ejbModule);
+                        Map<String, URL> descriptors = getDescriptors(ejbUrl);
+
+                        EjbJar ejbJar = null;
+                        if (descriptors.containsKey("ejb-jar.xml")){
+                            ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
+                        }
+
+                        EjbModule ejbModule = new EjbModule(appClassLoader, moduleName, ejbFile.getAbsolutePath(), ejbJar, null);
+
+                        ejbModule.getAltDDs().putAll(descriptors);
 
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
@@ -202,9 +212,16 @@ public class DeploymentLoader {
                         Manifest manifest = new Manifest(is);
                         String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
 
-                        ClientModule clientModule = new ClientModule(null, appClassLoader, clientFile.getAbsolutePath(), mainClass, moduleName);
+                        Map<String, URL> descriptors = getDescriptors(clientUrl);
 
-                        fillDescriptors(clientUrl, clientModule);
+                        ApplicationClient applicationClient = null;
+                        if (descriptors.containsKey("application-client.xml")){
+                            applicationClient = ReadDescriptors.readApplicationClient(descriptors.get("application-client.xml"));
+                        }
+
+                        ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass, moduleName);
+
+                        clientModule.getAltDDs().putAll(descriptors);
 
                         appModule.getClientModules().add(clientModule);
                     } catch (Exception e) {
@@ -231,9 +248,21 @@ public class DeploymentLoader {
 
         } else if (EjbModule.class.equals(moduleClass)) {
 
-            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), null, null);
+            Map<String, URL> descriptors = getDescriptors(baseUrl);
 
-            fillDescriptors(baseUrl, ejbModule);
+            EjbJar ejbJar = null;
+            if (descriptors.containsKey("ejb-jar.xml")){
+                ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
+            }
+
+            System.out.println("baseUrl = " + baseUrl);
+            for (Map.Entry<String, URL> entry : descriptors.entrySet()) {
+                System.out.println("entry.getKey() = " + entry.getKey());
+            }
+
+            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJar, null);
+
+            ejbModule.getAltDDs().putAll(descriptors);
 
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
             appModule.getEjbModules().add(ejbModule);
@@ -254,13 +283,12 @@ public class DeploymentLoader {
         }
     }
 
-    private void fillDescriptors(URL moduleUrl, DeploymentModule module) throws OpenEJBException {
+    private Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
         try {
             ResourceFinder finder = new ResourceFinder(moduleUrl);
 
-            Map<String, URL> descriptors = finder.getResourcesMap("META-INF/");
+            return finder.getResourcesMap("META-INF/");
 
-            module.getAltDDs().putAll(descriptors);
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }

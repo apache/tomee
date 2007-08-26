@@ -40,8 +40,12 @@ public class ClientModule implements DeploymentModule {
         this.mainClass = mainClass;
 
         if (moduleId == null){
-            File file = new File(jarLocation);
-            moduleId = file.getName();
+            if (applicationClient != null && applicationClient.getId() != null){
+                moduleId = applicationClient.getId();
+            } else {
+                File file = new File(jarLocation);
+                moduleId = file.getName();
+            }
         }
 
         this.moduleId = moduleId;

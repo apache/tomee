@@ -57,8 +57,12 @@ public class EjbModule implements DeploymentModule {
         this.jarURI = jarURI;
 
         if (moduleId == null){
-            File file = new File(jarURI);
-            moduleId = file.getName();
+            if (ejbJar != null && ejbJar.getId() != null){
+                jarURI = ejbJar.getId();
+            } else {
+                File file = new File(jarURI);
+                moduleId = file.getName();
+            }
         }
         this.moduleId = moduleId;
     }

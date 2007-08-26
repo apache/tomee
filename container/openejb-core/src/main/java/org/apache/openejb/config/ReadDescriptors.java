@@ -58,27 +58,7 @@ public class ReadDescriptors implements DynamicDeployer {
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
-
-            Object data = clientModule.getAltDDs().get("application-client.xml");
-            if (data instanceof URL) {
-                URL url = (URL) data;
-                try {
-                    ApplicationClient applicationClient = (ApplicationClient) JaxbJavaee.unmarshal(ApplicationClient.class, url.openStream());
-                    clientModule.setApplicationClient(applicationClient);
-                } catch (SAXException e) {
-                    throw new OpenEJBException("Cannot parse the application-client.xml file: "+ url.toExternalForm(), e);
-                } catch (JAXBException e) {
-                    throw new OpenEJBException("Cannot unmarshall the application-client.xml file: "+ url.toExternalForm(), e);
-                } catch (IOException e) {
-                    throw new OpenEJBException("Cannot read the application-client.xml file: "+ url.toExternalForm(), e);
-                } catch (Exception e) {
-                    throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: "+ url.toExternalForm(), e);
-                }
-            } else {
-                DeploymentLoader.logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
-                clientModule.setApplicationClient(new ApplicationClient());
-            }
-
+            readAppClient(clientModule, appModule);
         }
 
         List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
@@ -247,26 +227,68 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
-    private void readEjbJar(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
-        Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
-        if (data instanceof URL) {
+    private void readAppClient(ClientModule clientModule, AppModule appModule) throws OpenEJBException {
+        if (clientModule.getApplicationClient() != null) return;
+
+        Object data = clientModule.getAltDDs().get("application-client.xml");
+        if (data instanceof ApplicationClient) {
+            clientModule.setApplicationClient((ApplicationClient) data);
+        } else if (data instanceof URL) {
             URL url = (URL) data;
-            try {
-                EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, url.openStream());
-                ejbModule.setEjbJar(ejbJar);
-            } catch (SAXException e) {
-                throw new OpenEJBException("Cannot parse the ejb-jar.xml file: "+ url.toExternalForm(), e);
-            } catch (JAXBException e) {
-                throw new OpenEJBException("Cannot unmarshall the ejb-jar.xml file: "+ url.toExternalForm(), e);
-            } catch (IOException e) {
-                throw new OpenEJBException("Cannot read the ejb-jar.xml file: "+ url.toExternalForm(), e);
-            } catch (Exception e) {
-                throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: "+ url.toExternalForm(), e);
-            }
+            ApplicationClient applicationClient = readApplicationClient(url);
+            clientModule.setApplicationClient(applicationClient);
+        } else {
+            DeploymentLoader.logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
+            clientModule.setApplicationClient(new ApplicationClient());
+        }
+    }
+
+    private void readEjbJar(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
+        if (ejbModule.getEjbJar() != null) return;
+
+        Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
+        if (data instanceof EjbJar) {
+            ejbModule.setEjbJar((EjbJar) data);
+        } else if (data instanceof URL) {
+            URL url = (URL) data;
+            EjbJar ejbJar = readEjbJar(url);
+            ejbModule.setEjbJar(ejbJar);
         } else {
             DeploymentLoader.logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
             ejbModule.setEjbJar(new EjbJar());
         }
+    }
+
+    public static ApplicationClient readApplicationClient(URL url) throws OpenEJBException {
+        ApplicationClient applicationClient;
+        try {
+            applicationClient = (ApplicationClient) JaxbJavaee.unmarshal(ApplicationClient.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the application-client.xml file: "+ url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the application-client.xml file: "+ url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the application-client.xml file: "+ url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: "+ url.toExternalForm(), e);
+        }
+        return applicationClient;
+    }
+
+    public static EjbJar readEjbJar(URL url) throws OpenEJBException {
+        EjbJar ejbJar = null;
+        try {
+            ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the ejb-jar.xml file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the ejb-jar.xml file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the ejb-jar.xml file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: " + url.toExternalForm(), e);
+        }
+        return ejbJar;
     }
 
     private Source getSource(Object o) {
