@@ -255,11 +255,6 @@ public class DeploymentLoader {
                 ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
             }
 
-            System.out.println("baseUrl = " + baseUrl);
-            for (Map.Entry<String, URL> entry : descriptors.entrySet()) {
-                System.out.println("entry.getKey() = " + entry.getKey());
-            }
-
             EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJar, null);
 
             ejbModule.getAltDDs().putAll(descriptors);
