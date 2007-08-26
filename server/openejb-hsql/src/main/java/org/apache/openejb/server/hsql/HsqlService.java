@@ -22,6 +22,7 @@ import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.SelfManaging;
+import org.apache.openejb.util.LogCategory;
 import org.hsqldb.Server;
 import org.hsqldb.ServerConfiguration;
 import org.hsqldb.ServerConstants;
@@ -118,6 +119,11 @@ public class HsqlService implements ServerService, SelfManaging {
 
             // create the server
             server = new Server();
+            // add the silent property
+            properties.setProperty(ServerConstants.SC_KEY_SILENT, "true");
+            // set the log and error writers
+            server.setLogWriter(new HsqlPrintWriter(false));
+            server.setErrWriter(new HsqlPrintWriter(true));
             server.setProperties(new HsqlProperties(properties));
 
             // get the port
