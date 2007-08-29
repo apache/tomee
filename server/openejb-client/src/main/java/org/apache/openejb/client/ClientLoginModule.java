@@ -41,6 +41,8 @@ public class ClientLoginModule implements LoginModule {
     private String user;
     private Object clientIdentity;
     private ClientIdentityPrincipal principal;
+    private String realmNameSeparator;
+    private String realmName;
 
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
         this.subject = subject;
@@ -55,6 +57,14 @@ public class ClientLoginModule implements LoginModule {
         this.debug = "true".equalsIgnoreCase((String) options.get("debug"));
         if (debug) {
             log.config("Initialized ClientLoginModule: debug=" + debug);
+        }
+
+        if (options.containsKey("RealmNameSeparator")){
+            realmNameSeparator = (String)options.get("RealmNameSeparator");
+        }
+
+        if (options.containsKey("RealmName")){
+            realmName = (String)options.get("RealmName");
         }
     }
 
@@ -91,7 +101,19 @@ public class ClientLoginModule implements LoginModule {
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
         if (tmpPassword == null) tmpPassword = new char[0];
 
-        clientIdentity = ClientSecurity.directAuthentication(user, new String(tmpPassword), server);
+        if (realmNameSeparator != null){
+            String[] strings = user.split(realmNameSeparator);
+            if (strings.length == 2){
+                realmName = strings[0];
+                user = strings[1];
+            }
+        }
+
+        if (realmName != null) {
+            clientIdentity = ClientSecurity.directAuthentication(realmName, user, new String(tmpPassword), server);
+        } else {
+            clientIdentity = ClientSecurity.directAuthentication(user, new String(tmpPassword), server);
+        }
 
         if (debug) {
             log.config("login " + user);
