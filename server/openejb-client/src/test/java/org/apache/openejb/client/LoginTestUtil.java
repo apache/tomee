@@ -33,7 +33,6 @@ public class LoginTestUtil {
                 System.setProperty("java.security.auth.login.config", path);
             }
         }
-        System.out.println("Path to login config: " + path);
 
         Client.setClient(new Client() {
             protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
