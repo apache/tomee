@@ -49,6 +49,7 @@ public final class OpenEJB {
     
     public static class Instance {
         private static Messages messages = new Messages("org.apache.openejb.util.resources");
+        private final Throwable initialized;
 
         /**
          * 1 usage
@@ -62,7 +63,7 @@ public final class OpenEJB {
          * 2 usages
          */
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
-
+            initialized = new Exception("Initialized at "+new Date()).fillInStackTrace();
 
             Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
@@ -252,10 +253,15 @@ public final class OpenEJB {
                 System.out.println(messages.message("startup.ready"));
             }
         }
+
+        public Throwable getInitialized() {
+            return initialized;
+        }
     }
 
     public static void destroy() {
         instance = null;
+        SystemInstance.get().removeComponent(ContainerSystem.class);
     }
 
     /**
@@ -274,9 +280,15 @@ public final class OpenEJB {
      */
     public static void init(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
         if (isInitialized()) {
-            String msg = messages.message("startup.alreadyInitialized");
-            logger.error(msg);
-            throw new OpenEJBException(msg);
+            if (instance != null){
+                String msg = messages.message("startup.alreadyInitialized");
+                logger.error(msg, instance.initialized);
+                throw new OpenEJBException(msg, instance.initialized);
+            } else {
+                String msg = messages.message("startup.alreadyInitialized");
+                logger.error(msg);
+                throw new OpenEJBException(msg);
+            }
         } else {
             instance = new Instance(initProps, appServer);
         }
