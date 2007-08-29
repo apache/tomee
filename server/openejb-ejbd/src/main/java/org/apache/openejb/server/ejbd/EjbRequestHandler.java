@@ -25,6 +25,8 @@ import java.util.Collection;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.RequestMethodConstants;
@@ -38,11 +40,11 @@ import org.apache.openejb.spi.SecurityService;
 class EjbRequestHandler {
     public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
 
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("ejb"), "org.apache.openejb.server.util.resources");
     private final EjbDaemon daemon;
 
     EjbRequestHandler(EjbDaemon daemon) {
         this.daemon = daemon;
-
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
@@ -178,18 +180,22 @@ class EjbRequestHandler {
         } catch (org.apache.openejb.SystemException e) {
             res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
 
-            this.daemon.logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
+            logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
         } catch (java.lang.Throwable t) {
             // todo this causes the response to be written twice but the code below
             replyWithFatalError
                     (out, t, "Unknown error in container");
             return;
         } finally {
-            this.daemon.logger.info("EJB RESPONSE: " + res);
+            if (logger.isDebugEnabled()){
+                try {
+                    logger.debug("EJB REQUEST: "+req+" -- RESPONSE: " + res);
+                } catch (Exception justInCase) {}
+            }
             try {
                 res.writeExternal(out);
             } catch (java.io.IOException ie) {
-                this.daemon.logger.fatal("Couldn't write EjbResponse to output stream", ie);
+                logger.fatal("Couldn't write EjbResponse to output stream", ie);
             }
             call.reset();
             EJBHomeProxyHandle.resolver.set(null);
@@ -243,7 +249,7 @@ class EjbRequestHandler {
         } else {
 
             result = new RemoteException("The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
-            this.daemon.logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
+            logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
             res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact((Throwable) result));
         }
     }
@@ -303,7 +309,7 @@ class EjbRequestHandler {
                     "to return neither Collection nor the Remote Interface, " +
                     "but [" + result.getClass().getName() + "]";
             result = new RemoteException(message);
-            this.daemon.logger.error(req + " " + message);
+            logger.error(req + " " + message);
             res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, result);
         }
     }
@@ -383,13 +389,13 @@ class EjbRequestHandler {
 //        if (sec.isCallerAuthorized(req.getMethodInstance(), null)) {
 //            res.setResponse(ResponseCodes.EJB_OK, null);
 //        } else {
-//            this.daemon.logger.info(req + "Unauthorized Access by Principal Denied");
+//            logger.info(req + "Unauthorized Access by Principal Denied");
 //            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new EJBAccessException("Unauthorized Access by Principal Denied")));
 //        }
     }
 
     private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {
-        this.daemon.logger.fatal(message, error);
+        logger.fatal(message, error);
         RemoteException re = new RemoteException
                 ("The server has encountered a fatal error: " + message + " " + error, error);
         EJBResponse res = new EJBResponse();
@@ -397,7 +403,7 @@ class EjbRequestHandler {
         try {
             res.writeExternal(out);
         } catch (java.io.IOException ie) {
-            this.daemon.logger.error("Failed to write to EJBResponse", ie);
+            logger.error("Failed to write to EJBResponse", ie);
         }
     }
 }

@@ -71,5 +71,12 @@ public class AuthenticationRequest implements Request {
         out.writeObject(username);
         out.writeObject(credentials);
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(realm).append(':');
+        sb.append(username);
+        return sb.toString();
+    }
 }
 

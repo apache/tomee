@@ -136,7 +136,7 @@ public class ClientSecurity {
 
         // check the response
         if (authRes.getResponseCode() != ResponseCodes.AUTH_GRANTED) {
-            throw new FailedLoginException("This principal is not authenticated.");
+            throw (FailedLoginException) new FailedLoginException("This principal is not authenticated.").initCause(authRes.getDeniedCause());
         }
 
         // return the response object

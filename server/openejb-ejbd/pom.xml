@@ -59,6 +59,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkMode>pertest</forkMode>
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
           <argLine>-javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>

@@ -49,6 +49,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     protected transient EJBHome ejbHomeProxy;
 
+    // only used for business objects;
+    protected transient Object primaryKey;
+
     public EJBMetaDataImpl() {
 
     }
@@ -131,6 +134,14 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return businessClasses;
     }
 
+    public Object getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(Object primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
@@ -145,6 +156,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         out.writeShort((short) businessClasses.size());
         for (Class clazz : businessClasses) {
             out.writeObject(clazz);
+        }
+        if (businessClasses.size() >0){
+            out.writeObject(primaryKey);
         }
     }
 
@@ -162,6 +176,31 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         for (int i = in.readShort(); i > 0; i--) {
             businessClasses.add((Class) in.readObject());
         }
+        if (businessClasses.size() > 0){
+            primaryKey = in.readObject();
+        }
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder(100);
+        switch(type){
+            case STATEFUL: sb.append("STATEFUL:"); break;
+            case STATELESS: sb.append("STATELESS:");break;
+            case CMP_ENTITY: sb.append("CMP_ENTITY:");break;
+            case BMP_ENTITY: sb.append("BMP_ENTITY:");break;
+        }
+        sb.append(deploymentID).append(":");
+        if (homeClass != null){
+            sb.append(homeClass.getName());
+        } else if (businessClasses.size() != 0){
+            for (Class clazz : businessClasses) {
+                sb.append(clazz.getName()).append(',');
+            }
+            sb.deleteCharAt(sb.length()-1);
+            if (type == STATEFUL){
+                sb.append(":").append(primaryKey);
+            }
+        }
+        return sb.toString();
+    }
 }

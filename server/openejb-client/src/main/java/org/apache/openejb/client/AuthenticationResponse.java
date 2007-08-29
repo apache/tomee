@@ -25,6 +25,7 @@ public class AuthenticationResponse implements Response {
     private transient int responseCode = -1;
     private transient ClientMetaData identity;
     private transient ServerMetaData server;
+    private transient Throwable deniedCause;
 
     public AuthenticationResponse() {
     }
@@ -57,6 +58,14 @@ public class AuthenticationResponse implements Response {
         this.server = server;
     }
 
+    public Throwable getDeniedCause() {
+        return deniedCause;
+    }
+
+    public void setDeniedCause(Throwable deniedCause) {
+        this.deniedCause = deniedCause;
+    }
+
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
@@ -73,6 +82,9 @@ public class AuthenticationResponse implements Response {
                 server.readExternal(in);
                 break;
             case ResponseCodes.AUTH_DENIED:
+                ThrowableArtifact ta = new ThrowableArtifact();
+                ta.readExternal(in);
+                deniedCause = ta.getThrowable();
                 break;
         }
     }
@@ -91,8 +103,33 @@ public class AuthenticationResponse implements Response {
                 server.writeExternal(out);
                 break;
             case ResponseCodes.AUTH_DENIED:
+                ThrowableArtifact ta = new ThrowableArtifact(deniedCause);
+                ta.writeExternal(out);
                 break;
         }
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(50);
+
+        switch (responseCode) {
+            case ResponseCodes.AUTH_GRANTED: {
+                sb.append("AUTH_GRANTED:");
+                sb.append(identity);
+                break;
+            }
+            case ResponseCodes.AUTH_REDIRECT: {
+                sb.append("AUTH_REDIRECT:");
+                sb.append(server);
+                break;
+            }
+            case ResponseCodes.AUTH_DENIED: {
+                sb.append("AUTH_DENIED:");
+                sb.append(deniedCause.toString());
+                break;
+            }
+        }
+        return sb.toString();
     }
 
 }

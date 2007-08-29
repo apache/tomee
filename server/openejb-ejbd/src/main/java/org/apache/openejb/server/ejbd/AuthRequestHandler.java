@@ -20,6 +20,7 @@ import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
 import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
@@ -35,7 +36,7 @@ import javax.security.auth.login.LoginException;
 class AuthRequestHandler {
 
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
-    Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
 
     AuthRequestHandler(EjbDaemon daemon) {
     }
@@ -59,14 +60,20 @@ class AuthRequestHandler {
 
             res.setIdentity(client);
             res.setResponseCode(ResponseCodes.AUTH_GRANTED);
-
-            res.writeExternal(out);
         } catch (Throwable t) {
+            res.setResponseCode(ResponseCodes.AUTH_DENIED);
+            res.setDeniedCause(t);
+        } finally {
+            if (logger.isDebugEnabled()){
+                try {
+                    logger.debug("AUTH REQUEST: "+req+" -- RESPONSE: " + res);
+                } catch (Exception justInCase) {}
+            }
+
             try {
-                res.setResponseCode(ResponseCodes.AUTH_DENIED);
                 res.writeExternal(out);
-            } catch (IOException e) {
-                logger.error("Failed to write to AuthenticationResponse", e);
+            } catch (java.io.IOException ie) {
+                logger.fatal("Couldn't write AuthenticationResponse to output stream", ie);
             }
         }
     }

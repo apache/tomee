@@ -74,6 +74,10 @@ public class ThrowableArtifact implements Externalizable {
         return throwable;
     }
 
+    public String toString() {
+        return throwable.toString();
+    }
+
     private static class MockThrowable extends Throwable {
         private final String classType;
 

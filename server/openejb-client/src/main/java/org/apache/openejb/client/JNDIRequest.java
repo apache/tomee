@@ -78,5 +78,18 @@ public class JNDIRequest implements Request {
         out.writeUTF(requestString);
         out.writeObject(moduleId);
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(100);
+
+        switch(requestMethod){
+            case RequestMethodConstants.JNDI_LOOKUP: sb.append("JNDI_LOOKUP:"); break;
+            case RequestMethodConstants.JNDI_LIST: sb.append("JNDI_LIST:"); break;
+            case RequestMethodConstants.JNDI_LIST_BINDINGS: sb.append("JNDI_LIST_BINDINGS:"); break;
+        }
+        sb.append(this.moduleId).append(":");
+        sb.append(this.requestString);
+        return sb.toString();
+    }
 }
 

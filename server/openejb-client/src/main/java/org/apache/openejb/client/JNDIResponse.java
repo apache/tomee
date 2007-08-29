@@ -116,4 +116,25 @@ public class JNDIResponse implements Response {
                 break;
         }
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(100);
+
+        switch (responseCode) {
+            case ResponseCodes.JNDI_BUSINESS_OBJECT: sb.append("JNDI_BUSINESS_OBJECT:"); break;
+            case ResponseCodes.JNDI_OK: sb.append("JNDI_OK:"); break;
+            case ResponseCodes.JNDI_NAMING_EXCEPTION: sb.append("JNDI_NAMING_EXCEPTION:"); break;
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION: sb.append("JNDI_RUNTIME_EXCEPTION:"); break;
+            case ResponseCodes.JNDI_ERROR: sb.append("JNDI_ERROR:"); break;
+            case ResponseCodes.JNDI_RESOURCE: sb.append("JNDI_RESOURCE:"); break;
+            case ResponseCodes.JNDI_CONTEXT: sb.append("JNDI_CONTEXT:"); break;
+            case ResponseCodes.JNDI_NOT_FOUND: sb.append("JNDI_NOT_FOUND:"); break;
+            case ResponseCodes.JNDI_EJBHOME: sb.append("JNDI_EJBHOME:"); break;
+            case ResponseCodes.JNDI_DATA_SOURCE: sb.append("JNDI_DATA_SOURCE:"); break;
+            case ResponseCodes.JNDI_INJECTIONS: sb.append("JNDI_INJECTIONS:"); break;
+        }
+        sb.append(this.getResult());
+        return sb.toString();
+    }
+
 }

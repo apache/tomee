@@ -97,7 +97,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         Object serverURI = env.get(Context.PROVIDER_URL);
         moduleId = (String) env.get("openejb.client.moduleId");
 
-        if (serverURI == null) serverURI = "foo://localhost:4201";
+        if (serverURI == null) serverURI = "ejbd://localhost:4201";
         // if (userID == null) userID = "anonymous";
         // if (psswrd == null) psswrd = "anon";
 
@@ -129,7 +129,10 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     public void authenticate(String userID, String psswrd) throws AuthenticationException {
 
-        AuthenticationRequest req = new AuthenticationRequest(userID, psswrd);
+        // May be null
+        String realmName = (String) env.get("openejb.authentication.realmName");
+
+        AuthenticationRequest req = new AuthenticationRequest(realmName, userID, psswrd);
         AuthenticationResponse res = null;
 
         try {
@@ -147,7 +150,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 server = res.getServer();
                 break;
             case ResponseCodes.AUTH_DENIED:
-                throw new AuthenticationException("This principle is not authorized.");
+                throw (AuthenticationException) new AuthenticationException("This principle is not authorized.").initCause(res.getDeniedCause());
         }
     }
 
@@ -162,9 +165,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     private Object createBusinessObject(Object result) {
-        Object[] data = (Object[]) result;
-        EJBMetaDataImpl ejb = (EJBMetaDataImpl) data[0];
-        Object primaryKey = data[1];
+        EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
+        Object primaryKey = ejb.getPrimaryKey();
 
         EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
         return handler.createEJBObjectProxy();

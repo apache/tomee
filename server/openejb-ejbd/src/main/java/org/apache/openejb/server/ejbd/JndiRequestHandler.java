@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import javax.naming.Context;
@@ -30,6 +31,8 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.Injection;
 import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -42,7 +45,7 @@ import org.apache.openejb.client.InjectionMetaData;
 import org.omg.CORBA.ORB;
 
 class JndiRequestHandler {
-    private final EjbDaemon daemon;
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
     private Context ejbJndiTree;
     private Context clientJndiTree;
@@ -56,15 +59,34 @@ class JndiRequestHandler {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
         } catch (NamingException e) {
         }
-        this.daemon = daemon;
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
         JNDIResponse res = new JNDIResponse();
+        JNDIRequest req = null;
         try {
-            JNDIRequest req = new JNDIRequest();
+            req = new JNDIRequest();
             req.readExternal(in);
+        } catch (Throwable e) {
+            res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
+            NamingException namingException = new NamingException("Could not read jndi request");
+            namingException.setRootCause(e);
+            res.setResult(namingException);
 
+            if (logger.isDebugEnabled()){
+                try {
+                    logger.debug("JNDI REQUEST: "+req+" -- RESPONSE: " + res);
+                } catch (Exception justInCase) {}
+            }
+
+            try {
+                res.writeExternal(out);
+            } catch (java.io.IOException ie) {
+                logger.fatal("Couldn't write JndiResponse to output stream", ie);
+            }
+        }
+
+        try {
             String name = req.getRequestString();
             if (name.startsWith("/")) name = name.substring(1);
 
@@ -179,13 +201,13 @@ class JndiRequestHandler {
                             deployment.getComponentType().toString(),
                             deploymentID,
                             -1, proxyInfo.getInterfaces());
-                    Object[] data = {metaData, proxyInfo.getPrimaryKey()};
-                    res.setResult(data);
+                    metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
+                    res.setResult(metaData);
                     break;
                 }
                 case BUSINESS_LOCAL: {
-                    String property = SystemInstance.get().getProperty("openejb.businessLocal", "remotable");
-                    if (property.equalsIgnoreCase("remotable")) {
+                    String property = SystemInstance.get().getProperty("openejb.remotable.businessLocals", "false");
+                    if (property.equalsIgnoreCase("true")) {
                         res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                         EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                                 null,
@@ -193,11 +215,11 @@ class JndiRequestHandler {
                                 deployment.getComponentType().toString(),
                                 deploymentID,
                                 -1, proxyInfo.getInterfaces());
-                        Object[] data = {metaData, proxyInfo.getPrimaryKey()};
-                        res.setResult(data);
+                        metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
+                        res.setResult(metaData);
                     } else {
                         res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                        res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.businessLocal=remotable' in the server."));
+                        res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server."));
                     }
                     break;
                 }
@@ -212,10 +234,17 @@ class JndiRequestHandler {
             namingException.setRootCause(e);
             res.setResult(namingException);
         } finally {
+
+            if (logger.isDebugEnabled()){
+                try {
+                    logger.debug("JNDI REQUEST: "+req+" -- RESPONSE: " + res);
+                } catch (Exception justInCase) {}
+            }
+
             try {
                 res.writeExternal(out);
             } catch (java.io.IOException ie) {
-                this.daemon.logger.fatal("Couldn't write JndiResponse to output stream", ie);
+                logger.fatal("Couldn't write JndiResponse to output stream", ie);
             }
         }
     }
