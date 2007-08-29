@@ -34,9 +34,10 @@ public class InitEjbDeployments implements DynamicDeployer {
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final StringTemplate deploymentIdTemplate;
+    private static final String DEPLOYMENT_ID_FORMAT = "openejb.deploymentId.format";
 
     public InitEjbDeployments() {
-        String format = SystemInstance.get().getProperty("openejb.deploymentId.format", "{ejbName}");
+        String format = SystemInstance.get().getProperty(DEPLOYMENT_ID_FORMAT, "{ejbName}");
         this.deploymentIdTemplate = new StringTemplate(format);
     }
 
@@ -69,21 +70,26 @@ public class InitEjbDeployments implements DynamicDeployer {
                 ejbDeployment = new EjbDeployment();
 
                 ejbDeployment.setEjbName(bean.getEjbName());
-                ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData));
+                ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData, deploymentIdTemplate));
 
-                logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ", container-id=" + ejbDeployment.getContainerId() + ")");
+                logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
                 openejbJar.getEjbDeployment().add(ejbDeployment);
+            } else {
+                if (ejbDeployment.getDeploymentId() == null) {
+                    ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData, deploymentIdTemplate));
+                    logger.info("Auto-assigning deployment-id for ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
+                }
             }
         }
 
         return ejbModule;
     }
 
-    private String autoAssignDeploymentId(EnterpriseBean bean, Map<String, String> contextData) {
+    private String autoAssignDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
         contextData.put("ejbClass", bean.getClass().getName());
         contextData.put("ejbClass.simpleName", bean.getClass().getSimpleName());
         contextData.put("ejbName", bean.getEjbName());
-        return deploymentIdTemplate.apply(contextData);
+        return template.apply(contextData);
     }
 }
