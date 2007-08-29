@@ -20,6 +20,7 @@ import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class DeploymentsResolver {
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
     private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
+    private static final Logger logger = DeploymentLoader.logger;
 
     private static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
 
@@ -173,6 +175,12 @@ public class DeploymentsResolver {
         exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
         boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
         boolean filterDescriptors = SystemInstance.get().getProperty(CLASSPATH_FILTER_DESCRIPTORS, "false").equalsIgnoreCase("true");
+
+        logger.debug("Using "+CLASSPATH_INCLUDE+" '"+include+"'");
+        logger.debug("Using "+CLASSPATH_EXCLUDE+" '"+exclude+"'");
+        logger.debug("Using "+CLASSPATH_FILTER_DESCRIPTORS+" '"+filterDescriptors+"'");
+        logger.debug("Using "+CLASSPATH_REQUIRE_DESCRIPTOR+" '"+requireDescriptors+"'");
+
         try {
             UrlSet urlSet = new UrlSet(classLoader);
             UrlSet includes = urlSet.matching(include);
@@ -189,17 +197,17 @@ public class DeploymentsResolver {
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();
             if (size == 0 && include.length() > 0) {
-                DeploymentLoader.logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 return;
             } else if (size == 0 && (!filterDescriptors && prefiltered.getUrls().size() == 0)) {
                 return;
             } else if (size < 10) {
-                DeploymentLoader.logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
+                logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else if (size < 50 && !requireDescriptors) {
-                DeploymentLoader.logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
             } else if (!requireDescriptors) {
-                DeploymentLoader.logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
-                DeploymentLoader.logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
+                logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
             }
 
             long begin = System.currentTimeMillis();
@@ -215,27 +223,27 @@ public class DeploymentsResolver {
             if (urls.size() == 0) return;
             
             if (time < 1000) {
-                DeploymentLoader.logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {
-                DeploymentLoader.logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 10000) {
-                DeploymentLoader.logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
-                DeploymentLoader.logger.warning("Consider adjusting your " + CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" + exclude + "', include='" + include + "'");
+                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.warning("Consider adjusting your " + CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" + exclude + "', include='" + include + "'");
             } else {
-                DeploymentLoader.logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
-                DeploymentLoader.logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
+                logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 List<String> list = new ArrayList<String>();
                 for (URL url : urls) {
                     list.add(url.toExternalForm());
                 }
                 Collections.sort(list);
                 for (String url : list) {
-                    DeploymentLoader.logger.info("Matched: " + url);
+                    logger.info("Matched: " + url);
                 }
             }
         } catch (IOException e1) {
             e1.printStackTrace();
-            DeploymentLoader.logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
+            logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
 
     }
@@ -258,14 +266,14 @@ public class DeploymentsResolver {
                         path = file.getAbsolutePath();
                         deployment.setDir(path);
                     } else {
-                        DeploymentLoader.logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
+                        logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
                         continue;
                     }
-                    DeploymentLoader.logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
+                    logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
                     loadFrom(deployment, base, jarList);
                 }
             } catch (IOException e) {
-                DeploymentLoader.logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
+                logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
             } catch (UnknownModuleTypeException ignore) {
             }
         }
