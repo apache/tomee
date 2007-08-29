@@ -101,18 +101,23 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
     }
 
     public Object login(String realmName, String username, String password) throws LoginException {
-        if (realmName == null){
-            realmName = this.realmName;
+        try {
+            if (realmName == null){
+                realmName = this.realmName;
+            }
+            LoginContext context = new LoginContext(realmName, new UsernamePasswordCallbackHandler(username, password));
+            context.login();
+
+            Subject subject = context.getSubject();
+
+            Identity identity = new Identity(subject);
+            Serializable token = identity.getToken();
+            identities.put(token, identity);
+            return token;
+        } catch (LoginException e) {
+            e.printStackTrace();
+            throw e;
         }
-        LoginContext context = new LoginContext(realmName, new UsernamePasswordCallbackHandler(username, password));
-        context.login();
-
-        Subject subject = context.getSubject();
-
-        Identity identity = new Identity(subject);
-        Serializable token = identity.getToken();
-        identities.put(token, identity);
-        return token;
     }
 
     private final static class SecurityContext {
@@ -285,9 +290,7 @@ public class SecurityServiceImpl implements SecurityService, ThreadContextListen
 
         URL loginConfig = ConfUtils.getConfResource("login.config");
 
-        path = loginConfig.getFile();
-        
-        System.setProperty("java.security.auth.login.config", path);
+        System.setProperty("java.security.auth.login.config", loginConfig.toExternalForm());
     }
 
     private static void installJacc() {
