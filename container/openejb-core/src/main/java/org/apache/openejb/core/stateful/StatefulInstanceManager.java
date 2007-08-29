@@ -151,11 +151,13 @@ public class StatefulInstanceManager {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Context ctx = deploymentInfo.getJndiEnc();
             SessionContext sessionContext;
-            try {
-                sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
-            } catch (NamingException e1) {
-                sessionContext = createSessionContext();
-                ctx.bind("java:comp/EJBContext", sessionContext);
+            synchronized (this) {
+                try {
+                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
+                } catch (NamingException e1) {
+                    sessionContext = createSessionContext();
+                    ctx.bind("java:comp/EJBContext", sessionContext);
+                }
             }
             if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                 callContext.setCurrentOperation(Operation.INJECTION);

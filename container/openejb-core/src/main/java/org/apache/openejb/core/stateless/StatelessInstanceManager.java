@@ -104,13 +104,18 @@ public class StatelessInstanceManager {
             try {
                 Context ctx = deploymentInfo.getJndiEnc();                
                 SessionContext sessionContext;
-                try {
-                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
-                } catch (NamingException e1) {
-                    sessionContext = createSessionContext();
-                    // TODO: This should work
-                    ctx.bind("java:comp/EJBContext", sessionContext);
-                }                              
+                // This needs to be synchronized as this code is multi-threaded.
+                // In between the lookup and the bind a bind may take place in another Thread.
+                // This is a fix for GERONIMO-3444
+                synchronized(this){
+                    try {                    
+                        sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
+                    } catch (NamingException e1) {
+                        sessionContext = createSessionContext();
+                        // TODO: This should work
+                        ctx.bind("java:comp/EJBContext", sessionContext);
+                    }                  
+                }
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
                     callContext.setCurrentAllowedStates(StatelessContext.getStates());                    
@@ -118,11 +123,14 @@ public class StatelessInstanceManager {
                 }     
                 
                 WebServiceContext wsContext;
-                try {
-                    wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
-                } catch (NamingException e) {
-                    wsContext = new EjbWebServiceContext(sessionContext);
-                    ctx.bind("java:comp/WebServiceContext", wsContext);
+                // This is a fix for GERONIMO-3444
+                synchronized(this){
+                    try {
+                        wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
+                    } catch (NamingException e) {
+                        wsContext = new EjbWebServiceContext(sessionContext);
+                        ctx.bind("java:comp/WebServiceContext", wsContext);
+                    }
                 }
 
                 fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
