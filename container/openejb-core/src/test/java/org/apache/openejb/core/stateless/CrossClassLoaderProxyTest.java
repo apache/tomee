@@ -18,33 +18,24 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.EjbJarBuilder;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.config.EjbJarInfoBuilder;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.JndiEncInfoBuilder;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.ri.sp.PseudoSecurityService;
-import org.apache.openejb.ri.sp.PseudoTransactionService;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.Jdk13ProxyFactory;
-import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,71 +44,54 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Stack;
 
 /**
  * @version $Revision: 522073 $ $Date: 2007-03-24 11:03:25 -0700 (Sat, 24 Mar 2007) $
  */
 public class CrossClassLoaderProxyTest extends TestCase {
-    private DeploymentInfo deploymentInfo;
 
     public void testBusinessLocalInterface() throws Exception {
 
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-        DeploymentInfo.BusinessLocalHome businessLocalHome = coreDeploymentInfo.getBusinessLocalHome();
-        assertNotNull("businessLocalHome", businessLocalHome);
+        InitialContext ctx = new InitialContext();
 
-        Object object = businessLocalHome.create();
-        assertNotNull("businessLocalHome.create()", businessLocalHome);
-
-        assertTrue("instanceof widget", object instanceof Widget);
-
-        Widget widget = (Widget) object;
+        Widget widget = (Widget) ctx.lookup("WidgetBeanBusinessLocal");
 
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
-        assertNotNull("lifecycle",lifecycle);
+        assertNotNull("lifecycle", lifecycle);
 
         // Check the lifecycle of the bean
         List expected = Arrays.asList(Lifecycle.values());
 
-        assertEquals(join("\n", expected) , join("\n", lifecycle));
+        assertEquals(join("\n", expected), join("\n", lifecycle));
     }
 
     public void testBusinessRemoteInterface() throws Exception {
 
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-        DeploymentInfo.BusinessRemoteHome businessRemoteHome = coreDeploymentInfo.getBusinessRemoteHome();
-        assertNotNull("businessRemoteHome", businessRemoteHome);
+        InitialContext ctx = new InitialContext();
 
-        Object object = businessRemoteHome.create();
-        assertNotNull("businessRemoteHome.create()", businessRemoteHome);
-
-        assertTrue("instanceof widget", object instanceof RemoteWidget);
-
-        RemoteWidget widget = (RemoteWidget) object;
+        RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanBusinessRemote");
 
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
-        assertNotNull("lifecycle",lifecycle);
+        assertNotNull("lifecycle", lifecycle);
         assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
 
         // Check the lifecycle of the bean
         List expected = Arrays.asList(Lifecycle.values());
 
-        assertEquals(join("\n", expected) , join("\n", lifecycle));
+        assertEquals(join("\n", expected), join("\n", lifecycle));
     }
 
     public void testRemoteInterface() throws Exception {
 
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-        EJBHome home = coreDeploymentInfo.getEJBHome();
+        InitialContext ctx = new InitialContext();
+        EJBHome home = (EJBHome) ctx.lookup("WidgetBean");
         assertNotNull("home", home);
         assertTrue("home should be an instance of WidgetHome", home instanceof WidgetHome);
-        CrossClassLoaderProxyTestObject.widgetHome = (WidgetHome)home;
+        CrossClassLoaderProxyTestObject.widgetHome = (WidgetHome) home;
         CrossClassLoaderProxyTestObject proxyTestObject = new CrossClassLoaderProxyTestObject();
         proxyTestObject.testRemoteInterface();
     }
@@ -141,8 +115,9 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
             Object testObject = testObjectClass.newInstance();
 
-            CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-            EJBHome rawHome = coreDeploymentInfo.getEJBHome();
+            InitialContext ctx = new InitialContext();
+            EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBean");
+            ;
             EJBHome home = (EJBHome) copy(rawHome);
             assertNotNull("home", home);
             assertEquals(widgetHomeClass.getClassLoader(), home.getClass().getClassLoader());
@@ -241,37 +216,37 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        StatelessBean bean = new StatelessBean("widget", WidgetBean.class.getName());
-        bean.setRemote(WidgetRemote.class.getName());
-        bean.setHome(WidgetHome.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
+
+        // containers
+        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        statelessContainerInfo.properties.setProperty("TimeOut", "10");
+        statelessContainerInfo.properties.setProperty("PoolSize", "0");
+        statelessContainerInfo.properties.setProperty("StrictPooling", "false");
+        assembler.createContainer(statelessContainerInfo);
+
+        // Setup the descriptor information
+
+        StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
+        bean.setHomeAndRemote(WidgetHome.class, WidgetRemote.class);
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
-        OpenejbJar openejbJar = new OpenejbJar();
-        openejbJar.addEjbDeployment(new EjbDeployment("Stateless Container", "widget", "widget"));
-
-        EjbModule jar = new EjbModule(this.getClass().getClassLoader(), "", ejbJar, openejbJar);
-
-        PseudoTransactionService transactionManager = new PseudoTransactionService();
-        PseudoSecurityService securityService = new PseudoSecurityService();
-        SystemInstance.get().setComponent(SecurityService.class, securityService);
-        StatelessContainer container = new StatelessContainer("Stateless Container", transactionManager, securityService, 10, 0, false);
-        Properties props = new Properties();
-        props.put(container.getContainerID(), container);
-
-        HashMap<String, DeploymentInfo> ejbs = build(props, jar);
-        deploymentInfo = ejbs.get("widget");
-        CoreContainerSystem containerSystem = new CoreContainerSystem();
-        SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
-        containerSystem.addDeployment(deploymentInfo);
-
-        ProxyManager.registerFactory("ivm_server", new Jdk13ProxyFactory());
-        ProxyManager.setDefaultFactory("ivm_server");
+        assembler.createApplication(config.configureApplication(ejbJar));
 
         WidgetBean.lifecycle.clear();
     }
@@ -282,19 +257,6 @@ public class CrossClassLoaderProxyTest extends TestCase {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();
-    }
-
-    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule ejbModule) throws OpenEJBException {
-        EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
-        EjbJarInfo jarInfo = infoBuilder.buildInfo(ejbModule);
-
-        // Process JNDI refs
-        JndiEncInfoBuilder.initJndiReferences(ejbModule, jarInfo);
-
-        EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
-        HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
-        builder.deploy(ejbs);
-        return ejbs;
     }
 
     public static interface Widget {
