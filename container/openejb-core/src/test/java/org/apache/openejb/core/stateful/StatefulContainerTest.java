@@ -154,18 +154,6 @@ public class StatefulContainerTest extends TestCase {
         return sb.toString();
     }
 
-    private HashMap<String, DeploymentInfo> build(Properties props, EjbModule ejbModule) throws OpenEJBException {
-        EjbJarInfoBuilder infoBuilder = new EjbJarInfoBuilder();
-        EjbJarInfo jarInfo = infoBuilder.buildInfo(ejbModule);
-
-        // Process JNDI refs
-        JndiEncInfoBuilder.initJndiReferences(ejbModule, jarInfo);
-
-        EjbJarBuilder builder = new EjbJarBuilder(props, this.getClass().getClassLoader());
-        HashMap<String, DeploymentInfo> ejbs = builder.build(jarInfo,null);
-        return ejbs;
-    }
-
     @Local
     public static interface Widget {
         Stack<Lifecycle> getLifecycle();
