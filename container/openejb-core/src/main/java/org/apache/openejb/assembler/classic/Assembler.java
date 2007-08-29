@@ -514,7 +514,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } catch (Throwable t) {
             try {
                 destroyApplication(appInfo);
-            } catch (UndeployException e1) {
+            } catch (Exception e1) {
                 logger.debug("App failing deployment may not have undeployed cleanly: "+appInfo.jarPath, e1);
             }
             throw new OpenEJBException("Creating application failed: "+appInfo.jarPath, t);

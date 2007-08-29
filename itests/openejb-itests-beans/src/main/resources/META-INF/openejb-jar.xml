@@ -17,6 +17,9 @@
     limitations under the License.
 -->
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+  <properties>
+  openejb.jndiname.format = {deploymentId}{interfaceType.openejbLegacyName}
+  </properties>
   <ejb-deployment ejb-name="BasicCmpBean" deployment-id="client/tests/entity/cmp/BasicCmpHome" container-id="Default CMP Container">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
     <query>

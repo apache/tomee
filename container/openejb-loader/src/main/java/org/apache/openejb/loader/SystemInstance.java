@@ -137,6 +137,10 @@ public class SystemInstance {
         return (T)components.get(type);
     }
 
+    public <T> T removeComponent(Class<T> type) {
+        return (T)components.remove(type);
+    }
+
     /**
      * @param type the class type of the component required
      */

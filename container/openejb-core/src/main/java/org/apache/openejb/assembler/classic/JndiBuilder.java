@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
+import java.lang.reflect.Constructor;
 
 
 /**
@@ -48,31 +49,48 @@ public class JndiBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
-    private JndiNameStrategy strategy = new LegacyAddedSuffixStrategy();
     private final Context context;
+    private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
 
     public JndiBuilder(Context context) {
         this.context = context;
-
-        String strategyClass = SystemInstance.get().getProperty("openejb.jndiname.strategy.class", LegacyAddedSuffixStrategy.class.getName());
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            strategy = (JndiNameStrategy) classLoader.loadClass(strategyClass).newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalStateException("Could not instantiate JndiNameStrategy: "+strategyClass, e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Could not access JndiNameStrategy: "+strategyClass, e);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Could not load JndiNameStrategy: "+strategyClass, e);
-        } catch (Throwable t){
-            throw new IllegalStateException("Could not create JndiNameStrategy: "+strategyClass, t);
-        }
     }
 
     public void build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) {
+
+        JndiNameStrategy strategy = createStrategy(ejbJar, deployments);
+
         for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
             DeploymentInfo deploymentInfo = deployments.get(beanInfo.ejbDeploymentId);
-            bind(deploymentInfo, beanInfo);
+            bind(ejbJar, deploymentInfo, beanInfo, strategy);
+        }
+    }
+
+    private JndiNameStrategy createStrategy(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) {
+        String strategyClassName = SystemInstance.get().getProperty(JNDINAME_STRATEGY_CLASS, TemplatedStrategy.class.getName());
+        strategyClassName = ejbJar.properties.getProperty(JNDINAME_STRATEGY_CLASS, strategyClassName);
+
+        logger.debug("Using " + JNDINAME_STRATEGY_CLASS + " '" + strategyClassName + "'");
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Class strategyClass = classLoader.loadClass(strategyClassName);
+
+            try {
+                Constructor constructor = strategyClass.getConstructor(EjbJarInfo.class, Map.class);
+                return (JndiNameStrategy) constructor.newInstance(ejbJar, deployments);
+            } catch (NoSuchMethodException e) {
+            }
+
+            Constructor constructor = strategyClass.getConstructor();
+            return (JndiNameStrategy) constructor.newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalStateException("Could not instantiate JndiNameStrategy: "+strategyClassName, e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Could not access JndiNameStrategy: "+strategyClassName, e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Could not load JndiNameStrategy: "+strategyClassName, e);
+        } catch (Throwable t){
+            throw new IllegalStateException("Could not create JndiNameStrategy: "+strategyClassName, t);
         }
     }
 
@@ -139,15 +157,20 @@ public class JndiBuilder {
 
     // TODO: put these into the classpath and get them with xbean-finder
     public static class TemplatedStrategy implements JndiNameStrategy {
+        private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
         private org.codehaus.swizzle.stream.StringTemplate template;
 
-        public TemplatedStrategy() {
-            String format = SystemInstance.get().getProperty("openejb.jndiname.format", "{deploymentId}/{interfaceClass.simpleName}");
+        public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
+            String format = SystemInstance.get().getProperty(JNDINAME_FORMAT, "{deploymentId}{interfaceType.openejbLegacyName}");
+            format = ejbJarInfo.properties.getProperty(JNDINAME_FORMAT, format);
+
+            logger.info("Using " + JNDINAME_FORMAT + " '" + format + "'");
+
             this.template = new StringTemplate(format);
         }
 
-
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
+
             Map<String,String> contextData = new HashMap<String,String>();
             contextData.put("moduleId", deploymentInfo.getModuleID());
             contextData.put("ejbType", deploymentInfo.getComponentType().name());
@@ -155,18 +178,18 @@ public class JndiBuilder {
             contextData.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
             contextData.put("ejbName", deploymentInfo.getEjbName());
             contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
-            contextData.put("interfaceType", type.annotatedName);
+            contextData.put("interfaceType", type.getAnnotatedName());
+            contextData.put("interfaceType.annotatedName", type.getAnnotatedName());
             contextData.put("interfaceType.xmlName", type.getXmlName());
             contextData.put("interfaceType.xmlNameCc", type.getXmlNameCc());
             contextData.put("interfaceType.openejbLegacyName", type.getOpenejbLegacy());
             contextData.put("interfaceClass", interfce.getName());
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
-            return template.apply(contextData);
+            return this.template.apply(contextData);
         }
     }
 
     public static class LegacyAddedSuffixStrategy implements JndiNameStrategy {
-
         public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
             String id = deploymentInfo.getDeploymentID() + "";
             if (id.charAt(0) == '/') {
@@ -187,64 +210,7 @@ public class JndiBuilder {
         }
     }
 
-    public static class AddedSuffixStrategy implements JndiNameStrategy {
-
-        public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
-            String id = deploymentInfo.getDeploymentID() + "";
-            if (id.charAt(0) == '/') {
-                id = id.substring(1);
-            }
-
-            switch (type) {
-                case REMOTE_HOME:
-                    return id + "Remote";
-                case LOCAL_HOME:
-                    return id + "Local";
-                case BUSINESS_LOCAL:
-                    return id + "BusinessLocal";
-                case BUSINESS_REMOTE:
-                    return id + "BusinessRemote";
-            }
-            return id;
-        }
-    }
-
-
-    public static class CommonPrefixStrategy implements JndiNameStrategy {
-
-        public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
-            String id = deploymentInfo.getDeploymentID() + "";
-            if (id.charAt(0) == '/') {
-                id = id.substring(1);
-            }
-
-            switch (type) {
-                case REMOTE_HOME:
-                    return "component/remote/" + id;
-                case LOCAL_HOME:
-                    return "component/local/" + id;
-                case BUSINESS_REMOTE:
-                    return "business/remote/" + id;
-                case BUSINESS_LOCAL:
-                    return "business/local/" + id;
-            }
-            return id;
-        }
-    }
-
-    public static class InterfaceSimpleNameStrategy implements JndiNameStrategy {
-
-        public String getName(DeploymentInfo deploymentInfo, Class interfce, Interface type) {
-            return interfce.getSimpleName();
-        }
-    }
-
-    public JndiNameStrategy getStrategy() {
-        return strategy;
-    }
-
-    public void bind(DeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
-        JndiNameStrategy strategy = getStrategy();
+    public void bind(EjbJarInfo ejbJarInfo, DeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo, JndiNameStrategy strategy) {
         CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentInfo;
 
         Bindings bindings = new Bindings();

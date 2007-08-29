@@ -63,6 +63,14 @@ public class InitEjbDeployments implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
+        StringTemplate deploymentIdTemplate = this.deploymentIdTemplate;
+        if (openejbJar.getProperties().containsKey(DEPLOYMENT_ID_FORMAT)){
+            String format = openejbJar.getProperties().getProperty(DEPLOYMENT_ID_FORMAT);
+            logger.info("Using "+DEPLOYMENT_ID_FORMAT+" '"+format+"'");
+            deploymentIdTemplate = new StringTemplate(format);
+        }
+
+
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
             if (ejbDeployment == null) {

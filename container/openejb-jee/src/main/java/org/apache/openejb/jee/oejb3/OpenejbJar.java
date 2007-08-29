@@ -23,18 +23,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 
 
 /**
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"ejbDeployment"})
+@XmlType(propOrder = {"properties","ejbDeployment"})
 @XmlRootElement(name = "openejb-jar")
 public class OpenejbJar {
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
 
     @XmlElement(name = "ejb-deployment", required = true)
     protected List<EjbDeployment> ejbDeployment;
@@ -73,4 +78,12 @@ public class OpenejbJar {
     public void removeEjbDeployment(EjbDeployment ejbDeployment) {
         getEjbDeployment().remove(ejbDeployment);
     }
+
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
+    }
+    
 }

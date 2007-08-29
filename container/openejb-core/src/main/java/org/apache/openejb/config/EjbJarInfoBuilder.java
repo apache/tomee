@@ -129,6 +129,7 @@ public class EjbJarInfoBuilder {
             ejbJar.moduleId = new File(ejbJar.jarPath).getName().replaceFirst(".jar$","");
         }
 
+        ejbJar.properties.putAll(jar.getOpenejbJar().getProperties());
 
         for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
             EnterpriseBeanInfo beanInfo;
