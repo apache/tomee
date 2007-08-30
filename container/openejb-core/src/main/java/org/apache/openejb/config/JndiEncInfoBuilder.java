@@ -105,32 +105,6 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    public static void initJndiReferences(EjbModule ejbModule, EjbJarInfo ejbJarInfo) throws OpenEJBException {
-        // index the jaxb objects
-        Map<String, EnterpriseBean> beanData = new TreeMap<String, EnterpriseBean>();
-        for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            beanData.put(enterpriseBean.getEjbName(), enterpriseBean);
-        }
-
-        Map<String, EjbDeployment> ejbDeployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
-
-        // Create the JNDI info builder
-        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(ejbJarInfo);
-
-        // Build the JNDI tree for each ejb
-        for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-            String ejbName = beanInfo.ejbName;
-
-            // Get the JAXB tree for the info object
-            EnterpriseBean enterpriseBean = beanData.get(ejbName);
-
-            // Get the OpenEJB deployment
-            EjbDeployment ejbDeployment = ejbDeployments.get(ejbName);
-
-            // build the tree
-            initJndiReferences(enterpriseBean, ejbDeployment, beanInfo, jndiEncInfoBuilder, ejbJarInfo.moduleId);
-        }
-    }
 
     private static void initJndiReferences(EnterpriseBean enterpriseBean, EjbDeployment ejbDeployment, EnterpriseBeanInfo beanInfo, JndiEncInfoBuilder jndiEncInfoBuilder, String moduleId) throws OpenEJBException {
         // Link all the resource refs
