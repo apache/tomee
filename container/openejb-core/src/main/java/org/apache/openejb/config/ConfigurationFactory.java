@@ -155,8 +155,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new AutoConfig(this));
         }
 
-        chain.add(new ReportValidationResults());
-
         // TODO: How do we want this plugged in?
         //chain.add(new OutputGeneratedDescriptors());
         this.deployer = chain;
@@ -407,6 +405,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        ReportValidationResults reportValidationResults = new ReportValidationResults();
+        reportValidationResults.deploy(appModule);
+        
         logger.info("Loaded Module: " + appInfo.jarPath);
         return appInfo;
     }
