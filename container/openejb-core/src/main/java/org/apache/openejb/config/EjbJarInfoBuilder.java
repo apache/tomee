@@ -110,10 +110,10 @@ public class EjbJarInfoBuilder {
             Map<String, EjbDeployment> deployed = jar.getOpenejbJar().getDeploymentsByEjbName();
             for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
                 if (!deployed.containsKey(bean.getEjbName())){
-                    ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarURI());
+                    ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarLocation());
                 }
             }
-            String message = messages.format("conf.0008", jar.getJarURI(), "" + beansInEjbJar, "" + beansDeployed);
+            String message = messages.format("conf.0008", jar.getJarLocation(), "" + beansInEjbJar, "" + beansDeployed);
             logger.warning(message);
             throw new OpenEJBException(message);
         }
@@ -123,7 +123,7 @@ public class EjbJarInfoBuilder {
         Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 
         EjbJarInfo ejbJar = new EjbJarInfo();
-        ejbJar.jarPath = jar.getJarURI();
+        ejbJar.jarPath = jar.getJarLocation();
         ejbJar.moduleId = jar.getModuleId();
         if (ejbJar.moduleId == null) {
             ejbJar.moduleId = new File(ejbJar.jarPath).getName().replaceFirst(".jar$","");
@@ -145,14 +145,14 @@ public class EjbJarInfoBuilder {
             ejbJar.enterpriseBeans.add(beanInfo);
 
             if (deploymentIds.contains(beanInfo.ejbDeploymentId)) {
-                String message = messages.format("conf.0100", beanInfo.ejbDeploymentId, jar.getJarURI(), beanInfo.ejbName);
+                String message = messages.format("conf.0100", beanInfo.ejbDeploymentId, jar.getJarLocation(), beanInfo.ejbName);
                 logger.warning(message);
                 throw new OpenEJBException(message);
             }
 
             deploymentIds.add(beanInfo.ejbDeploymentId);
 
-            beanInfo.codebase = jar.getJarURI();
+            beanInfo.codebase = jar.getJarLocation();
             infos.put(beanInfo.ejbName, beanInfo);
             items.put(beanInfo.ejbName, bean);
 
@@ -330,7 +330,7 @@ public class EjbJarInfoBuilder {
             info.roleName = sr.getRoleName();
 
             if (securityRoles.contains(sr.getRoleName())) {
-                ConfigUtils.logger.warning("conf.0102", jar.getJarURI(), sr.getRoleName());
+                ConfigUtils.logger.warning("conf.0102", jar.getJarLocation(), sr.getRoleName());
             } else {
                 securityRoles.add(sr.getRoleName());
             }

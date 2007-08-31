@@ -30,8 +30,11 @@ import java.util.HashMap;
  * @version $Revision$ $Date$
  */
 public class EjbModule implements DeploymentModule {
+
+    private final ValidationContext validation;
+
     private ClassLoader classLoader;
-    private String jarURI;
+    private String jarLocation;
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
     private String moduleId;
@@ -54,7 +57,7 @@ public class EjbModule implements DeploymentModule {
                 jarURI = ejbJar.toString();
             }
         }
-        this.jarURI = jarURI;
+        this.jarLocation = jarURI;
 
         if (moduleId == null){
             if (ejbJar != null && ejbJar.getId() != null){
@@ -65,10 +68,19 @@ public class EjbModule implements DeploymentModule {
             }
         }
         this.moduleId = moduleId;
+        validation = new ValidationContext(EjbModule.class, jarLocation);
     }
 
+    public EjbModule(EjbJar ejbJar){
+        this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
+    }
+    
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         this(classLoader, null, jarURI, ejbJar, openejbJar);
+    }
+
+    public ValidationContext getValidation() {
+        return validation;
     }
 
     public Map<String, Object> getAltDDs() {
@@ -91,16 +103,12 @@ public class EjbModule implements DeploymentModule {
         this.ejbJar = ejbJar;
     }
 
-    public String getJarURI() {
-        return jarURI;
-    }
-
-    public void setJarURI(String jarURI) {
-        this.jarURI = jarURI;
-    }
-
     public String getJarLocation() {
-        return getJarURI();
+        return jarLocation;
+    }
+
+    public void setJarLocation(String jarLocation) {
+        this.jarLocation = jarLocation;
     }
 
     public String getModuleId() {

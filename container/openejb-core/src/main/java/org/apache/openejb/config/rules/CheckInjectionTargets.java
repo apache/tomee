@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbSet;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiReference;
@@ -28,10 +28,9 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class CheckInjectionTargets extends ValidationBase {
-    public void validate(EjbSet set) {
-        this.set = set;
+    public void validate(EjbModule ejbModule) {
 
-        for (EnterpriseBean bean : set.getEjbJar().getEnterpriseBeans()) {
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             List<JndiReference> entries = new ArrayList<JndiReference>();
             entries.addAll(bean.getEjbLocalRef());
             entries.addAll(bean.getEjbRef());

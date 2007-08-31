@@ -123,6 +123,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new AnnotationDeployer());
 
+        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
+        if (shouldValidate) {
+            chain.add(new ValidateModules());
+        } else {
+            DeploymentLoader.logger.info("Validation is disabled.");
+        }
+
         chain.add(new InitEjbDeployments());
 
         String debuggableVmHackery = SystemInstance.get().getProperty("openejb.debuggable-vm-hackery", "false");
@@ -148,12 +155,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new AutoConfig(this));
         }
 
-        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
-        if (shouldValidate) {
-            chain.add(new ValidateEjbModule());
-        } else {
-            DeploymentLoader.logger.info("Validation is disabled.");
-        }
+        chain.add(new ReportValidationResults());
 
         // TODO: How do we want this plugged in?
         //chain.add(new OutputGeneratedDescriptors());
@@ -331,28 +333,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 appInfo.ejbJars.add(ejbJarInfo);
 
             } catch (OpenEJBException e) {
-                ConfigUtils.logger.warning("conf.0004", ejbModule.getJarURI(), e.getMessage());
+                ConfigUtils.logger.warning("conf.0004", ejbModule.getJarLocation(), e.getMessage());
                 throw e;
             }
-        }
-
-        // process JNDI refs... all JDNI refs for the whole application
-        // must be processed at the same time
-        JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
-
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            ApplicationClient applicationClient = clientModule.getApplicationClient();
-            ClientInfo clientInfo = new ClientInfo();
-            clientInfo.description = applicationClient.getDescription();
-            clientInfo.displayName = applicationClient.getDisplayName();
-            clientInfo.codebase = clientModule.getJarLocation();
-            clientInfo.mainClass = clientModule.getMainClass();
-            clientInfo.callbackHandler = applicationClient.getCallbackHandler();
-            clientInfo.moduleId = getClientModuleId(clientModule);
-
-            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
-            appInfo.clients.add(clientInfo);
         }
 
         for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
@@ -383,9 +366,29 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                 }
 
+                logger.info("Configuring PersistenceUnit(name="+info.name+", provider="+info.provider+")");
                 // Persistence Unit Root Url
                 appInfo.persistenceUnits.add(info);
             }
+        }
+        
+        // process JNDI refs... all JDNI refs for the whole application
+        // must be processed at the same time
+        JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
+
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            ApplicationClient applicationClient = clientModule.getApplicationClient();
+            ClientInfo clientInfo = new ClientInfo();
+            clientInfo.description = applicationClient.getDescription();
+            clientInfo.displayName = applicationClient.getDisplayName();
+            clientInfo.codebase = clientModule.getJarLocation();
+            clientInfo.mainClass = clientModule.getMainClass();
+            clientInfo.callbackHandler = applicationClient.getCallbackHandler();
+            clientInfo.moduleId = getClientModuleId(clientModule);
+
+            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
+            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
+            appInfo.clients.add(clientInfo);
         }
 
         appInfo.jarPath = appModule.getJarLocation();

@@ -17,54 +17,55 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ValidateEjbModule implements DynamicDeployer {
-
-    public ValidateEjbModule() {
-    }
+public class ReportValidationResults implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            deploy(ejbModule);
+        if (!appModule.hasErrors() && !appModule.hasWarnings()) return appModule;
+
+        ValidationFailedException validationFailedException = null;
+
+
+        for (DeploymentModule module : appModule.getEjbModules()) {
+            validationFailedException = logResults(module, validationFailedException);
         }
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            deploy(clientModule);
+
+        for (DeploymentModule module : appModule.getClientModules()) {
+            validationFailedException = logResults(module, validationFailedException);
         }
-        return appModule;
+
+        validationFailedException = logResults(appModule, validationFailedException);
+
+        throw validationFailedException;
     }
 
-    public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-//        return deployer.deploy(clientModule);
-        return null;
-    }
+    private ValidationFailedException logResults(DeploymentModule module, ValidationFailedException validationFailedException) {
+        ValidationResults results = module.getValidation();
 
-    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-
-        EjbValidator validator = new EjbValidator();
-        ValidationResults set = validator.validateJar(ejbModule);
-        if (set.hasErrors() || set.hasFailures()) {
+        if (results.hasErrors() || results.hasFailures()) {
             Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
 
-            ValidationError[] errors = set.getErrors();
+            ValidationError[] errors = results.getErrors();
             for (int j = 0; j < errors.length; j++) {
                 ValidationError e = errors[j];
                 String ejbName = e.getComponentName();
                 logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
             }
-            ValidationFailure[] failures = set.getFailures();
+            ValidationFailure[] failures = results.getFailures();
             for (int j = 0; j < failures.length; j++) {
                 ValidationFailure e = failures[j];
                 logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
             }
 
-            throw new ValidationFailedException("Jar failed validation.", set);
+            validationFailedException = new ValidationFailedException("Module failed validation. "+results.getModuleType()+"(path="+results.getJarPath()+")", results, validationFailedException);
         }
-        return ejbModule;
+
+        return validationFailedException;
     }
 
 }

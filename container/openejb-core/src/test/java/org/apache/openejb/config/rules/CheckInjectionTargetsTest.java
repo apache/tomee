@@ -17,12 +17,12 @@
 package org.apache.openejb.config.rules;
 
 import junit.framework.TestCase;
-import org.apache.openejb.config.EjbSet;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.ValidationWarning;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.StatelessBean;
 
 /**
  * @version $Rev$ $Date$
@@ -31,8 +31,8 @@ public class CheckInjectionTargetsTest extends TestCase {
 
     public void test() throws Exception {
 
-        EjbSet ejbSet = new EjbSet("myJarPath", new EjbJar(), this.getClass().getClassLoader());
-        StatelessBean bean = ejbSet.getEjbJar().addEnterpriseBean(new StatelessBean("CheeseEjb", "org.acme.CheeseEjb"));
+        EjbModule module = new EjbModule(new EjbJar());
+        StatelessBean bean = module.getEjbJar().addEnterpriseBean(new StatelessBean("CheeseEjb", "org.acme.CheeseEjb"));
 
         // Valid
         EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
@@ -50,9 +50,10 @@ public class CheckInjectionTargetsTest extends TestCase {
         bean.getEnvEntry().add(envEntry3);
 
         CheckInjectionTargets rule = new CheckInjectionTargets();
-        rule.validate(ejbSet);
+        rule.module = module;
+        rule.validate(module);
 
-        ValidationWarning[] warnings = ejbSet.getWarnings();
+        ValidationWarning[] warnings = module.getValidation().getWarnings();
         assertEquals(warnings.length, 2);
 
     }

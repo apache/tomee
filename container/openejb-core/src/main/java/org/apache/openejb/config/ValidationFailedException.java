@@ -26,13 +26,19 @@ public class ValidationFailedException extends OpenEJBException implements Valid
     private final ValidationFailure[] failures;
     private final ValidationWarning[] warnings;
     private final String jarPath;
+    private final String moduleType;
 
     public ValidationFailedException(String message, ValidationResults set) {
-        super(message);
+        this(message, set, null);
+    }
+
+    public ValidationFailedException(String message, ValidationResults set, ValidationFailedException e) {
+        super(message, e);
         jarPath = set.getJarPath();
         errors = set.getErrors();
         failures = set.getFailures();
         warnings = set.getWarnings();
+        moduleType = set.getModuleType();
     }
 
     public String getJarPath() {
@@ -61,5 +67,9 @@ public class ValidationFailedException extends OpenEJBException implements Valid
 
     public boolean hasErrors() {
         return errors.length > 0;
+    }
+
+    public String getModuleType() {
+        return moduleType;
     }
 }

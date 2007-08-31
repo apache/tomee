@@ -16,29 +16,19 @@
  */
 package org.apache.openejb.config;
 
-import java.util.Map;
+import org.apache.openejb.OpenEJBException;
 
 /**
  * @version $Rev$ $Date$
  */
-public class WebModule implements DeploymentModule {
-    public String getModuleId() {
-        throw new UnsupportedOperationException();
+public class ValidateModules implements DynamicDeployer {
+
+    public ValidateModules() {
     }
 
-    public Map<String, Object> getAltDDs() {
-        throw new UnsupportedOperationException();
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        AppValidator validator = new AppValidator();
+        return validator.validate(appModule);
     }
 
-    public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    public String getJarLocation() {
-        throw new UnsupportedOperationException();
-    }
-
-    public ValidationContext getValidation() {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -69,7 +69,7 @@ import java.net.URISyntaxException;
  * @version $Rev$ $Date$
  */
 public class JndiEncInfoBuilder {
-    public static void initJndiReferences(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
+    protected static void initJndiReferences(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
         // index ejb modules
         Map<String, EjbModule> ejbModules = new TreeMap<String, EjbModule>();
         for (EjbModule ejbModule : appModule.getEjbModules()) {

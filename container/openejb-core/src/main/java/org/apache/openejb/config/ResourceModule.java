@@ -38,4 +38,7 @@ public class ResourceModule implements DeploymentModule {
         throw new UnsupportedOperationException();
     }
 
+    public ValidationContext getValidation() {
+        throw new UnsupportedOperationException();
+    }
 }

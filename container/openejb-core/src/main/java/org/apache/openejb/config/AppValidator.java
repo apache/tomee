@@ -16,15 +16,9 @@
  */
 package org.apache.openejb.config;
 
-import java.io.InputStream;
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
 import java.util.Vector;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckAssemblyBindings;
@@ -33,10 +27,7 @@ import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckServiceRefs;
 import org.apache.openejb.util.Messages;
 
-import org.apache.openejb.util.OpenEjbVersion;
-
-public class EjbValidator {
-    private static final String helpBase = "META-INF/org.apache.openejb.cli/";
+public class AppValidator {
 
     protected static final Messages _messages = new Messages("org.apache.openejb.config.rules");
 
@@ -50,10 +41,10 @@ public class EjbValidator {
     /*------------------------------------------------------*/
     /*    Constructors                                      */
     /*------------------------------------------------------*/
-    public EjbValidator() throws OpenEJBException {
+    public AppValidator() throws OpenEJBException {
     }
 
-    public EjbValidator(int LEVEL, boolean PRINT_XML, boolean PRINT_WARNINGS, boolean PRINT_COUNT) {
+    public AppValidator(int LEVEL, boolean PRINT_XML, boolean PRINT_WARNINGS, boolean PRINT_COUNT) {
         this.LEVEL = LEVEL;
         this.PRINT_XML = PRINT_XML;
         this.PRINT_WARNINGS = PRINT_WARNINGS;
@@ -70,23 +61,20 @@ public class EjbValidator {
         return ejbSets;
     }
 
-    public EjbSet validateJar(final EjbModule ejbModule) {
-        EjbSet set = null;
-
+    public AppModule validate(final AppModule appModule) {
         try {
-            set = new EjbSet(ejbModule.getJarLocation(), ejbModule.getEjbJar(), ejbModule.getClassLoader());
             ValidationRule[] rules = getValidationRules();
             for (int i = 0; i < rules.length; i++) {
-                rules[i].validate(set);
+                rules[i].validate(appModule);
             }
         } catch (Throwable e) {
             e.printStackTrace(System.out);
             ValidationError err = new ValidationError("cannot.validate");
             err.setCause(e);
             err.setDetails(e.getMessage());
-            set.addError(err);
+            appModule.getValidation().addError(err);
         }
-        return set;
+        return appModule;
     }
 
     protected ValidationRule[] getValidationRules() {
@@ -209,131 +197,4 @@ public class EjbValidator {
         }
 
     }
-
-    /*------------------------------------------------------*/
-    /*    Static methods                                    */
-    /*------------------------------------------------------*/
-
-    private static void printVersion() {
-        /*
-         * Output startup message
-         */
-
-        OpenEjbVersion versionInfo = OpenEjbVersion.get();
-        System.out.println("OpenEJB EJB Validation Tool " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
-        System.out.println("" + versionInfo.getUrl());
-    }
-
-    private static void printHelp() {
-        String header = "OpenEJB EJB Validation Tool ";
-        OpenEjbVersion versionInfo = OpenEjbVersion.get();
-        header += versionInfo.getVersion();
-
-        System.out.println(header);
-
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "validate.help").openConnection().getInputStream();
-
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
-            }
-        } catch (java.io.IOException e) {
-        }
-    }
-
-    private static void printExamples() {
-        String header = "OpenEJB EJB Validation Tool ";
-        OpenEjbVersion versionInfo = OpenEjbVersion.get();
-        header += versionInfo.getVersion();
-
-        System.out.println(header);
-
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "validate.examples").openConnection().getInputStream();
-
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
-            }
-        } catch (java.io.IOException e) {
-        }
-    }
-
-    public static void main(String args[]) {
-        try {
-            File directory = SystemInstance.get().getHome().getDirectory("lib");
-            SystemInstance.get().getClassPath().addJarsToPath(directory);
-            File directory1 = SystemInstance.get().getHome().getDirectory("dist");
-            SystemInstance.get().getClassPath().addJarsToPath(directory1);
-        } catch (Exception e) {
-
-        }
-
-
-        try {
-            EjbValidator v = new EjbValidator();
-
-            if (args.length == 0) {
-                printHelp();
-                return;
-            }
-
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-v")) {
-                    v.LEVEL = 1;
-                } else if (args[i].equals("-vv")) {
-                    v.LEVEL = 2;
-                } else if (args[i].equals("-vvv")) {
-                    v.LEVEL = 3;
-                } else if (args[i].equals("-nowarn")) {
-                    v.PRINT_WARNINGS = false;
-                } else if (args[i].equals("-xml")) {
-                    v.PRINT_XML = true;
-                } else if (args[i].equals("--help")) {
-                    printHelp();
-                } else if (args[i].equals("-examples")) {
-                    printExamples();
-                } else if (args[i].equals("-version")) {
-                    printVersion();
-                } else {
-
-                    for (; i < args.length; i++) {
-                        try {
-                            EjbJarUtils ejbJarUtils = new EjbJarUtils(args[i]);
-                            String jarLocation = ejbJarUtils.getJarLocation();
-                            ClassLoader classLoader = null;
-                            try {
-                                File jarFile = new File(jarLocation);
-                                URL[] classpath = new URL[]{jarFile.toURL()};
-                                classLoader = new URLClassLoader(classpath, EjbValidator.class.getClassLoader());
-                            } catch (MalformedURLException e) {
-                                throw new OpenEJBException("Unable to create a classloader to load classes from '" + jarLocation + "'", e);
-                            }
-                            final EjbModule ejbModule = new EjbModule(classLoader, ejbJarUtils.getJarLocation(), ejbJarUtils.getEjbJar(), ejbJarUtils.getOpenejbJar());
-                            EjbSet set = v.validateJar(ejbModule);
-                            v.addValidationResults(set);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            ValidationResults[] sets = v.getValidationResultsSets();
-            v.displayResults(sets);
-
-            for (int i = 0; i < sets.length; i++) {
-                if (sets[i].hasErrors() || sets[i].hasFailures()) {
-                    System.exit(1);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-        }
-    }
-
 }

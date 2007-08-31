@@ -164,7 +164,7 @@ public class JndiBuilder {
             String format = SystemInstance.get().getProperty(JNDINAME_FORMAT, "{deploymentId}{interfaceType.openejbLegacyName}");
             format = ejbJarInfo.properties.getProperty(JNDINAME_FORMAT, format);
 
-            logger.info("Using " + JNDINAME_FORMAT + " '" + format + "'");
+            logger.debug("Using " + JNDINAME_FORMAT + " '" + format + "'");
 
             this.template = new StringTemplate(format);
         }

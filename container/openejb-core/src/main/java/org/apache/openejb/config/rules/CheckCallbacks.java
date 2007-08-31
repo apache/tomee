@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbSet;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.CallbackMethod;
@@ -35,9 +35,8 @@ import java.util.ArrayList;
  */
 public class CheckCallbacks extends ValidationBase {
 
-    public void validate(EjbSet set) {
-        this.set = set;
-        for (EnterpriseBean bean : set.getEjbJar().getEnterpriseBeans()) {
+    public void validate(EjbModule module) {
+        for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
             Class ejbClass = null;
             try {
                 ejbClass = loadClass(bean.getEjbClass());
@@ -71,7 +70,7 @@ public class CheckCallbacks extends ValidationBase {
             }
         }
 
-        for (Interceptor interceptor : set.getEjbJar().getInterceptors()) {
+        for (Interceptor interceptor : module.getEjbJar().getInterceptors()) {
             Class interceptorClass = null;
             try {
                 interceptorClass = loadClass(interceptor.getInterceptorClass());

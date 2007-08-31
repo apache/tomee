@@ -21,23 +21,16 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.config.EjbSet;
-import org.apache.openejb.config.ValidationFailure;
-import org.apache.openejb.config.ValidationRule;
-import org.apache.openejb.config.ValidationWarning;
-import org.apache.openejb.config.ValidationError;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.config.EjbModule;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Method;
 
 public class CheckMethods extends ValidationBase {
 
-    public void validate(EjbSet set) {
+    public void validate(EjbModule ejbModule) {
 
-        this.set = set;
-
-        for (EnterpriseBean bean : set.getEjbJar().getEnterpriseBeans()) {
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (!(bean instanceof RemoteBean)) continue;
             RemoteBean b = (RemoteBean) bean;
 

@@ -33,4 +33,6 @@ public interface ValidationResults {
     boolean hasErrors();
 
     String getJarPath();
+
+    String getModuleType();
 }

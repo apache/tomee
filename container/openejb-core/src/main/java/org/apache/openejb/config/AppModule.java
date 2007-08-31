@@ -29,6 +29,8 @@ import org.apache.openejb.jee.jpa.EntityMappings;
  * @version $Rev$ $Date$
  */
 public class AppModule implements DeploymentModule {
+
+    private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();
     private final List<ResourceModule> resourceModules = new ArrayList<ResourceModule>();
     private final List<WebModule> webModules = new ArrayList<WebModule>();
@@ -46,6 +48,44 @@ public class AppModule implements DeploymentModule {
         this.jarLocation = jarLocation;
         File file = new File(jarLocation);
         moduleId = file.getName();
+        validation = new ValidationContext(AppModule.class, jarLocation);
+    }
+
+    public ValidationContext getValidation() {
+        return validation;
+    }
+
+    public boolean hasWarnings() {
+        if (validation.hasWarnings()) return true;
+        for (EjbModule module : ejbModules) {
+            if (module.getValidation().hasWarnings()) return true;
+        }
+        for (ClientModule module : clientModules) {
+            if (module.getValidation().hasWarnings()) return true;
+        }
+        return false;
+    }
+
+    public boolean hasFailures() {
+        if (validation.hasFailures()) return true;
+        for (EjbModule module : ejbModules) {
+            if (module.getValidation().hasFailures()) return true;
+        }
+        for (ClientModule module : clientModules) {
+            if (module.getValidation().hasFailures()) return true;
+        }
+        return false;
+    }
+
+    public boolean hasErrors() {
+        if (validation.hasErrors()) return true;
+        for (EjbModule module : ejbModules) {
+            if (module.getValidation().hasErrors()) return true;
+        }
+        for (ClientModule module : clientModules) {
+            if (module.getValidation().hasErrors()) return true;
+        }
+        return false;
     }
 
     public String getModuleId() {

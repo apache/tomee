@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbSet;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ServiceRef;
 
@@ -24,15 +24,13 @@ import org.apache.openejb.jee.ServiceRef;
  * @version $Rev$ $Date$
  */
 public class CheckServiceRefs extends ValidationBase {
-    public void validate(EjbSet set) {
+    public void validate(EjbModule ejbModule) {
         // Warn that we do not support service-refs yet.
 
         // Skip if in geronimo
         if (System.getProperty("duct tape") != null) return;
 
-        this.set = set;
-
-        for (EnterpriseBean bean : set.getEjbJar().getEnterpriseBeans()) {
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             for (ServiceRef ref : bean.getServiceRef()) {
                 warn(bean, "serviceRef.unsupported", ref.getName());
             }

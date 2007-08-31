@@ -26,6 +26,7 @@ import java.io.File;
  * @version $Rev$ $Date$
  */
 public class ClientModule implements DeploymentModule {
+    private final ValidationContext validation;
     private ApplicationClient applicationClient;
     private String jarLocation;
     private ClassLoader classLoader;
@@ -49,6 +50,11 @@ public class ClientModule implements DeploymentModule {
         }
 
         this.moduleId = moduleId;
+        validation = new ValidationContext(ClientModule.class, jarLocation);
+    }
+
+    public ValidationContext getValidation() {
+        return validation;
     }
 
     public String getModuleId() {

@@ -22,8 +22,8 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.config.EjbSet;
 import org.apache.openejb.config.ValidationFailure;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.util.SafeToolkit;
 
 import javax.ejb.EJBLocalHome;
@@ -31,13 +31,8 @@ import javax.ejb.EJBLocalObject;
 
 public class CheckClasses extends ValidationBase {
 
-    private EjbSet set;
-    private ClassLoader classLoader;
-
-    public void validate(EjbSet set) {
-        this.set = set;
-
-        for (EnterpriseBean bean : set.getJar().getEnterpriseBeans()) {
+    public void validate(EjbModule ejbModule) {
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             try {
                 check_hasEjbClass(bean);
 
@@ -67,14 +62,14 @@ public class CheckClasses extends ValidationBase {
             }
         }
 
-        for (Interceptor interceptor : set.getEjbJar().getInterceptors()) {
+        for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
             check_hasInterceptorClass(interceptor);
         }
     }
 
     private void check_hasDependentClasses(RemoteBean b, String className, String type) {
         try {
-            ClassLoader cl = set.getClassLoader();
+            ClassLoader cl = module.getClassLoader();
             Class clazz = cl.loadClass(className);
             for (Object item : clazz.getFields()) { item.toString(); }
             for (Object item : clazz.getMethods()) { item.toString(); }
@@ -90,11 +85,7 @@ public class CheckClasses extends ValidationBase {
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-            ValidationFailure failure = new ValidationFailure("missing.dependent.class");
-            failure.setDetails(className, e.getMessage(), type, b.getEjbName());
-            failure.setComponentName(b.getEjbName());
-
-            set.addFailure(failure);
+            fail(b, "missing.dependent.class", className, e.getMessage(), type, b.getEjbName());
         } catch (NoClassDefFoundError e) {
             /*
             # 0 - Referring Class name
@@ -102,12 +93,7 @@ public class CheckClasses extends ValidationBase {
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-
-            ValidationFailure failure = new ValidationFailure("missing.dependent.class");
-            failure.setDetails(className, e.getMessage(), type, b.getEjbName());
-            failure.setComponentName(b.getEjbName());
-
-            set.addFailure(failure);
+            fail(b, "missing.dependent.class", className, e.getMessage(), type, b.getEjbName());
         }
     }
 
@@ -214,21 +200,16 @@ public class CheckClasses extends ValidationBase {
         }
 
         if (class1 != null && !class2.isAssignableFrom(class1)) {
-            ValidationFailure failure = new ValidationFailure("wrong.class.type");
-            failure.setDetails(clazz1, class2.getName());
-            failure.setComponentName(b.getEjbName());
-
-            set.addFailure(failure);
-
+            fail(b, "wrong.class.type", clazz1, class2.getName());
         }
     }
 
     protected Class loadClass(String clazz) throws OpenEJBException {
-        ClassLoader cl = set.getClassLoader();
+        ClassLoader cl = module.getClassLoader();
         try {
             return Class.forName(clazz, false, cl);
         } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, set.getJarPath()), cnfe);
+            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
     }
 }

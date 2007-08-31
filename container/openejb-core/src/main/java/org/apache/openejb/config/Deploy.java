@@ -193,8 +193,8 @@ public class Deploy {
                 if (line.hasOption("debug")){
                     level = 3;
                 }
-                EjbValidator ejbValidator = new EjbValidator(level, false, true, false);
-                ejbValidator.printResults(e);
+                AppValidator appValidator = new AppValidator(level, false, true, false);
+                appValidator.printResults(e);
                 exitCode += 100;
             } catch (OpenEJBException e) {
                 System.out.println(messages.format("cmd.deploy.failed", path));

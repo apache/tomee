@@ -28,7 +28,7 @@ public class EjbSet implements ValidationResults {
 
     private final String jarPath;
     private final EjbJar jar;
-
+    private final String moduleType = EjbModule.class.getSimpleName();
     private final ClassLoader classLoader;
 
     public EjbSet(String jarPath, EjbJar jar, ClassLoader classLoader) {
@@ -43,6 +43,10 @@ public class EjbSet implements ValidationResults {
 
     public EjbJar getJar() {
         return jar;
+    }
+
+    public String getModuleType() {
+        return moduleType;
     }
 
     public void addWarning(ValidationWarning warning) {

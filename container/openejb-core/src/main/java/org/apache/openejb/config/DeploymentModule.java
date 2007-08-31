@@ -23,7 +23,13 @@ import java.util.Map;
  */
 public interface DeploymentModule {
     String getModuleId();
+
     ClassLoader getClassLoader();
+
     String getJarLocation();
-    Map<String,Object> getAltDDs();
+
+    Map<String, Object> getAltDDs();
+
+    ValidationContext getValidation();
+
 }

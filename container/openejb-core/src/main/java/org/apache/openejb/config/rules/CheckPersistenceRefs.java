@@ -14,31 +14,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.config.rules;
 
-import java.util.Map;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.ServiceRef;
 
 /**
  * @version $Rev$ $Date$
  */
-public class WebModule implements DeploymentModule {
-    public String getModuleId() {
-        throw new UnsupportedOperationException();
-    }
+public class CheckPersistenceRefs extends ValidationBase {
+    public void validate(EjbModule ejbModule) {
+        // Warn that we do not support service-refs yet.
 
-    public Map<String, Object> getAltDDs() {
-        throw new UnsupportedOperationException();
-    }
+        // Skip if in geronimo
+        if (System.getProperty("duct tape") != null) return;
 
-    public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    public String getJarLocation() {
-        throw new UnsupportedOperationException();
-    }
-
-    public ValidationContext getValidation() {
-        throw new UnsupportedOperationException();
+        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+            for (ServiceRef ref : bean.getServiceRef()) {
+                warn(bean, "serviceRef.unsupported", ref.getName());
+            }
+        }
     }
 }

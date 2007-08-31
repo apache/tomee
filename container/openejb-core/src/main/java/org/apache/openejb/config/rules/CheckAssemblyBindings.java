@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbSet;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -31,12 +31,11 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class CheckAssemblyBindings extends ValidationBase {
-    public void validate(EjbSet set) {
-        this.set = set;
+    public void validate(EjbModule ejbModule) {
 
-        Map<String, EnterpriseBean> ejbsByName = set.getEjbJar().getEnterpriseBeansByEjbName();
+        Map<String, EnterpriseBean> ejbsByName = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
-        AssemblyDescriptor assembly = set.getEjbJar().getAssemblyDescriptor();
+        AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
 
         if (assembly == null) return;
 

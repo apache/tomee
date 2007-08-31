@@ -18,6 +18,6 @@ package org.apache.openejb.config;
 
 public interface ValidationRule {
 
-    public void validate(EjbSet set);
+    public void validate(AppModule appModule);
 
 }

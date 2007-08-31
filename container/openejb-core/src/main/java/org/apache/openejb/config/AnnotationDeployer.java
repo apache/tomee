@@ -189,9 +189,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
 
             ClassFinder finder;
-            if (ejbModule.getJarURI() != null) {
+            if (ejbModule.getJarLocation() != null) {
                 try {
-                    String location = ejbModule.getJarURI();
+                    String location = ejbModule.getJarLocation();
                     File file = new File(location);
 
                     URL url;
@@ -202,7 +202,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     finder = new ClassFinder(ejbModule.getClassLoader(), url);
                 } catch (MalformedURLException e) {
-                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. EjbModule URL not valid: " + ejbModule.getJarURI(), e);
+                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. EjbModule URL not valid: " + ejbModule.getJarLocation(), e);
                     return ejbModule;
                 }
             } else {
@@ -1279,7 +1279,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (persistenceContextRef == null) {
                 persistenceContextRef = new PersistenceContextRef();
-                persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                    persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 persistenceContextRef.setPersistenceContextRefName(refName);
                 if (persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
