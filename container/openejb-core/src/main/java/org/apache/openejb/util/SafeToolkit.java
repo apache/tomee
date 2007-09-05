@@ -73,67 +73,6 @@ public class SafeToolkit {
 
     }
 
-    public SafeProperties getSafeProperties(Properties props) throws OpenEJBException {
-        return new SafeProperties(props, systemLocation);
-    }
-
-    public static Class loadClass(String className, String codebase) throws OpenEJBException {
-        return loadClass(className, codebase, true);
-    }
-
-    private static Class loadClass(String className, String codebase, boolean cache) throws OpenEJBException {
-
-        ClassLoader cl = (cache) ? getCodebaseClassLoader(codebase) : getClassLoader(codebase);
-        Class clazz = null;
-        try {
-            clazz = cl.loadClass(className);
-        } catch (ClassNotFoundException cnfe) {
-            throw new OpenEJBException(messages.format("cl0007", className, codebase), cnfe);
-        }
-        return clazz;
-    }
-
-    private static ClassLoader getCodebaseClassLoader(String codebase) throws OpenEJBException {
-        if (codebase == null) codebase = "CLASSPATH";
-
-        ClassLoader cl = (ClassLoader) codebases.get(codebase);
-        if (cl == null) {
-            synchronized (codebases) {
-                cl = (ClassLoader) codebases.get(codebase);
-                if (cl == null) {
-                    try {
-                        java.net.URL[] urlCodebase = new java.net.URL[1];
-                        urlCodebase[0] = new java.net.URL("file", null, codebase);
-// make sure everything works if we were not loaded by the system class loader
-                        cl = new java.net.URLClassLoader(urlCodebase, SafeToolkit.class.getClassLoader());
-//cl = SafeToolkit.class.getClassLoader();
-                        codebases.put(codebase, cl);
-                    } catch (java.net.MalformedURLException mue) {
-                        throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()), mue);
-                    } catch (SecurityException se) {
-                        throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()), se);
-                    }
-                }
-            }
-        }
-        return cl;
-    }
-
-    private static ClassLoader getClassLoader(String codebase) throws OpenEJBException {
-        ClassLoader cl = null;
-        try {
-            java.net.URL[] urlCodebase = new java.net.URL[1];
-            urlCodebase[0] = new java.net.URL("file", null, codebase);
-
-            cl = new java.net.URLClassLoader(urlCodebase, SafeToolkit.class.getClassLoader());
-        } catch (java.net.MalformedURLException mue) {
-            throw new OpenEJBException(messages.format("cl0001", codebase, mue.getMessage()), mue);
-        } catch (SecurityException se) {
-            throw new OpenEJBException(messages.format("cl0002", codebase, se.getMessage()), se);
-        }
-        return cl;
-    }
-
     private static String getCodebase(java.net.URLClassLoader urlClassLoader) {
         StringBuffer codebase = new StringBuffer();
         java.net.URL urlList[] = urlClassLoader.getURLs();
