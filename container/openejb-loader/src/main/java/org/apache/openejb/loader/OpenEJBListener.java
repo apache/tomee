@@ -29,6 +29,12 @@ import java.io.File;
 import java.util.Properties;
 
 public class OpenEJBListener implements LifecycleListener {
+    static private boolean installed;
+
+
+    public static boolean isInstalled() {
+        return installed;
+    }
 
     public OpenEJBListener() {
     }
@@ -36,6 +42,7 @@ public class OpenEJBListener implements LifecycleListener {
     public void lifecycleEvent(LifecycleEvent event) {
         Object source = event.getSource();
         if (source instanceof StandardServer) {
+            installed = true;
             StandardServer standardServer = (StandardServer) source;
             init(standardServer);
         }

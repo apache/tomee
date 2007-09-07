@@ -25,21 +25,23 @@
   <display-name>OpenEJB Loader Application</display-name>
 
   <servlet>
-    <servlet-name>loader</servlet-name>
-    <servlet-class>org.apache.openejb.loader.LoaderServlet</servlet-class>
+    <servlet-name>ServerServlet</servlet-name>
+    <servlet-class>org.apache.openejb.tomcat.ServerServlet</servlet-class>
+  </servlet>
 
-    <init-param>
-        <param-name>openejb.loader</param-name>
-        <param-value>tomcat-system</param-value>
-    </init-param>
-
-    <load-on-startup>0</load-on-startup>
-
+  <servlet>
+    <servlet-name>InstallerServlet</servlet-name>
+    <servlet-class>org.apache.openejb.tomcat.installer.InstallerServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>loader</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <servlet-name>ServerServlet</servlet-name>
+    <url-pattern>/ejb/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>InstallerServlet</servlet-name>
+    <url-pattern>/installer</url-pattern>
   </servlet-mapping>
 
 </web-app>

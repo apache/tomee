@@ -39,6 +39,13 @@
       </excludes>
     </fileSet>
     <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>openejb/WEB-INF/classes</outputDirectory>
+      <includes>
+          <include>org/apache/openejb/tomcat/installer/**</include>
+      </includes>
+    </fileSet>
+    <fileSet>
       <directory>target</directory>
       <outputDirectory>openejb/lib</outputDirectory>
       <includes>
@@ -63,6 +70,7 @@
       <scope>runtime</scope>
       <includes>
           <include>org.apache.openejb:openejb-loader</include>
+          <include>org.codehaus.swizzle:swizzle-stream</include>
       </includes>
     </dependencySet>
   </dependencySets>

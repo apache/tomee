@@ -97,9 +97,9 @@
       </j:if>
 
       <!-- Add OpenEJBListener -->
-      <replace file="${tomcat.home}/conf/server.xml" token='shutdown="SHUTDOWN">' value='shutdown="SHUTDOWN"  > &lt;Listener className="org.apache.openejb.loader.OpenEJBListener" />'/>
+      <!--<replace file="${tomcat.home}/conf/server.xml" token='shutdown="SHUTDOWN">' value='shutdown="SHUTDOWN"  > &lt;Listener className="org.apache.openejb.loader.OpenEJBListener" />'/>-->
       <!-- Add openejb loader jar -->
-      <copy file="${user.home}/.m2/repository/org/apache/openejb/openejb-loader/${openejb.version}/openejb-loader-${openejb.version}.jar" todir="${tomcat.lib}" />
+      <!--<copy file="${user.home}/.m2/repository/org/apache/openejb/openejb-loader/${openejb.version}/openejb-loader-${openejb.version}.jar" todir="${tomcat.lib}" />-->
     </goal>
 
     <goal name="setup:tomcat-src">
@@ -130,13 +130,15 @@
       <j:choose>
         <j:when test="${systemScope['os.name'].startsWith('Windows')}">
           <exec executable="${tomcat.home}/bin/startup.bat" os="Windows NT,Windows 2000,Windows XP">
-            <env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar"/>
+            <!--<env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Dcom.sun.management.jmxremote"/>
             <env key="CATALINA_HOME" value="${tomcat.home}"/>
           </exec>
         </j:when>
         <j:otherwise>
           <exec executable="${tomcat.home}/bin/startup.sh">
-            <env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar"/>
+            <!--<env key="JAVA_OPTS" value="-javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Dcom.sun.management.jmxremote"/>
           </exec>
         </j:otherwise>
       </j:choose>
@@ -146,13 +148,15 @@
       <j:choose>
         <j:when test="${systemScope['os.name'].startsWith('Windows')}">
           <exec executable="${tomcat.home}/bin/startup.bat" os="Windows NT,Windows 2000,Windows XP">
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar"/>
+            <!--<env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
             <env key="CATALINA_HOME" value="${tomcat.home}"/>
           </exec>
         </j:when>
         <j:otherwise>
           <exec executable="${tomcat.home}/bin/startup.sh">
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar"/>
+            <!--<env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
           </exec>
         </j:otherwise>
       </j:choose>
@@ -180,7 +184,7 @@
     <goal name="setup:loader-webapp">
       <!-- Unzip webapp and set openejb.home -->
       <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}-bin.zip" dest="${tomcat.webapps}"/>
-      <delete file="${tomcat.home}/lib/annotations-api.jar"/>
+      <!--<delete file="${tomcat.home}/lib/annotations-api.jar"/>-->
       
       <!--<u:file var="fileAsFile" name="${tomcat.dist}/conf/Catalina/localhost"/>-->
       <!--<j:if test="${!(fileAsFile.exists())}">-->
