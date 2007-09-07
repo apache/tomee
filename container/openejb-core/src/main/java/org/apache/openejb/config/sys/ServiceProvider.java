@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -70,6 +72,9 @@ public class ServiceProvider {
     protected String id;
     @XmlAttribute(name = "provider-type", required = true)
     protected String providerType;
+    @XmlAttribute(name = "service-types", required = false)
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected List<String> serviceTypes;
 
     /**
      * Gets the value of the properties property.
@@ -236,4 +241,10 @@ public class ServiceProvider {
         this.providerType = value;
     }
 
+    public List<String> getServiceTypes() {
+        if (serviceTypes == null){
+            serviceTypes = new ArrayList<String>();
+        }
+        return serviceTypes;
+    }
 }

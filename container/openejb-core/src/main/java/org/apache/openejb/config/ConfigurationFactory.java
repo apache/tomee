@@ -239,10 +239,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
 
         for (Container declaration : openejb.getContainer()) {
-            Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getCtype());
+            Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getType());
 
             if (infoClass == null) {
-                throw new OpenEJBException("Unrecognized contianer type " + declaration.getCtype());
+                throw new OpenEJBException("Unrecognized contianer type " + declaration.getType());
             }
 
             ContainerInfo info = configureService(declaration, infoClass);

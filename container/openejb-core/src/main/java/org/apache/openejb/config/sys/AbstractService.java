@@ -56,6 +56,8 @@ public abstract class AbstractService implements Service {
     protected String jar;
     @XmlAttribute
     protected String provider;
+    @XmlAttribute
+    protected String type;
 
 
     /**
@@ -141,5 +143,13 @@ public abstract class AbstractService implements Service {
      */
     public void setProvider(String value) {
         this.provider = value;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,33 +16,23 @@
  */
 package org.apache.openejb.config.sys;
 
-import static org.apache.openejb.util.Join.join;
-import org.apache.activemq.util.ByteArrayOutputStream;
 import org.apache.openejb.util.Join;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.io.ByteArrayInputStream;
-import java.util.Properties;
-import java.util.List;
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Converts a java.util.Properties object to a String in the XML file.
+ * @version $Rev$ $Date$
  */
-public class PropertiesAdapter extends XmlAdapter<String, Properties> {
-    public Properties unmarshal(String s) throws Exception {
-        Properties properties = new Properties();
-        ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes());
-        properties.load(in);
-        return properties;
+public class ListAdapter extends XmlAdapter<String, List> {
+    public List unmarshal(String s) throws Exception {
+        String[] strings = s.split(", *");
+        return new ArrayList(Arrays.asList(strings));
     }
 
-    public String marshal(Properties properties) throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        properties.store(out, null);
-        return new String(out.toByteArray());
+    public String marshal(List list) throws Exception {
+        return Join.join(", ", list);
     }
-
 }

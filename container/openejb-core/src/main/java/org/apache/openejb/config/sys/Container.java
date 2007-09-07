@@ -42,21 +42,20 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "")
 @XmlRootElement(name = "Container")
 public class Container extends AbstractService {
-    @XmlAttribute(required = true)
-    protected String ctype;
 
     /**
      * Gets the value of the ctype property.
      *
      * @return possible object is
      *         {@link String }
+     * @deprecated use getType instead
      */
     public String getCtype() {
-        return ctype;
+        return null;
     }
 
     /**
@@ -65,7 +64,8 @@ public class Container extends AbstractService {
      * @param value allowed object is
      *              {@link String }
      */
+    @XmlAttribute
     public void setCtype(String value) {
-        this.ctype = value;
+        setType(value);
     }
 }

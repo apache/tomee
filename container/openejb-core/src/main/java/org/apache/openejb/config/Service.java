@@ -50,4 +50,8 @@ public interface Service {
     public String getProvider();
 
     public void setProvider(String provider);
+
+    public String getType();
+
+    public void setType(String type);
 }
