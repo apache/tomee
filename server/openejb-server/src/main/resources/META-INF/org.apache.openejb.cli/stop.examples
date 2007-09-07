@@ -25,4 +25,4 @@ Example: -p
  
  Sends a stop request to the server running on IP 127.0.0.1 and port 8765.
 
-Bug Reports to <user@openejb.org>
+Bug Reports to <users@openejb.apache.org>

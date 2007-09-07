@@ -46,10 +46,8 @@ OPTIONS
             for EJB 2.0 Local interfaces.  Default is true.
 
 
-See http://incubator.apache.org/openejb/remote-server.html for more information.
-
 OpenEJB -- EJB Container System and EJB Server.
 For OpenEJB updates and additional information, visit
-http://incubator.apache.org/openejb
+http://openejb.apache.org
 
-Bug Reports to <openejb-user@incubator.apache.org>
+Bug Reports to <users@openejb.apache.org>

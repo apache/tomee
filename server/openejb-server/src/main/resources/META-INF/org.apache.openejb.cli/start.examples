@@ -148,4 +148,4 @@ Example: -D<service>.disabled=<true/false>
  OpenEJB Server starts.
 
 
-Bug Reports to <users@apache.openejb.org>
+Bug Reports to <users@openejb.apache.org>
