@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
+import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -23,6 +24,7 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.util.Join;
 
 import java.util.Map;
 import java.util.List;
@@ -46,12 +48,12 @@ public class CheckAssemblyBindings extends ValidationBase {
             }
 
             if (binding.getEjbName() != null && !binding.getEjbName().equals("*") && !ejbsByName.containsKey(binding.getEjbName())) {
-                fail("InterceptorBinding", "interceptorBinding.noSuchEjbName", binding.getEjbName(), join(interceptorClasses, ","));
+                fail("InterceptorBinding", "interceptorBinding.noSuchEjbName", binding.getEjbName(), join(",", interceptorClasses));
             }
 
             if (binding.getMethod() != null) {
                 if (binding.getEjbName() == null) {
-                    fail("InterceptorBinding", "interceptorBinding.ejbNameRequiredWithMethod", binding.getMethod().getMethodName(), join(interceptorClasses, ","));
+                    fail("InterceptorBinding", "interceptorBinding.ejbNameRequiredWithMethod", binding.getMethod().getMethodName(), join(",", interceptorClasses));
                 }
             }
         }
@@ -59,9 +61,9 @@ public class CheckAssemblyBindings extends ValidationBase {
         for (MethodPermission permission : assembly.getMethodPermission()) {
             for (Method method : permission.getMethod()) {
                 if (method.getEjbName() == null) {
-                    fail("MethodPermission", "methodPermission.ejbNameRequired", method.getMethodName(), join(permission.getRoleName(), ","));
+                    fail("MethodPermission", "methodPermission.ejbNameRequired", method.getMethodName(), join(",", permission.getRoleName()));
                 } else if (!ejbsByName.containsKey(method.getEjbName())){
-                    fail("MethodPermission", "methodPermission.noSuchEjbName", method.getEjbName(), method.getMethodName(), join(permission.getRoleName(), ","));
+                    fail("MethodPermission", "methodPermission.noSuchEjbName", method.getEjbName(), method.getMethodName(), join(",", permission.getRoleName()));
                 }
             }
         }

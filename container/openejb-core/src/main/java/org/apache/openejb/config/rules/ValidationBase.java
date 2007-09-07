@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
+import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.config.ValidationRule;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
@@ -25,6 +26,7 @@ import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Join;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -120,18 +122,5 @@ public abstract class ValidationBase implements ValidationRule {
         } catch (ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
-    }
-
-    public String join(List list, String s) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < list.size(); i++) {
-            Object object = list.get(i);
-            sb.append(object.toString());
-            sb.append(s);
-        }
-        if (sb.length() > 0) {
-            sb.delete(sb.length() - s.length(), sb.length());
-        }
-        return sb.toString();
     }
 }
