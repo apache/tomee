@@ -50,6 +50,7 @@
   -->
   <ServiceProvider id="Default CMP Container"
                    provider-type="Container"
+                   service-types="CMP_ENTITY"
                    constructor="id, transactionManager, securityService, CmpEngineFactory, Engine, ConnectorName"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
@@ -69,6 +70,7 @@
   <ServiceProvider
           id="Default BMP Container"
           provider-type="Container"
+          service-types="BMP_ENTITY"
           constructor="id, transactionManager, securityService, PoolSize"
           class-name="org.apache.openejb.core.entity.EntityContainer">
 
@@ -89,6 +91,7 @@
   <ServiceProvider
           id="Default Stateless Container"
           provider-type="Container"
+          service-types="STATELESS"
           constructor="id, transactionManager, securityService, TimeOut, PoolSize, StrictPooling"
           class-name="org.apache.openejb.core.stateless.StatelessContainer">
 
@@ -130,6 +133,7 @@
   <ServiceProvider
           id="Default Stateful Container"
           provider-type="Container"
+          service-types="STATEFUL"
           constructor="id, transactionManager, securityService, Passivator, TimeOut, PoolSize, BulkPassivate"
           class-name="org.apache.openejb.core.stateful.StatefulContainer">
 
@@ -173,6 +177,7 @@
   <ServiceProvider
           id="Default MDB Container"
           provider-type="Container"
+          service-types="MESSAGE"
           constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
@@ -238,6 +243,7 @@
   <ServiceProvider
           id="Default JDBC Database"
           provider-type="Resource"
+          service-types="javax.sql.DataSource, DataSource"
           class-name="org.apache.openejb.resource.jdbc.BasicManagedDataSource">
 
     # Driver class name
@@ -422,6 +428,7 @@
   <ServiceProvider
           id="Default Unmanaged JDBC Database"
           provider-type="Resource"
+          service-types="javax.sql.DataSource, DataSource"
           class-name="org.apache.openejb.resource.jdbc.BasicDataSource">
 
     # Driver class name
@@ -631,6 +638,7 @@
   <ServiceProvider
           id="Default JMS Connection Factory"
           provider-type="Resource"
+          service-types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
     
     ResourceAdapter Default JMS Resource Adapter
@@ -641,7 +649,7 @@
   <ServiceProvider
           id="Default Queue"
           provider-type="Resource"
-          constructor="destination"
+          service-types="javax.jms.Queue, Queue"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
   </ServiceProvider>
@@ -649,6 +657,7 @@
   <ServiceProvider
           id="Default Topic"
           provider-type="Resource"
+          service-types="javax.jms.Topic, Topic"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
@@ -673,6 +682,7 @@
   <ServiceProvider
           id="Default ORB"
           provider-type="Resource"
+          service-types="org.omg.CORBA.ORB, ORB"
           factory-name="create"
           class-name="org.apache.openejb.core.OrbFactory">
 
@@ -686,6 +696,7 @@
   <ServiceProvider
           id="Default Mail Session"
           provider-type="Resource"
+          service-types="javax.mail.Session"
           factory-name="create"
           class-name="org.apache.openejb.core.MailSessionFactory">
 
