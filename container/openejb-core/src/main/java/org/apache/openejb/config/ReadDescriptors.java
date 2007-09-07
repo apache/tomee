@@ -254,7 +254,7 @@ public class ReadDescriptors implements DynamicDeployer {
             EjbJar ejbJar = readEjbJar(url);
             ejbModule.setEjbJar(ejbJar);
         } else {
-            DeploymentLoader.logger.warning("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
+            DeploymentLoader.logger.debug("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
             ejbModule.setEjbJar(new EjbJar());
         }
     }
