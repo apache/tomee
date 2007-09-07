@@ -17,7 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.JarUtils;
+import org.apache.openejb.util.*;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
@@ -46,6 +46,9 @@ import java.util.jar.JarFile;
  */
 public class JaxbUnmarshaller {
 
+    public static final org.apache.openejb.util.Messages messages = new Messages("org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
+    
     private final File xmlFile;
 
     private javax.xml.bind.Unmarshaller unmarshaller;
@@ -110,7 +113,7 @@ public class JaxbUnmarshaller {
         JarEntry entry = jar.getJarEntry(xmlFile.getPath().replaceAll("\\\\", "/"));
 
         if (entry == null)
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, jarLocation));
+            throw new OpenEJBException(messages.format("xml.cannotFindFile", file, jarLocation));
 
         Reader reader = null;
         InputStream stream = null;
@@ -120,14 +123,14 @@ public class JaxbUnmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, jarLocation);
         } catch (IOException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages.format("xml.cannotRead", file, jarLocation, e.getLocalizedMessage()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
                 if (jar != null) jar.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", jarLocation, e.getLocalizedMessage()), e);
+                throw new OpenEJBException(messages.format("file.0020", jarLocation, e.getLocalizedMessage()), e);
             }
         }
     }
@@ -144,13 +147,13 @@ public class JaxbUnmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, file, directory.getPath());
         } catch (FileNotFoundException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", file, directory.getPath()), e);
+            throw new OpenEJBException(messages.format("xml.cannotFindFile", file, directory.getPath()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", directory.getPath(), e.getLocalizedMessage()), e);
+                throw new OpenEJBException(messages.format("file.0020", directory.getPath(), e.getLocalizedMessage()), e);
             }
         }
     }
@@ -170,15 +173,15 @@ public class JaxbUnmarshaller {
             reader = new InputStreamReader(stream);
             return unmarshalObject(reader, fileName, fullURL.getPath());
         } catch (MalformedURLException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotFindFile", fileName, url.getPath()), e);
+            throw new OpenEJBException(messages.format("xml.cannotFindFile", fileName, url.getPath()), e);
         } catch (IOException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotRead", fileName, url.getPath(), e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages.format("xml.cannotRead", fileName, url.getPath(), e.getLocalizedMessage()), e);
         } finally {
             try {
                 if (stream != null) stream.close();
                 if (reader != null) reader.close();
             } catch (Exception e) {
-                throw new OpenEJBException(EjbJarUtils.messages.format("file.0020", url.getPath(), e.getLocalizedMessage()), e);
+                throw new OpenEJBException(messages.format("file.0020", url.getPath(), e.getLocalizedMessage()), e);
             }
         }
     }
@@ -208,11 +211,11 @@ public class JaxbUnmarshaller {
             return object;
         } catch (JAXBException e) {
             e.printStackTrace();
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
         } catch (ParserConfigurationException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
         } catch (SAXException e) {
-            throw new OpenEJBException(EjbJarUtils.messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages.format("xml.cannotUnmarshal", file, jarLocation, e.getLocalizedMessage()), e);
         }
     }
 

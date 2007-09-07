@@ -54,13 +54,9 @@ public class DeploymentLoader {
 
     private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap<Class<?>, JaxbUnmarshaller>();
 
-    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
-    public DeploymentLoader() {
-        // For some reason intellij won't log to the one we configured statically
-        logger = EjbJarUtils.logger;
-    }
 
     public AppModule load(File jarFile) throws OpenEJBException, UnsupportedModuleTypeException, UnknownModuleTypeException {
         ClassLoader classLoader = getClassLoader(jarFile);
