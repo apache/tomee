@@ -527,7 +527,7 @@ public class AutoConfig implements DynamicDeployer {
 
         // get the container info (data used to build the container)
         ContainerInfo containerInfo = configFactory.configureService(containerInfoType);
-        logger.warning("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + getType(bean) + ", id=" + containerInfo.id + ")");
+        logger.info("Auto-creating a container for bean " + ejbDeployment.getDeploymentId() + ": Container(type=" + getType(bean) + ", id=" + containerInfo.id + ")");
 
         // if the is an MDB container we need to resolve the resource adapter
         String resourceAdapterId = containerInfo.properties.getProperty("ResourceAdapter");
