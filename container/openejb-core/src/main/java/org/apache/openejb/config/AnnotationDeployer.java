@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.jee.ActivationConfig;
@@ -64,7 +65,6 @@ import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
@@ -335,6 +335,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
+
+            ValidationContext validation = ejbModule.getValidation();
 
             ClassLoader classLoader = ejbModule.getClassLoader();
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
@@ -615,19 +617,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                         Remote remote = clazz.getAnnotation(Remote.class);
                         if (remote != null) {
                             if (remote.value().length == 0) {
-                                if (interfaces.size() != 1)
-                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
-                                if (clazz.getAnnotation(Local.class) != null)
-                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes you must not also annotate it with @Local.");
-                                if (interfaces.get(0).getAnnotation(Local.class) != null)
-                                    throw new IllegalStateException("When annotating a bean class as @Remote with no annotation attributes, the business interface itself must not be annotated as @Local.");
-
-                                validateInterface(interfaces.get(0));                                                                    
-                                remotes.add(interfaces.get(0));
-                                interfaces.remove(0);
-                            }
-                            for (Class interfce : remote.value()) {
-                                validateInterface(interfce);                                    
+                                if (interfaces.size() != 1) {
+                                    validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
+                                } else if (clazz.getAnnotation(Local.class) != null) {
+                                    validation.fail(ejbName, "ann.remoteLocal.ambiguous", join(", ", interfaces));
+                                } else if (interfaces.get(0).getAnnotation(Local.class) != null) {
+                                    validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
+                                } else {
+                                    validateRemoteInterface(interfaces.get(0), validation, ejbName);
+                                    remotes.add(interfaces.get(0));
+                                    interfaces.remove(0);
+                                }
+                            } else for (Class interfce : remote.value()) {
+                                validateRemoteInterface(interfce, validation, ejbName);
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             }
@@ -637,19 +639,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                         Local local = clazz.getAnnotation(Local.class);
                         if (local != null) {
                             if (local.value().length == 0) {
-                                if (interfaces.size() != 1)
-                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the bean must implement exactly one business interface, no more and no less.");
-                                if (clazz.getAnnotation(Remote.class) != null)
-                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes you must not also annotate it with @Remote.");
-                                if (interfaces.get(0).getAnnotation(Remote.class) != null)
-                                    throw new IllegalStateException("When annotating a bean class as @Local with no annotation attributes, the business interface itself must not be annotated as @Remote.");
-
-                                validateInterface(interfaces.get(0));
-                                locals.add(interfaces.get(0));
-                                interfaces.remove(0);
-                            }
-                            for (Class interfce : local.value()) {
-                                validateInterface(interfce);
+                                if (interfaces.size() != 1) {
+                                    validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
+                                } else if (clazz.getAnnotation(Remote.class) != null) {
+                                    validation.fail(ejbName, "ann.localRemote.ambiguous", join(", ", interfaces));
+                                } else if (interfaces.get(0).getAnnotation(Remote.class) != null) {
+                                    validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
+                                } else {
+                                    validateLocalInterface(interfaces.get(0), validation, ejbName);
+                                    locals.add(interfaces.get(0));
+                                    interfaces.remove(0);
+                                }
+                            } else for (Class interfce : local.value()) {
+                                validateLocalInterface(interfce, validation, ejbName);
                                 locals.add(interfce);
                                 interfaces.remove(interfce);
                             }
@@ -677,23 +679,19 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         for (Class interfce : copy(interfaces)) {
                             if (interfce.isAnnotationPresent(Remote.class)) {
-                                validateInterface(interfce);
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             } else {
-                                validateInterface(interfce);
                                 locals.add(interfce);
                                 interfaces.remove(interfce);
                             }
                         }
 
                         for (Class interfce : remotes) {
-                            // TODO: This should be turned back into an array
                             sessionBean.addBusinessRemote(interfce.getName());
                         }
 
                         for (Class interfce : locals) {
-                            // TODO: This should be turned back into an array
                             sessionBean.addBusinessLocal(interfce.getName());
                         }
                     }
@@ -1446,13 +1444,25 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             return null;
         }
-        
-        private void validateInterface(Class interfce) {
-            if (EJBHome.class.isAssignableFrom(interfce) || EJBObject.class.isAssignableFrom(interfce)){
-                throw new IllegalStateException(SafeToolkit.messages.format("conf.3901", interfce.getName() ));
-            }
-            if (EJBLocalHome.class.isAssignableFrom(interfce) || EJBLocalObject.class.isAssignableFrom(interfce)){
-                throw new IllegalStateException(SafeToolkit.messages.format("conf.3902", interfce.getName() ));
+
+
+        private void validateRemoteInterface(Class interfce, ValidationContext validation, String ejbName) {
+            validateInterface(interfce, validation, ejbName, "Remote");
+        }
+
+        private void validateLocalInterface(Class interfce, ValidationContext validation, String ejbName) {
+            validateInterface(interfce, validation, ejbName, "Local");
+        }
+
+        private void validateInterface(Class interfce, ValidationContext validation, String ejbName, String annotationName) {
+            if (EJBHome.class.isAssignableFrom(interfce)){
+                validation.fail(ejbName, "ann.remoteOrLocal.ejbHome", annotationName, interfce.getName());
+            } else if (EJBObject.class.isAssignableFrom(interfce)){
+                validation.fail(ejbName, "ann.remoteOrLocal.ejbObject", annotationName, interfce.getName());
+            } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
+                validation.fail(ejbName, "ann.remoteOrLocal.ejbLocalHome", annotationName, interfce.getName());
+            } else if (EJBLocalObject.class.isAssignableFrom(interfce)){
+                validation.fail(ejbName, "ann.remoteOrLocal.ejbLocalObject", annotationName, interfce.getName());
             }
         }
     }
@@ -1520,6 +1530,5 @@ public class AnnotationDeployer implements DynamicDeployer {
             return field.getName();
         }
     }
-
 
 }
