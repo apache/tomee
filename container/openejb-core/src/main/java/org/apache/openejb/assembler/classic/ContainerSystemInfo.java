@@ -24,7 +24,5 @@ public class ContainerSystemInfo extends InfoObject {
     public final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
 
     public final List<AppInfo> applications = new ArrayList<AppInfo>();
-    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
-    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
 
 }
