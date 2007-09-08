@@ -33,10 +33,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ServiceUtils {
     public static final String defaultProviderURL = "org.apache.openejb";
-    private static Map<String, Map<String, ServiceProvider>> loadedServiceJars = new HashMap<String, Map<String, ServiceProvider>>();
+    private static Map<String, List<ServiceProvider>> loadedServiceJars = new HashMap<String, List<ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
@@ -62,40 +63,54 @@ public class ServiceUtils {
         try {
             ProviderInfo info = getProviderInfo(id);
 
-            Map<String, ServiceProvider> services = getServices(info.getPackageName());
+            List<ServiceProvider> services = getServices(info.getPackageName());
 
-            return  services.containsKey(info.getServiceName());
-        } catch (OpenEJBException e) {
+            for (ServiceProvider service : services) {
+                if (service.getId().equals(id)) {
+                    return true;
+                }
+            }
+        } catch (OpenEJBException ignored) {
             // someone else will load the file and get the exception
-            return false;
         }
+        return false;
     }
 
     public static ServiceProvider getServiceProvider(String id) throws OpenEJBException {
         ProviderInfo info = getProviderInfo(id);
 
-        Map<String, ServiceProvider> services = getServices(info.getPackageName());
+        List<ServiceProvider> services = getServices(info.getPackageName());
 
-        ServiceProvider service = services.get(info.getServiceName());
-        if (service == null) {
-            throw new NoSuchProviderException(messages.format("conf.4901", info.getServiceName(), info.getPackageName()));
+        for (ServiceProvider service : services) {
+            if (service.getId().equals(info.getServiceName())) {
+                return service;
+            }
         }
-
-        return service;
+        throw new NoSuchProviderException(messages.format("conf.4901", info.getServiceName(), info.getPackageName()));
     }
 
-    private static Map<String, ServiceProvider> getServices(String packageName) throws OpenEJBException {
-        Map<String, ServiceProvider> services = loadedServiceJars.get(packageName);
+    public static String getServiceProviderId(String type) throws OpenEJBException {
+        if (type == null) return null;
+
+        List<ServiceProvider> services = getServices(defaultProviderURL);
+
+        for (ServiceProvider service : services) {
+            if (service.getServiceTypes().contains(type)) {
+                return service.getId();
+            }
+        }
+
+        return null;
+    }
+
+    private static List<ServiceProvider> getServices(String packageName) throws OpenEJBException {
+        List<ServiceProvider> services = loadedServiceJars.get(packageName);
         if (services == null) {
             ServicesJar servicesJar = JaxbOpenejb.readServicesJar(packageName);
 
             // index services by provider id
             List<ServiceProvider> serviceProviders = servicesJar.getServiceProvider();
-            services = new HashMap<String, ServiceProvider>(serviceProviders.size());
-            for (ServiceProvider serviceProvider : serviceProviders) {
-                services.put(serviceProvider.getId(), serviceProvider);
-
-            }
+            services = new ArrayList<ServiceProvider>(serviceProviders);
 
             loadedServiceJars.put(packageName, services);
         }

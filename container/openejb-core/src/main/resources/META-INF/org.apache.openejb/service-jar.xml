@@ -418,11 +418,6 @@
     # original logical connection wrapper.
     
     AccessToUnderlyingConnectionAllowed	false
-
-    # Interface type of this factory
-    # This is used to auto map resource references
-
-    ConnectionInterface javax.sql.DataSource
   </ServiceProvider>
 
   <ServiceProvider
@@ -607,11 +602,6 @@
     # original logical connection wrapper.
 
     AccessToUnderlyingConnectionAllowed	false
-
-    # Interface type of this factory
-    # This is used to auto map resource references
-
-    ConnectionInterface javax.sql.DataSource
   </ServiceProvider>
 
   <!--
@@ -642,8 +632,6 @@
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
     
     ResourceAdapter Default JMS Resource Adapter
-
-    ConnectionInterface javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory
   </ServiceProvider>
 
   <ServiceProvider

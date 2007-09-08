@@ -601,14 +601,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-            if (isResourceType(resourceInfo.properties, type)) {
+            if (isResourceType(resourceInfo.serviceType, type)) {
                 resourceIds.add(resourceInfo.id);
             }
         }
 
         if (sys != null) {
             for (ResourceInfo resourceInfo : sys.facilities.resources) {
-                if (isResourceType(resourceInfo.properties, type)) {
+                if (isResourceType(resourceInfo.serviceType, type)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }
@@ -617,7 +617,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // the above sys instance
             if (openejb != null) {
                 for (Resource resource : openejb.getResource()) {
-                    if (isResourceType(resource.getProperties(), type)) {
+                    if (isResourceType(resource.getType(), type)) {
                         resourceIds.add(resource.getId());
                     }
                 }
@@ -626,14 +626,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return resourceIds;
     }
 
-    private static boolean isResourceType(Properties properties, String type) {
+    private static boolean isResourceType(String serviceTypes, String type) {
         if (type == null) return true;
+        if (serviceTypes == null) return false;
 
-        String connectionInterfaces = properties.getProperty("ConnectionInterface");
-        if (connectionInterfaces == null) return false;
-
-        for (String connectionInterface : connectionInterfaces.split(" *, *")) {
-            if (connectionInterface.equals(type)) return true;
+        for (String serviceType : serviceTypes.split(" *, *")) {
+            if (serviceType.equals(type)) return true;
         }
         return false;
     }

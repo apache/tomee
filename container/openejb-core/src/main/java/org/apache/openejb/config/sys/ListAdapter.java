@@ -26,13 +26,13 @@ import java.util.List;
 /**
  * @version $Rev$ $Date$
  */
-public class ListAdapter extends XmlAdapter<String, List> {
-    public List unmarshal(String s) throws Exception {
+public class ListAdapter extends XmlAdapter<String, List<String>> {
+    public List<String> unmarshal(String s) throws Exception {
         String[] strings = s.split(", *");
-        return new ArrayList(Arrays.asList(strings));
+        return new ArrayList<String>(Arrays.asList(strings));
     }
 
-    public String marshal(List list) throws Exception {
+    public String marshal(List<String> list) throws Exception {
         return Join.join(", ", list);
     }
 }

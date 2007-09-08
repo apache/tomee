@@ -74,7 +74,8 @@ public class ServiceProvider {
     protected String providerType;
     @XmlAttribute(name = "service-types", required = false)
     @XmlJavaTypeAdapter(ListAdapter.class)
-    protected List<String> serviceTypes;
+    // for some reason when this field is type List JaxB gives us a List<List<String>>
+    protected Object serviceTypes;
 
     /**
      * Gets the value of the properties property.
@@ -241,10 +242,11 @@ public class ServiceProvider {
         this.providerType = value;
     }
 
+    @SuppressWarnings({"unchecked"})
     public List<String> getServiceTypes() {
         if (serviceTypes == null){
             serviceTypes = new ArrayList<String>();
         }
-        return serviceTypes;
+        return (List<String>) serviceTypes;
     }
 }

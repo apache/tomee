@@ -21,8 +21,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.LinkResolver;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -50,23 +48,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.TreeMap;
 import java.util.HashMap;
 import java.net.URI;
 
 public class AutoConfig implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-
-    private static Map<String,String> defaultResourceIds = new TreeMap<String,String>();
-    static {
-        defaultResourceIds.put("javax.sql.DataSource", "Default Unmanaged JDBC Database");
-        defaultResourceIds.put("javax.jms.ConnectionFactory", "Default JMS Connection Factory");
-        defaultResourceIds.put("javax.jms.QueueConnectionFactory", "Default JMS Connection Factory");
-        defaultResourceIds.put("javax.jms.TopicConnectionFactory", "Default JMS Connection Factory");
-        defaultResourceIds.put("org.omg.CORBA.ORB", "Default ORB");
-        defaultResourceIds.put("javax.mail.Session", "Default Mail Session");
-    }
 
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
     static{
@@ -697,19 +684,17 @@ public class AutoConfig implements DynamicDeployer {
             return installResource(beanName, resourceInfo);
         }
 
-        // if there is only one resource, use it
+        // if there are any resources of the desired type, use the first one
         if (resourceIds.size() > 0) {
             return resourceIds.get(0);
         }
 
-        // look for a default resource based on the type
-        Resource resource = getDefaultResource(type);
-        if (resource == null) {
-            // no default resource for this type... give up
-            throw new OpenEJBException("No default resource defined for reference '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.");
+        // Auto create a resource using the first provider that can supply a resource of the desired type
+        resourceId = ServiceUtils.getServiceProviderId(type);
+        if (resourceId == null) {
+            throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
-        ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
-        logger.warning("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.  THERE IS LITTLE CHANCE THIS WILL WORK!");
+        ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
         return installResource(beanName, resourceInfo);
     }
 
@@ -724,17 +709,6 @@ public class AutoConfig implements DynamicDeployer {
 
         configFactory.install(resourceInfo);
         return resourceInfo.id;
-    }
-
-    private Resource getDefaultResource(String type) {
-        String providerId = defaultResourceIds.get(type);
-        if (providerId == null) {
-            return null;
-        }
-        Resource resource = JaxbOpenejb.createResource();
-        resource.setProvider(providerId);
-        resource.setId(providerId);
-        return resource;
     }
 
     private String getResourceEnvId(String beanName, String resourceId, String type) throws OpenEJBException {
@@ -766,30 +740,15 @@ public class AutoConfig implements DynamicDeployer {
         logger.info(message);
 
 
-        // if there isn't a type we can't create a default resource
-        if (type == null) {
-            throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
+        // Auto create a resource using the first provider that can supply a resource of the desired type
+        String providerId = ServiceUtils.getServiceProviderId(type);
+        if (providerId == null) {
+                throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
-
-        // properties for new resource
         Properties properties = new Properties();
         properties.setProperty("destination", resourceId);
-
-        // Search for a provider like "Default javax.jms.Queue"
-        String longId = "Default " + type;
-        if (ServiceUtils.hasServiceProvider(longId)) {
-            ResourceInfo resourceInfo = configFactory.configureService(ResourceInfo.class, resourceId, properties, longId, null);
-            return installResource(beanName, resourceInfo);
-        }
-
-        // Search for a provider like "Default Queue"
-        String shortId = "Default " + type.replaceFirst(".*\\.", "");
-        if (ServiceUtils.hasServiceProvider(shortId)) {
-            ResourceInfo resourceInfo = configFactory.configureService(ResourceInfo.class, resourceId, properties, shortId, null);
-            return installResource(beanName, resourceInfo);
-        }
-
-        throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.  Looked for Resource(id=" + longId + ") and Resource(id=" + shortId + ")");
+        ResourceInfo resourceInfo = configFactory.configureService(ResourceInfo.class, resourceId, properties, providerId, null);
+        return installResource(beanName, resourceInfo);
     }
 
     private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType, Object bean) {
