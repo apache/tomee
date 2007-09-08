@@ -50,7 +50,7 @@ import java.io.Closeable;
 import java.util.Properties;
 
 /**
- * Deploy EJB beans
+ * UnDeploy EJB beans
  */
 public class Undeploy {
 
