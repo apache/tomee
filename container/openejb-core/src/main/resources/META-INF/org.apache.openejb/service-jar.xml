@@ -650,6 +650,7 @@
           id="Default Queue"
           provider-type="Resource"
           service-types="javax.jms.Queue, Queue"
+          constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
   </ServiceProvider>
