@@ -73,7 +73,7 @@ public class ServiceProvider {
     @XmlAttribute(name = "provider-type", required = true)
     protected String providerType;
     @XmlAttribute(name = "service-types", required = false)
-    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    @XmlJavaTypeAdapter(ListAdapter.class)
     protected List<String> serviceTypes;
 
     /**
