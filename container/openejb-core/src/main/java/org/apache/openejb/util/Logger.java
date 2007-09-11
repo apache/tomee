@@ -121,16 +121,18 @@ public class Logger {
 	private static final String EMBEDDED_PROPERTIES_FILE = "embedded.logging.properties";
 	static {
 		try {
-			configure();
-
+			String prop = System.getProperty("openejb.logger.external","false");
+			boolean externalLogging = Boolean.parseBoolean(prop);
+			if(!externalLogging)
+				configureInternal();
 		} catch (IOException e) {
          // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used. 
 			
 		}
 	}
 
-	private static void configure() throws IOException {
-
+	private static void configureInternal() throws IOException {
+		
 		System.setProperty("openjpa.Log", "log4j");
 		SystemInstance system = SystemInstance.get();
 		FileUtils base = system.getBase();
@@ -154,7 +156,8 @@ public class Logger {
 			configureEmbedded();
 		} 
 	}
-    private static void configureEmbedded(){
+
+	private static void configureEmbedded(){
     	URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
     	if(resource != null)
     		PropertyConfigurator.configure(resource);
