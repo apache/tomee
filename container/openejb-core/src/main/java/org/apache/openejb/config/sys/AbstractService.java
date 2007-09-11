@@ -60,6 +60,20 @@ public abstract class AbstractService implements Service {
     protected String type;
 
 
+    protected AbstractService(String id) {
+        this(id, null, null, new Properties());
+    }
+    
+    protected AbstractService(String id, String provider, String type, Properties properties) {
+        this.properties = properties;
+        this.id = id;
+        this.provider = provider;
+        this.type = type;
+    }
+
+    protected AbstractService() {
+    }
+
     /**
      * Gets the value of the properties property.
      * <p/>

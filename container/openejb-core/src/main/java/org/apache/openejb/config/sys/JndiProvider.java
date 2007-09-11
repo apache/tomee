@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Properties;
 
 
 /**
@@ -44,4 +45,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "JndiProvider")
 public class JndiProvider extends AbstractService {
+    public JndiProvider(String id) {
+        super(id);
+    }
+
+    public JndiProvider(String id, String provider, String type, Properties properties) {
+        super(id, provider, type, properties);
+    }
+
+    public JndiProvider() {
+    }
 }

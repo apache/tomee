@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import java.util.Properties;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -47,4 +48,15 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "")
 @XmlRootElement(name = "ConnectionManager")
 public class ConnectionManager extends AbstractService {
+
+    public ConnectionManager(String id) {
+        super(id);
+    }
+
+    public ConnectionManager(String id, String provider, String type, Properties properties) {
+        super(id, provider, type, properties);
+    }
+
+    public ConnectionManager() {
+    }
 }

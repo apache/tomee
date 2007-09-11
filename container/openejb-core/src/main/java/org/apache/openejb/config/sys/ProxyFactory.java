@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Properties;
 
 
 /**
@@ -44,4 +45,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "ProxyFactory")
 public class ProxyFactory extends AbstractService {
+    public ProxyFactory(String id) {
+        super(id);
+    }
+
+    public ProxyFactory(String id, String provider, String type, Properties properties) {
+        super(id, provider, type, properties);
+    }
+
+    public ProxyFactory() {
+    }
 }

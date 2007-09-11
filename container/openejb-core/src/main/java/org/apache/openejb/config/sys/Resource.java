@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Properties;
 
 
 /**
@@ -48,6 +49,17 @@ import javax.xml.bind.annotation.XmlType;
 public class Resource extends AbstractService {
     @XmlAttribute
     protected String jndi;
+
+    public Resource(String id) {
+        super(id);
+    }
+
+    public Resource(String id, String provider, String type, Properties properties) {
+        super(id, provider, type, properties);
+    }
+
+    public Resource() {
+    }
 
     /**
      * Gets the value of the jndi property.

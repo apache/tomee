@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Properties;
 
 
 /**
@@ -46,6 +47,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "Container")
 public class Container extends AbstractService {
+
+    public Container(String id) {
+        super(id);
+    }
+
+    public Container(String id, String provider, String type, Properties properties) {
+        super(id, provider, type, properties);
+    }
+
+    public Container() {
+    }
 
     /**
      * Gets the value of the ctype property.
