@@ -41,7 +41,10 @@ public class ReportValidationResults implements DynamicDeployer {
 
         validationFailedException = logResults(appModule, validationFailedException);
 
-        throw validationFailedException;
+        if (validationFailedException != null)
+            throw validationFailedException;
+
+        return appModule;
     }
 
     private ValidationFailedException logResults(DeploymentModule module, ValidationFailedException validationFailedException) {
