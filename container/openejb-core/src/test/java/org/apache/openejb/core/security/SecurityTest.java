@@ -60,7 +60,7 @@ public class SecurityTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
 
         SecurityServiceInfo serviceInfo = new SecurityServiceInfo();
-        serviceInfo.serviceType = "SecurityService";
+        serviceInfo.service = "SecurityService";
         serviceInfo.className = SecurityServiceImpl.class.getName();
         serviceInfo.id = "New Security Service";
         serviceInfo.properties = new Properties();

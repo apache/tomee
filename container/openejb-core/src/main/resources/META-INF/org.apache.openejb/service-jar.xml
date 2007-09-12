@@ -49,8 +49,8 @@
   # ==========================================================
   -->
   <ServiceProvider id="Default CMP Container"
-                   provider-type="Container"
-                   service-types="CMP_ENTITY"
+                   service="Container"
+                   types="CMP_ENTITY"
                    constructor="id, transactionManager, securityService, CmpEngineFactory, Engine, ConnectorName"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
@@ -69,8 +69,8 @@
   -->
   <ServiceProvider
           id="Default BMP Container"
-          provider-type="Container"
-          service-types="BMP_ENTITY"
+          service="Container"
+          types="BMP_ENTITY"
           constructor="id, transactionManager, securityService, PoolSize"
           class-name="org.apache.openejb.core.entity.EntityContainer">
 
@@ -90,8 +90,8 @@
   -->
   <ServiceProvider
           id="Default Stateless Container"
-          provider-type="Container"
-          service-types="STATELESS"
+          service="Container"
+          types="STATELESS"
           constructor="id, transactionManager, securityService, TimeOut, PoolSize, StrictPooling"
           class-name="org.apache.openejb.core.stateless.StatelessContainer">
 
@@ -132,8 +132,8 @@
   -->
   <ServiceProvider
           id="Default Stateful Container"
-          provider-type="Container"
-          service-types="STATEFUL"
+          service="Container"
+          types="STATEFUL"
           constructor="id, transactionManager, securityService, Passivator, TimeOut, PoolSize, BulkPassivate"
           class-name="org.apache.openejb.core.stateful.StatefulContainer">
 
@@ -176,8 +176,8 @@
   -->
   <ServiceProvider
           id="Default MDB Container"
-          provider-type="Container"
-          service-types="MESSAGE"
+          service="Container"
+          types="MESSAGE"
           constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
@@ -207,8 +207,8 @@
   -->
   <ServiceProvider
           id="Default JDK 1.3 ProxyFactory"
-          provider-type="ProxyFactory"
-          service-types="ProxyFactory"
+          service="ProxyFactory"
+          types="ProxyFactory"
           class-name="org.apache.openejb.util.proxy.Jdk13ProxyFactory"/>
 
   <!--
@@ -218,14 +218,14 @@
   -->
   <ServiceProvider
           id="PseudoSecurityService"
-          provider-type="SecurityService"
-          service-types="SecurityService"
+          service="SecurityService"
+          types="SecurityService"
           class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
 
   <ServiceProvider
           id="Default Security Service"
-          provider-type="SecurityService"
-          service-types="SecurityService"
+          service="SecurityService"
+          types="SecurityService"
           class-name="org.apache.openejb.core.security.SecurityServiceImpl"/>
 
   <!--
@@ -235,8 +235,8 @@
   -->
   <ServiceProvider
           id="Default Transaction Manager"
-          provider-type="TransactionManager"
-          service-types="TransactionManager"
+          service="TransactionManager"
+          types="TransactionManager"
           class-name="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
 
   <!--
@@ -246,8 +246,8 @@
   -->
   <ServiceProvider
           id="Default JDBC Database"
-          provider-type="Resource"
-          service-types="javax.sql.DataSource, DataSource"
+          service="Resource"
+          types="javax.sql.DataSource, DataSource"
           class-name="org.apache.openejb.resource.jdbc.BasicManagedDataSource">
 
     # Driver class name
@@ -426,8 +426,8 @@
 
   <ServiceProvider
           id="Default Unmanaged JDBC Database"
-          provider-type="Resource"
-          service-types="javax.sql.DataSource, DataSource"
+          service="Resource"
+          types="javax.sql.DataSource, DataSource"
           class-name="org.apache.openejb.resource.jdbc.BasicDataSource">
 
     # Driver class name
@@ -615,7 +615,7 @@
   -->
   <ServiceProvider
           id="Default JMS Resource Adapter"
-          provider-type="Resource"
+          service="Resource"
           class-name="org.apache.activemq.ra.ActiveMQResourceAdapter">
 
     # Broker configuration
@@ -631,8 +631,8 @@
 
   <ServiceProvider
           id="Default JMS Connection Factory"
-          provider-type="Resource"
-          service-types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+          service="Resource"
+          types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
     
     ResourceAdapter Default JMS Resource Adapter
@@ -640,8 +640,8 @@
 
   <ServiceProvider
           id="Default Queue"
-          provider-type="Resource"
-          service-types="javax.jms.Queue, Queue"
+          service="Resource"
+          types="javax.jms.Queue, Queue"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
@@ -649,8 +649,8 @@
 
   <ServiceProvider
           id="Default Topic"
-          provider-type="Resource"
-          service-types="javax.jms.Topic, Topic"
+          service="Resource"
+          types="javax.jms.Topic, Topic"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
@@ -663,8 +663,8 @@
   -->
   <ServiceProvider
           id="Default Local TX ConnectionManager"
-          provider-type="ConnectionManager"
-          service-types="ConnectionManager"
+          service="ConnectionManager"
+          types="ConnectionManager"
           constructor="transactionManager"
           class-name="org.apache.openejb.resource.SharedLocalConnectionManager"/>
 
@@ -675,8 +675,8 @@
   -->
   <ServiceProvider
           id="Default ORB"
-          provider-type="Resource"
-          service-types="org.omg.CORBA.ORB, ORB"
+          service="Resource"
+          types="org.omg.CORBA.ORB, ORB"
           factory-name="create"
           class-name="org.apache.openejb.core.OrbFactory">
 
@@ -689,8 +689,8 @@
   -->
   <ServiceProvider
           id="Default Mail Session"
-          provider-type="Resource"
-          service-types="javax.mail.Session"
+          service="Resource"
+          types="javax.mail.Session"
           factory-name="create"
           class-name="org.apache.openejb.core.MailSessionFactory">
 

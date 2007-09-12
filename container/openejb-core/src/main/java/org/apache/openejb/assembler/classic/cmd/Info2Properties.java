@@ -219,7 +219,7 @@ public class Info2Properties {
 
             println("");
 
-            comment(info.serviceType + "(id=" + info.id + ")");
+            comment(info.service + "(id=" + info.id + ")");
             comment("className: " + info.className);
             // TODO: the codebase value usually isn't filled in, we should do that.
             // comment("codebase: " + info.codebase);

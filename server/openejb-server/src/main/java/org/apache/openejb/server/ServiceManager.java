@@ -155,7 +155,7 @@ public class ServiceManager {
             if (conf != null && conf.facilities != null){
                 ServiceInfo info = new ServiceInfo();
                 info.className = ((Class) serviceProperties.get(ServerService.class)).getName();
-                info.serviceType = "ServerService";
+                info.service = "ServerService";
                 info.id = serviceName;
                 info.properties = serviceProperties;
                 conf.facilities.services.add(info);

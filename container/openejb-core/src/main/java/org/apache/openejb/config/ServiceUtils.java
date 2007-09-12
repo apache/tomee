@@ -101,7 +101,7 @@ public class ServiceUtils {
         List<ServiceProvider> services = getServices(defaultProviderURL);
 
         for (ServiceProvider service : services) {
-            if (service.getServiceTypes().contains(type)) {
+            if (service.getTypes().contains(type)) {
                 return service;
             }
         }
@@ -115,9 +115,9 @@ public class ServiceUtils {
         List<ServiceProvider> services = getServices(defaultProviderURL);
 
         for (ServiceProvider service : services) {
-            if (!service.getProviderType().equals(providerType)) continue;
+            if (!service.getService().equals(providerType)) continue;
             
-            if (service.getServiceTypes().contains(serviceType)) {
+            if (service.getTypes().contains(serviceType)) {
                 return service;
             }
         }

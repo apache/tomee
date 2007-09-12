@@ -493,14 +493,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (service.getId() == null) service.setId(provider.getId());
 
-        logger.info("Configuring Service(id=" + service.getId() + ", type=" + provider.getProviderType() + ", provider-id=" + provider.getId() + ")");
+        logger.info("Configuring Service(id=" + service.getId() + ", type=" + provider.getService() + ", provider-id=" + provider.getId() + ")");
 
         Properties props = new Properties();
         props.putAll(provider.getProperties());
         props.putAll(service.getProperties());
         props.putAll(getSystemProperties(service.getId()));
 
-        if (providerType != null && !provider.getProviderType().equals(providerType)) {
+        if (providerType != null && !provider.getService().equals(providerType)) {
             throw new OpenEJBException(messages.format("conf.4902", service.getId(), providerType));
         }
 
@@ -512,7 +512,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             throw new OpenEJBException("Cannot instantiate class " + infoType.getName(), e);
         }
 
-        info.serviceType = provider.getProviderType();
+        info.service = provider.getService();
         info.description = provider.getDescription();
         info.displayName = provider.getDisplayName();
         info.className = provider.getClassName();
@@ -630,14 +630,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-            if (isResourceType(resourceInfo.serviceType, type)) {
+            if (isResourceType(resourceInfo.service, type)) {
                 resourceIds.add(resourceInfo.id);
             }
         }
 
         if (sys != null) {
             for (ResourceInfo resourceInfo : sys.facilities.resources) {
-                if (isResourceType(resourceInfo.serviceType, type)) {
+                if (isResourceType(resourceInfo.service, type)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }

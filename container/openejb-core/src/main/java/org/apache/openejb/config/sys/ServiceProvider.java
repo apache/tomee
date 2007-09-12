@@ -70,12 +70,12 @@ public class ServiceProvider {
     protected String factoryName;
     @XmlAttribute(required = true)
     protected String id;
-    @XmlAttribute(name = "provider-type", required = true)
-    protected String providerType;
-    @XmlAttribute(name = "service-types", required = false)
+    @XmlAttribute(name = "service", required = true)
+    protected String service;
+    @XmlAttribute(name = "types", required = false)
     @XmlJavaTypeAdapter(ListAdapter.class)
     // for some reason when this field is type List JaxB gives us a List<List<String>>
-    protected Object serviceTypes;
+    protected Object types;
 
     /**
      * Gets the value of the properties property.
@@ -228,8 +228,8 @@ public class ServiceProvider {
      * @return possible object is
      *         {@link String }
      */
-    public String getProviderType() {
-        return providerType;
+    public String getService() {
+        return service;
     }
 
     /**
@@ -238,15 +238,15 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setProviderType(String value) {
-        this.providerType = value;
+    public void setService(String value) {
+        this.service = value;
     }
 
     @SuppressWarnings({"unchecked"})
-    public List<String> getServiceTypes() {
-        if (serviceTypes == null){
-            serviceTypes = new ArrayList<String>();
+    public List<String> getTypes() {
+        if (types == null){
+            types = new ArrayList<String>();
         }
-        return (List<String>) serviceTypes;
+        return (List<String>) types;
     }
 }

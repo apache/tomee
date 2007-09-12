@@ -18,11 +18,11 @@
 -->
 <ServiceJar>
 
-  <ServiceProvider id="CheddarContainer" provider-type="Container" class-name="org.acme.SuperContainer">
+  <ServiceProvider id="CheddarContainer" service="Container" class-name="org.acme.SuperContainer">
       myProperty = Yummy Cheese
   </ServiceProvider>
 
-  <ServiceProvider id="Default Stateless Container" provider-type="Container" class-name="org.acme.SuperContainer">
+  <ServiceProvider id="Default Stateless Container" service="Container" class-name="org.acme.SuperContainer">
       myProperty = Overridden Declaration
   </ServiceProvider>
 

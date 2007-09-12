@@ -637,7 +637,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + contextInfo.serviceType + " with id " + contextInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + contextInfo.service + " with id " + contextInfo.id, e);
         }
 
         // Update the config tree
@@ -659,19 +659,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         
         Object service = serviceRecipe.create();
 
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.service + "/" + serviceInfo.id, service);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
 
         setSystemInstanceComponent(interfce, service);
 
         props.put(interfce.getName(), service);
-        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.service, service);
         props.put(serviceInfo.id, service);
 
         containerSystem.addContainer(serviceInfo.id, (Container) service);
@@ -699,16 +699,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create();
 
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         ProxyManager.registerFactory(serviceInfo.id, (ProxyFactory) service);
         ProxyManager.setDefaultFactory(serviceInfo.id);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.service + "/" + serviceInfo.id, service);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
 
         setSystemInstanceComponent(interfce, service);
@@ -716,7 +716,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         getContext().put(interfce.getName(), service);
 
         props.put(interfce.getName(), service);
-        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.service, service);
         props.put(serviceInfo.id, service);
 
         // Update the config tree
@@ -840,13 +840,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create();
 
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType + "/" + serviceInfo.id, service);
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.service + "/" + serviceInfo.id, service);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
 
         setSystemInstanceComponent(interfce, service);
@@ -854,7 +854,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         getContext().put(interfce.getName(), service);
 
         props.put(interfce.getName(), service);
-        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.service, service);
         props.put(serviceInfo.id, service);
 
         // Update the config tree
@@ -868,13 +868,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create();
 
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType, service);
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.service, service);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
 
         setSystemInstanceComponent(interfce, service);
@@ -882,7 +882,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         getContext().put(interfce.getName(), service);
 
         props.put(interfce.getName(), service);
-        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.service, service);
         props.put(serviceInfo.id, service);
 
         this.securityService = (SecurityService) service;
@@ -898,13 +898,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create();
 
-        Class interfce = serviceInterfaces.get(serviceInfo.serviceType);
-        checkImplementation(interfce, service.getClass(), serviceInfo.serviceType, serviceInfo.id);
+        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.serviceType, service);
+            this.containerSystem.getJNDIContext().bind("java:openejb/" + serviceInfo.service, service);
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.serviceType + " with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
 
         setSystemInstanceComponent(interfce, service);
@@ -912,7 +912,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         getContext().put(interfce.getName(), service);
 
         props.put(interfce.getName(), service);
-        props.put(serviceInfo.serviceType, service);
+        props.put(serviceInfo.service, service);
         props.put(serviceInfo.id, service);
 
         this.transactionManager = (TransactionManager) service;

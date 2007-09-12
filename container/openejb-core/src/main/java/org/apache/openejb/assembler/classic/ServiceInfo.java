@@ -22,7 +22,8 @@ import java.util.ArrayList;
 
 public class ServiceInfo extends InfoObject {
 
-    public String serviceType;
+    public String service;
+    public List<String> types;
     public String description;
     public String id;
     public String displayName;

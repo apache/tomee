@@ -38,7 +38,8 @@
       <xsd:simpleContent>
         <xsd:extension base="xsd:string">
           <xsd:attribute name="id" type="xsd:string" use="required"/>
-          <xsd:attribute name="provider-type" type="ProviderTypes" use="required"/>
+          <xsd:attribute name="service" type="ServiceTypes" use="required"/>
+          <xsd:attribute name="types" type="xsd:string" use="optional"/>
           <xsd:attribute name="display-name" type="xsd:string" use="optional"/>
           <xsd:attribute name="description" type="xsd:string" use="optional"/>
           <xsd:attribute name="class-name" type="ClassName"/>
@@ -64,8 +65,8 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <!-- ProviderTypes -->
-  <xsd:simpleType name="ProviderTypes">
+  <!-- ServiceTypes -->
+  <xsd:simpleType name="ServiceTypes">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="Container|Proxy|Security|Transaction|Resource|Connector|ConnectionManager|JNDI"/>
     </xsd:restriction>
