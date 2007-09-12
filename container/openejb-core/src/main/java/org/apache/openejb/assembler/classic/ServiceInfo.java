@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class ServiceInfo extends InfoObject {
 
     public String service;
-    public List<String> types;
+    public List<String> types = new ArrayList<String>();
     public String description;
     public String id;
     public String displayName;

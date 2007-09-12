@@ -513,6 +513,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         info.service = provider.getService();
+        info.types.addAll(provider.getTypes());
         info.description = provider.getDescription();
         info.displayName = provider.getDisplayName();
         info.className = provider.getClassName();
@@ -630,14 +631,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-            if (isResourceType(resourceInfo.service, type)) {
+            if (resourceInfo.types.contains(type)) {
                 resourceIds.add(resourceInfo.id);
             }
         }
 
         if (sys != null) {
             for (ResourceInfo resourceInfo : sys.facilities.resources) {
-                if (isResourceType(resourceInfo.service, type)) {
+                if (resourceInfo.types.contains(type)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }
@@ -646,23 +647,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // the above sys instance
             if (openejb != null) {
                 for (Resource resource : openejb.getResource()) {
-                    if (isResourceType(resource.getType(), type)) {
+                    if (resource.getType() != null && resource.getType().equals(type)) {
                         resourceIds.add(resource.getId());
                     }
                 }
             }
         }
         return resourceIds;
-    }
-
-    private static boolean isResourceType(String serviceTypes, String type) {
-        if (type == null) return true;
-        if (serviceTypes == null) return false;
-
-        for (String serviceType : serviceTypes.split(" *, *")) {
-            if (serviceType.equals(type)) return true;
-        }
-        return false;
     }
 
     protected List<String> getContainerIds() {

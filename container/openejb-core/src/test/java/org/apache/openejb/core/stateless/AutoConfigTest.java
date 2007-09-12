@@ -42,10 +42,10 @@ import org.apache.openejb.jee.EjbJar;
 public class AutoConfigTest extends TestCase {
 
 
-    public void test() throws Exception {
+    public void _test() throws Exception {
 
     }
-    public void _test() throws Exception {
+    public void test() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 

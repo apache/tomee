@@ -566,7 +566,7 @@ public class AutoConfig implements DynamicDeployer {
 
     private void processResourceEnvRef(JndiReference ref, EjbDeployment ejbDeployment) throws OpenEJBException {
         // skip destinations with a global jndi name
-        String mappedName = ref.getMappedName() + "";
+        String mappedName = (ref.getMappedName() == null)? "": ref.getMappedName();
         if (mappedName.startsWith("jndi:")){
             return;
         }
