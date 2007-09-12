@@ -369,7 +369,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 appInfo.persistenceUnits.add(info);
             }
         }
-        
+
         // process JNDI refs... all JDNI refs for the whole application
         // must be processed at the same time
         JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
@@ -407,7 +407,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         ReportValidationResults reportValidationResults = new ReportValidationResults();
         reportValidationResults.deploy(appModule);
-        
+
         logger.info("Loaded Module: " + appInfo.jarPath);
         return appInfo;
     }
@@ -435,43 +435,118 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private static final Map<Class<? extends ServiceInfo>, DefaultService> defaultProviders = new HashMap<Class<? extends ServiceInfo>, DefaultService>();
 
+    private static final Map<Class<? extends ServiceInfo>, Class<? extends Service>> types = new HashMap<Class<? extends ServiceInfo>, Class<? extends Service>>();
+
     static {
-        defaultProviders.put(MdbContainerInfo.class, new DefaultService("Default MDB Container", Container.class));
-        defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService("Default Stateful Container", Container.class));
-        defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService("Default Stateless Container", Container.class));
-        defaultProviders.put(CmpEntityContainerInfo.class, new DefaultService("Default CMP Container", Container.class));
-        defaultProviders.put(BmpEntityContainerInfo.class, new DefaultService("Default BMP Container", Container.class));
-        defaultProviders.put(SecurityServiceInfo.class, new DefaultService("Default Security Service", SecurityService.class));
-        defaultProviders.put(TransactionServiceInfo.class, new DefaultService("Default Transaction Manager", TransactionManager.class));
-        defaultProviders.put(ConnectionManagerInfo.class, new DefaultService("Default Local TX ConnectionManager", ConnectionManager.class));
-        defaultProviders.put(ProxyFactoryInfo.class, new DefaultService("Default JDK 1.3 ProxyFactory", ProxyFactory.class));
+        defaultProviders.put(MdbContainerInfo.class, new DefaultService("MESSAGE", Container.class));
+        defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService("STATEFUL", Container.class));
+        defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService("STATELESS", Container.class));
+        defaultProviders.put(CmpEntityContainerInfo.class, new DefaultService("CMP_ENTITY", Container.class));
+        defaultProviders.put(BmpEntityContainerInfo.class, new DefaultService("BMP_ENTITY", Container.class));
+        defaultProviders.put(SecurityServiceInfo.class, new DefaultService("SecurityService", SecurityService.class));
+        defaultProviders.put(TransactionServiceInfo.class, new DefaultService("TransactionManager", TransactionManager.class));
+        defaultProviders.put(ConnectionManagerInfo.class, new DefaultService("ConnectionManager", ConnectionManager.class));
+        defaultProviders.put(ProxyFactoryInfo.class, new DefaultService("ProxyFactory", ProxyFactory.class));
+
+        for (Map.Entry<Class<? extends ServiceInfo>, DefaultService> entry : defaultProviders.entrySet()) {
+            types.put(entry.getKey(), entry.getValue().type);
+        }
+
+        types.put(ResourceInfo.class, Resource.class);
     }
 
+
     public <T extends ServiceInfo> T configureService(Class<? extends T> type) throws OpenEJBException {
+        Service service = getDefaultService(type);
+
+        return configureService(service, type);
+    }
+
+    private <T extends ServiceInfo>Service getDefaultService(Class<? extends T> type) throws OpenEJBException {
         DefaultService defaultService = defaultProviders.get(type);
 
         Service service = null;
         try {
             service = JaxbOpenejb.create(defaultService.type);
-            service.setProvider(defaultService.id);
-            service.setId(defaultService.id);
+            service.setType(defaultService.id);
         } catch (Exception e) {
             throw new OpenEJBException("Cannot instantiate class " + defaultService.type.getName(), e);
         }
-
-        return configureService(service, type);
+        return service;
     }
 
 
-    public <T extends ServiceInfo> T configureService(Service service, Class<? extends T> type) throws OpenEJBException {
+    public <T extends ServiceInfo> T configureService(Service service, Class<? extends T> infoType) throws OpenEJBException {
+        if (infoType == null) throw new NullPointerException("type");
+
         if (service == null) {
-            return configureService(type);
+            service = getDefaultService(infoType);
         }
 
-        Properties declaredProperties = new Properties();
-        declaredProperties.putAll(service.getProperties());
+        String providerType = service.getClass().getSimpleName();
 
-        return configureService(type, service.getId(), declaredProperties, service.getProvider(), service.getClass().getSimpleName());
+        ServiceProvider provider = resolveServiceProvider(service, infoType);
+
+        if (provider == null){
+            throw new NoSuchProviderException("Cannot determine a default provider for Service("+service.getId() +", "+infoType.getSimpleName()+")");
+        }
+
+        if (service.getId() == null) service.setId(provider.getId());
+
+        logger.info("Configuring Service(id=" + service.getId() + ", type=" + provider.getProviderType() + ", provider-id=" + provider.getId() + ")");
+
+        Properties props = new Properties();
+        props.putAll(provider.getProperties());
+        props.putAll(service.getProperties());
+        props.putAll(getSystemProperties(service.getId()));
+
+        if (providerType != null && !provider.getProviderType().equals(providerType)) {
+            throw new OpenEJBException(messages.format("conf.4902", service.getId(), providerType));
+        }
+
+        T info = null;
+
+        try {
+            info = infoType.newInstance();
+        } catch (Exception e) {
+            throw new OpenEJBException("Cannot instantiate class " + infoType.getName(), e);
+        }
+
+        info.serviceType = provider.getProviderType();
+        info.description = provider.getDescription();
+        info.displayName = provider.getDisplayName();
+        info.className = provider.getClassName();
+        info.factoryMethod = provider.getFactoryName();
+        info.id = service.getId();
+        info.properties = props;
+        info.constructorArgs.addAll(parseConstructorArgs(provider));
+
+        return info;
+    }
+
+    private ServiceProvider resolveServiceProvider(Service service, Class infoType) throws OpenEJBException {
+
+        if (service.getProvider() != null) {
+            return ServiceUtils.getServiceProvider(service.getProvider());
+        }
+
+        if (service.getType() != null) {
+            return ServiceUtils.getServiceProviderByType(service.getClass().getSimpleName(), service.getType());
+        }
+
+        if (service.getId() != null) {
+            try {
+                return ServiceUtils.getServiceProvider(service.getId());
+            } catch (NoSuchProviderException e) {
+            }
+        }
+
+        if (infoType != null) {
+            Service defaultService = getDefaultService(infoType);
+            return resolveServiceProvider(defaultService, null);
+        }
+
+        return null;
     }
 
     public <T extends ServiceInfo>T configureService(String id, Class<? extends T> type) throws OpenEJBException {
@@ -488,67 +563,21 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * 5.  If this fails, throw NoSuchProviderException
      */
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
-        if (type == null) throw new NullPointerException("type");
-        if (serviceId == null) throw new NullPointerException("serviceId");
-
-        if (declaredProperties == null){
-            declaredProperties = new Properties();
-        }
-
-        ServiceProvider provider = null;
-        if (providerId != null) {
-            provider = ServiceUtils.getServiceProvider(providerId);
-        } else {
-            try {
-                provider = ServiceUtils.getServiceProvider(serviceId);
-            } catch (NoSuchProviderException e) {
-                DefaultService defaultProvider = defaultProviders.get(type);
-                if (defaultProvider == null){
-                    throw new NoSuchProviderException("Cannot determine a default provider for Service("+serviceId +", "+type.getSimpleName()+")");
-                }
-                provider = ServiceUtils.getServiceProvider(defaultProvider.id);
-                providerId = provider.getId();
-            }
-        }
-
-        logger.info("Configuring Service(id=" + serviceId + ", type=" + provider.getProviderType() + ", provider-id=" + provider.getId() + ")");
-        Properties props = new Properties();
-        props.putAll(provider.getProperties());
-        props.putAll(declaredProperties);
-
-        Properties serviceProperties = getSystemProperties(serviceId);
-
-        props.putAll(serviceProperties);
-
-        if (serviceType != null && !provider.getProviderType().equals(serviceType)) {
-            throw new OpenEJBException(messages.format("conf.4902", serviceId, serviceType));
-        }
-
-        T info = null;
-
+        Class<? extends Service> serviceClass = types.get(type);
+        Service service = null;
         try {
-            info = type.newInstance();
+            service = serviceClass.newInstance();
         } catch (Exception e) {
-            throw new OpenEJBException("Cannot instantiate class " + type.getName(), e);
+            throw new OpenEJBException("Cannot instantiate service class '" + serviceClass.getName() + "'", e);
+        }
+        service.setId(serviceId);
+        service.setProvider(providerId);
+
+        if (declaredProperties != null) {
+            service.getProperties().putAll(declaredProperties);
         }
 
-        info.serviceType = provider.getProviderType();
-        info.description = provider.getDescription();
-        info.displayName = provider.getDisplayName();
-        info.className = provider.getClassName();
-        info.factoryMethod = provider.getFactoryName();
-        info.id = serviceId;
-        info.properties = props;
-        info.constructorArgs.addAll(parseConstructorArgs(provider));
-
-//        String serviceId = serviceType + ":" + info.id;
-//        if (serviceIds.contains(serviceId)) {
-//            handleException("conf.0105", configLocation, info.id, serviceType);
-//        }
-
-//        serviceIds.add(serviceId);
-
-        return info;
+        return configureService(service, type);
     }
 
     private Properties getSystemProperties(String serviceId) {

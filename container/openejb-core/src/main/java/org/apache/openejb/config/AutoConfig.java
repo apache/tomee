@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.LinkResolver;
@@ -673,7 +674,7 @@ public class AutoConfig implements DynamicDeployer {
         if (!autoCreateResources){
             throw new OpenEJBException(message);
         }
-        logger.info(message);
+        logger.debug(message);
 
         // if there is a provider with the specified name. use it
         if (ServiceUtils.hasServiceProvider(resourceId)) {
@@ -695,6 +696,8 @@ public class AutoConfig implements DynamicDeployer {
             throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
         ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
+
+        logger.info("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
         return installResource(beanName, resourceInfo);
     }
 
@@ -737,7 +740,7 @@ public class AutoConfig implements DynamicDeployer {
         if (!autoCreateResources){
             throw new OpenEJBException(message);
         }
-        logger.info(message);
+        logger.debug(message);
 
 
         // Auto create a resource using the first provider that can supply a resource of the desired type
@@ -745,9 +748,12 @@ public class AutoConfig implements DynamicDeployer {
         if (providerId == null) {
                 throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
-        Properties properties = new Properties();
-        properties.setProperty("destination", resourceId);
-        ResourceInfo resourceInfo = configFactory.configureService(ResourceInfo.class, resourceId, properties, providerId, null);
+
+        Resource resource = new Resource(resourceId, providerId, null);
+        resource.getProperties().setProperty("destination", resourceId);
+
+        ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+        logger.info("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
         return installResource(beanName, resourceInfo);
     }
 

@@ -18,6 +18,10 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.Container;
 
 import java.util.Properties;
 
@@ -38,11 +42,11 @@ public class ConfigureServiceTest extends TestCase {
         assertNotNull(defaultStatelessContainer.properties);
 
         // We should be able to create one of these with a different name
-        String containerId = "My Stateless Container";
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class, containerId, null, null, null);
+        Container container = new Container("My Stateless Container");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
-        assertEquals(containerId, myStatelessContainer.id);
+        assertEquals("My Stateless Container", myStatelessContainer.id);
         assertEquals(defaultStatelessContainer.className, myStatelessContainer.className);
         assertNotNull(myStatelessContainer.constructorArgs);
         assertNotNull(myStatelessContainer.properties);
@@ -53,11 +57,12 @@ public class ConfigureServiceTest extends TestCase {
         ConfigurationFactory factory = new ConfigurationFactory();
 
         // We should be able to create one of these with a different name
-        String containerId = "MyContainer";
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class, containerId, null, "org.acme#CheddarContainer", null);
+
+        Container container = new Container("MyContainer", "org.acme#CheddarContainer", "STATELESS");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
-        assertEquals(containerId, myStatelessContainer.id);
+        assertEquals("MyContainer", myStatelessContainer.id);
         assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
         assertNotNull(myStatelessContainer.constructorArgs);
         assertNotNull(myStatelessContainer.properties);
@@ -68,14 +73,13 @@ public class ConfigureServiceTest extends TestCase {
     public void testConfigureServiceOverriddenProperty() throws Exception {
         ConfigurationFactory factory = new ConfigurationFactory();
 
-        Properties properties = new Properties();
-        properties.setProperty("myProperty", "Cheese is good");
+        Container container = new Container("MyContainer", "org.acme#CheddarContainer", "STATELESS");
+        container.getProperties().setProperty("myProperty", "Cheese is good");
 
-        String containerId = "MyContainer";
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class, containerId, properties, "org.acme#CheddarContainer", null);
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
-        assertEquals(containerId, myStatelessContainer.id);
+        assertEquals("MyContainer", myStatelessContainer.id);
         assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
         assertNotNull(myStatelessContainer.constructorArgs);
         assertNotNull(myStatelessContainer.properties);
@@ -86,14 +90,12 @@ public class ConfigureServiceTest extends TestCase {
     public void testConfigureServiceAddedProperty() throws Exception {
         ConfigurationFactory factory = new ConfigurationFactory();
 
-        Properties properties = new Properties();
-        properties.setProperty("anotherProperty", "Cheese is good");
-
-        String containerId = "MyContainer";
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class, containerId, properties, "org.acme#CheddarContainer", null);
+        Container container = new Container("MyContainer", "org.acme#CheddarContainer", "STATELESS");
+        container.getProperties().setProperty("anotherProperty", "Cheese is good");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
-        assertEquals(containerId, myStatelessContainer.id);
+        assertEquals("MyContainer", myStatelessContainer.id);
         assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
         assertNotNull(myStatelessContainer.constructorArgs);
         assertNotNull(myStatelessContainer.properties);
@@ -103,5 +105,17 @@ public class ConfigureServiceTest extends TestCase {
         assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
     }
 
+    public void testConfigureByType() throws Exception {
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        Container container = new Container("MyContainer", null, "STATELESS");
+        container.getProperties().setProperty("anotherProperty", "Cheese is good");
+        ContainerInfo myStatelessContainer = factory.configureService(container,  ContainerInfo.class);
+
+        assertNotNull(myStatelessContainer);
+        assertEquals("org.apache.openejb.core.stateless.StatelessContainer", myStatelessContainer.className);
+    }
+
 
 }
+

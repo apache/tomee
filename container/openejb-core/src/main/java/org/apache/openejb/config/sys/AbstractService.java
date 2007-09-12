@@ -61,11 +61,10 @@ public abstract class AbstractService implements Service {
 
 
     protected AbstractService(String id) {
-        this(id, null, null, new Properties());
+        this(id, null, null);
     }
     
-    protected AbstractService(String id, String provider, String type, Properties properties) {
-        this.properties = properties;
+    protected AbstractService(String id, String provider, String type) {
         this.id = id;
         this.provider = provider;
         this.type = type;

@@ -90,13 +90,35 @@ public class ServiceUtils {
     }
 
     public static String getServiceProviderId(String type) throws OpenEJBException {
+        ServiceProvider provider = getServiceProviderByType(type);
+
+        return provider != null? provider.getId(): null;
+    }
+
+    public static ServiceProvider getServiceProviderByType(String type) throws OpenEJBException {
         if (type == null) return null;
 
         List<ServiceProvider> services = getServices(defaultProviderURL);
 
         for (ServiceProvider service : services) {
             if (service.getServiceTypes().contains(type)) {
-                return service.getId();
+                return service;
+            }
+        }
+
+        return null;
+    }
+
+    public static ServiceProvider getServiceProviderByType(String providerType, String serviceType) throws OpenEJBException {
+        if (serviceType == null) return null;
+
+        List<ServiceProvider> services = getServices(defaultProviderURL);
+
+        for (ServiceProvider service : services) {
+            if (!service.getProviderType().equals(providerType)) continue;
+            
+            if (service.getServiceTypes().contains(serviceType)) {
+                return service;
             }
         }
 

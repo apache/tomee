@@ -17,14 +17,10 @@
  */
 package org.apache.openejb.config.sys;
 
-import org.apache.openejb.config.Service;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 import java.util.Properties;
 
 /**
@@ -53,8 +49,8 @@ public class ConnectionManager extends AbstractService {
         super(id);
     }
 
-    public ConnectionManager(String id, String provider, String type, Properties properties) {
-        super(id, provider, type, properties);
+    public ConnectionManager(String id, String provider, String type) {
+        super(id, provider, type);
     }
 
     public ConnectionManager() {

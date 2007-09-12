@@ -49,8 +49,8 @@ public class TransactionManager extends AbstractService {
         super(id);
     }
 
-    public TransactionManager(String id, String provider, String type, Properties properties) {
-        super(id, provider, type, properties);
+    public TransactionManager(String id, String provider, String type) {
+        super(id, provider, type);
     }
 
     public TransactionManager() {
