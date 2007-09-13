@@ -53,8 +53,8 @@ import java.util.HashMap;
 import java.net.URI;
 
 public class AutoConfig implements DynamicDeployer {
-    public static Messages messages = new Messages("org.apache.openejb.util.resources");
-    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
     static{
@@ -359,7 +359,7 @@ public class AutoConfig implements DynamicDeployer {
                             // Queue is the default
                             destinationType = Queue.class.getName();
                         }
-                        logger.warning("Auto-configuring a message driven bean " + ejbDeployment.getDeploymentId() + " destination " + properties.getProperty("destination") + " to be destinationType " + destinationType);
+                        logger.info("Auto-configuring a message driven bean " + ejbDeployment.getDeploymentId() + " destination " + properties.getProperty("destination") + " to be destinationType " + destinationType);
                     }
 
                     if (destinationType != null) {
@@ -551,7 +551,7 @@ public class AutoConfig implements DynamicDeployer {
         if (link == null) {
             String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
             id = getResourceId(ejbDeployment.getDeploymentId(), id, refType);
-            logger.warning("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
+            logger.info("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
             link = new ResourceLink();
             link.setResId(id);
@@ -588,7 +588,7 @@ public class AutoConfig implements DynamicDeployer {
                 // could be a session context ref
                 return;
             }
-            logger.warning("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
+            logger.info("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
             link = new ResourceLink();
             link.setResId(id);
@@ -659,14 +659,14 @@ public class AutoConfig implements DynamicDeployer {
 
         // check for existing resource with specified resourceId
         List<String> resourceIds = configFactory.getResourceIds(type);
-        if (resourceIds.contains(resourceId)) {
-            return resourceId;
+        for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(resourceId)) return id;
         }
 
         // check for an existing resource using the short name (everything ever the final '/')
         String shortName = resourceId.replaceFirst(".*/", "");
-        if (resourceIds.contains(shortName)) {
-            return shortName;
+        for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(shortName)) return id;
         }
 
         // throw an exception or log an error
@@ -731,8 +731,8 @@ public class AutoConfig implements DynamicDeployer {
 
         // check for existing resource with specified resourceId
         List<String> resourceIds = configFactory.getResourceIds(type);
-        if (resourceIds.contains(resourceId)) {
-            return resourceId;
+        for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(resourceId)) return id;
         }
 
         // throw an exception or log an error

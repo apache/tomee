@@ -18,12 +18,10 @@ package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
 
-import javax.naming.InitialContext;
-import javax.ejb.SessionContext;
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -32,7 +30,10 @@ import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EjbJar;
 
@@ -41,10 +42,6 @@ import org.apache.openejb.jee.EjbJar;
  */
 public class AutoConfigTest extends TestCase {
 
-
-    public void _test() throws Exception {
-
-    }
     public void test() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
@@ -58,16 +55,40 @@ public class AutoConfigTest extends TestCase {
 
         assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("defaultDataSource", null, "DataSource"), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("yellowDataSource", null, "DataSource"), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpleDataSource", null, "DataSource"), ResourceInfo.class));
+
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
 
-        assembler.createApplication(config.configureApplication(ejbJar));
+        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
-        fail();
+        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+
+        Map<String, ResourceReferenceInfo> refs = new HashMap<String,ResourceReferenceInfo>();
+        for (ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
+            refs.put(ref.referenceName.replaceAll(".*/",""), ref);
+        }
+
+        ResourceReferenceInfo info;
+        info = refs.get("yellowDataSource");
+        assertNotNull(info);
+        assertEquals("yellowDataSource", info.resourceID);
+
+        info = refs.get("orangeDataSource");
+        assertNotNull(info);
+        assertEquals("defaultDataSource", info.resourceID);
+
+        info = refs.get("purpleDataSource");
+        assertNotNull(info);
+        assertEquals("PurpleDataSource", info.resourceID);
+
     }
 
     public static interface Widget {
     }
+
 
     public static class WidgetBean implements Widget {
 
