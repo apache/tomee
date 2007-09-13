@@ -111,6 +111,14 @@ public class PersistenceUnit {
     @XmlAttribute(name = "transaction-type")
     protected TransactionType transactionType;
 
+    public PersistenceUnit(String name, String provider) {
+        this.name = name;
+        this.provider = provider;
+    }
+
+    public PersistenceUnit() {
+    }
+
     public String getDescription() {
         return description;
     }
