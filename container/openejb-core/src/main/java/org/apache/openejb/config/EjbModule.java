@@ -40,6 +40,10 @@ public class EjbModule implements DeploymentModule {
     private String moduleId;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
+    public EjbModule(EjbJar ejbJar){
+        this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
+    }
+
     public EjbModule(ClassLoader classLoader, String moduleId, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");
@@ -61,7 +65,7 @@ public class EjbModule implements DeploymentModule {
 
         if (moduleId == null){
             if (ejbJar != null && ejbJar.getId() != null){
-                jarURI = ejbJar.getId();
+                moduleId = ejbJar.getId();
             } else {
                 File file = new File(jarURI);
                 moduleId = file.getName();
@@ -71,10 +75,6 @@ public class EjbModule implements DeploymentModule {
         validation = new ValidationContext(EjbModule.class, jarLocation);
     }
 
-    public EjbModule(EjbJar ejbJar){
-        this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
-    }
-    
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         this(classLoader, null, jarURI, ejbJar, openejbJar);
     }

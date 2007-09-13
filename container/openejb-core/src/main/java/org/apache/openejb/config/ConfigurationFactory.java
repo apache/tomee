@@ -286,8 +286,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public EjbJarInfo configureApplication(EjbJar ejbJar) throws OpenEJBException {
-        String moduleId = (ejbJar.getId() == null) ? ejbJar.getId(): ejbJar.toString();
-        EjbModule ejbModule = new EjbModule(Thread.currentThread().getContextClassLoader(), moduleId, moduleId, ejbJar, null);
+        EjbModule ejbModule = new EjbModule(ejbJar);
         return configureApplication(ejbModule);
     }
 
