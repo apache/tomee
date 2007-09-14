@@ -21,6 +21,8 @@ package org.apache.openejb.jee;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 
@@ -44,6 +46,8 @@ public class ObjectFactory {
     private final static QName _EjbRelationTypeEjbRelationName_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-relation-name");
     private final static QName _EjbRelationTypeEjbRelationshipRole_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-relationship-role");
     private final static QName _EjbRelationTypeDescription_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "description");
+    private final static QName _WebResourceCollectionTypeHttpMethod_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "http-method");
+    private final static QName _WebApp_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "web-app");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee2
@@ -81,6 +85,25 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "description", scope = EjbRelation.class)
     public JAXBElement<Text> createEjbRelationTypeDescription(Text value) {
         return new JAXBElement<Text>(_EjbRelationTypeDescription_QNAME, Text.class, EjbRelation.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "http-method", scope = WebResourceCollection.class)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    public JAXBElement<String> createWebResourceCollectionTypeHttpMethod(String value) {
+        return new JAXBElement<String>(_WebResourceCollectionTypeHttpMethod_QNAME, String.class, WebResourceCollection.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WebApp }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "web-app")
+    public JAXBElement<WebApp> createWebApp(WebApp value) {
+        return new JAXBElement<WebApp>(_WebApp_QNAME, WebApp.class, null, value);
     }
 
 }
