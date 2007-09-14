@@ -68,4 +68,9 @@ public interface BasicStatelessBusinessRemote {
      * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
+    
+    /**
+     * Verify if we can invoke remove() on a stateless session bean as a business method
+     */    
+    public Object remove();
 }

@@ -127,6 +127,11 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
     //
     // Test remote interface methods
     //=================================
+    
+    public void test06_testRemove(){
+        Object obj =businessRemote.remove();
+        assertNotNull(obj);
+    }
 
     protected void tearDown() throws Exception {
         super.tearDown();

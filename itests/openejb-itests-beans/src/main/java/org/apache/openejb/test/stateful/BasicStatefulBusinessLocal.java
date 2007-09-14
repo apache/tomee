@@ -68,4 +68,9 @@ public interface BasicStatefulBusinessLocal {
      * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
+    
+    /**
+     * Verify if we can invoke remove() on a stateful session bean as a business method
+     */    
+    public Object remove();
 }

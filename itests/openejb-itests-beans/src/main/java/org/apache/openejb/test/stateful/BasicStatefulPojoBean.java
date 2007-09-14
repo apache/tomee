@@ -39,7 +39,7 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
     }
 
     @Remove
-    public void remove(){
+    public void removeBean(){
     }
 
     /**
@@ -105,5 +105,9 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
     }
 
     public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+    }
+    
+    public Object remove() {
+        return new String("Executed remove() Method");
     }
 }

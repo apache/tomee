@@ -18,19 +18,19 @@ package org.apache.openejb.core.ivm;
 
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 import java.rmi.AccessException;
+import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.EJBAccessException;
 import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
 
-import org.apache.openejb.InterfaceType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.spi.ApplicationServer;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -62,7 +62,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             }
             Integer operation = (Integer) dispatchTable.get(m.getName());
 
-            if (operation == null) {
+            if (operation == null || interfaceType.isBusiness()) {
                 retValue = businessMethod(interfce, m, a, p);
             } else {
                 switch (operation.intValue()) {
