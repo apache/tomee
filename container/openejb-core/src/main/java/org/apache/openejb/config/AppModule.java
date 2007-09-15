@@ -63,6 +63,12 @@ public class AppModule implements DeploymentModule {
         for (ClientModule module : clientModules) {
             if (module.getValidation().hasWarnings()) return true;
         }
+        for (ResourceModule module : resourceModules) {
+            if (module.getValidation().hasWarnings()) return true;
+        }
+        for (WebModule module : webModules) {
+            if (module.getValidation().hasWarnings()) return true;
+        }
         return false;
     }
 
@@ -74,6 +80,12 @@ public class AppModule implements DeploymentModule {
         for (ClientModule module : clientModules) {
             if (module.getValidation().hasFailures()) return true;
         }
+        for (ResourceModule module : resourceModules) {
+            if (module.getValidation().hasFailures()) return true;
+        }
+        for (WebModule module : webModules) {
+            if (module.getValidation().hasFailures()) return true;
+        }
         return false;
     }
 
@@ -83,6 +95,12 @@ public class AppModule implements DeploymentModule {
             if (module.getValidation().hasErrors()) return true;
         }
         for (ClientModule module : clientModules) {
+            if (module.getValidation().hasErrors()) return true;
+        }
+        for (ResourceModule module : resourceModules) {
+            if (module.getValidation().hasErrors()) return true;
+        }
+        for (WebModule module : webModules) {
             if (module.getValidation().hasErrors()) return true;
         }
         return false;

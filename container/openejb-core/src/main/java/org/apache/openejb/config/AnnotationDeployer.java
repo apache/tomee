@@ -63,6 +63,10 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Listener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
@@ -123,6 +127,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Properties;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @version $Rev$ $Date$
@@ -178,11 +183,25 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ClientModule clientModule : appModule.getClientModules()) {
                 deploy(clientModule);
             }
+            for (ResourceModule resourceModule : appModule.getResourceModules()) {
+                deploy(resourceModule);
+            }
+            for (WebModule webModule : appModule.getWebModules()) {
+                deploy(webModule);
+            }
             return appModule;
         }
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
             return clientModule;
+        }
+
+        public ResourceModule deploy(ResourceModule resourceModule) throws OpenEJBException {
+            return resourceModule;
+        }
+
+        public WebModule deploy(WebModule webModule) throws OpenEJBException {
+            return webModule;
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -313,6 +332,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ClientModule clientModule : appModule.getClientModules()) {
                 deploy(clientModule);
             }
+            for (ResourceModule resourceModule : appModule.getResourceModules()) {
+                deploy(resourceModule);
+            }
+            for (WebModule webModule : appModule.getWebModules()) {
+                deploy(webModule);
+            }
             return appModule;
         }
 
@@ -331,6 +356,57 @@ public class AnnotationDeployer implements DynamicDeployer {
             buildAnnotatedRefs(client, inheritedClassFinder);
 
             return clientModule;
+        }
+
+        public ResourceModule deploy(ResourceModule resourceModule) throws OpenEJBException {
+            // resource modules currently don't have any annotations
+            return resourceModule;
+        }
+
+        public WebModule deploy(WebModule webModule) throws OpenEJBException {
+            WebApp webApp = webModule.getWebApp();
+            if (webApp != null && webApp.isMetadataComplete()) return webModule;
+
+            Set<Class<?>> classes = new HashSet<Class<?>>();
+            for (Servlet servlet : webApp.getServlet()) {
+                String servletClass = servlet.getServletClass();
+                if (servletClass != null) {
+                    try {
+                        Class clazz = webModule.getClassLoader().loadClass(servletClass);
+                        classes.add(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
+                    }
+                }
+            }
+            for (Filter filter : webApp.getFilter()) {
+                String filterClass = filter.getFilterClass();
+                if (filterClass != null) {
+                    try {
+                        Class clazz = webModule.getClassLoader().loadClass(filterClass);
+                        classes.add(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBException("Unable to load servlet filter class: " + filterClass, e);
+                    }
+                }
+            }
+            for (Listener listener : webApp.getListener()) {
+                String listenerClass = listener.getListenerClass();
+                if (listenerClass != null) {
+                    try {
+                        Class clazz = webModule.getClassLoader().loadClass(listenerClass);
+                        classes.add(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBException("Unable to load servlet listener class: " + listenerClass, e);
+                    }
+                }
+            }
+            ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
+
+            // Currently we only process the JNDI annotations for web applications
+            buildAnnotatedRefs(webApp, inheritedClassFinder);
+
+            return webModule;
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
@@ -780,12 +856,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbModule;
         }
 
-        private ClassFinder createInheritedClassFinder(Class<?> clazz) {
+        private ClassFinder createInheritedClassFinder(Class<?>... classes) {
             List<Class> parents = new ArrayList<Class>();
-            parents.add(clazz);
-            Class parent = clazz;
-            while ((parent = parent.getSuperclass()) != null) {
-                parents.add(parent);
+            for (Class<?> clazz : classes) {
+                parents.add(clazz);
+                Class parent = clazz;
+                while ((parent = parent.getSuperclass()) != null) {
+                    parents.add(parent);
+                }
             }
 
             return new ClassFinder(parents);

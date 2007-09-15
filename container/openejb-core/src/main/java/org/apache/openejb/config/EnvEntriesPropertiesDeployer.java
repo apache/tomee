@@ -52,6 +52,16 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             }
         }
 
+        // WebModule META-INF/env-entries.properties
+        for (WebModule webModule : appModule.getWebModules()) {
+            for (Map.Entry<String, String> entry : getEnvEntries(webModule).entrySet()) {
+                EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
+                apply(webModule.getWebApp(), envEntry, "WebApp");
+            }
+        }
+
+        // Resource Adapters do not have an ENC
+
         // EjbJar META-INF/env-entries.properties
         for (EjbModule module : appModule.getEjbModules()) {
             for (Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
@@ -100,9 +110,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         entries.add(newEntry);
     }
 
+    @SuppressWarnings({"unchecked"})
     private Map<String, String> getEnvEntries(DeploymentModule module) {
         URL propsUrl = (URL) module.getAltDDs().get("env-entries.properties");
-        if (propsUrl == null) return Collections.EMPTY_MAP;
+        if (propsUrl == null) return Collections.emptyMap();
         try {
 
             InputStream in = propsUrl.openStream();
@@ -112,7 +123,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             return new HashMap(envEntriesProps);
         } catch (IOException e) {
             log.error("envprops.notLoaded", e, module.getModuleId(), propsUrl.toExternalForm());
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
     }
 }
