@@ -64,6 +64,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.Join;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -630,14 +631,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-            if (resourceInfo.types.contains(type)) {
+            if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
                 resourceIds.add(resourceInfo.id);
             }
         }
 
         if (sys != null) {
             for (ResourceInfo resourceInfo : sys.facilities.resources) {
-                if (resourceInfo.types.contains(type)) {
+                if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }
@@ -646,13 +647,30 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // the above sys instance
             if (openejb != null) {
                 for (Resource resource : openejb.getResource()) {
-                    if (resource.getType() != null && resource.getType().equals(type)) {
+                    ArrayList<String> types = new ArrayList<String>();
+                    if (resource.getType() != null){
+                        types.add(resource.getType());
+                    }
+                    if (isResourceType("Resource", types, type)) {
                         resourceIds.add(resource.getId());
                     }
                 }
             }
         }
         return resourceIds;
+    }
+
+    private boolean isResourceType(String service, List<String> types, String type) {
+        boolean b = false;
+        try {
+            if (type == null) return b = true;
+            if (service == null) return b = false;
+            return b = types.contains(type);
+        } finally {
+//            System.out.println("isResourceType: "+b+" ["+service +"] ["+type+"] ["+ Join.join(",", types)+"]");
+//            Throwable throwable = new Exception().fillInStackTrace();
+//            throwable.printStackTrace(System.out);
+        }
     }
 
     protected List<String> getContainerIds() {
