@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<connector xmlns="http://java.sun.com/xml/ns/javaee" version="1.5" id="ID001">
+    <description xml:lang="">description0</description>
+    <display-name xml:lang="en-US">display-name0</display-name>
+    <icon xml:lang="" id="ID007">
+        <small-icon>small-icon0</small-icon>
+        <large-icon>large-icon0</large-icon>
+    </icon>
+    <vendor-name>vendor-name0</vendor-name>
+    <eis-type>eis-type0</eis-type>
+    <resourceadapter-version>resourceadapter-version0</resourceadapter-version>
+    <license id="ID019">
+        <description xml:lang="" id="ID021">description1</description>
+        <license-required>true</license-required>
+    </license>
+    <resourceadapter id="ID025">
+        <resourceadapter-class>resourceadapter-class0</resourceadapter-class>
+        <config-property id="ID029">
+            <description xml:lang="" id="ID031">description2</description>
+            <config-property-name>config-property-name0</config-property-name>
+            <config-property-type>java.lang.Boolean</config-property-type>
+            <config-property-value>config-property-value0</config-property-value>
+        </config-property>
+        <outbound-resourceadapter id="ID039">
+            <connection-definition id="ID041">
+                <managedconnectionfactory-class>managedconnectionfactory-class0</managedconnectionfactory-class>
+                <config-property id="ID045">
+                    <description xml:lang="en-US" id="ID047">description3</description>
+                    <config-property-name>config-property-name1</config-property-name>
+                    <config-property-type>java.lang.Boolean</config-property-type>
+                    <config-property-value>config-property-value1</config-property-value>
+                </config-property>
+                <connectionfactory-interface>connectionfactory-interface0</connectionfactory-interface>
+                <connectionfactory-impl-class>connectionfactory-impl-class0</connectionfactory-impl-class>
+                <connection-interface>connection-interface0</connection-interface>
+                <connection-impl-class>connection-impl-class0</connection-impl-class>
+            </connection-definition>
+            <connection-definition id="ID063">
+                <managedconnectionfactory-class>managedconnectionfactory-class1</managedconnectionfactory-class>
+                <config-property id="ID067">
+                    <description xml:lang="en-US" id="ID069">description4</description>
+                    <config-property-name>config-property-name2</config-property-name>
+                    <config-property-type>java.lang.Boolean</config-property-type>
+                    <config-property-value>config-property-value2</config-property-value>
+                </config-property>
+                <connectionfactory-interface>connectionfactory-interface1</connectionfactory-interface>
+                <connectionfactory-impl-class>connectionfactory-impl-class1</connectionfactory-impl-class>
+                <connection-interface>connection-interface1</connection-interface>
+                <connection-impl-class>connection-impl-class1</connection-impl-class>
+            </connection-definition>
+            <connection-definition id="ID085">
+                <managedconnectionfactory-class>managedconnectionfactory-class2</managedconnectionfactory-class>
+                <config-property id="ID089">
+                    <description xml:lang="en-US" id="ID091">description5</description>
+                    <config-property-name>config-property-name3</config-property-name>
+                    <config-property-type>java.lang.Boolean</config-property-type>
+                    <config-property-value>config-property-value3</config-property-value>
+                </config-property>
+                <connectionfactory-interface>connectionfactory-interface2</connectionfactory-interface>
+                <connectionfactory-impl-class>connectionfactory-impl-class2</connectionfactory-impl-class>
+                <connection-interface>connection-interface2</connection-interface>
+                <connection-impl-class>connection-impl-class2</connection-impl-class>
+            </connection-definition>
+            <transaction-support>NoTransaction</transaction-support>
+            <authentication-mechanism id="ID109">
+                <description xml:lang="en-US" id="ID111">description6</description>
+                <authentication-mechanism-type>authentication-mechanism-type0</authentication-mechanism-type>
+                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+            </authentication-mechanism>
+            <reauthentication-support>true</reauthentication-support>
+        </outbound-resourceadapter>
+        <inbound-resourceadapter id="ID119">
+            <messageadapter id="ID121">
+                <messagelistener id="ID123">
+                    <messagelistener-type>messagelistener-type0</messagelistener-type>
+                    <activationspec id="ID127">
+                        <activationspec-class>activationspec-class0</activationspec-class>
+                        <required-config-property id="ID131">
+                            <description xml:lang="en-US" id="ID133">description7</description>
+                            <config-property-name>config-property-name4</config-property-name>
+                        </required-config-property>
+                    </activationspec>
+                </messagelistener>
+                <messagelistener id="ID137">
+                    <messagelistener-type>messagelistener-type1</messagelistener-type>
+                    <activationspec id="ID141">
+                        <activationspec-class>activationspec-class1</activationspec-class>
+                        <required-config-property id="ID145">
+                            <description xml:lang="" id="ID147">description8</description>
+                            <config-property-name>config-property-name5</config-property-name>
+                        </required-config-property>
+                    </activationspec>
+                </messagelistener>
+                <messagelistener id="ID151">
+                    <messagelistener-type>messagelistener-type2</messagelistener-type>
+                    <activationspec id="ID155">
+                        <activationspec-class>activationspec-class2</activationspec-class>
+                        <required-config-property id="ID159">
+                            <description xml:lang="" id="ID161">description9</description>
+                            <config-property-name>config-property-name6</config-property-name>
+                        </required-config-property>
+                    </activationspec>
+                </messagelistener>
+            </messageadapter>
+        </inbound-resourceadapter>
+        <adminobject id="ID165">
+            <adminobject-interface>adminobject-interface0</adminobject-interface>
+            <adminobject-class>adminobject-class0</adminobject-class>
+            <config-property id="ID171">
+                <description xml:lang="" id="ID173">description10</description>
+                <config-property-name>config-property-name7</config-property-name>
+                <config-property-type>java.lang.Boolean</config-property-type>
+                <config-property-value>config-property-value4</config-property-value>
+            </config-property>
+        </adminobject>
+        <security-permission id="ID181">
+            <description xml:lang="" id="ID183">description11</description>
+            <security-permission-spec>security-permission-spec0</security-permission-spec>
+        </security-permission>
+    </resourceadapter>
+</connector>

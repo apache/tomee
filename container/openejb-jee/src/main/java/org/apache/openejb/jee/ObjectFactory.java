@@ -48,6 +48,7 @@ public class ObjectFactory {
     private final static QName _EjbRelationTypeDescription_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "description");
     private final static QName _WebResourceCollectionTypeHttpMethod_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "http-method");
     private final static QName _WebApp_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "web-app");
+    private final static QName _Connector_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "connector");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee2
@@ -106,4 +107,12 @@ public class ObjectFactory {
         return new JAXBElement<WebApp>(_WebApp_QNAME, WebApp.class, null, value);
     }
 
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Connector }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "connector")
+    public JAXBElement<Connector> createConnector(Connector value) {
+        return new JAXBElement<Connector>(_Connector_QNAME, Connector.class, null, value);
+    }
 }

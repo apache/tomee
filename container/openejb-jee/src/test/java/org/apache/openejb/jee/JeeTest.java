@@ -55,6 +55,10 @@ public class JeeTest extends TestCase {
         marshalAndUnmarshal(WebApp.class, "web-example.xml");
     }
 
+    public void testRar() throws Exception {
+        marshalAndUnmarshal(Connector.class, "connector-example.xml");
+    }
+
     private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws JAXBException, IOException {
         JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
