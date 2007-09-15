@@ -25,6 +25,8 @@ import org.apache.openejb.jee.Module;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -51,9 +54,6 @@ import java.util.jar.Manifest;
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader {
-
-    private static final Map<Class<?>, JaxbUnmarshaller> unmarshallers = new HashMap<Class<?>, JaxbUnmarshaller>();
-
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
@@ -89,8 +89,15 @@ public class DeploymentLoader {
 
             try {
 
+                //
+                // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
+                //
+
                 Map<String, URL> ejbModules = new HashMap<String, URL>();
                 Map<String, URL> clientModules = new HashMap<String, URL>();
+                Map<String, URL> resouceModules = new HashMap<String, URL>();
+                Map<String, URL> webModules = new HashMap<String, URL>();
+                Map<String, String> webContextRoots = new HashMap<String, String>();
 
                 URL applicationXmlUrl = appDescriptors.get("application.xml");
 
@@ -105,6 +112,13 @@ public class DeploymentLoader {
                             } else if (module.getJava() != null) {
                                 URL url = finder.find(module.getJava().trim());
                                 clientModules.put(module.getConnector(), url);
+                            } else if (module.getConnector() != null) {
+                                URL url = finder.find(module.getConnector().trim());
+                                resouceModules.put(module.getConnector(), url);
+                            } else if (module.getWeb() != null) {
+                                URL url = finder.find(module.getWeb().getWebUri().trim());
+                                webModules.put(module.getWeb().getWebUri(), url);
+                                webContextRoots.put(module.getWeb().getWebUri(), module.getWeb().getContextRoot());
                             }
                         } catch (IOException e) {
                             throw new OpenEJBException("Invalid path to module " + e.getMessage(), e);
@@ -127,6 +141,10 @@ public class DeploymentLoader {
                                 ejbModules.put(entry.getKey(), entry.getValue());
                             } else if (ClientModule.class.equals(moduleType)) {
                                 clientModules.put(entry.getKey(), entry.getValue());
+                            } else if (ResourceModule.class.equals(moduleType)) {
+                                resouceModules.put(entry.getKey(), entry.getValue());
+                            } else if (WebModule.class.equals(moduleType)) {
+                                webModules.put(entry.getKey(), entry.getValue());
                             }
                         } catch (UnsupportedOperationException e) {
                             // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
@@ -136,13 +154,17 @@ public class DeploymentLoader {
                     }
                 }
 
+                //
+                // Create a class loader for the application
+                //
+
+                // lib/*
                 if (application.getLibraryDirectory() == null) {
                     application.setLibraryDirectory("lib/");
                 } else {
                     String dir = application.getLibraryDirectory();
                     if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
                 }
-
                 List<URL> extraLibs = new ArrayList<URL>();
                 try {
                     Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
@@ -151,6 +173,7 @@ public class DeploymentLoader {
                     logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
                 }
 
+                // APP-INF/lib/*
                 try {
                     Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
                     extraLibs.addAll(libs.values());
@@ -158,6 +181,7 @@ public class DeploymentLoader {
                     logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
                 }
 
+                // META-INF/lib/*
                 try {
                     Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
                     extraLibs.addAll(libs.values());
@@ -165,17 +189,44 @@ public class DeploymentLoader {
                     logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
                 }
 
+                // All jars nested in the Resource Adapter
+                HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+                for (Map.Entry<String, URL> entry : resouceModules.entrySet()) {
+                    try {
+                        // unpack the resource adapter archive
+                        File rarFile = new File(entry.getValue().getPath());
+                        rarFile = unpack(rarFile);
+                        entry.setValue(rarFile.toURL());
+
+                        scanDir(appDir, rarLibs, "");
+                    } catch (MalformedURLException e) {
+                        throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
+                    }
+                }
+                for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
+                    // remove all non jars from the rarLibs
+                    Map.Entry<String, URL> fileEntry = iterator.next();
+                    if (!fileEntry.getKey().endsWith(".jar")) continue;
+                    iterator.remove();
+                }
+
                 List<URL> classPath = new ArrayList<URL>();
                 classPath.addAll(ejbModules.values());
                 classPath.addAll(clientModules.values());
+                classPath.addAll(rarLibs.values());
                 classPath.addAll(extraLibs);
                 URL[] urls = classPath.toArray(new URL[]{});
                 ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+
+                //
+                // Create the AppModule and all nested module objects
+                //
 
                 AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
                 appModule.getAdditionalLibraries().addAll(extraLibs);
                 appModule.getAltDDs().putAll(appDescriptors);
 
+                // EJB modules
                 for (String moduleName : ejbModules.keySet()) {
                     try {
                         URL ejbUrl = ejbModules.get(moduleName);
@@ -197,6 +248,8 @@ public class DeploymentLoader {
                         logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                     }
                 }
+
+                // Application Client Modules
                 for (String moduleName : clientModules.keySet()) {
                     try {
                         URL clientUrl = clientModules.get(moduleName);
@@ -225,15 +278,80 @@ public class DeploymentLoader {
                     }
                 }
 
-                //
-                // Persistence Units
-                try {
-                    ResourceFinder finder1 = new ResourceFinder("", appClassLoader, urls);
-                    List<URL> persistenceUrls = finder1.findAll("META-INF/persistence.xml");
-                    appModule.getAltDDs().put("persistence.xml", persistenceUrls);
-                } catch (IOException e1) {
-                    logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e1.getMessage(), e1);
+                // Resource modules
+                for (String moduleName : resouceModules.keySet()) {
+                    try {
+                        URL rarUrl = resouceModules.get(moduleName);
+                        File rarFile = new File(rarUrl.getPath());
+
+                        Map<String, URL> descriptors = getDescriptors(rarUrl);
+
+                        Connector connector = null;
+                        if (descriptors.containsKey("ra.xml")){
+                            connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
+                        }
+
+                        ResourceModule resourceModule = new ResourceModule(connector, appClassLoader, rarFile.getAbsolutePath(),  moduleName);
+
+                        resourceModule.getAltDDs().putAll(descriptors);
+
+                        appModule.getResourceModules().add(resourceModule);
+                    } catch (OpenEJBException e) {
+                        logger.error("Unable to load RAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    }
                 }
+
+                // Web modules
+                for (String moduleName : webModules.keySet()) {
+                    try {
+                        URL warUrl = webModules.get(moduleName);
+                        File warFile = new File(warUrl.getPath());
+
+                        // read web.xml file
+                        Map<String, URL> descriptors = getDescriptors(warUrl);
+                        WebApp webApp = null;
+                        if (descriptors.containsKey("web.xml")){
+                            webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
+                        }
+
+                        // determine war class path
+                        List<URL> webClassPath = new ArrayList<URL>();
+                        File webInfDir = new File(warFile, "WEB-INF");
+                        try {
+                            webClassPath.add(new File(webInfDir, "classes").toURL());
+                        } catch (MalformedURLException e) {
+                            logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
+                        }
+
+                        File libDir = new File(webInfDir, "lib");
+                        if (libDir.exists()) {
+                            for (File file : libDir.listFiles()) {
+                                if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                                    try {
+                                        webClassPath.add(file.toURL());
+                                    } catch (MalformedURLException e) {
+                                        logger.warning("War path bad: " + file, e);
+                                    }
+                                }
+                            }
+                        }
+
+                        // create the class loader
+                        URL[] webUrls = webClassPath.toArray(new URL[]{});
+                        ClassLoader warClassLoader = new TemporaryClassLoader(webUrls, appClassLoader);
+
+                        // create web module
+                        WebModule webModule = new WebModule(webApp, webContextRoots.get(moduleName), warClassLoader, warFile.getAbsolutePath(),  moduleName);
+                        webModule.getAltDDs().putAll(descriptors);
+
+                        appModule.getWebModules().add(webModule);
+                    } catch (OpenEJBException e) {
+                        logger.error("Unable to load WAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    }
+                }
+
+                // Persistence Units
+                addPersistenceUnits(appModule, classLoader, urls);
 
                 return appModule;
 
@@ -243,34 +361,129 @@ public class DeploymentLoader {
             }
 
         } else if (EjbModule.class.equals(moduleClass)) {
-
+            // read the ejb-jar.xml file
             Map<String, URL> descriptors = getDescriptors(baseUrl);
-
             EjbJar ejbJar = null;
             if (descriptors.containsKey("ejb-jar.xml")){
                 ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
             }
 
+            // create the EJB Module
             EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJar, null);
-
             ejbModule.getAltDDs().putAll(descriptors);
 
+            // wrap the EJB Module with an Application Module
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
             appModule.getEjbModules().add(ejbModule);
 
-            //
             // Persistence Units
-            try {
-                ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
-                List<URL> persistenceUrls = finder.findAll("META-INF/persistence.xml");
-                appModule.getAltDDs().put("persistence.xml", persistenceUrls);
-            } catch (IOException e) {
-                logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
+            addPersistenceUnits(appModule, classLoader, baseUrl);
+
+            return appModule;
+        } else if (ResourceModule.class.equals(moduleClass)) {
+            // unpack the rar file
+            File rarFile = new File(baseUrl.getPath());
+            rarFile = unpack(rarFile);
+            baseUrl = getFileUrl(rarFile);
+
+            // read the ra.xml file
+            Map<String, URL> descriptors = getDescriptors(baseUrl);
+            Connector connector = null;
+            if (descriptors.containsKey("ra.xml")){
+                connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
             }
+
+            // find the nested jar files
+            HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+            scanDir(rarFile, rarLibs, "");
+            for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
+                // remove all non jars from the rarLibs
+                Map.Entry<String, URL> fileEntry = iterator.next();
+                if (!fileEntry.getKey().endsWith(".jar")) continue;
+                iterator.remove();
+            }
+
+            // create the class loader
+            List<URL> classPath = new ArrayList<URL>();
+            classPath.addAll(rarLibs.values());
+            URL[] urls = classPath.toArray(new URL[]{});
+            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+
+            // create the Resource Module
+            ResourceModule resourceModule = new ResourceModule(connector, appClassLoader, jarFile.getAbsolutePath(),  null);
+            resourceModule.getAltDDs().putAll(descriptors);
+
+            // Wrap the resource module with an Application Module
+            AppModule appModule = new AppModule(classLoader, resourceModule.getJarLocation());
+            appModule.getResourceModules().add(resourceModule);
+
+            // Persistence Units
+            addPersistenceUnits(appModule, classLoader, baseUrl);
+
+            return appModule;
+        } else if (WebModule.class.equals(moduleClass)) {
+            // unpack the rar file
+            File warFile = new File(baseUrl.getPath());
+            warFile = unpack(warFile);
+            baseUrl = getFileUrl(warFile);
+
+            // read the web.xml file
+            Map<String, URL> descriptors = getDescriptors(baseUrl);
+            WebApp webApp = null;
+            if (descriptors.containsKey("web.xml")){
+                webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
+            }
+
+            // determine war class path
+            List<URL> classPath = new ArrayList<URL>();
+            File webInfDir = new File(warFile, "WEB-INF");
+            try {
+                classPath.add(new File(webInfDir, "classes").toURL());
+            } catch (MalformedURLException e) {
+                logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
+            }
+
+            File libDir = new File(webInfDir, "lib");
+            if (libDir.exists()) {
+                for (File file : libDir.listFiles()) {
+                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                        try {
+                            classPath.add(file.toURL());
+                        } catch (MalformedURLException e) {
+                            logger.warning("War path bad: " + file, e);
+                        }
+                    }
+                }
+            }
+
+            // create the class loader
+            URL[] urls = classPath.toArray(new URL[]{});
+            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+
+            // create the Resource Module
+            WebModule webModule = new WebModule(webApp, null, appClassLoader, jarFile.getAbsolutePath(),  null);
+            webModule.getAltDDs().putAll(descriptors);
+
+            // Wrap the resource module with an Application Module
+            AppModule appModule = new AppModule(classLoader, webModule.getJarLocation());
+            appModule.getWebModules().add(webModule);
+
+            // Persistence Units
+            addPersistenceUnits(appModule, classLoader, baseUrl);
 
             return appModule;
         } else {
             throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
+        }
+    }
+
+    private void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
+        try {
+            ResourceFinder finder = new ResourceFinder("", classLoader, urls);
+            List<URL> persistenceUrls = finder.findAll("META-INF/persistence.xml");
+            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+        } catch (IOException e) {
+            logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
         }
     }
 

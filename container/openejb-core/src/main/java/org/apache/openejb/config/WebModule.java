@@ -16,29 +16,85 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.jee.WebApp;
+
 import java.util.Map;
+import java.util.HashMap;
+import java.io.File;
 
 /**
  * @version $Rev$ $Date$
  */
 public class WebModule implements DeploymentModule {
-    public String getModuleId() {
-        throw new UnsupportedOperationException();
-    }
+    private final ValidationContext validation;
+    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
-    public Map<String, Object> getAltDDs() {
-        throw new UnsupportedOperationException();
-    }
+    private WebApp webApp;
+    private String contextRoot;
+    private ClassLoader classLoader;
+    private String jarLocation;
+    private final String moduleId;
 
-    public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException();
-    }
+    public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
+        this.webApp = webApp;
+        this.contextRoot = contextRoot;
+        this.classLoader = classLoader;
+        this.jarLocation = jarLocation;
 
-    public String getJarLocation() {
-        throw new UnsupportedOperationException();
+        if (moduleId == null){
+            if (webApp != null && webApp.getId() != null){
+                moduleId = webApp.getId();
+            } else {
+                File file = new File(jarLocation);
+                moduleId = file.getName();
+            }
+        }
+
+        this.moduleId = moduleId;
+        validation = new ValidationContext(WebModule.class, jarLocation);
     }
 
     public ValidationContext getValidation() {
-        throw new UnsupportedOperationException();
+        return validation;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public Map<String, Object> getAltDDs() {
+        return altDDs;
+    }
+
+    public WebApp getWebApp() {
+        return webApp;
+    }
+
+    public void setWebApp(WebApp webApp) {
+        this.webApp = webApp;
+    }
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public String getJarLocation() {
+        return jarLocation;
+    }
+
+    public void setJarLocation(String jarLocation) {
+        this.jarLocation = jarLocation;
+    }
+
+
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
     }
 }
