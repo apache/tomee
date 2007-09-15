@@ -141,7 +141,7 @@ public class Undeploy {
 
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("deploy [options] <file> [<file>...]", "\n"+ Undeploy.i18n("cmd.deploy.description"), options, "\n");
+        formatter.printHelp("undeploy [options] <file> [<file>...]", "\n"+ Undeploy.i18n("cmd.undeploy.description"), options, "\n");
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {
