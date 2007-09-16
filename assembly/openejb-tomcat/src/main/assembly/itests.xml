@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev$ $Date$ -->
+
 <assembly>
   <id>itests</id>
   <formats>
@@ -25,9 +28,19 @@
   <fileSets>
     <fileSet>
       <includes>
-        <include>README*</include>
-        <include>LICENSE.txt</include>
-        <include>NOTICE.txt</include>
+        <include>README.txt</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <!-- TODO: There're two ways to leverage MRRP: 
+         -  o the one below
+         -  o pom.xml where MRRP is configured to output the files in the directory of our choice 
+         -->
+      <directory>target/maven-shared-archive-resources/META-INF</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>LICENSE</include>
+        <include>NOTICE</include>
       </includes>
     </fileSet>
     <!--<fileSet>-->

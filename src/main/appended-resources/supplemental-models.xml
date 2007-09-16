@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<supplementalDataModels>
+  <supplement>
+    <project>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <name>Apache Log4j</name>
+      <url>http://logging.apache.org/log4j/</url>
+      <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <name>Sun JAXB Reference Implementation Runtime</name>
+      <organization>
+        <name>Sun Microsystems</name>
+        <url>http://www.sun.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+          <url>http://www.sun.com/cddl/cddl.html</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <name>Java Architecture for XML Binding (JAXB) API</name>
+      <organization>
+        <name>Sun Microsystems</name>
+        <url>http://www.sun.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+          <url>http://www.sun.com/cddl/cddl.html</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jsr173_api</artifactId>
+      <name>JSR173 API</name>
+      <organization>
+        <name>Sun Microsystems</name>
+        <url>http://www.sun.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+          <url>http://www.sun.com/cddl/cddl.html</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <name>Apache Xalan</name>
+      <url>http://xalan.apache.org/</url>
+      <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>xerces</groupId>
+      <artifactId>xmlParserAPIs</artifactId>
+      <name>Apache Xerces</name>
+      <url>http://xerces.apache.org/</url>
+      <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <name>Apache Ant</name>
+      <url>http://ant.apache.org/</url>
+      <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <!-- TODO: Make sure it's correct - it's based on ICU4J 3.4.4 -->
+  <supplement>
+    <project>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j</artifactId>
+      <name>The International Component for Unicode (ICU)</name>
+      <url>http://www-306.ibm.com/software/globalization/icu/</url>
+      <organization>
+        <name>IBM</name>
+        <url>http://www.ibm.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>ICU License</name>
+          <url>http://www-306.ibm.com/software/globalization/icu/license.jsp</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <name>jdom</name>
+      <url>http://www.jdom.org/</url>
+      <organization>
+        <name>jdom.org</name>
+        <url>http://www.jdom.org/</url>
+      </organization>
+      <licenses>
+        <!-- TODO: Fill it out with proper values -->
+        <license>
+          <name>Apache License</name>
+          <url>http://www.jdom.org/docs/faq.html#a0030</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>activemq</groupId>
+      <artifactId>jmdns</artifactId>
+      <name>Apache ActiveMQ jmdns</name>
+      <url>http://activemq.apache.org/</url>
+      <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+</supplementalDataModels>
