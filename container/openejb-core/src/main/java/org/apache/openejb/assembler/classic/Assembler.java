@@ -530,6 +530,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyApplication(AppInfo appInfo) throws UndeployException {
+        logger.info("Undeploying app: "+appInfo.jarPath);
         Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appInfo.jarPath);
 
@@ -563,7 +564,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
-            for (String name : bindings.getBindings()) {
+            if (bindings != null) for (String name : bindings.getBindings()) {
                 try {
                     globalContext.unbind(name);
                 } catch (Throwable t) {

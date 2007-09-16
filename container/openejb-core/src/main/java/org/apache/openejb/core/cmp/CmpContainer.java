@@ -208,11 +208,13 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             }
 
             CmpEngine cmpEngine = (CmpEngine) deploymentInfo.getContainerData();
-            cmpEngine.undeploy(deploymentInfo);
+            if (cmpEngine != null){
+                cmpEngine.undeploy(deploymentInfo);
 
-            if (cmpEngine.isEmpty()){
-                cmpEngines.remove(deploymentInfo.getJarPath());
-                cmpEngines.remove(deploymentInfo.getClassLoader());
+                if (cmpEngine.isEmpty()){
+                    cmpEngines.remove(deploymentInfo.getJarPath());
+                    cmpEngines.remove(deploymentInfo.getClassLoader());
+                }
             }
             deploymentInfo.setContainer(null);
             deploymentInfo.setContainerData(null);

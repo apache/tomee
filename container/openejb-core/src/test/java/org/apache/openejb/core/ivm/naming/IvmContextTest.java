@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.openejb.util.Debug;
 
 import javax.naming.*;
+import javax.naming.NamingException;
 
 /**
  * @version $Rev$ $Date$
@@ -126,6 +127,19 @@ public class IvmContextTest extends TestCase {
 
         Map<String, Object> map = Debug.contextToMap(context);
         assertFalse("name should not appear in bindings list", map.containsKey("veggies/tomato/roma"));
+    }
+
+    public void testAlreadyBound() throws Exception {
+
+        IvmContext context = new IvmContext();
+        context.bind("root/number", 2);
+        try {
+            context.bind("root/number", 3);
+            fail("A NameAlreadyBoundException should have been thrown");
+        } catch (NameAlreadyBoundException e) {
+            // pass
+        }
+
     }
 
     public void test() throws Exception {

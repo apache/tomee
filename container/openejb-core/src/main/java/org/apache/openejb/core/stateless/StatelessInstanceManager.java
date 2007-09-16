@@ -288,6 +288,7 @@ public class StatelessInstanceManager {
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
+        if (data == null) return;
         Stack pool = data.getPool();
         //TODO ejbRemove on each bean in pool.
         //clean pool

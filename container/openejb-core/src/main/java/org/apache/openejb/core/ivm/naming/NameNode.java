@@ -86,6 +86,9 @@ public class NameNode implements java.io.Serializable {
                 if (subTree != null) {
                     throw new javax.naming.NameAlreadyBoundException();
                 }
+                if (myObject != null){
+                    throw new javax.naming.NameAlreadyBoundException();
+                }
                 unbound = false;
                 myObject = obj;// bind the object to this node
             }
