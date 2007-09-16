@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
+import java.rmi.RemoteException;
+
 import javax.ejb.EJBHome;
 
 /**
@@ -113,4 +115,14 @@ public class StatelessEjbObjectTests extends BasicStatelessTestClient{
     //
     // Test ejb object methods
     //===============================
+    public void test06_remove(){
+        String str = null;
+        try {
+            str = ejbObject.remove("Hello");
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        assertEquals("Hello",str);
+    }
 }

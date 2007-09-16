@@ -175,7 +175,9 @@ public class BeanTxStatefulBean implements javax.ejb.SessionBean{
         return acct;
     }
 
-
+    public String remove(String arg) {
+        return arg;
+    }
     //    
     // Remote interface methods
     //=============================

@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
@@ -44,6 +46,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("remove", new Integer(4));
         dispatchTable.put("getEJBHome", new Integer(5));
         dispatchTable.put("getEJBLocalHome", new Integer(6));
+        
     }
 
     public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
@@ -61,8 +64,16 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                 logger.info("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
             }
             Integer operation = (Integer) dispatchTable.get(m.getName());
-
-            if (operation == null || interfaceType.isBusiness()) {
+            if(operation != null){
+                if(operation.intValue() == 3){
+                    if(m.getParameterTypes()[0] != EJBObject.class && m.getParameterTypes()[0] != EJBLocalObject.class ){
+                        operation = null;  
+                    }
+                } else {
+                    operation = (m.getParameterTypes().length == 0)?operation:null;
+                }                
+            }
+            if (operation == null || !interfaceType.isComponent() ) {
                 retValue = businessMethod(interfce, m, a, p);
             } else {
                 switch (operation.intValue()) {

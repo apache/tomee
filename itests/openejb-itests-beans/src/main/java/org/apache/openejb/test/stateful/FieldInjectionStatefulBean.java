@@ -330,4 +330,8 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
     }
+    
+    public String remove(String arg) {
+        return arg;
+    }
 }

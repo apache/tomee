@@ -73,4 +73,6 @@ public interface BasicStatelessObject extends javax.ejb.EJBObject{
      * @param name the name used to notify via the TimerSyncBean
      */
     public void scheduleTimer(String name) throws RemoteException;
+    
+    public String remove(String obj) throws RemoteException;
 }

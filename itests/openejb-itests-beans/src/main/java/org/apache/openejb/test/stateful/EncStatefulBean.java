@@ -500,6 +500,10 @@ public class EncStatefulBean implements javax.ejb.SessionBean, SessionSynchroniz
         }
 
     }
+    
+    public String remove(String arg) {
+        return arg;
+    }
 
     //
     // Remote interface methods

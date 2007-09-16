@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
+import java.rmi.RemoteException;
+
 import javax.ejb.EJBHome;
 
 /**
@@ -96,7 +98,21 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient{
         fail("A RuntimeException should have been thrown.");
     }
 
+    //
+    // Test ejb  remoce methods
+    //===============================
     public void test05_remove(){
+        String str = null;
+        try {
+            str = ejbObject.remove("Hello");
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        assertEquals("Hello",str);
+    }
+
+    public void test06_remove(){
         try{
             ejbObject.remove();
             try{
@@ -110,9 +126,6 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient{
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
-    //
-    // Test ejb object methods
-    //===============================
-
+    
 
 }

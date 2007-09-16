@@ -45,6 +45,10 @@ public class PersistenceContextStatefulBean {
     public void remove(){
     }
     
+    public String remove(String arg) {
+        return arg;
+    }
+    
     public void testPersistenceContext() throws TestFailureException {
         try{
             try{

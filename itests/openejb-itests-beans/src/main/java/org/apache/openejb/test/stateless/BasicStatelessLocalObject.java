@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
+import java.rmi.RemoteException;
 import java.util.Properties;
 
 import org.apache.openejb.test.ApplicationException;
@@ -73,4 +74,6 @@ public interface BasicStatelessLocalObject extends javax.ejb.EJBLocalObject{
      * @param name the name used to notify via the TimerSyncBean
      */
     public void scheduleTimer(String name);
+    
+    public String remove(String obj);
 }

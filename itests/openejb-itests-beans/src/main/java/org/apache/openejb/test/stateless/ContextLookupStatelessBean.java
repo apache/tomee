@@ -478,4 +478,8 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
     //
     // SessionBean interface methods
     //================================
+    
+    public String remove(String arg) {
+        return arg;
+    }
 }

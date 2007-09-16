@@ -64,4 +64,6 @@ public interface BasicStatefulObject extends javax.ejb.EJBObject{
      * @param methodName The method for which to get the allowed opperations report
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;
+    
+    public String remove(String obj) throws RemoteException;
 }

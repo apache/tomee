@@ -406,6 +406,11 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean{
     public ObjectGraph[] returnObjectGraphArray(ObjectGraph[] data) {
         return data;
     }
+    
+    public String remove(String arg) {
+        return arg;
+    }
+    
     //    
     // Remote interface methods
     //=============================

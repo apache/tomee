@@ -113,6 +113,10 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
     public OperationsPolicy getAllowedOperationsReport(String methodName) {
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
     }
+    
+    public String remove(String str){
+        return str;
+    }    
 
     //    
     // Remote interface methods

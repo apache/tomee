@@ -123,6 +123,10 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
     }
     
+    public String remove(String arg) {
+        return arg;
+    }
+    
     //    
     // Remote interface methods
     //=============================

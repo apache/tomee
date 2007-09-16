@@ -123,6 +123,10 @@ public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchron
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
     }
     
+    
+    public String remove(String str){
+        return str;
+    }
     //    
     // Remote interface methods
     //=============================

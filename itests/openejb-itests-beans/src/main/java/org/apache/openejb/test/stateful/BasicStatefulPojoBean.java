@@ -110,4 +110,8 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
     public Object remove() {
         return new String("Executed remove() Method");
     }
+    
+    public String remove(String arg) {
+        return arg;
+    }
 }

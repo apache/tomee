@@ -67,4 +67,6 @@ public interface BasicStatefulLocalObject extends javax.ejb.EJBLocalObject {
      * @param methodName The method for which to get the allowed opperations report
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
+    
+    public String remove(String obj);
 }
