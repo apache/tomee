@@ -50,7 +50,7 @@ public class StratocasterTest extends TestCase {
     }
 
     public void test() throws Exception {
-        Stratocaster stratocaster = (Stratocaster) initialContext.lookup("StratocasterImplBusinessLocal");
+        Stratocaster stratocaster = (Stratocaster) initialContext.lookup("StratocasterImplLocal");
 
 
         assertEquals("Stratocaster.getMyClass()", Stratocaster.class, stratocaster.getMyClass());

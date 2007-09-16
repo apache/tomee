@@ -47,7 +47,7 @@ public class StatelessContainerTest extends TestCase {
         {
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanBusinessLocal");
+            Object object = ctx.lookup("WidgetBeanLocal");
 
             assertTrue("instanceof widget", object instanceof Widget);
 
@@ -65,7 +65,7 @@ public class StatelessContainerTest extends TestCase {
 
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanBusinessRemote");
+            Object object = ctx.lookup("WidgetBeanRemote");
 
             assertTrue("instanceof widget", object instanceof RemoteWidget);
 

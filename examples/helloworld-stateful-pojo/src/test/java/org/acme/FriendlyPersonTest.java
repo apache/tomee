@@ -47,7 +47,7 @@ public class FriendlyPersonTest extends TestCase {
      * @throws Exception
      */
     public void testFriendlyPersonViaRemoteInterface() throws Exception {
-        Object object = initialContext.lookup("FriendlyPerson");
+        Object object = initialContext.lookup("FriendlyPersonRemoteHome");
         FriendlyPersonComponent.Home home = (FriendlyPersonComponent.Home) object;
         FriendlyPerson friendlyPerson = home.create();
 
@@ -60,7 +60,7 @@ public class FriendlyPersonTest extends TestCase {
      * @throws Exception
      */
     public void testFriendlyPersonViaLocalInterface() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonLocal");
+        Object object = initialContext.lookup("FriendlyPersonLocalHome");
         FriendlyPersonComponent.LocalHome home = (FriendlyPersonComponent.LocalHome) object;
         FriendlyPerson friendlyPerson = home.create();
 

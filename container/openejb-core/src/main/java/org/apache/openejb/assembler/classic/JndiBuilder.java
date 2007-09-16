@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import static org.apache.openejb.util.Classes.packageName;
+
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
@@ -26,6 +28,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
@@ -134,7 +137,7 @@ public class JndiBuilder {
                 return type;
             }
 
-            public String getAnnotatedName() {
+            public String getAnnotationName() {
                 return annotatedName;
             }
 
@@ -161,7 +164,7 @@ public class JndiBuilder {
         private org.codehaus.swizzle.stream.StringTemplate template;
 
         public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
-            String format = SystemInstance.get().getProperty(JNDINAME_FORMAT, "{deploymentId}{interfaceType.openejbLegacyName}");
+            String format = SystemInstance.get().getProperty(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
             format = ejbJarInfo.properties.getProperty(JNDINAME_FORMAT, format);
 
             logger.debug("Using " + JNDINAME_FORMAT + " '" + format + "'");
@@ -176,15 +179,17 @@ public class JndiBuilder {
             contextData.put("ejbType", deploymentInfo.getComponentType().name());
             contextData.put("ejbClass", deploymentInfo.getBeanClass().getName());
             contextData.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
+            contextData.put("ejbClass.packageName", packageName(deploymentInfo.getBeanClass()));
             contextData.put("ejbName", deploymentInfo.getEjbName());
             contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
-            contextData.put("interfaceType", type.getAnnotatedName());
-            contextData.put("interfaceType.annotatedName", type.getAnnotatedName());
+            contextData.put("interfaceType", type.getAnnotationName());
+            contextData.put("interfaceType.annotationName", type.getAnnotationName());
             contextData.put("interfaceType.xmlName", type.getXmlName());
             contextData.put("interfaceType.xmlNameCc", type.getXmlNameCc());
             contextData.put("interfaceType.openejbLegacyName", type.getOpenejbLegacy());
             contextData.put("interfaceClass", interfce.getName());
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
+            contextData.put("interfaceClass.packageName", packageName(interfce));
             return this.template.apply(contextData);
         }
     }
@@ -321,17 +326,24 @@ public class JndiBuilder {
                 return;
             }
 
-            beanInfo.jndiNames.add(externalName);
-            logger.info("Jndi(name=" + externalName +")");
+            try {
+                context.bind(name, ref);
+                bindings.add(name);
+                beanInfo.jndiNames.add(externalName);
+                logger.info("Jndi(name=" + externalName +")");
+            } catch (NameAlreadyBoundException e) {
+                logger.error("Jndi name already in use: could not be bound; it may be taken by another ejb.  Jndi(name=" + name +")");
+            }
+        } else {
+            try {
+                context.bind(name, ref);
+                bindings.add(name);
+            } catch (NameAlreadyBoundException e) {
+                logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name +")");
+                throw e;
+            }
         }
 
-        try {
-            context.bind(name, ref);
-            bindings.add(name);
-        } catch (NameAlreadyBoundException e) {
-            logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name +")");
-            throw e;
-        }
     }
 
     private static List<Class> asList(Class interfce) {

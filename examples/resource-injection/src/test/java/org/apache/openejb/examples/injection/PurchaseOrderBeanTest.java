@@ -41,7 +41,7 @@ public class PurchaseOrderBeanTest extends TestCase {
     }
 
     public void testAddLineItem() throws Exception {
-        PurchaseOrder order = (PurchaseOrder) initialContext.lookup("PurchaseOrderBeanBusinessRemote");
+        PurchaseOrder order = (PurchaseOrder) initialContext.lookup("PurchaseOrderBeanRemote");
         assertNotNull(order);
         LineItem item = new LineItem("ABC-1", "Test Item");
 
@@ -53,7 +53,7 @@ public class PurchaseOrderBeanTest extends TestCase {
     }
 
     public void testGetMaxLineItems() throws Exception {
-        PurchaseOrder order = (PurchaseOrder) initialContext.lookup("PurchaseOrderBeanBusinessRemote");
+        PurchaseOrder order = (PurchaseOrder) initialContext.lookup("PurchaseOrderBeanRemote");
         assertNotNull(order);
 
         int maxLineItems = order.getMaxLineItems();

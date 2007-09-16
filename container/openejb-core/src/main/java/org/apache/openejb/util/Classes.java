@@ -52,4 +52,17 @@ public class Classes {
         }
         return Array.newInstance(clazz, new int[arrayDimentions]).getClass();
     }
+
+    public static String packageName(Class clazz){
+        return packageName(clazz.getName());
+    }
+
+    public static String packageName(String clazzName){
+        int i = clazzName.lastIndexOf('.');
+        if (i > 0){
+            return clazzName.substring(0, i);
+        } else {
+            return "";
+        }
+    }
 }

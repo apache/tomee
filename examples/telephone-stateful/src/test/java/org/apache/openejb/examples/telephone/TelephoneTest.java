@@ -56,7 +56,7 @@ public class TelephoneTest extends TestCase {
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         InitialContext localContext = new InitialContext(properties);
 
-        Telephone telephone = (Telephone) localContext.lookup("TelephoneBeanBusinessRemote");
+        Telephone telephone = (Telephone) localContext.lookup("TelephoneBeanRemote");
 
         telephone.speak("Did you know I am talking directly through the embedded container?");
 
@@ -87,7 +87,7 @@ public class TelephoneTest extends TestCase {
         properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:4201");
         InitialContext remoteContext = new InitialContext(properties);
 
-        Telephone telephone = (Telephone) remoteContext.lookup("TelephoneBeanBusinessRemote");
+        Telephone telephone = (Telephone) remoteContext.lookup("TelephoneBeanRemote");
 
         telephone.speak("Is this a local call?");
 

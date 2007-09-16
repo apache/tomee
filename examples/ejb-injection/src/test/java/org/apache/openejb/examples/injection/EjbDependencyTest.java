@@ -46,7 +46,7 @@ public class EjbDependencyTest extends TestCase {
 
     //START SNIPPET: test
     public void testViaLocalInterface() throws Exception {
-    	Object object = initialContext.lookup("DataReaderImplBusinessLocal");
+    	Object object = initialContext.lookup("DataReaderImplLocal");
     	
     	assertNotNull(object);
     	assertEquals(LOCAL_STORE_RESULT, ((DataReaderLocal)object).readDataFromLocalStore());
@@ -55,7 +55,7 @@ public class EjbDependencyTest extends TestCase {
     //END SNIPPET: test
     
     public void testViaRemoteInterface() throws Exception {
-    	Object object = initialContext.lookup("DataReaderImplBusinessRemote");
+    	Object object = initialContext.lookup("DataReaderImplRemote");
     	
     	assertNotNull(object);
     	assertEquals(LOCAL_STORE_RESULT, ((DataReaderRemote)object).readDataFromLocalStore());

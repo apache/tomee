@@ -64,7 +64,7 @@ public class StatefulContainerTest extends TestCase {
         // Do a create...
 
         InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("WidgetBeanBusinessLocal");
+        Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
@@ -89,7 +89,7 @@ public class StatefulContainerTest extends TestCase {
         // Do a create...
 
         InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("WidgetBeanBusinessRemote");
+        Object object = ctx.lookup("WidgetBeanRemote");
 
         assertTrue("instanceof widget", object instanceof RemoteWidget);
 

@@ -44,7 +44,7 @@ public class CounterImplTest extends TestCase {
      */
     //START SNIPPET: remote	
     public void testCounterViaRemoteInterface() throws Exception {
-        Object object = initialContext.lookup("CounterImplBusinessRemote");
+        Object object = initialContext.lookup("CounterImplRemote");
 
 		assertNotNull(object);
 		assertTrue(object instanceof CounterRemote);
@@ -63,7 +63,7 @@ public class CounterImplTest extends TestCase {
      */
     //START SNIPPET: local	
     public void testCounterViaLocalInterface() throws Exception {
-        Object object = initialContext.lookup("CounterImplBusinessLocal");
+        Object object = initialContext.lookup("CounterImplLocal");
 
 		assertNotNull(object);
 		assertTrue(object instanceof CounterLocal);

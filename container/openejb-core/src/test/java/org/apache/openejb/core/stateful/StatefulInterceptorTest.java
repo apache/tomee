@@ -80,7 +80,7 @@ public class StatefulInterceptorTest extends TestCase {
         assembler.createApplication(ejbJar);
 
         InitialContext ctx = new InitialContext();
-        Target target = (Target) ctx.lookup("TargetBeanBusinessLocal");
+        Target target = (Target) ctx.lookup("TargetBeanLocal");
         target.echo(new ArrayList());
 
         assertCalls(Call.values());

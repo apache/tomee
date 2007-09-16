@@ -56,7 +56,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Widget widget = (Widget) ctx.lookup("WidgetBeanBusinessLocal");
+        Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
 
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
@@ -72,7 +72,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanBusinessRemote");
+        RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
 
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
@@ -88,7 +88,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
     public void testRemoteInterface() throws Exception {
 
         InitialContext ctx = new InitialContext();
-        EJBHome home = (EJBHome) ctx.lookup("WidgetBean");
+        EJBHome home = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
         assertNotNull("home", home);
         assertTrue("home should be an instance of WidgetHome", home instanceof WidgetHome);
         CrossClassLoaderProxyTestObject.widgetHome = (WidgetHome) home;
@@ -116,7 +116,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             Object testObject = testObjectClass.newInstance();
 
             InitialContext ctx = new InitialContext();
-            EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBean");
+            EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
             ;
             EJBHome home = (EJBHome) copy(rawHome);
             assertNotNull("home", home);

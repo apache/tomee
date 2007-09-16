@@ -69,7 +69,7 @@ public class StatefulSessionBeanTest extends TestCase {
         StatefulSessionBeanTest.calls.clear();
 
         InitialContext ctx = new InitialContext();
-        TargetHome home = (TargetHome) ctx.lookup("TargetBean");
+        TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
         assertNotNull(home);
 
         Target target = home.create("Fuzz");

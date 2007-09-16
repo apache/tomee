@@ -44,7 +44,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: remote
     public void testCalculatorViaRemoteInterface() throws Exception {
-        Object object = initialContext.lookup("CalculatorImplBusinessRemote");
+        Object object = initialContext.lookup("CalculatorImplRemote");
 
 		assertNotNull(object);
 		assertTrue(object instanceof CalculatorRemote);
@@ -61,7 +61,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: local    
     public void testCalculatorViaLocalInterface() throws Exception {
-        Object object = initialContext.lookup("CalculatorImplBusinessLocal");
+        Object object = initialContext.lookup("CalculatorImplLocal");
 
 		assertNotNull(object);
 		assertTrue(object instanceof CalculatorLocal);

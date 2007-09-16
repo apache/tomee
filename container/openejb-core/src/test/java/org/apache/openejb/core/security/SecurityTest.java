@@ -88,7 +88,7 @@ public class SecurityTest extends TestCase {
         InitialContext ctx = new InitialContext(props);
 
 
-        Project foo = (Project) ctx.lookup("FooBeanBusinessLocal");
+        Project foo = (Project) ctx.lookup("FooBeanLocal");
 
         foo.svnCheckout("");
 
@@ -105,7 +105,7 @@ public class SecurityTest extends TestCase {
         assertTrue("not in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
 
-//        Project bar = (Project) ctx.lookup("BarBeanBusinessLocal");
+//        Project bar = (Project) ctx.lookup("BarBeanLocal");
 //
 //        bar.svnCheckout("");
 //
