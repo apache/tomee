@@ -58,6 +58,7 @@ public class Server implements Service {
         File home = system.getHome().getDirectory();
         system.setProperty("openejb.deployments.classpath.include", ".*/"+home.getName()+"/lib/.*");
         system.setProperty("openejb.deployments.classpath.require.descriptor", "true");
+        system.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
 
         OpenEJB.init(props, new ServerFederation());
 

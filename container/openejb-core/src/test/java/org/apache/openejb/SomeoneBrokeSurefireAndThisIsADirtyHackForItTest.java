@@ -39,6 +39,7 @@ public class SomeoneBrokeSurefireAndThisIsADirtyHackForItTest extends TestCase {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
         System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-*.*");
         System.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        System.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
         return iTest.suite();
     }
 }

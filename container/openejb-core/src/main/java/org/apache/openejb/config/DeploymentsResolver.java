@@ -40,6 +40,7 @@ public class DeploymentsResolver {
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
     private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
+    private static final String CLASSPATH_FILTER_SYSTEMAPPS = "openejb.deployments.classpath.filter.systemapps";
     private static final Logger logger = DeploymentLoader.logger;
 
     private static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
@@ -175,9 +176,11 @@ public class DeploymentsResolver {
         exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
         boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
         boolean filterDescriptors = SystemInstance.get().getProperty(CLASSPATH_FILTER_DESCRIPTORS, "false").equalsIgnoreCase("true");
+        boolean filterSystemApps = SystemInstance.get().getProperty(CLASSPATH_FILTER_SYSTEMAPPS, "true").equalsIgnoreCase("true");
 
         logger.debug("Using "+CLASSPATH_INCLUDE+" '"+include+"'");
         logger.debug("Using "+CLASSPATH_EXCLUDE+" '"+exclude+"'");
+        logger.debug("Using "+CLASSPATH_FILTER_SYSTEMAPPS+" '"+filterSystemApps+"'");
         logger.debug("Using "+CLASSPATH_FILTER_DESCRIPTORS+" '"+filterDescriptors+"'");
         logger.debug("Using "+CLASSPATH_REQUIRE_DESCRIPTOR+" '"+requireDescriptors+"'");
 
@@ -193,6 +196,10 @@ public class DeploymentsResolver {
             UrlSet prefiltered = urlSet;
             urlSet = urlSet.exclude(exclude);
             urlSet = urlSet.include(includes);
+
+            if (filterSystemApps){
+                urlSet = urlSet.exclude(".*/openejb-.*");
+            }
 
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();
@@ -217,6 +224,9 @@ public class DeploymentsResolver {
 
             if (!filterDescriptors){
                 UrlSet unchecked = prefiltered.exclude(urlSet);
+                if (filterSystemApps){
+                    unchecked = unchecked.exclude(".*/openejb-.*");
+                }
                 processUrls(unchecked.getUrls(), classLoader, false, base, jarList);
             }
 
