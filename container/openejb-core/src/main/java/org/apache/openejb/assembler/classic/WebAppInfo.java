@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +17,15 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
-import java.util.ArrayList;
+public class WebAppInfo extends InfoObject {
 
-/**
- * @version $Rev$ $Date$
- */
-public class AppInfo extends InfoObject {
-    public String jarPath;
-    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
-    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
-    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
-    public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
-    public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
-    public final List<String> libs = new ArrayList<String>();
-    public String cmpMappingsXml;
+    public String codebase;
+    public String description;
+    public String displayName;
+    public String smallIcon;
+    public String largeIcon;
+    public String moduleId;
+    public String contextRoot;
+
+    public JndiEncInfo jndiEnc;
 }

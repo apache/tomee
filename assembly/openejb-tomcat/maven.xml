@@ -214,6 +214,10 @@
       </j:if>
     </goal>
 
+    <goal name="setup:ejb-examples">
+      <mkdir dir="${tomcat.home}/webapps/ejb-examples"/>
+      <unjar src="${user.home}/.m2/repository/org/apache/openejb/servlet-samples/1.0-SNAPSHOT/servlet-samples-1.0-SNAPSHOT.war" dest="${tomcat.home}/webapps/ejb-examples"/>
+    </goal>
 
     <!--======================-->
     <!--   Testing profiles   -->
@@ -224,6 +228,7 @@
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
       <attainGoal name="setup:itests"/>
+      <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat"/>
     </goal>
 
@@ -232,6 +237,7 @@
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
       <attainGoal name="setup:itests"/>
+      <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat-debug"/>
     </goal>
 

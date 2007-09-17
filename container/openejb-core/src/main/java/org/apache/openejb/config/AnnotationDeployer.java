@@ -183,8 +183,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ClientModule clientModule : appModule.getClientModules()) {
                 deploy(clientModule);
             }
-            for (ResourceModule resourceModule : appModule.getResourceModules()) {
-                deploy(resourceModule);
+            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+                deploy(connectorModule);
             }
             for (WebModule webModule : appModule.getWebModules()) {
                 deploy(webModule);
@@ -196,8 +196,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             return clientModule;
         }
 
-        public ResourceModule deploy(ResourceModule resourceModule) throws OpenEJBException {
-            return resourceModule;
+        public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
+            return connectorModule;
         }
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
@@ -332,8 +332,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ClientModule clientModule : appModule.getClientModules()) {
                 deploy(clientModule);
             }
-            for (ResourceModule resourceModule : appModule.getResourceModules()) {
-                deploy(resourceModule);
+            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+                deploy(connectorModule);
             }
             for (WebModule webModule : appModule.getWebModules()) {
                 deploy(webModule);
@@ -358,9 +358,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             return clientModule;
         }
 
-        public ResourceModule deploy(ResourceModule resourceModule) throws OpenEJBException {
+        public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
             // resource modules currently don't have any annotations
-            return resourceModule;
+            return connectorModule;
         }
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {

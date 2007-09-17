@@ -78,6 +78,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         }
     }
 
+    public void stop() {
+        standardServer.removePropertyChangeListener(this);
+    }
+
     private void serviceAdded(Service service) {
         Container container = service.getContainer();
         if (container instanceof StandardEngine) {
@@ -161,6 +165,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         }
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private void contextRemoved(StandardContext context) {
     }
 

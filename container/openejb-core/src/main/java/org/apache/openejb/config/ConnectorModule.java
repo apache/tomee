@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * @version $Rev$ $Date$
  */
-public class ResourceModule implements DeploymentModule {
+public class ConnectorModule implements DeploymentModule {
     private final ValidationContext validation;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
@@ -34,7 +34,7 @@ public class ResourceModule implements DeploymentModule {
     private String jarLocation;
     private final String moduleId;
 
-    public ResourceModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
+    public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
@@ -49,7 +49,7 @@ public class ResourceModule implements DeploymentModule {
         }
 
         this.moduleId = moduleId;
-        validation = new ValidationContext(ResourceModule.class, jarLocation);
+        validation = new ValidationContext(ConnectorModule.class, jarLocation);
     }
 
     public ValidationContext getValidation() {

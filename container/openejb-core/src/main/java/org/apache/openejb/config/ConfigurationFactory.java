@@ -41,8 +41,9 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.ConnectionManager;
-import org.apache.openejb.config.sys.Connector;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
@@ -54,6 +55,8 @@ import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -64,7 +67,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.Join;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -217,7 +219,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
         // convert legacy connector declarations to resource declarations
-        for (Connector connector : openejb.getConnector()) {
+        for (org.apache.openejb.config.sys.Connector connector : openejb.getConnector()) {
             Resource resource = JaxbOpenejb.createResource();
             resource.setJar(connector.getJar());
             resource.setId(connector.getId());
@@ -305,6 +307,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return appInfo.clients.get(0);
     }
 
+    public ConnectorInfo configureApplication(ConnectorModule connectorModule) throws OpenEJBException {
+        AppModule appModule = new AppModule(connectorModule.getClassLoader(), connectorModule.getJarLocation());
+        appModule.getResourceModules().add(connectorModule);
+        AppInfo appInfo = configureApplication(appModule);
+        return appInfo.connectors.get(0);
+    }
+
+    public WebAppInfo configureApplication(WebModule webModule) throws OpenEJBException {
+        AppModule appModule = new AppModule(webModule.getClassLoader(), webModule.getJarLocation());
+        appModule.getWebModules().add(webModule);
+        AppInfo appInfo = configureApplication(appModule);
+        return appInfo.webApps.get(0);
+    }
+
     public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
         logger.info("Configuring app: "+appModule.getJarLocation());
         deployer.deploy(appModule);
@@ -389,6 +405,31 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             appInfo.clients.add(clientInfo);
         }
 
+        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            Connector applicationClient = connectorModule.getConnector();
+            ConnectorInfo connectorInfo = new ConnectorInfo();
+            connectorInfo.description = applicationClient.getDescription();
+            connectorInfo.displayName = applicationClient.getDisplayName();
+            connectorInfo.codebase = connectorModule.getJarLocation();
+            connectorInfo.moduleId = connectorModule.getModuleId();
+            appInfo.connectors.add(connectorInfo);
+        }
+
+        for (WebModule webModule : appModule.getWebModules()) {
+            WebApp webApp = webModule.getWebApp();
+            WebAppInfo webAppInfo = new WebAppInfo();
+            webAppInfo.description = webApp.getDescription();
+            webAppInfo.displayName = webApp.getDisplayName();
+            webAppInfo.codebase = webModule.getJarLocation();
+            webAppInfo.moduleId = webModule.getModuleId();
+            
+            webAppInfo.contextRoot = webModule.getContextRoot();
+
+            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
+            webAppInfo.jndiEnc = jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId);
+            appInfo.webApps.add(webAppInfo);
+        }
+
         appInfo.jarPath = appModule.getJarLocation();
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
@@ -421,7 +462,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
         return name;
     }
-
 
     private static class DefaultService {
         private final Class<? extends Service> type;

@@ -64,6 +64,8 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InfoObject;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.Deployer;
 
 public class VmDeploymentManager implements DeploymentManager {
@@ -183,6 +185,26 @@ public class VmDeploymentManager implements DeploymentManager {
                     return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
                 }
             }
+            if (infoObject instanceof ConnectorInfo) {
+                // are connector modules allowed
+                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
+                    return null;
+                }
+                ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
+                if (connectorInfo.moduleId == appInfo.jarPath) {
+                    return new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
+                }
+            }
+            if (infoObject instanceof WebAppInfo) {
+                // are web app modules allowed
+                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
+                    return null;
+                }
+                WebAppInfo webAppInfo = (WebAppInfo) infoObject;
+                if (webAppInfo.moduleId == appInfo.jarPath) {
+                    return new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId);
+                }
+            }
         }
 
         // regular ear
@@ -200,6 +222,14 @@ public class VmDeploymentManager implements DeploymentManager {
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             TargetModuleIDImpl ejbJarModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
             ejbJarModuleId.setParentTargetModuleID(earModuleId);
+        }
+        for (ConnectorInfo connectorInfo : appInfo.connectors) {
+            TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
+            clientModuleId.setParentTargetModuleID(earModuleId);
+        }
+        for (WebAppInfo webAppInfo : appInfo.webApps) {
+            TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId, webAppInfo.contextRoot);
+            clientModuleId.setParentTargetModuleID(earModuleId);
         }
 
         return earModuleId;

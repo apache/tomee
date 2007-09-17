@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,21 +15,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.examples.servlet;
 
-import java.util.List;
-import java.util.ArrayList;
+import javax.sql.DataSource;
 
-/**
- * @version $Rev$ $Date$
- */
-public class AppInfo extends InfoObject {
-    public String jarPath;
-    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
-    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
-    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
-    public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
-    public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
-    public final List<String> libs = new ArrayList<String>();
-    public String cmpMappingsXml;
+public interface AnnotatedEJBLocal {
+    String getName();
+
+    void setName(String name);
+
+    DataSource getDs();
+
+    void setDs(DataSource ds);
 }

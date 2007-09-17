@@ -32,7 +32,7 @@ public class AppModule implements DeploymentModule {
 
     private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();
-    private final List<ResourceModule> resourceModules = new ArrayList<ResourceModule>();
+    private final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
     private final List<WebModule> webModules = new ArrayList<WebModule>();
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
@@ -63,7 +63,7 @@ public class AppModule implements DeploymentModule {
         for (ClientModule module : clientModules) {
             if (module.getValidation().hasWarnings()) return true;
         }
-        for (ResourceModule module : resourceModules) {
+        for (ConnectorModule module : connectorModules) {
             if (module.getValidation().hasWarnings()) return true;
         }
         for (WebModule module : webModules) {
@@ -80,7 +80,7 @@ public class AppModule implements DeploymentModule {
         for (ClientModule module : clientModules) {
             if (module.getValidation().hasFailures()) return true;
         }
-        for (ResourceModule module : resourceModules) {
+        for (ConnectorModule module : connectorModules) {
             if (module.getValidation().hasFailures()) return true;
         }
         for (WebModule module : webModules) {
@@ -97,7 +97,7 @@ public class AppModule implements DeploymentModule {
         for (ClientModule module : clientModules) {
             if (module.getValidation().hasErrors()) return true;
         }
-        for (ResourceModule module : resourceModules) {
+        for (ConnectorModule module : connectorModules) {
             if (module.getValidation().hasErrors()) return true;
         }
         for (WebModule module : webModules) {
@@ -146,8 +146,8 @@ public class AppModule implements DeploymentModule {
         this.cmpMappings = cmpMappings;
     }
 
-    public List<ResourceModule> getResourceModules() {
-        return resourceModules;
+    public List<ConnectorModule> getResourceModules() {
+        return connectorModules;
     }
 
     public List<WebModule> getWebModules() {

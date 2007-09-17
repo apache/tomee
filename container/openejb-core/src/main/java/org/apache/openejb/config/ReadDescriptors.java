@@ -70,8 +70,8 @@ public class ReadDescriptors implements DynamicDeployer {
             readAppClient(clientModule, appModule);
         }
 
-        for (ResourceModule resourceModule : appModule.getResourceModules()) {
-            readConnector(resourceModule, appModule);
+        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            readConnector(connectorModule, appModule);
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
@@ -276,19 +276,19 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readConnector(ResourceModule resourceModule, AppModule appModule) throws OpenEJBException {
-        if (resourceModule.getConnector() != null) return;
+    private void readConnector(ConnectorModule connectorModule, AppModule appModule) throws OpenEJBException {
+        if (connectorModule.getConnector() != null) return;
 
-        Object data = resourceModule.getAltDDs().get("ra.xml");
+        Object data = connectorModule.getAltDDs().get("ra.xml");
         if (data instanceof Connector) {
-            resourceModule.setConnector((Connector) data);
+            connectorModule.setConnector((Connector) data);
         } else if (data instanceof URL) {
             URL url = (URL) data;
             Connector connector = readConnector(url);
-            resourceModule.setConnector(connector);
+            connectorModule.setConnector(connector);
         } else {
-            DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + resourceModule.getModuleId());
-            resourceModule.setConnector(new Connector());
+            DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
+            connectorModule.setConnector(new Connector());
         }
     }
 

@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,21 +15,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.examples.servlet;
 
-import java.util.List;
-import java.util.ArrayList;
+import javax.ejb.Stateless;
+import javax.sql.DataSource;
+import javax.annotation.Resource;
 
-/**
- * @version $Rev$ $Date$
- */
-public class AppInfo extends InfoObject {
-    public String jarPath;
-    public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
-    public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
-    public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
-    public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
-    public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
-    public final List<String> libs = new ArrayList<String>();
-    public String cmpMappingsXml;
+@Stateless
+public class AnnotatedEJB implements AnnotatedEJBLocal {
+    @Resource
+    private DataSource ds;
+
+    private String name = "foo";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public DataSource getDs() {
+        return ds;
+    }
+
+    public void setDs(DataSource ds) {
+        this.ds = ds;
+    }
+
+    public String toString() {
+        return "AnnotatedEJB[name=" + name + "]";
+    }
 }

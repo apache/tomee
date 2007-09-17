@@ -34,6 +34,8 @@ import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.InterceptorInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
@@ -178,6 +180,14 @@ public class Deploy {
                 }
                 for (ClientInfo clientInfo : appInfo.clients) {
                     System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.codebase + ")");
+                    System.out.println("");
+                }
+                for (ConnectorInfo connectorInfo : appInfo.connectors) {
+                    System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.codebase + ")");
+                    System.out.println("");
+                }
+                for (WebAppInfo webAppInfo : appInfo.webApps) {
+                    System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.codebase + ")");
                     System.out.println("");
                 }
                 for (PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {

@@ -32,6 +32,7 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -39,7 +40,6 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 
 import javax.sql.DataSource;
 import javax.jms.Queue;
@@ -107,6 +107,12 @@ public class AutoConfig implements DynamicDeployer {
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
             deploy(clientModule);
+        }
+        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            deploy(connectorModule);
+        }
+        for (WebModule webModule : appModule.getWebModules()) {
+            deploy(webModule);
         }
         for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
             deploy(persistenceModule);
@@ -408,8 +414,21 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void deploy(ClientModule clientModule) throws OpenEJBException {
+        processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient());
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    private void deploy(ConnectorModule connectorModule) throws OpenEJBException {
+        // Nothing to process for resource modules
+    }
+
+    private void deploy(WebModule webModule) throws OpenEJBException {
+        processJndiRefs(webModule.getModuleId(), webModule.getWebApp());
+    }
+
+    private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer) throws OpenEJBException {
         // Resource env reference
-        for (ResourceRef ref : clientModule.getApplicationClient().getResourceRef()) {
+        for (ResourceRef ref : jndiConsumer.getResourceRef()) {
             // skip destinations with a global jndi name
             String mappedName = ref.getMappedName();
             if (mappedName == null) mappedName = "";
@@ -418,12 +437,12 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceId(clientModule.getModuleId(), destinationId, ref.getType());
+            destinationId = getResourceId(moduleId, destinationId, ref.getType());
             ref.setMappedName(destinationId);
         }
 
         // Resource env reference
-        for (JndiReference ref : clientModule.getApplicationClient().getResourceEnvRef()) {
+        for (JndiReference ref : jndiConsumer.getResourceEnvRef()) {
             // skip destinations with a global jndi name
             String mappedName = ref.getMappedName() + "";
             if (mappedName.startsWith("jndi:")){
@@ -431,12 +450,12 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceEnvId(clientModule.getModuleId(), destinationId, ref.getType());
+            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType());
             ref.setMappedName(destinationId);
         }
 
         // Message destination reference
-        for (MessageDestinationRef ref : clientModule.getApplicationClient().getMessageDestinationRef()) {
+        for (MessageDestinationRef ref : jndiConsumer.getMessageDestinationRef()) {
             // skip destinations with a global jndi name
             String mappedName = ref.getMappedName() + "";
             if (mappedName.startsWith("jndi:")){
@@ -444,7 +463,7 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceEnvId(clientModule.getModuleId(), destinationId, ref.getType());
+            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType());
             ref.setMappedName(destinationId);
         }
     }

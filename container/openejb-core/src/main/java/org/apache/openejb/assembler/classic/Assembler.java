@@ -345,6 +345,34 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         createApplication(appInfo, null, classLoader);
     }
 
+    public void createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = connectorInfo.moduleId;
+        appInfo.connectors.add(connectorInfo);
+        createApplication(appInfo);
+    }
+
+    public void createConnector(ConnectorInfo connectorInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = connectorInfo.moduleId;
+        appInfo.connectors.add(connectorInfo);
+        createApplication(appInfo, null, classLoader);
+    }
+
+    public void createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = webAppInfo.moduleId;
+        appInfo.webApps.add(webAppInfo);
+        createApplication(appInfo);
+    }
+
+    public void createWebApp(WebAppInfo webAppInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        AppInfo appInfo = new AppInfo();
+        appInfo.jarPath = webAppInfo.moduleId;
+        appInfo.webApps.add(webAppInfo);
+        createApplication(appInfo, null, classLoader);
+    }
+
     public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
         createApplication(appInfo, null, createAppClassLoader(appInfo));
     }
@@ -510,6 +538,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
             }
 
+            // WebApp
+            WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+            if (webAppBuilder != null) {
+                for (WebAppInfo webAppInfo : appInfo.webApps) {
+                    webAppBuilder.deploy(webAppInfo);
+                }
+            }
+
             deployedApplications.put(appInfo.jarPath, appInfo);
         } catch (Throwable t) {
             try {
@@ -533,6 +569,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.info("Undeploying app: "+appInfo.jarPath);
         Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appInfo.jarPath);
+
+        WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+        if (webAppBuilder != null) {
+            for (WebAppInfo webAppInfo : appInfo.webApps) {
+                try {
+                    webAppBuilder.undeploy(webAppInfo);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("webApp: " + webAppInfo.moduleId + ": " + t.getMessage(), t));
+                }
+            }
+        }
 
         // get all of the ejb deployments
         List<CoreDeploymentInfo> deployments = new ArrayList<CoreDeploymentInfo>();
@@ -618,6 +665,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (String jarPath : appInfo.libs) {
             jars.add(toUrl(jarPath));
         }
+        // todo add connector data
 
         // Create the class loader
         ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());

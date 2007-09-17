@@ -141,7 +141,7 @@ public class DeploymentLoader {
                                 ejbModules.put(entry.getKey(), entry.getValue());
                             } else if (ClientModule.class.equals(moduleType)) {
                                 clientModules.put(entry.getKey(), entry.getValue());
-                            } else if (ResourceModule.class.equals(moduleType)) {
+                            } else if (ConnectorModule.class.equals(moduleType)) {
                                 resouceModules.put(entry.getKey(), entry.getValue());
                             } else if (WebModule.class.equals(moduleType)) {
                                 webModules.put(entry.getKey(), entry.getValue());
@@ -291,11 +291,11 @@ public class DeploymentLoader {
                             connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
                         }
 
-                        ResourceModule resourceModule = new ResourceModule(connector, appClassLoader, rarFile.getAbsolutePath(),  moduleName);
+                        ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarFile.getAbsolutePath(),  moduleName);
 
-                        resourceModule.getAltDDs().putAll(descriptors);
+                        connectorModule.getAltDDs().putAll(descriptors);
 
-                        appModule.getResourceModules().add(resourceModule);
+                        appModule.getResourceModules().add(connectorModule);
                     } catch (OpenEJBException e) {
                         logger.error("Unable to load RAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                     }
@@ -380,7 +380,7 @@ public class DeploymentLoader {
             addPersistenceUnits(appModule, classLoader, baseUrl);
 
             return appModule;
-        } else if (ResourceModule.class.equals(moduleClass)) {
+        } else if (ConnectorModule.class.equals(moduleClass)) {
             // unpack the rar file
             File rarFile = new File(baseUrl.getPath());
             rarFile = unpack(rarFile);
@@ -410,12 +410,12 @@ public class DeploymentLoader {
             ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
 
             // create the Resource Module
-            ResourceModule resourceModule = new ResourceModule(connector, appClassLoader, jarFile.getAbsolutePath(),  null);
-            resourceModule.getAltDDs().putAll(descriptors);
+            ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, jarFile.getAbsolutePath(),  null);
+            connectorModule.getAltDDs().putAll(descriptors);
 
             // Wrap the resource module with an Application Module
-            AppModule appModule = new AppModule(classLoader, resourceModule.getJarLocation());
-            appModule.getResourceModules().add(resourceModule);
+            AppModule appModule = new AppModule(classLoader, connectorModule.getJarLocation());
+            appModule.getResourceModules().add(connectorModule);
 
             // Persistence Units
             addPersistenceUnits(appModule, classLoader, baseUrl);
@@ -547,7 +547,7 @@ public class DeploymentLoader {
         }
 
         if (descriptors.containsKey("ra.xml")) {
-            return ResourceModule.class;
+            return ConnectorModule.class;
         }
 
         URL manifestUrl = descriptors.get("MANIFEST.MF");

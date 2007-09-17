@@ -18,6 +18,7 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
@@ -48,10 +49,10 @@ public class TomcatLoader implements Loader {
 
         ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
-        TomcatWarBuilder warBuilder = SystemInstance.get().getComponent(TomcatWarBuilder.class);
-        if (warBuilder == null) {
-            TomcatWarBuilder tomcatWarBuilder = new TomcatWarBuilder();
-            tomcatWarBuilder.start();
+        if (SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
+            TomcatWebAppBuilder tomcatWebAppBuilder = new TomcatWebAppBuilder();
+            tomcatWebAppBuilder.start();
+            SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
 
         SystemInstance.init(props);
