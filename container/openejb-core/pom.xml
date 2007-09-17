@@ -324,10 +324,6 @@
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-jaxws-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
   </dependencies>
 
 </project>

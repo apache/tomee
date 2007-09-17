@@ -43,18 +43,10 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-activation_1.1_spec</artifactId>
-      <version>1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.0.3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml</groupId>
-          <artifactId>jsr173</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>

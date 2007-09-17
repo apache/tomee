@@ -17,8 +17,6 @@
 
 package org.apache.openejb.core.timer;
 
-import com.thoughtworks.xstream.XStream;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,9 +25,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Base64;
 
 public class DatabaseTimerStore implements TimerStore {
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
@@ -149,7 +153,7 @@ public class DatabaseTimerStore implements TimerStore {
         return timerData;
     }
 
-    
+
     /**
      * Used to restore a Timer that was cancelled, but the Transaction has been rolled back. 
      */
@@ -157,7 +161,7 @@ public class DatabaseTimerStore implements TimerStore {
         // TODO Need to verify how to handle this. Presumably, the Transaction rollback would "restore" this timer. So, no further action would be required.
         // The MemoryTimerStore does require this capability...
     }
-    
+
     public void removeTimer(long timerId) {
         boolean threwException = false;
 
@@ -244,15 +248,28 @@ public class DatabaseTimerStore implements TimerStore {
     }
 
     private String serializeObject(Object object) {
-        XStream xstream = new XStream();
-        String serializaedValue = xstream.toXML(object);
-        return serializaedValue;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(baos);
+            out.writeObject(object);
+            out.close();
+
+            byte[] encoded = Base64.encodeBase64(baos.toByteArray());
+            return new String(encoded);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Object deserializeObject(String serializedValue) {
-        XStream xstream = new XStream();
-        Object object = xstream.fromXML(serializedValue);
-        return object;
+        try {
+            byte[] bytes = Base64.decodeBase64(serializedValue.getBytes());
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            return in.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void execSQL(String sql) throws SQLException {
