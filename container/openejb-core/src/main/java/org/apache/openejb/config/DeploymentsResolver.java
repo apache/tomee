@@ -198,7 +198,7 @@ public class DeploymentsResolver {
             urlSet = urlSet.include(includes);
 
             if (filterSystemApps){
-                urlSet = urlSet.exclude(".*/openejb-.*");
+                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/classes/?)");
             }
 
             List<URL> urls = urlSet.getUrls();
@@ -222,12 +222,23 @@ public class DeploymentsResolver {
             long end = System.currentTimeMillis();
             long time = end - begin;
 
+            UrlSet unchecked = new UrlSet();
             if (!filterDescriptors){
-                UrlSet unchecked = prefiltered.exclude(urlSet);
+                unchecked = prefiltered.exclude(urlSet);
                 if (filterSystemApps){
-                    unchecked = unchecked.exclude(".*/openejb-.*");
+                    urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/classes/?)");
                 }
                 processUrls(unchecked.getUrls(), classLoader, false, base, jarList);
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("URLs after filtering: "+urlSet.getUrls().size() + unchecked.getUrls().size());
+                for (URL url : urlSet.getUrls()) {
+                    logger.debug("Annotations path: " + url);
+                }
+                for (URL url : unchecked.getUrls()) {
+                    logger.debug("Descriptors path: " + url);
+                }
             }
 
             if (urls.size() == 0) return;
