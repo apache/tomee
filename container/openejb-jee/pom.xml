@@ -28,32 +28,32 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Java EE</name>
   <build>
-      <plugins>
-          <!--<plugin>-->
-              <!--<artifactId>maven-surefire-plugin</artifactId>-->
-              <!--<configuration>-->
-                  <!--<excludes>-->
-                      <!--<exclude>org/openejb/jee2/EjbJarTest.*</exclude>-->
-                  <!--</excludes>-->
-              <!--</configuration>-->
-          <!--</plugin>-->
-      </plugins>
+    <plugins>
+      <!--<plugin>-->
+      <!--<artifactId>maven-surefire-plugin</artifactId>-->
+      <!--<configuration>-->
+      <!--<excludes>-->
+      <!--<exclude>org/openejb/jee2/EjbJarTest.*</exclude>-->
+      <!--</excludes>-->
+      <!--</configuration>-->
+      <!--</plugin>-->
+    </plugins>
   </build>
   <dependencies>
     <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-activation_1.1_spec</artifactId>
-        <version>1.0-M1</version>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-activation_1.1_spec</artifactId>
+      <version>1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>2.0.3</version>
       <exclusions>
-	<exclusion>
-	  <groupId>javax.xml</groupId>
-	  <artifactId>jsr173</artifactId>
-	</exclusion>
+        <exclusion>
+          <groupId>javax.xml</groupId>
+          <artifactId>jsr173</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -61,9 +61,9 @@
       <artifactId>xbean-finder</artifactId>
     </dependency>
     <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-        <version>1.0-SNAPSHOT</version>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
