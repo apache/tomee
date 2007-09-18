@@ -18,11 +18,13 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Container;
 import org.apache.catalina.util.DefaultAnnotationProcessor;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
+import org.apache.naming.NamingContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
@@ -52,6 +54,8 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Hashtable;
+import java.util.Stack;
 
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
@@ -64,6 +68,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public TomcatWebAppBuilder() {
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();
+        standardServer.addLifecycleListener(new OpenEJBNamingContextListener(standardServer));
 
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
@@ -114,6 +119,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     //
 
     public void init(StandardContext standardContext) {
+        // turn off Tomcat's naming system
+        standardContext.setUseNaming(false);
     }
 
     public void beforeStart(StandardContext standardContext) {
@@ -247,12 +254,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     //
 
     private void bindEnc(StandardContext standardContext, Context enc) {
-        // turn off Tomcat's naming system
-        standardContext.setUseNaming(false);
+        Context rootContext = null;
+        try {
+            rootContext = new NamingContext(new Hashtable(), getNamingContextName(standardContext));
+            Context compCtx = rootContext.createSubcontext("comp");
+            compCtx.bind("env", enc);
+        } catch (NamingException e) {
+            // Never happens
+        }
 
         // Add enc to global map of named contexts
         ContextAccessController.setSecurityToken(standardContext.getName(), standardContext);
-        ContextBindings.bindContext(standardContext, enc, standardContext);
+        ContextBindings.bindContext(standardContext, rootContext, standardContext);
         if( logger.isDebugEnabled() ) {
             logger.debug("Bound enc for " + standardContext);
         }
@@ -270,9 +283,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private void unbindEnc(StandardContext standardContext) {
         encs.remove(standardContext.getPath());
 
-        // turn Tomcat's naming system back on
-        standardContext.setUseNaming(true);
-
         ContextBindings.unbindContext(standardContext, standardContext);
 
         ContextBindings.unbindClassLoader(standardContext, standardContext, standardContext.getLoader().getClassLoader());
@@ -285,5 +295,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         }
         return assembler;
+    }
+
+    private String getNamingContextName(StandardContext standardContext) {
+        Container parent = standardContext.getParent();
+        if (parent == null) {
+            return standardContext.getName();
+        } else {
+            Stack<String> stk = new Stack<String>();
+            StringBuffer buff = new StringBuffer();
+            while (parent != null) {
+                stk.push(parent.getName());
+                parent = parent.getParent();
+            }
+            while (!stk.empty()) {
+                buff.append("/").append(stk.pop());
+            }
+            buff.append(standardContext.getName());
+            return buff.toString();
+        }
     }
 }

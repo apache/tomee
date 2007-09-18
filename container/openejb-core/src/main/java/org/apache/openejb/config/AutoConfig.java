@@ -765,7 +765,11 @@ public class AutoConfig implements DynamicDeployer {
         // Auto create a resource using the first provider that can supply a resource of the desired type
         String providerId = ServiceUtils.getServiceProviderId(type);
         if (providerId == null) {
-                throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
+            // if there are any existing resources of the desired type, use the first one
+            if (resourceIds.size() > 0) {
+                return resourceIds.get(0);
+            }
+            throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
 
         Resource resource = new Resource(resourceId, providerId, null);
