@@ -52,7 +52,7 @@ import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
-import org.apache.openjpa.persistence.OpenJPAEntityManager;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
@@ -117,8 +117,8 @@ public class JpaCmpEngine implements CmpEngine {
             return;
         }
 
-        if (entityManager instanceof OpenJPAEntityManager) {
-            OpenJPAEntityManager openjpaEM = (OpenJPAEntityManager) entityManager;
+        if (entityManager instanceof OpenJPAEntityManagerSPI) {
+            OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
             OpenJPALifecycleListener listener = new OpenJPALifecycleListener();
             openjpaEM.addLifecycleListener(listener, (Class[])null);
             entityManagerListeners.put(entityManager,  listener);
