@@ -32,18 +32,8 @@
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>README.txt</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <!-- TODO: There're two ways to leverage MRRP: 
-         -  o the one below
-         -  o pom.xml where MRRP is configured to output the files in the directory of our choice 
-         -->
-      <directory>target/maven-shared-archive-resources/META-INF</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>LICENSE</include>
-        <include>NOTICE</include>
+        <include>NOTICE.txt</include>
+        <include>LICENSE.txt</include>
       </includes>
     </fileSet>
     <fileSet>

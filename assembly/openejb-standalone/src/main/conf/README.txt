@@ -16,7 +16,7 @@
 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
- OpenEJB 3.0.0 Configuration Directory Documentation
+ OpenEJB 3.0 Configuration Directory Documentation
 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -92,7 +92,7 @@ DETAILS ABOUT EACH FILE
     
     Such as:
     
-    <Resource id="MyDataSource">
+    <Resource id="MyDataSource" type="DataSource">
       username foo
       password bar
     </Resource>
@@ -101,7 +101,7 @@ DETAILS ABOUT EACH FILE
     properties file (along with semi-colon).  So the above is equivalent
     to:
     
-    <Resource id="MyDataSource">
+    <Resource id="MyDataSource" type="DataSource">
       username = foo
       password = bar
     </Resource>
@@ -122,7 +122,7 @@ DETAILS ABOUT EACH FILE
     purposes.  It is safe to delete them and be assured that no behavior
     will change if a smaller config file is desired.
     
-    CATELOG OF ALL PROPERTIES
+    CATALOG OF ALL PROPERTIES
     
     To know what properties can be overriden the './bin/openejb
     properties' command is very useful: see

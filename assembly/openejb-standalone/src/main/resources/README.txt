@@ -29,37 +29,26 @@ Using OpenEJB
  
  Now all you need to do is to type:
  
-   openejb help
+   openejb --help
  
  For Windows users, that looks like this:
   
-   C:\openejb> openejb help
+   C:\openejb> openejb --help
  
  For UNIX/Linux/Mac OS X users, that looks like this:
  
-   [user@host openejb]# openejb help
+   [user@host openejb]# openejb --help
  
  You really only need to know two commands to use OpenEJB, deploy
  and start.  Both are completely documented and have examples.
  
  For help information and command options, try this:
  
-   openejb deploy -help
-   openejb start -help
+   openejb deploy --help
+   openejb start --help
  
- For examples on using the command and options, try this:
- 
-   openejb deploy -examples
-   openejb start -examples
  
  That's it!
-
-___________________
-Documentation
-===================
- 
- The initial versions of the documentation for this release 
- are in the directory docs/html,  see file docs/html/index.html
 
 ___________________
 Support
