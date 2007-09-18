@@ -316,6 +316,12 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
         <version>4.1.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
@@ -595,6 +601,10 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -614,6 +624,10 @@
           <exclusion>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jsr173_api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
