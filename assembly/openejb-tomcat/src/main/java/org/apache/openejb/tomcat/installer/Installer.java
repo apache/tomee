@@ -148,8 +148,6 @@ public class Installer {
         if (writeAll(paths.getServerXmlFile(), newServerXml)) {
             addInfo("Added OpenEJB listener to Tomcat server.xml file.");
         }
-
-        addInfo("Added OpenEJB listener to Tomcat server.xml file.");
     }
 
     private void installJavaagent() {
@@ -518,7 +516,7 @@ public class Installer {
     }
 
     private void addInfo(String message) {
-        System.out.println(message);
+        infos.add(message);
     }
 
 }
