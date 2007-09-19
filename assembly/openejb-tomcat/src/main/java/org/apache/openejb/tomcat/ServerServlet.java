@@ -38,13 +38,11 @@ public class ServerServlet extends HttpServlet {
     }
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(request.getContextPath() + " | " + request.getServletPath() + " | " + request.getPathInfo());
         ServletInputStream in = request.getInputStream();
         ServletOutputStream out = response.getOutputStream();
         try {
             ejbServer.service(in, out);
         } catch (ServiceException e) {
-            e.printStackTrace();
             throw new ServletException("ServerService error: " + ejbServer.getClass().getName() + " -- " + e.getMessage(), e);
         }
     }
