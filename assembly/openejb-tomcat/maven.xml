@@ -206,7 +206,6 @@
     <goal name="setup:itests-war">
       <j:set var="targetDir" value="${basedir}/target/"/>
       <j:set var="itests.war" value="openejb-tomcat-${openejb.version}-itests.war"/>
-      <mkdir dir="${tomcat.home}/apps"/>
 
       <u:file var="fileAsFile" name="${tomcat.home}/webapps/itests.war"/>
       <j:if test="${!(fileAsFile.exists())}">
@@ -227,7 +226,7 @@
       <attainGoal name="tomcat6"/>
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
-      <attainGoal name="setup:itests"/>
+      <attainGoal name="setup:itests-war"/>
       <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat"/>
     </goal>
@@ -236,7 +235,7 @@
       <attainGoal name="tomcat6"/>
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
-      <attainGoal name="setup:itests"/>
+      <attainGoal name="setup:itests-war"/>
       <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat-debug"/>
     </goal>
@@ -244,7 +243,7 @@
     <goal name="test:tomcat">
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
-      <attainGoal name="setup:itests"/>
+      <attainGoal name="setup:itests-war"/>
       <attainGoal name="start:tomcat"/>
       <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>

@@ -169,13 +169,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private AppModule loadApplication(ServletContext servletContext, ClassLoader classLoader) {
         // read the web.xml
-        WebApp webApp = null;
+        WebApp webApp = new WebApp();
         try {
             URL webXmlUrl = servletContext.getResource("/WEB-INF/web.xml");
-            webApp = ReadDescriptors.readWebApp(webXmlUrl);
+            if (webXmlUrl != null) {
+                webApp = ReadDescriptors.readWebApp(webXmlUrl);
+            }
         } catch (Exception e) {
             logger.error("Unable to load web.xml in war " + servletContext.getContextPath() + ": Exception: " + e.getMessage(), e);
-            return null;
         }
 
         String basePath = servletContext.getRealPath(".");
