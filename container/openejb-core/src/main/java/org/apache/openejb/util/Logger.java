@@ -35,6 +35,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Map;
 
 public class Logger {
 
@@ -125,9 +126,9 @@ public class Logger {
 			boolean externalLogging = Boolean.parseBoolean(prop);
 			if(!externalLogging)
 				configureInternal();
-		} catch (IOException e) {
+		} catch (Exception e) {
          // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used. 
-			
+			e.printStackTrace();
 		}
 	}
 
@@ -143,7 +144,8 @@ public class Logger {
 				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
 				Properties props = new Properties();
 				props.load(bis);
-				PropertyConfigurator.configure(props);
+                preprocessProperties(props);
+                PropertyConfigurator.configure(props);
 				try{
 					bis.close();
 				}catch(IOException e){
@@ -157,13 +159,25 @@ public class Logger {
 		} 
 	}
 
-	private static void configureEmbedded(){
+    private static void preprocessProperties(Properties props) {
+        String openejbHome = SystemInstance.get().getHome().getDirectory().getAbsolutePath();
+        String openejbBase = SystemInstance.get().getBase().getDirectory().getAbsolutePath();
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            String value = (String) entry.getValue();
+            value = value.replace("${openejb.home}", openejbHome);
+            value = value.replace("${openejb.base}", openejbBase);
+            entry.setValue(value);
+        }
+    }
+
+    private static void configureEmbedded(){
     	URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
     	if(resource != null)
     		PropertyConfigurator.configure(resource);
     	else
     		System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
     }
+
     private static void installLoggingPropertiesFile(File loggingPropertiesFile) throws IOException {
     	URL resource = Thread.currentThread().getContextClassLoader().getResource(LOGGING_PROPERTIES_FILE);
         if(resource == null){
@@ -184,6 +198,7 @@ public class Logger {
         
         Properties props = new Properties();
         props.load(bis);
+        preprocessProperties(props);
 		BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(loggingPropertiesFile));
 		bout.write(byteArray);
         PropertyConfigurator.configure(props);

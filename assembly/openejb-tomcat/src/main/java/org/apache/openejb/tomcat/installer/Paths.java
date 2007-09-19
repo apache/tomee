@@ -73,11 +73,11 @@ public class Paths {
 
     public File getServerXmlFile() {
         if (serverXmlFile == null) {
-            File catalinaBaseDir = getCatalinaBaseDir();
-            if (catalinaBaseDir == null) return null;
+            File confdir = getCatalinaConfDir();
 
-            File catalinaConfDir = new File(catalinaBaseDir, "conf");
-            serverXmlFile = new File(catalinaConfDir, "server.xml");
+            if (confdir == null) return null;
+
+            serverXmlFile = new File(confdir, "server.xml");
         }
         return serverXmlFile;
     }
@@ -96,6 +96,14 @@ public class Paths {
         if (catalinaHomeDir == null) return null;
 
         return new File(catalinaHomeDir, "lib");
+    }
+
+    public File getCatalinaConfDir() {
+        File catalinaBaseDir = getCatalinaBaseDir();
+
+        if (catalinaBaseDir == null) return null;
+
+        return new File(catalinaBaseDir, "conf");
     }
 
     public File getCatalinaBinDir() {
@@ -126,6 +134,10 @@ public class Paths {
 
     public File getOpenEJBJavaagentJar() {
         return findOpenEJBJar("openejb-javaagent");
+    }
+
+    public File getOpenEJBCoreJar() {
+        return findOpenEJBJar("openejb-core");
     }
 
     private File findOpenEJBJar(String namePrefix) {
@@ -159,6 +171,7 @@ public class Paths {
         }
 
         verifyWritableDirectory("Catalina lib", getCatalinaLibDir());
+        verifyWritableDirectory("Catalina conf", getCatalinaConfDir());
         verifyDirectory("Catalina bin", getCatalinaBinDir());
         verifyWritableFile("Catalina server.xml", getServerXmlFile());
         verifyWritableFile("Catalina catalina.sh", getCatalinaShFile());
@@ -177,6 +190,11 @@ public class Paths {
         }
         verifyFile("OpenEJB javaagent jar", openejbJavaagentJar);
 
+        File openejbCoreJar = getOpenEJBCoreJar();
+        if (openejbCoreJar != null) {
+            verifyFile("OpenEJB core jar", openejbCoreJar);
+        }
+        
         return !hasErrors();
     }
 
@@ -263,6 +281,7 @@ public class Paths {
         printFile(out, "Catalina home: ", getCatalinaHomeDir());
         printFile(out, "Catalina base: ", getCatalinaBaseDir());
         printFile(out, "Catalina server.xml: ", getServerXmlFile());
+        printFile(out, "Catalina conf: ", getCatalinaConfDir());
         printFile(out, "Catalina lib: ", getCatalinaLibDir());
         printFile(out, "Catalina bin: ", getCatalinaBinDir());
         printFile(out, "Catalina catalina.sh: ", getCatalinaShFile());

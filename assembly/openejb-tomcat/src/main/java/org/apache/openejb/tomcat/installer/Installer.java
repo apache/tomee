@@ -32,6 +32,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.jar.JarFile;
 
 public class Installer {
     public enum Status {
@@ -88,6 +90,8 @@ public class Installer {
 
         installJavaagent();
 
+        installConfigFiles();
+        
         if (!hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
@@ -223,6 +227,83 @@ public class Installer {
         // overwrite the catalina.sh file
         if (writeAll(paths.getCatalinaShFile(), newCatalinaSh)) {
             addInfo("Added OpenEJB javaagent to Tomcat catalina.sh file.");
+        }
+    }
+
+    private void installConfigFiles() {
+        if (paths.getOpenEJBCoreJar() == null) {
+            // the core jar contains the config files
+            return;
+        }
+        JarFile coreJar = null;
+        try {
+            coreJar = new JarFile(paths.getOpenEJBCoreJar());
+        } catch (IOException e) {
+            return;
+        }
+
+        //
+        // conf/openejb.xml
+        //
+        File openEjbXmlFile = new File(paths.getCatalinaConfDir(), "openejb.xml");
+        if (!openEjbXmlFile.exists()) {
+            // read in the openejb.xml file from the openejb core jar
+            String openEjbXml = readEntry(coreJar, "default.openejb.conf");
+            if (openEjbXml != null) {
+                if (writeAll(openEjbXmlFile, openEjbXml)) {
+                    addInfo("Added openejb.xml to Tomcat conf directory.");
+                }
+            }
+        }
+
+
+        //
+        // conf/logging.properties
+        //
+        String openejbLoggingProps = readEntry(coreJar, "logging.properties");
+        if (openejbLoggingProps != null) {
+            File loggingPropsFile = new File(paths.getCatalinaConfDir(), "logging.properties");
+            String newLoggingProps = null;
+            if (!loggingPropsFile.exists()) {
+                newLoggingProps = openejbLoggingProps;
+            } else {
+                String loggingPropsOriginal = readAll(loggingPropsFile);
+                if (!loggingPropsOriginal.contains("OpenEJB")) {
+                    // strip off license header
+                    String[] strings = openejbLoggingProps.split("## --*", 3);
+                    if (strings.length == 3) {
+                        openejbLoggingProps = strings[2];
+                    }
+                    // append our properties
+                    newLoggingProps = loggingPropsOriginal +
+                            "\r\n" +
+                            "############################################################\r\n" +
+                            "# OpenEJB Logging Configuration.\r\n" +
+                            "############################################################\r\n" +
+                            openejbLoggingProps + "\r\n";
+                }
+            }
+            if (newLoggingProps != null) {
+                if (writeAll(loggingPropsFile, newLoggingProps)) {
+                    addInfo("Added OpenEJB logging configuration to Tomcat logging.properties file.");
+                }
+            }
+        }
+    }
+
+    private String readEntry(JarFile jarFile, String name) {
+        ZipEntry entry = jarFile.getEntry(name);
+        if (entry == null) return null;
+        InputStream in = null;
+        try {
+            in = jarFile.getInputStream(entry);
+            String text = readAll(in);
+            return text;
+        } catch (Exception e) {
+            addError("Unable to read " + name + " from " + jarFile.getName());
+            return null;
+        } finally {
+            close(in);
         }
     }
 
@@ -390,6 +471,7 @@ public class Installer {
         errors.add(message);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private void addError(String message, Exception e) {
         // todo add exception somehow
         System.out.println(message);
