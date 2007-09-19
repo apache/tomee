@@ -16,12 +16,35 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
+
 <assembly>
-  <id>test</id>
+  <id>client</id>
   <formats>
     <format>jar</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <outputDirectory>META-INF</outputDirectory>
+      <includes>
+        <include>README.txt</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <!-- TODO: There're two ways to leverage MRRP:
+         -  o the one below
+         -  o pom.xml where MRRP is configured to output the files in the directory of our choice
+         -->
+      <directory>target/maven-shared-archive-resources/META-INF</directory>
+      <outputDirectory>META-INF</outputDirectory>
+      <includes>
+        <include>LICENSE</include>
+        <include>NOTICE</include>
+      </includes>
+    </fileSet>
+  </fileSets>
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>

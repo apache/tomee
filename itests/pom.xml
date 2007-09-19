@@ -35,5 +35,7 @@
     <module>openejb-itests-beans</module>
     <module>openejb-itests-interceptor-beans</module>
     <module>openejb-itests-app</module>
+    <module>openejb-itests-web</module>
+    <module>openejb-itests-standalone-client</module>
   </modules>
 </project>

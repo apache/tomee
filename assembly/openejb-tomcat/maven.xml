@@ -182,14 +182,9 @@
     <!--======================-->
 
     <goal name="setup:loader-webapp">
-      <!-- Unzip webapp and set openejb.home -->
-      <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}-bin.zip" dest="${tomcat.webapps}"/>
-      <!--<delete file="${tomcat.home}/lib/annotations-api.jar"/>-->
-      
-      <!--<u:file var="fileAsFile" name="${tomcat.dist}/conf/Catalina/localhost"/>-->
-      <!--<j:if test="${!(fileAsFile.exists())}">-->
-        <!--<move file="${tomcat.webapps}/openejb/openejb.xml" todir="${tomcat.home}/conf/Catalina/localhost"/>-->
-      <!--</j:if>-->
+      <!-- Unzip openejb war -->
+      <mkdir dir="${tomcat.webapps}/openejb"/>
+      <unjar src="${basedir}/target/openejb-tomcat-${openejb.version}.war" dest="${tomcat.webapps}/openejb"/>
     </goal>
 
     <goal name="setup:itests">
@@ -205,7 +200,7 @@
 
     <goal name="setup:itests-war">
       <j:set var="targetDir" value="${basedir}/target/"/>
-      <j:set var="itests.war" value="openejb-tomcat-${openejb.version}-itests.war"/>
+      <j:set var="itests.war" value="openejb-itests-web-${openejb.version}.war"/>
 
       <u:file var="fileAsFile" name="${tomcat.home}/webapps/itests.war"/>
       <j:if test="${!(fileAsFile.exists())}">
@@ -245,7 +240,7 @@
       <attainGoal name="setup:loader-webapp"/>
       <attainGoal name="setup:itests-war"/>
       <attainGoal name="start:tomcat"/>
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
+      <java jar="target/openejb-itests-standalone-client-${openejb.version}.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
           <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
@@ -255,7 +250,7 @@
     </goal>
 
     <goal name="test:client">
-      <java jar="target/openejb-tomcat-${openejb.version}-test.jar" fork="yes">
+      <java jar="target/openejb-itests-standalone-client-${openejb.version}.jar" fork="yes">
         <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>

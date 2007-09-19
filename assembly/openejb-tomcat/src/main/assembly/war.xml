@@ -17,10 +17,10 @@
     limitations under the License.
 -->
 
-<!-- $Rev$ $Date$ -->
+<!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>itests</id>
+  <id>war</id>
   <formats>
     <format>war</format>
   </formats>
@@ -43,37 +43,51 @@
         <include>NOTICE</include>
       </includes>
     </fileSet>
-    <!--<fileSet>-->
-      <!--<directory>target/classes</directory>-->
-      <!--<outputDirectory>openejb</outputDirectory>-->
-      <!--<excludes>-->
-          <!--<exclude>org/**</exclude>-->
-      <!--</excludes>-->
-    <!--</fileSet>-->
-    <!--<fileSet>-->
-      <!--<directory>target</directory>-->
-      <!--<outputDirectory>openejb/lib</outputDirectory>-->
-      <!--<includes>-->
-        <!--<include>openejb-tomcat*.jar</include>-->
-      <!--</includes>-->
-    <!--</fileSet>-->
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+          <exclude>org/**</exclude>
+          <exclude>META-INF/LICENSE</exclude>
+          <exclude>META-INF/NOTICE</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>WEB-INF/classes</outputDirectory>
+      <includes>
+          <include>org/apache/openejb/tomcat/installer/**</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>openejb-tomcat*.jar</include>
+      </includes>
+      <excludes>
+        <!-- TODO: Fix the exclusion to pick up the proper version -->
+        <exclude>openejb-tomcat-3.0-incubating-SNAPSHOT-test.*</exclude>
+      </excludes>
+    </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>WEB-INF/lib</outputDirectory>
-      <includes>
-          <include>junit:junit</include>
-          <include>org.apache.openejb:openejb-itests-beans</include>
-      </includes>
-      <scope>test</scope>
+      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+          <exclude>org.apache.tomcat:catalina</exclude>
+          <exclude>org.apache.tomcat:annotations-api</exclude>
+      </excludes>
     </dependencySet>
-    <!--<dependencySet>-->
-      <!--<outputDirectory>openejb/WEB-INF/lib</outputDirectory>-->
-      <!--<scope>runtime</scope>-->
-      <!--<includes>-->
-          <!--<include>org.apache.openejb:openejb-loader</include>-->
-      <!--</includes>-->
-    <!--</dependencySet>-->
+    <dependencySet>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+      <scope>runtime</scope>
+      <includes>
+          <include>org.apache.openejb:openejb-loader</include>
+          <include>org.codehaus.swizzle:swizzle-stream</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
 </assembly>
 
