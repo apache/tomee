@@ -44,7 +44,6 @@ public class Installer {
     private Status status = Status.NONE;
 
     private final boolean listenerInstalled;
-    private final boolean annotationJarRemoved;
     private final boolean agentInstalled;
 
     // Thi may need to be redesigned but the goal is to provide some feedback on what happened
@@ -60,21 +59,10 @@ public class Installer {
         if (listenerInstalled == null) listenerInstalled = false;
         this.listenerInstalled = listenerInstalled;
 
-        // has the annotation jar been removed
-        boolean annotationJarRemoved = false;
-        try {
-            // Tomcat persistence context class is missing the properties method
-            Class<?> persistenceContextClass = Class.forName("javax.persistence.PersistenceContext");
-            persistenceContextClass.getMethod("properties", (Class[]) null);
-            annotationJarRemoved = true;
-        } catch (Exception e) {
-        }
-        this.annotationJarRemoved = annotationJarRemoved;
-
         // is the OpenEJB javaagent installed
         agentInstalled = invokeStaticNoArgMethod("org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
 
-        if (listenerInstalled && annotationJarRemoved && agentInstalled) {
+        if (listenerInstalled && agentInstalled) {
             status = Status.INSTALLED;
         }
     }
@@ -84,8 +72,6 @@ public class Installer {
     }
 
     protected void install() {
-        removeAnnotationJar();
-
         installListener();
 
         installJavaagent();
@@ -94,28 +80,6 @@ public class Installer {
         
         if (!hasErrors()) {
             status = Status.REBOOT_REQUIRED;
-        }
-    }
-
-    private void removeAnnotationJar() {
-        if (annotationJarRemoved) {
-            addInfo("Annotation Jar already removed");
-            return;
-        }
-
-        File destination = new File(paths.getCatalinaLibDir(), "annotations-api.jar");
-
-        // if the file doesn't exist, there is nothing to do
-        if (!destination.exists()) {
-            return;
-        }
-
-        // attempt to delete the file
-        if (destination.delete()) {
-            addInfo("Deleted non-compliant (invalid) Tomcat annotation jar.");
-        } else {
-            // generally delete will fail on Windows
-            addWarning("Can not delete non-compliant (invalid) Tomcat annotation jar.  Jar havs been marked to be deleted on a normal VM exit.");
         }
     }
 
@@ -216,7 +180,13 @@ public class Installer {
 
         // add our magic bits to the catalina sh file
         String openejbJavaagentPath = paths.getCatalinaBaseDir().toURI().relativize(paths.getOpenEJBJavaagentJar().toURI()).getPath();
+        String updatedAnnotationApiPath = paths.getCatalinaBaseDir().toURI().relativize(paths.getUpdatedAnnotationApiJar().toURI()).getPath();
         String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
+                "# Update non-compliant Tomcat annotation-api.jar\n" +
+                "if [ -r \"$CATALINA_BASE\"/" + updatedAnnotationApiPath + " ]; then\n" +
+                "  cp \"$CATALINA_BASE\"/" + updatedAnnotationApiPath + "  \"$CATALINA_HOME\"/lib/annotations-api.jar \n" +
+                "fi\n" +
+                "\n" +
                 "# Add OpenEJB javaagent\n" +
                 "if [ -r \"$CATALINA_BASE\"/" + openejbJavaagentPath + " ]; then\n" +
                 "  JAVA_OPTS=\"\"-javaagent:$CATALINA_BASE/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
@@ -486,6 +456,7 @@ public class Installer {
         return warnings;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private void addWarning(String message) {
         System.out.println(message);
     }

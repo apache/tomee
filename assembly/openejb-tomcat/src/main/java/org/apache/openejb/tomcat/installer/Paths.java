@@ -154,6 +154,12 @@ public class Paths {
         return openejbLoaderJar;
     }
 
+    public File getUpdatedAnnotationApiJar() {
+        if (servletContext == null) return null;
+
+        return new File(servletContext.getRealPath("tomcat/annotations-api.jar"));
+    }
+
     public boolean verify() {
         if (getCatalinaHomeDir() == null) {
             addError("Catalina home directory is not defined");
@@ -194,6 +200,8 @@ public class Paths {
         if (openejbCoreJar != null) {
             verifyFile("OpenEJB core jar", openejbCoreJar);
         }
+
+        verifyFile("Updated Tomcat annotation-api jar", getUpdatedAnnotationApiJar());
         
         return !hasErrors();
     }

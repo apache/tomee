@@ -36,7 +36,7 @@
 
     <goal name="tomcat6">
       <j:set var="tomcat.branch" value="6"/>
-      <j:set var="tomcat.version" value="6.0.10"/>
+      <j:set var="tomcat.version" value="6.0.14"/>
       <j:set var="tomcat.prefix" value="apache"/>
       <j:set var="tomcat.server.lib" value="lib"/>
       <j:set var="tomcat.server.webapps" value="webapps"/>
