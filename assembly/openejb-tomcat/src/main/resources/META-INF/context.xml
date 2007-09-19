@@ -17,5 +17,5 @@
     limitations under the License.
 -->
 <Context>
-  <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="127.0.0.1,0:0:0:0:0:0:0:1,0:0:0:0:0:0:0:1%0" deny=""/>
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="127\.0\.0\.1,0:0:0:0:0:0:0:1(%.*)?" deny=""/>
 </Context>
