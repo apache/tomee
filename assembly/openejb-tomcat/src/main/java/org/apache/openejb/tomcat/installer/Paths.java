@@ -122,6 +122,14 @@ public class Paths {
         return new File(binDir, "catalina.sh");
     }
 
+    public File getCatalinaBatFile() {
+        File binDir = getCatalinaBinDir();
+
+        if (binDir == null) return null;
+
+        return new File(binDir, "catalina.bat");
+    }
+
     public File getOpenEJBLibDir() {
         if (servletContext == null) return null;
 
@@ -181,6 +189,7 @@ public class Paths {
         verifyDirectory("Catalina bin", getCatalinaBinDir());
         verifyWritableFile("Catalina server.xml", getServerXmlFile());
         verifyWritableFile("Catalina catalina.sh", getCatalinaShFile());
+        verifyWritableFile("Catalina catalina.sh", getCatalinaBatFile());
 
         verifyDirectory("OpenEJB lib", getOpenEJBLibDir());
 
@@ -293,6 +302,7 @@ public class Paths {
         printFile(out, "Catalina lib: ", getCatalinaLibDir());
         printFile(out, "Catalina bin: ", getCatalinaBinDir());
         printFile(out, "Catalina catalina.sh: ", getCatalinaShFile());
+        printFile(out, "Catalina catalina.bat: ", getCatalinaBatFile());
         printFile(out, "OpenEJB lib: ", getOpenEJBLibDir());
         printFile(out, "OpenEJB loader jar: ", getOpenEJBLoaderJar());
         printFile(out, "OpenEJB javaagent jar: ", getOpenEJBJavaagentJar());

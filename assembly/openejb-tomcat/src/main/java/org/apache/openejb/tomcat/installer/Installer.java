@@ -158,6 +158,9 @@ public class Installer {
             return;
         }
 
+        //
+        // bin/catalina.sh
+        //
 
         // read the catalina sh file
         String catalinaShOriginal = readAll(paths.getCatalinaShFile());
@@ -197,6 +200,50 @@ public class Installer {
         // overwrite the catalina.sh file
         if (writeAll(paths.getCatalinaShFile(), newCatalinaSh)) {
             addInfo("Added OpenEJB javaagent to Tomcat catalina.sh file.");
+        }
+
+        //
+        // bin/catalina.bat
+        //
+
+        // read the catalina bat file
+        String catalinaBatOriginal = readAll(paths.getCatalinaBatFile());
+
+        // catalina bat will be null if we couldn't read the file
+        if (catalinaBatOriginal == null) {
+            return;
+        }
+
+        // does the catalina bat contain our comment... it is possible that they commented out the magic script code, but there is no way to detect that
+        if (catalinaBatOriginal.contains("Add OpenEJB javaagent")) {
+            addInfo("OpenEJB javaagent already declared in Tomcat catalina.bat file.");
+            return;
+        }
+
+        // if we can't backup the file, do not modify it
+        if (!backup(paths.getCatalinaBatFile())) {
+            return;
+        }
+
+        // add our magic bits to the catalina bat file
+        openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
+        updatedAnnotationApiPath = updatedAnnotationApiPath.replace('/', '\\');
+        String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
+                "rem Update non-compliant Tomcat annotation-api.jar\r\n" +
+                "if not exist \"%CATALINA_BASE%\\" + updatedAnnotationApiPath + "\" goto noUpdatedAnnotationJar\r\n" +
+                "copy /Y \"%CATALINA_BASE%\\" + updatedAnnotationApiPath + "\" \"%CATALINA_HOME%\\lib\\annotations-api.jar\"\r\n" +
+                ":noUpdatedAnnotationJar\r\n" +
+                "\r\n" +
+                "rem Add OpenEJB javaagent\r\n" +
+                "if not exist \"%CATALINA_BASE%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
+                "set JAVA_OPTS=\"-javaagent:%CATALINA_BASE%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
+                ":noOpenEJBJavaagent\r\n" +
+                "\r\n" +
+                "rem ----- Execute The Requested Command");
+
+        // overwrite the catalina.bat file
+        if (writeAll(paths.getCatalinaBatFile(), newCatalinaBat)) {
+            addInfo("Added OpenEJB javaagent to Tomcat catalina.bat file.");
         }
     }
 
