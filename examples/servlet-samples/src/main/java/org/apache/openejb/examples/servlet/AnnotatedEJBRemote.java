@@ -17,34 +17,11 @@
  */
 package org.apache.openejb.examples.servlet;
 
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
-import javax.annotation.Resource;
+import javax.ejb.Remote;
 
-@Stateless
-public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
-    @Resource
-    private DataSource ds;
+@Remote
+public interface AnnotatedEJBRemote {
+    String getName();
 
-    private String name = "foo";
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public DataSource getDs() {
-        return ds;
-    }
-
-    public void setDs(DataSource ds) {
-        this.ds = ds;
-    }
-
-    public String toString() {
-        return "AnnotatedEJB[name=" + name + "]";
-    }
+    void setName(String name);
 }

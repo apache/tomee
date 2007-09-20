@@ -18,7 +18,9 @@
 package org.apache.openejb.examples.servlet;
 
 import javax.sql.DataSource;
+import javax.ejb.Local;
 
+@Local
 public interface AnnotatedEJBLocal {
     String getName();
 

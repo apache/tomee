@@ -25,25 +25,53 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.IOException;
 
 public class AnnotatedServlet extends HttpServlet {
     @EJB
-    private AnnotatedEJBLocal ejb;
+    private AnnotatedEJBLocal localEJB;
+
+    @EJB
+    private AnnotatedEJBRemote remoteEJB;
 
     @Resource
     private DataSource ds;
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
 
-        out.println("@EJB=" + ejb);
-        if (ejb != null) {
-            out.println("@EJB.getName()=" + ejb.getName());
-            out.println("@EJB.getDs()=" + ejb.getDs());
+        out.println("Local EJB");
+        out.println("@EJB=" + localEJB);
+        if (localEJB != null) {
+            out.println("@EJB.getName()=" + localEJB.getName());
+            out.println("@EJB.getDs()=" + localEJB.getDs());
         }
+        out.println("JNDI=" + lookupField("localEJB"));
+        out.println();
 
+        out.println("Remote EJB");
+        out.println("@EJB=" + remoteEJB);
+        if (localEJB != null) {
+            out.println("@EJB.getName()=" + remoteEJB.getName());
+        }
+        out.println("JNDI=" + lookupField("remoteEJB"));
+        out.println();
+
+
+        out.println("DataSource");
         out.println("@Resource=" + ds);
+        out.println("JNDI=" + lookupField("ds"));
+    }
+
+    private Object lookupField(String name) {
+        try {
+            return new InitialContext().lookup("java:comp/env/" + getClass().getName() + "/" + name);
+        } catch (NamingException e) {
+            return null;
+        }
     }
 }
