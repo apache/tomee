@@ -18,6 +18,8 @@ package org.apache.openejb.util;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.SimpleLayout;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -36,6 +38,8 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Logger {
 
@@ -160,15 +164,58 @@ public class Logger {
         }
     }
 
-    private static void preprocessProperties(Properties props) {
-        String openejbHome = SystemInstance.get().getHome().getDirectory().getAbsolutePath();
-        String openejbBase = SystemInstance.get().getBase().getDirectory().getAbsolutePath();
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+    private static void preprocessProperties(Properties properties) {
+        FileUtils base = SystemInstance.get().getBase();
+        File confDir = new File(base.getDirectory(), "conf");
+        File baseDir = base.getDirectory();
+        File userDir = new File("foo").getParentFile();
+
+        File[] paths = {confDir, baseDir, userDir};
+
+        List missing = new ArrayList();
+
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            String key = (String) entry.getKey();
             String value = (String) entry.getValue();
-            value = value.replace("${openejb.home}", openejbHome);
-            value = value.replace("${openejb.base}", openejbBase);
-            entry.setValue(value);
+
+
+            if (key.endsWith(".File")) {
+
+                boolean found = false;
+                for (int i = 0; i < paths.length && !found; i++) {
+                    File path = paths[i];
+                    File logfile = new File(path, value);
+                    if (logfile.getParentFile().exists()) {
+                        properties.setProperty(key, logfile.getAbsolutePath());
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    File logfile = new File(paths[0], value);
+                    missing.add(logfile);
+                }
+            }
         }
+
+        if (missing.size() > 0) {
+            org.apache.log4j.Logger logger = getFallabckLogger();
+
+            logger.error("Logging may not operate as expected.  The directories for the following files do not exist so no file can be created.  See the list below.");
+            for (int i = 0; i < missing.size(); i++) {
+                File file = (File) missing.get(i);
+                logger.error("[" + i + "] " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    private static org.apache.log4j.Logger getFallabckLogger() {
+        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB.logging");
+
+        SimpleLayout simpleLayout = new SimpleLayout();
+        ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
+        logger.addAppender(newAppender);
+        return logger;
     }
 
     private static void configureEmbedded() {
