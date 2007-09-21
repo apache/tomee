@@ -60,8 +60,7 @@ import java.util.Stack;
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
-    private final Map<String, StandardContext> contexts = new LinkedHashMap<String, StandardContext>();
-    private final Map<String, Context> encs = new LinkedHashMap<String, Context>();
+    private final LinkedHashMap<String, ContextInfo> infos = new LinkedHashMap<String, ContextInfo>();
     private final GlobalListenerSupport globalListenerSupport;
     private final ConfigurationFactory configurationFactory;
     private Assembler assembler;
@@ -97,7 +96,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     //
 
     public void deploy(WebAppInfo webAppInfo) throws Exception {
-        StandardContext standardContext = contexts.get(webAppInfo.contextRoot);
+        StandardContext standardContext = getContextInfo(webAppInfo.moduleId).standardContext;
 
         if (standardContext != null) {
             JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(webAppInfo.jndiEnc, webAppInfo.moduleId);
@@ -108,10 +107,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     public void undeploy(WebAppInfo webAppInfo) throws Exception {
-        StandardContext standardContext = contexts.get(webAppInfo.contextRoot);
-        if (standardContext != null) {
-            unbindEnc(standardContext);
-        }
+        ContextInfo contextInfo = getContextInfo(webAppInfo.moduleId);
+        unbindEnc(contextInfo);
     }
 
     //
@@ -135,13 +132,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
 
         ClassLoader classLoader = standardContext.getLoader().getClassLoader();
-        ServletContext servletContext = standardContext.getServletContext();
-        AppModule appModule = loadApplication(servletContext, classLoader);
+        AppModule appModule = loadApplication(standardContext, classLoader);
 
         if (appModule != null) {
             try {
-                contexts.put(servletContext.getContextPath(), standardContext);
                 AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                ContextInfo contextInfo = getContextInfo(standardContext);
+                contextInfo.applicationId = appInfo.jarPath;
+                contextInfo.classLoader = standardContext.getLoader().getClassLoader();
                 assembler.createApplication(appInfo, classLoader);
             } catch (Exception e) {
                 logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
@@ -150,7 +148,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     public void afterStart(StandardContext standardContext) {
-        Context enc = encs.get(standardContext.getPath());
+        ContextInfo contextInfo = getContextInfo(standardContext);
+        Context enc = contextInfo.enc;
         standardContext.setAnnotationProcessor(new DefaultAnnotationProcessor(enc));
     }
 
@@ -161,13 +160,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     public void afterStop(StandardContext standardContext) {
-        contexts.remove(standardContext.getPath());
+        ContextInfo contextInfo = getContextInfo(standardContext);
+        if (contextInfo != null) {
+            try {
+                assembler.destroyApplication(contextInfo.applicationId);
+            } catch (Exception e) {
+                logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+            }
+        }
+        removeContextInfo(standardContext);
     }
 
     public void destroy(StandardContext standardContext) {
     }
 
-    private AppModule loadApplication(ServletContext servletContext, ClassLoader classLoader) {
+    private AppModule loadApplication(StandardContext standardContext, ClassLoader classLoader) {
+        ServletContext servletContext = standardContext.getServletContext();
+
         // read the web.xml
         WebApp webApp = new WebApp();
         try {
@@ -179,7 +188,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             logger.error("Unable to load web.xml in war " + servletContext.getContextPath() + ": Exception: " + e.getMessage(), e);
         }
 
-        String basePath = servletContext.getRealPath(".");
+        String basePath = new File(servletContext.getRealPath(".")).getParentFile().getAbsolutePath();
 
         List<URL> urls = null;
         try {
@@ -195,7 +204,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         AppModule appModule = new AppModule(appClassLoader, basePath);
 
         // add the web module itself
-        WebModule webModule = new WebModule(webApp, servletContext.getContextPath(), classLoader, basePath, null);
+        WebModule webModule = new WebModule(webApp, servletContext.getContextPath(), classLoader, basePath, getId(standardContext));
         appModule.getWebModules().add(webModule);
 
         // check each url to determine if it is an ejb jar
@@ -278,15 +287,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             logger.error("Unable to bind enc for " + standardContext.getPath(), e);
         }
 
-        encs.put(standardContext.getPath(), enc);
+        getContextInfo(standardContext).enc = enc;
     }
 
-    private void unbindEnc(StandardContext standardContext) {
-        encs.remove(standardContext.getPath());
+    private void unbindEnc(ContextInfo contextInfo) {
+        if (contextInfo != null) return;
+
+        StandardContext standardContext = contextInfo.standardContext;
+        contextInfo.enc = null;
 
         ContextBindings.unbindContext(standardContext, standardContext);
 
-        ContextBindings.unbindClassLoader(standardContext, standardContext, standardContext.getLoader().getClassLoader());
+        ContextBindings.unbindClassLoader(standardContext, standardContext, contextInfo.classLoader);
 
         ContextAccessController.unsetSecurityToken(standardContext.getName(), standardContext);
     }
@@ -315,5 +327,39 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             buff.append(standardContext.getName());
             return buff.toString();
         }
+    }
+
+    private String getId(StandardContext standardContext) {
+        return standardContext.getHostname() + "/" + standardContext.getName();
+    }
+
+    private ContextInfo getContextInfo(StandardContext standardContext) {
+        String id = getId(standardContext);
+        ContextInfo contextInfo = infos.get(id);
+        if (contextInfo == null) {
+            contextInfo = new ContextInfo();
+            contextInfo.standardContext = standardContext;
+            infos.put(id, contextInfo);
+        }
+        return contextInfo;
+    }
+
+    private ContextInfo getContextInfo(String id) {
+        ContextInfo contextInfo = infos.get(id);
+        return contextInfo;
+    }
+
+    private void removeContextInfo(StandardContext standardContext) {
+        String id = getId(standardContext);
+        infos.remove(id);
+    }
+
+    private static class ContextInfo {
+        private Context enc;
+        private String applicationId;
+        private StandardContext standardContext;
+        // we unbind the enc after stop and tomcat destroys the cl in stop
+        // so, we must hold on to classloader so we can unbind the enc
+        private ClassLoader classLoader;
     }
 }
