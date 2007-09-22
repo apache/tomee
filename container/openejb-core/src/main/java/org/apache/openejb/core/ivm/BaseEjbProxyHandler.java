@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.io.NotSerializableException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -59,6 +60,7 @@ import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
+    private static final String OPENEJB_LOCALCOPY = "openejb.localcopy";
 
     private static class ProxyRegistry {
 
@@ -184,7 +186,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     private static boolean parseRemoteCopySetting() {
         Properties properties = SystemInstance.get().getProperties();
-        String value = properties.getProperty("openejb.localcopy");
+        String value = properties.getProperty(OPENEJB_LOCALCOPY);
         if (value == null) {
             value = properties.getProperty(org.apache.openejb.core.EnvProps.INTRA_VM_COPY);
         }
@@ -498,10 +500,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
 
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
-        ObjectOutputStream out = new ObjectOutputStream(baos);
-        out.writeObject(object);
-        out.close();
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream(128);
+            ObjectOutputStream out = new ObjectOutputStream(baos);
+            out.writeObject(object);
+            out.close();
+        } catch (NotSerializableException e) {
+            throw (IOException) new NotSerializableException(e.getMessage()+" : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the "+OPENEJB_LOCALCOPY+"=false system property.").initCause(e);
+        }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ObjectInputStream in = new EjbObjectInputStream(bais);
