@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 
 /**
@@ -145,9 +148,9 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
     protected String localHome;
     protected String local;
     @XmlElement(name = "business-local")
-    protected List<String> businessLocal;
+    protected LinkedHashSet<String> businessLocal;
     @XmlElement(name = "business-remote")
-    protected List<String> businessRemote;
+    protected LinkedHashSet<String> businessRemote;
     @XmlElement(name = "service-endpoint")
     protected String serviceEndpoint;
     @XmlElement(name = "ejb-class")
@@ -334,9 +337,9 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         this.local = value;
     }
 
-    public List<String> getBusinessLocal() {
+    public Collection<String> getBusinessLocal() {
         if (businessLocal == null){
-            businessLocal = new ArrayList<String>();
+            businessLocal = new LinkedHashSet<String>();
         }
         return businessLocal;
     }
@@ -346,9 +349,9 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         getBusinessLocal().add(businessLocal);
     }
 
-    public List<String> getBusinessRemote() {
+    public Collection<String> getBusinessRemote() {
         if (businessRemote == null){
-            businessRemote = new ArrayList<String>();
+            businessRemote = new LinkedHashSet<String>();
         }
         return businessRemote;
     }
@@ -423,7 +426,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         assert ejbClass != null: "Set the ejbClass before calling this method";
         getAroundInvoke().add(new AroundInvoke(ejbClass, method));
     }
-    
+
     public List<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
             envEntry = new ArrayList<EnvEntry>();

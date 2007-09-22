@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 import java.util.Set;
+import java.util.Collection;
 
 
 /**
@@ -497,12 +498,12 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         return this.securityRoleRef;
     }
 
-    public List<String> getBusinessLocal() {
-        return Collections.EMPTY_LIST;
+    public Collection<String> getBusinessLocal() {
+        return Collections.EMPTY_SET;
     }
 
-    public List<String> getBusinessRemote() {
-        return Collections.EMPTY_LIST;
+    public Collection<String> getBusinessRemote() {
+        return Collections.EMPTY_SET;
     }
 
     public SecurityIdentity getSecurityIdentity() {

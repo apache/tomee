@@ -18,6 +18,7 @@
 package org.apache.openejb.jee;
 
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
@@ -42,7 +43,7 @@ public interface RemoteBean extends EnterpriseBean {
 
     public List<SecurityRoleRef> getSecurityRoleRef();
 
-    List<String> getBusinessLocal();
+    Collection<String> getBusinessLocal();
 
-    List<String> getBusinessRemote();
+    Collection<String> getBusinessRemote();
 }
