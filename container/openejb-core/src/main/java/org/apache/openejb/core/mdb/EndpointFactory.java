@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.geronimo.transaction.manager.NamedXAResource;
+import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
@@ -54,7 +56,11 @@ public class EndpointFactory implements MessageEndpointFactory {
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
-        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, xaResource);
+        // Hack to get GERONIMO-3354 error from not ocurring. 
+        //TODO Create an abstraction so that we need not use geronimo api classes(NamedXAResource).
+        //TODO Confirm that this is all that is required for transaction recovery
+        NamedXAResource wrapper = new WrapperNamedXAResource(xaResource, container.getContainerID().toString());
+        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, wrapper);
         MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         return messageEndpoint;
     }
