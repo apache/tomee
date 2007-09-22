@@ -226,7 +226,7 @@ public class DeploymentsResolver {
             if (!filterDescriptors){
                 unchecked = prefiltered.exclude(urlSet);
                 if (filterSystemApps){
-                    urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/classes/?)");
+                    unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
                 processUrls(unchecked.getUrls(), classLoader, false, base, jarList);
             }
