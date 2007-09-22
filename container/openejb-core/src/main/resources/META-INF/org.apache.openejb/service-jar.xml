@@ -160,12 +160,12 @@
     # Specifies the size of the bean pools for this
     # stateful SessionBean container.
 
-    PoolSize 100
+    PoolSize 1000
 
     # Property name that specifies the number of instances
     # to passivate at one time when doing bulk passivation.
 
-    BulkPassivate 50
+    BulkPassivate 100
 
   </ServiceProvider>
 

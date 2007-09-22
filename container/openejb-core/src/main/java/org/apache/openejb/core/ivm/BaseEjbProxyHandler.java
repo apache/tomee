@@ -35,7 +35,6 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.WeakHashMap;
 import java.util.Set;
 
@@ -249,7 +248,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 IntraVmCopyMonitor.preCopyOperation();
                 try {
                     throwable = (Throwable) copyObj(throwable);
-                    throw convertException(throwable, method);
+                    throw convertException(throwable, method, interfce);
                 } finally {
                     IntraVmCopyMonitor.postCopyOperation();
                 }
@@ -290,7 +289,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 IntraVmCopyMonitor.preCrossClassLoaderOperation();
                 try {
                     throwable = (Throwable) copyObj(throwable);
-                    throw convertException(throwable, method);
+                    throw convertException(throwable, method, interfce);
                 } finally {
                     IntraVmCopyMonitor.postCrossClassLoaderOperation();
                 }
@@ -321,7 +320,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
                 return _invoke(proxy, interfce, method, args);
             } catch (Throwable t) {
-                throw convertException(t, method);
+                throw convertException(t, method, interfce);
             }
         }
     }
@@ -331,10 +330,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
      * will be the top element in the stacktrace
      * @param e
      * @param method
+     * @param interfce
      */
-    protected Throwable convertException(Throwable e, Method method) {
+    protected Throwable convertException(Throwable e, Method method, Class interfce) {
+        boolean rmiRemote = java.rmi.Remote.class.isAssignableFrom(interfce);
         if (e instanceof TransactionRequiredException) {
-            if (interfaceType.isBusiness()) {
+            if (!rmiRemote && interfaceType.isBusiness()) {
                 return new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
             } else if (interfaceType.isLocal()) {
                 return new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
@@ -343,7 +344,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (e instanceof TransactionRolledbackException) {
-            if (interfaceType.isBusiness()) {
+            if (!rmiRemote && interfaceType.isBusiness()) {
                 return new EJBTransactionRolledbackException(e.getMessage()).initCause(getCause(e));
             } else if (interfaceType.isLocal()) {
                 return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
@@ -352,7 +353,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (e instanceof NoSuchObjectException) {
-            if (interfaceType.isBusiness()) {
+            if (!rmiRemote && interfaceType.isBusiness()) {
                 return new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
             } else if (interfaceType.isLocal()) {
                 return new NoSuchObjectLocalException(e.getMessage()).initCause(getCause(e));
@@ -361,7 +362,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (e instanceof RemoteException) {
-            if (interfaceType.isBusiness()) {
+            if (!rmiRemote && interfaceType.isBusiness()) {
                 return new EJBException(e.getMessage()).initCause(getCause(e));
             } else if (interfaceType.isLocal()) {
                 return new EJBException(e.getMessage()).initCause(getCause(e));
@@ -370,7 +371,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (e instanceof AccessException) {
-            if (interfaceType.isBusiness()) {
+            if (!rmiRemote && interfaceType.isBusiness()) {
                 return new AccessLocalException(e.getMessage()).initCause(getCause(e));
             } else if (interfaceType.isLocal()) {
                 return new AccessLocalException(e.getMessage()).initCause(getCause(e));

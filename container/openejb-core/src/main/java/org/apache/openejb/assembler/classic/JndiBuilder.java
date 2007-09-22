@@ -328,7 +328,7 @@ public class JndiBuilder {
                 context.bind(name, ref);
                 bindings.add(name);
                 beanInfo.jndiNames.add(externalName);
-                logger.info("Jndi(name=" + externalName +") bound to Ejb(deployment-id="+beanInfo.ejbDeploymentId+")");
+                logger.info("Jndi(name=" + externalName +") --> Ejb(deployment-id="+beanInfo.ejbDeploymentId+")");
             } catch (NameAlreadyBoundException e) {
                 DeploymentInfo deployment = findNameOwner(name);
                 if (deployment != null){
