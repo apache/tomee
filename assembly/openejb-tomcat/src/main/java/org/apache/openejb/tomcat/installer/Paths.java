@@ -215,65 +215,74 @@ public class Paths {
         return !hasErrors();
     }
 
+    public void reset() {
+        errors.clear();
+    }
+    
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
-
 
     public List<String> getErrors() {
         return errors;
     }
 
     private void addError(String message) {
-        System.out.println(message);
+        errors.add(message);
     }
 
-    private void verifyDirectory(String description, File file) {
+    private boolean verifyDirectory(String description, File file) {
         if (file == null) {
             // ignore... files are built up based on other files, and probles
             // with the root files will have been logged else where
-            return;
+            return false;
         }
         if (!file.exists()) {
             addError(description + " directory does not exist");
-            return;
+            return false;
         }
         if (!file.isDirectory()) {
             addError(description + " directory is not a directory");
-            return;
+            return false;
         }
         if (!file.canRead()) {
             addError(description + " directory is not readable");
+            return false;
         }
+        return true;
     }
 
     private void verifyWritableDirectory(String description, File file) {
-        verifyDirectory(description, file);
-        verifyWritable(description, file);
+        if (verifyDirectory(description, file)) {
+            verifyWritable(description, file);
+        }
     }
 
-    private void verifyFile(String description, File file) {
+    private boolean verifyFile(String description, File file) {
         if (file == null) {
             // ignore... files are built up based on other files, and probles
             // with the root files will have been logged else where
-            return;
+            return false;
         }
         if (!file.exists()) {
             addError(description + " file does not exist");
-            return;
+            return false;
         }
         if (!file.isFile()) {
             addError(description + " file is not a file");
-            return;
+            return false;
         }
         if (!file.canRead()) {
             addError(description + " file is not readable");
+            return false;
         }
+        return true;
     }
 
     private void verifyWritableFile(String description, File file) {
-        verifyFile(description, file);
-        verifyWritable(description, file);
+        if (verifyFile(description, file)) {
+            verifyWritable(description, file);
+        }
     }
 
     private void verifyWritable(String description, File file) {

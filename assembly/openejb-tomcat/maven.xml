@@ -66,7 +66,6 @@
       <j:set var="tomcat.home" value="${targetDir}/${tomcat.prefix}-tomcat-${tomcat.version}"/>
       <j:set var="tomcat.lib" value="${tomcat.home}/${tomcat.server.lib}"/>
       <j:set var="tomcat.webapps" value="${tomcat.home}/${tomcat.server.webapps}"/>
-      <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
     </goal>
 
     <!--======================-->
@@ -80,7 +79,6 @@
       <j:set var="tomcat.src" value="${maven.repo.local}/tomcat/distributions/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
       <j:set var="tomcat.dist" value="${maven.repo.local}/tomcat/distributions/${tomcat.prefix}-tomcat-${tomcat.version}.zip"/>
       <j:set var="tomcat.home" value="${targetDir}/${tomcat.prefix}-tomcat-${tomcat.version}"/>
-      <j:set var="openejb.home" value="${targetDir}/openejb-${openejb.version}" />
 
       <!-- Download tomcat if it isn't in the repo -->
       <u:file var="fileAsFile" name="${tomcat.dist}"/>
@@ -148,15 +146,15 @@
       <j:choose>
         <j:when test="${systemScope['os.name'].startsWith('Windows')}">
           <exec executable="${tomcat.home}/bin/startup.bat" os="Windows NT,Windows 2000,Windows XP">
-            <!--<env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
+            <!--<env key="JAVA_OPTS" value="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}\openejb\lib\openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
             <env key="CATALINA_HOME" value="${tomcat.home}"/>
           </exec>
         </j:when>
         <j:otherwise>
           <exec executable="${tomcat.home}/bin/startup.sh">
-            <!--<env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
-            <env key="JAVA_OPTS" value="-Dopenejb.home=${openejb.home} -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
+            <!--<env key="JAVA_OPTS" value="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${tomcat.webapps}/openejb/lib/openejb-javaagent-${openejb.version}.jar -Dcom.sun.management.jmxremote"/>-->
+            <env key="JAVA_OPTS" value="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Dcom.sun.management.jmxremote"/>
           </exec>
         </j:otherwise>
       </j:choose>
@@ -241,7 +239,7 @@
       <attainGoal name="setup:itests-war"/>
       <attainGoal name="start:tomcat"/>
       <java jar="target/openejb-itests-standalone-client-${openejb.version}.jar" fork="yes">
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
+        <!--<sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>-->
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
           <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
         <arg value="tomcat"/>
@@ -251,7 +249,7 @@
 
     <goal name="test:client">
       <java jar="target/openejb-itests-standalone-client-${openejb.version}.jar" fork="yes">
-        <sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>
+        <!--<sysproperty key="openejb.home" value="target/openejb-${openejb.version}"/>-->
         <sysproperty key="tomcat.home" value="${tomcat.home}"/>
         <sysproperty key="remote.servlet.url" value="http://127.0.0.1:8080/openejb/remote"/>
         <arg value="tomcat"/>

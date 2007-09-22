@@ -67,6 +67,15 @@ public class Installer {
         }
     }
 
+
+    public boolean isListenerInstalled() {
+        return listenerInstalled;
+    }
+
+    public boolean isAgentInstalled() {
+        return agentInstalled;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -85,7 +94,7 @@ public class Installer {
 
     private void installListener() {
         if (listenerInstalled) {
-            addInfo("OpenEJB Listener already installed");
+//            addInfo("OpenEJB Listener already installed");
             return;
         }
 
@@ -97,7 +106,7 @@ public class Installer {
             if (paths.getOpenEJBLoaderJar().length() != destination.length()) {
                 // md5 diff the files
             } else {
-                addInfo("OpenEJB loader jar already installed in Tomcat lib directory.");
+//                addInfo("OpenEJB loader jar already installed in Tomcat lib directory.");
                 copyOpenEJBLoader = false;
             }
         }
@@ -105,7 +114,7 @@ public class Installer {
         if (copyOpenEJBLoader) {
             try {
                 copyFile(paths.getOpenEJBLoaderJar(), destination);
-                addInfo("Coppied " + paths.getOpenEJBLoaderJar().getName() + " to the Tomcat lib directory.");
+                addInfo("Copy " + paths.getOpenEJBLoaderJar().getName() + " to lib");
             } catch (IOException e) {
                 addError("Unable to copy OpenEJB loader jar to Tomcat lib directory.  This will need to be performed manually.", e);
             }
@@ -121,7 +130,7 @@ public class Installer {
 
         // does the server.xml contain our listener name... it is possible that they commented out our listener, but that would be a PITA to detect
         if (serverXmlOriginal.contains("org.apache.openejb.loader.OpenEJBListener")) {
-            addInfo("OpenEJB Listener already declared in Tomcat server.xml file.");
+            addWarning("OpenEJB Listener already declared in Tomcat server.xml file.");
             return;
         }
 
@@ -146,13 +155,13 @@ public class Installer {
 
         // overwrite server.xml
         if (writeAll(paths.getServerXmlFile(), newServerXml)) {
-            addInfo("Added OpenEJB listener to Tomcat server.xml file.");
+            addInfo("Add OpenEJB listener to server.xml");
         }
     }
 
     private void installJavaagent() {
         if (agentInstalled) {
-            addInfo("OpenEJB Agent already installed");
+//            addInfo("OpenEJB Agent already installed");
             return;
         }
 
@@ -170,7 +179,7 @@ public class Installer {
 
         // does the catalina sh contain our comment... it is possible that they commented out the magic script code, but there is no way to detect that
         if (catalinaShOriginal.contains("Add OpenEJB javaagent")) {
-            addInfo("OpenEJB javaagent already declared in Tomcat catalina.sh file.");
+            addWarning("OpenEJB javaagent already declared in Tomcat catalina.sh file.");
             return;
         }
 
@@ -197,7 +206,7 @@ public class Installer {
 
         // overwrite the catalina.sh file
         if (writeAll(paths.getCatalinaShFile(), newCatalinaSh)) {
-            addInfo("Added OpenEJB javaagent to Tomcat catalina.sh file.");
+            addInfo("Add OpenEJB JavaAgent to catalina.sh");
         }
 
         //
@@ -214,7 +223,7 @@ public class Installer {
 
         // does the catalina bat contain our comment... it is possible that they commented out the magic script code, but there is no way to detect that
         if (catalinaBatOriginal.contains("Add OpenEJB javaagent")) {
-            addInfo("OpenEJB javaagent already declared in Tomcat catalina.bat file.");
+            addWarning("OpenEJB javaagent already declared in Tomcat catalina.bat file.");
             return;
         }
 
@@ -241,7 +250,8 @@ public class Installer {
 
         // overwrite the catalina.bat file
         if (writeAll(paths.getCatalinaBatFile(), newCatalinaBat)) {
-            addInfo("Added OpenEJB javaagent to Tomcat catalina.bat file.");
+            addInfo("Add OpenEJB JavaAgent to catalina.bat");
+//            addInfo("Added OpenEJB javaagent to Tomcat catalina.bat file.");
         }
     }
 
@@ -266,7 +276,7 @@ public class Installer {
             String openEjbXml = readEntry(coreJar, "default.openejb.conf");
             if (openEjbXml != null) {
                 if (writeAll(openEjbXmlFile, openEjbXml)) {
-                    addInfo("Added openejb.xml to Tomcat conf directory.");
+                    addInfo("Copy openejb.xml to conf");
                 }
             }
         }
@@ -300,7 +310,7 @@ public class Installer {
             }
             if (newLoggingProps != null) {
                 if (writeAll(loggingPropsFile, newLoggingProps)) {
-                    addInfo("Added OpenEJB logging configuration to Tomcat logging.properties file.");
+                    addInfo("Append OpenEJB config to logging.properties");
                 }
             }
         }
@@ -471,6 +481,12 @@ public class Installer {
             String result = begin + token + end;
             return result;
         }
+    }
+
+    public void reset() {
+        errors.clear();
+        warnings.clear();
+        infos.clear();
     }
 
     public boolean hasErrors() {

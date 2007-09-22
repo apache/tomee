@@ -57,8 +57,10 @@ public class OpenEJBListener implements LifecycleListener {
             File libDir = new File(webappDir, "lib");
             String catalinaHome = System.getProperty("catalina.home");
             properties.setProperty("openejb.home", catalinaHome);
+            System.setProperty("openejb.home", catalinaHome);
             String catalinaBase = System.getProperty("catalina.base");
             properties.setProperty("openejb.base", catalinaBase);
+            System.setProperty("openejb.base", catalinaBase);
             String libPath = libDir.getAbsolutePath();
             properties.setProperty("openejb.libs", libPath);
 
