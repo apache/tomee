@@ -30,6 +30,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -48,6 +49,7 @@ import org.apache.xbean.finder.UrlSet;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -95,11 +97,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     // OpenEJB WebAppBuilder
     //
 
-    public void deploy(WebAppInfo webAppInfo) throws Exception {
+    public void deploy(WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) throws Exception {
         StandardContext standardContext = getContextInfo(webAppInfo.moduleId).standardContext;
 
         if (standardContext != null) {
-            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(webAppInfo.jndiEnc, webAppInfo.moduleId);
+            JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(webAppInfo.jndiEnc, "Bean", emfLinkResolver, webAppInfo.moduleId);
             jndiEncBuilder.setUseCrossClassLoaderRef(false);
             Context enc = (Context) jndiEncBuilder.build().lookup("env");
             bindEnc(standardContext, enc);

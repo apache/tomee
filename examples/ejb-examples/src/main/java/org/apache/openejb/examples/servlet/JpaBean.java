@@ -15,11 +15,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.examples.servlet;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
 
-public interface WebAppBuilder {
-    void deploy(WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) throws Exception;
-    void undeploy(WebAppInfo webAppInfo) throws Exception;
+@Entity
+public class JpaBean {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public String toString() {
+        return "[JpaBean id=" + id + ", name=" + name + "]";
+    }
 }

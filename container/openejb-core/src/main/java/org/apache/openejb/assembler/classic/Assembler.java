@@ -542,7 +542,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
                 for (WebAppInfo webAppInfo : appInfo.webApps) {
-                    webAppBuilder.deploy(webAppInfo);
+                    webAppBuilder.deploy(webAppInfo, emfLinkResolver);
                 }
             }
 

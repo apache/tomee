@@ -32,4 +32,14 @@
     <servlet-name>AnnotatedServlet</servlet-name>
     <url-pattern>/annotated/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>JpaServlet</servlet-name>
+    <servlet-class>org.apache.openejb.examples.servlet.JpaServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>JpaServlet</servlet-name>
+    <url-pattern>/jpa/*</url-pattern>
+  </servlet-mapping>
 </web-app>

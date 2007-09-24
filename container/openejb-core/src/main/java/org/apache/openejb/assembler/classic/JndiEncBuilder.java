@@ -272,39 +272,41 @@ public class JndiEncBuilder {
             }
         }
 
-        for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
-            if (referenceInfo.location != null){
-                Reference reference = buildReferenceLocation(referenceInfo.location);
+        if (emfLinkResolver != null) {
+            for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
+                if (referenceInfo.location != null){
+                    Reference reference = buildReferenceLocation(referenceInfo.location);
+                    bindings.put(normalize(referenceInfo.referenceName), reference);
+                    continue;
+                }
+
+                EntityManagerFactory factory = emfLinkResolver.resolveLink(referenceInfo.persistenceUnitName, moduleUri);
+                if (factory == null) {
+                    throw new IllegalArgumentException("Persistence unit " + referenceInfo.persistenceUnitName + " for persistence-unit-ref " +
+                            referenceInfo.referenceName + " not found");
+                }
+
+                Reference reference = new PersistenceUnitReference(factory);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
-                continue;
             }
 
-            EntityManagerFactory factory = emfLinkResolver.resolveLink(referenceInfo.persistenceUnitName, moduleUri);
-            if (factory == null) {
-                throw new IllegalArgumentException("Persistence unit " + referenceInfo.persistenceUnitName + " for persistence-unit-ref " +
-                        referenceInfo.referenceName + " not found");
-            }
+            for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
+                if (contextInfo.location != null){
+                    Reference reference = buildReferenceLocation(contextInfo.location);
+                    bindings.put(normalize(contextInfo.referenceName), reference);
+                    continue;
+                }
 
-            Reference reference = new PersistenceUnitReference(factory);
-            bindings.put(normalize(referenceInfo.referenceName), reference);
-        }
+                EntityManagerFactory factory = emfLinkResolver.resolveLink(contextInfo.persistenceUnitName, moduleUri);
+                if (factory == null) {
+                    throw new IllegalArgumentException("Persistence unit " + contextInfo.persistenceUnitName + " for persistence-context-ref " +
+                            contextInfo.referenceName + " not found");
+                }
 
-        for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
-            if (contextInfo.location != null){
-                Reference reference = buildReferenceLocation(contextInfo.location);
+                JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+                Reference reference = new PersistenceContextReference(jtaEntityManager);
                 bindings.put(normalize(contextInfo.referenceName), reference);
-                continue;
             }
-
-            EntityManagerFactory factory = emfLinkResolver.resolveLink(contextInfo.persistenceUnitName, moduleUri);
-            if (factory == null) {
-                throw new IllegalArgumentException("Persistence unit " + contextInfo.persistenceUnitName + " for persistence-context-ref " +
-                        contextInfo.referenceName + " not found");
-            }
-
-            JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
-            Reference reference = new PersistenceContextReference(jtaEntityManager);
-            bindings.put(normalize(contextInfo.referenceName), reference);
         }
 
         for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
