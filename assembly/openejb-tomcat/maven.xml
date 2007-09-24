@@ -219,7 +219,7 @@
       <attainGoal name="tomcat6"/>
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
-      <!--<attainGoal name="setup:itests-war"/>-->
+      <attainGoal name="setup:itests-war"/>
       <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat"/>
     </goal>
@@ -228,7 +228,7 @@
       <attainGoal name="tomcat6"/>
       <attainGoal name="setup:tomcat"/>
       <attainGoal name="setup:loader-webapp"/>
-      <!--<attainGoal name="setup:itests-war"/>-->
+      <attainGoal name="setup:itests-war"/>
       <attainGoal name="setup:ejb-examples"/>
       <attainGoal name="start:tomcat-debug"/>
     </goal>
