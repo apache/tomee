@@ -37,6 +37,6 @@
     <module>resource-injection</module>
     <module>telephone-stateful</module>
     <module>expanded-env-entries</module>
-    <module>servlet-samples</module>
+    <module>ejb-examples</module>
   </modules>
 </project>
