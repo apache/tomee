@@ -78,6 +78,9 @@
       <excludes>
           <exclude>org.apache.tomcat:catalina</exclude>
           <exclude>org.apache.tomcat:annotations-api</exclude>
+          <exclude>org.apache.tomcat:juli</exclude>
+          <exclude>org.apache.tomcat:servlet-api</exclude>
+          <exclude>org.apache.geronimo.specs:geronimo-servlet_2.5_spec</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
