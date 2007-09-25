@@ -8,6 +8,9 @@ OPTIONS:
   remote    Runs the test suite against OpenEJB in client/server
             mode using the OpenEJB Remote Server.                   
             
+  tomcat    Runs the test suite against OpenEJB embedded in
+            Tomcat using the http protocol.                   
+
 Apache OpenEJB -- EJB Container System and EJB Server.
 For updates and additional information, visit
 http://openejb.apache.org
