@@ -101,6 +101,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this(false);
     }
 
+    public ConfigurationFactory(boolean offline, OpenEjbConfiguration configuration) {
+        this(offline);
+        sys = configuration;
+    }
+
     public static class Chain implements DynamicDeployer{
         private final List<DynamicDeployer> chain = new ArrayList<DynamicDeployer>();
 
@@ -670,9 +675,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         List<String> resourceIds = new ArrayList<String>();
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
-        for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-            if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
-                resourceIds.add(resourceInfo.id);
+        if (runningConfig != null) {
+            for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
+                if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
+                    resourceIds.add(resourceInfo.id);
+                }
             }
         }
 
@@ -744,8 +751,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
-        for (ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
-            containers.add(containerInfo);
+        if (runningConfig != null) {
+            for (ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
+                containers.add(containerInfo);
+            }
         }
 
         if (sys != null) {
