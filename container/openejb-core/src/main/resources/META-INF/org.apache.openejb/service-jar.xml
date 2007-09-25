@@ -217,16 +217,16 @@
   # ================================================
   -->
   <ServiceProvider
-          id="PseudoSecurityService"
-          service="SecurityService"
-          types="SecurityService"
-          class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
-
-  <ServiceProvider
           id="Default Security Service"
           service="SecurityService"
           types="SecurityService"
           class-name="org.apache.openejb.core.security.SecurityServiceImpl"/>
+
+  <ServiceProvider
+          id="PseudoSecurityService"
+          service="SecurityService"
+          types="SecurityService"
+          class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
 
   <!--
   # ================================================
