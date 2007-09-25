@@ -22,14 +22,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>itests</artifactId>
+    <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-standalone-client</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: iTests standalone client</name>
+  <name>OpenEJB :: Assembly :: iTests standalone client</name>
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
