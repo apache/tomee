@@ -2,9 +2,6 @@ Usage: openejb test [options]
 
 OPTIONS:
 
-  local     Default. Runs the test suite against OpenEJB in 
-            embedded library mode using the IntraVm Server
-  
   remote    Runs the test suite against OpenEJB in client/server
             mode using the OpenEJB Remote Server.                   
             
