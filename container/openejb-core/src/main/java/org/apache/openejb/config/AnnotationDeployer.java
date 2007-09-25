@@ -1484,6 +1484,28 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             ejbRef.setMappedName(mappedName);
 
+
+            Map<String, EjbRef> remoteRefs = mapReferences(consumer.getEjbRef());
+            if (remoteRefs.containsKey(ejbRef.getName())){
+                EjbRef ref = remoteRefs.get(ejbRef.getName());
+                if (ref.getRemote() == null) ref.setRemote(ejbRef.getRemote());
+                if (ref.getHome() == null) ref.setHome(ejbRef.getHome());
+                if (ref.getMappedName() == null) ref.setMappedName(ejbRef.getMappedName());
+                ref.getInjectionTarget().addAll(ejbRef.getInjectionTarget());
+                return;
+            }
+
+            Map<String, EjbLocalRef> localRefs = mapReferences(consumer.getEjbLocalRef());
+            if (localRefs.containsKey(ejbRef.getName())){
+                EjbLocalRef ejbLocalRef = new EjbLocalRef(ejbRef);
+                EjbLocalRef ref = localRefs.get(ejbLocalRef.getName());
+                if (ref.getLocal() == null) ref.setLocal(ejbLocalRef.getLocal());
+                if (ref.getLocalHome() == null) ref.setLocalHome(ejbLocalRef.getLocalHome());
+                if (ref.getMappedName() == null) ref.setMappedName(ejbLocalRef.getMappedName());
+                ref.getInjectionTarget().addAll(ejbLocalRef.getInjectionTarget());
+                return;
+            }
+
             switch (ejbRef.getRefType()) {
                 case UNKNOWN:
                 case REMOTE:
@@ -1493,6 +1515,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
                     break;
             }
+        }
+
+        private static <T extends JndiReference> Map<String, T> mapReferences(List<T> refsList) {
+            Map<String, T> refs = new HashMap<String, T>(refsList.size());
+            for (T ref : refsList) {
+                refs.put(ref.getName(), ref);
+            }
+            return refs;
         }
 
         private List<Class<?>> copy(List<Class<?>> classes) {
