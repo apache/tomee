@@ -56,8 +56,13 @@ public class Agent {
     private static synchronized void checkInitialization() {
         if (!initialized) {
             try {
-                ClassLoader systemCl = ClassLoader.getSystemClassLoader();
-                Class<?> systemAgentClass = systemCl.loadClass(Agent.class.getName());
+                Class<?> systemAgentClass = null;
+                try {
+                    ClassLoader systemCl = ClassLoader.getSystemClassLoader();
+                    systemAgentClass = systemCl.loadClass(Agent.class.getName());
+                } catch (ClassNotFoundException e) {
+                    return;
+                }
 
                 Field instrumentationField = systemAgentClass.getDeclaredField("instrumentation");
                 instrumentationField.setAccessible(true);
@@ -68,8 +73,9 @@ public class Agent {
                 agentArgs = (String) agentArgsField.get(null);
             } catch (Exception e) {
                 new IllegalStateException("Unable to initialize agent", e).printStackTrace();
+            } finally {
+                initialized = true;
             }
-            initialized = true;
         }
     }
 

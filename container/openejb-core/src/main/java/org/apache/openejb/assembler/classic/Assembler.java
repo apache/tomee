@@ -91,7 +91,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class.getPackage().getName());
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
 
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
@@ -1007,6 +1007,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             Instrumentation instrumentation = Agent.getInstrumentation();
             if (instrumentation != null) {
                 instrumentation.addTransformer(classFileTransformer);
+            } else {
+                logger.error("assembler.noAgent");
             }
         }
 

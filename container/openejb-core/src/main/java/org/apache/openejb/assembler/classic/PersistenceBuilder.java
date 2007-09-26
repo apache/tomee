@@ -28,8 +28,13 @@ import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 
 public class PersistenceBuilder {
+
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, PersistenceBuilder.class);
+
     public static final String PROVIDER_PROP = "javax.persistence.provider";
 
     public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
@@ -154,6 +159,8 @@ public class PersistenceBuilder {
         }
         Class clazz = classLoader.loadClass(persistenceProviderClassName);
         PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
+
+        logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), unitInfo.getPersistenceUnitRootUrl(), unitInfo.getTransactionType());
 
         // Create entity manager factory
         EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
