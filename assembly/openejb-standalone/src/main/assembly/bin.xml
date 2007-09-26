@@ -55,7 +55,10 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>src/main/conf</directory>
+      <includes>
+        <include>README.txt</include>
+      </includes>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
