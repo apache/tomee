@@ -153,6 +153,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         ContextInfo contextInfo = getContextInfo(standardContext);
         Context enc = contextInfo.enc;
         standardContext.setAnnotationProcessor(new DefaultAnnotationProcessor(enc));
+
+        OpenEJBValve openejbValve = new OpenEJBValve();
+        standardContext.getPipeline().addValve(openejbValve);
     }
 
     public void beforeStop(StandardContext standardContext) {

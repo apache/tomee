@@ -16,18 +16,20 @@
  */
 package org.apache.openejb.core.security.jacc;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+
 import javax.security.jacc.PolicyConfiguration;
 import javax.security.jacc.PolicyContextException;
+import java.security.Permission;
+import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Principal;
 import java.security.ProtectionDomain;
-import java.security.Permission;
-import java.security.PermissionCollection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -39,7 +41,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     private final String contextID;
     private int state;
-    private final HashMap<String, Permissions> rolePermissionsMap = new HashMap();
+    private final Map<String, Permissions> rolePermissionsMap = new LinkedHashMap<String, Permissions>();
     private Permissions unchecked = null;
     private Permissions excluded = null;
 
@@ -61,10 +63,11 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         Principal[] principals = domain.getPrincipals();
         if (principals.length == 0) return false;
 
-        for (int i = 0; i < principals.length; i++) {
-            Principal principal = principals[i];
+        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        Set<String> roles = securityService.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
-            Permissions permissions = (Permissions) rolePermissionsMap.get(principal.getName());
+        for (String role : roles) {
+            Permissions permissions = rolePermissionsMap.get(role);
 
             if (permissions != null && permissions.implies(permission)) return true;
         }
@@ -84,7 +87,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     public void addToRole(String roleName, Permission permission) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
-        Permissions permissions = (Permissions) rolePermissionsMap.get(roleName);
+        Permissions permissions = rolePermissionsMap.get(roleName);
         if (permissions == null) {
             permissions = new Permissions();
             rolePermissionsMap.put(roleName, permissions);

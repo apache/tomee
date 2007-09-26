@@ -23,48 +23,27 @@ import javax.security.auth.login.LoginException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Set;
 
 public interface SecurityService extends Service {
-
-    public <T> T translateTo(Object securityIdentity, Class<T> type);
-
-    /*
-     * Associates a security identity object with the current thread. Setting 
-     * this argument to null, will effectively dissociate the thread with a
-     * security identity.  This is used when access enterprise beans through 
-     * the global JNDI name space. Its not used when calling invoke on a 
-     * RpcContainer object.
-    */
-    public void setSecurityIdentity(Object securityIdentity);
-
-    /*
-    * Obtains the security identity associated with the current thread.
-    * If there is no association, then null is returned. 
-    */
-    public Object getSecurityIdentity();
-
     /**
      * Active
      */
     public Object login(String user, String pass) throws LoginException;
     public Object login(String securityRealm, String user, String pass) throws LoginException;
 
+
+    public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles);
+    
     /**
      * Active
      */
-    public void associate(Object securityIdentity) throws LoginException;
+    public Object associate(Object securityIdentity) throws LoginException;
 
     /**
      * Active
      */
 //    public Object logout(Object securityIdentity) throws LoginException;
-
-    /**
-     * Active
-     */
-//    public void disassociate() throws LoginException;
-
-    public Subject getCurrentSubject();
 
     /**
      * Active

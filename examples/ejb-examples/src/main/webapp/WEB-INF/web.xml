@@ -25,7 +25,7 @@
 
   <servlet>
     <servlet-name>AnnotatedServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.AnnotatedServlet</servlet-class>
+    <servlet-class>org.apache.openejb.examples.servlet.RunAsServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -42,4 +42,42 @@
     <servlet-name>JpaServlet</servlet-name>
     <url-pattern>/jpa/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RunAsServlet</servlet-name>
+    <servlet-class>org.apache.openejb.examples.servlet.RunAsServlet</servlet-class>
+    <run-as>
+      <role-name>fake</role-name>
+    </run-as>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>RunAsServlet</servlet-name>
+    <url-pattern>/runas/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>SecureServlet</servlet-name>
+    <servlet-class>org.apache.openejb.examples.servlet.SecureServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SecureServlet</servlet-name>
+    <url-pattern>/secure/*</url-pattern>
+  </servlet-mapping>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Secure Area</web-resource-name>
+      <url-pattern>/secure/*</url-pattern>
+      <url-pattern>/runas/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>user</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+  </login-config>
 </web-app>

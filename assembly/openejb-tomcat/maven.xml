@@ -36,7 +36,7 @@
 
     <goal name="tomcat6">
       <j:set var="tomcat.branch" value="6"/>
-      <j:set var="tomcat.version" value="6.0.14"/>
+      <j:set var="tomcat.version" value="6.0.13"/>
       <j:set var="tomcat.prefix" value="apache"/>
       <j:set var="tomcat.server.lib" value="lib"/>
       <j:set var="tomcat.server.webapps" value="webapps"/>
@@ -93,6 +93,11 @@
         <unjar src="${tomcat.dist}" dest="${targetDir}"/>
         <chmod dir="${tomcat.home}/bin" perm="u+x" includes="**/*.sh"/>
       </j:if>
+
+      <!-- Copy conf files -->
+      <copy todir="${tomcat.home}/conf">
+        <fileset dir="${basedir}/src/test/conf"/>
+      </copy>
 
       <!-- Add OpenEJBListener -->
       <!--<replace file="${tomcat.home}/conf/server.xml" token='shutdown="SHUTDOWN">' value='shutdown="SHUTDOWN"  > &lt;Listener className="org.apache.openejb.loader.OpenEJBListener" />'/>-->

@@ -73,8 +73,7 @@ public abstract class CoreContext implements java.io.Serializable {
 
     public java.security.Principal getCallerPrincipal() {
         checkBeanState(SECURITY_METHOD);
-        Object securityIdentity = null;
-        return (java.security.Principal) getSecurityService().translateTo(securityIdentity, java.security.Principal.class);
+        return getSecurityService().getCallerPrincipal();
     }
 
     private SecurityService getSecurityService() {

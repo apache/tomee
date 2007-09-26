@@ -20,8 +20,9 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.InterfaceType;
 
 import javax.security.auth.login.LoginException;
-import javax.security.auth.Subject;
 import java.util.Collection;
+import java.util.Set;
+import java.util.Collections;
 import java.security.Principal;
 import java.lang.reflect.Method;
 
@@ -29,42 +30,12 @@ import java.lang.reflect.Method;
  * @org.apache.xbean.XBean element="pseudoSecurityService"
  */
 public class PseudoSecurityService implements SecurityService {
-    private final ThreadLocal<Object> securityIdentity = new ThreadLocal<Object>();
-
     public PseudoSecurityService() {
         PseudoPolicyConfigurationFactory.install();
     }
 
     public void init(java.util.Properties props) {
     }
-
-    public Object getSecurityIdentity() {
-        return securityIdentity.get();
-    }
-
-    public void setSecurityIdentity(Object securityIdentity) {
-        this.securityIdentity.set(securityIdentity);
-    }
-
-    public boolean isCallerAuthorized(Object securityIdentity, Collection<String> roleNames) {
-        return true;
-    }
-
-
-    public <T> T translateTo(Object securityIdentity, Class<T> type) {
-        if (type == java.security.Principal.class) {
-            return (T)new java.security.Principal() {
-                public String getName() {
-                    return "TestRole";
-                }
-            };
-        } else if (type == javax.security.auth.Subject.class) {
-            return (T) new javax.security.auth.Subject();
-        } else {
-            return null;
-        }
-    }
-
 
     public Object login(String user, String pass) throws LoginException {
         return null;
@@ -74,10 +45,11 @@ public class PseudoSecurityService implements SecurityService {
         return null;
     }
 
-    public void associate(Object securityIdentity) throws LoginException {
+    public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles) {
+        return Collections.emptySet();
     }
 
-    public Subject getCurrentSubject() {
+    public Object associate(Object securityIdentity) throws LoginException {
         return null;
     }
 

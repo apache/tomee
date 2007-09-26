@@ -47,6 +47,8 @@ public class TomcatLoader implements Loader {
             return;
         }
 
+        System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
+        
         ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
         if (SystemInstance.get().getComponent(WebAppBuilder.class) == null) {

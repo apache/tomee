@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ServiceUtils {
-    public static final String defaultProviderURL = "org.apache.openejb";
+    public static final String defaultProviderURL = System.getProperty("openejb.provider.default", "org.apache.openejb");
     private static Map<String, List<ServiceProvider>> loadedServiceJars = new HashMap<String, List<ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
