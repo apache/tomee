@@ -78,11 +78,14 @@
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
-        // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
-        properties.setProperty("openejb.deployments.classpath", "true");
-
         initialContext = new InitialContext(properties);
 
+    And include an add a src/main/resources/META-INF/ejb-jar.xml
+    file to your project containing at least "<ejb-jar/>"
+
+    There is a method for finding your app without the need for
+    an ejb-jar.xml via annotation scraping the classpath.  See:
+    http://openejb.apache.org/loading-deployments-from-the-classpath.html
     -->
     <dependency>
       <groupId>org.apache.openejb</groupId>

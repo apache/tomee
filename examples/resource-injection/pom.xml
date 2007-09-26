@@ -19,7 +19,7 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-annotation_1.0_spec</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -74,23 +74,26 @@
     </dependency>
 
     <!--
-      Nice thing about maven2 is it has test-only dependencies.
-      This guarantees that non of your runtime code is dependent
-      on any OpenEJB classes.
-      
-      For those of you who want to know the minimum steps required
-      to add OpenEJB for testing to an existing maven 2 build, you
-      simply add this dependency below and in your test code create
-      your InitialContext like such:
-      
-      Properties properties = new Properties();
-      properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-      
-      // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
-      properties.setProperty("openejb.deployments.classpath", "true");
-      
-      initialContext = new InitialContext(properties);
-      
+    Nice thing about maven2 is it has test-only dependencies.
+    This guarantees that non of your runtime code is dependent
+    on any OpenEJB classes.
+
+    For those of you who want to know the minimum steps required
+    to add OpenEJB for testing to an existing maven 2 build, you
+    simply add this dependency below and in your test code create
+    your InitialContext like such:
+
+        Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+
+        initialContext = new InitialContext(properties);
+
+    And include an add a src/main/resources/META-INF/ejb-jar.xml
+    file to your project containing at least "<ejb-jar/>"
+
+    There is a method for finding your app without the need for
+    an ejb-jar.xml via annotation scraping the classpath.  See:
+    http://openejb.apache.org/loading-deployments-from-the-classpath.html
     -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
