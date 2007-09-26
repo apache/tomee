@@ -546,6 +546,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            logger.info("Deployed Application(path="+appInfo.jarPath+")");
+
             deployedApplications.put(appInfo.jarPath, appInfo);
         } catch (Throwable t) {
             try {
