@@ -1,13 +1,13 @@
-===============================================
-OpenEJB -- EJB Container System and EJB Server
+======================================================
+Apache OpenEJB -- EJB Container System and EJB Server
 
-OpenEJB ${pom.version}      http://openejb.apache.org/
------------------------------------------------
+Apache OpenEJB ${pom.version}      http://openejb.apache.org/
+------------------------------------------------------
 ___________________
 Installation
 ===================
  
- If you are reading this, you've already unpacked the OpenEJB release.  
+ If you are reading this, you've already unpacked the Apache OpenEJB release.  
  In that case, congratulations, you've installed OpenEJB.  
  
  If you've unpacked OpenEJB into the directory C:\openejb, for example.
@@ -23,9 +23,9 @@ Installation
 
    export PATH=$OPENEJB_HOME/bin:$PATH
 
-___________________
-Using OpenEJB
-===================
+__________________________
+Using Apache OpenEJB
+==========================
  
  Now all you need to do is to type:
  
@@ -58,8 +58,6 @@ Support
  mailing list at users@openejb.apache.org 
  Follow this link for other subscription and list information:
  http://openejb.apache.org/mailing-lists.html
-
-
 
 
 =========================================================================
