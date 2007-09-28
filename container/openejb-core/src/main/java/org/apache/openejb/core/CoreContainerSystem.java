@@ -41,6 +41,9 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
             jndiRootContext.createSubcontext("java:openejb/ejb");
             jndiRootContext.createSubcontext("java:openejb/client");
             jndiRootContext.createSubcontext("java:openejb/Deployment");
+            jndiRootContext.bind("openejb/ejb/.", "");
+            jndiRootContext.bind("openejb/client/.", "");
+            jndiRootContext.bind("openejb/Deployment/.", "");
         }
         catch (javax.naming.NamingException exception) {
             throw new RuntimeException();
