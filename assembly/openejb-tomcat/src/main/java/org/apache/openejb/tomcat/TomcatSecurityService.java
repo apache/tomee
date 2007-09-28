@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.LinkedList;
+import java.util.UUID;
 
 public class TomcatSecurityService  extends AbstractSecurityService {
     static protected final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
@@ -55,14 +56,14 @@ public class TomcatSecurityService  extends AbstractSecurityService {
         }
     }
 
-    public Object login(String realmName, String username, String password) throws LoginException {
+    public UUID login(String realmName, String username, String password) throws LoginException {
         if (defaultRealm == null) {
             throw new LoginException("No Tomcat realm available");
         }
 
         Principal principal = defaultRealm.authenticate(username, password);
         Subject subject = createSubject(defaultRealm, principal);
-        Object token = registerSubject(subject);
+        UUID token = registerSubject(subject);
         return token;
     }
 
@@ -99,13 +100,20 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     }
 
     public Object enterWebApp(Realm realm, Principal principal, String runAs) {
-        Subject newSubject = null;
+        UUID newToken = null;
         if (principal != null) {
-            newSubject = createSubject(realm, principal);
+            Subject newSubject = createSubject(realm, principal);
+            newToken = registerSubject(newSubject);
         }
 
-        WebAppState webAppState = new WebAppState(clientIdentity.get(), runAs != null);
-        clientIdentity.set(newSubject);
+        UUID oldToken = disassociate();
+        WebAppState webAppState = new WebAppState(oldToken, runAs != null);
+        try {
+            associate(newToken);
+        } catch (LoginException e) {
+            throw new IllegalStateException("Subject was registered, but cannot be associated with the SecurityService", e);
+        }
+
 
         if (runAs != null) {
             Subject runAsSubject = createRunAsSubject(runAs);
@@ -118,7 +126,12 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     public void exitWebApp(Object state) {
         if (state instanceof WebAppState) {
             WebAppState webAppState = (WebAppState) state;
-            clientIdentity.set(webAppState.oldSubject);
+            disassociate();
+            try {
+                if (webAppState.oldToken != null) associate(webAppState.oldToken);
+            } catch (LoginException e) {
+                throw new IllegalStateException("Subject was registered, but cannot be associated with the SecurityService", e);
+            }
             if (webAppState.hadRunAs) {
                 runAsStack.get().removeFirst();
             }
@@ -224,12 +237,12 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     }
 
     private static class WebAppState {
-        private final Subject oldSubject;
+        private final UUID oldToken;
         private final boolean hadRunAs;
 
 
-        public WebAppState(Subject oldSubject, boolean hadRunAs) {
-            this.oldSubject = oldSubject;
+        public WebAppState(UUID oldSubject, boolean hadRunAs) {
+            this.oldToken = oldSubject;
             this.hadRunAs = hadRunAs;
         }
     }

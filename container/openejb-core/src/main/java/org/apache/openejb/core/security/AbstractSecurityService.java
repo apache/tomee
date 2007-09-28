@@ -22,7 +22,9 @@ import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
+import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -47,12 +49,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 
-public abstract class AbstractSecurityService implements SecurityService, ThreadContextListener {
+/**
+ * This security service chooses a UUID as its token as this can be serialized
+ * to clients, is mostly secure, and can be deserialized in a client vm without
+ * addition openejb-core classes.
+ */
+public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
     static private final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
-    static protected final ThreadLocal<Subject> clientIdentity = new ThreadLocal<Subject>();
+    static private final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected final String defaultUser = "guest";
     protected final Subject defaultSubject;
     protected final SecurityContext defaultContext;
@@ -67,6 +73,8 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
 
         defaultSubject = createSubject(defaultUser);
         defaultContext = new SecurityContext(defaultSubject);
+
+        SystemInstance.get().setComponent(BasicPolicyConfiguration.RoleResolver.class, this);
     }
 
 
@@ -81,7 +89,7 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
     public void init(Properties props) throws Exception {
     }
 
-    public Object login(String username, String password) throws LoginException {
+    public UUID login(String username, String password) throws LoginException {
         return login(realmName, username, password);
     }
 
@@ -110,10 +118,9 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
 
         } else if (securityContext == null) {
 
-            Subject subject = clientIdentity.get();
-
-            if (subject != null){
-                securityContext = new SecurityContext(subject);
+            Identity identity = clientIdentity.get();
+            if (identity != null){
+                securityContext = new SecurityContext(identity.subject);
             } else {
                 securityContext = defaultContext;
             }
@@ -142,39 +149,41 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
         }
     }
 
-    protected Object registerSubject(Subject subject) {
+    protected UUID registerSubject(Subject subject) {
         Identity identity = new Identity(subject);
-        Serializable token = identity.getToken();
+        UUID token = identity.getToken();
         identities.put(token, identity);
         return token;
+    }
+
+    public void logout(UUID securityIdentity) throws LoginException {
+        Identity identity = identities.get(securityIdentity);
+        if (identity == null) throw new LoginException("Identity is not currently logged in: " + securityIdentity);
+        identities.remove(securityIdentity);
     }
 
     protected void unregisterSubject(Object securityIdentity) {
         identities.remove(securityIdentity);
     }
 
-    public Object associate(Object securityIdentity) throws LoginException {
-        Object oldIdentity = new SubjectHolder(clientIdentity.get());
+    public void associate(UUID securityIdentity) throws LoginException {
+        if (clientIdentity.get() != null) throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite.");
+        if (securityIdentity == null) throw new NullPointerException("The security token passed in is null");
 
-        Subject subject  = null;
-        if (securityIdentity != null) {
+        // The securityIdentity token must associated with a logged in Identity
+        Identity identity = identities.get(securityIdentity);
+        if (identity == null) throw new LoginException("Identity is not currently logged in: " + securityIdentity);
 
-            Identity identity = identities.get(securityIdentity);
-            if (identity == null) throw new LoginException("Identity does not exist: " + securityIdentity);
-
-            subject = identity.subject;
-        }
-        clientIdentity.set(subject);
-
-        return oldIdentity;
+        clientIdentity.set(identity);
     }
 
-    public void disassociate(Object oldIdentity) {
-        if (!(oldIdentity instanceof SubjectHolder)) {
-            throw new IllegalArgumentException("oldIdentity is not an object returned from associate");
+    public UUID disassociate() {
+        try {
+            Identity identity = clientIdentity.get();
+            return (identity == null)? null: identity.getToken();
+        } finally {
+            clientIdentity.remove();
         }
-        SubjectHolder subjectHolder = (SubjectHolder) oldIdentity;
-        clientIdentity.set(subjectHolder.subject);
     }
 
     public boolean isCallerInRole(String role) {
@@ -287,7 +296,7 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
             return subject;
         }
 
-        public Serializable getToken() {
+        public UUID getToken() {
             return token;
         }
     }
@@ -330,14 +339,6 @@ public abstract class AbstractSecurityService implements SecurityService, Thread
 
         public String getName() {
             return name;
-        }
-    }
-
-    private static class SubjectHolder {
-        private final Subject subject;
-
-        public SubjectHolder(Subject subject) {
-            this.subject = subject;
         }
     }
 }

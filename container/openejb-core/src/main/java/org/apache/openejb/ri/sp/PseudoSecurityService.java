@@ -49,8 +49,14 @@ public class PseudoSecurityService implements SecurityService {
         return Collections.emptySet();
     }
 
-    public Object associate(Object securityIdentity) throws LoginException {
+    public void associate(Object securityIdentity) throws LoginException {
+    }
+
+    public Object disassociate() {
         return null;
+    }
+
+    public void logout(Object securityIdentity) throws LoginException {
     }
 
     public boolean isCallerInRole(String role) {

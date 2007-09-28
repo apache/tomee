@@ -18,32 +18,41 @@ package org.apache.openejb.spi;
 
 import org.apache.openejb.InterfaceType;
 
-import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import java.lang.reflect.Method;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Set;
 
-public interface SecurityService extends Service {
+/**
+ * The generic value T is any serializable token of the SecurityService
+ * implementations choosing.   This token only needs to be understandable
+ * by the SecurityService internally and need not be a publicly usable class
+ * type.  No part of the outlying system will make any assumptions as to the
+ * type of the object.  The use of a java generic type is to express the
+ * required symmetry in the interface.  
+ *
+ */
+public interface SecurityService<T> extends Service {
+    /**
+     *
+     */
+    public T login(String user, String pass) throws LoginException;
+
+    public T login(String securityRealm, String user, String pass) throws LoginException;
+
     /**
      * Active
      */
-    public Object login(String user, String pass) throws LoginException;
-    public Object login(String securityRealm, String user, String pass) throws LoginException;
-
-
-    public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles);
-    
-    /**
-     * Active
-     */
-    public Object associate(Object securityIdentity) throws LoginException;
+    public void associate(T securityIdentity) throws LoginException;
 
     /**
      * Active
      */
-//    public Object logout(Object securityIdentity) throws LoginException;
+    public T disassociate();
+
+    /**
+     * Active
+     */
+    public void logout(T securityIdentity) throws LoginException;
 
     /**
      * Active

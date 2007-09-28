@@ -105,9 +105,10 @@ class EjbRequestHandler {
             return;
         }
 
+        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         try {
-            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            securityService.associate(req.getClientIdentity());
+            Object clientIdentity = req.getClientIdentity();
+            if (clientIdentity != null) securityService.associate(clientIdentity);
         } catch (Throwable t) {
             replyWithFatalError(out, t, "Security system failed to associate thread with the thread");
             return;
@@ -197,6 +198,7 @@ class EjbRequestHandler {
             } catch (java.io.IOException ie) {
                 logger.fatal("Couldn't write EjbResponse to output stream", ie);
             }
+            securityService.disassociate();
             call.reset();
             EJBHomeProxyHandle.resolver.set(null);
             EJBObjectProxyHandle.resolver.set(null);

@@ -63,8 +63,8 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         Principal[] principals = domain.getPrincipals();
         if (principals.length == 0) return false;
 
-        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        Set<String> roles = securityService.getLogicalRoles(principals, rolePermissionsMap.keySet());
+        RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
+        Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
         for (String role : roles) {
             Permissions permissions = rolePermissionsMap.get(role);
@@ -180,5 +180,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     int getState() {
         return state;
+    }
+
+    public interface RoleResolver {
+        public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles);
     }
 }

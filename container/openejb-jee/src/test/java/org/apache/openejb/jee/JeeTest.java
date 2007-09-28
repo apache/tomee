@@ -18,6 +18,7 @@
 package org.apache.openejb.jee;
 
 import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -30,6 +31,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.File;
 
 /**
  * @version $Revision$ $Date$
@@ -78,9 +81,27 @@ public class JeeTest extends TestCase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-        String actual = new String(baos.toByteArray());
+        byte[] bytes = baos.toByteArray();
+        String actual = new String(bytes);
 
-        assertEquals(expected, actual);
+        try {
+            assertEquals(expected, actual);
+        } catch (AssertionFailedError e) {
+            writeToTmpFile(bytes, xmlFileName);
+            throw e;            
+        }
+    }
+
+    private void writeToTmpFile(byte[] bytes, String xmlFileName) {
+        try {
+            File tempFile = File.createTempFile("jaxb-output", "xml");
+            FileOutputStream out = new FileOutputStream(tempFile);
+            out.write(bytes);
+            out.close();
+            System.out.println("Jaxb output of "+xmlFileName+" written to "+tempFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {

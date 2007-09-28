@@ -23,6 +23,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import java.net.URL;
+import java.util.UUID;
 
 /**
  * @version $Rev$ $Date$
@@ -54,7 +55,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
         System.setProperty("java.security.auth.login.config", loginConfig.toExternalForm());
     }
 
-    public Object login(String realmName, String username, String password) throws LoginException {
+    public UUID login(String realmName, String username, String password) throws LoginException {
         if (realmName == null){
             realmName = getRealmName();
         }
