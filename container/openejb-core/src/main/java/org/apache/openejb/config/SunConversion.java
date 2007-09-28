@@ -175,10 +175,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        Map<String,org.apache.openejb.jee.EjbRef> refMap = new TreeMap<String,org.apache.openejb.jee.EjbRef>();
-        for (org.apache.openejb.jee.EjbRef ejbRef : applicationClient.getEjbRef()) {
-            refMap.put(ejbRef.getEjbRefName(), ejbRef);
-        }
+        Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
 
         // map ejb-ref jndi name declaration to deploymentId
         for (EjbRef ref : sunApplicationClient.getEjbRef()) {
@@ -197,12 +194,8 @@ public class SunConversion implements DynamicDeployer {
 
         // map resource-env-refs and message-destination-refs
         Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
-        for (JndiReference envRef : applicationClient.getResourceEnvRef()) {
-            resEnvMap.put(envRef.getName(), envRef);
-        }
-        for (JndiReference envRef : applicationClient.getMessageDestinationRef()) {
-            resEnvMap.put(envRef.getName(), envRef);
-        }
+        resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
+        resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
         for (ResourceRef ref : sunApplicationClient.getResourceRef()) {
             if (ref.getJndiName() != null) {

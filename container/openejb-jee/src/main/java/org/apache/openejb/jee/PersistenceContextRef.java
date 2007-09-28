@@ -96,6 +96,10 @@ public class PersistenceContextRef implements JndiReference {
         return getPersistenceContextRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     public String getType() {
         return getPersistenceContextType().name();
     }

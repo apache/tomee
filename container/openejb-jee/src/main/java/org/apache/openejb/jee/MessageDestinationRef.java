@@ -102,6 +102,10 @@ public class MessageDestinationRef implements JndiReference {
         return getMessageDestinationRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     @XmlTransient
     public String getType() {
         return getMessageDestinationType();

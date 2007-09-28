@@ -32,12 +32,11 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
 
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @version $Rev$ $Date$
@@ -53,7 +52,7 @@ class DebuggableVmHackery implements DynamicDeployer {
 
             ejbJar.setRelationships(null);
 
-            List<String> removed = new ArrayList();
+            List<String> removed = new ArrayList<String>();
 
             for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
@@ -125,24 +124,17 @@ class DebuggableVmHackery implements DynamicDeployer {
                 }
             }
 
+            // Drop any ejb ref to with an ejb-link to a removed ejb
             for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
-                for (EjbLocalRef ref : copy(bean.getEjbLocalRef())) {
-                    if (removed.contains(ref.getEjbLink())){
-                        bean.getEjbLocalRef().remove(ref);
-                    }
-                }
-                for (EjbRef ref : copy(bean.getEjbRef())) {
-                    if (removed.contains(ref.getEjbLink())){
-                        bean.getEjbRef().remove(ref);
-                    }
-                }
+                bean.getEjbLocalRefMap().keySet().removeAll(removed);
+                bean.getEjbRefMap().keySet().removeAll(removed);
             }
 
         }
         return appModule;
     }
 
-    public <T> List<T> copy(List<T> list) {
-        return new ArrayList(list);
+    public <T> List<T> copy(Collection<T> list) {
+        return new ArrayList<T>(list);
     }
 }

@@ -96,6 +96,10 @@ public class ResourceRef implements JndiReference {
         return getResRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     @XmlTransient
     public String getType() {
         return getResType();

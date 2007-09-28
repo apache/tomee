@@ -16,28 +16,38 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
  */
 public interface JndiConsumer {
-    List<EnvEntry> getEnvEntry();
+    Collection<EnvEntry> getEnvEntry();
+    Map<String,EnvEntry> getEnvEntryMap();
 
-    List<EjbRef> getEjbRef();
+    Collection<EjbRef> getEjbRef();
+    Map<String,EjbRef> getEjbRefMap();
 
-    List<EjbLocalRef> getEjbLocalRef();
+    Collection<EjbLocalRef> getEjbLocalRef();
+    Map<String,EjbLocalRef> getEjbLocalRefMap();
 
-    List<ServiceRef> getServiceRef();
+    Collection<ServiceRef> getServiceRef();
+    Map<String,ServiceRef> getServiceRefMap();
 
-    List<ResourceRef> getResourceRef();
+    Collection<ResourceRef> getResourceRef();
+    Map<String,ResourceRef> getResourceRefMap();
 
-    List<ResourceEnvRef> getResourceEnvRef();
+    Collection<ResourceEnvRef> getResourceEnvRef();
+    Map<String,ResourceEnvRef> getResourceEnvRefMap();
 
-    List<MessageDestinationRef> getMessageDestinationRef();
+    Collection<MessageDestinationRef> getMessageDestinationRef();
+    Map<String,MessageDestinationRef> getMessageDestinationRefMap();
 
-    List<PersistenceContextRef> getPersistenceContextRef();
+    Collection<PersistenceContextRef> getPersistenceContextRef();
+    Map<String,PersistenceContextRef> getPersistenceContextRefMap();
 
-    List<PersistenceUnitRef> getPersistenceUnitRef();
+    Collection<PersistenceUnitRef> getPersistenceUnitRef();
+    Map<String,PersistenceUnitRef> getPersistenceUnitRefMap();
 
 }

@@ -89,6 +89,10 @@ public class ResourceEnvRef implements JndiReference {
         return getResourceEnvRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     @XmlTransient
     public String getType() {
         return getResourceEnvRefType();

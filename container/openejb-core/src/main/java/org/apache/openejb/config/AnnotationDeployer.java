@@ -28,7 +28,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.InjectionTarget;
@@ -153,6 +152,13 @@ public class AnnotationDeployer implements DynamicDeployer {
         return appModule;
     }
 
+    public WebModule deploy(WebModule webModule) throws OpenEJBException {
+        webModule = discoverAnnotatedBeans.deploy(webModule);
+        webModule = envEntriesPropertiesDeployer.deploy(webModule);
+        webModule = processAnnotatedBeans.deploy(webModule);
+        return webModule;
+    }
+
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
                 "javax.ejb.SessionContext",
@@ -186,9 +192,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 deploy(connectorModule);
             }
-            for (WebModule webModule : appModule.getWebModules()) {
-                deploy(webModule);
-            }
+//            for (WebModule webModule : appModule.getWebModules()) {
+//                deploy(webModule);
+//            }
             return appModule;
         }
 
@@ -335,9 +341,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 deploy(connectorModule);
             }
-            for (WebModule webModule : appModule.getWebModules()) {
-                deploy(webModule);
-            }
+//            for (WebModule webModule : appModule.getWebModules()) {
+//                deploy(webModule);
+//            }
             return appModule;
         }
 
@@ -1121,21 +1127,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 throw new OpenEJBException("The name attribute is not specified for the class level annotation @PersistenceUnit with unitName=" + persistenceUnit.unitName()
                         + ". It is mandatory for all class level PersistenceUnit annotations.");
             }
-            PersistenceUnitRef persistenceUnitRef = null;
-            List<PersistenceUnitRef> persistenceUnitRefs = consumer.getPersistenceUnitRef();
-            for (PersistenceUnitRef puRef : persistenceUnitRefs) {
-                if (puRef.getPersistenceUnitRefName().equals(refName)) {
-                    persistenceUnitRef = puRef;
-                    break;
-                }
-            }
-
-
+            PersistenceUnitRef persistenceUnitRef = consumer.getPersistenceUnitRefMap().get(refName);
             if (persistenceUnitRef == null) {
                 persistenceUnitRef = new PersistenceUnitRef();
                 persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
                 persistenceUnitRef.setPersistenceUnitRefName(refName);
-                persistenceUnitRefs.add(persistenceUnitRef);
+                consumer.getPersistenceUnitRef().add(persistenceUnitRef);
             }
             if (member != null) {
                 // Set the member name where this will be injected
@@ -1157,17 +1154,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
-            JndiReference reference = null;
-
-            List<EnvEntry> envEntries = consumer.getEnvEntry();
-            for (EnvEntry envEntry : envEntries) {
-                if (envEntry.getName().equals(refName)) {
-                    reference = envEntry;
-                    break;
-                }
-            }
-
-
+            JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
                 String type = null;
                 if (resource.type() != java.lang.Object.class) {
@@ -1177,18 +1164,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 if (knownResourceEnvTypes.contains(type)) {
-                    List<ResourceEnvRef> resourceEnvRefs = consumer.getResourceEnvRef();
-                    ResourceEnvRef resourceEnvRef = null;
-                    for (ResourceEnvRef resEnvRef : resourceEnvRefs) {
-                        if (resEnvRef.getName().equals(refName)) {
-                            resourceEnvRef = resEnvRef;
-                            break;
-                        }
-                    }
+                    ResourceEnvRef resourceEnvRef = consumer.getResourceEnvRefMap().get(refName);
                     if (resourceEnvRef == null) {
                         resourceEnvRef = new ResourceEnvRef();
                         resourceEnvRef.setName(refName);
-                        resourceEnvRefs.add(resourceEnvRef);
+                        consumer.getResourceEnvRef().add(resourceEnvRef);
                     }
 
                     if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
@@ -1200,19 +1180,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     reference = resourceEnvRef;
                 } else if (!knownEnvironmentEntries.contains(type)) {
-                    ResourceRef resourceRef = null;
-                    List<ResourceRef> resourceRefs = consumer.getResourceRef();
-                    for (ResourceRef resRef : resourceRefs) {
-                        if (resRef.getName().equals(refName)) {
-                            resourceRef = resRef;
-                            break;
-                        }
-                    }
+                    ResourceRef resourceRef = consumer.getResourceRefMap().get(refName);
 
                     if (resourceRef == null) {
                         resourceRef = new ResourceRef();
                         resourceRef.setName(refName);
-                        resourceRefs.add(resourceRef);
+                        consumer.getResourceRef().add(resourceRef);
                     }
 
                     if (resourceRef.getResAuth() == null) {
@@ -1271,18 +1244,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
-            List<ServiceRef> serviceRefEntries = consumer.getServiceRef();
-            for (ServiceRef serviceRefEntry : serviceRefEntries) {
-                if (serviceRefEntry.getName().equals(refName)) {
-                    serviceRef = serviceRefEntry;
-                    break;
-                }
-            }
+            serviceRef = consumer.getServiceRefMap().get(refName);
 
             if (serviceRef == null) {
                 serviceRef = new ServiceRef();
                 serviceRef.setServiceRefName(refName);
-                serviceRefEntries.add(serviceRef);
+                consumer.getServiceRef().add(serviceRef);
             }
 
             if (member != null) {
@@ -1343,16 +1310,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 throw new OpenEJBException("The name attribute is not specified for the class level annotation @PersistenceContext with unitName="
                         + persistenceContext.unitName() + ". It is mandatory for all class level PersistenceContext annotations.");
             }
-            PersistenceContextRef persistenceContextRef = null;
-
-            List<PersistenceContextRef> persistenceContextRefs = consumer.getPersistenceContextRef();
-            for (PersistenceContextRef pcRef : persistenceContextRefs) {
-                if (pcRef.getPersistenceContextRefName().equals(refName)) {
-                    persistenceContextRef = pcRef;
-                    break;
-                }
-            }
-
+            PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
             if (persistenceContextRef == null) {
                 persistenceContextRef = new PersistenceContextRef();
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
@@ -1362,7 +1320,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 } else {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
                 }
-                persistenceContextRefs.add(persistenceContextRef);
+                consumer.getPersistenceContextRef().add(persistenceContextRef);
             } else {
                 if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName()))
                 {
@@ -1485,7 +1443,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ejbRef.setMappedName(mappedName);
 
 
-            Map<String, EjbRef> remoteRefs = mapReferences(consumer.getEjbRef());
+            Map<String, EjbRef> remoteRefs = consumer.getEjbRefMap();
             if (remoteRefs.containsKey(ejbRef.getName())){
                 EjbRef ref = remoteRefs.get(ejbRef.getName());
                 if (ref.getRemote() == null) ref.setRemote(ejbRef.getRemote());
@@ -1495,7 +1453,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return;
             }
 
-            Map<String, EjbLocalRef> localRefs = mapReferences(consumer.getEjbLocalRef());
+            Map<String, EjbLocalRef> localRefs = consumer.getEjbLocalRefMap();
             if (localRefs.containsKey(ejbRef.getName())){
                 EjbLocalRef ejbLocalRef = new EjbLocalRef(ejbRef);
                 EjbLocalRef ref = localRefs.get(ejbLocalRef.getName());
@@ -1515,14 +1473,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
                     break;
             }
-        }
-
-        private static <T extends JndiReference> Map<String, T> mapReferences(List<T> refsList) {
-            Map<String, T> refs = new HashMap<String, T>(refsList.size());
-            for (T ref : refsList) {
-                refs.put(ref.getName(), ref);
-            }
-            return refs;
         }
 
         private List<Class<?>> copy(List<Class<?>> classes) {

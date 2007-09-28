@@ -144,14 +144,14 @@
             </ejb-local-ref>
             <service-ref>
                 <description>String</description>
-                <display-name>token</display-name>
+                <display-name>token1</display-name>
                 <icon>
-                    <small-icon>token</small-icon>
-                    <large-icon>token</large-icon>
+                    <small-icon>token1</small-icon>
+                    <large-icon>token1</large-icon>
                 </icon>
-                <service-ref-name>token</service-ref-name>
-                <service-interface>token</service-interface>
-                <service-ref-type>token</service-ref-type>
+                <service-ref-name>token1</service-ref-name>
+                <service-interface>token1</service-interface>
+                <service-ref-type>token1</service-ref-type>
                 <wsdl-file>http://www.altova.com</wsdl-file>
                 <jaxrpc-mapping-file>token</jaxrpc-mapping-file>
                 <service-qname>q:name</service-qname>
@@ -186,14 +186,14 @@
             </service-ref>
             <service-ref>
                 <description>String</description>
-                <display-name>token</display-name>
+                <display-name>token2</display-name>
                 <icon>
-                    <small-icon>token</small-icon>
-                    <large-icon>token</large-icon>
+                    <small-icon>token2</small-icon>
+                    <large-icon>token2</large-icon>
                 </icon>
-                <service-ref-name>token</service-ref-name>
-                <service-interface>token</service-interface>
-                <service-ref-type>token</service-ref-type>
+                <service-ref-name>token2</service-ref-name>
+                <service-interface>token2</service-interface>
+                <service-ref-type>token2</service-ref-type>
                 <wsdl-file>http://www.altova.com</wsdl-file>
                 <jaxrpc-mapping-file>token</jaxrpc-mapping-file>
                 <service-qname>q:name</service-qname>

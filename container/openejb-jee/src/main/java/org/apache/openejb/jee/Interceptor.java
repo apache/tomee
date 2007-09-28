@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -73,23 +75,23 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "env-entry", required = true)
-    protected List<EnvEntry> envEntry;
+    protected KeyedCollection<String,EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected List<EjbRef> ejbRef;
+    protected KeyedCollection<String,EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected List<EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected List<ServiceRef> serviceRef;
+    protected KeyedCollection<String,ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected List<ResourceRef> resourceRef;
+    protected KeyedCollection<String,ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected List<ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected List<MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected List<PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected List<PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -141,67 +143,130 @@ public class Interceptor implements JndiConsumer, Session {
         getAroundInvoke().add(new AroundInvoke(interceptorClass, method));
     }
 
-    public List<EnvEntry> getEnvEntry() {
+    public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new ArrayList<EnvEntry>();
+            envEntry = new KeyedCollection<String,EnvEntry>();
         }
         return this.envEntry;
     }
 
-    public List<EjbRef> getEjbRef() {
+    public Map<String,EnvEntry> getEnvEntryMap() {
+        if (envEntry == null) {
+            envEntry = new KeyedCollection<String,EnvEntry>();
+        }
+        return this.envEntry.toMap();
+    }
+
+    public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRef>();
+            ejbRef = new KeyedCollection<String,EjbRef>();
         }
         return this.ejbRef;
     }
 
-    public List<EjbLocalRef> getEjbLocalRef() {
+    public Map<String,EjbRef> getEjbRefMap() {
+        if (ejbRef == null) {
+            ejbRef = new KeyedCollection<String,EjbRef>();
+        }
+        return this.ejbRef.toMap();
+    }
+
+    public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
-    public List<ServiceRef> getServiceRef() {
+    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+        if (ejbLocalRef == null) {
+            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+        }
+        return this.ejbLocalRef.toMap();
+    }
+
+    public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRef>();
+            serviceRef = new KeyedCollection<String,ServiceRef>();
         }
         return this.serviceRef;
     }
 
-    public List<ResourceRef> getResourceRef() {
+    public Map<String,ServiceRef> getServiceRefMap() {
+        if (serviceRef == null) {
+            serviceRef = new KeyedCollection<String,ServiceRef>();
+        }
+        return this.serviceRef.toMap();
+    }
+
+    public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRef>();
+            resourceRef = new KeyedCollection<String,ResourceRef>();
         }
         return this.resourceRef;
     }
 
-    public List<ResourceEnvRef> getResourceEnvRef() {
+    public Map<String,ResourceRef> getResourceRefMap() {
+        if (resourceRef == null) {
+            resourceRef = new KeyedCollection<String,ResourceRef>();
+        }
+        return this.resourceRef.toMap();
+    }
+
+    public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
-    public List<MessageDestinationRef> getMessageDestinationRef() {
+    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+        if (resourceEnvRef == null) {
+            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+        }
+        return this.resourceEnvRef.toMap();
+    }
+
+    public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new ArrayList<MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
-    public List<PersistenceContextRef> getPersistenceContextRef() {
+    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+        if (messageDestinationRef == null) {
+            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+        }
+        return this.messageDestinationRef.toMap();
+    }
+
+    public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new ArrayList<PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
-    public List<PersistenceUnitRef> getPersistenceUnitRef() {
+    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+        if (persistenceContextRef == null) {
+            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+        }
+        return this.persistenceContextRef.toMap();
+    }
+
+    public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new ArrayList<PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
+    }
+
+    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+        if (persistenceUnitRef == null) {
+            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+        }
+        return this.persistenceUnitRef.toMap();
     }
 
     public List<LifecycleCallback> getPostConstruct() {
@@ -253,11 +318,11 @@ public class Interceptor implements JndiConsumer, Session {
     }
 
     public List<InitMethod> getInitMethod() {
-        return new ArrayList();
+        return new ArrayList<InitMethod>();
     }
 
     public List<RemoveMethod> getRemoveMethod() {
-        return new ArrayList();
+        return new ArrayList<RemoveMethod>();
     }
 
     public String getId() {

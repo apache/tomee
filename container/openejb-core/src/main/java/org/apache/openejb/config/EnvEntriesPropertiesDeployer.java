@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.List;
 
 /**
  * Read in all the properties for an app's META-INF/env-entries.properties file
@@ -52,13 +51,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             }
         }
 
-        // WebModule META-INF/env-entries.properties
-        for (WebModule webModule : appModule.getWebModules()) {
-            for (Map.Entry<String, String> entry : getEnvEntries(webModule).entrySet()) {
-                EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
-                apply(webModule.getWebApp(), envEntry, "WebApp");
-            }
-        }
+//        // WebModule META-INF/env-entries.properties
+//        for (WebModule webModule : appModule.getWebModules()) {
+//            deploy(webModule);
+//        }
 
         // Resource Adapters do not have an ENC
 
@@ -92,22 +88,25 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         return appModule;
     }
 
-    private void apply(JndiConsumer bean, EnvEntry newEntry, String componentName) {
-        List<EnvEntry> entries = bean.getEnvEntry();
+    public WebModule deploy(WebModule webModule) {
+        for (Map.Entry<String, String> entry : getEnvEntries(webModule).entrySet()) {
+            EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
+            apply(webModule.getWebApp(), envEntry, "WebApp");
+        }
+        return webModule;
+    }
 
-        // If this is an override to an existing entry, apply
-        // it and return
-        for (EnvEntry entry : entries) {
-            if (entry.getName().equals(newEntry.getName())){
-                log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
-                entry.setEnvEntryValue(newEntry.getEnvEntryValue());
-                return;
-            }
+    private void apply(JndiConsumer bean, EnvEntry newEntry, String componentName) {
+        EnvEntry entry = bean.getEnvEntryMap().get(newEntry.getName());
+        if (entry != null){
+            log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
+            entry.setEnvEntryValue(newEntry.getEnvEntryValue());
+            return;
         }
 
         // Must not be an override, just add the new entry
         log.debug("envprops.add", componentName, newEntry.getName(), newEntry.getEnvEntryValue());
-        entries.add(newEntry);
+        bean.getEnvEntry().add(newEntry);
     }
 
     @SuppressWarnings({"unchecked"})

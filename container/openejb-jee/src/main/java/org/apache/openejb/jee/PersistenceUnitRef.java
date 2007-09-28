@@ -93,6 +93,10 @@ public class PersistenceUnitRef implements JndiReference {
         setPersistenceUnitRefName(name);
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     public void setType(String type) {
     }
 

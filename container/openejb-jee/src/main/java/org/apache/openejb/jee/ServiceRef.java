@@ -95,6 +95,10 @@ public class ServiceRef implements JndiReference {
         return getServiceRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     public String getType() {
         return getServiceRefType();
     }

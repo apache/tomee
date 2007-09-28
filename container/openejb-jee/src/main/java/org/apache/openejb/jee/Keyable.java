@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,15 +18,16 @@
 package org.apache.openejb.jee;
 
 /**
- * @version $Rev$ $Date$
+ * A keyable object can provide an immutable key for this object.
+ *
+ * It is important for the key to not be mutable and that the key value
+ * itself is not changed in the object.  If this happens any AutoIndex,
+ * or Map using this key will break.
  */
-public interface JndiReference extends Injectable, Keyable<String> {
-    String getName();
-    void setName(String name);
-
-    String getType();
-    void setType(String type);
-
-    String getMappedName();
-    void setMappedName(String mappedName);
+public interface Keyable<K> {
+    /**
+     * Gets the immutable key for this object.
+     * @return gets the immutable key for this object
+     */
+    K getKey();
 }

@@ -589,12 +589,9 @@ public class CmpJpaConversion implements DynamicDeployer {
     }
 
     private boolean addPersistenceContextRef(EntityBean bean) {
-        for (PersistenceContextRef ref : bean.getPersistenceContextRef()) {
-            // if a ref is already defined, skip this bean
-            if (ref.getName().equals(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) {
-                return false;
-            }
-        }
+        // if a ref is already defined, skip this bean
+        if (bean.getPersistenceContextRefMap().containsKey(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) return false;
+
         PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
         persistenceContextRef.setName(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME);
         persistenceContextRef.setPersistenceUnitName(CMP_PERSISTENCE_UNIT_NAME);

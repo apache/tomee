@@ -112,10 +112,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
-            Map<String,EjbRef> ejbRefs =  new TreeMap<String,EjbRef>();
-            for (EjbRef ref : ejb.getEjbRef()) {
-                ejbRefs.put(ref.getEjbRefName(), ref);
-            }
+            Map<String,EjbRef> ejbRefs =  ejb.getEjbRefMap();
 
             EjbDeployment deployment = deployments.get(enterpriseBean.getEjbName());
             if (deployment == null) {

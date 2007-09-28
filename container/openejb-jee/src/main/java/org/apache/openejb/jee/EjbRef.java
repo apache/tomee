@@ -115,6 +115,10 @@ public class EjbRef implements JndiReference {
         return getEjbRefName();
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     public String getType() {
         return getEjbRefType().name();
     }

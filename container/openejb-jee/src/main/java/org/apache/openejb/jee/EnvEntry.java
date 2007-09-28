@@ -106,6 +106,10 @@ public class EnvEntry implements JndiReference {
         setEnvEntryName(name);
     }
 
+    public String getKey() {
+        return getName();
+    }
+
     public void setType(String type) {
         setEnvEntryType(type);
     }

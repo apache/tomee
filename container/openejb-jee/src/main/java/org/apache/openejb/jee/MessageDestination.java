@@ -60,7 +60,7 @@ import java.util.List;
         "messageDestinationName",
         "mappedName"
         })
-public class MessageDestination {
+public class MessageDestination implements Keyable<String> {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -104,6 +104,10 @@ public class MessageDestination {
 
     public void setMessageDestinationName(String value) {
         this.messageDestinationName = value;
+    }
+
+    public String getKey() {
+        return getMessageDestinationName();
     }
 
     public String getMappedName() {
