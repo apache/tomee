@@ -100,20 +100,15 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     }
 
     public Object enterWebApp(Realm realm, Principal principal, String runAs) {
-        UUID newToken = null;
+        Identity newIdentity = null;
         if (principal != null) {
             Subject newSubject = createSubject(realm, principal);
-            newToken = registerSubject(newSubject);
+            newIdentity = new Identity(newSubject);
         }
 
-        UUID oldToken = disassociate();
-        WebAppState webAppState = new WebAppState(oldToken, runAs != null);
-        try {
-            associate(newToken);
-        } catch (LoginException e) {
-            throw new IllegalStateException("Subject was registered, but cannot be associated with the SecurityService", e);
-        }
-
+        Identity oldIdentity = clientIdentity.get();
+        WebAppState webAppState = new WebAppState(oldIdentity, runAs != null);
+        clientIdentity.set(newIdentity);
 
         if (runAs != null) {
             Subject runAsSubject = createRunAsSubject(runAs);
@@ -126,12 +121,7 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     public void exitWebApp(Object state) {
         if (state instanceof WebAppState) {
             WebAppState webAppState = (WebAppState) state;
-            disassociate();
-            try {
-                if (webAppState.oldToken != null) associate(webAppState.oldToken);
-            } catch (LoginException e) {
-                throw new IllegalStateException("Subject was registered, but cannot be associated with the SecurityService", e);
-            }
+            clientIdentity.set(webAppState.oldIdentity);
             if (webAppState.hadRunAs) {
                 runAsStack.get().removeFirst();
             }
@@ -237,12 +227,12 @@ public class TomcatSecurityService  extends AbstractSecurityService {
     }
 
     private static class WebAppState {
-        private final UUID oldToken;
+        private final Identity oldIdentity;
         private final boolean hadRunAs;
 
 
-        public WebAppState(UUID oldSubject, boolean hadRunAs) {
-            this.oldToken = oldSubject;
+        public WebAppState(Identity oldIdentity, boolean hadRunAs) {
+            this.oldIdentity = oldIdentity;
             this.hadRunAs = hadRunAs;
         }
     }

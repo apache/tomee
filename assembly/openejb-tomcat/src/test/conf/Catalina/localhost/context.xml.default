@@ -1,0 +1,6 @@
+<Context>
+  <Environment
+      name="conf/context.xml/Catalina/localhost/environment"
+      value="ConfCatalinaLocalhostContextString"
+      type="java.lang.String"/>
+</Context>

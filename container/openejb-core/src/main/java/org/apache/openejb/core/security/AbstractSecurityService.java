@@ -58,7 +58,7 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
     static private final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
-    static private final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
+    static protected final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected final String defaultUser = "guest";
     protected final Subject defaultSubject;
     protected final SecurityContext defaultContext;
@@ -283,13 +283,18 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    private static class Identity {
+    protected static class Identity {
         private final Subject subject;
         private final UUID token;
 
         public Identity(Subject subject) {
             this.subject = subject;
             this.token = UUID.randomUUID();
+        }
+
+        public Identity(Subject subject, UUID token) {
+            this.subject = subject;
+            this.token = token;
         }
 
         public Subject getSubject() {

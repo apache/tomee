@@ -1,0 +1,6 @@
+<Context>
+  <Environment
+      name="conf/context.xml.default/environment"
+      value="ConfContextDefaultString"
+      type="java.lang.String"/>
+</Context>

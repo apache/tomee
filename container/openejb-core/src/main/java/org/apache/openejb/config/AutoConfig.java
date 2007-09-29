@@ -444,7 +444,8 @@ public class AutoConfig implements DynamicDeployer {
         // Resource env reference
         for (JndiReference ref : jndiConsumer.getResourceEnvRef()) {
             // skip destinations with a global jndi name
-            String mappedName = ref.getMappedName() + "";
+            String mappedName = ref.getMappedName();
+            if (mappedName == null) mappedName = "";
             if (mappedName.startsWith("jndi:")){
                 continue;
             }
