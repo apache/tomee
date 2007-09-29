@@ -292,6 +292,11 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             this.token = UUID.randomUUID();
         }
 
+        public Identity(Subject subject, UUID token) {
+            this.subject = subject;
+            this.token = token;
+        }
+
         public Subject getSubject() {
             return subject;
         }

@@ -103,7 +103,7 @@ public class TomcatSecurityService  extends AbstractSecurityService {
         Identity newIdentity = null;
         if (principal != null) {
             Subject newSubject = createSubject(realm, principal);
-            newIdentity = new Identity(newSubject);
+            newIdentity = new Identity(newSubject, null);
         }
 
         Identity oldIdentity = clientIdentity.get();
