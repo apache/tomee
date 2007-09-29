@@ -43,7 +43,10 @@
     Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
   </description>
 
-  <url>http://openejb.apache.org</url>
+  <organization>
+    <name>The Apache OpenEJB development community</name>
+    <url>http://openejb.apache.org</url>
+  </organization>
 
   <issueManagement>
     <system>jira</system>
@@ -103,6 +106,7 @@
               as the maven-release-plugin will not update this value.
     <version>3.0-SNAPSHOT</version>
         -->
+    <derbyVersion>10.3.1.4</derbyVersion>
   </properties>
 
   <build>
@@ -481,17 +485,17 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
-        <version>10.2.2.0</version>
+        <version>${derbyVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbyclient</artifactId>
-        <version>10.2.2.0</version>
+        <version>${derbyVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbynet</artifactId>
-        <version>10.2.2.0</version>
+        <version>${derbyVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
