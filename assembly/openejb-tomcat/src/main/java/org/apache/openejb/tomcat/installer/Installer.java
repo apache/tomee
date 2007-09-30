@@ -190,13 +190,7 @@ public class Installer {
 
         // add our magic bits to the catalina sh file
         String openejbJavaagentPath = paths.getCatalinaBaseDir().toURI().relativize(paths.getOpenEJBJavaagentJar().toURI()).getPath();
-        String updatedAnnotationApiPath = paths.getCatalinaBaseDir().toURI().relativize(paths.getUpdatedAnnotationApiJar().toURI()).getPath();
         String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
-                "# Update non-compliant Tomcat annotation-api.jar\n" +
-                "if [ -r \"$CATALINA_BASE\"/" + updatedAnnotationApiPath + " ]; then\n" +
-                "  cp \"$CATALINA_BASE\"/" + updatedAnnotationApiPath + "  \"$CATALINA_HOME\"/lib/annotations-api.jar \n" +
-                "fi\n" +
-                "\n" +
                 "# Add OpenEJB javaagent\n" +
                 "if [ -r \"$CATALINA_BASE\"/" + openejbJavaagentPath + " ]; then\n" +
                 "  JAVA_OPTS=\"\"-javaagent:$CATALINA_BASE/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
@@ -234,13 +228,7 @@ public class Installer {
 
         // add our magic bits to the catalina bat file
         openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
-        updatedAnnotationApiPath = updatedAnnotationApiPath.replace('/', '\\');
         String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
-                "rem Update non-compliant Tomcat annotation-api.jar\r\n" +
-                "if not exist \"%CATALINA_BASE%\\" + updatedAnnotationApiPath + "\" goto noUpdatedAnnotationJar\r\n" +
-                "copy /Y \"%CATALINA_BASE%\\" + updatedAnnotationApiPath + "\" \"%CATALINA_HOME%\\lib\\annotations-api.jar\"\r\n" +
-                ":noUpdatedAnnotationJar\r\n" +
-                "\r\n" +
                 "rem Add OpenEJB javaagent\r\n" +
                 "if not exist \"%CATALINA_BASE%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
                 "set JAVA_OPTS=\"-javaagent:%CATALINA_BASE%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
@@ -251,7 +239,6 @@ public class Installer {
         // overwrite the catalina.bat file
         if (writeAll(paths.getCatalinaBatFile(), newCatalinaBat)) {
             addInfo("Add OpenEJB JavaAgent to catalina.bat");
-//            addInfo("Added OpenEJB javaagent to Tomcat catalina.bat file.");
         }
     }
 

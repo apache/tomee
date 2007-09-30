@@ -299,7 +299,7 @@ public class JndiEncBuilder {
 
                 EntityManagerFactory factory = emfLinkResolver.resolveLink(contextInfo.persistenceUnitName, moduleUri);
                 if (factory == null) {
-                    throw new IllegalArgumentException("Persistence unit " + contextInfo.persistenceUnitName + " for persistence-context-ref " +
+                    throw new IllegalArgumentException("Persistence unit \"" + contextInfo.persistenceUnitName + "\" for persistence-context-ref " +
                             contextInfo.referenceName + " not found");
                 }
 

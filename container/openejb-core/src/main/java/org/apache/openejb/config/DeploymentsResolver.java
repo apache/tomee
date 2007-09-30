@@ -71,7 +71,7 @@ public class DeploymentsResolver {
 
         ////////////////////////////////
         //
-        //  Unpacked "Jar" directory
+        //  Unpacked "Jar" directory with descriptor
         //
         ////////////////////////////////
         File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
@@ -90,28 +90,35 @@ public class DeploymentsResolver {
             return;
         }
 
-        HashMap<String, URL> files = new HashMap<String, URL>();
-        DeploymentLoader.scanDir(dir, files, "");
-        for (String fileName : files.keySet()) {
-            if (fileName.endsWith(".class")) {
-                if (!jarList.contains(dir.getAbsolutePath())) {
-                    jarList.add(dir.getAbsolutePath());
-                }
-                return;
-            }
-        }
-
         ////////////////////////////////
         //
         //  Directory contains Jar files
         //
         ////////////////////////////////
-        for (String fileName : files.keySet()) {
-            if (fileName.endsWith(".jar") || fileName.endsWith(".ear")) {
-                File jar = new File(dir, fileName);
+        boolean hasNestedArchives = false;
+        for (File file : dir.listFiles()) {
+            if (file.getName().endsWith(".jar") || file.getName().endsWith(".ear")) {
+                if (jarList.contains(file.getAbsolutePath())) continue;
+                jarList.add(file.getAbsolutePath());
+                hasNestedArchives = true;
+            }
+        }
 
-                if (jarList.contains(jar.getAbsolutePath())) continue;
-                jarList.add(jar.getAbsolutePath());
+        ////////////////////////////////
+        //
+        //  Unpacked "Jar" directory w/o descriptor
+        //
+        ////////////////////////////////
+        if (!hasNestedArchives) {
+            HashMap<String, URL> files = new HashMap<String, URL>();
+            DeploymentLoader.scanDir(dir, files, "");
+            for (String fileName : files.keySet()) {
+                if (fileName.endsWith(".class")) {
+                    if (!jarList.contains(dir.getAbsolutePath())) {
+                        jarList.add(dir.getAbsolutePath());
+                    }
+                    return;
+                }
             }
         }
     }

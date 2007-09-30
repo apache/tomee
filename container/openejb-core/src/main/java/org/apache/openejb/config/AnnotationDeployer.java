@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.Join.join;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
@@ -29,6 +28,7 @@ import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.Interceptor;
@@ -37,6 +37,7 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.Lifecycle;
 import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
@@ -53,19 +54,18 @@ import org.apache.openejb.jee.ResSharingScope;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SecurityIdentity;
+import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.Filter;
-import org.apache.openejb.jee.Listener;
+import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
@@ -74,11 +74,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resources;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
-import javax.annotation.security.DeclareRoles;
+import javax.ejb.ApplicationException;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -100,19 +101,17 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.ejb.ApplicationException;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
-import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
+import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
-import javax.xml.ws.WebServiceProvider;
-import javax.jws.WebService;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -120,13 +119,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Properties;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
@@ -1092,27 +1091,30 @@ public class AnnotationDeployer implements DynamicDeployer {
             // @PersistenceContext
             //
 
+            PersistenceContextAnnFactory pcFactory = new PersistenceContextAnnFactory();
             List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
             for (Class<?> clazz : classFinder.findAnnotatedClasses(PersistenceContexts.class)) {
                 PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
                 persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
+                pcFactory.addAnnotations(clazz);
             }
             for (Class<?> clazz : classFinder.findAnnotatedClasses(PersistenceContext.class)) {
                 PersistenceContext persistenceContext = clazz.getAnnotation(PersistenceContext.class);
                 persistenceContextList.add(persistenceContext);
+                pcFactory.addAnnotations(clazz);
             }
             for (PersistenceContext pCtx : persistenceContextList) {
-                buildPersistenceContext(consumer, pCtx, null);
+                buildPersistenceContext(consumer, pcFactory.create(pCtx, null), null);
             }
             for (Field field : classFinder.findAnnotatedFields(PersistenceContext.class)) {
                 PersistenceContext pCtx = field.getAnnotation(PersistenceContext.class);
                 Member member = new FieldMember(field);
-                buildPersistenceContext(consumer, pCtx, member);
+                buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
             for (Method method : classFinder.findAnnotatedMethods(PersistenceContext.class)) {
                 PersistenceContext pCtx = method.getAnnotation(PersistenceContext.class);
                 Member member = new MethodMember(method);
-                buildPersistenceContext(consumer, pCtx, member);
+                buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
 
         }
@@ -1299,7 +1301,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @param member
          * @throws OpenEJBException
          */
-        private void buildPersistenceContext(JndiConsumer consumer, PersistenceContext persistenceContext, Member member) throws OpenEJBException {
+        private void buildPersistenceContext(JndiConsumer consumer, PersistenceContextAnn persistenceContext, Member member) throws OpenEJBException {
             String refName = persistenceContext.name();
 
             if (refName.equals("")) {
@@ -1313,22 +1315,20 @@ public class AnnotationDeployer implements DynamicDeployer {
             PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
             if (persistenceContextRef == null) {
                 persistenceContextRef = new PersistenceContextRef();
-                    persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 persistenceContextRef.setPersistenceContextRefName(refName);
-                if (persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                 } else {
                     persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
                 }
                 consumer.getPersistenceContextRef().add(persistenceContextRef);
             } else {
-                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName()))
-                {
+                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 }
-                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType()))
-                {
-                    if (persistenceContext.type() == javax.persistence.PersistenceContextType.EXTENDED) {
+                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
+                    if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                     } else {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
@@ -1342,19 +1342,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                 persistenceContextRef.setPersistenceProperty(persistenceProperties);
             }
 
-            Property property = null;
-            for (PersistenceProperty persistenceProperty : persistenceContext.properties()) {
+            for (Map.Entry<String, String> persistenceProperty : persistenceContext.properties().entrySet()) {
                 boolean flag = true;
                 for (Property prpty : persistenceProperties) {
-                    if (prpty.getName().equals(persistenceProperty.name())) {
+                    if (prpty.getName().equals(persistenceProperty.getKey())) {
                         flag = false;
                         break;
                     }
                 }
                 if (flag) {
-                    property = new Property();
-                    property.setName(persistenceProperty.name());
-                    property.setValue(persistenceProperty.value());
+                    Property property = new Property();
+                    property.setName(persistenceProperty.getKey());
+                    property.setValue(persistenceProperty.getValue());
                     persistenceProperties.add(property);
                 }
             }
