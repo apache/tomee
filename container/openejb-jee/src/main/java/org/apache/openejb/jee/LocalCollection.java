@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,20 +15,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.jee;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.ResourceFinder;
+import java.util.Locale;
+import java.util.Collection;
+import java.util.Map;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+/**
+ * @version $Revision$ $Date$
+ */
+public class LocalCollection<V> extends KeyedCollection<String,V> {
+    public LocalCollection() {
+    }
 
-public class DerbySystemHomeHack extends ManagedConnectionFactoryAdapter {
+    public LocalCollection(KeyExtractor<String, ? super V> keyExtractor) {
+        super(keyExtractor);
+    }
 
-    public DerbySystemHomeHack(ManagedConnectionFactory factory) {
-        super(factory);
-        System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
+    public LocalCollection(Collection<? extends V> c) {
+        super(c);
+    }
+
+    public LocalCollection(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public V getLocal() {
+        String lang = Locale.getDefault().getLanguage();
+        Map<String,V> map = toMap();
+        return (map.get(lang) != null ? map.get(lang) : map.get(null));
     }
 }

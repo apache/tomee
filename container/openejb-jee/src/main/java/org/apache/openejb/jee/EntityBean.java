@@ -130,7 +130,7 @@ import java.util.Map;
 @XmlType(name = "entity-beanType", propOrder = {
         "descriptions",
         "displayNames",
-        "icons",
+        "icon",
         "ejbName",
         "mappedName",
         "home",
@@ -166,8 +166,8 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
     protected TextMap description = new TextMap();
     @XmlTransient
     protected TextMap displayName = new TextMap();
-    @XmlTransient
-    protected LocalList<String,Icon> icon = new LocalList<String,Icon>(Icon.class);
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
@@ -262,13 +262,18 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         return displayName.get();
     }
 
-    @XmlElement(name = "icon", required = true)
-    public Icon[] getIcons() {
-        return icon.toArray();
+    public Collection<Icon> getIcons() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon;
     }
 
-    public void setIcons(Icon[] text) {
-        icon.set(text);
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
     }
 
     public Icon getIcon() {

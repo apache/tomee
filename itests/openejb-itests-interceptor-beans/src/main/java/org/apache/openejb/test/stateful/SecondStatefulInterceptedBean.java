@@ -26,7 +26,6 @@ import javax.ejb.PrePassivate;
 import javax.ejb.Stateful;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.ExcludeClassInterceptors;
-import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
 
@@ -100,7 +99,7 @@ public class SecondStatefulInterceptedBean extends SuperInterceptedBean
      */
     @AroundInvoke
     public Object inBeanInterceptor(InvocationContext ctx) throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(ctx);        
+        Map<String, Object> ctxData = Interceptor.profile(ctx, "inBeanInterceptor");
         setContextData(ctxData);
     
         return ctx.proceed();
@@ -114,7 +113,7 @@ public class SecondStatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PostConstruct
     public void inBeanInterceptorPostConstruct() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this); 
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostConstruct");
         setContextData(ctxData);
         return;
     }
@@ -128,7 +127,7 @@ public class SecondStatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PostActivate
     public void inBeanInterceptorPostActivate() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostActivate");
         setContextData(ctxData);
         return;
     }
@@ -141,7 +140,7 @@ public class SecondStatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PrePassivate
     public void inBeanInterceptorPrePassivate() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, Thread.currentThread().getStackTrace()[4].getMethodName());
         setContextData(ctxData);
         return;
     }
@@ -154,7 +153,7 @@ public class SecondStatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PreDestroy
     public void inBeanInterceptorPreDestroy() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, Thread.currentThread().getStackTrace()[4].getMethodName());
         setContextData(ctxData);
         return;
     }

@@ -48,7 +48,7 @@ public class SecondClassInterceptor {
      */    
     @AroundInvoke
     public Object secondClassInterceptor(InvocationContext ctx) throws Exception {        
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "secondClassInterceptor");
         return ctx.proceed();
     }
     
@@ -62,7 +62,7 @@ public class SecondClassInterceptor {
      */    
     @PostConstruct
     public void secondClassInterceptorPostConstruct(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "secondClassInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
@@ -78,7 +78,7 @@ public class SecondClassInterceptor {
      */    
     @PostActivate
     public void secondClassInterceptorPostActivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "secondClassInterceptorPostActivate");
         ctx.proceed();
         return;
     }
@@ -93,7 +93,7 @@ public class SecondClassInterceptor {
      */    
     @PrePassivate
     public void secondClassInterceptorPrePassivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "secondClassInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
@@ -108,7 +108,7 @@ public class SecondClassInterceptor {
      */    
     @PreDestroy
     public void secondClassInterceptorPreDestroy(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "secondClassInterceptorPreDestroy");
         ctx.proceed();
         return;
     }

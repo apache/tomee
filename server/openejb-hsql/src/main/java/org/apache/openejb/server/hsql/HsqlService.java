@@ -18,11 +18,10 @@
 package org.apache.openejb.server.hsql;
 
 import org.apache.openejb.core.ConnectorReference;
-import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.SelfManaging;
-import org.apache.openejb.util.LogCategory;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.hsqldb.Server;
 import org.hsqldb.ServerConfiguration;
 import org.hsqldb.ServerConstants;
@@ -34,7 +33,6 @@ import org.hsqldb.persist.HsqlProperties;
 import javax.naming.Binding;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,8 +97,8 @@ public class HsqlService implements ServerService, SelfManaging {
                     Object value = binding.getObject();
                     if (value instanceof ConnectorReference) {
                         Object connectionFactory = ((ConnectorReference)value).getObject();
-                        if (connectionFactory instanceof JdbcConnectionFactory) {
-                            JdbcConnectionFactory jdbc = (JdbcConnectionFactory) connectionFactory;
+                        if (connectionFactory instanceof BasicDataSource) {
+                            BasicDataSource jdbc = (BasicDataSource) connectionFactory;
                             String path = getPath(jdbc);
                             if (path != null) {
                                 if (dbIndex > 9) {
@@ -137,13 +135,13 @@ public class HsqlService implements ServerService, SelfManaging {
         }
     }
 
-    private String getPath(JdbcConnectionFactory jdbc) {
+    private String getPath(BasicDataSource jdbc) {
         // is this connectoion using the hsql driver?
-        if (!jdbcDriver.class.getName().equals(jdbc.getJdbcDriver())) {
+        if (!jdbcDriver.class.getName().equals(jdbc.getDriverClassName())) {
             return null;
         }
 
-        String url = jdbc.getJdbcUrl();
+        String url = jdbc.getUrl();
 
         // is this a hsql url?
         if (url == null || !url.startsWith("jdbc:hsqldb:")) {

@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -43,7 +43,7 @@ import org.apache.openejb.test.interceptor.MethodInterceptor;
 public class StatelessInterceptedBean extends SuperInterceptedBean 
                   implements BasicStatelessInterceptedLocal, BasicStatelessInterceptedRemote {
     
-    private static Map<String, Object> contextData = new HashMap<String, Object>(); 
+    private static Map<String, Object> contextData = new LinkedHashMap<String, Object>();
 
     /**
      * A simple dummy business method to concat 2 strings
@@ -98,7 +98,7 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      */
     @AroundInvoke
     public Object inBeanInterceptor(InvocationContext ctx) throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(ctx);        
+        Map<String, Object> ctxData = Interceptor.profile(ctx, "inBeanInterceptor");
         setContextData(ctxData);
     
         return ctx.proceed();
@@ -112,9 +112,8 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      */    
     @PostConstruct
     public void inBeanInterceptorPostConstruct() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostConstruct");
         setContextData(ctxData);
-        return;
     }
     
       
@@ -126,9 +125,8 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      */    
     @PreDestroy
     public void inBeanInterceptorPreDestroy() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPreDestroy");
         setContextData(ctxData);
-        return;
     }
 
 }

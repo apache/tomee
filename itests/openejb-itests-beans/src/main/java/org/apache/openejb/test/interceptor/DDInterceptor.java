@@ -42,7 +42,7 @@ public class DDInterceptor {
      * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
      */    
     public Object ddInterceptor(InvocationContext ctx) throws Exception {        
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "ddInterceptor");
         return ctx.proceed();
     }
     
@@ -55,7 +55,7 @@ public class DDInterceptor {
      * @throws runtime exceptions.
      */    
     public void ddInterceptorPostConstruct(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "ddInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
@@ -70,7 +70,7 @@ public class DDInterceptor {
      * @throws runtime exceptions.
      */    
     public void ddInterceptorPostActivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "ddInterceptorPostActivate");
         ctx.proceed();
         return;
     }
@@ -84,7 +84,7 @@ public class DDInterceptor {
      * @throws runtime exceptions.
      */    
     public void ddInterceptorPrePassivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "ddInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
@@ -98,7 +98,7 @@ public class DDInterceptor {
      * @throws runtime exceptions.
      */    
     public void ddInterceptorPreDestroy(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "ddInterceptorPreDestroy");
         ctx.proceed();
         return;
     }

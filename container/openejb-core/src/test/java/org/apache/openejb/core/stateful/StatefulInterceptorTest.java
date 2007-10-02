@@ -18,7 +18,6 @@ package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -33,7 +32,6 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.StatefulBean;
 
 import javax.annotation.PostConstruct;
@@ -59,8 +57,6 @@ public class StatefulInterceptorTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // containers
         assembler.createContainer(config.configureService(StatefulSessionContainerInfo.class));

@@ -19,7 +19,6 @@ package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
@@ -92,8 +91,6 @@ public class StatelessContainerTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // containers
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);

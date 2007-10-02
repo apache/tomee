@@ -42,15 +42,14 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 import junit.framework.TestCase;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.resource.SharedLocalConnectionManager;
-import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
+import org.apache.openejb.resource.jdbc.BasicDataSource;
+import org.apache.openejb.resource.jdbc.BasicManagedDataSource;
 import org.apache.xbean.naming.context.ImmutableContext;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
@@ -270,12 +269,16 @@ public class JpaTest extends TestCase {
     }
 
     private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
-        JdbcManagedConnectionFactory mcf = new JdbcManagedConnectionFactory("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:JpaTest", "sa", "", false);
-
-        SharedLocalConnectionManager connectionManager = new SharedLocalConnectionManager(transactionManager);
-
-        DataSource connectionFactory = (DataSource) mcf.createConnectionFactory(connectionManager);
-        return connectionFactory;
+        BasicManagedDataSource ds = new BasicManagedDataSource();
+        ds.setTransactionManager(transactionManager);
+        ds.setDriverClassName("org.hsqldb.jdbcDriver");
+        ds.setUrl("jdbc:hsqldb:mem:JpaTest");
+        ds.setUsername("sa");
+        ds.setPassword("");
+        ds.setMaxActive(100);
+        ds.setMaxWait(10000);
+        ds.setTestOnBorrow(true);
+        return ds;
     }
 
     private DataSource createNonJtaDataSource() throws Exception {

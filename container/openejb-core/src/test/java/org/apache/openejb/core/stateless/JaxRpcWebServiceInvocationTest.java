@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.jee.EjbJar;
@@ -72,8 +71,6 @@ public class JaxRpcWebServiceInvocationTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class,"PseudoSecurityService",null,"PseudoSecurityService",null));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
 

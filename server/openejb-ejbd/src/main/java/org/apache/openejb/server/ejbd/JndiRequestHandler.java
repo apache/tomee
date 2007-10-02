@@ -18,7 +18,6 @@ package org.apache.openejb.server.ejbd;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import javax.naming.Context;
@@ -29,7 +28,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.Injection;
-import org.apache.openejb.resource.jdbc.JdbcConnectionFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -42,6 +40,7 @@ import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.InjectionMetaData;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.omg.CORBA.ORB;
 
 class JndiRequestHandler {
@@ -131,9 +130,9 @@ class JndiRequestHandler {
                     return;
                 } else if (object == null) {
                     throw new NullPointerException("lookup of '"+name+"' returned null");
-                } else if (object instanceof JdbcConnectionFactory){
-                    JdbcConnectionFactory cf = (JdbcConnectionFactory) object;
-                    DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getJdbcDriver(), cf.getJdbcUrl(), cf.getDefaultUserName(), cf.getDefaultPassword());
+                } else if (object instanceof BasicDataSource){
+                    BasicDataSource cf = (BasicDataSource) object;
+                    DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
                     res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
                     res.setResult(dataSourceMetaData);
                     return;

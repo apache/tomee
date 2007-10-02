@@ -17,18 +17,18 @@
 package org.apache.openejb.client;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.sql.Connection;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * @version $Rev$ $Date$
  */
 public class ClientDataSource implements DataSource {
     private final String jdbcUrl;
-    private final String jdbcDriver;
     private final String defaultPassword;
     private final String defaultUserName;
 
@@ -62,7 +62,6 @@ public class ClientDataSource implements DataSource {
     public ClientDataSource(String jdbcDriver, String jdbcUrl, String defaultUserName, String defaultPassword) {
         this.defaultPassword = defaultPassword;
         this.defaultUserName = defaultUserName;
-        this.jdbcDriver = jdbcDriver;
         this.jdbcUrl = jdbcUrl;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -95,5 +94,19 @@ public class ClientDataSource implements DataSource {
     }
 
     public void setLogWriter(PrintWriter out) throws SQLException {
+    }
+
+    public boolean isWrapperFor(java.lang.Class<?> iface) {
+        if (iface == null) throw new NullPointerException("iface is null");
+        return iface.isInstance(this);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        if (iface == null) throw new NullPointerException("iface is null");
+        if (iface.isInstance(this)) {
+            return (T) this;
+        }
+        throw new SQLException(getClass().getName() + " does not implement " + iface.getName());
     }
 }

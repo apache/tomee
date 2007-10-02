@@ -48,7 +48,7 @@ public class ClassInterceptor extends SuperClassInterceptor {
      */    
     @AroundInvoke
     public Object classInterceptor(InvocationContext ctx) throws Exception {        
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "classInterceptor");
         return ctx.proceed();
     }
     
@@ -62,7 +62,7 @@ public class ClassInterceptor extends SuperClassInterceptor {
      */    
     @PostConstruct
     public void classInterceptorPostConstruct(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "classInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
@@ -78,7 +78,7 @@ public class ClassInterceptor extends SuperClassInterceptor {
      */    
     @PostActivate
     public void classInterceptorPostActivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "classInterceptorPostActivate");
         ctx.proceed();
         return;
     }
@@ -93,7 +93,7 @@ public class ClassInterceptor extends SuperClassInterceptor {
      */    
     @PrePassivate
     public void classInterceptorPrePassivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "classInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
@@ -108,7 +108,7 @@ public class ClassInterceptor extends SuperClassInterceptor {
      */    
     @PreDestroy
     public void classInterceptorPreDestroy(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "classInterceptorPreDestroy");
         ctx.proceed();
         return;
     }

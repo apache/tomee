@@ -18,41 +18,30 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.EjbJarInfoBuilder;
-import org.apache.openejb.config.JndiEncInfoBuilder;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.assembler.classic.EjbJarBuilder;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatefulBean;
 
-import javax.ejb.SessionContext;
-import javax.ejb.Remote;
-import javax.ejb.Local;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remove;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.Local;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remote;
+import javax.ejb.Remove;
+import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Properties;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
@@ -126,8 +115,6 @@ public class StatefulContainerTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // containers
         StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);

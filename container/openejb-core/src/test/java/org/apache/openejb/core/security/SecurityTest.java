@@ -23,7 +23,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.jee.EjbJar;
@@ -66,8 +65,6 @@ public class SecurityTest extends TestCase {
         serviceInfo.properties = new Properties();
 
         assembler.createSecurityService(serviceInfo);
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // containers
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));

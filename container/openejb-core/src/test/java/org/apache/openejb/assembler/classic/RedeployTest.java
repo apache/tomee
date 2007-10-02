@@ -54,8 +54,6 @@ public class RedeployTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
-
         // managed JDBC
         assembler.createResource(config.configureService("Default JDBC Database", ResourceInfo.class));
 

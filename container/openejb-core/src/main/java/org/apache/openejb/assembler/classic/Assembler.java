@@ -26,7 +26,6 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.resource.jdbc.JdbcManagedConnectionFactory;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -279,10 +278,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         createTransactionManager(configInfo.facilities.transactionService);
 
         createSecurityService(configInfo.facilities.securityService);
-
-        for (ConnectionManagerInfo connectionManagerInfo : configInfo.facilities.connectionManagers) {
-            createConnectionManager(connectionManagerInfo);
-        }
 
         for (ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(resourceInfo);
@@ -836,20 +831,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
             // get the connection manager
-            ConnectionManager connectionManager;
-            if ((ManagedConnectionFactory) service instanceof JdbcManagedConnectionFactory) {
-                connectionManager = SystemInstance.get().getComponent(ConnectionManager.class);
-            } else {
-                GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
-                // default transaction support is "local" and that doesn't seem to work
-                connectionManagerFactory.setTransactionSupport("xa");
-                connectionManagerFactory.setTransactionManager(transactionManager);
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                if (classLoader == null) classLoader = getClass().getClassLoader();
-                if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
-                connectionManagerFactory.setClassLoader(classLoader);
-                connectionManager = connectionManagerFactory.create();
-            }
+            GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
+            // default transaction support is "local" and that doesn't seem to work
+            connectionManagerFactory.setTransactionSupport("xa");
+            connectionManagerFactory.setTransactionManager(transactionManager);
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) classLoader = getClass().getClassLoader();
+            if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+            connectionManagerFactory.setClassLoader(classLoader);
+            ConnectionManager connectionManager = connectionManagerFactory.create();
 
             if (connectionManager == null) {
                 throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);

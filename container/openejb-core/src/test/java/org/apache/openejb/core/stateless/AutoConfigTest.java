@@ -19,7 +19,6 @@ package org.apache.openejb.core.stateless;
 import junit.framework.TestCase;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -29,7 +28,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -52,8 +50,6 @@ public class AutoConfigTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("defaultDataSource", null, "DataSource"), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("yellowDataSource", null, "DataSource"), ResourceInfo.class));

@@ -18,6 +18,7 @@ package org.apache.openejb.test.stateless;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Arrays;
 
 // import javax.ejb.EJB;
 
@@ -71,6 +72,8 @@ public class StatelessInterceptorTests extends BasicStatelessLocalTestClient {
         Map innerMap = (Map) contextData.get("reverse");
         ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
         // verifying interceptor chaining order
+        assertEquals(Arrays.asList("ddInterceptor","secondClassInterceptor", "superClassInterceptor", "classInterceptor", "methodInterceptor", "superBeanInterceptor","inBeanInterceptor"), interceptorsList);
+
         assertEquals("ddInterceptor", interceptorsList.get(0)); //specified in DD
         assertEquals("secondClassInterceptor", interceptorsList.get(1)); //specified in DD
         assertEquals("superClassInterceptor", interceptorsList.get(2)); //derived from class extension

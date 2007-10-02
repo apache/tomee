@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
@@ -55,8 +54,6 @@ public class StatefulSessionBeanTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
 
         // containers
         StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
@@ -130,11 +127,11 @@ public class StatefulSessionBeanTest extends TestCase {
         }
 
         public void ejbActivate() throws EJBException, RemoteException {
-            calls.add((Call) Enum.valueOf(Call.class, "EjbActivate" + (++activates)));
+            calls.add(Enum.valueOf(Call.class, "EjbActivate" + (++activates)));
         }
 
         public void ejbPassivate() throws EJBException, RemoteException {
-            calls.add((Call) Enum.valueOf(Call.class, "EjbPassivate" + (++passivates)));
+            calls.add(Enum.valueOf(Call.class, "EjbPassivate" + (++passivates)));
         }
 
         public void ejbRemove() throws EJBException, RemoteException {

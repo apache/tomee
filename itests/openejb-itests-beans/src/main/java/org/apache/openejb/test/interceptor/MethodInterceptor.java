@@ -44,7 +44,7 @@ public class MethodInterceptor {
      */    
     @AroundInvoke
     public Object methodInterceptor(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "methodInterceptor");
         return ctx.proceed();
     }
     
@@ -57,7 +57,7 @@ public class MethodInterceptor {
      */    
     @PostConstruct
     public void methodInterceptorPostConstruct(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "methodInterceptorPostConstruct");
         ctx.proceed();
         return;
     }

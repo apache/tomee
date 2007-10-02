@@ -53,7 +53,7 @@ public class SuperInterceptedBean {
      */
     @AroundInvoke
     public Object superBeanInterceptor(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);        
+        Interceptor.profile(ctx, "superBeanInterceptor");
         return ctx.proceed();
     }
     
@@ -65,7 +65,7 @@ public class SuperInterceptedBean {
      */    
     @PostConstruct
     public void superBeanInterceptorPostConstruct() throws Exception {
-        Interceptor.profile(this);
+        Interceptor.profile(this, "superBeanInterceptorPostConstruct");
         return;
     }
     
@@ -78,7 +78,7 @@ public class SuperInterceptedBean {
      */    
     @PreDestroy
     public void superBeanInterceptorPreDestroy() throws Exception {
-        Interceptor.profile(this);        
+        Interceptor.profile(this, "superBeanInterceptorPreDestroy");
         return;
     }
 

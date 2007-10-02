@@ -48,7 +48,7 @@ public class DefaultInterceptor {
      */    
     @AroundInvoke
     public Object defaultInterceptor(InvocationContext ctx) throws Exception {        
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "defaultInterceptor");
         return ctx.proceed();
     }
     
@@ -62,7 +62,7 @@ public class DefaultInterceptor {
      */    
     @PostConstruct
     public void defaultInterceptorPostConstruct(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "defaultInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
@@ -78,7 +78,7 @@ public class DefaultInterceptor {
      */    
     @PostActivate
     public void defaultInterceptorPostActivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "defaultInterceptorPostActivate");
         ctx.proceed();
         return;
     }
@@ -93,7 +93,7 @@ public class DefaultInterceptor {
      */    
     @PrePassivate
     public void defaultInterceptorPrePassivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "defaultInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
@@ -108,7 +108,7 @@ public class DefaultInterceptor {
      */    
     @PreDestroy
     public void defaultInterceptorPreDestroy(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "defaultInterceptorPreDestroy");
         ctx.proceed();
         return;
     }

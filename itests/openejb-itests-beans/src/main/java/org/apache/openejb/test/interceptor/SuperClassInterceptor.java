@@ -60,7 +60,7 @@ public class SuperClassInterceptor {
     @SuppressWarnings("unchecked")
     @AroundInvoke
     public Object superClassInterceptor(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);        
+        Interceptor.profile(ctx, "superClassInterceptor");
         return ctx.proceed();
     }
     
@@ -81,7 +81,7 @@ public class SuperClassInterceptor {
             System.out.println("SessionContext is null");
         }
        */
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "superClassInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
@@ -97,7 +97,7 @@ public class SuperClassInterceptor {
      */    
     @PostActivate
     public void superClassInterceptorPostActivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "superClassInterceptorPostActivate");
         ctx.proceed();
         return;
     }
@@ -112,7 +112,7 @@ public class SuperClassInterceptor {
      */    
     @PrePassivate
     public void superClassInterceptorPrePassivate(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "superClassInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
@@ -127,7 +127,7 @@ public class SuperClassInterceptor {
      */    
     @PreDestroy
     public void superClassInterceptorPreDestroy(InvocationContext ctx) throws Exception {
-        Interceptor.profile(ctx);
+        Interceptor.profile(ctx, "superClassInterceptorPreDestroy");
         ctx.proceed();
         return;
     }

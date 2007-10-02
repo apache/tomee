@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The connectorType defines a resource adapter.
@@ -35,7 +37,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "connectorType", propOrder = {
         "descriptions",
         "displayNames",
-        "icons",
+        "icon",
         "vendorName",
         "eisType",
         "resourceAdapterVersion",
@@ -48,8 +50,8 @@ public class Connector {
     protected TextMap description = new TextMap();
     @XmlTransient
     protected TextMap displayName = new TextMap();
-    @XmlTransient
-    protected LocalList<String, Icon> icon = new LocalList<String, Icon>(Icon.class);
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     @XmlElement(name = "vendor-name", required = true)
     protected String vendorName;
@@ -93,13 +95,18 @@ public class Connector {
         return displayName.get();
     }
 
-    @XmlElement(name = "icon", required = true)
-    public Icon[] getIcons() {
-        return icon.toArray();
+    public Collection<Icon> getIcons() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon;
     }
 
-    public void setIcons(Icon[] text) {
-        icon.set(text);
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
     }
 
     public Icon getIcon() {

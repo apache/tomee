@@ -37,7 +37,7 @@ import java.util.Map;
 @XmlType(name = "web-appType", propOrder = {
         "descriptions",
         "displayNames",
-        "icons",
+        "icon",
         "distributable",
         "contextParam",
         "filter",
@@ -72,8 +72,8 @@ public class WebApp implements JndiConsumer {
     protected TextMap description = new TextMap();
     @XmlTransient
     protected TextMap displayName = new TextMap();
-    @XmlTransient
-    protected LocalList<String, Icon> icon = new LocalList<String, Icon>(Icon.class);
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     protected List<EmptyType> distributable;
     @XmlElement(name = "context-param")
@@ -167,13 +167,18 @@ public class WebApp implements JndiConsumer {
         return displayName.get();
     }
 
-    @XmlElement(name = "icon", required = true)
-    public Icon[] getIcons() {
-        return icon.toArray();
+    public Collection<Icon> getIcons() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon;
     }
 
-    public void setIcons(Icon[] text) {
-        icon.set(text);
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
     }
 
     public Icon getIcon() {

@@ -100,7 +100,7 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */
     @AroundInvoke
     public Object inBeanInterceptor(InvocationContext ctx) throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(ctx);        
+        Map<String, Object> ctxData = Interceptor.profile(ctx, "inBeanInterceptor");
         setContextData(ctxData);
     
         return ctx.proceed();
@@ -114,7 +114,7 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PostConstruct
     public void inBeanInterceptorPostConstruct() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this); 
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostConstruct");
         setContextData(ctxData);
         return;
     }
@@ -128,7 +128,7 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PostActivate
     public void inBeanInterceptorPostActivate() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostActivate");
         setContextData(ctxData);
         return;
     }
@@ -141,7 +141,7 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PrePassivate
     public void inBeanInterceptorPrePassivate() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPrePassivate");
         setContextData(ctxData);
         return;
     }
@@ -154,7 +154,7 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */    
     @PreDestroy
     public void inBeanInterceptorPreDestroy() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this);        
+        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPreDestroy");
         setContextData(ctxData);
         return;
     }

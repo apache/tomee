@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "smallIcon",
         "largeIcon"
         })
-public class Icon {
+public class Icon implements Keyable<String> {
 
     @XmlElement(name = "small-icon")
     protected String smallIcon;
@@ -88,4 +88,7 @@ public class Icon {
         this.lang = value;
     }
 
+    public String getKey() {
+        return getLang();
+    }
 }

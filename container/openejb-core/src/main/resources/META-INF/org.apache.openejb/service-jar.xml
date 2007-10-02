@@ -658,18 +658,6 @@
 
   <!--
   # ================================================
-  # Default JCA ConnectionManager
-  # ================================================
-  -->
-  <ServiceProvider
-          id="Default Local TX ConnectionManager"
-          service="ConnectionManager"
-          types="ConnectionManager"
-          constructor="transactionManager"
-          class-name="org.apache.openejb.resource.SharedLocalConnectionManager"/>
-
-  <!--
-  # ================================================
   # Default ORB
   # ================================================
   -->

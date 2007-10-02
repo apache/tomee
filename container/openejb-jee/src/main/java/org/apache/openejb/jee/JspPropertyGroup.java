@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The jsp-property-groupType is used to group a number of
@@ -49,7 +51,7 @@ import java.util.List;
 @XmlType(name = "jsp-property-groupType", propOrder = {
         "descriptions",
         "displayNames",
-        "icons",
+        "icon",
         "urlPattern",
         "elIgnored",
         "pageEncoding",
@@ -66,8 +68,8 @@ public class JspPropertyGroup {
     protected TextMap description = new TextMap();
     @XmlTransient
     protected TextMap displayName = new TextMap();
-    @XmlTransient
-    protected LocalList<String, Icon> icon = new LocalList<String, Icon>(Icon.class);
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     @XmlElement(name = "url-pattern", required = true)
     protected List<String> urlPattern;
@@ -118,13 +120,18 @@ public class JspPropertyGroup {
         return displayName.get();
     }
 
-    @XmlElement(name = "icon", required = true)
-    public Icon[] getIcons() {
-        return icon.toArray();
+    public Collection<Icon> getIcons() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon;
     }
 
-    public void setIcons(Icon[] text) {
-        icon.set(text);
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
     }
 
     public Icon getIcon() {

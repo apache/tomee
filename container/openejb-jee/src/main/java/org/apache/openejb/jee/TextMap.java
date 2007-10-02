@@ -17,21 +17,21 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
  */
 public class TextMap {
 
-    protected Map<String, String> string = new HashMap<String, String>();
+    protected Map<String, String> string = new LinkedHashMap<String, String>();
 
     public Text[] toArray() {
-        List<Text> list = new ArrayList();
+        List<Text> list = new ArrayList<Text>();
         for (Map.Entry<String, String> entry : string.entrySet()) {
             list.add(new Text(entry.getKey(), entry.getValue()));
         }
@@ -46,7 +46,7 @@ public class TextMap {
     }
 
     public String get() {
-        return (String) getLocal(string);
+        return getLocal(string);
     }
 
     private String getLocal(Map<String, ?> map) {

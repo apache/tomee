@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.interceptor.InvocationContext;
 
 import org.apache.openejb.test.SuperInterceptedBean;
@@ -43,18 +41,19 @@ public class Interceptor {
      * The inner map is put back into the contextData against the method name as the key.
      * 
      * @param ctx - InvocationContext
-     * @return contextData - the contextData which now has been filled with a hashmap of hashmap. 
+     * @param interceptorName
+     * @return contextData - the contextData which now has been filled with a hashmap of hashmap.
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> profile(InvocationContext ctx) {
+    public static Map<String, Object> profile(InvocationContext ctx, String interceptorName) {
         /*if (sessionContext != null) {
             System.out.println(sessionContext.lookup("java:comp/env"));        
         }
         else {
             System.out.println("SessionContext is null");
         }*/
-        
-        
+
+
         Map<String, Object> ctxData = ctx.getContextData();
 
         String KEY;
@@ -67,7 +66,7 @@ public class Interceptor {
         System.out.print("Intercepting " + KEY);
         
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
-        innerMap = updateInterceptorsList(innerMap);
+        innerMap = updateInterceptorsList(innerMap, interceptorName);
 
         // don't try to get parameters for call back methods (you'll get an IllegalStateException)
         if (ctx.getMethod() != null) {
@@ -84,14 +83,14 @@ public class Interceptor {
      * This is invoked by the lifecycle interceptor callback methods that are defined inside a bean.
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> profile(SuperInterceptedBean bean) {
+    public static Map<String, Object> profile(SuperInterceptedBean bean, String interceptorName) {
         Map<String, Object> ctxData = new HashMap<String, Object>();
         
         String KEY = bean.getClass().getSimpleName();
         System.out.print("Intercepting " + KEY);
         
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
-        innerMap = updateInterceptorsList(innerMap);
+        innerMap = updateInterceptorsList(innerMap, interceptorName);
         
         ctxData.put(KEY, innerMap);
         return ctxData;        
@@ -99,10 +98,11 @@ public class Interceptor {
 
     /**
      * @param innerMap
+     * @param interceptorName
      * @return innerMap
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> updateInterceptorsList(Map<String, Object> innerMap) {
+    private static Map<String, Object> updateInterceptorsList(Map<String, Object> innerMap, String interceptorName) {
         if(innerMap == null) {
             innerMap = new HashMap<String, Object>();
         }        
@@ -111,10 +111,9 @@ public class Interceptor {
         if(interceptorsList == null) {
             interceptorsList = new ArrayList<String>();            
         }
-        
-        String interceptor = Thread.currentThread().getStackTrace()[4].getMethodName();
-        System.out.println(" by " + interceptor + "()");
-        interceptorsList.add(interceptor);
+
+        System.out.println(" by " + interceptorName + "()");
+        interceptorsList.add(interceptorName);
         innerMap.put("INTERCEPTORS", interceptorsList);
         
         return innerMap;

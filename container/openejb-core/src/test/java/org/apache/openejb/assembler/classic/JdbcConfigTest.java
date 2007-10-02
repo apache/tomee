@@ -43,9 +43,6 @@ public class JdbcConfigTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        // connection manager
-        assembler.createConnectionManager(config.configureService(ConnectionManagerInfo.class));
-
         // managed JDBC
         assembler.createResource(config.configureService("Default JDBC Database", ResourceInfo.class));
 
