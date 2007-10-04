@@ -18,6 +18,7 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -25,6 +26,7 @@ import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.naming.factory.Constants;
+import org.apache.naming.ContextAccessController;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -60,12 +62,18 @@ public class TomcatJndiBuilder {
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
     private final LinkResolver<EntityManagerFactory> emfLinkResolver;
+    private final boolean replaceEntry;
     private boolean useCrossClassLoaderRef = false;
+    private NamingContextListener namingContextListener;
 
     public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) {
         this.standardContext = standardContext;
+        this.namingContextListener = standardContext.getNamingContextListener();
         this.webAppInfo = webAppInfo;
         this.emfLinkResolver = emfLinkResolver;
+
+        String parameter = standardContext.findParameter("openejb.start.late");
+        replaceEntry = Boolean.parseBoolean(parameter);
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -130,6 +138,13 @@ public class TomcatJndiBuilder {
         if (addEntry) {
             naming.addEnvironment(environment);
         }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeEnvironment(environment.getName());
+            namingContextListener.addEnvironment(environment);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
     public void mergeRef(NamingResources naming, EjbReferenceInfo ref) {
@@ -163,6 +178,13 @@ public class TomcatJndiBuilder {
         if (addEntry) {
             naming.addEjb(ejb);
         }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeEjb(ejb.getName());
+            namingContextListener.addEjb(ejb);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
     public void mergeRef(NamingResources naming, EjbLocalReferenceInfo ref) {
@@ -194,6 +216,13 @@ public class TomcatJndiBuilder {
 
         if (addEntry) {
             naming.addEjb(ejb);
+        }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeEjb(ejb.getName());
+            namingContextListener.addEjb(ejb);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
@@ -235,6 +264,13 @@ public class TomcatJndiBuilder {
         if (addEntry) {
             naming.addResource(resource);
         }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            namingContextListener.addResource(resource);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
     public void mergeRef(NamingResources naming, PersistenceUnitReferenceInfo ref, URI moduleUri) {
@@ -268,6 +304,13 @@ public class TomcatJndiBuilder {
         if (addEntry) {
             naming.addResource(resource);
         }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            namingContextListener.addResource(resource);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
     public void mergeRef(NamingResources naming, ResourceReferenceInfo ref) {
@@ -300,6 +343,13 @@ public class TomcatJndiBuilder {
         if (addEntry) {
             naming.addResource(resource);
         }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            namingContextListener.addResource(resource);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
     public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
@@ -330,6 +380,13 @@ public class TomcatJndiBuilder {
 
         if (addEntry) {
             naming.addResourceEnvRef(resourceEnv);
+        }
+
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeResourceEnvRef(resourceEnv.getName());
+            namingContextListener.addResourceEnvRef(resourceEnv);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 

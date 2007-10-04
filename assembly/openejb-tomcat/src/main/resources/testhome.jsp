@@ -100,7 +100,7 @@ java.io.File
         this.session = session;
         this.out = out;
 
-        out.print("<b>openejb.home = " + System.getProperty("openejb.home") + "</b><br><br>");
+//        out.print("<b>openejb.home = " + System.getProperty("openejb.home") + "</b><br><br>");
         try {
             out.print(HR);
             out.print("<table width='300' cellspacing='4' cellpadding='4' border='0'>");
@@ -127,15 +127,15 @@ java.io.File
             if (!openejbHomeLib.exists()) handleError(BAD_HOME + homePath, NO_LIB, INSTRUCTIONS);
             out.print(OK);
 
-            // The openejb.home there must be openejb*.jar files in the 'lib' directory
-            out.print("<tr><td><font size='2'>has openejb* libraries</font></td> ");
-            String[] libs = openejbHomeLib.list();
-            boolean found = false;
-            for (int i = 0; i < libs.length && !found; i++) {
-                found = (libs[i].startsWith("openejb-") && libs[i].endsWith(".jar"));
-            }
-            if (!found) handleError(BAD_HOME + homePath, NO_LIBS, INSTRUCTIONS);
-            out.print(OK);
+//            // The openejb.home there must be openejb*.jar files in the 'lib' directory
+//            out.print("<tr><td><font size='2'>has openejb* libraries</font></td> ");
+//            String[] libs = openejbHomeLib.list();
+//            boolean found = false;
+//            for (int i = 0; i < libs.length && !found; i++) {
+//                found = (libs[i].startsWith("openejb-") && libs[i].endsWith(".jar"));
+//            }
+//            if (!found) handleError(BAD_HOME + homePath, NO_LIBS, INSTRUCTIONS);
+//            out.print(OK);
             out.print("</table>");
             out.print(HR);
 

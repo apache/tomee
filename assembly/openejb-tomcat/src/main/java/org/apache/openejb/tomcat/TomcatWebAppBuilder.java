@@ -76,8 +76,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public TomcatWebAppBuilder() {
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();
-        standardServer.addLifecycleListener(new OpenEJBNamingContextListener(standardServer));
-
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
         // MBeanServer mbeanServer;
@@ -94,6 +92,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public void start() {
         globalListenerSupport.start();
+
     }
 
     public void stop() {
@@ -126,6 +125,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         Assembler assembler = getAssembler();
         if (assembler == null) {
             logger.warning("OpenEJB has not been initialized so war will not be scanned for nested modules " + standardContext.getPath());
+            return;
         }
 
         AppModule appModule = loadApplication(standardContext);
@@ -153,8 +153,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // bound after the context is created
         ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
         try {
-            Context comp = (Context) ContextBindings.getThread().lookup("comp");
-
+            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
+            
             // bind TransactionManager
             TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
             safeBind(comp, "TransactionManager", transactionManager);

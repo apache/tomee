@@ -25,6 +25,13 @@ import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
+import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.Service;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Container;
+import org.apache.catalina.Host;
+import org.apache.catalina.ServerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -47,22 +54,76 @@ public class TomcatLoader implements Loader {
             return;
         }
 
+        // initialize system instance before doing anything
         System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
-        
+        SystemInstance.init(props);
+
+        // Install tomcat thread context listener
         ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
-        if (SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
-            TomcatWebAppBuilder tomcatWebAppBuilder = new TomcatWebAppBuilder();
+        // Install tomcat war builder
+        TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+        if (tomcatWebAppBuilder == null) {
+            tomcatWebAppBuilder = new TomcatWebAppBuilder();
             tomcatWebAppBuilder.start();
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
 
-        SystemInstance.init(props);
-
+        // Start OpenEJB
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
         OpenEJB.init(props, new ServerFederation());
         ejbServer.init(props);
+
+        // Add our naming context listener to the server which registers all Tomcat resources with OpenEJB
+        StandardServer standardServer = (StandardServer) ServerFactory.getServer();
+        OpenEJBNamingContextListener namingContextListener = new OpenEJBNamingContextListener(standardServer);
+        // Standard server has no state property, so we check global naming context to determine if server is started yet
+        if (standardServer.getGlobalNamingContext() != null) {
+            namingContextListener.start();
+        }
+        standardServer.addLifecycleListener(namingContextListener);
+
+        // Process all applications already started.  This deploys EJBs, PersistenceUnits
+        // and modifies JNDI ENC references to OpenEJB managed objects such as EJBs.
+        processRunningApplications(tomcatWebAppBuilder, standardServer);
+    }
+
+    private void processRunningApplications(TomcatWebAppBuilder tomcatWebAppBuilder, StandardServer standardServer) {
+        for (Service service : standardServer.findServices()) {
+            if (service.getContainer() instanceof Engine) {
+                Engine engine = (Engine) service.getContainer();
+                for (Container engineChild : engine.findChildren()) {
+                    if (engineChild instanceof Host) {
+                        Host host = (Host) engineChild;
+                        for (Container hostChild : host.findChildren()) {
+                            if (hostChild instanceof StandardContext) {
+                                StandardContext standardContext = (StandardContext) hostChild;
+                                int state = standardContext.getState();
+                                if (state == 0) {
+                                    // context only initialized
+                                    tomcatWebAppBuilder.init(standardContext);
+                                } else if (state == 1) {
+                                    // context started
+                                    standardContext.addParameter("openejb.start.late", "true");
+                                    ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+                                    Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+                                    try {
+                                        tomcatWebAppBuilder.init(standardContext);
+                                        tomcatWebAppBuilder.beforeStart(standardContext);
+                                        tomcatWebAppBuilder.start(standardContext);
+                                        tomcatWebAppBuilder.afterStart(standardContext);
+                                    } finally {
+                                        Thread.currentThread().setContextClassLoader(oldCL);
+                                    }
+                                    standardContext.removeParameter("openejb.start.late");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

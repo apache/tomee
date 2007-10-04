@@ -137,6 +137,7 @@ java.util.Properties
                 ejbHome = ctx.lookup("MEJB");
                 if (ejbHome instanceof java.rmi.Remote) out.println(OK);
             } catch (Exception e) {
+                e.printStackTrace(new PrintWriter(out));
                 out.println(FAIL);
                 return;
             }

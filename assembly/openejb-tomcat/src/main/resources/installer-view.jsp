@@ -30,7 +30,6 @@
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="index.jsp"><span class="menuTopOff">Index</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
-<% if (installer.getStatus() == Installer.Status.INSTALLED)  { %>
                 <a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a>
@@ -39,7 +38,6 @@
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
-<% } %>
             </td>
             <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
         </tr>
@@ -90,7 +88,7 @@
                 <br><br>
 
             The installer has completed successfully. <br> 
-            Please, <b>restart Tomcat</b> and reload this page.
+            Please, <b>restart Tomcat</b> and reload this page to verify installation.
 <%
         } else {
             List<String> errors = new ArrayList<String>(paths.getErrors());

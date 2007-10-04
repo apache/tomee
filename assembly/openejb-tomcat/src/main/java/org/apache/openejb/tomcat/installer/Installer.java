@@ -40,11 +40,29 @@ public class Installer {
         NONE, INSTALLED, REBOOT_REQUIRED
     }
 
+    private static final boolean listenerInstalled;
+    private static final boolean agentInstalled;
+
+    static {
+        // is the OpenEJB listener installed
+        Boolean listener = (Boolean) invokeStaticNoArgMethod("org.apache.openejb.loader.OpenEJBListener", "isListenerInstalled");
+        if (listener == null) listener = false;
+        listenerInstalled = listener;
+
+        // is the OpenEJB javaagent installed
+        agentInstalled = invokeStaticNoArgMethod("org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
+    }
+
+    public static boolean isListenerInstalled() {
+        return listenerInstalled;
+    }
+
+    public static boolean isAgentInstalled() {
+        return agentInstalled;
+    }
+
     private final Paths paths;
     private Status status = Status.NONE;
-
-    private final boolean listenerInstalled;
-    private final boolean agentInstalled;
 
     // Thi may need to be redesigned but the goal is to provide some feedback on what happened
     private final List<String> errors = new ArrayList<String>();
@@ -54,26 +72,9 @@ public class Installer {
     public Installer(Paths paths) {
         this.paths = paths;
 
-        // is the OpenEJB listener installed
-        Boolean listenerInstalled = (Boolean) invokeStaticNoArgMethod("org.apache.openejb.loader.OpenEJBListener", "isInstalled");
-        if (listenerInstalled == null) listenerInstalled = false;
-        this.listenerInstalled = listenerInstalled;
-
-        // is the OpenEJB javaagent installed
-        agentInstalled = invokeStaticNoArgMethod("org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
-
         if (listenerInstalled && agentInstalled) {
             status = Status.INSTALLED;
         }
-    }
-
-
-    public boolean isListenerInstalled() {
-        return listenerInstalled;
-    }
-
-    public boolean isAgentInstalled() {
-        return agentInstalled;
     }
 
     public Status getStatus() {
@@ -420,9 +421,9 @@ public class Installer {
 //        return tomcatVersion;
 //    }
 
-    private Object invokeStaticNoArgMethod(String className, String propertyName) {
+    private static Object invokeStaticNoArgMethod(String className, String propertyName) {
         try {
-            Class<?> clazz = loadClass(className, getClass().getClassLoader());
+            Class<?> clazz = loadClass(className, Installer.class.getClassLoader());
             Method method = clazz.getMethod(propertyName);
             Object result = method.invoke(null, (Object[]) null);
             return result;
@@ -431,7 +432,7 @@ public class Installer {
         }
     }
 
-    private Class<?> loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
+    private static Class<?> loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
         LinkedList<ClassLoader> loaders = new LinkedList<ClassLoader>();
         for (ClassLoader loader = classLoader; loader != null; loader = loader.getParent()) {
             loaders.addFirst(loader);
@@ -521,5 +522,4 @@ public class Installer {
     private void addInfo(String message) {
         infos.add(message);
     }
-
 }

@@ -1,3 +1,4 @@
+<%@ page import="org.apache.openejb.tomcat.installer.Installer" %>
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -23,7 +24,6 @@
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="index.jsp"><span class="menuTopOff">Index</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
-<% if (installed) { %>
                 <a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a>
@@ -32,7 +32,6 @@
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
                 <a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a>
                 <img border="0" height="2" width="20" src="images/dotTrans.gif">
-<% } %>                    
             </td>
             <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
         </tr>
@@ -62,12 +61,6 @@
                 <p>
                 <FONT SIZE='2'>
                 <B>Welcome to the OpenEJB/Tomcat integration!</B><br><BR>
-<% if (!installed) { %>
-                To complete the installation process, please click the link below.
-                <BR><BR>
-                <B>Install</B><BR>
-                <A HREF="installer">Install OpenEJB</A><BR>
-<% } else { %>
                 Now that OpenEJB has been installed, click on
                 the "Testing your setup" link below to verify it.  When everything
                 is setup well, feel free to play around with the tools provided below!
@@ -75,6 +68,19 @@
                 <B>Setup</B><BR>
                 <A HREF="testhome.jsp">Testing your setup</A><BR>
                 <BR>
+<% if (!Installer.isListenerInstalled() && !Installer.isAgentInstalled()) { %>
+                <B>Install</B><BR>
+                <A HREF="installer">[Optional] Install Listener and JavaAgent</A><BR>
+                <BR>
+<% } else if (!Installer.isListenerInstalled()) { %>
+                <B>Install</B><BR>
+                <A HREF="installer">[Optional] Install Listener</A><BR>
+                <BR>
+<% } else if (!Installer.isAgentInstalled()) { %>
+                <B>Install</B><BR>
+                <A HREF="installer">[Optional] JavaAgent</A><BR>
+                <BR>
+<% } %>
                 <B>Tools</B><BR>
                 <A HREF="viewjndi.jsp">OpenEJB JNDI Browser</A><BR>
                 <A HREF="viewclass.jsp">OpenEJB Class Viewer</A><BR>
@@ -88,7 +94,6 @@
                 <A HREF="ejbref.html">How to configure java:comp/env lookups</A><BR>
                 <BR>
 --%>                
-<% } %>
                 </FONT>
                 </p>
                 <p>
@@ -104,14 +109,3 @@
     </table>
     </body>
 </html>
-<%!
-    private static boolean installed;
-    static {
-        Class clazz = null;
-        try {
-            clazz = Class.forName("org.apache.openejb.OpenEJB");
-        } catch(Exception e) {}
-        installed = (clazz != null);
-    }
-
-%>

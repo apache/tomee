@@ -34,8 +34,9 @@
           <archive>
             <manifestEntries>
               <Premain-Class>org.apache.openejb.javaagent.Agent</Premain-Class>
-              <!--<Boot-Class-Path></Boot-Class-Path>-->
-              <!--<Can-Redefine-Classes>true</Can-Redefine-Classes>-->
+              <Agent-Class>org.apache.openejb.javaagent.Agent</Agent-Class>
+              <Can-Redefine-Classes>true</Can-Redefine-Classes>
+              <Can-Retransform-Classes>true</Can-Retransform-Classes>
             </manifestEntries>
           </archive>
         </configuration>
@@ -56,4 +57,10 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
 </project>

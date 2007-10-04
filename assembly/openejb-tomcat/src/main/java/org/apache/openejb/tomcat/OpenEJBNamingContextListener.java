@@ -50,9 +50,9 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
     private final StandardServer standardServer;
 
     /**
-     * Initialized flag.
+     * Has the listener been started?
      */
-    private boolean initialized = false;
+    private boolean running = false;
 
     /**
      * Associated naming resources.
@@ -70,26 +70,38 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         }
 
         if (event.getType() == Lifecycle.START_EVENT) {
-            if (initialized) return;
-
-            namingResources.addPropertyChangeListener(this);
-            processInitialNamingResources();
-
-
-            initialized = true;
+            start();
 
         } else if (event.getType() == Lifecycle.STOP_EVENT) {
 
-            if (!initialized) return;
-
-            namingResources.removePropertyChangeListener(this);
-
-            initialized = false;
+            stop();
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void start() {
+        if (running) return;
+
+        namingResources.addPropertyChangeListener(this);
+        processInitialNamingResources();
+
+
+        running = true;
+    }
+
+    public void stop() {
+        if (!running) return;
+
+        namingResources.removePropertyChangeListener(this);
+
+        running = false;
+    }
+
     public void propertyChange(PropertyChangeEvent event) {
-        if (!initialized) return;
+        if (!running) return;
 
         Object source = event.getSource();
         if (source == namingResources) {

@@ -20,6 +20,7 @@ package org.apache.openejb.loader;
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
@@ -29,20 +30,25 @@ import java.io.File;
 import java.util.Properties;
 
 public class OpenEJBListener implements LifecycleListener {
-    static private boolean installed;
+    static private Boolean listenerInstalled;
 
-
-    public static boolean isInstalled() {
-        return installed;
+    public static boolean isListenerInstalled() {
+        new OpenEJBListener().tryDynamicInstall();
+        return listenerInstalled;
     }
 
     public OpenEJBListener() {
     }
 
     public void lifecycleEvent(LifecycleEvent event) {
+        // if installed hasn't been set yet, we can assume that
+        // this is the first entry into this code, meaning
+        // the listener was loaded from the server.xml and is
+        // installed into Tomcat.
+        if (listenerInstalled == null) listenerInstalled = true;
+
         Object source = event.getSource();
         if (source instanceof StandardServer) {
-            installed = true;
             StandardServer standardServer = (StandardServer) source;
             init(standardServer);
         }
@@ -137,5 +143,15 @@ public class OpenEJBListener implements LifecycleListener {
             }
         }
         return null;
+    }
+
+    private void tryDynamicInstall() {
+        // if installed hasn't been set yet, we can assume that
+        // this is the first entry into this code, meaning
+        // the listener was NOT installed into Tomcat
+        if (listenerInstalled == null) listenerInstalled = false;
+
+        StandardServer server = (StandardServer) ServerFactory.getServer();
+        this.init(server);
     }
 }
