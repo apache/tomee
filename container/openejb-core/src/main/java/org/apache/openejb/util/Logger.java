@@ -334,8 +334,8 @@ public class Logger {
         return name.substring(0, name.lastIndexOf("."));
     }
 
-    public Logger getLogger(String moduleId) {
-        return Logger.getInstance(this.category, this.baseName);
+    public Logger getChildLogger(String child) {
+        return Logger.getInstance(this.category.createChild(child), this.baseName);
 
     }
 
