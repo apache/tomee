@@ -199,7 +199,7 @@ public class Logger {
         }
 
         if (missing.size() > 0) {
-            org.apache.log4j.Logger logger = getFallabckLogger();
+            org.apache.log4j.Logger logger = getFallbackLogger();
 
             logger.error("Logging may not operate as expected.  The directories for the following files do not exist so no file can be created.  See the list below.");
             for (int i = 0; i < missing.size(); i++) {
@@ -209,7 +209,7 @@ public class Logger {
         }
     }
 
-    private static org.apache.log4j.Logger getFallabckLogger() {
+    private static org.apache.log4j.Logger getFallbackLogger() {
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB.logging");
 
         SimpleLayout simpleLayout = new SimpleLayout();
@@ -235,11 +235,8 @@ public class Logger {
         InputStream in = resource.openStream();
         in = new BufferedInputStream(in);
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        byte buf[] = new byte[4096];
-        int i = in.read(buf);
-        while (i != -1) {
-            bao.write(buf);
-            i = in.read(buf);
+        for(int i = in.read(); i!=-1;i=in.read()){
+        	bao.write(i);
         }
         byte[] byteArray = bao.toByteArray();
         ByteArrayInputStream bis = new ByteArrayInputStream(byteArray);
