@@ -59,6 +59,8 @@ public class TomcatLoader implements Loader {
         }
 
         // initialize system instance before doing anything
+        System.setProperty("openejb.deployments.classpath", "true");
+        System.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
         System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
         SystemInstance.init(props);
 
