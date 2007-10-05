@@ -25,14 +25,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Paths {
-    private final ServletContext servletContext;
+    private final File openejbWarDir;
     private final List<String> errors = new ArrayList<String>();
     private File catalinaHomeDir;
     private File catalinaBaseDir;
     private File serverXmlFile;
 
     public Paths(ServletContext servletContext) {
-        this.servletContext = servletContext;
+        String path = servletContext.getRealPath("/");
+        if (path == null) {
+            openejbWarDir = null;
+        } else {
+            openejbWarDir = new File(path);
+        }
+    }
+
+    public Paths(String openejbWarDir) {
+        if (openejbWarDir == null) throw new NullPointerException("openejbWarDir is null");
+        this.openejbWarDir = new File(openejbWarDir);
+    }
+
+    public Paths(File openejbWarDir) {
+        this.openejbWarDir = openejbWarDir;
     }
 
     public File getCatalinaHomeDir() {
@@ -131,9 +145,9 @@ public class Paths {
     }
 
     public File getOpenEJBLibDir() {
-        if (servletContext == null) return null;
+        if (openejbWarDir == null) return null;
 
-        return new File(servletContext.getRealPath("lib"));
+        return new File(openejbWarDir, "lib");
     }
 
     public File getOpenEJBLoaderJar() {
@@ -163,12 +177,15 @@ public class Paths {
     }
 
     public File getUpdatedAnnotationApiJar() {
-        if (servletContext == null) return null;
+        if (openejbWarDir == null) return null;
 
-        return new File(servletContext.getRealPath("tomcat/annotations-api.jar"));
+        return new File(openejbWarDir, "tomcat/annotations-api.jar");
     }
 
     public boolean verify() {
+        if (openejbWarDir == null) {
+            addError("OpenEJB war is not unpacked");
+        }
         if (getCatalinaHomeDir() == null) {
             addError("Catalina home directory is not defined");
         }

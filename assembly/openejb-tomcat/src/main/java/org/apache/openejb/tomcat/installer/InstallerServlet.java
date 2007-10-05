@@ -42,6 +42,7 @@ public class InstallerServlet extends HttpServlet {
         this.servletConfig = servletConfig;
         paths = new Paths(servletConfig.getServletContext());
         installer = new Installer(paths);
+        installer.tryDynamicInstall();
     }
 
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -67,7 +68,7 @@ public class InstallerServlet extends HttpServlet {
                 paths.setServerXmlFile(req.getParameter("serverXml"));
 
                 if (paths.verify()) {
-                    installer.install();
+                    installer.installAll();
                 }
             }
 

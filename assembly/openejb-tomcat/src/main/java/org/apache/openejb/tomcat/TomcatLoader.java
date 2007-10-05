@@ -18,6 +18,8 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.tomcat.installer.Paths;
+import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
@@ -48,6 +50,8 @@ public class TomcatLoader implements Loader {
     private EjbServer ejbServer;
 
     public void init(Properties props) throws Exception {
+        installConfigFiles();
+
         // Not thread safe
         if (OpenEJB.isInitialized()) {
             ejbServer = SystemInstance.get().getComponent(EjbServer.class);
@@ -87,6 +91,17 @@ public class TomcatLoader implements Loader {
         // Process all applications already started.  This deploys EJBs, PersistenceUnits
         // and modifies JNDI ENC references to OpenEJB managed objects such as EJBs.
         processRunningApplications(tomcatWebAppBuilder, standardServer);
+    }
+
+    private void installConfigFiles() {
+        String openejbWarDir = System.getProperty("openejb.war");
+        if (openejbWarDir == null) return;
+
+        Paths paths = new Paths(openejbWarDir);
+        if (paths.verify()) {
+            Installer installer = new Installer(paths);
+            installer.installConfigFiles();
+        }
     }
 
     private void processRunningApplications(TomcatWebAppBuilder tomcatWebAppBuilder, StandardServer standardServer) {

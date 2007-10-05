@@ -16,40 +16,50 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.SimpleLayout;
-import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.SystemInstance;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Logger {
-
-    protected org.apache.log4j.Logger _logger = null;
-    private LogCategory category;
-    private String baseName;
-
     private static final String SUFFIX = ".Messages";
-
     private static final String OPENEJB = "org.apache.openejb";
+    private static LogStreamFactory logStreamFactory;
+
+    static {
+        String factoryName = System.getProperty("openejb.log.factory");
+        Class<?> factoryClass = null;
+        if (factoryName != null) {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader != null) {
+                try {
+                    factoryClass = classLoader.loadClass(factoryName);
+                } catch (ClassNotFoundException e) {
+                }
+            }
+
+            if (factoryClass != null) {
+                try {
+                    factoryClass = Class.forName(factoryName);
+                } catch (ClassNotFoundException e) {
+                }
+            }
+        }
+
+        LogStreamFactory factory = null;
+        if (factoryClass != null) {
+            try {
+                factory = (LogStreamFactory) factoryClass.newInstance();
+            } catch (Exception e) {
+            }
+        }
+
+        if (factory == null) {
+            factory = new Log4jLogStreamFactory();
+        }
+
+        logStreamFactory = factory;
+    }
+
     /**
      * Computes the parent of a resource name. E.g. if we pass in a key of
      * a.b.c, it returns the value a.b
@@ -63,12 +73,12 @@ public class Logger {
             return null;
         }
     };
+
     /**
      * Simply returns the ResourceBundle for a given baseName
      */
     private static final Computable<String, ResourceBundle> bundleResolver = new Computable<String, ResourceBundle>() {
-        public ResourceBundle compute(String baseName)
-                throws InterruptedException {
+        public ResourceBundle compute(String baseName) throws InterruptedException {
             try {
                 return ResourceBundle.getBundle(baseName + SUFFIX);
             } catch (MissingResourceException e) {
@@ -76,188 +86,333 @@ public class Logger {
             }
         }
     };
+
     /**
      * Builds a Logger object and returns it
      */
     private static final Computable<Object[], Logger> loggerResolver = new Computable<Object[], Logger>() {
         public Logger compute(Object[] args) throws InterruptedException {
-
-            Logger logger = new Logger();
-            logger.category = (LogCategory) args[0];
-            logger._logger = org.apache.log4j.Logger.getLogger(logger.category.getName());
-            logger.baseName = (String) args[1];
+            LogCategory category = (LogCategory) args[0];
+            LogStream logStream = logStreamFactory.createLogStream(category);
+            String baseName = (String) args[1];
+            Logger logger = new Logger(category, logStream, baseName);
             return logger;
-
         }
     };
+
     /**
      * Creates a MessageFormat object for a message and returns it
      */
     private static final Computable<String, MessageFormat> messageFormatResolver = new Computable<String, MessageFormat>() {
-        public MessageFormat compute(String message)
-                throws InterruptedException {
-
+        public MessageFormat compute(String message) throws InterruptedException {
             return new MessageFormat(message);
-
         }
     };
+
     /**
      * Cache of parent-child relationships between resource names
      */
-    private static final Computable<String, String> heirarchyCache = new Memoizer<String, String>(
-            heirarchyResolver);
+    private static final Computable<String, String> heirarchyCache = new Memoizer<String, String>(heirarchyResolver);
+
     /**
      * Cache of ResourceBundles
      */
-    private static final Computable<String, ResourceBundle> bundleCache = new Memoizer<String, ResourceBundle>(
-            bundleResolver);
+    private static final Computable<String, ResourceBundle> bundleCache = new Memoizer<String, ResourceBundle>(bundleResolver);
+
     /**
      * Cache of Loggers
      */
-    private static final Computable<Object[], Logger> loggerCache = new Memoizer<Object[], Logger>(
-            loggerResolver);
+    private static final Computable<Object[], Logger> loggerCache = new Memoizer<Object[], Logger>(loggerResolver);
+
     /**
      * Cache of MessageFormats
      */
-    private static final Computable<String, MessageFormat> messageFormatCache = new Memoizer<String, MessageFormat>(
-            messageFormatResolver);
+    private static final Computable<String, MessageFormat> messageFormatCache = new Memoizer<String, MessageFormat>(messageFormatResolver);
 
-    private static final String LOGGING_PROPERTIES_FILE = "logging.properties";
-    private static final String EMBEDDED_PROPERTIES_FILE = "embedded.logging.properties";
-
-    static {
+    /**
+     * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
+     *
+     * @param category - The category of the logger
+     * @param baseName - The baseName for the ResourceBundle
+     * @return Logger
+     */
+    public static Logger getInstance(LogCategory category, String baseName) {
         try {
-            String prop = System.getProperty("openejb.logger.external", "false");
-            boolean externalLogging = Boolean.parseBoolean(prop);
-            if (!externalLogging)
-                configureInternal();
-        } catch (Exception e) {
-            // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
-            e.printStackTrace();
+            Logger logger = loggerCache.compute(new Object[]{category, baseName});
+            return logger;
+        } catch (InterruptedException e) {
+            // Don't return null here. Just create a new Logger and set it up.
+            // It will not be stored in the cache, but a later lookup for the
+            // same Logger would probably end up in the cache
+            LogStream logStream = logStreamFactory.createLogStream(category);
+            Logger logger = new Logger(category, logStream, baseName);
+            return logger;
         }
     }
 
-    private static void configureInternal() throws IOException {
+    private final LogCategory category;
+    private final LogStream logStream;
+    private final String baseName;
 
-        System.setProperty("openjpa.Log", "log4j");
-        SystemInstance system = SystemInstance.get();
-        FileUtils base = system.getBase();
-        File confDir = base.getDirectory("conf");
-        File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
-        if (confDir.exists()) {
-            if (loggingPropertiesFile.exists()) {
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
-                Properties props = new Properties();
-                props.load(bis);
-                preprocessProperties(props);
-                PropertyConfigurator.configure(props);
-                try {
-                    bis.close();
-                } catch (IOException e) {
-
-                }
-            } else {
-                installLoggingPropertiesFile(loggingPropertiesFile);
-            }
-        } else {
-            configureEmbedded();
-        }
+    public Logger(LogCategory category, LogStream logStream, String baseName) {
+        this.category = category;
+        this.logStream = logStream;
+        this.baseName = baseName;
     }
 
-    private static void preprocessProperties(Properties properties) {
-        FileUtils base = SystemInstance.get().getBase();
-        File confDir = new File(base.getDirectory(), "conf");
-        File baseDir = base.getDirectory();
-        File userDir = new File("foo").getParentFile();
-
-        File[] paths = {confDir, baseDir, userDir};
-
-        List missing = new ArrayList();
-
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-
-
-            if (key.endsWith(".File")) {
-
-                boolean found = false;
-                for (int i = 0; i < paths.length && !found; i++) {
-                    File path = paths[i];
-                    File logfile = new File(path, value);
-                    if (logfile.getParentFile().exists()) {
-                        properties.setProperty(key, logfile.getAbsolutePath());
-                        found = true;
-                    }
-                }
-
-                if (!found) {
-                    File logfile = new File(paths[0], value);
-                    missing.add(logfile);
-                }
-            }
-        }
-
-        if (missing.size() > 0) {
-            org.apache.log4j.Logger logger = getFallbackLogger();
-
-            logger.error("Logging may not operate as expected.  The directories for the following files do not exist so no file can be created.  See the list below.");
-            for (int i = 0; i < missing.size(); i++) {
-                File file = (File) missing.get(i);
-                logger.error("[" + i + "] " + file.getAbsolutePath());
-            }
-        }
+    public static Logger getInstance(LogCategory category, Class clazz) {
+        return getInstance(category, packageName(clazz));
     }
 
-    private static org.apache.log4j.Logger getFallbackLogger() {
-        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB.logging");
-
-        SimpleLayout simpleLayout = new SimpleLayout();
-        ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
-        logger.addAppender(newAppender);
-        return logger;
+    private static String packageName(Class clazz) {
+        String name = clazz.getName();
+        return name.substring(0, name.lastIndexOf("."));
     }
 
-    private static void configureEmbedded() {
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
-        if (resource != null)
-            PropertyConfigurator.configure(resource);
-        else
-            System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
+    public Logger getChildLogger(String child) {
+        return Logger.getInstance(this.category.createChild(child), this.baseName);
     }
 
-    private static void installLoggingPropertiesFile(File loggingPropertiesFile) throws IOException {
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(LOGGING_PROPERTIES_FILE);
-        if (resource == null) {
-            System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING logging.properties FILE ");
-            return;
-        }
-        InputStream in = resource.openStream();
-        in = new BufferedInputStream(in);
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        for(int i = in.read(); i!=-1;i=in.read()){
-        	bao.write(i);
-        }
-        byte[] byteArray = bao.toByteArray();
-        ByteArrayInputStream bis = new ByteArrayInputStream(byteArray);
-
-        Properties props = new Properties();
-        props.load(bis);
-        preprocessProperties(props);
-        BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(loggingPropertiesFile));
-        bout.write(byteArray);
-        PropertyConfigurator.configure(props);
+    /**
+     * Formats a given message
+     *
+     * @param message
+     * @param args
+     * @return the formatted message
+     */
+    private String formatMessage(String message, Object... args) {
         try {
-            bout.close();
-        } catch (IOException e) {
-
-        }
-        try {
-            in.close();
-        } catch (IOException e) {
-
+            MessageFormat mf = messageFormatCache.compute(message);
+            String msg = mf.format(args);
+            return msg;
+        } catch (InterruptedException e) {
+            return "Error in formatting message " + message;
         }
 
+    }
+
+    public boolean isDebugEnabled() {
+        return logStream.isDebugEnabled();
+    }
+
+    public boolean isErrorEnabled() {
+        return logStream.isErrorEnabled();
+    }
+
+    public boolean isFatalEnabled() {
+        return logStream.isFatalEnabled();
+    }
+
+    public boolean isInfoEnabled() {
+        return logStream.isInfoEnabled();
+    }
+
+    public boolean isWarningEnabled() {
+        return logStream.isWarnEnabled();
+    }
+
+    /**
+     * If this level is enabled, then it finds a message for the given key  and logs it
+     *
+     * @param message - This could be a plain message or a key in Messages.properties
+     * @return the formatted i18n message
+     */
+    public String debug(String message) {
+
+        if (isDebugEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.debug(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String debug(String message, Object... args) {
+
+        if (isDebugEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.debug(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String debug(String message, Throwable t) {
+
+        if (isDebugEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.debug(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String debug(String message, Throwable t, Object... args) {
+
+        if (isDebugEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.debug(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String error(String message) {
+
+        if (isErrorEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.error(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String error(String message, Object... args) {
+
+        if (isErrorEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.error(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String error(String message, Throwable t) {
+
+        if (isErrorEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.error(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String error(String message, Throwable t, Object... args) {
+
+        if (isErrorEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.error(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String fatal(String message) {
+        if (isFatalEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.fatal(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String fatal(String message, Object... args) {
+        if (isFatalEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.fatal(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String fatal(String message, Throwable t) {
+        if (isFatalEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.fatal(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String fatal(String message, Throwable t, Object... args) {
+        if (isFatalEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.fatal(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String info(String message) {
+        if (isInfoEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.info(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String info(String message, Object... args) {
+        if (isInfoEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.info(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String info(String message, Throwable t) {
+        if (isInfoEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.info(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String info(String message, Throwable t, Object... args) {
+        if (isInfoEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.info(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String warning(String message) {
+        if (isWarningEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.warn(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String warning(String message, Object... args) {
+        if (isWarningEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.warn(msg);
+            return msg;
+        }
+        return message;
+    }
+
+    public String warning(String message, Throwable t) {
+        if (isWarningEnabled()) {
+            String msg = getMessage(message, baseName);
+            logStream.warn(msg, t);
+            return msg;
+        }
+        return message;
+    }
+
+    public String warning(String message, Throwable t, Object... args) {
+        if (isWarningEnabled()) {
+            String msg = getMessage(message, baseName);
+            msg = formatMessage(msg, args);
+            logStream.warn(msg, t);
+            return msg;
+        }
+        return message;
     }
 
     /**
@@ -296,292 +451,6 @@ public class Logger {
             // ignore
         }
         return key;
-    }
-
-
-    /**
-     * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
-     *
-     * @param category - The category of the logger
-     * @param baseName - The baseName for the ResourceBundle
-     * @return Logger
-     */
-    public static Logger getInstance(LogCategory category, String baseName) {
-        try {
-            Logger logger = loggerCache
-                    .compute(new Object[]{category, baseName});
-            return logger;
-        } catch (InterruptedException e) {
-            /*
-                * Don't return null here. Just create a new Logger and set it up.
-                * It will not be stored in the cache, but a later lookup for the
-                * same Logger would probably end up in the cache
-                */
-            Logger logger = new Logger();
-            logger.category = category;
-            logger._logger = org.apache.log4j.Logger.getLogger(category.getName());
-            logger.baseName = baseName;
-            return logger;
-        }
-    }
-
-    public static Logger getInstance(LogCategory category, Class clazz) {
-        return getInstance(category, packageName(clazz));
-    }
-
-    private static String packageName(Class clazz) {
-        String name = clazz.getName();
-        return name.substring(0, name.lastIndexOf("."));
-    }
-
-    public Logger getChildLogger(String child) {
-        return Logger.getInstance(this.category.createChild(child), this.baseName);
-
-    }
-
-    /**
-     * Formats a given message
-     *
-     * @param message
-     * @param args
-     * @return the formatted message
-     */
-    private String formatMessage(String message, Object... args) {
-        try {
-            MessageFormat mf = messageFormatCache.compute(message);
-            String msg = mf.format(args);
-            return msg;
-        } catch (InterruptedException e) {
-            return "Error in formatting message " + message;
-        }
-
-    }
-
-    private Logger() {
-    }
-
-    public boolean isDebugEnabled() {
-        return _logger.isDebugEnabled();
-    }
-
-    public boolean isErrorEnabled() {
-        return _logger.isEnabledFor(Level.ERROR);
-    }
-
-    public boolean isFatalEnabled() {
-        return _logger.isEnabledFor(Level.FATAL);
-    }
-
-    public boolean isInfoEnabled() {
-        return _logger.isInfoEnabled();
-    }
-
-    public boolean isWarningEnabled() {
-        return _logger.isEnabledFor(Level.WARN);
-    }
-
-    /**
-     * If this level is enabled, then it finds a message for the given key  and logs it
-     *
-     * @param message - This could be a plain message or a key in Messages.properties
-     * @return the formatted i18n message
-     */
-    public String debug(String message) {
-
-        if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.debug(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String debug(String message, Object... args) {
-
-        if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.debug(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String debug(String message, Throwable t) {
-
-        if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.debug(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String debug(String message, Throwable t, Object... args) {
-
-        if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.debug(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String error(String message) {
-
-        if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.error(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String error(String message, Object... args) {
-
-        if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.error(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String error(String message, Throwable t) {
-
-        if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.error(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String error(String message, Throwable t, Object... args) {
-
-        if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.error(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String fatal(String message) {
-        if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.fatal(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String fatal(String message, Object... args) {
-        if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.fatal(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String fatal(String message, Throwable t) {
-        if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.fatal(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String fatal(String message, Throwable t, Object... args) {
-        if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.fatal(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String info(String message) {
-        if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.info(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String info(String message, Object... args) {
-        if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.info(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String info(String message, Throwable t) {
-        if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.info(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String info(String message, Throwable t, Object... args) {
-        if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.info(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String warning(String message) {
-        if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.warn(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String warning(String message, Object... args) {
-        if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.warn(msg);
-            return msg;
-        }
-        return message;
-    }
-
-    public String warning(String message, Throwable t) {
-        if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
-            _logger.warn(msg, t);
-            return msg;
-        }
-        return message;
-    }
-
-    public String warning(String message, Throwable t, Object... args) {
-        if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
-            msg = formatMessage(msg, args);
-            _logger.warn(msg, t);
-            return msg;
-        }
-        return message;
     }
 
 }

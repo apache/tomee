@@ -81,7 +81,11 @@ public class Installer {
         return status;
     }
 
-    protected void install() {
+    public void tryDynamicInstall() {
+        invokeStaticNoArgMethod("org.apache.openejb.loader.OpenEJBListener", "tryDynamicInstall");        
+    }
+
+    public void installAll() {
         installListener();
 
         installJavaagent();
@@ -93,7 +97,7 @@ public class Installer {
         }
     }
 
-    private void installListener() {
+    public void installListener() {
         if (listenerInstalled) {
 //            addInfo("OpenEJB Listener already installed");
             return;
@@ -160,7 +164,7 @@ public class Installer {
         }
     }
 
-    private void installJavaagent() {
+    public void installJavaagent() {
         if (agentInstalled) {
 //            addInfo("OpenEJB Agent already installed");
             return;
@@ -243,7 +247,7 @@ public class Installer {
         }
     }
 
-    private void installConfigFiles() {
+    public void installConfigFiles() {
         if (paths.getOpenEJBCoreJar() == null) {
             // the core jar contains the config files
             return;
@@ -281,7 +285,7 @@ public class Installer {
                 newLoggingProps = openejbLoggingProps;
             } else {
                 String loggingPropsOriginal = readAll(loggingPropsFile);
-                if (!loggingPropsOriginal.contains("OpenEJB")) {
+                if (!loggingPropsOriginal.toLowerCase().contains("openejb")) {
                     // strip off license header
                     String[] strings = openejbLoggingProps.split("## --*", 3);
                     if (strings.length == 3) {

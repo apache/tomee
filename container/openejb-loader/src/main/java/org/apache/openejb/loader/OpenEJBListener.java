@@ -33,8 +33,17 @@ public class OpenEJBListener implements LifecycleListener {
     static private Boolean listenerInstalled;
 
     public static boolean isListenerInstalled() {
-        new OpenEJBListener().tryDynamicInstall();
         return listenerInstalled;
+    }
+
+    public static void tryDynamicInstall() {
+        // if installed hasn't been set yet, we can assume that
+        // this is the first entry into this code, meaning
+        // the listener was NOT installed into Tomcat
+        if (listenerInstalled == null) listenerInstalled = false;
+
+        StandardServer server = (StandardServer) ServerFactory.getServer();
+        new OpenEJBListener().init(server);
     }
 
     public OpenEJBListener() {
@@ -60,6 +69,7 @@ public class OpenEJBListener implements LifecycleListener {
             properties.setProperty("openejb.loader", "tomcat-system");
 
             File webappDir = findOpenEjbWar(standardServer);
+            System.setProperty("openejb.war", webappDir.getAbsolutePath());            
             File libDir = new File(webappDir, "lib");
             String catalinaHome = System.getProperty("catalina.home");
             properties.setProperty("openejb.home", catalinaHome);
@@ -143,15 +153,5 @@ public class OpenEJBListener implements LifecycleListener {
             }
         }
         return null;
-    }
-
-    private void tryDynamicInstall() {
-        // if installed hasn't been set yet, we can assume that
-        // this is the first entry into this code, meaning
-        // the listener was NOT installed into Tomcat
-        if (listenerInstalled == null) listenerInstalled = false;
-
-        StandardServer server = (StandardServer) ServerFactory.getServer();
-        this.init(server);
     }
 }
