@@ -31,6 +31,10 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import javax.transaction.NotSupportedException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -51,13 +55,13 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public BaseContext(TransactionManager transactionManager, SecurityService securityService) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
-        this.userTransaction = new CoreUserTransaction(transactionManager);
+        this.userTransaction = new UserTransactionWrapper(new CoreUserTransaction(transactionManager));
     }
 
     protected BaseContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
-        this.userTransaction = userTransaction;
+        this.userTransaction = new UserTransactionWrapper(userTransaction);
     }
 
     protected static State[] states;
@@ -167,6 +171,56 @@ public abstract class BaseContext implements EJBContext, Serializable {
         State currentState = currentStates[ThreadContext.getThreadContext().getCurrentOperation().ordinal()];
         
         return currentState.isTimerMethodAllowed();
+    }
+
+    public class UserTransactionWrapper implements UserTransaction {
+        private UserTransaction userTransaction;
+
+        public UserTransactionWrapper(UserTransaction userTransaction) {
+            this.userTransaction = userTransaction;
+        }
+
+        public void begin() throws NotSupportedException, SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            userTransaction.begin();
+        }
+
+        public void commit() throws HeuristicMixedException, HeuristicRollbackException, IllegalStateException, RollbackException, SecurityException, SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            userTransaction.commit();
+        }
+
+        public int getStatus() throws SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            return userTransaction.getStatus();
+        }
+
+        public void rollback() throws IllegalStateException, SecurityException, SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            userTransaction.rollback();
+        }
+
+        public void setRollbackOnly() throws IllegalStateException, SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            userTransaction.setRollbackOnly();
+        }
+
+        public void setTransactionTimeout(int i) throws SystemException {
+            if (!isUserTransactionAccessAllowed()) {
+                throw new IllegalStateException();
+            }
+            userTransaction.setTransactionTimeout(i);
+        }
     }
     
     public static class State {

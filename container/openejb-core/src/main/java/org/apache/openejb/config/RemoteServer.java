@@ -27,6 +27,11 @@ import java.util.Properties;
  */
 public class RemoteServer {
     private static final boolean DEBUG = System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE");
+    private static final boolean TOMCAT;
+    static {
+        File home = getHome();
+        TOMCAT = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
+    }
 
     /**
      * Has the remote server's instance been already running ?
@@ -70,9 +75,7 @@ public class RemoteServer {
             try {
                 System.out.println("[] START SERVER");
 
-                String openejbHome = System.getProperty("openejb.home");
-
-                File home = new File(openejbHome);
+                File home = getHome();
                 System.out.println("OPENEJB_HOME = "+home.getAbsolutePath());
                 String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
                 System.out.println("SYSTEM_INFO  = "+systemInfo);
@@ -81,10 +84,15 @@ public class RemoteServer {
 
                 File openejbJar = null;
                 File javaagentJar = null;
-                File lib = new File(home, "lib");
-                File[] files = lib.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    File file = files[i];
+
+                File lib;
+                if (!TOMCAT) {
+                    lib = new File(home, "lib");
+                } else {
+                    lib = new File(new File(new File(home, "webapps"), "openejb"), "lib");
+                }
+                
+                for (File file : lib.listFiles()) {
                     if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
                         openejbJar = file;
                     }
@@ -105,22 +113,79 @@ public class RemoteServer {
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 String[] args;
-                if (DEBUG) {
-                    args = new String[]{"java",
-                            "-Xdebug",
-                            "-Xnoagent",
-                            "-Djava.compiler=NONE",
-                            "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
-                            "-javaagent:" + javaagentJar.getAbsolutePath(),
-                            "-jar",
-                            openejbJar.getAbsolutePath(),
-                            "start"};
+                if (!TOMCAT) {
+                    if (DEBUG) {
+                        args = new String[]{"java",
+                                "-Xdebug",
+                                "-Xnoagent",
+                                "-Djava.compiler=NONE",
+                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
+
+                                "-javaagent:" + javaagentJar.getAbsolutePath(),
+
+                                "-jar", openejbJar.getAbsolutePath(), "start"
+                        };
+                    } else {
+                        args = new String[]{"java",
+                                "-javaagent:" + javaagentJar.getAbsolutePath(),
+                                "-jar", openejbJar.getAbsolutePath(), "start"
+                        };
+                    }
                 } else {
-                    args = new String[]{"java",
-                            "-javaagent:" + javaagentJar.getAbsolutePath(),
-                            "-jar",
-                            openejbJar.getAbsolutePath(),
-                            "start"};
+                    File bin = new File(home, "bin");
+                    File bootstrapJar = new File(bin, "bootstrap.jar");
+                    File commonsLoggingJar = new File(bin, "commons-logging-api.jar");
+
+                    File conf = new File(home, "conf");
+                    File loggingProperties = new File(conf, "logging.properties");
+
+                    File endorsed = new File(home, "endorsed");
+                    File temp = new File(home, "temp");
+
+                    if (DEBUG) {
+                        args = new String[] { "java",
+                                "-Xdebug",
+                                "-Xnoagent",
+                                "-Djava.compiler=NONE",
+                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
+
+                                "-javaagent:" + javaagentJar.getAbsolutePath(),
+
+                                "-Dcom.sun.management.jmxremote",
+
+                                "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
+                                "-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath(),
+
+                                "-Djava.io.tmpdir=" + temp.getAbsolutePath(),
+                                "-Djava.endorsed.dirs=" + endorsed.getAbsolutePath(),
+                                "-Dcatalina.base=" + home.getAbsolutePath(),
+                                "-Dcatalina.home=" + home.getAbsolutePath(),
+                                "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
+
+                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
+
+                                "org.apache.catalina.startup.Bootstrap", "start"
+                        };
+                    } else {
+                        args = new String[] { "java",
+                                "-javaagent:" + javaagentJar.getAbsolutePath(),
+
+                                "-Dcom.sun.management.jmxremote",
+
+                                "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
+                                "-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath(),
+
+                                "-Djava.io.tmpdir=" + temp.getAbsolutePath(),
+                                "-Djava.endorsed.dirs=" + endorsed.getAbsolutePath(),
+                                "-Dcatalina.base=" + home.getAbsolutePath(),
+                                "-Dcatalina.home=" + home.getAbsolutePath(),
+                                "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
+
+                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
+
+                                "org.apache.catalina.startup.Bootstrap", "start"
+                        };
+                    }
                 }
                 server = Runtime.getRuntime().exec(args);
 
@@ -150,15 +215,34 @@ public class RemoteServer {
         }
     }
 
+    private static File getHome() {
+        String openejbHome = System.getProperty("openejb.home");
+
+        if (openejbHome != null) {
+            return new File(openejbHome);
+        } else {
+            return null;
+        }
+    }
+
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
                 System.out.println("[] STOP SERVER");
 
-                Socket socket = new Socket("localhost", 4200);
-                OutputStream out = socket.getOutputStream();
+                int port;
+                String command;
+                if (!TOMCAT) {
+                    port = 4200;
+                    command = "Stop";
+                } else {
+                    port = 8005;
+                    command = "SHUTDOWN";
+                }
 
-                out.write("Stop".getBytes());
+                Socket socket = new Socket("localhost", port);
+                OutputStream out = socket.getOutputStream();
+                out.write(command.getBytes());
 
                 if (server != null) {
                     server.waitFor();
@@ -177,8 +261,16 @@ public class RemoteServer {
     private boolean connect(int tries) {
         //System.out.println("CONNECT "+ tries);
         try {
-            Socket socket = new Socket("localhost", 4200);
+            int port;
+            if (!TOMCAT) {
+                port = 4200;
+            } else {
+                port = 8005;
+            }
+
+            Socket socket = new Socket("localhost", port);
             OutputStream out = socket.getOutputStream();
+            out.close();
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             if (tries < 2) {

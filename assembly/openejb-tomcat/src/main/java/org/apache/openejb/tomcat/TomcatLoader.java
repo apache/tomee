@@ -26,6 +26,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardContext;
@@ -34,6 +35,9 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Container;
 import org.apache.catalina.Host;
 import org.apache.catalina.ServerFactory;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.Lifecycle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -48,6 +52,7 @@ import java.util.Properties;
  */
 public class TomcatLoader implements Loader {
     private EjbServer ejbServer;
+    protected ServiceManager manager;
 
     public void init(Properties props) throws Exception {
         installConfigFiles();
@@ -93,6 +98,45 @@ public class TomcatLoader implements Loader {
         // Process all applications already started.  This deploys EJBs, PersistenceUnits
         // and modifies JNDI ENC references to OpenEJB managed objects such as EJBs.
         processRunningApplications(tomcatWebAppBuilder, standardServer);
+
+        if (Boolean.getBoolean("openejb.servicemanager.enabled")) {
+            manager = ServiceManager.getManager();
+            manager.init();
+            manager.start(false);
+        }
+
+        standardServer.addLifecycleListener(new LifecycleListener() {
+            public void lifecycleEvent(LifecycleEvent event) {
+                String type = event.getType();
+                if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
+                    TomcatLoader.this.destroy();
+                }
+            }
+        });
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                TomcatLoader.this.destroy();
+            }
+        });
+    }
+
+    public void destroy() {
+        if (manager != null) {
+            try {
+                manager.stop();
+            } catch (ServiceException e) {
+            }
+            manager = null;
+        }
+        if (ejbServer != null) {
+            try {
+                ejbServer.stop();
+            } catch (ServiceException e) {
+            }
+            ejbServer = null;
+        }
+        OpenEJB.destroy();
     }
 
     private void installConfigFiles() {
@@ -142,6 +186,7 @@ public class TomcatLoader implements Loader {
             }
         }
     }
+
 
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletInputStream in = request.getInputStream();

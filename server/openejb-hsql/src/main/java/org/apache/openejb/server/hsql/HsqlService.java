@@ -17,29 +17,33 @@
  */
 package org.apache.openejb.server.hsql;
 
-import org.apache.openejb.core.ConnectorReference;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.HsqldbDataSourcePlugin;
+import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.SelfManaging;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.openejb.spi.ContainerSystem;
+import org.hsqldb.Database;
+import org.hsqldb.DatabaseManager;
 import org.hsqldb.Server;
 import org.hsqldb.ServerConfiguration;
 import org.hsqldb.ServerConstants;
 import org.hsqldb.jdbcDriver;
-import org.hsqldb.DatabaseManager;
-import org.hsqldb.Database;
 import org.hsqldb.persist.HsqlProperties;
 
 import javax.naming.Binding;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev: 480809 $ $Date: 2006-11-29 18:27:38 -0800 (Wed, 29 Nov 2006) $
@@ -64,11 +68,13 @@ public class HsqlService implements ServerService, SelfManaging {
 
     public void init(Properties p) throws Exception {
         Properties properties = new Properties();
-        for (Object key : Collections.list(properties.propertyNames())) {
-            if (!(key instanceof String)) continue;
+        for (Map.Entry<Object, Object> entry : p.entrySet()) {
+            // Somtimes the properties object has non string values
+            if (!(entry.getKey() instanceof String)) continue;
+            if (!(entry.getValue() instanceof String)) continue;
 
-            String property = (String) key;
-            String value = (String) p.get(property);
+            String property = (String) entry.getKey();
+            String value = (String) entry.getValue();
 
             if (property.startsWith(ServerConstants.SC_KEY_DBNAME + ".") ||
                     property.startsWith(ServerConstants.SC_KEY_DATABASE + ".")) {
@@ -88,26 +94,27 @@ public class HsqlService implements ServerService, SelfManaging {
         properties.setProperty(ServerConstants.SC_KEY_NO_SYSTEM_EXIT, "true");
 
         boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
-        if (!disabled) {
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        if (!disabled && containerSystem != null) {
             NamingEnumeration<Binding> bindings = null;
             try {
-                bindings = new InitialContext().listBindings("java:openejb/Resource/");
-                int dbIndex = 0;
+                bindings = containerSystem.getJNDIContext().listBindings("java:openejb/Resource/");
+                Set<String> dbnames = new TreeSet<String>();
                 for (Binding binding : Collections.list(bindings)) {
                     Object value = binding.getObject();
-                    if (value instanceof ConnectorReference) {
-                        Object connectionFactory = ((ConnectorReference)value).getObject();
-                        if (connectionFactory instanceof BasicDataSource) {
-                            BasicDataSource jdbc = (BasicDataSource) connectionFactory;
-                            String path = getPath(jdbc);
-                            if (path != null) {
-                                if (dbIndex > 9) {
-                                    throw new ServiceException("Hsql Server can only host 10 database connections");
-                                }
-                                String dbname = path.substring(path.lastIndexOf('/') + 1);
-                                properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbIndex, dbname);
-                                properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbIndex, path);
-                                dbIndex++;
+                    if (value instanceof BasicDataSource) {
+                        BasicDataSource jdbc = (BasicDataSource) value;
+                        String path = getPath(jdbc);
+                        if (path != null) {
+                            if (dbnames.size() > 9) {
+                                throw new ServiceException("Hsql Server can only host 10 database instances");
+                            }
+                            String dbname = path.substring(path.lastIndexOf(':') + 1);
+                            dbname = dbname.substring(dbname.lastIndexOf('/') + 1);
+                            if (!dbnames.contains(dbname)) {
+                                properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbnames.size(), dbname);
+                                properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbnames.size(), path);
+                                dbnames.add(dbname);
                             }
                         }
                     }
@@ -148,6 +155,10 @@ public class HsqlService implements ServerService, SelfManaging {
             return null;
         }
 
+        // resolve the relative path
+        url = HsqldbDataSourcePlugin.toAbsolutePath(url);
+
+        // hack off the jdbc:hsqldb stuff
         String path = url.substring("jdbc:hsqldb:".length());
 
         // is this a connection to a local file, mem, or res database?

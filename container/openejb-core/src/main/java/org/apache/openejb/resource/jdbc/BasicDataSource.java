@@ -25,6 +25,14 @@ import java.util.Properties;
 import java.io.File;
 
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
+    public synchronized String getUserName() {
+        return super.getUsername();
+    }
+
+    public synchronized void setUserName(String string) {
+        super.setUsername(string);
+    }
+
     public synchronized String getJdbcDriver() {
         return super.getDriverClassName();
     }

@@ -25,6 +25,14 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
+    public synchronized String getUserName() {
+        return super.getUsername();
+    }
+
+    public synchronized void setUserName(String string) {
+        super.setUsername(string);
+    }
+
     public synchronized String getJdbcDriver() {
         return super.getDriverClassName();
     }
