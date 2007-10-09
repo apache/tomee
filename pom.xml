@@ -107,6 +107,7 @@
     <version>3.0-SNAPSHOT</version>
         -->
     <derbyVersion>10.3.1.4</derbyVersion>
+    <xbeanVersion>3.2</xbeanVersion>
   </properties>
 
   <build>
@@ -706,17 +707,17 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder</artifactId>
-        <version>3.2-SNAPSHOT</version>
+        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-naming</artifactId>
-        <version>3.1</version>
+        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>3.2-SNAPSHOT</version>
+        <version>${xbeanVersion}</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>
