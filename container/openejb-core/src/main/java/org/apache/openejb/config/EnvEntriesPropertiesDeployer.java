@@ -51,10 +51,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             }
         }
 
-//        // WebModule META-INF/env-entries.properties
-//        for (WebModule webModule : appModule.getWebModules()) {
-//            deploy(webModule);
-//        }
+        // WebModule META-INF/env-entries.properties
+        for (WebModule webModule : appModule.getWebModules()) {
+            deploy(webModule);
+        }
 
         // Resource Adapters do not have an ENC
 

@@ -27,11 +27,15 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.JspConfig;
+import org.apache.openejb.jee.Taglib;
+import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.SAXException;
 
 import javax.ejb.Stateful;
@@ -42,13 +46,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.TreeMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
 
 /**
  * @version $Revision$ $Date$
@@ -282,18 +295,7 @@ public class DeploymentLoader {
                 for (String moduleName : resouceModules.keySet()) {
                     try {
                         URL rarUrl = resouceModules.get(moduleName);
-                        File rarFile = new File(rarUrl.getPath());
-
-                        Map<String, URL> descriptors = getDescriptors(rarUrl);
-
-                        Connector connector = null;
-                        if (descriptors.containsKey("ra.xml")){
-                            connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
-                        }
-
-                        ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarFile.getAbsolutePath(),  moduleName);
-
-                        connectorModule.getAltDDs().putAll(descriptors);
+                        ConnectorModule connectorModule = createConnectorModule(rarUrl.getPath(), appClassLoader, moduleName);
 
                         appModule.getResourceModules().add(connectorModule);
                     } catch (OpenEJBException e) {
@@ -305,44 +307,7 @@ public class DeploymentLoader {
                 for (String moduleName : webModules.keySet()) {
                     try {
                         URL warUrl = webModules.get(moduleName);
-                        File warFile = new File(warUrl.getPath());
-
-                        // read web.xml file
-                        Map<String, URL> descriptors = getDescriptors(warUrl);
-                        WebApp webApp = null;
-                        if (descriptors.containsKey("web.xml")){
-                            webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
-                        }
-
-                        // determine war class path
-                        List<URL> webClassPath = new ArrayList<URL>();
-                        File webInfDir = new File(warFile, "WEB-INF");
-                        try {
-                            webClassPath.add(new File(webInfDir, "classes").toURL());
-                        } catch (MalformedURLException e) {
-                            logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
-                        }
-
-                        File libDir = new File(webInfDir, "lib");
-                        if (libDir.exists()) {
-                            for (File file : libDir.listFiles()) {
-                                if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
-                                    try {
-                                        webClassPath.add(file.toURL());
-                                    } catch (MalformedURLException e) {
-                                        logger.warning("War path bad: " + file, e);
-                                    }
-                                }
-                            }
-                        }
-
-                        // create the class loader
-                        URL[] webUrls = webClassPath.toArray(new URL[]{});
-                        ClassLoader warClassLoader = new TemporaryClassLoader(webUrls, appClassLoader);
-
-                        // create web module
-                        WebModule webModule = new WebModule(webApp, webContextRoots.get(moduleName), warClassLoader, warFile.getAbsolutePath(),  moduleName);
-                        webModule.getAltDDs().putAll(descriptors);
+                        WebModule webModule = createWebModule(warUrl.getPath(), appClassLoader, webContextRoots.get(moduleName), moduleName);
 
                         appModule.getWebModules().add(webModule);
                     } catch (OpenEJBException e) {
@@ -381,100 +346,290 @@ public class DeploymentLoader {
 
             return appModule;
         } else if (ConnectorModule.class.equals(moduleClass)) {
-            // unpack the rar file
-            File rarFile = new File(baseUrl.getPath());
-            rarFile = unpack(rarFile);
-            baseUrl = getFileUrl(rarFile);
-
-            // read the ra.xml file
-            Map<String, URL> descriptors = getDescriptors(baseUrl);
-            Connector connector = null;
-            if (descriptors.containsKey("ra.xml")){
-                connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
-            }
-
-            // find the nested jar files
-            HashMap<String, URL> rarLibs = new HashMap<String, URL>();
-            scanDir(rarFile, rarLibs, "");
-            for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
-                // remove all non jars from the rarLibs
-                Map.Entry<String, URL> fileEntry = iterator.next();
-                if (!fileEntry.getKey().endsWith(".jar")) continue;
-                iterator.remove();
-            }
-
-            // create the class loader
-            List<URL> classPath = new ArrayList<URL>();
-            classPath.addAll(rarLibs.values());
-            URL[] urls = classPath.toArray(new URL[]{});
-            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
-
-            // create the Resource Module
-            ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, jarFile.getAbsolutePath(),  null);
-            connectorModule.getAltDDs().putAll(descriptors);
+            ConnectorModule connectorModule = createConnectorModule(baseUrl.getPath(), OpenEJB.class.getClassLoader(), null);
 
             // Wrap the resource module with an Application Module
             AppModule appModule = new AppModule(classLoader, connectorModule.getJarLocation());
             appModule.getResourceModules().add(connectorModule);
 
-            // Persistence Units
-            addPersistenceUnits(appModule, classLoader, baseUrl);
-
             return appModule;
         } else if (WebModule.class.equals(moduleClass)) {
             // unpack the rar file
-            File warFile = new File(baseUrl.getPath());
-            warFile = unpack(warFile);
-            baseUrl = getFileUrl(warFile);
-
-            // read the web.xml file
-            Map<String, URL> descriptors = getDescriptors(baseUrl);
-            WebApp webApp = null;
-            if (descriptors.containsKey("web.xml")){
-                webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
-            }
-
-            // determine war class path
-            List<URL> classPath = new ArrayList<URL>();
-            File webInfDir = new File(warFile, "WEB-INF");
-            try {
-                classPath.add(new File(webInfDir, "classes").toURL());
-            } catch (MalformedURLException e) {
-                logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
-            }
-
-            File libDir = new File(webInfDir, "lib");
-            if (libDir.exists()) {
-                for (File file : libDir.listFiles()) {
-                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
-                        try {
-                            classPath.add(file.toURL());
-                        } catch (MalformedURLException e) {
-                            logger.warning("War path bad: " + file, e);
-                        }
-                    }
-                }
-            }
-
-            // create the class loader
-            URL[] urls = classPath.toArray(new URL[]{});
-            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
-
-            // create the Resource Module
-            WebModule webModule = new WebModule(webApp, null, appClassLoader, jarFile.getAbsolutePath(),  null);
-            webModule.getAltDDs().putAll(descriptors);
+            String moduleId = new File(baseUrl.getPath()).getName();
+            WebModule webModule = createWebModule(baseUrl.getPath(), OpenEJB.class.getClassLoader(), null, moduleId);
 
             // Wrap the resource module with an Application Module
             AppModule appModule = new AppModule(classLoader, webModule.getJarLocation());
             appModule.getWebModules().add(webModule);
 
             // Persistence Units
-            addPersistenceUnits(appModule, classLoader, baseUrl);
+            addPersistenceUnits(appModule, classLoader);
 
             return appModule;
         } else {
             throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
         }
+    }
+
+    private WebModule createWebModule(String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+        File warFile = new File(warPath);
+        warFile = unpack(warFile);
+
+        // read web.xml file
+        Map<String, URL> descriptors = null;
+        try {
+            descriptors = getWebDescriptors(warFile);
+        } catch (IOException e) {
+            throw new OpenEJBException("Unable to determine descriptors in jar.", e);
+        }
+
+        WebApp webApp = null;
+        if (descriptors.containsKey("web.xml")){
+            webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
+        }
+
+        // if this is a standalone module (no-context root), and webApp.getId is set then that is the module name
+        if (contextRoot == null && webApp != null && webApp.getId() != null) {
+            moduleName = webApp.getId();
+        }
+
+        // determine war class path
+        List<URL> webClassPath = new ArrayList<URL>();
+        File webInfDir = new File(warFile, "WEB-INF");
+        try {
+            webClassPath.add(new File(webInfDir, "classes").toURL());
+        } catch (MalformedURLException e) {
+            logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
+        }
+
+        File libDir = new File(webInfDir, "lib");
+        if (libDir.exists()) {
+            for (File file : libDir.listFiles()) {
+                if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                    try {
+                        webClassPath.add(file.toURL());
+                    } catch (MalformedURLException e) {
+                        logger.warning("War path bad: " + file, e);
+                    }
+                }
+            }
+        }
+
+        // create the class loader
+        URL[] webUrls = webClassPath.toArray(new URL[]{});
+        ClassLoader warClassLoader = new TemporaryClassLoader(webUrls, parentClassLoader);
+
+        // create web module
+        WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
+        webModule.getAltDDs().putAll(descriptors);
+
+        // find all tag libs
+        addTagLibraries(webModule);
+
+        return webModule;
+    }
+
+    private void addTagLibraries(WebModule webModule) throws OpenEJBException {
+        Set<URL> tldLocations = new HashSet<URL>();
+
+        // web.xml contains tag lib locations in nested jsp config elements
+        File warFile = new File(webModule.getJarLocation());
+        WebApp webApp = webModule.getWebApp();
+        if (webApp != null) {
+            for (JspConfig jspConfig : webApp.getJspConfig()) {
+                for (Taglib taglib : jspConfig.getTaglib()) {
+                    String location = taglib.getTaglibLocation();
+                    if (!location.startsWith("/")) {
+                        // this reproduces a tomcat bug
+                        location = "/WEB-INF/" + location;
+                    }
+                    try {
+                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
+                        if (location.endsWith(".jar")) {
+                            URL url = file.toURL();
+                            tldLocations.add(url);
+                        } else {
+                            Set<URL> urls = scanJarForTagLibs(file);
+                            tldLocations.addAll(urls);
+                        }
+                    } catch (IOException e) {
+                        logger.warning("JSP tag library location bad: " + location, e);
+                    }
+                }
+            }
+        }
+
+        // WEB-INF/**/*.tld except in WEB-INF/classes and WEB-INF/lib
+        Set<URL> urls = scanWarForTagLibs(warFile);
+        tldLocations.addAll(urls);
+
+        // Search all libs
+        ClassLoader parentClassLoader = webModule.getClassLoader().getParent();
+        urls = scanClassLoaderForTagLibs(parentClassLoader);
+        tldLocations.addAll(urls);
+
+        // load the tld files
+        for (URL location : tldLocations) {
+            TldTaglib taglib = ReadDescriptors.readTldTaglib(location);
+            webModule.getTaglibs().add(taglib);
+        }
+    }
+
+    private Set<URL> scanClassLoaderForTagLibs(ClassLoader parentClassLoader) throws OpenEJBException {
+        Set<URL> urls = new HashSet<URL>();
+        if (parentClassLoader == null) return urls;
+
+        UrlSet urlSet = null;
+        try {
+            urlSet = new UrlSet(parentClassLoader);
+            urlSet = urlSet.excludeJavaEndorsedDirs();
+            urlSet = urlSet.excludeJavaExtDirs();
+            urlSet = urlSet.excludeJavaHome();
+            urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader());
+        } catch (IOException e) {
+            logger.warning("Error scanning class loader for JSP tag libraries", e);
+        }
+
+        for (URL url : urlSet.getUrls()) {
+            if (url.getProtocol().equals("jar")) {
+                try {
+                    String path = url.getPath();
+                    if (path.endsWith("!/")) {
+                        path = path.substring(0, path.length() - 2);
+                    }
+                    url = new URL(path);
+                } catch (MalformedURLException e) {
+                    logger.warning("JSP tag library location bad: " + url.toExternalForm(), e);
+                    continue;
+                }
+            }
+
+            if (!url.getProtocol().equals("file")) {
+                continue;
+            }
+
+            File file;
+            try {
+                file = new File(url.toURI());
+            } catch (URISyntaxException e) {
+                // Ignore, probably an unencoded char
+                file = new File(url.getFile());
+            }
+            try {
+                file = file.getCanonicalFile().getAbsoluteFile();
+            } catch (IOException e) {
+                logger.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
+                continue;
+            }
+
+            urls.addAll(scanJarForTagLibs(file));
+        }
+        return urls;
+    }
+
+    private static Set<URL> scanWarForTagLibs(File war) {
+        Set<URL> urls = new HashSet<URL>();
+
+        File webInfDir = new File(war, "WEB-INF");
+        if (!webInfDir.isDirectory()) return urls;
+
+
+        // skip the lib and classes dir in WEB-INF
+        LinkedList<File> files = new LinkedList<File>();
+        for (File file : webInfDir.listFiles()) {
+            if ("lib".equals(file.getName()) || "classes".equals(file.getName())) {
+                continue;
+            }
+            files.add(file);
+        }
+
+        if (files.isEmpty()) return urls;
+
+        // recursively scan the directories
+        while(!files.isEmpty()) {
+            File file = files.removeFirst();
+            if (file.isDirectory()) {
+                files.addAll(Arrays.asList(file.listFiles()));
+            } else if (file.getName().endsWith(".tld")) {
+                try {
+                    file = file.getCanonicalFile().getAbsoluteFile();
+                    urls.add(file.toURL());
+                } catch (IOException e) {
+                    logger.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
+                }
+            }
+        }
+
+        return urls;
+    }
+
+    private static Set<URL> scanJarForTagLibs(File file) {
+        Set<URL> urls = new HashSet<URL>();
+
+        if (!file.isFile()) return urls;
+
+        JarFile jarFile = null;
+        try {
+            jarFile = new JarFile(file);
+
+            URL jarFileUrl = new URL("jar", "", -1, file.toURL().toExternalForm() + "!/");
+            for (JarEntry entry : Collections.list(jarFile.entries())) {
+                String name = entry.getName();
+                if (!name.startsWith("META-INF/") || !name.endsWith(".tld")) {
+                    continue;
+                }
+                URL url = new URL(jarFileUrl, name);
+                urls.add(url);
+            }
+        } catch (IOException e) {
+            logger.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+        return urls;
+    }
+
+    private ConnectorModule createConnectorModule(String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
+        URL baseUrl;// unpack the rar file
+        File rarFile = new File(rarPath);
+        rarFile = unpack(rarFile);
+        baseUrl = getFileUrl(rarFile);
+
+        // read the ra.xml file
+        Map<String, URL> descriptors = getDescriptors(baseUrl);
+        Connector connector = null;
+        if (descriptors.containsKey("ra.xml")){
+            connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
+        }
+
+        // find the nested jar files
+        HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+        scanDir(rarFile, rarLibs, "");
+        for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
+            // remove all non jars from the rarLibs
+            Map.Entry<String, URL> fileEntry = iterator.next();
+            if (!fileEntry.getKey().endsWith(".jar")) {
+                iterator.remove();
+            }
+        }
+
+        // create the class loader
+        List<URL> classPath = new ArrayList<URL>();
+        classPath.addAll(rarLibs.values());
+        URL[] urls = classPath.toArray(new URL[]{});
+        ClassLoader appClassLoader = new TemporaryClassLoader(urls, parentClassLoader);
+
+        // create the Resource Module
+        ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarPath, moduleId);
+        connectorModule.getAltDDs().putAll(descriptors);
+        connectorModule.getLibraries().addAll(classPath);
+        return connectorModule;
     }
 
     private void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
@@ -495,6 +650,62 @@ public class DeploymentLoader {
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
+        }
+    }
+
+    private static Map<String, URL> getWebDescriptors(File warFile) throws IOException {
+        Map<String, URL> descriptors = new TreeMap<String,URL>();
+
+        // xbean resource finder has a bug when you use any uri but "META-INF"
+        // and the jar file does not contain a directory entry for the uri
+
+        if (warFile.isFile()) {
+            URL jarURL = new URL("jar", "", -1, warFile.toURL() + "!/");
+            try {
+                JarFile jarFile = new JarFile(warFile);
+                for (JarEntry entry : Collections.list(jarFile.entries())) {
+                    String entryName = entry.getName();
+                    if (!entry.isDirectory() && entryName.startsWith("WEB-INF/") && entryName.indexOf('/', "WEB-INF/".length()) > 0) {
+                        descriptors.put(entryName, new URL(jarURL, entry.getName()));
+                    }
+                }
+            } catch (IOException e) {
+                // most likely an invalid jar file
+            }
+        } else if (warFile.isDirectory()) {
+            File webInfDir = new File(warFile, "WEB-INF");
+            if (webInfDir.isDirectory()) {
+                for (File file : webInfDir.listFiles()) {
+                    if (!file.isDirectory()) {
+                        descriptors.put(file.getName(), file.toURL());
+                    }
+                }
+            }
+        }
+
+        return descriptors;
+    }
+
+    private static File getFile(URL warUrl) {
+        if ("jar".equals(warUrl.getProtocol())) {
+            String pathname = warUrl.getPath();
+
+            // we only support file based jar urls
+            if (!pathname .startsWith("file:")) {
+                return null;
+            }
+
+            // strip off "file:"
+            pathname = pathname.substring("file:".length());
+
+            // file path has trailing !/ that must be stripped off
+            pathname = pathname.substring(0, pathname.lastIndexOf('!'));
+            return new File(pathname);
+        } else if ("file".equals(warUrl.getProtocol())) {
+            String pathname = warUrl.getPath();
+            return new File(pathname);
+        } else {
+            return null;
         }
     }
 
@@ -546,8 +757,13 @@ public class DeploymentLoader {
             return ClientModule.class;
         }
 
-        if (descriptors.containsKey("ra.xml")) {
+        if (descriptors.containsKey("ra.xml") || baseUrl.getPath().endsWith(".rar")) {
             return ConnectorModule.class;
+        }
+
+        Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
+        if (webDescriptors.containsKey("web.xml") || baseUrl.getPath().endsWith(".war")) {
+            return WebModule.class;
         }
 
         URL manifestUrl = descriptors.get("MANIFEST.MF");
@@ -579,15 +795,14 @@ public class DeploymentLoader {
         }
 
         String name = jarFile.getName();
-        if (name.endsWith(".jar") || name.endsWith(".ear") || name.endsWith(".zip")) {
+        if (name.endsWith(".jar") || name.endsWith(".ear") || name.endsWith(".zip") || name.endsWith(".war") || name.endsWith(".rar")) {
             name = name.replaceFirst("....$", "");
         } else {
-            name += "_app";
+            name += ".unpacked";
         }
 
         try {
-            URL jarUrl = new URL("jar", "", jarFile.toURL().toExternalForm() + "!/");
-            return JarExtractor.extract(jarUrl, name, jarFile);
+            return JarExtractor.extract(jarFile, name);
         } catch (IOException e) {
             throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
         }

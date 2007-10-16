@@ -116,6 +116,7 @@ public class RemoteServer {
                 if (!TOMCAT) {
                     if (DEBUG) {
                         args = new String[]{"java",
+                                "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-Xdebug",
                                 "-Xnoagent",
                                 "-Djava.compiler=NONE",
@@ -127,6 +128,7 @@ public class RemoteServer {
                         };
                     } else {
                         args = new String[]{"java",
+                                "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-javaagent:" + javaagentJar.getAbsolutePath(),
                                 "-jar", openejbJar.getAbsolutePath(), "start"
                         };
@@ -144,6 +146,7 @@ public class RemoteServer {
 
                     if (DEBUG) {
                         args = new String[] { "java",
+                                "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-Xdebug",
                                 "-Xnoagent",
                                 "-Djava.compiler=NONE",
@@ -168,6 +171,7 @@ public class RemoteServer {
                         };
                     } else {
                         args = new String[] { "java",
+                                "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-javaagent:" + javaagentJar.getAbsolutePath(),
 
                                 "-Dcom.sun.management.jmxremote",

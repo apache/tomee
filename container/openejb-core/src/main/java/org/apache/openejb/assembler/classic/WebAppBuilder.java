@@ -20,6 +20,6 @@ package org.apache.openejb.assembler.classic;
 import javax.persistence.EntityManagerFactory;
 
 public interface WebAppBuilder {
-    void deploy(WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) throws Exception;
-    void undeploy(WebAppInfo webAppInfo) throws Exception;
+    void deployWebApps(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws Exception;
+    void undeployWebApps(AppInfo appInfo) throws Exception;
 }

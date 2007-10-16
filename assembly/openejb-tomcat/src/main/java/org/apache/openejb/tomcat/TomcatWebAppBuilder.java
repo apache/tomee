@@ -17,13 +17,20 @@
  */
 package org.apache.openejb.tomcat;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.Engine;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.OpenEJBException;
@@ -72,11 +79,29 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private final TreeMap<String, ContextInfo> infos = new TreeMap<String, ContextInfo>();
     private final GlobalListenerSupport globalListenerSupport;
     private final ConfigurationFactory configurationFactory;
+    private final Map<String,HostConfig> deployers = new TreeMap<String,HostConfig>();
     private Assembler assembler;
 
     public TomcatWebAppBuilder() {
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
+
+        for (Service service : standardServer.findServices()) {
+            if (service.getContainer() instanceof Engine) {
+                Engine engine = (Engine) service.getContainer();
+                for (Container engineChild : engine.findChildren()) {
+                    if (engineChild instanceof StandardHost) {
+                        StandardHost host = (StandardHost) engineChild;
+                        for (LifecycleListener listener : host.findLifecycleListeners()) {
+                            if (listener instanceof HostConfig) {
+                                HostConfig hostConfig = (HostConfig) listener;
+                                deployers.put(host.getName(), hostConfig);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // MBeanServer mbeanServer;
         // List mbeanServers = MBeanServerFactory.findMBeanServer(null);
@@ -103,10 +128,56 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     // OpenEJB WebAppBuilder
     //
 
-    public void deploy(WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) throws Exception {
+    public void deployWebApps(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws Exception {
+        for (WebAppInfo webApp : appInfo.webApps) {
+            if (getContextInfo(webApp) == null) {
+                StandardContext standardContext = new StandardContext();
+                standardContext.addLifecycleListener(new ContextConfig());
+                standardContext.setPath("/" + webApp.contextRoot);
+                standardContext.setDocBase(webApp.codebase);
+                standardContext.setParentClassLoader(classLoader);
+                standardContext.setDelegate(true);
+
+                String host = webApp.host;
+                if (host == null) host = "localhost";
+                HostConfig deployer = deployers.get(host);
+                if (deployer != null) {
+                    // host isn't set until we call deployer.manageApp, so pass it
+                    ContextInfo contextInfo = addContextInfo(host, standardContext);
+                    contextInfo.appInfo = appInfo;
+                    contextInfo.deployer = deployer;
+                    contextInfo.standardContext = standardContext;
+                    contextInfo.emfLinkResolver = emfLinkResolver;
+                    deployer.manageApp(standardContext);
+                }
+            }
+        }
     }
 
-    public void undeploy(WebAppInfo webAppInfo) throws Exception {
+    public void undeployWebApps(AppInfo appInfo) throws Exception {
+        for (WebAppInfo webApp : appInfo.webApps) {
+            ContextInfo contextInfo = getContextInfo(webApp);
+            if (contextInfo != null && contextInfo.deployer != null) {
+                StandardContext standardContext = contextInfo.standardContext;
+                HostConfig deployer = contextInfo.deployer;
+                deployer.unmanageApp(standardContext.getPath());
+                deleteDir(new File(standardContext.getServletContext().getRealPath("")));
+                removeContextInfo(standardContext);
+            }
+        }
+    }
+
+    private void deleteDir(File dir) {
+        if (dir == null) return;
+        if (dir.isFile()) return;
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
     }
 
     //
@@ -128,22 +199,40 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return;
         }
 
-        AppModule appModule = loadApplication(standardContext);
+        ContextInfo contextInfo = getContextInfo(standardContext);
+        if (contextInfo == null) {
+            AppModule appModule = loadApplication(standardContext);
+            if (appModule != null) {
+                try {
+                    contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
+                    AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                    contextInfo.appInfo = appInfo;
 
-        if (appModule != null) {
+                    LinkResolver<EntityManagerFactory> emfLinkResolver = new UniqueDefaultLinkResolver<EntityManagerFactory>();
+                    assembler.createApplication(contextInfo.appInfo, emfLinkResolver, standardContext.getLoader().getClassLoader());
+                    contextInfo.emfLinkResolver = emfLinkResolver;
+                } catch (Exception e) {
+                    logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                }
+            }
+        }
+
+        contextInfo.standardContext = standardContext;
+
+        WebAppInfo webAppInfo = null;
+        for (WebAppInfo w : contextInfo.appInfo.webApps) {
+            if (("/" + w.contextRoot).equals(standardContext.getPath())) {
+                webAppInfo = w;
+                break;
+            }
+        }
+
+        if (webAppInfo != null) {
             try {
-                AppInfo appInfo = configurationFactory.configureApplication(appModule);
-                ContextInfo contextInfo = getContextInfo(standardContext);
-                contextInfo.applicationId = appInfo.jarPath;
-
-                UniqueDefaultLinkResolver<EntityManagerFactory> emfLinkResolver = new UniqueDefaultLinkResolver<EntityManagerFactory>();
-                assembler.createApplication(appInfo, emfLinkResolver, standardContext.getLoader().getClassLoader());
-
-                WebAppInfo webAppInfo = appInfo.webApps.get(0);
-                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, emfLinkResolver);
+                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, contextInfo.emfLinkResolver);
                 jndiBuilder.mergeJndi();
             } catch (Exception e) {
-                logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
         }
     }
@@ -182,17 +271,32 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public void afterStop(StandardContext standardContext) {
         ContextInfo contextInfo = getContextInfo(standardContext);
-        if (contextInfo != null) {
+        if (contextInfo != null && contextInfo.deployer == null) {
             try {
-                assembler.destroyApplication(contextInfo.applicationId);
+                assembler.destroyApplication(contextInfo.appInfo.jarPath);
             } catch (Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
+            removeContextInfo(standardContext);
         }
-        removeContextInfo(standardContext);
     }
 
     public void destroy(StandardContext standardContext) {
+    }
+
+    public void afterStop(StandardServer standardServer) {
+        // clean ear based webapps after shutdown
+        for (ContextInfo contextInfo : infos.values()) {
+            if (contextInfo != null && contextInfo.deployer != null) {
+                StandardContext standardContext = contextInfo.standardContext;
+                HostConfig deployer = contextInfo.deployer;
+                deployer.unmanageApp(standardContext.getPath());
+                String realPath = standardContext.getServletContext().getRealPath("");
+                if (realPath != null) {
+                    deleteDir(new File(realPath));
+                }
+            }
+        }
     }
 
     private AppModule loadApplication(StandardContext standardContext) {
@@ -275,6 +379,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         String basePath = new File(servletContext.getRealPath(".")).getParentFile().getAbsolutePath();
         ClassLoader classLoader = new TemporaryClassLoader(standardContext.getLoader().getClassLoader());
         WebModule webModule = new WebModule(webApp, servletContext.getContextPath(), classLoader, basePath, getId(standardContext));
+        webModule.setHost(standardContext.getHostname());
 
         // Add all Tomcat env entries to context so they can be overriden by the env.properties file
         NamingResources naming = standardContext.getNamingResources();
@@ -363,11 +468,30 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     private String getId(StandardContext standardContext) {
-        return standardContext.getHostname() + "/" + standardContext.getName();
+        String contextRoot = standardContext.getName();
+        if (!contextRoot.startsWith("/")) contextRoot = "/" + contextRoot;
+        return standardContext.getHostname() + contextRoot;
     }
 
     private ContextInfo getContextInfo(StandardContext standardContext) {
         String id = getId(standardContext);
+        ContextInfo contextInfo = infos.get(id);
+        return contextInfo;
+    }
+
+    private ContextInfo getContextInfo(WebAppInfo webAppInfo) {
+        String host = webAppInfo.host;
+        if (host == null) host = "localhost";
+        String contextRoot = webAppInfo.contextRoot;
+        String id = host + "/" + contextRoot;
+        ContextInfo contextInfo = infos.get(id);
+        return contextInfo;
+    }
+
+    private ContextInfo addContextInfo(String host, StandardContext standardContext) {
+        String contextRoot = standardContext.getName();
+        if (!contextRoot.startsWith("/")) contextRoot = "/" + contextRoot;
+        String id = host + contextRoot;
         ContextInfo contextInfo = infos.get(id);
         if (contextInfo == null) {
             contextInfo = new ContextInfo();
@@ -382,6 +506,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     private static class ContextInfo {
-        private String applicationId;
+        public AppInfo appInfo;
+        public StandardContext standardContext;
+        public HostConfig deployer;
+        public LinkResolver<EntityManagerFactory> emfLinkResolver;
     }
 }

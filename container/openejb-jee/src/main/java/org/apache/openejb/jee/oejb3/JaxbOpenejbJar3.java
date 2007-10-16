@@ -36,6 +36,8 @@ import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -98,9 +100,14 @@ public class JaxbOpenejbJar3 {
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
         public NamespaceFilter(XMLReader xmlReader) {
             super(xmlReader);
+        }
+
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return EMPTY_INPUT_SOURCE;
         }
 
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {

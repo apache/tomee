@@ -16,21 +16,16 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.SystemInstance;
-
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.net.URL;
-import java.net.JarURLConnection;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @version $Rev$ $Date$
@@ -38,19 +33,17 @@ import java.nio.channels.FileChannel;
 public class JarExtractor {
 
     /**
-     * Extract the WAR file found at the specified URL into an unpacked
+     * Extract the Jar file into an unpacked
      * directory structure, and return the absolute pathname to the extracted
      * directory.
      *
-     * @param jar      URL of the web application archive to be extracted
-     *                 (must start with "jar:")
+     * @param file Jar file to unpack
      * @param pathname Context path name for web application
-     * @param file
      * @throws IllegalArgumentException if this is not a "jar:" URL
      * @throws java.io.IOException              if an input/output error was encountered
      *                                  during expansion
      */
-    public static File extract(URL jar, String pathname, File file)
+    public static File extract(File file, String pathname)
             throws IOException {
 
         File docBase = new File(file.getParentFile(), pathname);
@@ -65,12 +58,10 @@ public class JarExtractor {
         docBase.mkdir();
 
         // Extract the JAR into the new directory
-        JarURLConnection jarURLConnection = (JarURLConnection) jar.openConnection();
-        jarURLConnection.setUseCaches(false);
         JarFile jarFile = null;
         InputStream input = null;
         try {
-            jarFile = jarURLConnection.getJarFile();
+            jarFile = new JarFile(file);
             Enumeration jarEntries = jarFile.entries();
             while (jarEntries.hasMoreElements()) {
                 JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
@@ -105,7 +96,6 @@ public class JarExtractor {
                 try {
                     input.close();
                 } catch (Throwable t) {
-                    ;
                 }
                 input = null;
             }
@@ -113,7 +103,6 @@ public class JarExtractor {
                 try {
                     jarFile.close();
                 } catch (Throwable t) {
-                    ;
                 }
                 jarFile = null;
             }

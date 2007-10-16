@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -107,6 +108,7 @@ public class JaxbJavaee {
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
         public NamespaceFilter(XMLReader xmlReader) {
             super(xmlReader);
@@ -117,7 +119,7 @@ public class JaxbJavaee {
             if (publicIds != null) {
                 publicIds.add(publicId);
             }
-            return super.resolveEntity(publicId, systemId);
+            return EMPTY_INPUT_SOURCE;
         }
 
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {

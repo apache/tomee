@@ -17,9 +17,12 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.TldTaglib;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.File;
 
 /**
@@ -30,13 +33,25 @@ public class WebModule implements DeploymentModule {
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     private WebApp webApp;
+    private String host;
     private String contextRoot;
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
+    private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
+        if (contextRoot == null) {
+            contextRoot = jarLocation.substring(jarLocation.lastIndexOf('/'));
+            if (contextRoot.endsWith(".unpacked")) {
+                contextRoot = contextRoot.substring(0, contextRoot.length() - ".unpacked".length());
+            }
+            if (contextRoot.endsWith(".war")) {
+                contextRoot = contextRoot.substring(0, contextRoot.length() - ".war".length());
+            }
+        }
+        if (contextRoot.startsWith("/")) contextRoot = contextRoot.substring(1);
         this.contextRoot = contextRoot;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
@@ -47,6 +62,9 @@ public class WebModule implements DeploymentModule {
             } else {
                 File file = new File(jarLocation);
                 moduleId = file.getName();
+                if (moduleId.endsWith(".unpacked")) {
+                    moduleId = moduleId.substring(0, moduleId.length() - ".unpacked".length());
+                }
             }
         }
 
@@ -96,5 +114,19 @@ public class WebModule implements DeploymentModule {
 
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
+    }
+
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+
+    public List<TldTaglib> getTaglibs() {
+        return taglibs;
     }
 }

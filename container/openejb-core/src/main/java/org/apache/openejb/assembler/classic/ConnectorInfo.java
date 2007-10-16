@@ -17,6 +17,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class ConnectorInfo extends InfoObject {
 
     public String codebase;
@@ -25,5 +28,10 @@ public class ConnectorInfo extends InfoObject {
     public String smallIcon;
     public String largeIcon;
     public String moduleId;
+    public final List<String> libs = new ArrayList<String>();
 
+    public ResourceInfo resourceAdapter;
+    public List<ResourceInfo> outbound = new ArrayList<ResourceInfo>();
+    public List<MdbContainerInfo> inbound = new ArrayList<MdbContainerInfo>();
+    public List<ResourceInfo> adminObject = new ArrayList<ResourceInfo>();
 }

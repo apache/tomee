@@ -14,19 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "integrity",
@@ -34,9 +28,7 @@ import javax.xml.bind.annotation.XmlType;
     "establishTrustInTarget",
     "establishTrustInClient"
 })
-@XmlRootElement(name = "transport-config")
 public class TransportConfig {
-
     @XmlElement(required = true)
     protected String integrity;
     @XmlElement(required = true)
@@ -46,100 +38,35 @@ public class TransportConfig {
     @XmlElement(name = "establish-trust-in-client", required = true)
     protected String establishTrustInClient;
 
-    /**
-     * Gets the value of the integrity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getIntegrity() {
         return integrity;
     }
 
-    /**
-     * Sets the value of the integrity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setIntegrity(String value) {
         this.integrity = value;
     }
 
-    /**
-     * Gets the value of the confidentiality property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getConfidentiality() {
         return confidentiality;
     }
 
-    /**
-     * Sets the value of the confidentiality property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setConfidentiality(String value) {
         this.confidentiality = value;
     }
 
-    /**
-     * Gets the value of the establishTrustInTarget property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEstablishTrustInTarget() {
         return establishTrustInTarget;
     }
 
-    /**
-     * Sets the value of the establishTrustInTarget property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEstablishTrustInTarget(String value) {
         this.establishTrustInTarget = value;
     }
 
-    /**
-     * Gets the value of the establishTrustInClient property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getEstablishTrustInClient() {
         return establishTrustInClient;
     }
 
-    /**
-     * Sets the value of the establishTrustInClient property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setEstablishTrustInClient(String value) {
         this.establishTrustInClient = value;
     }
-
 }

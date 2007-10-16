@@ -14,78 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "pmIdentifier",
-    "pmVersion"
-})
-@XmlRootElement(name = "pm-inuse")
+@XmlType(name = "", propOrder = {"pmIdentifier", "pmVersion"})
 public class PmInuse {
-
     @XmlElement(name = "pm-identifier", required = true)
     protected String pmIdentifier;
     @XmlElement(name = "pm-version", required = true)
     protected String pmVersion;
 
-    /**
-     * Gets the value of the pmIdentifier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPmIdentifier() {
         return pmIdentifier;
     }
 
-    /**
-     * Sets the value of the pmIdentifier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPmIdentifier(String value) {
         this.pmIdentifier = value;
     }
 
-    /**
-     * Gets the value of the pmVersion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPmVersion() {
         return pmVersion;
     }
 
-    /**
-     * Sets the value of the pmVersion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setPmVersion(String value) {
         this.pmVersion = value;
     }
-
 }

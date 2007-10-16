@@ -14,58 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "methodParam"
-})
-@XmlRootElement(name = "method-params")
+@XmlType(name = "", propOrder = {"methodParam"})
 public class MethodParams {
-
     @XmlElement(name = "method-param")
     protected List<MethodParam> methodParam;
 
-    /**
-     * Gets the value of the methodParam property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the methodParam property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMethodParam().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MethodParam }
-     * 
-     * 
-     */
     public List<MethodParam> getMethodParam() {
         if (methodParam == null) {
             methodParam = new ArrayList<MethodParam>();
         }
         return this.methodParam;
     }
-
 }

@@ -17,17 +17,11 @@
  */
 package org.apache.openejb.config.sys;
 
-import static org.apache.openejb.util.Join.join;
 import org.apache.activemq.util.ByteArrayOutputStream;
-import org.apache.openejb.util.Join;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.ByteArrayInputStream;
 import java.util.Properties;
-import java.util.List;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.ArrayList;
 
 /**
  * Converts a java.util.Properties object to a String in the XML file.

@@ -41,8 +41,8 @@ public class EndpointFactory implements MessageEndpointFactory {
         this.container = container;
         this.deploymentInfo = deploymentInfo;
         this.instanceFactory = instanceFactory;
-        classLoader = deploymentInfo.getClassLoader();
-        interfaces = new Class[]{deploymentInfo.getMdbInterface(), MessageEndpoint.class};
+        classLoader = container.getMessageListenerInterface().getClassLoader();
+        interfaces = new Class[]{container.getMessageListenerInterface(), MessageEndpoint.class};
     }
 
     public ActivationSpec getActivationSpec() {

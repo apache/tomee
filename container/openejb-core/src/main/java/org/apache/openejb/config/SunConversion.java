@@ -35,6 +35,7 @@ import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -75,6 +76,7 @@ import org.apache.openejb.jee.sun.SunApplicationClient;
 import org.apache.openejb.jee.sun.ResourceEnvRef;
 import org.apache.openejb.jee.sun.MessageDestinationRef;
 import org.apache.openejb.jee.sun.ResourceRef;
+import org.apache.openejb.jee.sun.SunWebApp;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -89,6 +91,9 @@ public class SunConversion implements DynamicDeployer {
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
             convertModule(clientModule);
+        }
+        for (WebModule webModule : appModule.getWebModules()) {
+            convertModule(webModule);
         }
         return appModule;
     }
@@ -115,6 +120,29 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
+    private SunWebApp getSunWebApp(WebModule webModule) {
+        Object altDD = webModule.getAltDDs().get("sun-web.xml");
+        if (altDD instanceof String) {
+            try {
+                altDD = JaxbSun.unmarshal(SunWebApp.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+            } catch (Exception e) {
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof URL) {
+            try {
+                altDD = JaxbSun.unmarshal(SunWebApp.class, ((URL)altDD).openStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+                // todo warn about not being able to parse sun descriptor
+            }
+        }
+        if (altDD instanceof SunWebApp) {
+            return (SunWebApp) altDD;
+        }
+        return null;
+    }
+
     private SunEjbJar getSunEjbJar(EjbModule ejbModule) {
         Object altDD = ejbModule.getAltDDs().get("sun-ejb-jar.xml");
         if (altDD instanceof String) {
@@ -128,6 +156,7 @@ public class SunConversion implements DynamicDeployer {
             try {
                 altDD = JaxbSun.unmarshal(SunEjbJar.class, ((URL)altDD).openStream());
             } catch (Exception e) {
+                e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
             }
         }
@@ -216,6 +245,75 @@ public class SunConversion implements DynamicDeployer {
             }
         }
         for (MessageDestinationRef ref : sunApplicationClient.getMessageDestinationRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getMessageDestinationRefName();
+                JndiReference resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setMappedName(ref.getJndiName());
+                }
+            }
+        }
+    }
+
+    public void convertModule(WebModule webModule) {
+        if (webModule == null) {
+            return;
+        }
+
+        WebApp webApp = webModule.getWebApp();
+        if (webApp == null) {
+            return;
+        }
+        SunWebApp sunWebApp = getSunWebApp(webModule);
+        if (sunWebApp == null) {
+            return;
+        }
+
+        // map ejb-refs
+        Map<String,org.apache.openejb.jee.JndiReference> refMap = new TreeMap<String,org.apache.openejb.jee.JndiReference>();
+        refMap.putAll(webApp.getEjbRefMap());
+        refMap.putAll(webApp.getEjbLocalRefMap());
+
+        // map ejb-ref jndi name declaration to deploymentId
+        for (EjbRef ref : sunWebApp.getEjbRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getEjbRefName();
+                org.apache.openejb.jee.JndiReference ejbRef = refMap.get(refName);
+                if (ejbRef == null) {
+                    ejbRef = new org.apache.openejb.jee.EjbRef();
+                    ejbRef.setName(refName);
+                    refMap.put(refName, ejbRef);
+                    webApp.getEjbRef().add((org.apache.openejb.jee.EjbRef) ejbRef);
+                }
+                ejbRef.setMappedName(ref.getJndiName());
+            }
+        }
+
+        // map resource-env-refs and message-destination-refs
+        Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        resEnvMap.putAll(webApp.getResourceRefMap());
+        resEnvMap.putAll(webApp.getResourceEnvRefMap());
+        resEnvMap.putAll(webApp.getMessageDestinationRefMap());
+
+        for (ResourceRef ref : sunWebApp.getResourceRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getResRefName();
+                JndiReference resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setMappedName(ref.getJndiName());
+                }
+            }
+        }
+        for (ResourceEnvRef ref : sunWebApp.getResourceEnvRef()) {
+            if (ref.getJndiName() != null) {
+                String refName = ref.getResourceEnvRefName();
+                JndiReference resEnvRef = resEnvMap.get(refName);
+                if (resEnvRef != null) {
+                    resEnvRef.setMappedName(ref.getJndiName());
+                }
+            }
+        }
+        for (MessageDestinationRef ref : sunWebApp.getMessageDestinationRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getMessageDestinationRefName();
                 JndiReference resEnvRef = resEnvMap.get(refName);
@@ -320,6 +418,12 @@ public class SunConversion implements DynamicDeployer {
                     }
                     link.setResId(ref.getJndiName());
                 }
+            }
+
+            if (ejb.getMdbResourceAdapter() != null) {
+                // resource adapter id is the MDB container ID
+                String resourceAdapterId = ejb.getMdbResourceAdapter().getResourceAdapterMid();
+                deployment.setContainerId(resourceAdapterId);
             }
         }
     }

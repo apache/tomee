@@ -57,6 +57,13 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ConfigProperty;
+import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ConnectionDefinition;
+import org.apache.openejb.jee.InboundResource;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -75,10 +82,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Iterator;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -411,12 +418,141 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-            Connector applicationClient = connectorModule.getConnector();
+            //
+            // DEVELOPERS NOTE:  if you change the id generation code here, you must change
+            // the id generation code in AutoConfig$AppResources
+            //
+
+            Connector connector = connectorModule.getConnector();
+
             ConnectorInfo connectorInfo = new ConnectorInfo();
-            connectorInfo.description = applicationClient.getDescription();
-            connectorInfo.displayName = applicationClient.getDisplayName();
+            connectorInfo.description = connector.getDescription();
+            connectorInfo.displayName = connector.getDisplayName();
             connectorInfo.codebase = connectorModule.getJarLocation();
             connectorInfo.moduleId = connectorModule.getModuleId();
+
+            List<URL> libraries = connectorModule.getLibraries();
+            for (URL url : libraries) {
+                File file = new File(url.getPath());
+                connectorInfo.libs.add(file.getAbsolutePath());
+            }
+
+            ResourceAdapter resourceAdapter = connector.getResourceAdapter();
+            if (resourceAdapter.getResourceAdapterClass() != null) {
+                ResourceInfo resourceInfo = new ResourceInfo();
+                resourceInfo.service = "Resource";
+                if (resourceAdapter.getId() != null) {
+                    resourceInfo.id = resourceAdapter.getId();
+                } else {
+                    resourceInfo.id = connectorModule.getModuleId() + "RA";
+                }
+                resourceInfo.className = resourceAdapter.getResourceAdapterClass();
+                resourceInfo.properties = new Properties();
+                for (ConfigProperty property : resourceAdapter.getConfigProperty()) {
+                    String name = property.getConfigPropertyName();
+                    String value = property.getConfigPropertyValue();
+                    if (value != null) {
+                        resourceInfo.properties.setProperty(name, value);
+                    }
+                }
+                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                connectorInfo.resourceAdapter = resourceInfo;
+            }
+
+            OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
+            if (outbound != null) {
+                String transactionSupport = "none";
+                switch (outbound.getTransactionSupport()) {
+                    case LOCAL_TRANSACTION:
+                        transactionSupport = "local";
+                        break;
+                    case NO_TRANSACTION:
+                        transactionSupport = "none";
+                        break;
+                    case XA_TRANSACTION:
+                        transactionSupport = "xa";
+                        break;
+                }
+                for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
+                    ResourceInfo resourceInfo = new ResourceInfo();
+                    resourceInfo.service = "Resource";
+                    if (connection.getId() != null) {
+                        resourceInfo.id = connection.getId();
+                    } else if (outbound.getConnectionDefinition().size() == 1) {
+                        resourceInfo.id = connectorModule.getModuleId();
+                    } else {
+                        resourceInfo.id = connectorModule.getModuleId() + "-" + connection.getConnectionFactoryInterface();
+                    }
+                    resourceInfo.className = connection.getManagedConnectionFactoryClass();
+                    resourceInfo.types.add(connection.getConnectionFactoryInterface());
+                    resourceInfo.properties = new Properties();
+                    for (ConfigProperty property : connection.getConfigProperty()) {
+                        String name = property.getConfigPropertyName();
+                        String value = property.getConfigPropertyValue();
+                        if (value != null) {
+                            resourceInfo.properties.setProperty(name, value);
+                        }
+                    }
+                    resourceInfo.properties.setProperty("TransactionSupport", transactionSupport);
+                    resourceInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                    resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                    connectorInfo.outbound.add(resourceInfo);
+                }
+            }
+
+            InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
+            if (inbound != null) {
+                for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
+                    MdbContainerInfo mdbContainerInfo = new MdbContainerInfo();
+                    mdbContainerInfo.service = "Container";
+                    if (messageListener.getId() != null) {
+                        mdbContainerInfo.id = messageListener.getId();
+                    } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
+                        mdbContainerInfo.id = connectorModule.getModuleId();
+                    } else {
+                        mdbContainerInfo.id = connectorModule.getModuleId() + "-" + messageListener.getMessageListenerType();
+                    }
+
+                    mdbContainerInfo.properties = new Properties();
+                    mdbContainerInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                    mdbContainerInfo.properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
+                    mdbContainerInfo.properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
+
+                    // todo provider system should fill in this information
+                    mdbContainerInfo.types.add("MESSAGE");
+                    mdbContainerInfo.className = "org.apache.openejb.core.mdb.MdbContainer";
+                    mdbContainerInfo.constructorArgs.addAll(Arrays.asList("id", "transactionManager", "securityService", "ResourceAdapter", "MessageListenerInterface", "ActivationSpecClass", "InstanceLimit"));
+                    mdbContainerInfo.properties.setProperty("InstanceLimit", "10");
+
+                    mdbContainerInfo.properties.putAll(getSystemProperties(mdbContainerInfo.id));
+                    connectorInfo.inbound.add(mdbContainerInfo);
+                }
+            }
+
+            for (AdminObject adminObject : resourceAdapter.getAdminObject()) {
+                ResourceInfo resourceInfo = new ResourceInfo();
+                resourceInfo.service = "Resource";
+                if (adminObject.getId() != null) {
+                    resourceInfo.id = adminObject.getId();
+                } else if (resourceAdapter.getAdminObject().size() == 1) {
+                    resourceInfo.id = connectorModule.getModuleId();
+                } else {
+                    resourceInfo.id = connectorModule.getModuleId() + "-" + adminObject.getAdminObjectInterface();
+                }
+                resourceInfo.className = adminObject.getAdminObjectClass();
+                resourceInfo.types.add(adminObject.getAdminObjectInterface());
+                resourceInfo.properties = new Properties();
+                for (ConfigProperty property : adminObject.getConfigProperty()) {
+                    String name = property.getConfigPropertyName();
+                    String value = property.getConfigPropertyValue();
+                    if (value != null) {
+                        resourceInfo.properties.setProperty(name, value);
+                    }
+                }
+                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                connectorInfo.adminObject.add(resourceInfo);
+            }
+
             appInfo.connectors.add(connectorInfo);
         }
 
@@ -428,6 +564,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             webAppInfo.codebase = webModule.getJarLocation();
             webAppInfo.moduleId = webModule.getModuleId();
             
+            webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
 
             JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
@@ -570,6 +707,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return info;
     }
 
+    @SuppressWarnings({"unchecked"})
     private ServiceProvider resolveServiceProvider(Service service, Class infoType) throws OpenEJBException {
 
         if (service.getProvider() != null) {
@@ -707,6 +845,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return resourceIds;
     }
 
+    @SuppressWarnings({"UnusedDeclaration", "EmptyFinallyBlock"})
     private boolean isResourceType(String service, List<String> types, String type) {
         boolean b = false;
         try {

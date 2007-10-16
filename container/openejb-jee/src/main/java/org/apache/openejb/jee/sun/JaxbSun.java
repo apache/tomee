@@ -18,6 +18,8 @@ package org.apache.openejb.jee.sun;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -56,15 +58,19 @@ public class JaxbSun {
     }
 
     public static <T>Object unmarshal(Class<T> type, InputStream in, final boolean logErrors) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
-
+        // create a parser with validation disabled
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         SAXParser parser = factory.newSAXParser();
 
+        // Get the JAXB context -- this should be cached
         JAXBContext ctx = JAXBContext.newInstance(type);
+
+        // get the unmarshaller
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+        // log errors?
         unmarshaller.setEventHandler(new ValidationEventHandler(){
             public boolean handleEvent(ValidationEvent validationEvent) {
                 if (logErrors) {
@@ -73,28 +79,28 @@ public class JaxbSun {
                 return false;
             }
         });
-        unmarshaller.setListener(new Unmarshaller.Listener(){
-            public void afterUnmarshal(Object object, Object object1) {
-                super.afterUnmarshal(object, object1);
-            }
 
-            public void beforeUnmarshal(Object object, Object object1) {
-                super.beforeUnmarshal(object, object1);
-            }
-        });
-
+        // add our XMLFilter which disables dtd downloading
         NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        // Wrap the input stream with our filter
+        SAXSource source = new SAXSource(xmlFilter, new InputSource(in));
 
+        // unmarshal the document
         return unmarshaller.unmarshal(source);
     }
 
     // todo Inject the proper namespace
     public static class NamespaceFilter extends XMLFilterImpl {
-        public NamespaceFilter(XMLReader arg0) {
-            super(arg0);
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+
+        public NamespaceFilter(XMLReader xmlReader) {
+            super(xmlReader);
+        }
+
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return EMPTY_INPUT_SOURCE;
         }
     }
 }

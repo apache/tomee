@@ -32,6 +32,7 @@ import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
+import org.apache.openejb.core.ivm.naming.URLReference;
 import org.apache.xbean.naming.context.WritableContext;
 import org.omg.CORBA.ORB;
 
@@ -225,7 +226,9 @@ public class JndiEncBuilder {
         for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
             Reference reference = null;
 
-            if (referenceInfo.location != null) {
+            if ("java.net.URL".equals(referenceInfo.referenceType)) {
+                reference = new URLReference(referenceInfo.resourceID);
+            } else if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "java:openejb/Resource/" + referenceInfo.resourceID;

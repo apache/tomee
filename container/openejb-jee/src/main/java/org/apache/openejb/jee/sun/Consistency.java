@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import java.util.ArrayList;
@@ -23,20 +22,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances"
 })
-@XmlRootElement(name = "consistency")
 public class Consistency {
-
     @XmlElements({
         @XmlElement(name = "none", required = true, type = None.class),
         @XmlElement(name = "check-modified-at-commit", required = true, type = CheckModifiedAtCommit.class),
@@ -47,38 +39,10 @@ public class Consistency {
     })
     protected List<Object> noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances;
 
-    /**
-     * Gets the value of the noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNoneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link None }
-     * {@link CheckModifiedAtCommit }
-     * {@link LockWhenLoaded }
-     * {@link CheckAllAtCommit }
-     * {@link LockWhenModified }
-     * {@link CheckVersionOfAccessedInstances }
-     * 
-     * 
-     */
     public List<Object> getNoneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances() {
         if (noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances == null) {
             noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances = new ArrayList<Object>();
         }
         return this.noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances;
     }
-
 }

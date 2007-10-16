@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.core.ivm.naming.Reference;
+
 import javax.naming.NamingException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
-
-import org.apache.openejb.core.ivm.naming.Reference;
 /*
   This reference object is used for wrappering ManagedConnectionFactory objects that
   manufacture resource specific connection factories. When the getObject( ) method is 
@@ -45,10 +45,10 @@ public class ConnectorReference extends Reference {
 
     public Object getObject() throws NamingException {
         try {
-            return mngedConFactory.createConnectionFactory(conMngr);
+            Object connection = mngedConFactory.createConnectionFactory(conMngr);
+            return connection;
         } catch (javax.resource.ResourceException re) {
-            throw (javax.naming.NamingException)(new javax.naming.NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re));
+            throw (javax.naming.NamingException) (new javax.naming.NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re));
         }
-
     }
 }

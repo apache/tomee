@@ -161,48 +161,58 @@ public class VmDeploymentManager implements DeploymentManager {
         List<InfoObject> infos = new ArrayList<InfoObject>();
         infos.addAll(appInfo.clients);
         infos.addAll(appInfo.ejbJars);
+        infos.addAll(appInfo.webApps);
+        infos.addAll(appInfo.connectors);
 
         // if the module id is the same as the appInfo, then it is a standalone module
         if (infos.size() == 1) {
             InfoObject infoObject = infos.get(0);
             if (infoObject instanceof ClientInfo) {
-                // are client modules allowed
-                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.CAR)) {
-                    return null;
-                }
                 ClientInfo clientInfo = (ClientInfo) infoObject;
-                if (clientInfo.moduleId == appInfo.jarPath) {
-                    return new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
+                if (appInfo.jarPath.equals(clientInfo.codebase)) {
+                    // are client modules allowed
+                    if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.CAR)) {
+                        return null;
+                    }
+                    if (clientInfo.moduleId == appInfo.jarPath) {
+                        return new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
+                    }
                 }
             }
             if (infoObject instanceof EjbJarInfo) {
-                // are ejb modules allowed
-                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
-                    return null;
-                }
                 EjbJarInfo ejbJarInfo = (EjbJarInfo) infoObject;
-                if (ejbJarInfo.moduleId == appInfo.jarPath) {
-                    return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
+                if (appInfo.jarPath.equals(ejbJarInfo.jarPath)) {
+                    // are ejb modules allowed
+                    if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
+                        return null;
+                    }
+                    if (ejbJarInfo.moduleId == appInfo.jarPath) {
+                        return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
+                    }
                 }
             }
             if (infoObject instanceof ConnectorInfo) {
-                // are connector modules allowed
-                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
-                    return null;
-                }
                 ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
-                if (connectorInfo.moduleId == appInfo.jarPath) {
-                    return new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
+                if (appInfo.jarPath.equals(connectorInfo.codebase)) {
+                    // are connector modules allowed
+                    if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
+                        return null;
+                    }
+                    if (connectorInfo.moduleId == appInfo.jarPath) {
+                        return new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
+                    }
                 }
             }
             if (infoObject instanceof WebAppInfo) {
-                // are web app modules allowed
-                if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
-                    return null;
-                }
                 WebAppInfo webAppInfo = (WebAppInfo) infoObject;
-                if (webAppInfo.moduleId == appInfo.jarPath) {
-                    return new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId);
+                if (appInfo.jarPath.equals(webAppInfo.codebase)) {
+                    // are web app modules allowed
+                    if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
+                        return null;
+                    }
+                    if (webAppInfo.moduleId == appInfo.jarPath) {
+                        return new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId); //todo web module
+                    }
                 }
             }
         }
@@ -496,6 +506,7 @@ public class VmDeploymentManager implements DeploymentManager {
             if (moduleId == null) throw new NullPointerException("moduleId is null");
             this.target = target;
             this.moduleId = moduleId;
+            if (webUrl != null && !webUrl.startsWith("http:")) webUrl = "http://localhost:8080/" + webUrl;
             this.webUrl = webUrl;
         }
 

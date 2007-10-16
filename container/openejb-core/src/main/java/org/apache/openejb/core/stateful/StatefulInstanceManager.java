@@ -21,7 +21,6 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -383,6 +382,9 @@ public class StatefulInstanceManager {
     }
 
     public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
+        // Don't pool if the bean has been undeployed
+        if (callContext.getDeploymentInfo().isDestroyed()) return;
+
         Object primaryKey = callContext.getPrimaryKey();
         if (primaryKey == null || bean == null) {
             throw new SystemException("Invalid arguments");

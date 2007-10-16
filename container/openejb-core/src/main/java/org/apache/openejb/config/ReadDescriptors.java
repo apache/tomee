@@ -22,6 +22,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
@@ -370,6 +371,22 @@ public class ReadDescriptors implements DynamicDeployer {
             throw new OpenEJBException("Encountered unknown error parsing the web.xml file: " + url.toExternalForm(), e);
         }
         return webApp;
+    }
+
+    public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
+        TldTaglib tldTaglib = null;
+        try {
+            tldTaglib = (TldTaglib) JaxbJavaee.unmarshal(TldTaglib.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the JSP tag library definition file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the JSP tag library definition file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the JSP tag library definition file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the JSP tag library definition file: " + url.toExternalForm(), e);
+        }
+        return tldTaglib;
     }
 
     private Source getSource(Object o) {

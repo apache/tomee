@@ -21,6 +21,9 @@ import org.apache.openejb.jee.Connector;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
@@ -33,6 +36,7 @@ public class ConnectorModule implements DeploymentModule {
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
+    private final List<URL> libraries = new ArrayList<URL>();
 
     public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
@@ -45,6 +49,12 @@ public class ConnectorModule implements DeploymentModule {
             } else {
                 File file = new File(jarLocation);
                 moduleId = file.getName();
+                if (moduleId.endsWith(".unpacked")) {
+                    moduleId = moduleId.substring(0, moduleId.length() - ".unpacked".length());
+                }
+                if (moduleId.endsWith(".rar")) {
+                    moduleId = moduleId.substring(0, moduleId.length() - ".rar".length());
+                }
             }
         }
 
@@ -86,5 +96,9 @@ public class ConnectorModule implements DeploymentModule {
 
     public void setJarLocation(String jarLocation) {
         this.jarLocation = jarLocation;
+    }
+
+    public List<URL> getLibraries() {
+        return libraries;
     }
 }

@@ -21,8 +21,21 @@ import static org.apache.openejb.tomcat.NamingUtil.*;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.naming.Name;
+import javax.naming.Context;
+import java.util.Hashtable;
+import java.net.URL;
 
 public class ResourceFactory extends AbstractObjectFactory {
+    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+        Reference reference = ((Reference) object);
+        if (reference.getClassName().equals("java.net.URL")) {
+            String resourceId = getProperty(reference, RESOURCE_ID);
+            return new URL(resourceId);
+        }
+        return super.getObjectInstance(object, name, context, environment);
+    }
+
     protected String buildJndiName(Reference reference) throws NamingException {
         // get and verify interface type
         String resourceId = getProperty(reference, RESOURCE_ID);

@@ -18,6 +18,7 @@
 package org.apache.openejb.tomcat;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardServer;
 
 public interface ContextListener {
     void init(StandardContext context);
@@ -28,4 +29,6 @@ public interface ContextListener {
     void stop(StandardContext context);
     void afterStop(StandardContext context);
     void destroy(StandardContext context);
+
+    void afterStop(StandardServer standardServer);
 }

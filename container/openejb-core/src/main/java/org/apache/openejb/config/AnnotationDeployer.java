@@ -65,6 +65,8 @@ import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.Tag;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -191,9 +193,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 deploy(connectorModule);
             }
-//            for (WebModule webModule : appModule.getWebModules()) {
-//                deploy(webModule);
-//            }
+            for (WebModule webModule : appModule.getWebModules()) {
+                deploy(webModule);
+            }
             return appModule;
         }
 
@@ -340,9 +342,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 deploy(connectorModule);
             }
-//            for (WebModule webModule : appModule.getWebModules()) {
-//                deploy(webModule);
-//            }
+            for (WebModule webModule : appModule.getWebModules()) {
+                deploy(webModule);
+            }
             return appModule;
         }
 
@@ -406,6 +408,31 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+            for (TldTaglib taglib : webModule.getTaglibs()) {
+                for (Listener listener : taglib.getListener()) {
+                    String listenerClass = listener.getListenerClass();
+                    if (listenerClass != null) {
+                        try {
+                            Class clazz = webModule.getClassLoader().loadClass(listenerClass);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load tag library servlet listener class: " + listenerClass, e);
+                        }
+                    }
+                }
+                for (Tag tag : taglib.getTag()) {
+                    String tagClass = tag.getTagClass();
+                    if (tagClass != null) {
+                        try {
+                            Class clazz = webModule.getClassLoader().loadClass(tagClass);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load tag library tag class: " + tagClass, e);
+                        }
+                    }
+                }
+            }
+            
             ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
 
             // Currently we only process the JNDI annotations for web applications

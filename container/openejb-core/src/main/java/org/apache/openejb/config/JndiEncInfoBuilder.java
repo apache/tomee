@@ -204,9 +204,6 @@ public class JndiEncInfoBuilder {
         /* Build Environment entries *****************/
         jndi.envEntries.addAll(buildEnvEntryInfos(jndiConsumer));
 
-        // URLs resource references become env entried
-        jndi.envEntries.addAll(buildUrlRefInfos(jndiConsumer));
-
         /* Build Resource References *****************/
         jndi.resourceRefs.addAll(buildResourceRefInfos(jndiConsumer));
 
@@ -410,11 +407,6 @@ public class JndiEncInfoBuilder {
     private List<ResourceReferenceInfo> buildResourceRefInfos(JndiConsumer item) {
         List<ResourceReferenceInfo> infos = new ArrayList<ResourceReferenceInfo>();
         for (ResourceRef res : item.getResourceRef()) {
-            // skip URLs which are converted to env entries
-            if (res.getResType().equals("java.net.URL")) {
-                continue;
-            }
-
             ResourceReferenceInfo info = new ResourceReferenceInfo();
 
             if (res.getResAuth() != null) {
@@ -470,31 +462,6 @@ public class JndiEncInfoBuilder {
             info.value = env.getEnvEntryValue();
             info.location = buildLocationInfo(env);
             info.targets.addAll(buildInjectionInfos(env));
-            infos.add(info);
-        }
-        return infos;
-    }
-
-    private List<EnvEntryInfo> buildUrlRefInfos(JndiConsumer item) {
-        List<EnvEntryInfo> infos = new ArrayList<EnvEntryInfo>();
-        for (ResourceRef res : item.getResourceRef()) {
-            // only process URLs
-            if (!res.getResType().equals("java.net.URL")) {
-                continue;
-            }
-
-            // ignore env entries without a mapped name
-            if (res.getMappedName() == null) {
-                continue;
-            }
-            
-            EnvEntryInfo info = new EnvEntryInfo();
-
-            info.name = res.getResRefName();
-            info.type = res.getResType();
-            info.value = res.getMappedName();
-            info.location = buildLocationInfo(res);
-            info.targets.addAll(buildInjectionInfos(res));
             infos.add(info);
         }
         return infos;

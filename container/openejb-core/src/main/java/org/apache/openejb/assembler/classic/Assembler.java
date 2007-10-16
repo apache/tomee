@@ -420,6 +420,29 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            // Connectors
+            for (ConnectorInfo connector : appInfo.connectors) {
+                ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(classLoader);
+                try {
+                    // todo add undeployment code for these
+                    if (connector.resourceAdapter != null) {
+                        createResource(connector.resourceAdapter);
+                    }
+                    for (ResourceInfo outbound : connector.outbound) {
+                        createResource(outbound);
+                    }
+                    for (MdbContainerInfo inbound : connector.inbound) {
+                        createContainer(inbound);
+                    }
+                    for (ResourceInfo adminObject : connector.adminObject) {
+                        createResource(adminObject);
+                    }
+                } finally {
+                    Thread.currentThread().setContextClassLoader(oldClassLoader);
+                }
+            }
+
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -536,9 +559,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // WebApp
             WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
-                for (WebAppInfo webAppInfo : appInfo.webApps) {
-                    webAppBuilder.deploy(webAppInfo, emfLinkResolver);
-                }
+                webAppBuilder.deployWebApps(appInfo, emfLinkResolver, classLoader);
             }
 
             logger.info("Deployed Application(path="+appInfo.jarPath+")");
@@ -569,12 +590,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
         if (webAppBuilder != null) {
-            for (WebAppInfo webAppInfo : appInfo.webApps) {
-                try {
-                    webAppBuilder.undeploy(webAppInfo);
-                } catch (Throwable t) {
-                    undeployException.getCauses().add(new Exception("webApp: " + webAppInfo.moduleId + ": " + t.getMessage(), t));
-                }
+            try {
+                webAppBuilder.undeployWebApps(appInfo);
+            } catch (Exception e) {
+                undeployException.getCauses().add(new Exception("App: " + appInfo.jarPath + ": " + e.getMessage(), e));
             }
         }
 
@@ -659,10 +678,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (ClientInfo info : appInfo.clients) {
             jars.add(toUrl(info.codebase));
         }
+        for (ConnectorInfo info : appInfo.connectors) {
+            for (String jarPath : info.libs) {
+                jars.add(toUrl(jarPath));
+            }
+        }
         for (String jarPath : appInfo.libs) {
             jars.add(toUrl(jarPath));
         }
-        // todo add connector data
 
         // Create the class loader
         ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
@@ -833,7 +856,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // get the connection manager
             GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
             // default transaction support is "local" and that doesn't seem to work
-            connectionManagerFactory.setTransactionSupport("xa");
+            String transactionSupport = serviceInfo.properties.getProperty("TransactionSupport", "xa");
+            connectionManagerFactory.setTransactionSupport(transactionSupport);
             connectionManagerFactory.setTransactionManager(transactionManager);
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader == null) classLoader = getClass().getClassLoader();

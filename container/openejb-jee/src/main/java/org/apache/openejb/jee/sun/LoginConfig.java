@@ -14,77 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "authMethod",
-    "realm"
-})
-@XmlRootElement(name = "login-config")
+@XmlType(name = "", propOrder = {"authMethod", "realm"})
 public class LoginConfig {
-
     @XmlElement(name = "auth-method", required = true)
     protected String authMethod;
     protected String realm;
 
-    /**
-     * Gets the value of the authMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getAuthMethod() {
         return authMethod;
     }
 
-    /**
-     * Sets the value of the authMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setAuthMethod(String value) {
         this.authMethod = value;
     }
 
-    /**
-     * Gets the value of the realm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRealm() {
         return realm;
     }
 
-    /**
-     * Sets the value of the realm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRealm(String value) {
         this.realm = value;
     }
-
 }

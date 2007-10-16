@@ -14,78 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "messageDestinationRefName",
-    "jndiName"
-})
-@XmlRootElement(name = "message-destination-ref")
+@XmlType(name = "", propOrder = {"messageDestinationRefName", "jndiName"})
 public class MessageDestinationRef {
-
     @XmlElement(name = "message-destination-ref-name", required = true)
     protected String messageDestinationRefName;
     @XmlElement(name = "jndi-name", required = true)
     protected String jndiName;
 
-    /**
-     * Gets the value of the messageDestinationRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getMessageDestinationRefName() {
         return messageDestinationRefName;
     }
 
-    /**
-     * Sets the value of the messageDestinationRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setMessageDestinationRefName(String value) {
         this.messageDestinationRefName = value;
     }
 
-    /**
-     * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getJndiName() {
         return jndiName;
     }
 
-    /**
-     * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setJndiName(String value) {
         this.jndiName = value;
     }
-
 }

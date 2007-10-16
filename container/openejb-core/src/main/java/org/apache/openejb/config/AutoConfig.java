@@ -33,6 +33,13 @@ import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ConnectionDefinition;
+import org.apache.openejb.jee.InboundResource;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -50,6 +57,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.net.URI;
 
 public class AutoConfig implements DynamicDeployer {
@@ -63,7 +73,7 @@ public class AutoConfig implements DynamicDeployer {
         ignoredReferenceTypes.add("javax.ejb.EntityContext");
         ignoredReferenceTypes.add("javax.ejb.MessageDrivenContext");
         ignoredReferenceTypes.add("javax.xml.ws.WebServiceContext");
-        // URLs are turned into env-refs
+        // URLs are automatically handled
         ignoredReferenceTypes.add("java.net.URL");
         // User transaction is automatically handled
         ignoredReferenceTypes.add("javax.transaction.UserTransaction");
@@ -97,22 +107,24 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
+        AppResources appResources = new AppResources(appModule);
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
         }
         resolveDestinationLinks(appModule);
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            deploy(ejbModule);
+            deploy(ejbModule, appResources);
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
-            deploy(clientModule);
+            deploy(clientModule, appResources);
         }
         for (ConnectorModule connectorModule : appModule.getResourceModules()) {
             deploy(connectorModule);
         }
         for (WebModule webModule : appModule.getWebModules()) {
-            deploy(webModule);
+            deploy(webModule, appResources);
         }
         for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
             deploy(persistenceModule);
@@ -148,7 +160,7 @@ public class AutoConfig implements DynamicDeployer {
                 Properties properties = mdb.getActivationConfig().toProperties();
 
                 // destination
-                String destination = properties.getProperty("destination");
+                String destination = properties.getProperty("destination", properties.getProperty("destinationName"));
                 if (destination == null) {
                     destination = ejbDeployment.getDeploymentId();
                     mdb.getActivationConfig().addProperty("destination", destination);
@@ -204,6 +216,12 @@ public class AutoConfig implements DynamicDeployer {
         for (ClientModule clientModule : appModule.getClientModules()) {
             String moduleId = appModule.getModuleId();
             for (MessageDestination destination : clientModule.getApplicationClient().getMessageDestination()) {
+                destinationResolver.add(moduleId, destination.getMessageDestinationName(), destination);
+            }
+        }
+        for (WebModule webModule : appModule.getWebModules()) {
+            String moduleId = appModule.getModuleId();
+            for (MessageDestination destination : webModule.getWebApp().getMessageDestination()) {
                 destinationResolver.add(moduleId, destination.getMessageDestinationName(), destination);
             }
         }
@@ -313,6 +331,17 @@ public class AutoConfig implements DynamicDeployer {
             }
         }
 
+        for (WebModule webModule : appModule.getWebModules()) {
+            URI moduleUri = URI.create(appModule.getModuleId());
+            for (MessageDestinationRef ref : webModule.getWebApp().getMessageDestinationRef()) {
+                String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
+                if (destinationId != null) {
+                    // for web modules we put the destinationId in the mapped name
+                    ref.setMappedName(destinationId);
+                }
+            }
+        }
+
         // Process MDBs one more time...
         // this time fill in the destination type (if not alreday specified) with
         // the info from the destination (which got filled in from the references)
@@ -413,8 +442,8 @@ public class AutoConfig implements DynamicDeployer {
         return destinationId;
     }
 
-    private void deploy(ClientModule clientModule) throws OpenEJBException {
-        processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient());
+    private void deploy(ClientModule clientModule, AppResources appResources) throws OpenEJBException {
+        processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient(), appResources);
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -422,13 +451,18 @@ public class AutoConfig implements DynamicDeployer {
         // Nothing to process for resource modules
     }
 
-    private void deploy(WebModule webModule) throws OpenEJBException {
-        processJndiRefs(webModule.getModuleId(), webModule.getWebApp());
+    private void deploy(WebModule webModule, AppResources appResources) throws OpenEJBException {
+        processJndiRefs(webModule.getModuleId(), webModule.getWebApp(), appResources);
     }
 
-    private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer) throws OpenEJBException {
-        // Resource env reference
+    private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer, AppResources appResources) throws OpenEJBException {
+        // Resource reference
         for (ResourceRef ref : jndiConsumer.getResourceRef()) {
+            // skip references such as URLs which are automatically handled by the server
+            if (ignoredReferenceTypes.contains(ref.getType())) {
+                continue;
+            }
+
             // skip destinations with a global jndi name
             String mappedName = ref.getMappedName();
             if (mappedName == null) mappedName = "";
@@ -437,12 +471,17 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceId(moduleId, destinationId, ref.getType());
+            destinationId = getResourceId(moduleId, destinationId, ref.getType(), appResources);
             ref.setMappedName(destinationId);
         }
 
         // Resource env reference
         for (JndiReference ref : jndiConsumer.getResourceEnvRef()) {
+            // skip references such as URLs which are automatically handled by the server
+            if (ignoredReferenceTypes.contains(ref.getType())) {
+                continue;
+            }
+
             // skip destinations with a global jndi name
             String mappedName = ref.getMappedName();
             if (mappedName == null) mappedName = "";
@@ -451,7 +490,7 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType());
+            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType(), appResources);
             ref.setMappedName(destinationId);
         }
 
@@ -464,12 +503,12 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType());
+            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType(), appResources);
             ref.setMappedName(destinationId);
         }
     }
 
-    private void deploy(EjbModule ejbModule) throws OpenEJBException {
+    private void deploy(EjbModule ejbModule, AppResources appResources) throws OpenEJBException {
         OpenejbJar openejbJar;
         if (ejbModule.getOpenejbJar() != null) {
             openejbJar = ejbModule.getOpenejbJar();
@@ -486,7 +525,7 @@ public class AutoConfig implements DynamicDeployer {
 
             Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(getType(bean));
             if (ejbDeployment.getContainerId() == null && !skipMdb(bean)) {
-                String containerId = getUsableContainer(containerInfoType, bean);
+                String containerId = getUsableContainer(containerInfoType, bean, appResources);
                 if (containerId == null){
                     containerId = createContainer(containerInfoType, ejbDeployment, bean);
                 }
@@ -500,17 +539,17 @@ public class AutoConfig implements DynamicDeployer {
 
             // Resource reference
             for (ResourceRef ref : bean.getResourceRef()) {
-                processResourceRef(ref, ejbDeployment);
+                processResourceRef(ref, ejbDeployment, appResources);
             }
 
             // Resource env reference
             for (JndiReference ref : bean.getResourceEnvRef()) {
-                processResourceEnvRef(ref, ejbDeployment);
+                processResourceEnvRef(ref, ejbDeployment, appResources);
             }
 
             // Message destination reference
             for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
-                processResourceEnvRef(ref, ejbDeployment);
+                processResourceEnvRef(ref, ejbDeployment, appResources);
             }
 
 
@@ -520,8 +559,13 @@ public class AutoConfig implements DynamicDeployer {
 
                 ResourceLink resourceLink = ejbDeployment.getResourceLink("openejb/destination");
                 if (resourceLink != null) {
-                    String destinationId = getResourceEnvId(bean.getEjbName(), resourceLink.getResId(), mdb.getMessageDestinationType());
-                    resourceLink.setResId(destinationId);
+                    try {
+                        String destinationId = getResourceEnvId(bean.getEjbName(), resourceLink.getResId(), mdb.getMessageDestinationType(), appResources);
+                        resourceLink.setResId(destinationId);
+                    } catch (OpenEJBException e) {
+                        // The MDB doesn't need the auto configured "openejb/destination" env entry
+                        ejbDeployment.removeResourceLink("openejb/destination");
+                    }
                 }
             }
 
@@ -540,7 +584,7 @@ public class AutoConfig implements DynamicDeployer {
         // if the is an MDB container we need to resolve the resource adapter
         String resourceAdapterId = containerInfo.properties.getProperty("ResourceAdapter");
         if (resourceAdapterId != null) {
-            String newResourceId = getResourceId(ejbDeployment.getDeploymentId(), resourceAdapterId, null);
+            String newResourceId = getResourceId(ejbDeployment.getDeploymentId(), resourceAdapterId, null, null);
             if (resourceAdapterId != newResourceId) {
                 containerInfo.properties.setProperty("ResourceAdapter", newResourceId);
             }
@@ -551,7 +595,7 @@ public class AutoConfig implements DynamicDeployer {
         return containerInfo.id;
     }
 
-    private void processResourceRef(ResourceRef ref, EjbDeployment ejbDeployment) throws OpenEJBException {
+    private void processResourceRef(ResourceRef ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
         // skip destinations with a global jndi name
         String mappedName = ref.getMappedName();
         if (mappedName == null) mappedName = "";
@@ -570,7 +614,7 @@ public class AutoConfig implements DynamicDeployer {
         ResourceLink link = ejbDeployment.getResourceLink(refName);
         if (link == null) {
             String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            id = getResourceId(ejbDeployment.getDeploymentId(), id, refType);
+            id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
             logger.info("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
             link = new ResourceLink();
@@ -578,13 +622,13 @@ public class AutoConfig implements DynamicDeployer {
             link.setResRefName(refName);
             ejbDeployment.addResourceLink(link);
         } else {
-            String id = getResourceId(ejbDeployment.getDeploymentId(), link.getResId(), refType);
+            String id = getResourceId(ejbDeployment.getDeploymentId(), link.getResId(), refType, appResources);
             link.setResId(id);
             link.setResRefName(refName);
         }
     }
 
-    private void processResourceEnvRef(JndiReference ref, EjbDeployment ejbDeployment) throws OpenEJBException {
+    private void processResourceEnvRef(JndiReference ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
         // skip destinations with a global jndi name
         String mappedName = (ref.getMappedName() == null)? "": ref.getMappedName();
         if (mappedName.startsWith("jndi:")){
@@ -603,7 +647,7 @@ public class AutoConfig implements DynamicDeployer {
         if (link == null) {
 
             String id = (mappedName.length() == 0) ? refName : mappedName;
-            id = getResourceEnvId(ejbDeployment.getDeploymentId(), id, refType);
+            id = getResourceEnvId(ejbDeployment.getDeploymentId(), id, refType, appResources);
             if (id == null) {
                 // could be a session context ref
                 return;
@@ -615,7 +659,7 @@ public class AutoConfig implements DynamicDeployer {
             link.setResRefName(refName);
             ejbDeployment.addResourceLink(link);
         } else {
-            String id = getResourceEnvId(ejbDeployment.getDeploymentId(), link.getResId(), refType);
+            String id = getResourceEnvId(ejbDeployment.getDeploymentId(), link.getResId(), refType, appResources);
             link.setResId(id);
             link.setResRefName(refName);
         }
@@ -651,21 +695,22 @@ public class AutoConfig implements DynamicDeployer {
 
         Persistence persistence = persistenceModule.getPersistence();
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
-            String jtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource(), DataSource.class.getName());
+            String jtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource(), DataSource.class.getName(), null);
             if (jtaDataSourceId != null) {
                 persistenceUnit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
             }
-            String nonJtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource(), DataSource.class.getName());
+            String nonJtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource(), DataSource.class.getName(), null);
             if (nonJtaDataSourceId != null) {
                 persistenceUnit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
             }
         }
     }
 
-    private String getResourceId(String beanName, String resourceId, String type) throws OpenEJBException {
+    private String getResourceId(String beanName, String resourceId, String type, AppResources appResources) throws OpenEJBException {
         if(resourceId == null){
             return null;
         }
+        if (appResources == null) appResources = new AppResources();
 
         // skip references such as URL which are automatically handled by the server
         if (type != null && ignoredReferenceTypes.contains(type)) {
@@ -678,7 +723,9 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // check for existing resource with specified resourceId
-        List<String> resourceIds = configFactory.getResourceIds(type);
+        List<String> resourceIds = new ArrayList<String>();
+        resourceIds.addAll(appResources.getResourceIds(type));
+        resourceIds.addAll(configFactory.getResourceIds(type));
         for (String id : resourceIds) {
             if (id.equalsIgnoreCase(resourceId)) return id;
         }
@@ -686,6 +733,17 @@ public class AutoConfig implements DynamicDeployer {
         // check for an existing resource using the short name (everything ever the final '/')
         String shortName = resourceId.replaceFirst(".*/", "");
         for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(shortName)) return id;
+        }
+
+        // expand search to any type -- may be asking for a reference to a sub-type
+        List<String> allResourceIds = new ArrayList<String>();
+        allResourceIds.addAll(appResources.getResourceIds(null));
+        allResourceIds.addAll(configFactory.getResourceIds(null));
+        for (String id : allResourceIds) {
+            if (id.equalsIgnoreCase(resourceId)) return id;
+        }
+        for (String id : allResourceIds) {
             if (id.equalsIgnoreCase(shortName)) return id;
         }
 
@@ -724,7 +782,7 @@ public class AutoConfig implements DynamicDeployer {
     private String installResource(String beanName, ResourceInfo resourceInfo) throws OpenEJBException {
         String resourceAdapterId = resourceInfo.properties.getProperty("ResourceAdapter");
         if (resourceAdapterId != null) {
-            String newResourceId = getResourceId(beanName, resourceAdapterId, null);
+            String newResourceId = getResourceId(beanName, resourceAdapterId, null, null);
             if (resourceAdapterId != newResourceId) {
                 resourceInfo.properties.setProperty("ResourceAdapter", newResourceId);
             }
@@ -734,10 +792,11 @@ public class AutoConfig implements DynamicDeployer {
         return resourceInfo.id;
     }
 
-    private String getResourceEnvId(String beanName, String resourceId, String type) throws OpenEJBException {
+    private String getResourceEnvId(String beanName, String resourceId, String type, AppResources appResources) throws OpenEJBException {
         if(resourceId == null){
             return null;
         }
+        if (appResources == null) appResources = new AppResources();
 
         // skip references such as URLs which are automatically handled by the server
         if (ignoredReferenceTypes.contains(type)) {
@@ -750,8 +809,10 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // check for existing resource with specified resourceId
-        List<String> resourceIds = configFactory.getResourceIds(type);
-        for (String id : resourceIds) {
+        List<String> resourceEnvIds = new ArrayList<String>();
+        resourceEnvIds.addAll(appResources.getResourceIds(type));
+        resourceEnvIds.addAll(configFactory.getResourceIds(type));
+        for (String id : resourceEnvIds) {
             if (id.equalsIgnoreCase(resourceId)) return id;
         }
 
@@ -767,8 +828,8 @@ public class AutoConfig implements DynamicDeployer {
         String providerId = ServiceUtils.getServiceProviderId(type);
         if (providerId == null) {
             // if there are any existing resources of the desired type, use the first one
-            if (resourceIds.size() > 0) {
-                return resourceIds.get(0);
+            if (resourceEnvIds.size() > 0) {
+                return resourceEnvIds.get(0);
             }
             throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
@@ -781,7 +842,16 @@ public class AutoConfig implements DynamicDeployer {
         return installResource(beanName, resourceInfo);
     }
 
-    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType, Object bean) {
+    private String getUsableContainer(Class<? extends ContainerInfo> containerInfoType, Object bean, AppResources appResources) {
+        if (bean instanceof MessageDrivenBean) {
+            MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
+            String messagingType = messageDrivenBean.getMessagingType();
+            List<String> containerIds = appResources.containerIdsByType.get(messagingType);
+            if (containerIds != null && !containerIds.isEmpty()) {
+                return containerIds.get(0);
+            }
+        }
+
         for (ContainerInfo containerInfo : configFactory.getContainerInfos()) {
             if (containerInfo.getClass().equals(containerInfoType)){
                 // MDBs must match message listener interface type
@@ -798,5 +868,132 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         return null;
+    }
+
+    private static class AppResources {
+        @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
+        private final Set<String> resourceAdapterIds = new TreeSet<String>();
+        private final Map<String,List<String>> resourceIdsByType = new TreeMap<String,List<String>>();
+        private final Map<String,List<String>> resourceEnvIdsByType = new TreeMap<String,List<String>>();
+        private final Map<String,List<String>> containerIdsByType = new TreeMap<String,List<String>>();
+
+        public AppResources() {
+        }
+
+        public AppResources(AppModule appModule) {
+
+            //
+            // DEVELOPERS NOTE:  if you change the id generation code here, you must change
+            // the id generation code in ConfigurationFactory.configureApplication(AppModule appModule)
+            //
+
+            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+                Connector connector = connectorModule.getConnector();
+
+                ResourceAdapter resourceAdapter = connector.getResourceAdapter();
+                if (resourceAdapter.getResourceAdapterClass() != null) {
+                    String resourceAdapterId;
+                    if (resourceAdapter.getId() != null) {
+                        resourceAdapterId = resourceAdapter.getId();
+                    } else {
+                        resourceAdapterId = connectorModule.getModuleId() + "RA";
+                    }
+                    resourceAdapterIds.add(resourceAdapterId);
+                }
+
+                OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
+                if (outbound != null) {
+                    for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
+                        String type = connection.getConnectionFactoryInterface();
+
+                        String resourceId;
+                        if (connection.getId() != null) {
+                            resourceId = connection.getId();
+                        } else if (outbound.getConnectionDefinition().size() == 1) {
+                            resourceId = connectorModule.getModuleId();
+                        } else {
+                            resourceId = connectorModule.getModuleId() + "-" + type;
+                        }
+
+                        List<String> resourceIds = resourceIdsByType.get(type);
+                        if (resourceIds == null) {
+                            resourceIds = new ArrayList<String>();
+                            resourceIdsByType.put(type, resourceIds);
+                        }
+                        resourceIds.add(resourceId);
+                    }
+                }
+
+                InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
+                if (inbound != null) {
+                    for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
+                        String type = messageListener.getMessageListenerType();
+
+                        String containerId;
+                        if (messageListener.getId() != null) {
+                            containerId = messageListener.getId();
+                        } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
+                            containerId = connectorModule.getModuleId();
+                        } else {
+                            containerId = connectorModule.getModuleId() + "-" + type;
+                        }
+
+                        List<String> containerIds = containerIdsByType.get(type);
+                        if (containerIds == null) {
+                            containerIds = new ArrayList<String>();
+                            containerIdsByType.put(type, containerIds);
+                        }
+                        containerIds.add(containerId);
+                    }
+                }
+
+                for (AdminObject adminObject : resourceAdapter.getAdminObject()) {
+                    String type = adminObject.getAdminObjectInterface();
+
+                    String resourceEnvId;
+                    if (adminObject.getId() != null) {
+                        resourceEnvId = adminObject.getId();
+                    } else if (resourceAdapter.getAdminObject().size() == 1) {
+                        resourceEnvId = connectorModule.getModuleId();
+                    } else {
+                        resourceEnvId = connectorModule.getModuleId() + "-" + type;
+                    }
+
+                    List<String> resourceEnvIds = resourceEnvIdsByType.get(type);
+                    if (resourceEnvIds == null) {
+                        resourceEnvIds = new ArrayList<String>();
+                        resourceEnvIdsByType.put(type, resourceEnvIds);
+                    }
+                    resourceEnvIds.add(resourceEnvId);
+                }
+            }
+
+        }
+
+        public List<String> getResourceIds(String type) {
+            if (type == null) {
+                List<String> allResourceIds = new ArrayList<String>();
+                for (List<String> resourceIds : resourceIdsByType.values()) {
+                    allResourceIds.addAll(resourceIds);
+                }
+                return allResourceIds;
+            }
+            
+            List<String> resourceIds = resourceIdsByType.get(type);
+            if (resourceIds != null) {
+                return resourceIds;
+            }
+            return Collections.emptyList();
+        }
+
+        public List<String> getResourceEnvIds(String type) {
+            if (type != null) {
+                List<String> resourceIds = resourceEnvIdsByType.get(type);
+                if (resourceIds != null) {
+                    return resourceIds;
+                }
+            }
+            return Collections.emptyList();
+        }
     }
 }

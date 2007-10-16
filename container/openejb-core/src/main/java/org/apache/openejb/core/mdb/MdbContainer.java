@@ -96,6 +96,18 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         return containerID;
     }
 
+    public ResourceAdapter getResourceAdapter() {
+        return resourceAdapter;
+    }
+
+    public Class getMessageListenerInterface() {
+        return messageListenerInterface;
+    }
+
+    public Class getActivationSpecClass() {
+        return activationSpecClass;
+    }
+
     public void deploy(DeploymentInfo info) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
         Object deploymentId = deploymentInfo.getDeploymentID();
@@ -150,7 +162,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
             }
 
             // create the activationSpec
-            ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(deploymentInfo.getClassLoader());
+            ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
 
             // verify all properties except "destination" and "destinationType" were consumed
             Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());

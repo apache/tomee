@@ -27,6 +27,17 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.test.mdb.BasicMdbBean;
 
 import javax.jms.MessageListener;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.UnavailableException;
+import javax.resource.spi.InvalidPropertyException;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
+import javax.resource.spi.endpoint.MessageEndpoint;
+import javax.resource.ResourceException;
+import javax.transaction.xa.XAResource;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -44,21 +55,31 @@ public class MdbConfigTest extends TestCase {
         // JMS
         assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
 
-        // containers
+        // JMS Container
         MdbContainerInfo mdbContainerInfo = config.configureService(MdbContainerInfo.class);
         assembler.createContainer(mdbContainerInfo);
 
-        // add fake mdb container
+        // FakeRA
+        ResourceInfo resourceInfo = new ResourceInfo();
+        resourceInfo.service = "Resource";
+        resourceInfo.className = FakeRA.class.getName();
+        resourceInfo.id = "FakeRA";
+        resourceInfo.properties = new Properties();
+        assembler.createResource(resourceInfo);
+        
+        // FakeRA container
         ContainerInfo containerInfo = config.configureService(MdbContainerInfo.class);
         containerInfo.id = "FakeContainer";
         containerInfo.displayName = "Fake Container";
-        containerInfo.properties.setProperty("MessageListenerInterface", "java.lang.Runnable");
+        containerInfo.properties.setProperty("ResourceAdapter", "FakeRA");
+        containerInfo.properties.setProperty("MessageListenerInterface", FakeMessageListener.class.getName());
+        containerInfo.properties.setProperty("ActivationSpecClass", FakeActivationSpec.class.getName());
         assembler.createContainer(containerInfo);
 
         // generate ejb jar application
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(createJaxbMdb("JmsMdb", BasicMdbBean.class.getName(), MessageListener.class.getName()));
-        ejbJar.addEnterpriseBean(createJaxbMdb("FakeMdb", FakeMdb.class.getName(), Runnable.class.getName()));
+        ejbJar.addEnterpriseBean(createJaxbMdb("FakeMdb", FakeMdb.class.getName(), FakeMessageListener.class.getName()));
         EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "FakeEjbJar", "fake.jar", ejbJar, null);
 
         // configure and deploy it
@@ -66,8 +87,71 @@ public class MdbConfigTest extends TestCase {
         assembler.createEjbJar(info);
     }
 
-    public static class FakeMdb implements Runnable {
-        public void run() {
+    public static class FakeMdb implements FakeMessageListener {
+        public void doIt(Properties properties) {
+        }
+    }
+
+    public static interface FakeMessageListener {
+        public void doIt(Properties properties);
+    }
+
+    public static class FakeRA implements ResourceAdapter {
+        public boolean started;
+        public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+            assertFalse("Already started", started);
+            assertNotNull("bootstrapContext is null", bootstrapContext);
+            assertNotNull("bootstrapContext.getWorkManager() is null", bootstrapContext.getWorkManager());
+            assertNotNull("bootstrapContext.getXATerminator() is null", bootstrapContext.getXATerminator());
+            try {
+                assertNotNull("bootstrapContext.createTimer() is null", bootstrapContext.createTimer());
+            } catch (UnavailableException e) {
+                throw new ResourceAdapterInternalException("bootstrapContext.createTimer() threw an exception", e);
+            }
+        }
+
+        public void stop() {
+            assertTrue("RA was not started", started);
+        }
+
+        public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
+            assertNotNull("messageEndpointFactory is null", messageEndpointFactory);
+            assertNotNull("activationSpec is null", activationSpec);
+            assertTrue("activationSpec should be an instance of FakeActivationSpec", activationSpec instanceof FakeActivationSpec);
+
+            MessageEndpoint endpoint = messageEndpointFactory.createEndpoint(null);
+            assertNotNull("endpoint is null", endpoint);
+            assertTrue("endpoint should be an instance of FakeMessageListener", endpoint instanceof FakeMessageListener);
+        }
+
+        public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
+            assertNotNull("messageEndpointFactory is null", messageEndpointFactory);
+            assertNotNull("activationSpec is null", activationSpec);
+            assertTrue("activationSpec should be an instance of FakeActivationSpec", activationSpec instanceof FakeActivationSpec);
+        }
+
+        public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
+            return new XAResource[0];
+        }
+    }
+
+    public static class FakeActivationSpec implements ActivationSpec {
+        private FakeRA fakeRA;
+        protected boolean validated;
+
+        public void validate() throws InvalidPropertyException {
+            validated = true;
+        }
+
+        public FakeRA getResourceAdapter() {
+            return fakeRA;
+        }
+
+        public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+            assertNotNull("resourceAdapter is null", resourceAdapter);
+            assertTrue("resourceAdapter should be an instance of FakeRA", resourceAdapter instanceof FakeRA);
+            this.fakeRA  = (FakeRA)resourceAdapter;
+            assertTrue("ActivationSpec has not been validated", validated);
         }
     }
 

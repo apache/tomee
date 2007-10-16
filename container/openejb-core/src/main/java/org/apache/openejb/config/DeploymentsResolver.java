@@ -97,7 +97,7 @@ public class DeploymentsResolver {
         ////////////////////////////////
         boolean hasNestedArchives = false;
         for (File file : dir.listFiles()) {
-            if (file.getName().endsWith(".jar") || file.getName().endsWith(".ear")) {
+            if (file.getName().endsWith(".jar") || file.getName().endsWith(".war")|| file.getName().endsWith(".rar")|| file.getName().endsWith(".ear")) {
                 if (jarList.contains(file.getAbsolutePath())) continue;
                 jarList.add(file.getAbsolutePath());
                 hasNestedArchives = true;
@@ -174,10 +174,8 @@ public class DeploymentsResolver {
      */
     private static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
 
-        Deployments deployment = null;
         String include = null;
         String exclude = null;
-        String path = null;
 
         include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
         exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");

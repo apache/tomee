@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import java.util.ArrayList;
@@ -25,47 +24,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "sunCmpMapping"
 })
 @XmlRootElement(name = "sun-cmp-mappings")
 public class SunCmpMappings {
-
     @XmlElement(name = "sun-cmp-mapping", required = true)
     protected List<SunCmpMapping> sunCmpMapping;
 
-    /**
-     * Gets the value of the sunCmpMapping property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the sunCmpMapping property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSunCmpMapping().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SunCmpMapping }
-     * 
-     * 
-     */
     public List<SunCmpMapping> getSunCmpMapping() {
         if (sunCmpMapping == null) {
             sunCmpMapping = new ArrayList<SunCmpMapping>();
         }
         return this.sunCmpMapping;
     }
-
 }

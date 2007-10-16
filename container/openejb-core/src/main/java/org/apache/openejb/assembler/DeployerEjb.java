@@ -143,8 +143,10 @@ public class DeployerEjb implements Deployer {
 
             return appInfo;
         } catch (OpenEJBException e) {
+            e.printStackTrace();
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new OpenEJBException(e);
         }
     }

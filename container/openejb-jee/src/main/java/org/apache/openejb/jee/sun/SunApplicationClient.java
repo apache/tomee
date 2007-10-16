@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import java.util.ArrayList;
@@ -25,10 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "ejbRef",
@@ -41,7 +36,6 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlRootElement(name = "sun-application-client")
 public class SunApplicationClient {
-
     @XmlElement(name = "ejb-ref")
     protected List<EjbRef> ejbRef;
     @XmlElement(name = "resource-ref")
@@ -57,28 +51,6 @@ public class SunApplicationClient {
     @XmlElement(name = "java-web-start-access")
     protected JavaWebStartAccess javaWebStartAccess;
 
-    /**
-     * Gets the value of the ejbRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEjbRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EjbRef }
-     * 
-     * 
-     */
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
             ejbRef = new ArrayList<EjbRef>();
@@ -86,28 +58,6 @@ public class SunApplicationClient {
         return this.ejbRef;
     }
 
-    /**
-     * Gets the value of the resourceRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceRef }
-     * 
-     * 
-     */
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
             resourceRef = new ArrayList<ResourceRef>();
@@ -115,28 +65,6 @@ public class SunApplicationClient {
         return this.resourceRef;
     }
 
-    /**
-     * Gets the value of the resourceEnvRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceEnvRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceEnvRef }
-     * 
-     * 
-     */
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
             resourceEnvRef = new ArrayList<ResourceEnvRef>();
@@ -144,28 +72,6 @@ public class SunApplicationClient {
         return this.resourceEnvRef;
     }
 
-    /**
-     * Gets the value of the serviceRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getServiceRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ServiceRef }
-     * 
-     * 
-     */
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
             serviceRef = new ArrayList<ServiceRef>();
@@ -173,28 +79,6 @@ public class SunApplicationClient {
         return this.serviceRef;
     }
 
-    /**
-     * Gets the value of the messageDestinationRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messageDestinationRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMessageDestinationRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MessageDestinationRef }
-     * 
-     * 
-     */
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
             messageDestinationRef = new ArrayList<MessageDestinationRef>();
@@ -202,28 +86,6 @@ public class SunApplicationClient {
         return this.messageDestinationRef;
     }
 
-    /**
-     * Gets the value of the messageDestination property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messageDestination property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMessageDestination().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MessageDestination }
-     * 
-     * 
-     */
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
             messageDestination = new ArrayList<MessageDestination>();
@@ -231,28 +93,11 @@ public class SunApplicationClient {
         return this.messageDestination;
     }
 
-    /**
-     * Gets the value of the javaWebStartAccess property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaWebStartAccess }
-     *     
-     */
     public JavaWebStartAccess getJavaWebStartAccess() {
         return javaWebStartAccess;
     }
 
-    /**
-     * Sets the value of the javaWebStartAccess property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaWebStartAccess }
-     *     
-     */
     public void setJavaWebStartAccess(JavaWebStartAccess value) {
         this.javaWebStartAccess = value;
     }
-
 }

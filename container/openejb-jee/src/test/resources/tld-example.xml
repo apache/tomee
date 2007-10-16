@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.5" id="ID001">
+    <description xml:lang="">description0</description>
+    <display-name xml:lang="en-US">display-name0</display-name>
+    <icon xml:lang="" id="ID007">
+        <small-icon>small-icon0</small-icon>
+        <large-icon>large-icon0</large-icon>
+    </icon>
+    <tlib-version>0</tlib-version>
+    <short-name>short-name0</short-name>
+    <uri>http://www.oxygenxml.com/</uri>
+    <validator id="ID017">
+        <description xml:lang="">description1</description>
+        <validator-class>validator-class0</validator-class>
+        <init-param id="ID023">
+            <description xml:lang="en-US" id="ID025">description2</description>
+            <param-name>param-name0</param-name>
+            <param-value>param-value0</param-value>
+        </init-param>
+    </validator>
+    <listener id="ID031">
+        <description xml:lang="en-US" id="ID033">description3</description>
+        <display-name xml:lang="en-US" id="ID035">display-name1</display-name>
+        <icon xml:lang="en-US" id="ID037">
+            <small-icon>small-icon1</small-icon>
+            <large-icon>large-icon1</large-icon>
+        </icon>
+        <listener-class>listener-class0</listener-class>
+    </listener>
+    <listener id="ID931">
+        <description xml:lang="en-US" id="ID033">description3</description>
+        <display-name xml:lang="en-US" id="ID035">display-name1</display-name>
+        <icon xml:lang="" id="ID037">
+            <small-icon>small-icon1</small-icon>
+            <large-icon>large-icon1</large-icon>
+        </icon>
+        <listener-class>listener-class0</listener-class>
+    </listener>
+    <tag id="ID045">
+        <description xml:lang="">description4</description>
+        <display-name xml:lang="en-US">display-name2</display-name>
+        <icon xml:lang="en-US" id="ID051">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <name>name0</name>
+        <tag-class>tag-class0</tag-class>
+        <tei-class>tei-class0</tei-class>
+        <body-content>tagdependent</body-content>
+        <variable id="ID065">
+            <description xml:lang="en-US">description5</description>
+            <name-given>$</name-given>
+            <variable-class>variable-class0</variable-class>
+            <declare>true</declare>
+            <scope>NESTED</scope>
+        </variable>
+        <attribute id="ID077">
+            <description xml:lang="">description6</description>
+            <name>$</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>type0</type>
+            <deferred-value id="ID089">
+                <type>type1</type>
+            </deferred-value>
+        </attribute>
+        <dynamic-attributes>true</dynamic-attributes>
+        <example>example0</example>
+        <tag-extension namespace="http://www.oxygenxml.com/" id="ID097">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </tag-extension>
+    </tag>
+    <tag id="ID945">
+        <description xml:lang="en-US">description4</description>
+        <display-name xml:lang="">display-name2</display-name>
+        <icon xml:lang="" id="ID051">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <name>name0</name>
+        <tag-class>tag-class0</tag-class>
+        <tei-class>tei-class0</tei-class>
+        <body-content>tagdependent</body-content>
+        <variable id="ID065">
+            <description xml:lang="">description5</description>
+            <name-from-attribute>$</name-from-attribute>
+            <variable-class>variable-class0</variable-class>
+            <declare>true</declare>
+            <scope>NESTED</scope>
+        </variable>
+        <attribute id="ID077">
+            <description xml:lang="">description6</description>
+            <name>$</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>type0</type>
+            <deferred-method id="ID089">
+                <method-signature>method-signature0</method-signature>
+            </deferred-method>
+        </attribute>
+        <dynamic-attributes>true</dynamic-attributes>
+        <example>example0</example>
+        <tag-extension namespace="http://www.oxygenxml.com/" id="ID097">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </tag-extension>
+    </tag>
+    <tag id="ID045">
+        <description xml:lang="en-US">description4</description>
+        <display-name xml:lang="en-US">display-name2</display-name>
+        <icon xml:lang="en-US" id="ID051">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <name>name0</name>
+        <tag-class>tag-class0</tag-class>
+        <tei-class>tei-class0</tei-class>
+        <body-content>tagdependent</body-content>
+        <variable id="ID065">
+            <description xml:lang="">description5</description>
+            <name-from-attribute>$</name-from-attribute>
+            <variable-class>variable-class0</variable-class>
+            <declare>true</declare>
+            <scope>NESTED</scope>
+        </variable>
+        <attribute id="ID077">
+            <description xml:lang="">description6</description>
+            <name>$</name>
+            <required>true</required>
+            <fragment>true</fragment>
+        </attribute>
+        <dynamic-attributes>true</dynamic-attributes>
+        <example>example0</example>
+        <tag-extension namespace="http://www.oxygenxml.com/" id="ID091">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </tag-extension>
+    </tag>
+    <tag-file id="ID105">
+        <description xml:lang="en-US">description7</description>
+        <display-name xml:lang="">display-name3</display-name>
+        <icon xml:lang="en-US" id="ID111">
+            <small-icon>small-icon3</small-icon>
+            <large-icon>large-icon3</large-icon>
+        </icon>
+        <name>name1</name>
+        <path>path0</path>
+        <example>example1</example>
+        <tag-extension namespace="http://www.oxygenxml.com/" id="ID123">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </tag-extension>
+    </tag-file>
+    <tag-file id="ID999">
+        <description xml:lang="">description7</description>
+        <display-name xml:lang="">display-name3</display-name>
+        <icon xml:lang="en-US" id="ID105">
+            <small-icon>small-icon3</small-icon>
+            <large-icon>large-icon3</large-icon>
+        </icon>
+        <name>name1</name>
+        <path>path0</path>
+        <example>example1</example>
+        <tag-extension namespace="http://www.oxygenxml.com/" id="ID117">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </tag-extension>
+    </tag-file>
+    <function id="ID131">
+        <description xml:lang="en-US">description8</description>
+        <display-name xml:lang="en-US">display-name4</display-name>
+        <icon xml:lang="" id="ID137">
+            <small-icon>small-icon4</small-icon>
+            <large-icon>large-icon4</large-icon>
+        </icon>
+        <name>name2</name>
+        <function-class>function-class0</function-class>
+        <function-signature>function-signature0</function-signature>
+        <example>example2</example>
+        <function-extension namespace="http://www.oxygenxml.com/" id="ID151">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </function-extension>
+    </function>
+    <function id="ID925">
+        <description xml:lang="">description8</description>
+        <display-name xml:lang="en-US">display-name4</display-name>
+        <icon xml:lang="en-US" id="ID131">
+            <small-icon>small-icon4</small-icon>
+            <large-icon>large-icon4</large-icon>
+        </icon>
+        <name>name2</name>
+        <function-class>function-class0</function-class>
+        <function-signature>function-signature0</function-signature>
+        <example>example2</example>
+        <function-extension namespace="http://www.oxygenxml.com/" id="ID145">
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+            <extension-element></extension-element>
+        </function-extension>
+    </function>
+    <taglib-extension namespace="http://www.oxygenxml.com/" id="ID159">
+        <extension-element></extension-element>
+        <extension-element></extension-element>
+        <extension-element></extension-element>
+    </taglib-extension>
+</taglib>

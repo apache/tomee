@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Iterator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"ejbLink", "resourceLink", "query"})
@@ -136,6 +137,15 @@ public class EjbDeployment {
 
     public void addResourceLink(ResourceLink resourceLink) {
         getResourceLink().add(resourceLink);
+    }
+
+    public void removeResourceLink(String resRefName) {
+        for (Iterator<ResourceLink> iterator = resourceLink.iterator(); iterator.hasNext();) {
+            ResourceLink link =  iterator.next();
+            if (resRefName.equals(link.getResRefName())) {
+                iterator.remove();
+            }
+        }
     }
 
     public void addEjbLink(EjbLink ejbLink) {

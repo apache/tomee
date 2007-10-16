@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "response-protection")
 public class ResponseProtection {
-
     @XmlAttribute(name = "auth-source")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String authSource;
@@ -41,52 +33,19 @@ public class ResponseProtection {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String authRecipient;
 
-    /**
-     * Gets the value of the authSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getAuthSource() {
         return authSource;
     }
 
-    /**
-     * Sets the value of the authSource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setAuthSource(String value) {
         this.authSource = value;
     }
 
-    /**
-     * Gets the value of the authRecipient property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getAuthRecipient() {
         return authRecipient;
     }
 
-    /**
-     * Sets the value of the authRecipient property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setAuthRecipient(String value) {
         this.authRecipient = value;
     }
-
 }

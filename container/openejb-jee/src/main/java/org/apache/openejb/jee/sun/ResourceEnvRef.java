@@ -14,78 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.jee.sun;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "resourceEnvRefName",
-    "jndiName"
-})
-@XmlRootElement(name = "resource-env-ref")
+@XmlType(name = "", propOrder = {"resourceEnvRefName", "jndiName"})
 public class ResourceEnvRef {
-
     @XmlElement(name = "resource-env-ref-name", required = true)
     protected String resourceEnvRefName;
     @XmlElement(name = "jndi-name", required = true)
     protected String jndiName;
 
-    /**
-     * Gets the value of the resourceEnvRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getResourceEnvRefName() {
         return resourceEnvRefName;
     }
 
-    /**
-     * Sets the value of the resourceEnvRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setResourceEnvRefName(String value) {
         this.resourceEnvRefName = value;
     }
 
-    /**
-     * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getJndiName() {
         return jndiName;
     }
 
-    /**
-     * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setJndiName(String value) {
         this.jndiName = value;
     }
-
 }

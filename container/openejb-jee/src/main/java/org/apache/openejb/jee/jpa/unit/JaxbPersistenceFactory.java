@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.jee.jpa.unit;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -30,6 +29,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -73,14 +74,14 @@ public class JaxbPersistenceFactory {
 
     // Inject the proper namespace
     public static class PersistenceFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public PersistenceFilter(XMLReader arg0) {
-            super(arg0);
+        public PersistenceFilter(XMLReader xmlReader) {
+            super(xmlReader);
         }
 
-        @Override
-        public void startElement(String arg0, String arg1, String arg2, Attributes arg3) throws SAXException {
-            super.startElement(PERSISTENCE_SCHEMA, arg1, arg2, arg3);
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return EMPTY_INPUT_SOURCE;
         }
     }
 }

@@ -47,7 +47,8 @@ public class ObjectFactory {
     private final static QName _EjbRelationTypeEjbRelationshipRole_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-relationship-role");
     private final static QName _EjbRelationTypeDescription_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "description");
     private final static QName _WebResourceCollectionTypeHttpMethod_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "http-method");
-    private final static QName _WebApp_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "web-app");
+    private final static QName _TldTaglib_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "web-app");
+    private final static QName _WebApp_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "taglib");
     private final static QName _Connector_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "connector");
 
     /**
@@ -105,6 +106,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "web-app")
     public JAXBElement<WebApp> createWebApp(WebApp value) {
         return new JAXBElement<WebApp>(_WebApp_QNAME, WebApp.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TldTaglib }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "taglib")
+    public JAXBElement<TldTaglib> createTldTaglib(TldTaglib value) {
+        return new JAXBElement<TldTaglib>(_TldTaglib_QNAME, TldTaglib.class, null, value);
     }
 
     /**

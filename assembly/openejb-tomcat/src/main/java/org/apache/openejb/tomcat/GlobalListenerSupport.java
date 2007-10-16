@@ -67,12 +67,19 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.DESTROY_EVENT.equals(type)) {
                 contextListener.destroy(standardContext);
             }
+        } else if (source instanceof StandardServer) {
+            StandardServer standardServer = (StandardServer) source;
+            String type = event.getType();
+            if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
+                contextListener.afterStop(standardServer);
+            }
         }
     }
 
     public void start() {
         // hook the hosts so we get notified before contexts are started
         standardServer.addPropertyChangeListener(this);
+        standardServer.addLifecycleListener(this);
         for (Service service : standardServer.findServices()) {
             serviceAdded(service);
         }

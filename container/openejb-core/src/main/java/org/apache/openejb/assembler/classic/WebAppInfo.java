@@ -25,6 +25,7 @@ public class WebAppInfo extends InfoObject {
     public String smallIcon;
     public String largeIcon;
     public String moduleId;
+    public String host;
     public String contextRoot;
 
     public JndiEncInfo jndiEnc;
