@@ -17,18 +17,15 @@
  */
 package org.apache.openejb.core.cmp;
 
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
 
-import javax.persistence.EntityTransaction;
-import javax.ejb.EntityBean;
 import javax.ejb.CreateException;
+import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
-import javax.transaction.TransactionManager;
-import java.util.List;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public interface CmpEngine {
 
@@ -47,6 +44,4 @@ public interface CmpEngine {
     void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
 
     void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
-
-    boolean isEmpty();
 }

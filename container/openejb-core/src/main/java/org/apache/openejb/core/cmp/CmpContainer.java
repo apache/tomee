@@ -74,10 +74,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     protected final Object containerID;
     protected final TransactionManager transactionManager;
     protected final SecurityService securityService;
-    protected final String cmpEngineFactory;
-    protected final String connectorName;
-    protected final String engine;
-    protected final CmpCallback cmpCallback;
 
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
@@ -92,9 +88,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     protected final Map<Class, DeploymentInfo> deploymentsByClass = new HashMap<Class, DeploymentInfo>();
 
     /**
-     * There is one cmpEngine per ejb jar and they are keyed by either the jar path or class loader when there is not jar.
+     * The CmpEngine which performs the actual persistence operations
      */
-    protected final Map<Object, CmpEngine> cmpEngines = new HashMap<Object, CmpEngine>();
+    protected final CmpEngine cmpEngine;
 
     /**
      * Tracks entity instances that have been "entered" so we can throw reentrancy exceptions.
@@ -107,17 +103,30 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
     };
 
-    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) {
+    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) throws OpenEJBException {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.containerID = id;
-        this.cmpEngineFactory = cmpEngineFactory;
-        this.connectorName = connectorName;
-        this.engine = engine;
         synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         entrancyTracker = new EntrancyTracker(synchronizationRegistry);
 
-        cmpCallback = new ContainerCmpCallback();
+        // create the cmp engine instance
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) classLoader = getClass().getClassLoader();
+
+        CmpEngineFactory factory = null;
+        try {
+            Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
+            factory = (CmpEngineFactory) cmpEngineFactoryClass.newInstance();
+        } catch (Exception e) {
+            throw new OpenEJBException("Unable to create cmp engine factory " + cmpEngineFactory, e);
+        }
+        factory.setTransactionManager(transactionManager);
+        factory.setConnectorName(connectorName);
+        factory.setCmpCallback(new ContainerCmpCallback());
+        factory.setEngine(engine);
+        factory.setClassLoader(classLoader);
+        cmpEngine = factory.create();
     }
 
     public Object getContainerID() {
@@ -154,16 +163,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         synchronized (this) {
             Object deploymentId = deploymentInfo.getDeploymentID();
 
-            Object cmpEngineKey = deploymentInfo.getJarPath();
-            if (cmpEngineKey == null) {
-                cmpEngineKey = deploymentInfo.getClassLoader();
-            }
-
-            CmpEngine cmpEngine = cmpEngines.get(cmpEngineKey);
-            if (cmpEngine == null) {
-                cmpEngine = createCmpEngine(deploymentInfo.getJarPath(), deploymentInfo.getClassLoader());
-                cmpEngines.put(cmpEngineKey, cmpEngine);
-            }
             cmpEngine.deploy(deploymentInfo);
             deploymentInfo.setContainerData(cmpEngine);
 
@@ -207,23 +206,12 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 // ignore
             }
 
-            CmpEngine cmpEngine = (CmpEngine) deploymentInfo.getContainerData();
-            if (cmpEngine != null){
-                cmpEngine.undeploy(deploymentInfo);
-
-                if (cmpEngine.isEmpty()){
-                    cmpEngines.remove(deploymentInfo.getJarPath());
-                    cmpEngines.remove(deploymentInfo.getClassLoader());
-                }
-            }
             deploymentInfo.setContainer(null);
             deploymentInfo.setContainerData(null);
         }
     }
 
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
-        CmpEngine cmpEngine = getCmpEngine(deployInfo);
-
         ThreadContext callContext = new ThreadContext(deployInfo, primaryKey);
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
@@ -233,32 +221,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         } finally {
             ThreadContext.exit(oldCallContext);
         }
-    }
-
-    private CmpEngine getCmpEngine(CoreDeploymentInfo deployInfo) {
-        CmpEngine cmpEngine = (CmpEngine) deployInfo.getContainerData();
-        if (cmpEngine == null) {
-            throw new IllegalArgumentException("Deployment does not contain a CmpEngine " + deployInfo);
-        }
-        return cmpEngine;
-    }
-
-    private CmpEngine createCmpEngine(String jarPath, ClassLoader classLoader) throws OpenEJBException {
-        CmpEngineFactory factory = null;
-        try {
-            Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
-            factory = (CmpEngineFactory) cmpEngineFactoryClass.newInstance();
-        } catch (Exception e) {
-            throw new OpenEJBException("Unable to create cmp engine factory " + cmpEngineFactory, e);
-        }
-        factory.setTransactionManager(transactionManager);
-        factory.setJarPath(jarPath);
-        factory.setConnectorName(connectorName);
-        factory.setCmpCallback(cmpCallback);
-        factory.setEngine(engine);
-        factory.setClassLoader(classLoader);
-        CmpEngine cmpEngine = factory.create();
-        return cmpEngine;
     }
 
     /**
@@ -521,7 +483,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         entrancyTracker.enter(deploymentInfo, callContext.getPrimaryKey());
         try {
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             bean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             if (bean == null) {
                 throw new NoSuchObjectException(deploymentInfo.getDeploymentID() + " : " + callContext.getPrimaryKey());
@@ -634,7 +595,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             ejbCreateMethod.invoke(bean, args);
 
             // create the new bean
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             primaryKey = cmpEngine.createBean(bean, callContext);
 
             // determine post create callback method
@@ -691,7 +651,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         txPolicy.beforeInvoke(null, txContext);
         try {
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
             if (bean == null) {
                 throw new ObjectNotFoundException(deploymentInfo.getDeploymentID() + " : " + args[0]);
@@ -722,7 +681,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         txPolicy.beforeInvoke(null, txContext);
         try {
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
 
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
@@ -781,7 +739,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         try {
             // exectue the select query
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             Collection<Object> results = cmpEngine.queryBeans(deploymentInfo, signature, args);
 
             //
@@ -852,7 +809,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         txPolicy.beforeInvoke(null, txContext);
         try {
-            CmpEngine cmpEngine = getCmpEngine(deploymentInfo);
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             if (entityBean == null) {
                 throw new NoSuchObjectException(callContext.getDeploymentInfo().getDeploymentID() + " " + callContext.getPrimaryKey());

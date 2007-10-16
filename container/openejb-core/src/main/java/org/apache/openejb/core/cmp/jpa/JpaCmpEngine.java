@@ -17,30 +17,7 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.Map;
-import java.util.HashMap;
-import java.lang.reflect.Method;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityBean;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
-import javax.ejb.EJBLocalObject;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import javax.transaction.TransactionManager;
-import javax.transaction.Status;
-import javax.transaction.TransactionSynchronizationRegistry;
-
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
@@ -50,9 +27,32 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.transaction.Status;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
@@ -61,9 +61,12 @@ public class JpaCmpEngine implements CmpEngine {
     private final CmpCallback cmpCallback;
     private final TransactionManager transactionManager;
     private final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+
+    /**
+     * Used to track which entity managers have had the live cycle listener registered
+     */
     private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
 
-    private final Map<Object, CoreDeploymentInfo> deployments = new HashMap<Object, CoreDeploymentInfo>();
     private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
         protected Set<EntityBean> initialValue() {
             return new HashSet<EntityBean>();
@@ -75,24 +78,12 @@ public class JpaCmpEngine implements CmpEngine {
         this.transactionManager = transactionManager;
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        deployments.put(deploymentInfo.getDeploymentID(), deploymentInfo);
-        if (deploymentInfo.getCmpImplClass() == null) {
-            throw new OpenEJBException("Deployment info does not define a CMP implementation class " + deploymentInfo.getDeploymentID());
-        }
+    public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         configureKeyGenerator(deploymentInfo);
     }
 
-    public void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+    public synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         deploymentInfo.setKeyGenerator(null);
-        deployments.remove(deploymentInfo.getDeploymentID());
-        if (deployments.size() == 0){
-            entityManagerListeners.clear();
-        }
-    }
-
-    public boolean isEmpty() {
-        return deployments.size() == 0;
     }
 
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
@@ -121,7 +112,7 @@ public class JpaCmpEngine implements CmpEngine {
             OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
             OpenJPALifecycleListener listener = new OpenJPALifecycleListener();
             openjpaEM.addLifecycleListener(listener, (Class[])null);
-            entityManagerListeners.put(entityManager,  listener);
+            entityManagerListeners.put(entityManager,  null);
             return;
         }
 
