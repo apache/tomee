@@ -18,12 +18,14 @@ package org.apache.openejb.client;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.ref.WeakReference;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
-import java.rmi.Remote;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
 
@@ -31,7 +33,6 @@ import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.AccessLocalException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBAccessException;
@@ -45,7 +46,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static final Method HASHCODE = getMethod(Object.class, "hashCode");
     protected static final Method TOSTRING = getMethod(Object.class, "toString");
 
-    protected static final Hashtable<Object,HashSet> liveHandleRegistry = new Hashtable();
+    protected static final ConcurrentMap<Object, Set<WeakReference<EJBInvocationHandler>>> liveHandleRegistry = new ConcurrentHashMap<Object, Set<WeakReference<EJBInvocationHandler>>>();
 
     protected transient boolean inProxyMap = false;
 
@@ -145,27 +146,32 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected static void invalidateAllHandlers(Object key) {
 
-        HashSet<EJBInvocationHandler> set = liveHandleRegistry.remove(key);
+        Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.remove(key);
         if (set == null) return;
 
         synchronized (set) {
-            for (EJBInvocationHandler handler : set) {
-                handler.invalidateReference();
+            for (WeakReference<EJBInvocationHandler> ref : set) {
+                EJBInvocationHandler handler = ref.get();
+                if (handler != null) {
+                    handler.invalidateReference();
+                }
             }
             set.clear();
         }
     }
 
     protected static void registerHandler(Object key, EJBInvocationHandler handler) {
-        HashSet set = (HashSet) liveHandleRegistry.get(key);
+        Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
 
         if (set == null) {
-            set = new HashSet();
-            liveHandleRegistry.put(key, set);
+            set = new HashSet<WeakReference<EJBInvocationHandler>>();
+            Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
+            // someone else added the set
+            if (current != null) set = current;
         }
 
         synchronized (set) {
-            set.add(handler);
+            set.add(new WeakReference<EJBInvocationHandler>(handler));
         }
     }
 

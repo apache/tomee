@@ -26,6 +26,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -665,6 +666,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 undeployException.getCauses().add(new Exception("client: " + clientId + ": " + t.getMessage(), t));
             }
         }
+
+        ClassLoaderUtil.clearClassLoaderCaches();
+
         if (undeployException.getCauses().size() > 0) {
             throw undeployException;
         }

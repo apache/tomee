@@ -17,16 +17,63 @@
  */
 package org.apache.openejb;
 
+import java.beans.Introspector;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Map;
+
 /**
  * @version $Revision$ $Date$
  */
 public class ClassLoaderUtil {
 
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
+    }
+
+    /**
+     * Cleans well known class loader leaks in VMs and libraries.  There is a lot of bad code out there and this method
+     * will clear up the know problems.  This method should only be called when the class loader will no longer be used.
+     * It this method is called two often it can have a serious impact on preformance.
+     * @param classLoader the class loader to destroy
+     */
+    public static void clearClassLoaderCaches() {
+        clearSunSoftCache(ObjectInputStream.class, "subclassAudits");
+        clearSunSoftCache(ObjectOutputStream.class, "subclassAudits");
+        clearSunSoftCache(ObjectStreamClass.class, "localDescs");
+        clearSunSoftCache(ObjectStreamClass.class, "reflectors");
+        Introspector.flushCaches();
+    }
+
+    /**
+     * Clears the caches maintained by the SunVM object stream implementation.  This method uses reflection and
+     * setAccessable to obtain access to the Sun cache.  The cache is locked with a synchronize monitor and cleared.
+     * This method completely clears the class loader cache which will impact preformance of object serialization.
+     * @param clazz the name of the class containing the cache field
+     * @param fieldName the name of the cache field
+     */
+    public static void clearSunSoftCache(Class clazz, String fieldName) {
+        Map cache = null;
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            cache = (Map) field.get(null);
+        } catch (Throwable ignored) {
+            // there is nothing a user could do about this anyway
+        }
+
+        if (cache != null) {
+            synchronized (cache) {
+                cache.clear();
+            }
+        }
     }
 }
