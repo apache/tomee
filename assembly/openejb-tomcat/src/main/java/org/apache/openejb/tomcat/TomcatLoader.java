@@ -45,6 +45,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.util.Properties;
 
 /**
@@ -62,6 +66,22 @@ public class TomcatLoader implements Loader {
             ejbServer = SystemInstance.get().getComponent(EjbServer.class);
             return;
         }
+
+        // Read in and apply the conf/system.properties
+        try {
+            File conf = SystemInstance.get().getBase().getDirectory("conf");
+            File file = new File(conf, "system.properties");
+            if (file.exists()){
+                Properties systemProperties = new Properties();
+                FileInputStream fin = new FileInputStream(file);
+                InputStream in = new BufferedInputStream(fin);
+                systemProperties.load(in);
+                System.getProperties().putAll(systemProperties);
+            }
+        } catch (IOException e) {
+            System.out.println("Processing conf/system.properties failed: "+e.getMessage());
+        }
+
 
         // initialize system instance before doing anything
         System.setProperty("openejb.deployments.classpath", "true");

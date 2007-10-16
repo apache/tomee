@@ -85,7 +85,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Iterator;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -455,7 +454,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         resourceInfo.properties.setProperty(name, value);
                     }
                 }
-                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
                 connectorInfo.resourceAdapter = resourceInfo;
             }
 
@@ -495,7 +494,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                     resourceInfo.properties.setProperty("TransactionSupport", transactionSupport);
                     resourceInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
-                    resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                    resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
                     connectorInfo.outbound.add(resourceInfo);
                 }
             }
@@ -524,7 +523,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     mdbContainerInfo.constructorArgs.addAll(Arrays.asList("id", "transactionManager", "securityService", "ResourceAdapter", "MessageListenerInterface", "ActivationSpecClass", "InstanceLimit"));
                     mdbContainerInfo.properties.setProperty("InstanceLimit", "10");
 
-                    mdbContainerInfo.properties.putAll(getSystemProperties(mdbContainerInfo.id));
+                    mdbContainerInfo.properties.putAll(getSystemProperties(mdbContainerInfo.id, "CONTAINER"));
                     connectorInfo.inbound.add(mdbContainerInfo);
                 }
             }
@@ -549,7 +548,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         resourceInfo.properties.setProperty(name, value);
                     }
                 }
-                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id));
+                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
                 connectorInfo.adminObject.add(resourceInfo);
             }
 
@@ -680,7 +679,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         Properties props = new Properties();
         props.putAll(provider.getProperties());
         props.putAll(service.getProperties());
-        props.putAll(getSystemProperties(service.getId()));
+        props.putAll(getSystemProperties(service.getId(), provider.getService()));
 
         if (providerType != null && !provider.getService().equals(providerType)) {
             throw new OpenEJBException(messages.format("conf.4902", service.getId(), providerType));
@@ -764,19 +763,33 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return configureService(service, type);
     }
 
-    private Properties getSystemProperties(String serviceId) {
+    private Properties getSystemProperties(String serviceId, String serviceType) {
+        String fullPrefix = serviceType.toUpperCase() + "." + serviceId + ".";
+        String fullPrefix2 = serviceType.toUpperCase() + "." + serviceId + "|";
+        String shortPrefix = serviceId + ".";
+        String shortPrefix2 = serviceId + "|";
+
         // Override with system properties
         Properties serviceProperties = new Properties();
-        String prefix = serviceId + ".";
         Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
-        for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
-            Map.Entry entry1 = (Map.Entry) iterator1.next();
-            String key = (String) entry1.getKey();
-            Object value = entry1.getValue();
-            if (value instanceof String && key.startsWith(prefix)) {
-                key = key.replaceFirst(prefix, "");
-                serviceProperties.setProperty(key, (String) value);
+        for (Map.Entry<Object, Object> entry : sysProps.entrySet()) {
+            String name = (String) entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                if (name.startsWith(fullPrefix)) {
+                    name = name.substring(fullPrefix.length());
+                    serviceProperties.setProperty(name, (String) value);
+                } else if (name.startsWith(fullPrefix2)) {
+                    name = name.substring(fullPrefix2.length());
+                    serviceProperties.setProperty(name, (String) value);
+                } else if (name.startsWith(shortPrefix)) {
+                    name = name.substring(shortPrefix.length());
+                    serviceProperties.setProperty(name, (String) value);
+                } else if (name.startsWith(shortPrefix2)) {
+                    name = name.substring(shortPrefix2.length());
+                    serviceProperties.setProperty(name, (String) value);
+                }
             }
         }
         return serviceProperties;
