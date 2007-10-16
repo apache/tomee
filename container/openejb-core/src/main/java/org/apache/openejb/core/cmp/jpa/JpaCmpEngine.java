@@ -27,10 +27,10 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.cmp.SimpleKeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openjpa.event.AbstractLifecycleListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerFactorySPI;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -52,30 +52,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
     public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
 
+    /**
+     * Used to notify call CMP callback methods.
+     */
     private final CmpCallback cmpCallback;
+
     private final TransactionManager transactionManager;
-    private final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+    private final TransactionSynchronizationRegistry synchronizationRegistry;
 
     /**
-     * Used to track which entity managers have had the live cycle listener registered
+     * Thread local to track the beans we are creating to avoid an extra ejbStore callback
      */
-    private final WeakHashMap<EntityManager,Object> entityManagerListeners = new WeakHashMap<EntityManager,Object>();
-
     private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
         protected Set<EntityBean> initialValue() {
             return new HashSet<EntityBean>();
         }
     };
 
-    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager) {
+    /**
+     * Listener added to entity managers.
+     */
+    protected Object entityManagerListener;
+
+    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, TransactionSynchronizationRegistry synchronizationRegistry) {
         this.cmpCallback = cmpCallback;
         this.transactionManager = transactionManager;
+        this.synchronizationRegistry = synchronizationRegistry;
     }
 
     public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -103,16 +110,14 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     private synchronized void registerListener(EntityManager entityManager) {
-        // check if listener is already registered
-        if (entityManagerListeners.containsKey(entityManager)) {
-            return;
-        }
-
         if (entityManager instanceof OpenJPAEntityManagerSPI) {
             OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
-            OpenJPALifecycleListener listener = new OpenJPALifecycleListener();
-            openjpaEM.addLifecycleListener(listener, (Class[])null);
-            entityManagerListeners.put(entityManager,  null);
+            OpenJPAEntityManagerFactorySPI openjpaEMF = (OpenJPAEntityManagerFactorySPI) openjpaEM.getEntityManagerFactory();
+
+            if (entityManagerListener == null) {
+                entityManagerListener = new OpenJPALifecycleListener();
+            }
+            openjpaEMF.addLifecycleListener(entityManagerListener, (Class[])null);
             return;
         }
 

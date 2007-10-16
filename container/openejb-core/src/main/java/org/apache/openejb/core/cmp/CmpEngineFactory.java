@@ -20,6 +20,7 @@ package org.apache.openejb.core.cmp;
 import org.apache.openejb.OpenEJBException;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 public interface CmpEngineFactory {
     String getJarPath();
@@ -29,6 +30,10 @@ public interface CmpEngineFactory {
     TransactionManager getTransactionManager();
 
     void setTransactionManager(TransactionManager transactionManager);
+
+    TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
+
+    void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry synchronizationRegistry);
 
     String getEngine();
 

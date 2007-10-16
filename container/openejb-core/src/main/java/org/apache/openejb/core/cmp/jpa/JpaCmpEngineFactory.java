@@ -23,10 +23,12 @@ import org.apache.openejb.core.cmp.CmpEngine;
 import org.apache.openejb.OpenEJBException;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 public class JpaCmpEngineFactory implements CmpEngineFactory {
     private String jarPath;
     private TransactionManager transactionManager;
+    private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
     private String engine;
     private String connectorName;
     private CmpCallback cmpCallback;
@@ -46,6 +48,14 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
+        return transactionSynchronizationRegistry;
+    }
+
+    public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry transactionSynchronizationRegistry) {
+        this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
     }
 
     public String getEngine() {
@@ -81,6 +91,6 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
     }
 
     public CmpEngine create() throws OpenEJBException {
-        return new JpaCmpEngine(cmpCallback, transactionManager);
+        return new JpaCmpEngine(cmpCallback, transactionManager, transactionSynchronizationRegistry);
     }
 }

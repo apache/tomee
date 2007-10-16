@@ -122,6 +122,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             throw new OpenEJBException("Unable to create cmp engine factory " + cmpEngineFactory, e);
         }
         factory.setTransactionManager(transactionManager);
+        factory.setTransactionSynchronizationRegistry(synchronizationRegistry);
         factory.setConnectorName(connectorName);
         factory.setCmpCallback(new ContainerCmpCallback());
         factory.setEngine(engine);
