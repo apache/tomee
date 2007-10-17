@@ -26,7 +26,6 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.PoolingSup
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.SinglePool;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.TransactionSupport;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransactions;
-import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTrackingCoordinator;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 
 import javax.transaction.TransactionManager;
@@ -149,7 +148,7 @@ public class GeronimoConnectionManagerFactory   {
                 createTransactionSupport(),
                 poolingSupport,
                 null,
-                new ConnectionTrackingCoordinator(true),
+                new AutoConnectionTracker(),
                 (RecoverableTransactionManager)transactionManager,
                 name,
                 classLoader);
