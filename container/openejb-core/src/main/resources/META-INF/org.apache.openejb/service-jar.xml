@@ -636,6 +636,22 @@
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
     
     ResourceAdapter Default JMS Resource Adapter
+
+    # Specifies if the connection is enrolled in global transaction
+    # allowed values: xa, local or none
+    TransactionSupport xa
+
+    # Maximum number of physical connection to the ActiveMQ broker
+    PoolMaxSize 10
+
+    # Minimum number of physical connection to the ActiveMQ broker
+    PoolMinSize 0
+
+    # Maximum amount of time to wait for a connection
+    ConnectionMaxWaitMilliseconds 5000
+
+    # Maximum amount of time a connection can be idle before being reclaimed
+    ConnectionMaxIdleMinutes 15
   </ServiceProvider>
 
   <ServiceProvider

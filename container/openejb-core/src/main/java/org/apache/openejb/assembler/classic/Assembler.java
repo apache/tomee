@@ -857,18 +857,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } else if (service instanceof ManagedConnectionFactory) {
             ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
-            // get the connection manager
-            GeronimoConnectionManagerFactory connectionManagerFactory = new GeronimoConnectionManagerFactory();
-            // default transaction support is "local" and that doesn't seem to work
-            String transactionSupport = serviceInfo.properties.getProperty("TransactionSupport", "xa");
-            connectionManagerFactory.setTransactionSupport(transactionSupport);
-            connectionManagerFactory.setTransactionManager(transactionManager);
+            // connection manager is constructed via a recipe so we automatically expose all cmf properties
+            ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
+            connectionManagerRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            connectionManagerRecipe.setAllProperties(serviceInfo.properties);
+            connectionManagerRecipe.setProperty("name", serviceInfo.id);
+
+            // standard properties
+            connectionManagerRecipe.setProperty("transactionManager", transactionManager);
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader == null) classLoader = getClass().getClassLoader();
             if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
-            connectionManagerFactory.setClassLoader(classLoader);
-            ConnectionManager connectionManager = connectionManagerFactory.create();
+            connectionManagerRecipe.setProperty("classLoader", classLoader);
 
+            // create the connection manager
+            ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
             if (connectionManager == null) {
                 throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
             }
