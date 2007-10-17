@@ -615,7 +615,7 @@ public class AutoConfig implements DynamicDeployer {
         if (link == null) {
             String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
             id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
-            logger.info("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
+            logger.info("Auto-linking resource-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
             link = new ResourceLink();
             link.setResId(id);
@@ -652,7 +652,7 @@ public class AutoConfig implements DynamicDeployer {
                 // could be a session context ref
                 return;
             }
-            logger.info("Auto-linking resource reference '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
+            logger.info("Auto-linking resource-env-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
             link = new ResourceLink();
             link.setResId(id);
@@ -748,7 +748,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // throw an exception or log an error
-        String message = "No existing resource found while attempting to Auto-link unmapped reference '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.  Looked for Resource(id=" + resourceId + ") and Resource(id=" + shortName + ")";
+        String message = "No existing resource found while attempting to Auto-link unmapped resource-ref '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.  Looked for Resource(id=" + resourceId + ") and Resource(id=" + shortName + ")";
         if (!autoCreateResources){
             throw new OpenEJBException(message);
         }
@@ -771,7 +771,7 @@ public class AutoConfig implements DynamicDeployer {
         // Auto create a resource using the first provider that can supply a resource of the desired type
         resourceId = ServiceUtils.getServiceProviderId(type);
         if (resourceId == null) {
-            throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
+            throw new OpenEJBException("No provider available for resource-ref '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
         ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
 
@@ -817,7 +817,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // throw an exception or log an error
-        String message = "No existing resource found while attempting to Auto-link unmapped reference '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.  Looked for Resource(id=" + resourceId + ")";
+        String message = "No existing resource found while attempting to Auto-link unmapped resource-env-ref '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.  Looked for Resource(id=" + resourceId + ")";
         if (!autoCreateResources){
             throw new OpenEJBException(message);
         }
@@ -831,7 +831,7 @@ public class AutoConfig implements DynamicDeployer {
             if (resourceEnvIds.size() > 0) {
                 return resourceEnvIds.get(0);
             }
-            throw new OpenEJBException("No provider available for resource reference '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
+            throw new OpenEJBException("No provider available for resource-env-ref '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
 
         Resource resource = new Resource(resourceId, providerId, null);
