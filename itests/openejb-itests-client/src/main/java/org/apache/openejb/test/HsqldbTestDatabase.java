@@ -200,11 +200,6 @@ public class HsqldbTestDatabase implements TestDatabase {
 
 
     public void stop() throws IllegalStateException {
-        try {
-            database.execute("SHUTDOWN");
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     public void init(Properties props) throws IllegalStateException {
