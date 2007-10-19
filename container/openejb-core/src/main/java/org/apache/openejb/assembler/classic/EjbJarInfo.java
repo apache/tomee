@@ -19,6 +19,8 @@ package org.apache.openejb.assembler.classic;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class EjbJarInfo extends InfoObject {
     public final Properties properties = new Properties();
@@ -34,4 +36,5 @@ public class EjbJarInfo extends InfoObject {
     public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<InterceptorBindingInfo>();
     public final List<MethodInfo> excludeList = new ArrayList<MethodInfo>();
     public final List<ApplicationExceptionInfo> applicationException = new ArrayList<ApplicationExceptionInfo>();
+    public final Set<String> watchedResources = new TreeSet<String>();
 }

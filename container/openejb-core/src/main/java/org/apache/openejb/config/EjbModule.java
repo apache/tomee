@@ -23,6 +23,8 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Class is to remain "dumb" and should not have deployment logic added to it.
@@ -39,6 +41,7 @@ public class EjbModule implements DeploymentModule {
     private OpenejbJar openejbJar;
     private String moduleId;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public EjbModule(EjbJar ejbJar){
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
@@ -125,5 +128,9 @@ public class EjbModule implements DeploymentModule {
 
     public void setOpenejbJar(OpenejbJar openejbJar) {
         this.openejbJar = openejbJar;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
     }
 }

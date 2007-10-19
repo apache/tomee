@@ -25,6 +25,7 @@ import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -40,6 +41,8 @@ import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.assembler.classic.UniqueDefaultLinkResolver;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -72,6 +75,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
@@ -80,6 +85,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private final GlobalListenerSupport globalListenerSupport;
     private final ConfigurationFactory configurationFactory;
     private final Map<String,HostConfig> deployers = new TreeMap<String,HostConfig>();
+    // todo merge this map witth the infos map above
+    private final Map<String,DeployedApplication> deployedApps = new TreeMap<String,DeployedApplication>();
+    private final DeploymentLoader deploymentLoader;
     private Assembler assembler;
 
     public TomcatWebAppBuilder() {
@@ -112,6 +120,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // }
 
         configurationFactory = new ConfigurationFactory();
+        deploymentLoader = new DeploymentLoader();
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 
@@ -210,6 +219,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                     LinkResolver<EntityManagerFactory> emfLinkResolver = new UniqueDefaultLinkResolver<EntityManagerFactory>();
                     assembler.createApplication(contextInfo.appInfo, emfLinkResolver, standardContext.getLoader().getClassLoader());
+                    // todo add watched resources to context
                     contextInfo.emfLinkResolver = emfLinkResolver;
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
@@ -297,6 +307,103 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             }
         }
+    }
+
+    public void checkHost(StandardHost standardHost) {
+        if (standardHost.getAutoDeploy()) {
+            // Undeploy any modified application
+            for (Iterator<Map.Entry<String, DeployedApplication>> iterator = deployedApps.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry<String, DeployedApplication> entry = iterator.next();
+                DeployedApplication deployedApplication = entry.getValue();
+                if (deployedApplication.isModified()) {
+                    try {
+                        assembler.destroyApplication(deployedApplication.appInfo.jarPath);
+                    } catch (Exception e) {
+                        logger.error("Unable to application " + deployedApplication.appInfo.jarPath + ": Exception: " + e.getMessage(), e);
+                    }
+                    iterator.remove();
+                }
+            }
+
+            // Deploy new applications
+            File appBase = appBase(standardHost);
+            File[] files = appBase.listFiles();
+            for (File file : files) {
+                String name = file.getName();
+                if (name.toLowerCase().endsWith(".war") || name.equals("ROOT") || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) continue;
+                if (file.isDirectory() && new File(file, "WEB-INF").exists()) continue;
+                if (isDeployed(file, standardHost)) continue;
+
+                AppInfo appInfo = null;
+                try {
+                    file = file.getCanonicalFile().getAbsoluteFile();
+
+                    AppModule appModule = deploymentLoader.load(file);
+
+                    // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
+                    if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
+                        WebModule webModule = appModule.getWebModules().iterator().next();
+                        if (file.getAbsolutePath().equals(webModule.getJarLocation())) {
+                            continue;
+                        }
+                    }
+
+                    // if this is an unpacked dir, tomcat will pick it up as a webapp so undeploy it first
+                    if (file.isDirectory()) {
+                        ContainerBase context = (ContainerBase) standardHost.findChild("/" + name);
+                        if (context != null) {
+                            try {
+                                standardHost.removeChild(context);
+                            } catch (Throwable t) {
+                                logger.warning("Error undeploying wep application from Tomcat  " + name, t);
+                            }
+                            try {
+                                context.destroy();
+                            } catch (Throwable t) {
+                                logger.warning("Error destroying Tomcat web context " + name, t);
+                            }
+                        }
+                    }
+
+                    // tell web modules to deploy using this host
+                    for (WebModule webModule : appModule.getWebModules()) {
+                        webModule.setHost(standardHost.getName());
+                    }
+
+                    appInfo = configurationFactory.configureApplication(appModule);
+                    assembler.createApplication(appInfo);
+                } catch (Throwable e) {
+                    logger.warning("Error deploying application " + file.getAbsolutePath(), e);
+                }
+                deployedApps.put(file.getAbsolutePath(), new DeployedApplication(file, appInfo));
+            }
+        }
+    }
+
+    private boolean isDeployed(File file, StandardHost standardHost) {
+        if (deployedApps.containsKey(file.getAbsolutePath())) {
+            return true;
+        }
+
+        // check if this is a deployed web application
+        String name = "/" + file.getName();
+
+        // ROOT context is a special case
+        if (name.equals("/ROOT")) name = "";
+
+        return file.isFile() && standardHost.findChild(name) != null;
+    }
+
+    protected File appBase(StandardHost standardHost) {
+        File file = new File(standardHost.getAppBase());
+        if (!file.isAbsolute()) {
+            file = new File(System.getProperty("catalina.base"), standardHost.getAppBase());
+        }
+        try {
+            file= file.getCanonicalFile();
+        } catch (IOException e) {
+        }
+        return file;
     }
 
     private AppModule loadApplication(StandardContext standardContext) {
@@ -510,5 +617,51 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         public StandardContext standardContext;
         public HostConfig deployer;
         public LinkResolver<EntityManagerFactory> emfLinkResolver;
+    }
+
+    private static class DeployedApplication {
+        private AppInfo appInfo;
+        private final Map<File,Long> watchedResource = new HashMap<File,Long>();
+
+        public DeployedApplication(File base, AppInfo appInfo) {
+            this.appInfo = appInfo;
+            watchedResource.put(base, base.lastModified());
+            if (appInfo != null) {
+                for (String resource : appInfo.watchedResources) {
+                    File file = new File(resource);
+                    watchedResource.put(file, file.lastModified());
+                }
+                for (EjbJarInfo info : appInfo.ejbJars) {
+                    for (String resource : info.watchedResources) {
+                        File file = new File(resource);
+                        watchedResource.put(file, file.lastModified());
+                    }
+                }
+                for (WebAppInfo info : appInfo.webApps) {
+                    for (String resource : info.watchedResources) {
+                        File file = new File(resource);
+                        watchedResource.put(file, file.lastModified());
+                    }
+                }
+                for (ConnectorInfo info : appInfo.connectors) {
+                    for (String resource : info.watchedResources) {
+                        File file = new File(resource);
+                        watchedResource.put(file, file.lastModified());
+                    }
+                }
+            }
+        }
+
+        public boolean isModified() {
+            for (Map.Entry<File, Long> entry : watchedResource.entrySet()) {
+                File file = entry.getKey();
+                long lastModified = entry.getValue();
+                if ((!file.exists() && lastModified != 0L) ||
+                        (file.lastModified() != lastModified)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

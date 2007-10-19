@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -32,4 +33,5 @@ public interface DeploymentModule {
 
     ValidationContext getValidation();
 
+    Set<String> getWatchedResources();
 }

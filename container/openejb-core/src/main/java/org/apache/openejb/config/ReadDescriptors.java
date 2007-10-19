@@ -81,18 +81,22 @@ public class ReadDescriptors implements DynamicDeployer {
 
         List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
         if (persistenceUrls != null) {
-            for (URL url1 : persistenceUrls) {
-                String moduleName1 = url1.toExternalForm().replaceFirst("!/?META-INF/persistence.xml$", "");
-                moduleName1 = moduleName1.replaceFirst("/?META-INF/persistence.xml$", "/");
-                if (moduleName1.startsWith("jar:")) moduleName1 = moduleName1.substring("jar:".length());
-                if (moduleName1.startsWith("file:")) moduleName1 = moduleName1.substring("file:".length());
+            for (URL persistenceUrl : persistenceUrls) {
+                String moduleName = persistenceUrl.toExternalForm().replaceFirst("!/?META-INF/persistence.xml$", "");
+                moduleName = moduleName.replaceFirst("/?META-INF/persistence.xml$", "/");
+                if (moduleName.startsWith("jar:")) moduleName = moduleName.substring("jar:".length());
+                if (moduleName.startsWith("file:")) moduleName = moduleName.substring("file:".length());
 //                if (moduleName1.endsWith("/")) moduleName1 = moduleName1.substring(0, moduleName1.length() - 1);
                 try {
-                    Persistence persistence = JaxbPersistenceFactory.getPersistence(url1);
-                    PersistenceModule persistenceModule = new PersistenceModule(moduleName1, persistence);
+                    Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
+                    PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
+                    persistenceModule.getWatchedResources().add(moduleName);
+                    if ("file".equals(persistenceUrl.getProtocol())) {
+                        persistenceModule.getWatchedResources().add(persistenceUrl.getPath());
+                    }
                     appModule.getPersistenceModules().add(persistenceModule);
                 } catch (Exception e1) {
-                    DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName1 + ". Exception: " + e1.getMessage(), e1);
+                    DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
                 }
             }
         }

@@ -369,6 +369,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
                 PersistenceUnitInfo info = new PersistenceUnitInfo();
                 info.name = persistenceUnit.getName();
+                info.watchedResources.addAll(persistenceModule.getWatchedResources());
                 info.persistenceUnitRootUrl = rootUrl;
                 info.provider = persistenceUnit.getProvider();
                 info.transactionType = persistenceUnit.getTransactionType().toString();
@@ -410,6 +411,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             clientInfo.mainClass = clientModule.getMainClass();
             clientInfo.callbackHandler = applicationClient.getCallbackHandler();
             clientInfo.moduleId = getClientModuleId(clientModule);
+            clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
 
             JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
             clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
@@ -429,6 +431,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             connectorInfo.displayName = connector.getDisplayName();
             connectorInfo.codebase = connectorModule.getJarLocation();
             connectorInfo.moduleId = connectorModule.getModuleId();
+            connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
 
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {
@@ -562,7 +565,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             webAppInfo.displayName = webApp.getDisplayName();
             webAppInfo.codebase = webModule.getJarLocation();
             webAppInfo.moduleId = webModule.getModuleId();
-            
+            webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
+
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
 
@@ -572,6 +576,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         appInfo.jarPath = appModule.getJarLocation();
+        appInfo.watchedResources.addAll(appModule.getWatchedResources());
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
             File file = new File(url.getPath());

@@ -67,6 +67,12 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.DESTROY_EVENT.equals(type)) {
                 contextListener.destroy(standardContext);
             }
+        } else if (source instanceof StandardHost) {
+            StandardHost standardHost = (StandardHost) source;
+            String type = event.getType();
+            if (Lifecycle.PERIODIC_EVENT.equals(type)) {
+                contextListener.checkHost(standardHost);
+            }
         } else if (source instanceof StandardServer) {
             StandardServer standardServer = (StandardServer) source;
             String type = event.getType();
@@ -126,6 +132,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
     private void hostAdded(StandardHost host) {
         addContextListener(host);
+        host.addLifecycleListener(this);
         for (Container child : host.findChildren()) {
             if (child instanceof StandardContext) {
                 StandardContext context = (StandardContext) child;

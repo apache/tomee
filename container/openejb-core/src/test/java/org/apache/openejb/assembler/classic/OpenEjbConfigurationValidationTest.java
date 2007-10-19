@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -77,6 +78,11 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
             if (List.class.isAssignableFrom(type)) {
                 type = getGenericType(field);
                 assertNotNull("Lists must have a generic type: " + simpleName + "." + field.getName(), type);
+            }
+
+            if (Set.class.isAssignableFrom(type)) {
+                type = getGenericType(field);
+                assertNotNull("Sets must have a generic type: " + simpleName + "." + field.getName(), type);
             }
 
             if (type.isPrimitive()) {

@@ -18,6 +18,8 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
@@ -30,5 +32,6 @@ public class AppInfo extends InfoObject {
     public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
     public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
     public final List<String> libs = new ArrayList<String>();
+    public final Set<String> watchedResources = new TreeSet<String>();
     public String cmpMappingsXml;
 }

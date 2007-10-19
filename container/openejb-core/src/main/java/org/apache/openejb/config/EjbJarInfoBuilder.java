@@ -74,7 +74,6 @@ import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -128,6 +127,7 @@ public class EjbJarInfoBuilder {
         if (ejbJar.moduleId == null) {
             ejbJar.moduleId = new File(ejbJar.jarPath).getName().replaceFirst(".jar$","");
         }
+        ejbJar.watchedResources.addAll(jar.getWatchedResources());
 
         ejbJar.properties.putAll(jar.getOpenejbJar().getProperties());
 
@@ -179,15 +179,6 @@ public class EjbJarInfoBuilder {
             initRelationships(jar, infos);
         }
 
-        if (!"tomcat-webapp".equals(SystemInstance.get().getProperty("openejb.loader"))) {
-//            try {
-//                File jarFile = new File(jar.getJarURI());
-//
-//                SystemInstance.get().getClassPath().addJarToPath(jarFile.toURL());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-        }
         return ejbJar;
     }
 

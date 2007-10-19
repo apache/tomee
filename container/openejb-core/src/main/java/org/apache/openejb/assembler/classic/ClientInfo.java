@@ -18,6 +18,8 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ClientInfo extends InfoObject {
 
@@ -29,6 +31,7 @@ public class ClientInfo extends InfoObject {
     public String moduleId;
     public String mainClass;
     public String callbackHandler;
+    public final Set<String> watchedResources = new TreeSet<String>();
 
     public JndiEncInfo jndiEnc;
 

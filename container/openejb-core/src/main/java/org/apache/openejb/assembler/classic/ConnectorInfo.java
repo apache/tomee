@@ -19,6 +19,8 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ConnectorInfo extends InfoObject {
 
@@ -29,6 +31,7 @@ public class ConnectorInfo extends InfoObject {
     public String largeIcon;
     public String moduleId;
     public final List<String> libs = new ArrayList<String>();
+    public final Set<String> watchedResources = new TreeSet<String>();
 
     public ResourceInfo resourceAdapter;
     public List<ResourceInfo> outbound = new ArrayList<ResourceInfo>();

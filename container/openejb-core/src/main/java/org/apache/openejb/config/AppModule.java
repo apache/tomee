@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.io.File;
 
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -42,6 +45,7 @@ public class AppModule implements DeploymentModule {
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final String moduleId;
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this.classLoader = classLoader;
@@ -152,5 +156,18 @@ public class AppModule implements DeploymentModule {
 
     public List<WebModule> getWebModules() {
         return webModules;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
+    }
+
+    public Collection<DeploymentModule> getDeploymentModule() {
+        ArrayList<DeploymentModule> modules = new ArrayList<DeploymentModule>();
+        modules.addAll(ejbModules);
+        modules.addAll(webModules);
+        modules.addAll(connectorModules);
+        modules.addAll(clientModules);
+        return modules;
     }
 }

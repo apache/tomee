@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import java.io.File;
 
 /**
@@ -39,6 +41,7 @@ public class WebModule implements DeploymentModule {
     private String jarLocation;
     private final String moduleId;
     private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -128,5 +131,9 @@ public class WebModule implements DeploymentModule {
 
     public List<TldTaglib> getTaglibs() {
         return taglibs;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
     }
 }

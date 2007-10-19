@@ -20,6 +20,8 @@ import org.apache.openejb.jee.ApplicationClient;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.io.File;
 
 /**
@@ -33,6 +35,7 @@ public class ClientModule implements DeploymentModule {
     private String mainClass;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final String moduleId;
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass, String moduleId) {
         this.applicationClient = applicationClient;
@@ -95,5 +98,9 @@ public class ClientModule implements DeploymentModule {
 
     public void setMainClass(String mainClass) {
         this.mainClass = mainClass;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
     }
 }

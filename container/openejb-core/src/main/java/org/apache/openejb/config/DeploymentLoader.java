@@ -238,6 +238,10 @@ public class DeploymentLoader {
                 AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
                 appModule.getAdditionalLibraries().addAll(extraLibs);
                 appModule.getAltDDs().putAll(appDescriptors);
+                appModule.getWatchedResources().add(appDir.getAbsolutePath());
+                if (applicationXmlUrl != null) {
+                    appModule.getWatchedResources().add(applicationXmlUrl.getPath());
+                }
 
                 // EJB modules
                 for (String moduleName : ejbModules.keySet()) {
@@ -248,13 +252,18 @@ public class DeploymentLoader {
                         Map<String, URL> descriptors = getDescriptors(ejbUrl);
 
                         EjbJar ejbJar = null;
-                        if (descriptors.containsKey("ejb-jar.xml")){
-                            ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
+                        URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
+                        if (ejbJarXmlUrl != null){
+                            ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
                         }
 
                         EjbModule ejbModule = new EjbModule(appClassLoader, moduleName, ejbFile.getAbsolutePath(), ejbJar, null);
 
                         ejbModule.getAltDDs().putAll(descriptors);
+                        ejbModule.getWatchedResources().add(ejbFile.getAbsolutePath());
+                        if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
+                            ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
+                        }
 
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
@@ -277,13 +286,18 @@ public class DeploymentLoader {
                         Map<String, URL> descriptors = getDescriptors(clientUrl);
 
                         ApplicationClient applicationClient = null;
-                        if (descriptors.containsKey("application-client.xml")){
-                            applicationClient = ReadDescriptors.readApplicationClient(descriptors.get("application-client.xml"));
+                        URL clientXmlUrl = descriptors.get("application-client.xml");
+                        if (clientXmlUrl != null){
+                            applicationClient = ReadDescriptors.readApplicationClient(clientXmlUrl);
                         }
 
                         ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass, moduleName);
 
                         clientModule.getAltDDs().putAll(descriptors);
+                        clientModule.getWatchedResources().add(clientFile.getAbsolutePath());
+                        if (clientXmlUrl != null && "file".equals(clientXmlUrl.getProtocol())) {
+                            clientModule.getWatchedResources().add(clientXmlUrl.getPath());
+                        }
 
                         appModule.getClientModules().add(clientModule);
                     } catch (Exception e) {
@@ -329,13 +343,18 @@ public class DeploymentLoader {
             // read the ejb-jar.xml file
             Map<String, URL> descriptors = getDescriptors(baseUrl);
             EjbJar ejbJar = null;
-            if (descriptors.containsKey("ejb-jar.xml")){
-                ejbJar = ReadDescriptors.readEjbJar(descriptors.get("ejb-jar.xml"));
+            URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
+            if (ejbJarXmlUrl != null){
+                ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
             }
 
             // create the EJB Module
             EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJar, null);
             ejbModule.getAltDDs().putAll(descriptors);
+            ejbModule.getWatchedResources().add(jarFile.getAbsolutePath());
+            if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
+                ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
+            }
 
             // wrap the EJB Module with an Application Module
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
@@ -384,8 +403,9 @@ public class DeploymentLoader {
         }
 
         WebApp webApp = null;
-        if (descriptors.containsKey("web.xml")){
-            webApp = ReadDescriptors.readWebApp(descriptors.get("web.xml"));
+        URL webXmlUrl = descriptors.get("web.xml");
+        if (webXmlUrl != null){
+            webApp = ReadDescriptors.readWebApp(webXmlUrl);
         }
 
         // if this is a standalone module (no-context root), and webApp.getId is set then that is the module name
@@ -422,6 +442,11 @@ public class DeploymentLoader {
         // create web module
         WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.getAltDDs().putAll(descriptors);
+        webModule.getWatchedResources().add(warPath);
+        webModule.getWatchedResources().add(warFile.getAbsolutePath());
+        if (webXmlUrl != null && "file".equals(webXmlUrl.getProtocol())) {
+            webModule.getWatchedResources().add(webXmlUrl.getPath());
+        }
 
         // find all tag libs
         addTagLibraries(webModule);
@@ -472,6 +497,9 @@ public class DeploymentLoader {
         for (URL location : tldLocations) {
             TldTaglib taglib = ReadDescriptors.readTldTaglib(location);
             webModule.getTaglibs().add(taglib);
+            if ("file".equals(location.getProtocol())) {
+                webModule.getWatchedResources().add(location.getPath());
+            }
         }
     }
 
@@ -604,8 +632,9 @@ public class DeploymentLoader {
         // read the ra.xml file
         Map<String, URL> descriptors = getDescriptors(baseUrl);
         Connector connector = null;
-        if (descriptors.containsKey("ra.xml")){
-            connector = ReadDescriptors.readConnector(descriptors.get("ra.xml"));
+        URL rarXmlUrl = descriptors.get("ra.xml");
+        if (rarXmlUrl != null){
+            connector = ReadDescriptors.readConnector(rarXmlUrl);
         }
 
         // find the nested jar files
@@ -629,6 +658,12 @@ public class DeploymentLoader {
         ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarPath, moduleId);
         connectorModule.getAltDDs().putAll(descriptors);
         connectorModule.getLibraries().addAll(classPath);
+        connectorModule.getWatchedResources().add(rarPath);
+        connectorModule.getWatchedResources().add(rarFile.getAbsolutePath());
+        if (rarXmlUrl != null && "file".equals(rarXmlUrl.getProtocol())) {
+            connectorModule.getWatchedResources().add(rarXmlUrl.getPath());
+        }
+
         return connectorModule;
     }
 
@@ -745,7 +780,10 @@ public class DeploymentLoader {
 
         Map<String, URL> descriptors = finder.getResourcesMap("META-INF");
 
-        if (descriptors.containsKey("application.xml") || baseUrl.getPath().endsWith(".ear")) {
+        String path = baseUrl.getPath();
+        if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+        
+        if (descriptors.containsKey("application.xml") || path.endsWith(".ear")) {
             return AppModule.class;
         }
 
@@ -757,12 +795,12 @@ public class DeploymentLoader {
             return ClientModule.class;
         }
 
-        if (descriptors.containsKey("ra.xml") || baseUrl.getPath().endsWith(".rar")) {
+        if (descriptors.containsKey("ra.xml") || path.endsWith(".rar")) {
             return ConnectorModule.class;
         }
 
         Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
-        if (webDescriptors.containsKey("web.xml") || baseUrl.getPath().endsWith(".war")) {
+        if (webDescriptors.containsKey("web.xml") || path.endsWith(".war")) {
             return WebModule.class;
         }
 

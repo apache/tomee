@@ -17,6 +17,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 public class WebAppInfo extends InfoObject {
 
     public String codebase;
@@ -27,6 +30,7 @@ public class WebAppInfo extends InfoObject {
     public String moduleId;
     public String host;
     public String contextRoot;
+    public final Set<String> watchedResources = new TreeSet<String>();
 
     public JndiEncInfo jndiEnc;
 }

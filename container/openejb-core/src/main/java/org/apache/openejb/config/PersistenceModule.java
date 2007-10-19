@@ -18,9 +18,13 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 public class PersistenceModule {
     private String rootUrl;
     private Persistence persistence;
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public PersistenceModule(String rootUrl, Persistence persistence) {
         this.rootUrl = rootUrl;
@@ -41,5 +45,9 @@ public class PersistenceModule {
 
     public void setPersistence(Persistence persistence) {
         this.persistence = persistence;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
     }
 }

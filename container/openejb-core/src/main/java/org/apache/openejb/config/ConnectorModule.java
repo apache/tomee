@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import java.net.URL;
 
 /**
@@ -37,6 +39,7 @@ public class ConnectorModule implements DeploymentModule {
     private String jarLocation;
     private final String moduleId;
     private final List<URL> libraries = new ArrayList<URL>();
+    private final Set<String> watchedResources = new TreeSet<String>();
 
     public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
@@ -100,5 +103,9 @@ public class ConnectorModule implements DeploymentModule {
 
     public List<URL> getLibraries() {
         return libraries;
+    }
+
+    public Set<String> getWatchedResources() {
+        return watchedResources;
     }
 }
