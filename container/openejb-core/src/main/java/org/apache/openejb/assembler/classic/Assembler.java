@@ -52,6 +52,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
@@ -821,6 +822,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.setAllProperties(serviceInfo.properties);
         serviceRecipe.setProperty("transactionManager", transactionManager);
+        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
         replaceResourceAdapterProperty(serviceRecipe);

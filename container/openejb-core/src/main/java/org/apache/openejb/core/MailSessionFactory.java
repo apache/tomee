@@ -19,10 +19,25 @@ package org.apache.openejb.core;
 
 import javax.mail.Session;
 import java.util.Properties;
+import java.util.Map;
 
 public class MailSessionFactory {
+    private final Properties properties = new Properties();
+
     public Session create() {
-        // todo add support for args and properties
-        return Session.getDefaultInstance(new Properties());
+        return Session.getDefaultInstance(properties);
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties.clear();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

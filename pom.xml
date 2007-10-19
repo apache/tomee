@@ -540,6 +540,16 @@
         <groupId>org.apache.geronimo.javamail</groupId>
         <artifactId>geronimo-javamail_1.4_mail</artifactId>
         <version>1.2</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.apache.geronimo.javamail</groupId>
+              <artifactId>geronimo-javamail_1.4_provider</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.apache.geronimo.specs</groupId>
+              <artifactId>geronimo-javamail_1.4_spec</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
