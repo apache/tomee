@@ -75,6 +75,7 @@ import java.util.Map;
     "displayNames",
     "icon",      
     "tlibVersion",
+    "jspVersion",
     "shortName",
     "uri",
     "validator",
@@ -94,6 +95,8 @@ public class TldTaglib {
 
     @XmlElement(name = "tlib-version", required = true)
     protected String tlibVersion;
+    @XmlElement(name = "jsp-version")
+    protected String jspVersion;
     @XmlElement(name = "short-name", required = true)
     protected String shortName;
     protected String uri;
@@ -162,6 +165,14 @@ public class TldTaglib {
 
     public void setTlibVersion(String value) {
         this.tlibVersion = value;
+    }
+
+    public String getJspVersion() {
+        return jspVersion;
+    }
+
+    public void setJspVersion(String jspVersion) {
+        this.jspVersion = jspVersion;
     }
 
     public String getShortName() {

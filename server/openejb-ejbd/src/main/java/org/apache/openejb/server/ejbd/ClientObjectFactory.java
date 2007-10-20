@@ -17,6 +17,7 @@
 package org.apache.openejb.server.ejbd;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -29,19 +30,16 @@ import org.apache.openejb.client.EJBObjectHandler;
 import org.apache.openejb.client.ServerMetaData;
 
 class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
-    private final EjbDaemon daemon;
-
     protected ServerMetaData sMetaData;
 
-    public ClientObjectFactory(EjbDaemon daemon) {
+    public ClientObjectFactory(EjbDaemon daemon, Properties props) {
 
         try {
-            this.sMetaData = new ServerMetaData(new URI[]{new URI("foo://"+"127.0.0.1" +":"+4201)});
+            String uriString = props.getProperty("openejb.ejbd.uri", "foo://127.0.0.1:4201");
+            this.sMetaData = new ServerMetaData(new URI(uriString));
         } catch (Exception e) {
-
             e.printStackTrace();
         }
-        this.daemon = daemon;
     }
 
     public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {

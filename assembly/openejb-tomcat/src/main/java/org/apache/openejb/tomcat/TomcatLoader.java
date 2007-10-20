@@ -104,7 +104,11 @@ public class TomcatLoader implements Loader {
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
         OpenEJB.init(props, new ServerFederation());
-        ejbServer.init(props);
+        
+        Properties ejbServerProps = new Properties();
+        ejbServerProps.putAll(props);
+        ejbServerProps.setProperty("openejb.ejbd.uri", "http://127.0.0.1:8080/openejb/ejb");
+        ejbServer.init(ejbServerProps);
 
         // Add our naming context listener to the server which registers all Tomcat resources with OpenEJB
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();

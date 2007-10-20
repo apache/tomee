@@ -69,7 +69,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 //        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
-        clientObjectFactory = new ClientObjectFactory(this);
+        clientObjectFactory = new ClientObjectFactory(this, props);
 
         ejbHandler = new EjbRequestHandler(this);
         jndiHandler = new JndiRequestHandler(this);

@@ -63,7 +63,7 @@ public class TomcatJndiBuilder {
     private final WebAppInfo webAppInfo;
     private final LinkResolver<EntityManagerFactory> emfLinkResolver;
     private final boolean replaceEntry;
-    private boolean useCrossClassLoaderRef = false;
+    private boolean useCrossClassLoaderRef = true;
     private NamingContextListener namingContextListener;
 
     public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) {
@@ -163,7 +163,7 @@ public class TomcatJndiBuilder {
         ejb.setLink(null);
         ejb.setType(ref.remoteType);
         if (useCrossClassLoaderRef) {
-            ejb.setProperty(EXTERNAL, ref.externalReference);
+            ejb.setProperty(EXTERNAL, "" + ref.externalReference);
         }
 
         if (ref.ejbDeploymentId != null) {
