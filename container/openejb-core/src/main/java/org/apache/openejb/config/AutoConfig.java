@@ -77,6 +77,7 @@ public class AutoConfig implements DynamicDeployer {
         ignoredReferenceTypes.add("java.net.URL");
         // User transaction is automatically handled
         ignoredReferenceTypes.add("javax.transaction.UserTransaction");
+        ignoredReferenceTypes.add("javax.ejb.TimerService");
     }
 
     private final ConfigurationFactory configFactory;

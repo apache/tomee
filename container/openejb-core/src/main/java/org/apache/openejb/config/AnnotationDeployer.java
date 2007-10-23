@@ -168,7 +168,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 "javax.transaction.UserTransaction",
                 "javax.jms.Queue",
                 "javax.jms.Topic",
-                "javax.xml.ws.WebServiceContext"
+                "javax.xml.ws.WebServiceContext",
+                "javax.ejb.TimerService"
         ));
 
         public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
@@ -317,7 +318,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 "javax.transaction.UserTransaction",
                 "javax.jms.Queue",
                 "javax.jms.Topic",
-                "javax.xml.ws.WebServiceContext"
+                "javax.xml.ws.WebServiceContext",
+                "javax.ejb.TimerService"
         ));
 
         public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(

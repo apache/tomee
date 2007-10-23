@@ -33,10 +33,12 @@ import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.URLReference;
+import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.xbean.naming.context.WritableContext;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.EJBContext;
+import javax.ejb.TimerService;
 import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
 import javax.naming.LinkRef;
@@ -147,6 +149,9 @@ public class JndiEncBuilder {
             bindings.put("java:comp/UserTransaction", userTransaction);
         }
 
+        // bind TimerService
+        bindings.put("java:comp/TimerService", new TimerServiceWrapper());
+        
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
             Reference reference = null;
@@ -251,6 +256,11 @@ public class JndiEncBuilder {
                     continue;
                 } else if (WebServiceContext.class.equals(type)) {
                     String jndiName = "java:comp/WebServiceContext";
+                    linkRef = new LinkRef(jndiName);
+                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    continue;                          
+                } else if (TimerService.class.equals(type)) {
+                    String jndiName = "java:comp/TimerService";
                     linkRef = new LinkRef(jndiName);
                     bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
                     continue;
