@@ -426,14 +426,6 @@
             <artifactId>mx4j-impl</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <!--<exclusion>-->
-            <!--<groupId>org.apache.activemq</groupId>-->
-            <!--<artifactId>activeio-core</artifactId>-->
-          <!--</exclusion>-->
-          <exclusion>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-jaas</artifactId>
           </exclusion>
@@ -718,10 +710,6 @@
           <exclusion>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
           </exclusion>
           <exclusion>
             <groupId>javax.mail</groupId>
