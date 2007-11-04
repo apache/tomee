@@ -88,6 +88,27 @@
     </auth-constraint>
   </security-constraint>
 
+  <servlet>
+    <servlet-name>WebserviceServlet</servlet-name>
+    <servlet-class>org.apache.openejb.examples.servlet.WebserviceServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>WebserviceServlet</servlet-name>
+    <url-pattern>/webservice/*</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>HelloPojoService</servlet-name>
+    <servlet-class>org.apache.openejb.examples.servlet.HelloPojoService</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>HelloPojoService</servlet-name>
+    <url-pattern>/hello</url-pattern>
+  </servlet-mapping>
+
   <login-config>
     <auth-method>BASIC</auth-method>
   </login-config>

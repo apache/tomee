@@ -22,6 +22,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
@@ -35,6 +36,9 @@ import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.Injection;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.LinkResolver;
@@ -43,6 +47,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -52,12 +57,15 @@ import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
+import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.core.CoreWebDeploymentInfo;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openjpa.lib.util.TemporaryClassLoader;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.omg.CORBA.ORB;
@@ -79,6 +87,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
+    public static final String IGNORE_CONTEXT = TomcatWebAppBuilder.class.getName() + ".IGNORE";
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
     private final TreeMap<String, ContextInfo> infos = new TreeMap<String, ContextInfo>();
@@ -89,6 +98,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private final Map<String,DeployedApplication> deployedApps = new TreeMap<String,DeployedApplication>();
     private final DeploymentLoader deploymentLoader;
     private Assembler assembler;
+    private CoreContainerSystem containerSystem;
 
     public TomcatWebAppBuilder() {
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();
@@ -122,6 +132,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
+        containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
     }
 
     public void start() {
@@ -201,6 +212,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     // context class loader is now defined, but no classes should have been loaded
     public void start(StandardContext standardContext) {
+        if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
 
         Assembler assembler = getAssembler();
         if (assembler == null) {
@@ -239,8 +251,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         if (webAppInfo != null) {
             try {
-                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, contextInfo.emfLinkResolver);
+                // determind the injections
+                InjectionBuilder injectionBuilder = new InjectionBuilder(standardContext.getLoader().getClassLoader());
+                List<Injection> injections = injectionBuilder.buildInjections(webAppInfo.jndiEnc);
+
+                // merge OpenEJB jndi into Tomcat jndi
+                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections, contextInfo.emfLinkResolver);
                 jndiBuilder.mergeJndi();
+
+                // add WebDeploymentInfo to ContainerSystem
+                CoreWebDeploymentInfo webDeploymentInfo = new CoreWebDeploymentInfo();
+                webDeploymentInfo.setId(webAppInfo.moduleId);
+                webDeploymentInfo.setClassLoader(standardContext.getLoader().getClassLoader());
+                webDeploymentInfo.getInjections().addAll(injections);
+                getContainerSystem().addWebDeployment(webDeploymentInfo);
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
@@ -248,12 +272,50 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     public void afterStart(StandardContext standardContext) {
+        if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
+
+        // replace any webservices with the webservice servlet
+        // HACK: use a temp class loader because the class may have been loaded before
+        // the openejb classes were added to the system class path so the WebService anntation
+        // will not be present on the class
+        TemporaryClassLoader tempClassLoader = new TemporaryClassLoader(standardContext.getLoader().getClassLoader());
+        for (Container container : standardContext.findChildren()) {
+            if (container instanceof Wrapper) {
+                Wrapper wrapper = (Wrapper) container;
+                String servletClass = wrapper.getServletClass();
+                try {
+                    Class<?> clazz = tempClassLoader.loadClass(servletClass);
+                    if (JaxWsUtils.isWebService(clazz)) {
+                        wrapper.setServletClass(WsServlet.class.getName());
+                        if (wrapper.getServlet() != null) {
+                            wrapper.load();
+                            wrapper.unload();
+                        }
+                    }
+                } catch (Exception e) {
+                    // will be reported by the tomcat
+                }
+            }
+        }
+
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
         ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
         try {
             Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
-            
+
+            // add context to WebDeploymentInfo
+            ContextInfo contextInfo = getContextInfo(standardContext);
+            for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath())) {
+                    CoreWebDeploymentInfo webDeploymentInfo = (CoreWebDeploymentInfo) getContainerSystem().getWebDeploymentInfo(webAppInfo.moduleId);
+                    if (webDeploymentInfo != null) {
+                        webDeploymentInfo.setJndiEnc(comp);
+                    }
+                    break;
+                }
+            }
+
             // bind TransactionManager
             TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
             safeBind(comp, "TransactionManager", transactionManager);
@@ -280,6 +342,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     public void afterStop(StandardContext standardContext) {
+        if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
+
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo != null && contextInfo.deployer == null) {
             try {
@@ -572,6 +636,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         }
         return assembler;
+    }
+
+    private CoreContainerSystem getContainerSystem() {
+        if (containerSystem == null) {
+            containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+        }
+        return containerSystem;
     }
 
     private String getId(StandardContext standardContext) {

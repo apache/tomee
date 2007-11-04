@@ -232,6 +232,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxr_1.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jaxrpc_1.1_spec</artifactId>
     </dependency>
     <dependency>
@@ -320,9 +324,15 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
+
+    <!-- webservices  -->
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-jaxws-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>wsdl4j</groupId>
+      <artifactId>wsdl4j</artifactId>
     </dependency>
   </dependencies>
 

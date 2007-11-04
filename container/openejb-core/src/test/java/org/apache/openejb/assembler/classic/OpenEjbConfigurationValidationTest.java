@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 
+import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -35,7 +36,7 @@ import java.util.Set;
  */
 public class OpenEjbConfigurationValidationTest extends TestCase {
 
-    private List<Class> seen = new ArrayList();
+    private List<Class> seen = new ArrayList<Class>();
 
     public void testValidate() throws Exception {
         seen.add(Object.class);
@@ -94,6 +95,10 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
             }
 
             if (Properties.class.isAssignableFrom(type)) {
+                continue;
+            }
+
+            if (QName.class.isAssignableFrom(type)) {
                 continue;
             }
 

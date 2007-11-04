@@ -16,23 +16,30 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
+import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
+import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
+import org.apache.openejb.core.ivm.naming.JndiReference;
+import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.NameNode;
+import org.apache.openejb.core.ivm.naming.ParsedName;
+import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
+import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
+import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.core.ivm.naming.SystemComponentReference;
+import org.apache.openejb.core.ivm.naming.URLReference;
+import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.PortRefData;
+import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
-import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
-import org.apache.openejb.core.ivm.naming.JndiReference;
-import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
-import org.apache.openejb.core.ivm.naming.Reference;
-import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
-import org.apache.openejb.core.ivm.naming.JndiUrlReference;
-import org.apache.openejb.core.ivm.naming.IvmContext;
-import org.apache.openejb.core.ivm.naming.NameNode;
-import org.apache.openejb.core.ivm.naming.ParsedName;
-import org.apache.openejb.core.ivm.naming.SystemComponentReference;
-import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
-import org.apache.openejb.core.ivm.naming.URLReference;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.xbean.naming.context.WritableContext;
 import org.omg.CORBA.ORB;
@@ -42,21 +49,23 @@ import javax.ejb.TimerService;
 import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
 import javax.naming.LinkRef;
-import javax.naming.NamingException;
 import javax.naming.Name;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
+import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -66,21 +75,27 @@ import java.net.MalformedURLException;
  * symlinked version of all the components.
  */
 public class JndiEncBuilder {
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncBuilder.class.getPackage().getName());
 
     private final boolean beanManagedTransactions;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
+    private final List<Injection> injections;
+    private final ClassLoader classLoader;
 
     // JPA factory indexes
     private final LinkResolver<EntityManagerFactory> emfLinkResolver;
 
     private boolean useCrossClassLoaderRef = true;
+    private boolean client = false;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String moduleId) throws OpenEJBException {
-        this(jndiEnc, null, null, moduleId);
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, ClassLoader classLoader) throws OpenEJBException {
+        this(jndiEnc, injections, null, null, moduleId, classLoader);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, String transactionType, LinkResolver<EntityManagerFactory> emfLinkResolver, String moduleId) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, LinkResolver<EntityManagerFactory> emfLinkResolver, String moduleId, ClassLoader classLoader) throws OpenEJBException {
+        this.jndiEnc = jndiEnc;
+        this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
         try {
@@ -88,8 +103,8 @@ public class JndiEncBuilder {
         } catch (URISyntaxException e) {
             throw new OpenEJBException(e);
         }
-        this.jndiEnc = jndiEnc;
         this.emfLinkResolver = emfLinkResolver;
+        this.classLoader = classLoader;
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -98,6 +113,14 @@ public class JndiEncBuilder {
 
     public void setUseCrossClassLoaderRef(boolean useCrossClassLoaderRef) {
         this.useCrossClassLoaderRef = useCrossClassLoaderRef;
+    }
+
+    public boolean isClient() {
+        return client;
+    }
+
+    public void setClient(boolean client) {
+        this.client = client;
     }
 
     public Context build() throws OpenEJBException {
@@ -326,6 +349,75 @@ public class JndiEncBuilder {
             if (referenceInfo.location != null){
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
+                continue;
+            }
+
+            // load service class which is used to construct the port
+            Class<? extends Service> serviceClass = Service.class;
+            if (referenceInfo.serviceType != null) {
+                try {
+                    serviceClass = classLoader.loadClass(referenceInfo.serviceType).asSubclass(Service.class);
+                } catch (Exception e) {
+                    throw new OpenEJBException("Could not load service type class "+ referenceInfo.serviceType, e);
+                }
+            }
+
+            // load the reference class which is the ultimate type of the port
+            Class<?> referenceClass = null;
+            if (referenceInfo.referenceType != null) {
+                try {
+                    referenceClass = classLoader.loadClass(referenceInfo.referenceType);
+                } catch (Exception e) {
+                    throw new OpenEJBException("Could not load reference type class " + referenceInfo.referenceType, e);
+                }
+            }
+
+            // if ref class is a subclass of Service, use it for the service class
+            if (referenceClass != null && Service.class.isAssignableFrom(referenceClass)) {
+                serviceClass = referenceClass.asSubclass(Service.class);
+            }
+
+            // determine the location of the wsdl file
+            URL wsdlUrl = null;
+            if (referenceInfo.wsdlFile != null) {
+                try {
+                    wsdlUrl = new URL(referenceInfo.wsdlFile);
+                } catch (MalformedURLException e) {
+                    wsdlUrl = classLoader.getResource(referenceInfo.wsdlFile);
+                    if (wsdlUrl == null) {
+                        logger.warning("Error obtaining WSDL: " + referenceInfo.wsdlFile, e);
+                    }
+
+                }
+            }
+
+            // port refs
+            List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
+            for (PortRefInfo portRefInfo : referenceInfo.portRefs) {
+                PortRefData portRef = new PortRefData();
+                try {
+                    portRef.setServiceEndpointInterface(classLoader.loadClass(portRefInfo.serviceEndpointInterface));
+                } catch (Exception e) {
+                    throw new OpenEJBException("Could not load service endpoint interface "+ portRefInfo.serviceEndpointInterface, e);
+                }
+                portRef.setEnableMtom(portRefInfo.enableMtom);
+                portRef.setPortComponentLink(portRefInfo.portComponentLink);
+                portRef.getProperties().putAll(portRefInfo.properties);
+                portRefs.add(portRef);
+            }
+
+            // create the handle chains
+            List<HandlerChainData> handlerChains = null;
+            if (!referenceInfo.handlerChains.isEmpty()) {
+                handlerChains = WsBuilder.toHandlerChainData(referenceInfo.handlerChains, classLoader);
+            }
+
+            if (!client) {
+                Reference reference = new JaxWsServiceReference(serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, referenceInfo.wsdlRepoUri, portRefs, handlerChains, injections);
+                bindings.put(normalize(referenceInfo.referenceName), reference);
+            } else {
+                ServiceRefData serviceRefData = new ServiceRefData(serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, referenceInfo.wsdlRepoUri, handlerChains, portRefs);
+                bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
             }
         }
         return bindings;

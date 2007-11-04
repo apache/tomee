@@ -16,20 +16,21 @@
  */
 package org.apache.openejb.core;
 
-import java.util.HashMap;
-
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.loader.SystemInstance;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @org.apache.xbean.XBean element="containerSystem"
  */
 public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
-
-    HashMap deployments = new HashMap();
-    HashMap containers = new HashMap();
+    Map<Object, DeploymentInfo> deployments = new ConcurrentHashMap<Object, DeploymentInfo>();
+    Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
+    Map<String, WebDeploymentInfo> webDeployments = new ConcurrentHashMap<String, WebDeploymentInfo>();
     IvmContext jndiRootContext = null;
 
     public CoreContainerSystem() {
@@ -54,19 +55,27 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     }
 
     public DeploymentInfo getDeploymentInfo(Object id) {
-        return (DeploymentInfo) deployments.get(id);
+        return deployments.get(id);
     }
 
     public DeploymentInfo [] deployments() {
-        return (DeploymentInfo []) deployments.values().toArray(new DeploymentInfo [deployments.size()]);
+        return deployments.values().toArray(new DeploymentInfo [deployments.size()]);
+    }
+
+    public void addDeployment(DeploymentInfo deployment) {
+        this.deployments.put(deployment.getDeploymentID(), deployment);
+    }
+
+    public void removeDeploymentInfo(DeploymentInfo info){
+        this.deployments.remove(info.getDeploymentID());
     }
 
     public Container getContainer(Object id) {
-        return (Container) containers.get(id);
+        return containers.get(id);
     }
 
     public Container [] containers() {
-        return (Container []) containers.values().toArray(new Container [containers.size()]);
+        return containers.values().toArray(new Container [containers.size()]);
     }
 
     public void addContainer(Object id, Container c) {
@@ -77,16 +86,21 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         containers.remove(id);
     }
 
-    public void addDeployment(DeploymentInfo deployment) {
-
-        this.deployments.put(deployment.getDeploymentID(), deployment);
-
+    public WebDeploymentInfo getWebDeploymentInfo(String id) {
+        return webDeployments.get(id);
     }
 
-    public void removeDeploymentInfo(DeploymentInfo info){
-        this.deployments.remove(info.getDeploymentID());
+    public WebDeploymentInfo [] WebDeployments() {
+        return webDeployments.values().toArray(new WebDeploymentInfo [webDeployments.size()]);
     }
 
+    public void addWebDeployment(WebDeploymentInfo webDeployment) {
+        this.webDeployments.put(webDeployment.getId(), webDeployment);
+    }
+
+    public void removeWebDeploymentInfo(WebDeploymentInfo info){
+        this.webDeployments.remove(info.getId());
+    }
 
     public javax.naming.Context getJNDIContext() {
         return jndiRootContext;

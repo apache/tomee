@@ -19,9 +19,11 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class WebAppInfo extends InfoObject {
-
     public String codebase;
     public String description;
     public String displayName;
@@ -31,6 +33,7 @@ public class WebAppInfo extends InfoObject {
     public String host;
     public String contextRoot;
     public final Set<String> watchedResources = new TreeSet<String>();
-
+    public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public JndiEncInfo jndiEnc;
+    public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
 }

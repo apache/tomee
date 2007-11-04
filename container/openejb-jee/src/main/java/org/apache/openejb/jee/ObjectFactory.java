@@ -50,6 +50,8 @@ public class ObjectFactory {
     private final static QName _TldTaglib_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "web-app");
     private final static QName _WebApp_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "taglib");
     private final static QName _Connector_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "connector");
+    private final static QName _JavaWsdlMapping_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "java-wsdl-mapping");
+    private final static QName _Webservices_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "webservices");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee2
@@ -124,5 +126,23 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "connector")
     public JAXBElement<Connector> createConnector(Connector value) {
         return new JAXBElement<Connector>(_Connector_QNAME, Connector.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link JavaWsdlMapping }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "java-wsdl-mapping")
+    public JAXBElement<JavaWsdlMapping> createConnector(JavaWsdlMapping value) {
+        return new JAXBElement<JavaWsdlMapping>(_JavaWsdlMapping_QNAME, JavaWsdlMapping.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Webservices }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "webservices")
+    public JAXBElement<Webservices> createConnector(Webservices value) {
+        return new JAXBElement<Webservices>(_Webservices_QNAME, Webservices.class, null, value);
     }
 }

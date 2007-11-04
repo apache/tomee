@@ -21,8 +21,6 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
-import org.apache.openejb.core.timer.EjbTimerServiceImpl;
-import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
@@ -113,7 +111,12 @@ class EnterpriseBeanBuilder {
 
         final String transactionType = bean.transactionType;
 
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, transactionType, emfLinkResolver, moduleId);
+        // determind the injections
+        InjectionBuilder injectionBuilder = new InjectionBuilder(cl);
+        List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
+
+        // build the enc
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, emfLinkResolver, moduleId, cl);
         Context root = jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
@@ -147,69 +150,7 @@ class EnterpriseBeanBuilder {
             deployment.addSecurityRoleReference(alias, actualName);
         }
 
-        for (EnvEntryInfo info : bean.jndiEnc.envEntries) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.name, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (EjbReferenceInfo info : bean.jndiEnc.ejbReferences) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (EjbLocalReferenceInfo info : bean.jndiEnc.ejbLocalReferences) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (PersistenceUnitReferenceInfo info : bean.jndiEnc.persistenceUnitRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (PersistenceContextReferenceInfo info : bean.jndiEnc.persistenceContextRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (ResourceReferenceInfo info : bean.jndiEnc.resourceRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (ResourceEnvReferenceInfo info : bean.jndiEnc.resourceEnvRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.resourceEnvRefName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
-
-        for (ServiceReferenceInfo info : bean.jndiEnc.serviceRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className, "classNotFound.injectionTarget");
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                deployment.getInjections().add(injection);
-            }
-        }
+        deployment.getInjections().addAll(injections);
 
         // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));

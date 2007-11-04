@@ -26,15 +26,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 
-
-/**
- * @version $Rev$ $Date$
- */
 public class DependenceValidationTest extends TestCase {
 
     private Map<String, Map<String, Integer>> depsOfPackages;
@@ -80,7 +75,7 @@ public class DependenceValidationTest extends TestCase {
 
     private void assertNotDependentOn(String referringPacakge, String referredPackage, String... exemptionsArray) {
         if (referringPacakge.equals(referredPackage)) return;
-        List exemptions = new ArrayList(Arrays.asList(exemptionsArray));
+        List<String> exemptions = new ArrayList<String>(Arrays.asList(exemptionsArray));
         exemptions.add(referredPackage);
 
         for (Map.Entry<String, Map<String, Integer>> entry : depsOfPackages.entrySet()) {

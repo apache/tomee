@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -24,46 +25,48 @@ import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
+import org.apache.openejb.assembler.classic.PortRefInfo;
 import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponentRef;
 import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.MessageDestinationRef;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.EjbLink;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
+import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.TreeMap;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -230,6 +233,26 @@ public class JndiEncInfoBuilder {
         for (ServiceRef ref : jndiConsumer.getServiceRef()) {
             ServiceReferenceInfo info = new ServiceReferenceInfo();
             info.referenceName = ref.getName();
+            if (ref.getServiceQname() != null && ref.getServiceQname().length() != 0) {
+                info.serviceQName = QName.valueOf(ref.getServiceQname());
+            }
+            info.wsdlFile = ref.getWsdlFile();
+            info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
+            info.referenceType = ref.getServiceRefType();
+            info.serviceType = ref.getServiceInterface();
+            String mappedName = ref.getMappedName();
+            if (mappedName != null && mappedName.startsWith("wsdlrepo:")) {
+                info.wsdlRepoUri = mappedName.substring("wsdlrepo:".length());
+            }
+            info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getHandlerChains()));
+            for (PortComponentRef portComponentRef : ref.getPortComponentRef()) {
+                PortRefInfo portRefInfo = new PortRefInfo();
+                portRefInfo.serviceEndpointInterface = portComponentRef.getServiceEndpointInterface();
+                portRefInfo.enableMtom = portComponentRef.isEnableMtom();
+                portRefInfo.portComponentLink = portComponentRef.getPortComponentLink();
+                portRefInfo.properties.putAll(portComponentRef.getProperties());
+                info.portRefs.add(portRefInfo);
+            }
             info.location = buildLocationInfo(ref);
             info.targets.addAll(buildInjectionInfos(ref));
             infos.add(info);

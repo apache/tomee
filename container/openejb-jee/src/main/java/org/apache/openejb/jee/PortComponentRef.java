@@ -24,8 +24,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Properties;
 
 
 /**
@@ -49,6 +51,8 @@ public class PortComponentRef {
     protected Boolean enableMtom;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
+    @XmlTransient
+    protected Properties properties;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -62,7 +66,7 @@ public class PortComponentRef {
         this.serviceEndpointInterface = value;
     }
 
-    public boolean getEnableMtom() {
+    public boolean isEnableMtom() {
         return enableMtom != null && enableMtom;
     }
 
@@ -76,6 +80,13 @@ public class PortComponentRef {
 
     public void setPortComponentLink(String value) {
         this.portComponentLink = value;
+    }
+
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 
     public String getId() {

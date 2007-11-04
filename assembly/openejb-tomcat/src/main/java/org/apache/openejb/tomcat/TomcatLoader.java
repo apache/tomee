@@ -17,38 +17,40 @@
  */
 package org.apache.openejb.tomcat;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Service;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.tomcat.installer.Paths;
-import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
-import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.Service;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Container;
-import org.apache.catalina.Host;
-import org.apache.catalina.ServerFactory;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.Lifecycle;
+import org.apache.openejb.server.webservices.WsRegistry;
+import org.apache.openejb.tomcat.installer.Installer;
+import org.apache.openejb.tomcat.installer.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
 import java.util.Properties;
 
 /**
@@ -100,6 +102,13 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
 
+        // Install the Tomcat webservice registry
+        TomcatWsRegistry tomcatSoapHandler = (TomcatWsRegistry) SystemInstance.get().getComponent(WsRegistry.class);
+        if (tomcatSoapHandler == null) {
+            tomcatSoapHandler = new TomcatWsRegistry();
+            SystemInstance.get().setComponent(WsRegistry.class, tomcatSoapHandler);
+        }
+
         // Start OpenEJB
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
@@ -127,6 +136,12 @@ public class TomcatLoader implements Loader {
             manager = ServiceManager.getManager();
             manager.init();
             manager.start(false);
+        } else {
+            try {
+                ServerService serverService = (ServerService) Class.forName("org.apache.openejb.server.cxf.CxfService").newInstance();
+                serverService.start();
+            } catch (Exception ignored) {
+            }
         }
 
         standardServer.addLifecycleListener(new LifecycleListener() {
@@ -189,7 +204,7 @@ public class TomcatLoader implements Loader {
                                     // context only initialized
                                     tomcatWebAppBuilder.init(standardContext);
                                 } else if (state == 1) {
-                                    // context started
+                                    // context already started
                                     standardContext.addParameter("openejb.start.late", "true");
                                     ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
                                     Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());

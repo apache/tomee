@@ -491,4 +491,9 @@ public class HttpRequestImpl implements HttpRequest {
     public Map getParameters() {
         return (Map)parameters.clone();
     }
+
+    public String getRemoteAddr() {
+        // todo how do we get this value?
+        return null;
+    }
 }

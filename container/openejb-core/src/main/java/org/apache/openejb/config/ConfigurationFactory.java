@@ -43,6 +43,10 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.HandlerInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.JndiProvider;
@@ -64,6 +68,15 @@ import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.InboundResource;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.HandlerChain;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.ParamValue;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -150,6 +163,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (debuggableVmHackery.equalsIgnoreCase("true")){
             chain.add(new DebuggableVmHackery());
         }
+
+        chain.add(new WsDeployer());
 
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2Conversion());
@@ -354,6 +369,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
                     bean.containerId = d.getContainerId();
                 }
+
+                ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
 
                 appInfo.ejbJars.add(ejbJarInfo);
 
@@ -572,6 +589,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
             webAppInfo.jndiEnc = jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId);
+
+            webAppInfo.portInfos.addAll(configureWebservices(webModule.getWebservices()));
+
+            for (Servlet servlet : webModule.getWebApp().getServlet()) {
+                ServletInfo servletInfo = new ServletInfo();
+                servletInfo.servletName = servlet.getServletName();
+                servletInfo.servletClass = servlet.getServletClass();
+                webAppInfo.servlets.add(servletInfo);
+            }
+
             appInfo.webApps.add(webAppInfo);
         }
 
@@ -597,6 +624,72 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         logger.info("Loaded Module: " + appInfo.jarPath);
         return appInfo;
+    }
+
+    private List<PortInfo> configureWebservices(Webservices webservices) {
+        List<PortInfo> portMap = new ArrayList<PortInfo>();
+        if (webservices == null) {
+            return portMap;
+        }
+
+        for (WebserviceDescription desc : webservices.getWebserviceDescription()) {
+            String wsdlFile = desc.getWsdlFile();
+            String serviceName = desc.getWebserviceDescriptionName();
+
+            for (PortComponent port : desc.getPortComponent()) {
+                PortInfo portInfo = new PortInfo();
+
+                ServiceImplBean serviceImplBean = port.getServiceImplBean();
+                portInfo.serviceLink = serviceImplBean.getEjbLink();
+                if (portInfo.serviceLink == null) {
+                    portInfo.serviceLink = serviceImplBean.getServletLink();
+                }
+
+                portInfo.seiInterfaceName = port.getServiceEndpointInterface();
+                portInfo.portName = port.getPortComponentName();
+                portInfo.binding = port.getProtocolBinding();
+                portInfo.serviceName = serviceName;
+                portInfo.wsdlFile = wsdlFile;
+                portInfo.mtomEnabled = port.isEnableMtom();
+                portInfo.wsdlPort = port.getWsdlPort();
+                portInfo.wsdlService = port.getWsdlService();
+                portInfo.location = port.getLocation();
+                portInfo.wsdlPublishLocation = port.getWsdlPublishLocation();
+
+                List<HandlerChainInfo> handlerChains = toHandlerChainInfo(port.getHandlerChains());
+                portInfo.handlerChains.addAll(handlerChains);
+
+                // todo configure jaxrpc mappings here
+                
+                portMap.add(portInfo);
+            }
+        }
+        return portMap;
+    }
+
+    public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
+        List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
+        if (chains == null) return handlerChains;
+
+        for (HandlerChain handlerChain : chains.getHandlerChain()) {
+            HandlerChainInfo handlerChainInfo = new HandlerChainInfo();
+            handlerChainInfo.serviceNamePattern = handlerChain.getServiceNamePattern();
+            handlerChainInfo.portNamePattern = handlerChain.getPortNamePattern();
+            handlerChainInfo.protocolBindings.addAll(handlerChain.getProtocolBindings());
+            for (Handler handler : handlerChain.getHandler()) {
+                HandlerInfo handlerInfo = new HandlerInfo();
+                handlerInfo.handlerName = handler.getHandlerName();
+                handlerInfo.handlerClass = handler.getHandlerClass();
+                handlerInfo.soapHeaders.addAll(handler.getSoapHeader());
+                handlerInfo.soapRoles.addAll(handler.getSoapRole());
+                for (ParamValue param : handler.getInitParam()) {
+                    handlerInfo.initParams.setProperty(param.getParamName(), param.getParamValue());
+                }
+                handlerChainInfo.handlers.add(handlerInfo);
+            }
+            handlerChains.add(handlerChainInfo);
+        }
+        return handlerChains;
     }
 
     private static String getClientModuleId(ClientModule clientModule) {

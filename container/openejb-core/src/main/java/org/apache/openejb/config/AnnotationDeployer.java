@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
@@ -61,12 +62,16 @@ import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.Tag;
 import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.Tag;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.PortComponent;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -107,6 +112,7 @@ import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceUnit;
@@ -114,9 +120,11 @@ import javax.persistence.PersistenceUnits;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
+import javax.xml.ws.Service;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -209,6 +217,39 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
+            WebApp webApp = webModule.getWebApp();
+            if (webApp != null && (webApp.isMetadataComplete() || !webApp.getServlet().isEmpty())) return webModule;
+
+            ClassFinder finder;
+            try {
+                finder = new ClassFinder(webModule.getClassLoader());
+            } catch (Exception e) {
+                DeploymentLoader.logger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. ClassFinder failed.", e);
+                return webModule;
+            }
+
+            List<Class> classes = new ArrayList<Class>();
+            classes.addAll(finder.findAnnotatedClasses(WebService.class));
+            classes.addAll(finder.findAnnotatedClasses(WebServiceProvider.class));
+            for (Class<?> webServiceClass : classes) {
+                int modifiers = webServiceClass.getModifiers();
+                if (!Modifier.isPublic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isAbstract(modifiers)) {
+                    continue;
+                }
+
+                // create webApp and webservices objects if they don't exist already
+                if (webApp == null) {
+                    webApp = new WebApp();
+                    webModule.setWebApp(webApp);
+                }
+
+                // add new <servlet/> element
+                Servlet servlet = new Servlet();
+                servlet.setServletName(webServiceClass.getName());
+                servlet.setServletClass(webServiceClass.getName());
+                webApp.getServlet().add(servlet);
+            }
+
             return webModule;
         }
 
@@ -362,7 +403,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             ApplicationClient client = clientModule.getApplicationClient();
             ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
-            buildAnnotatedRefs(client, inheritedClassFinder);
+            buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+            processWebServiceClientHandlers(client, classLoader);
 
             return clientModule;
         }
@@ -377,11 +419,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (webApp != null && webApp.isMetadataComplete()) return webModule;
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
+            ClassLoader classLoader = webModule.getClassLoader();
             for (Servlet servlet : webApp.getServlet()) {
                 String servletClass = servlet.getServletClass();
                 if (servletClass != null) {
                     try {
-                        Class clazz = webModule.getClassLoader().loadClass(servletClass);
+                        Class clazz = classLoader.loadClass(servletClass);
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
@@ -392,7 +435,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 String filterClass = filter.getFilterClass();
                 if (filterClass != null) {
                     try {
-                        Class clazz = webModule.getClassLoader().loadClass(filterClass);
+                        Class clazz = classLoader.loadClass(filterClass);
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet filter class: " + filterClass, e);
@@ -403,7 +446,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 String listenerClass = listener.getListenerClass();
                 if (listenerClass != null) {
                     try {
-                        Class clazz = webModule.getClassLoader().loadClass(listenerClass);
+                        Class clazz = classLoader.loadClass(listenerClass);
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet listener class: " + listenerClass, e);
@@ -415,7 +458,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     String listenerClass = listener.getListenerClass();
                     if (listenerClass != null) {
                         try {
-                            Class clazz = webModule.getClassLoader().loadClass(listenerClass);
+                            Class clazz = classLoader.loadClass(listenerClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load tag library servlet listener class: " + listenerClass, e);
@@ -426,7 +469,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     String tagClass = tag.getTagClass();
                     if (tagClass != null) {
                         try {
-                            Class clazz = webModule.getClassLoader().loadClass(tagClass);
+                            Class clazz = classLoader.loadClass(tagClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load tag library tag class: " + tagClass, e);
@@ -434,11 +477,34 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-            
+            if (webModule.getWebservices() != null) {
+                for (WebserviceDescription webservice : webModule.getWebservices().getWebserviceDescription()) {
+                    for (PortComponent port : webservice.getPortComponent()) {
+                        // skip ejb port defs
+                        if (port.getServiceImplBean().getEjbLink() != null) continue;
+
+                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                            for (Handler handler : handlerChain.getHandler()) {
+                                String handlerClass = handler.getHandlerClass();
+                                if (handlerClass != null) {
+                                    try {
+                                        Class clazz = classLoader.loadClass(handlerClass);
+                                        classes.add(clazz);
+                                    } catch (ClassNotFoundException e) {
+                                        throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
 
             // Currently we only process the JNDI annotations for web applications
-            buildAnnotatedRefs(webApp, inheritedClassFinder);
+            buildAnnotatedRefs(webApp, inheritedClassFinder, classLoader);
+            processWebServiceClientHandlers(webApp, classLoader);
 
             return webModule;
         }
@@ -856,8 +922,36 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                 }
-                buildAnnotatedRefs(bean, inheritedClassFinder);
 
+                // add webservice handler classes to the class finder used in annotation processing
+                Set<Class<?>> classes = new HashSet<Class<?>>();
+                classes.add(clazz);
+                if (ejbModule.getWebservices() != null) {
+                    for (WebserviceDescription webservice : ejbModule.getWebservices().getWebserviceDescription()) {
+                        for (PortComponent port : webservice.getPortComponent()) {
+                            // only process port definitions for this ejb
+                            if (!ejbName.equals(port.getServiceImplBean().getEjbLink())) continue;
+
+                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                                for (Handler handler : handlerChain.getHandler()) {
+                                    String handlerClass = handler.getHandlerClass();
+                                    if (handlerClass != null) {
+                                        try {
+                                            Class handlerClazz = classLoader.loadClass(handlerClass);
+                                            classes.add(handlerClazz);
+                                        } catch (ClassNotFoundException e) {
+                                            throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
+
+                buildAnnotatedRefs(bean, inheritedClassFinder, classLoader);
+                processWebServiceClientHandlers(bean, classLoader);
             }
 
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
@@ -872,7 +966,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 processCallbacks(interceptor, inheritedClassFinder);
 
-                buildAnnotatedRefs(interceptor, inheritedClassFinder);
+                buildAnnotatedRefs(interceptor, inheritedClassFinder, classLoader);
+                processWebServiceClientHandlers(interceptor, classLoader);
 
                 for (EnterpriseBean bean : enterpriseBeans) {
                     // DMB: TODO, we should actually check to see if the ref exists in the bean's enc.
@@ -884,6 +979,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     bean.getPersistenceContextRef().addAll(interceptor.getPersistenceContextRef());
                     bean.getPersistenceUnitRef().addAll(interceptor.getPersistenceUnitRef());
                     bean.getMessageDestinationRef().addAll(interceptor.getMessageDestinationRef());
+                    bean.getServiceRef().addAll(interceptor.getServiceRef());
                 }
             }
 
@@ -984,7 +1080,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private void buildAnnotatedRefs(JndiConsumer consumer, ClassFinder classFinder) throws OpenEJBException {
+        private void buildAnnotatedRefs(JndiConsumer consumer, ClassFinder classFinder, ClassLoader classLoader) throws OpenEJBException {
             //
             // @EJB
             //
@@ -1070,23 +1166,25 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             for (WebServiceRef webserviceref : webservicerefList) {
 
-                buildWebServiceRef(consumer, webserviceref, null);
+                buildWebServiceRef(consumer, webserviceref, null, null, classLoader);
             }
 
             for (Field field : classFinder.findAnnotatedFields(WebServiceRef.class)) {
                 WebServiceRef webserviceref = field.getAnnotation(WebServiceRef.class);
+                HandlerChain handlerChain = field.getAnnotation(HandlerChain.class);
 
                 Member member = new FieldMember(field);
 
-                buildWebServiceRef(consumer, webserviceref, member);
+                buildWebServiceRef(consumer, webserviceref, handlerChain, member, classLoader);
             }
 
             for (Method method : classFinder.findAnnotatedMethods(WebServiceRef.class)) {
                 WebServiceRef webserviceref = method.getAnnotation(WebServiceRef.class);
+                HandlerChain handlerChain = method.getAnnotation(HandlerChain.class);
 
                 Member member = new MethodMember(method);
 
-                buildWebServiceRef(consumer, webserviceref, member);
+                buildWebServiceRef(consumer, webserviceref, handlerChain, member, classLoader);
             }
 
             //
@@ -1146,6 +1244,37 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
 
+        }
+
+        private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
+            Set<Class<?>> processedClasses = new HashSet<Class<?>>();
+            Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
+            do {
+                // get unprocessed handler classes
+                handlerClasses.clear();
+                for (ServiceRef serviceRef : consumer.getServiceRef()) {
+                    HandlerChains chains = serviceRef.getHandlerChains();
+                    if (chains == null) continue;
+                    for (org.apache.openejb.jee.HandlerChain handlerChain : chains.getHandlerChain()) {
+                        for (Handler handler : handlerChain.getHandler()) {
+                            if (handler.getHandlerClass() != null) {
+                                try {
+                                    Class clazz = classLoader.loadClass(handler.getHandlerClass());
+                                    handlerClasses.add(clazz);
+                                } catch (ClassNotFoundException e) {
+                                    throw new OpenEJBException("Unable to load webservice handler class: " + handler.getHandlerClass(), e);
+                                }
+                            }
+                        }
+                    }
+                }
+                handlerClasses.removeAll(processedClasses);
+
+                // process handler classes
+                ClassFinder handlerClassFinder = createInheritedClassFinder(handlerClasses.toArray(new Class<?>[0]));
+                buildAnnotatedRefs(consumer, handlerClassFinder, classLoader);
+                processedClasses.addAll(handlerClasses);
+            } while (!handlerClasses.isEmpty());
         }
 
         private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
@@ -1266,7 +1395,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         }
 
-        private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, Member member) {
+        private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, HandlerChain handlerChain, Member member, ClassLoader classLoader) throws OpenEJBException {
 
             ServiceRef serviceRef = null;
 
@@ -1280,6 +1409,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (serviceRef == null) {
                 serviceRef = new ServiceRef();
                 serviceRef.setServiceRefName(refName);
+
                 consumer.getServiceRef().add(serviceRef);
             }
 
@@ -1292,16 +1422,34 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // Set service interface
+            Class<?> serviceInterface = null;
             if (serviceRef.getServiceInterface() == null) {
-                Class<?> interfce = webService.type();
-                if (interfce.equals(Object.class)) {
+                serviceInterface = webService.type();
+                if (serviceInterface.equals(Object.class)) {
                     if (member != null) {
-                        interfce = member.getType();
+                        serviceInterface = member.getType();
                     } else {
-                        interfce = webService.value();
+                        serviceInterface = webService.value();
                     }
                 }
-                serviceRef.setServiceInterface(interfce.getName());
+            }
+            if (serviceInterface == null || !serviceInterface.isAssignableFrom(Service.class)) {
+                serviceInterface = Service.class;
+            }
+            serviceRef.setServiceInterface(serviceInterface.getName());
+
+            // reference type
+            if (serviceRef.getServiceRefType() == null || ("").equals(serviceRef.getServiceRefType())) {
+                if (webService.type() != java.lang.Object.class) {
+                    serviceRef.setServiceRefType(webService.type().getName());
+                } else {
+                    serviceRef.setServiceRefType(member.getType().getName());
+                }
+            }
+            Class<?> refType = null;
+            try {
+                refType = classLoader.loadClass(serviceRef.getType());
+            } catch (ClassNotFoundException e) {
             }
 
             // Set the mappedName
@@ -1313,11 +1461,36 @@ public class AnnotationDeployer implements DynamicDeployer {
                 serviceRef.setMappedName(mappedName);
             }
 
-            // Set wsdl file
+            // wsdl file
             if (serviceRef.getWsdlFile() == null) {
                 String wsdlLocation = webService.wsdlLocation();
                 if (!wsdlLocation.equals("")) {
                     serviceRef.setWsdlFile(wsdlLocation);
+                }
+            }
+            if (serviceRef.getWsdlFile() == null && refType != null) {
+                serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(refType, classLoader));
+            }
+            if (serviceRef.getWsdlFile() == null && serviceInterface != null) {
+                serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(serviceInterface, classLoader));
+            }
+
+            // service qname
+            if (serviceRef.getServiceQname() == null && refType != null) {
+                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType).toString());
+            }
+            if (serviceRef.getServiceQname() == null && serviceInterface != null) {
+                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(serviceInterface).toString());
+            }
+
+            // handlers
+            if (serviceRef.getHandlerChains() == null && handlerChain != null) {
+                try {
+                    URL handlerFileURL = member.getDeclaringClass().getResource(handlerChain.file());
+                    HandlerChains handlerChains = ReadDescriptors.readHandlerChains(handlerFileURL);
+                    serviceRef.setHandlerChains(handlerChains);
+                } catch (Throwable e) {
+                    throw new OpenEJBException("Unable to load handler chain file: " + handlerChain.file(), e);
                 }
             }
         }

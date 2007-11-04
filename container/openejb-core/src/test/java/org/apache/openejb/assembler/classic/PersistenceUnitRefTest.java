@@ -69,7 +69,7 @@ public class PersistenceUnitRefTest extends TestCase {
         emfLinkResolver.add("my/module.jar", "one", new MockEntityManagerFactory());
         emfLinkResolver.add("some/other.jar", "two", new MockEntityManagerFactory());
 
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(jndiEncInfo, null, emfLinkResolver, "my/module.jar");
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(jndiEncInfo, null, null, emfLinkResolver, "my/module.jar", getClass().getClassLoader());
         jndiEncBuilder.build();
     }
 

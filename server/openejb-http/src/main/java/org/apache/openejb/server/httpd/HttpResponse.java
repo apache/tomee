@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
+import java.io.IOException;
+
 /**This interface takes care of HTTP Responses.  It sends data back to the browser.
  * 
  */
@@ -35,7 +37,7 @@ public interface HttpResponse extends java.io.Serializable{
     /** Gets the PrintWriter to send data to the browser
      * @return the PrintWriter to send data to the browser
      */
-    public java.io.PrintWriter getPrintWriter();
+    public java.io.PrintWriter getPrintWriter() throws IOException;
 
     /** gets the OutputStream to send data to the browser
      * @return the OutputStream to send data to the browser
@@ -77,4 +79,5 @@ public interface HttpResponse extends java.io.Serializable{
      */
     void setStatusMessage(String responseString);
 
+    void flushBuffer() throws IOException;
 }

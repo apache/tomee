@@ -227,6 +227,9 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             case ResponseCodes.JNDI_DATA_SOURCE:
                 return createDataSource((DataSourceMetaData) res.getResult());
 
+            case ResponseCodes.JNDI_WEBSERVICE:
+                return createWebservice((WsMetaData) res.getResult());
+
             case ResponseCodes.JNDI_RESOURCE:
                 String type = (String) res.getResult();
                 value = System.getProperty("Resource/" + type);
@@ -239,7 +242,11 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
 
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
-                throw (NamingException) res.getResult();
+                Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                if (throwable instanceof NamingException) {
+                    throw (NamingException) throwable;
+                }
+                throw (NamingException) new NamingException().initCause(throwable);
 
             case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
                 throw (RuntimeException) res.getResult();
@@ -296,6 +303,14 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     private DataSource createDataSource(DataSourceMetaData dataSourceMetaData) {
         return new ClientDataSource(dataSourceMetaData);
+    }
+
+    private Object createWebservice(WsMetaData webserviceMetaData) throws NamingException {
+        try {
+            return webserviceMetaData.createWebservice();
+        } catch (Exception e) {
+            throw (NamingException) new NamingException("Error creating webservice").initCause(e);
+        }
     }
 
     private ORB getDefaultOrb() {

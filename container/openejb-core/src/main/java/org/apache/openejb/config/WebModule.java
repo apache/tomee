@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.Webservices;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -30,11 +31,12 @@ import java.io.File;
 /**
  * @version $Rev$ $Date$
  */
-public class WebModule implements DeploymentModule {
+public class WebModule implements WsModule {
     private final ValidationContext validation;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     private WebApp webApp;
+    private Webservices webservices;
     private String host;
     private String contextRoot;
     private ClassLoader classLoader;
@@ -94,6 +96,15 @@ public class WebModule implements DeploymentModule {
     public void setWebApp(WebApp webApp) {
         this.webApp = webApp;
     }
+
+    public Webservices getWebservices() {
+        return webservices;
+    }
+
+    public void setWebservices(Webservices webservices) {
+        this.webservices = webservices;
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
     }

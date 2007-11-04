@@ -1,0 +1,13 @@
+server      = org.apache.openejb.server.cxf.CxfService
+
+# realmName   =
+
+# NONE, INTEGRAL or CONFIDENTIAL
+transportGuarantee = NONE
+
+#  NONE, BASIC, DIGEST or CLIENT-CERT
+authMethod  = NONE
+
+# virtualHost =
+
+disabled    = false

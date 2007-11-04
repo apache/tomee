@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import javax.xml.namespace.QName;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -23,5 +27,14 @@ public class ServiceReferenceInfo extends InjectableInfo {
 
     public String referenceName;
 
+    public QName serviceQName;
+    public String wsdlFile;
+    public String jaxrpcMappingFile;
+    public String referenceType;
+    public String serviceType;
+    public String wsdlRepoUri;
+    public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
+    public final List<PortRefInfo> portRefs =new ArrayList<PortRefInfo>();
+    
     public ReferenceLocationInfo location;
 }

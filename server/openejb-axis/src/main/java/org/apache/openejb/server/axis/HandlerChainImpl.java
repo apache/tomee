@@ -28,21 +28,22 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Implementation of HandlerChain
  */
 public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler.HandlerChain {
     private String[] roles;
-    private Stack invokedHandlers = new Stack();
+    private LinkedList<Handler> invokedHandlers = new LinkedList<Handler>();
 
     public HandlerChainImpl(List<HandlerInfo> handlerInfos) {
         this(handlerInfos, null);
     }
 
+    @SuppressWarnings({"unchecked"})
     public HandlerChainImpl(List<HandlerInfo> handlerInfos, String[] roles) {
         this.roles = roles;
         for (int i = 0; i < handlerInfos.size(); i++) {
@@ -86,7 +87,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         try {
             for (int i = 0; i < size(); i++) {
                 Handler currentHandler = (Handler) get(i);
-                invokedHandlers.push(currentHandler);
+                invokedHandlers.addFirst(currentHandler);
                 try {
                     if (!currentHandler.handleRequest(context)) {
                         return false;
@@ -163,7 +164,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
      */
     static class MessageSnapshot {
         private final String operationName;
-        private final List parameterNames;
+        private final List<String> parameterNames;
 
         public MessageSnapshot(MessageContext soapMessage) {
             SOAPMessage message = ((SOAPMessageContext) soapMessage).getMessage();
@@ -176,7 +177,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
                 SOAPElement operation = ((SOAPElement) body.getChildElements().next());
                 this.operationName = operation.getElementName().toString();
 
-                this.parameterNames = new ArrayList();
+                this.parameterNames = new ArrayList<String>();
                 for (Iterator i = operation.getChildElements(); i.hasNext();) {
                     SOAPElement parameter = (SOAPElement) i.next();
                     String element = parameter.getElementName().toString();

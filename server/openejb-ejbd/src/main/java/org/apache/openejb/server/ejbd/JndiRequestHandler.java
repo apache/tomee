@@ -19,6 +19,9 @@ package org.apache.openejb.server.ejbd;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.naming.Context;
 import javax.naming.NameNotFoundException;
@@ -32,6 +35,11 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.core.webservices.ServiceRefData;
+import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.HandlerData;
+import org.apache.openejb.core.webservices.PortRefData;
+import org.apache.openejb.core.webservices.WsdlRepo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBMetaDataImpl;
@@ -40,6 +48,12 @@ import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.InjectionMetaData;
+import org.apache.openejb.client.WsMetaData;
+import org.apache.openejb.client.HandlerChainMetaData;
+import org.apache.openejb.client.HandlerMetaData;
+import org.apache.openejb.client.CallbackMetaData;
+import org.apache.openejb.client.PortRefMetaData;
+import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.omg.CORBA.ORB;
 
@@ -70,7 +84,7 @@ class JndiRequestHandler {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             NamingException namingException = new NamingException("Could not read jndi request");
             namingException.setRootCause(e);
-            res.setResult(namingException);
+            res.setResult(new ThrowableArtifact(namingException));
 
             if (logger.isDebugEnabled()){
                 try {
@@ -145,12 +159,95 @@ class JndiRequestHandler {
                     res.setResult(ORB.class.getName());
                     return;
                 }
+
+                ServiceRefData serviceRef;
+                if (object instanceof ServiceRefData) {
+                    serviceRef = (ServiceRefData) object;
+                } else {
+                    serviceRef = ServiceRefData.getServiceRefData(object);
+                }
+
+                if (serviceRef != null) {
+                    WsMetaData serviceMetaData = new WsMetaData();
+
+                    // service class
+                    String serviceClassName = null;
+                    if (serviceRef.getServiceClass() != null) {
+                        serviceClassName = serviceRef.getServiceClass().getName();
+                    }
+                    serviceMetaData.setServiceClassName(serviceClassName);
+
+                    // reference class
+                    String referenceClassName = null;
+                    if (serviceRef.getReferenceClass() != null) {
+                        referenceClassName = serviceRef.getReferenceClass().getName();
+                    }
+                    serviceMetaData.setReferenceClassName(referenceClassName);
+
+                    // resolve the wsdl url
+                    String wsdlUrl = null;
+                    if (serviceRef.getWsdlURL() != null) {
+                        wsdlUrl = serviceRef.getWsdlURL().toExternalForm();
+                    }
+                    WsdlRepo wsdlRepo = SystemInstance.get().getComponent(WsdlRepo.class);
+                    if (wsdlRepo != null) {
+                        String wsdlLocation = wsdlRepo.getWsdl(serviceRef.getWsdlRepoUri(), serviceRef.getServiceQName(), referenceClassName);
+                        if (wsdlLocation != null) {
+                            try {
+                                wsdlUrl = new URL(wsdlLocation).toExternalForm();
+                            } catch (MalformedURLException e) {
+                            }
+                        }
+                    }
+                    serviceMetaData.setWsdlUrl(wsdlUrl);
+
+                    if (serviceRef.getServiceQName() != null) {
+                        serviceMetaData.setServiceQName(serviceRef.getServiceQName().toString());
+                    }
+                    for (HandlerChainData handlerChain : serviceRef.getHandlerChains()) {
+                        HandlerChainMetaData handlerChainMetaData = new HandlerChainMetaData();
+                        handlerChainMetaData.setServiceNamePattern(handlerChain.getServiceNamePattern());
+                        handlerChainMetaData.setPortNamePattern(handlerChain.getPortNamePattern());
+                        handlerChainMetaData.getProtocolBindings().addAll(handlerChain.getProtocolBindings());
+                        for (HandlerData handler : handlerChain.getHandlers()) {
+                            HandlerMetaData handlerMetaData = new HandlerMetaData();
+                            handlerMetaData.setHandlerClass(handler.getHandlerClass().getName());
+                            for (Method method : handler.getPostConstruct()) {
+                                CallbackMetaData callbackMetaData = new CallbackMetaData();
+                                callbackMetaData.setClassName(method.getDeclaringClass().getName());
+                                callbackMetaData.setMethod(method.getName());
+                                handlerMetaData.getPostConstruct().add(callbackMetaData);
+                            }
+                            for (Method method : handler.getPreDestroy()) {
+                                CallbackMetaData callbackMetaData = new CallbackMetaData();
+                                callbackMetaData.setClassName(method.getDeclaringClass().getName());
+                                callbackMetaData.setMethod(method.getName());
+                                handlerMetaData.getPreDestroy().add(callbackMetaData);
+                            }
+                            handlerChainMetaData.getHandlers().add(handlerMetaData);
+                        }
+                        serviceMetaData.getHandlerChains().add(handlerChainMetaData);
+                    }
+                    for (PortRefData portRef : serviceRef.getPortRefs()) {
+                        PortRefMetaData portRefMetaData = new PortRefMetaData();
+                        portRefMetaData.setPortComponentLink(portRef.getPortComponentLink());
+                        portRefMetaData.setEnableMtom(portRef.isEnableMtom());
+                        portRefMetaData.setServiceEndpointInterface(portRef.getServiceEndpointInterface().getName());
+                        portRefMetaData.getProperties().putAll(portRef.getProperties());
+                        serviceMetaData.getPortRefs().add(portRefMetaData);
+
+                    }
+
+                    res.setResponseCode(ResponseCodes.JNDI_WEBSERVICE);
+                    res.setResult(serviceMetaData);
+                    return;
+                }
             } catch (NameNotFoundException e) {
                 res.setResponseCode(ResponseCodes.JNDI_NOT_FOUND);
                 return;
             } catch (NamingException e) {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                res.setResult(e);
+                res.setResult(new ThrowableArtifact(e));
                 return;
             }
 
@@ -166,7 +263,8 @@ class JndiRequestHandler {
                     return;
                 } else {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                    res.setResult(new NamingException("Expected an ejb proxy, found unknown object: type="+object.getClass().getName() + ", toString="+object));
+                    NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" + object.getClass().getName() + ", toString=" + object);
+                    res.setResult(new ThrowableArtifact(namingException));
                     return;
                 }
             }
@@ -189,7 +287,8 @@ class JndiRequestHandler {
                 }
                 case EJB_LOCAL_HOME: {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                    res.setResult(new NamingException("Not remotable: '"+name+"'. EJBLocalHome interfaces are not remotable as per the EJB specification."));
+                    NamingException namingException = new NamingException("Not remotable: '" + name + "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
+                    res.setResult(new ThrowableArtifact(namingException));
                     break;
                 }
                 case BUSINESS_REMOTE: {
@@ -218,20 +317,22 @@ class JndiRequestHandler {
                         res.setResult(metaData);
                     } else {
                         res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                        res.setResult(new NamingException("Not remotable: '"+name+"'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server."));
+                        NamingException namingException = new NamingException("Not remotable: '" + name + "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                        res.setResult(new ThrowableArtifact(namingException));
                     }
                     break;
                 }
                 default: {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                    res.setResult(new NamingException("Not remotable: '"+name+"'."));
+                    NamingException namingException = new NamingException("Not remotable: '" + name + "'.");
+                    res.setResult(new ThrowableArtifact(namingException));
                 }
             }
         } catch (Throwable e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             NamingException namingException = new NamingException("Unknown error in container");
             namingException.setRootCause(e);
-            res.setResult(namingException);
+            res.setResult(new ThrowableArtifact(namingException));
         } finally {
 
             if (logger.isDebugEnabled()){
@@ -242,8 +343,8 @@ class JndiRequestHandler {
 
             try {
                 res.writeExternal(out);
-            } catch (java.io.IOException ie) {
-                logger.fatal("Couldn't write JndiResponse to output stream", ie);
+            } catch (Throwable e) {
+                logger.fatal("Couldn't write JndiResponse to output stream", e);
             }
         }
     }

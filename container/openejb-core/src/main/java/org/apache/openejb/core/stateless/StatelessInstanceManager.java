@@ -128,7 +128,7 @@ public class StatelessInstanceManager {
                     try {
                         wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
                     } catch (NamingException e) {
-                        wsContext = new EjbWebServiceContext(sessionContext);
+                        wsContext = new EjbWsContext(sessionContext);
                         ctx.bind("java:comp/WebServiceContext", wsContext);
                     }
                 }

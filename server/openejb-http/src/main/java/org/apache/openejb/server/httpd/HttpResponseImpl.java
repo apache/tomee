@@ -99,6 +99,10 @@ public class HttpResponseImpl implements HttpResponse {
         return baos;
     }
 
+    public void flushBuffer() throws IOException {
+        // there is really no way to flush
+    }
+
     /** sets the HTTP response code to be sent to the browser.  These codes are:
      *
      * OPTIONS = 0
@@ -477,5 +481,4 @@ public class HttpResponseImpl implements HttpResponse {
     public void setStatusMessage(String responseString) {
         this.setResponseString(responseString);
     }
-
 }

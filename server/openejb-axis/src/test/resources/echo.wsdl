@@ -1,0 +1,539 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://ws.apache.org/echosample" xmlns:impl="http://ws.apache.org/echosample" xmlns:intf="http://ws.apache.org/echosample" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ws.apache.org/echosample">
+      <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <complexType name="ArrayOf_xsd_int">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:int[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_xsd_long">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:long[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_soapenc_string">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="SmallEchoStruct">
+        <sequence>
+          <element name="val1" nillable="true" type="soapenc:string"/>
+          <element name="val2" nillable="true" type="soapenc:string"/>
+        </sequence>
+      </complexType>
+      <complexType name="ArrayOf_xsd_short">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:short[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_xsd_boolean">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:boolean[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_xsd_double">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:double[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_xsd_float">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:float[]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="ArrayOf_soapenc_base64Binary">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:byte[][]"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+      <complexType name="EchoStruct">
+        <sequence>
+          <element name="intaVal" nillable="true" type="impl:ArrayOf_xsd_int"/>
+          <element name="longaVal" nillable="true" type="impl:ArrayOf_xsd_long"/>
+          <element name="straVal" nillable="true" type="impl:ArrayOf_soapenc_string"/>
+          <element name="sturctaVal" nillable="true" type="impl:SmallEchoStruct"/>
+          <element name="intVal" type="xsd:int"/>
+          <element name="shortaVal" nillable="true" type="impl:ArrayOf_xsd_short"/>
+          <element name="shortVal" type="xsd:short"/>
+          <element name="sturctVal" nillable="true" type="impl:SmallEchoStruct"/>
+          <element name="longVal" type="xsd:long"/>
+          <element name="boolaenVal" type="xsd:boolean"/>
+          <element name="boolaenaVal" nillable="true" type="impl:ArrayOf_xsd_boolean"/>
+          <element name="doubleaVal" nillable="true" type="impl:ArrayOf_xsd_double"/>
+          <element name="floatVal" type="xsd:float"/>
+          <element name="bytesVal" nillable="true" type="soapenc:base64Binary"/>
+          <element name="doubleVal" type="xsd:double"/>
+          <element name="floataVal" nillable="true" type="impl:ArrayOf_xsd_float"/>
+          <element name="bytesaVal" nillable="true" type="impl:ArrayOf_soapenc_base64Binary"/>
+          <element name="strVal" nillable="true" type="soapenc:string"/>
+        </sequence>
+      </complexType>
+    </schema>
+  </wsdl:types>
+
+  <wsdl:message name="echoIntRequest">
+
+    <wsdl:part name="in0" type="xsd:int"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoShortRequest">
+
+    <wsdl:part name="in0" type="xsd:short"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoBytesResponse">
+
+    <wsdl:part name="echoBytesReturn" type="soapenc:base64Binary"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoFloatResponse">
+
+    <wsdl:part name="echoFloatReturn" type="xsd:float"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoShortResponse">
+
+    <wsdl:part name="echoShortReturn" type="xsd:short"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoVoidRequest">
+
+  </wsdl:message>
+
+  <wsdl:message name="echoDoubleRequest">
+
+    <wsdl:part name="in0" type="xsd:double"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoBooleanResponse">
+
+    <wsdl:part name="echoBooleanReturn" type="xsd:boolean"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoDoubleResponse">
+
+    <wsdl:part name="echoDoubleReturn" type="xsd:double"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoStructResponse">
+
+    <wsdl:part name="echoStructReturn" type="impl:EchoStruct"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoBooleanRequest">
+
+    <wsdl:part name="in0" type="xsd:boolean"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoFloatRequest">
+
+    <wsdl:part name="in0" type="xsd:float"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoBytesRequest">
+
+    <wsdl:part name="in0" type="soapenc:base64Binary"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoEvoidResponse">
+
+  </wsdl:message>
+
+  <wsdl:message name="echoEvoidRequest">
+
+  </wsdl:message>
+
+  <wsdl:message name="echoLongRequest">
+
+    <wsdl:part name="in0" type="xsd:long"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoVoidResponse">
+
+  </wsdl:message>
+
+  <wsdl:message name="echoStringRequest">
+
+    <wsdl:part name="in0" type="soapenc:string"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoStructRequest">
+
+    <wsdl:part name="in0" type="impl:EchoStruct"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoLongResponse">
+
+    <wsdl:part name="echoLongReturn" type="xsd:long"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoIntResponse">
+
+    <wsdl:part name="echoIntReturn" type="xsd:int"/>
+
+  </wsdl:message>
+
+  <wsdl:message name="echoStringResponse">
+
+    <wsdl:part name="echoStringReturn" type="soapenc:string"/>
+
+  </wsdl:message>
+
+  <wsdl:portType name="Echo">
+
+    <wsdl:operation name="echoVoid">
+
+      <wsdl:input name="echoVoidRequest" message="impl:echoVoidRequest"/>
+
+      <wsdl:output name="echoVoidResponse" message="impl:echoVoidResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoInt" parameterOrder="in0">
+
+      <wsdl:input name="echoIntRequest" message="impl:echoIntRequest"/>
+
+      <wsdl:output name="echoIntResponse" message="impl:echoIntResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoDouble" parameterOrder="in0">
+
+      <wsdl:input name="echoDoubleRequest" message="impl:echoDoubleRequest"/>
+
+      <wsdl:output name="echoDoubleResponse" message="impl:echoDoubleResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoFloat" parameterOrder="in0">
+
+      <wsdl:input name="echoFloatRequest" message="impl:echoFloatRequest"/>
+
+      <wsdl:output name="echoFloatResponse" message="impl:echoFloatResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoBoolean" parameterOrder="in0">
+
+      <wsdl:input name="echoBooleanRequest" message="impl:echoBooleanRequest"/>
+
+      <wsdl:output name="echoBooleanResponse" message="impl:echoBooleanResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoString" parameterOrder="in0">
+
+      <wsdl:input name="echoStringRequest" message="impl:echoStringRequest"/>
+
+      <wsdl:output name="echoStringResponse" message="impl:echoStringResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoShort" parameterOrder="in0">
+
+      <wsdl:input name="echoShortRequest" message="impl:echoShortRequest"/>
+
+      <wsdl:output name="echoShortResponse" message="impl:echoShortResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoLong" parameterOrder="in0">
+
+      <wsdl:input name="echoLongRequest" message="impl:echoLongRequest"/>
+
+      <wsdl:output name="echoLongResponse" message="impl:echoLongResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoBytes" parameterOrder="in0">
+
+      <wsdl:input name="echoBytesRequest" message="impl:echoBytesRequest"/>
+
+      <wsdl:output name="echoBytesResponse" message="impl:echoBytesResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoEvoid">
+
+      <wsdl:input name="echoEvoidRequest" message="impl:echoEvoidRequest"/>
+
+      <wsdl:output name="echoEvoidResponse" message="impl:echoEvoidResponse"/>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoStruct" parameterOrder="in0">
+
+      <wsdl:input name="echoStructRequest" message="impl:echoStructRequest"/>
+
+      <wsdl:output name="echoStructResponse" message="impl:echoStructResponse"/>
+
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+  <wsdl:binding name="echoSoapBinding" type="impl:Echo">
+
+    <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <wsdl:operation name="echoVoid">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoVoidRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoVoidResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoInt">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoIntRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoIntResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoDouble">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoDoubleRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoDoubleResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoFloat">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoFloatRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoFloatResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoBoolean">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoBooleanRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoBooleanResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoString">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoStringRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoStringResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoShort">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoShortRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoShortResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoLong">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoLongRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoLongResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoBytes">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoBytesRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoBytesResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoEvoid">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoEvoidRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoEvoidResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+    <wsdl:operation name="echoStruct">
+
+      <wsdlsoap:operation soapAction=""/>
+
+      <wsdl:input name="echoStructRequest">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:input>
+
+      <wsdl:output name="echoStructResponse">
+
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.apache.org/echosample"/>
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+  </wsdl:binding>
+
+  <wsdl:service name="EchoService">
+
+    <wsdl:port name="echo" binding="impl:echoSoapBinding">
+
+      <wsdlsoap:address location="http://localhost:8081/axis/services/echo"/>
+
+    </wsdl:port>
+
+  </wsdl:service>
+
+</wsdl:definitions>

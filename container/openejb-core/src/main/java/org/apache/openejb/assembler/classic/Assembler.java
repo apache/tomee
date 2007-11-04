@@ -101,6 +101,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private SecurityService securityService;
     private OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
+    private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
 
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
@@ -113,6 +114,42 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public SecurityService getSecurityService() {
         return securityService;
+    }
+
+    public synchronized void addDeploymentListener(DeploymentListener deploymentListener) {
+        deploymentListeners.add(deploymentListener);
+    }
+
+    public synchronized void removeDeploymentListener(DeploymentListener deploymentListener) {
+        deploymentListeners.remove(deploymentListener);
+    }
+
+    private synchronized void fireAfterApplicationCreated(AppInfo appInfo) {
+        ArrayList<DeploymentListener> listeners;
+        synchronized (this) {
+            listeners = new ArrayList<DeploymentListener>(deploymentListeners);
+        }
+        for (DeploymentListener listener : listeners) {
+            try {
+                listener.afterApplicationCreated(appInfo);
+            } catch (Throwable e) {
+                logger.error("Error notifying deployment listener of created application " + appInfo.jarPath, e);
+            }
+        }
+    }
+
+    private synchronized void fireBeforeApplicationDestroyed(AppInfo appInfo) {
+        ArrayList<DeploymentListener> listeners;
+        synchronized (this) {
+            listeners = new ArrayList<DeploymentListener>(deploymentListeners);
+        }
+        for (DeploymentListener listener : listeners) {
+            try {
+                listener.beforeApplicationDestroyed(appInfo);
+            } catch (Throwable e) {
+                logger.error("Error notifying deployment listener of destroyed application " + appInfo.jarPath, e);
+            }
+        }
     }
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
@@ -507,7 +544,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInfo.moduleId);
+                // determind the injections
+                InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
+                List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
+
+                // build the enc
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, clientInfo.moduleId, classLoader);
+                jndiEncBuilder.setClient(true);
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build().lookup("env");
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
@@ -519,41 +562,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 if (clientInfo.callbackHandler != null) {
                     containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/callbackHandler", clientInfo.callbackHandler);
-                }
-                ArrayList<Injection> injections = new ArrayList<Injection>();
-                JndiEncInfo jndiEnc = clientInfo.jndiEnc;
-                for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
-                    for (InjectionInfo target : info.targets) {
-                        try {
-                            Class targetClass = classLoader.loadClass(target.className);
-                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                            injections.add(injection);
-                        } catch (ClassNotFoundException e) {
-                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
-                        }
-                    }
-                }
-                for (ResourceReferenceInfo info : jndiEnc.resourceRefs) {
-                    for (InjectionInfo target : info.targets) {
-                        try {
-                            Class targetClass = classLoader.loadClass(target.className);
-                            Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                            injections.add(injection);
-                        } catch (ClassNotFoundException e) {
-                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
-                        }
-                    }
-                }
-                for (ResourceEnvReferenceInfo info : jndiEnc.resourceEnvRefs) {
-                    for (InjectionInfo target : info.targets) {
-                        try {
-                            Class targetClass = classLoader.loadClass(target.className);
-                            Injection injection = new Injection(info.resourceEnvRefName, target.propertyName, targetClass);
-                            injections.add(injection);
-                        } catch (ClassNotFoundException e) {
-                            logger.error("Injection Target invalid: class=" + target.className + ", name=" + target.propertyName + ".  Exception: " + e.getMessage(), e);
-                        }
-                    }
                 }
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
             }
@@ -567,6 +575,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.info("Deployed Application(path="+appInfo.jarPath+")");
 
             deployedApplications.put(appInfo.jarPath, appInfo);
+            fireAfterApplicationCreated(appInfo);
         } catch (Throwable t) {
             try {
                 destroyApplication(appInfo);
@@ -587,6 +596,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void destroyApplication(AppInfo appInfo) throws UndeployException {
         logger.info("Undeploying app: "+appInfo.jarPath);
+
+        fireBeforeApplicationDestroyed(appInfo);
+
         Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appInfo.jarPath);
 

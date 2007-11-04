@@ -79,9 +79,9 @@ public class ServiceRef implements JndiReference {
     @XmlElement(name = "port-component-ref", required = true)
     protected List<PortComponentRef> portComponentRef;
     @XmlElement(required = true)
-    protected List<ServiceRefHandler> handler;
+    protected List<Handler> handler;
     @XmlElement(name = "handler-chains")
-    protected ServiceRefHandlerChains handlerChains;
+    protected HandlerChains handlerChains;
     @XmlElement(name = "mapped-name")
     protected String mappedName;
     @XmlElement(name = "injection-target", required = true)
@@ -192,18 +192,19 @@ public class ServiceRef implements JndiReference {
         return this.portComponentRef;
     }
 
-    public List<ServiceRefHandler> getHandler() {
-        if (handler == null) {
-            handler = new ArrayList<ServiceRefHandler>();
+    public HandlerChains getHandlerChains() {
+        // convert the handlers to handler chain
+        if (handlerChains == null && handler != null) {
+            handlerChains = new HandlerChains();
+            HandlerChain handlerChain = new HandlerChain();
+            handlerChain.getHandler().addAll(handler);
+            handler.clear();
+            handlerChains.getHandlerChain().add(handlerChain);
         }
-        return this.handler;
-    }
-
-    public ServiceRefHandlerChains getHandlerChains() {
         return handlerChains;
     }
 
-    public void setHandlerChains(ServiceRefHandlerChains value) {
+    public void setHandlerChains(HandlerChains value) {
         this.handlerChains = value;
     }
 

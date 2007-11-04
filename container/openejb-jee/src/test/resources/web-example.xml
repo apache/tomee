@@ -484,8 +484,8 @@
             <handler-chain id="ID149">
                 <service-name-pattern>*</service-name-pattern>
                 <handler id="ID151">
-                    <description xml:lang="" id="ID153">description6</description>
-                    <display-name xml:lang="en-US" id="ID155">display-name3</display-name>
+                    <description>description6</description>
+                    <display-name>display-name3</display-name>
                     <icon xml:lang="" id="ID157">
                         <small-icon>small-icon3</small-icon>
                         <large-icon>large-icon3</large-icon>
@@ -502,8 +502,8 @@
                     <port-name>port-name0</port-name>
                 </handler>
                 <handler id="ID181">
-                    <description xml:lang="en-US" id="ID183">description8</description>
-                    <display-name xml:lang="en-US" id="ID185">display-name4</display-name>
+                    <description>description8</description>
+                    <display-name>display-name4</display-name>
                     <icon xml:lang="en-US" id="ID187">
                         <small-icon>small-icon4</small-icon>
                         <large-icon>large-icon4</large-icon>
@@ -546,8 +546,8 @@
             <port-component-link>port-component-link1</port-component-link>
         </port-component-ref>
         <handler id="I3391">
-            <description xml:lang="" id="I3393">description219</description>
-            <display-name xml:lang="" id="I3395">display-name107</display-name>
+            <description>description219</description>
+            <display-name>display-name107</display-name>
             <icon xml:lang="" id="I3397">
                 <small-icon>small-icon107</small-icon>
                 <large-icon>large-icon107</large-icon>
@@ -591,8 +591,8 @@
             <handler-chain id="I3611">
                 <service-name-pattern>*</service-name-pattern>
                 <handler id="I3613">
-                    <description xml:lang="" id="I3615">description230</description>
-                    <display-name xml:lang="en-US" id="I3617">display-name109</display-name>
+                    <description>description230</description>
+                    <display-name>display-name109</display-name>
                     <icon xml:lang="en-US" id="I3619">
                         <small-icon>small-icon109</small-icon>
                         <large-icon>large-icon109</large-icon>
@@ -609,8 +609,8 @@
                     <port-name>port-name101</port-name>
                 </handler>
                 <handler id="I3643">
-                    <description xml:lang="" id="I3645">description232</description>
-                    <display-name xml:lang="en-US" id="I3647">display-name110</display-name>
+                    <description>description232</description>
+                    <display-name>display-name110</display-name>
                     <icon xml:lang="" id="I3649">
                         <small-icon>small-icon110</small-icon>
                         <large-icon>large-icon110</large-icon>
@@ -627,8 +627,8 @@
                     <port-name>port-name102</port-name>
                 </handler>
                 <handler id="I3673">
-                    <description xml:lang="en-US" id="I3675">description234</description>
-                    <display-name xml:lang="" id="I3677">display-name111</display-name>
+                    <description>description234</description>
+                    <display-name>display-name111</display-name>
                     <icon xml:lang="en-US" id="I3679">
                         <small-icon>small-icon111</small-icon>
                         <large-icon>large-icon111</large-icon>

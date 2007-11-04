@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev: 482336 $ $Date: 2006-12-04 15:12:19 -0500 (Mon, 04 Dec 2006) $ -->
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:tns="http://doclitbare.axis2.geronimo.apache.org"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoclitBare"
+        targetNamespace="http://doclitbare.axis2.geronimo.apache.org">
+	
+    <wsdl:types>
+        <xsd:schema
+                targetNamespace="http://doclitbare.axis2.geronimo.apache.org"
+                xmlns:tns="http://doclitbare.axis2.geronimo.apache.org"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+		
+            <xsd:element name="String" type="xsd:string" />
+            <xsd:element name="Integer" type="xsd:int" />
+		
+            <xsd:element name="Composite">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="myElement" type="xsd:string" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- basic fault test, this should be mapped into message part
+                 of the generated faultBean
+              -->
+            <xsd:element name="MyFault" type="xsd:string" />
+
+            <!-- wrapper exception and polymorphic fault test
+                 This bean should have an associated exception
+              -->
+            <xsd:element name="MyBaseFaultBean" type="tns:BaseFault" />
+		
+            <xsd:complexType name="BaseFault">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" />
+                    <xsd:element name="error_code" type="xsd:int" />
+                </xsd:sequence>
+            </xsd:complexType>
+		
+            <xsd:complexType name="ExtendedFault">
+                <xsd:complexContent>
+                    <xsd:extension base="tns:BaseFault">
+                        <xsd:sequence>
+                            <xsd:element name="another_message" type="xsd:string" />
+                            <xsd:element name="another_error_code" type="xsd:int" />
+                        </xsd:sequence>
+                    </xsd:extension>
+                </xsd:complexContent>
+            </xsd:complexType>
+		
+        </xsd:schema>
+    </wsdl:types>
+	
+    <wsdl:message name="NoParam" />
+	
+    <wsdl:message name="SingleParam">
+        <wsdl:part name="allByMyself" element="tns:String" />
+    </wsdl:message>
+	
+    <wsdl:message name="SingleParamInt">
+        <wsdl:part name="allByMyself" element="tns:Integer" />
+    </wsdl:message>
+	
+    <wsdl:message name="SingleParamOther">
+        <wsdl:part name="allByMyself" element="tns:Composite" />
+    </wsdl:message>
+	
+    <wsdl:message name="SimpleFault">
+        <wsdl:part name="description" element="tns:MyFault" />
+    </wsdl:message>
+	
+    <wsdl:message name="FaultBeanWithWrapper">
+        <wsdl:part name="description" element="tns:MyBaseFaultBean" />
+    </wsdl:message>
+	
+    <wsdl:portType name="DocLitBarePortType">
+		
+        <wsdl:operation name="oneWayEmpty">
+            <wsdl:input message="tns:NoParam" />
+        </wsdl:operation>
+		
+        <wsdl:operation name="oneWay">
+            <wsdl:input message="tns:SingleParam" />
+        </wsdl:operation>
+		
+        <wsdl:operation name="twoWaySimple">
+            <wsdl:input message="tns:SingleParamInt" />
+            <wsdl:output message="tns:SingleParam" />
+        </wsdl:operation>
+		
+        <wsdl:operation name="twoWayHolder">
+            <wsdl:input message="tns:SingleParamOther" />
+            <wsdl:output message="tns:SingleParamOther" />
+            <wsdl:fault message="tns:SimpleFault" name="twoWayFault"/>
+            <wsdl:fault message="tns:FaultBeanWithWrapper" name="wrapperFault"/>
+        </wsdl:operation>
+	
+    </wsdl:portType>
+	
+    <wsdl:binding name="DocLitBare" type="tns:DocLitBarePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		
+        <wsdl:operation name="oneWayEmpty">
+            <soap:operation soapAction="http://doclitbare.axis2.geronimo.apache.org/oneWayEmpty" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+        </wsdl:operation>
+		
+        <wsdl:operation name="oneWay">
+            <soap:operation soapAction="http://doclitbare.axis2.geronimo.apache.org/oneWay" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+        </wsdl:operation>
+		
+        <wsdl:operation name="twoWaySimple">
+            <soap:operation soapAction="twoWaySimple" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+		
+        <wsdl:operation name="twoWayHolder">
+            <soap:operation soapAction="http://doclitbare.axis2.geronimo.apache.org/twoWayReturn" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="twoWayFault">
+                <soap:fault use="literal" name="twoWayFault" />
+            </wsdl:fault>
+            <wsdl:fault name="wrapperFault">
+                <soap:fault use="literal" name="wrapperFault" />
+            </wsdl:fault>
+        </wsdl:operation>
+	
+	
+    </wsdl:binding>
+	
+    <wsdl:service name="BareDocLitService">
+        <wsdl:port binding="tns:DocLitBare" name="BareDocLitPort">
+            <soap:address location="http://localhost:8080/axis2/services/BareDocLitService" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

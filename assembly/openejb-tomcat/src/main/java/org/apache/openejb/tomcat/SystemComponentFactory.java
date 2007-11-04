@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.tomcat;
 
+import static org.apache.openejb.tomcat.NamingUtil.loadClass;
 import org.apache.openejb.loader.SystemInstance;
 import static org.apache.openejb.tomcat.NamingUtil.*;
 
@@ -38,21 +39,5 @@ public class SystemComponentFactory implements ObjectFactory {
         // lookup the value
         Object value = SystemInstance.get().getComponent(clazz);
         return value;
-    }
-
-    private Class<?> loadClass(String className) {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader != null) {
-                try {
-                    Class clazz = classLoader.loadClass(className);
-                    return clazz;
-                } catch(ClassNotFoundException e) {
-                }
-            }
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
     }
 }

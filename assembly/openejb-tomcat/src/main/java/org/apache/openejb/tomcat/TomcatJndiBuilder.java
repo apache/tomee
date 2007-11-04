@@ -17,17 +17,20 @@
  */
 package org.apache.openejb.tomcat;
 
-import org.apache.catalina.core.StandardContext;
+import static org.apache.openejb.tomcat.NamingUtil.WSDL_REPO_URI;
 import org.apache.catalina.core.NamingContextListener;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceEnvRef;
+import org.apache.catalina.deploy.ContextService;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.naming.factory.Constants;
 import org.apache.naming.ContextAccessController;
+import org.apache.naming.factory.Constants;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
@@ -38,6 +41,10 @@ import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.assembler.classic.PortRefInfo;
+import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -50,23 +57,32 @@ import static org.apache.openejb.tomcat.NamingUtil.LOCAL;
 import static org.apache.openejb.tomcat.NamingUtil.NAME;
 import static org.apache.openejb.tomcat.NamingUtil.RESOURCE_ID;
 import static org.apache.openejb.tomcat.NamingUtil.UNIT;
+import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_CLASS;
+import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_QNAME;
+import static org.apache.openejb.tomcat.NamingUtil.WSDL_URL;
 import static org.apache.openejb.tomcat.NamingUtil.setStaticValue;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TomcatJndiBuilder {
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
+    private final List<Injection> injections;
     private final LinkResolver<EntityManagerFactory> emfLinkResolver;
     private final boolean replaceEntry;
     private boolean useCrossClassLoaderRef = true;
     private NamingContextListener namingContextListener;
 
-    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, LinkResolver<EntityManagerFactory> emfLinkResolver) {
+    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo,List<Injection> injections, LinkResolver<EntityManagerFactory> emfLinkResolver) {
+        this.injections = injections;
         this.standardContext = standardContext;
         this.namingContextListener = standardContext.getNamingContextListener();
         this.webAppInfo = webAppInfo;
@@ -390,9 +406,119 @@ public class TomcatJndiBuilder {
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public void mergeRef(NamingResources naming, ServiceReferenceInfo ref) {
-        // service refs aren't supported yet
+        ContextService service = naming.findService(ref.referenceName);
+        ContextResource resource = naming.findResource(ref.referenceName);
+        boolean addEntry = false;
+        if (resource == null) {
+            resource = new ContextResource();
+            resource.setName(ref.referenceName);
+            addEntry = true;
+        }
+
+        resource.setProperty(Constants.FACTORY, WsFactory.class.getName());
+        resource.setProperty(NAME, ref.referenceName);
+        if (ref.referenceType != null) {
+            resource.setType(ref.referenceType);
+        } else {
+            resource.setType(ref.serviceType);
+        }
+
+        if (ref.location != null) {
+            resource.setProperty(JNDI_NAME, ref.location.jndiName);
+            resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+        } else {
+            resource.setProperty(WEB_SERVICE_CLASS, ref.serviceType);
+            if (ref.serviceQName != null) {
+                resource.setProperty(WEB_SERVICE_QNAME, ref.serviceQName.toString());
+            }
+
+            // add the wsdl url
+            URL wsdlURL = getWsdlUrl(ref);
+            if (wsdlURL != null) {
+                resource.setProperty(WSDL_URL, wsdlURL.toString());
+            }
+
+            if (ref.wsdlRepoUri != null) {
+                resource.setProperty(WSDL_REPO_URI, ref.wsdlRepoUri);
+            }
+
+            // add port refs
+            if (!ref.portRefs.isEmpty()) {
+                List<PortRefData> portRefs = new ArrayList<PortRefData>(ref.portRefs.size());
+                for (PortRefInfo portRefInfo : ref.portRefs) {
+                    PortRefData portRef = new PortRefData();
+                    try {
+                        portRef.setServiceEndpointInterface(standardContext.getLoader().getClassLoader().loadClass(portRefInfo.serviceEndpointInterface));
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Could not load service endpoint interface "+ portRefInfo.serviceEndpointInterface, e);
+                    }
+                    portRef.setEnableMtom(portRefInfo.enableMtom);
+                    portRef.setPortComponentLink(portRefInfo.portComponentLink);
+                    portRef.getProperties().putAll(portRefInfo.properties);
+                    portRefs.add(portRef);
+                }
+                setStaticValue(resource, "port-refs", portRefs);
+            }
+
+            // add the handle chains
+            if (!ref.handlerChains.isEmpty()) {
+                try {
+                    List<HandlerChainData> handlerChains = null;
+                    handlerChains = WsBuilder.toHandlerChainData(ref.handlerChains, standardContext.getLoader().getClassLoader());
+                    setStaticValue(resource, "handler-chains", handlerChains);
+                    setStaticValue(resource, "injections", injections);
+                } catch (OpenEJBException e) {
+                    throw new IllegalArgumentException("Error creating handler chain for web service-ref " + ref.referenceName);
+                }
+            }
+        }
+
+        // if there was a service entry, remove it
+        if (service != null) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeService(service.getName());
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
+
+        // add the new resource entry
+        if (addEntry) {
+            naming.addResource(resource);
+        }
+
+        // or replace the exisitng resource entry
+        if (replaceEntry) {
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            namingContextListener.addResource(resource);
+            ContextAccessController.setReadOnly(namingContextListener.getName());
+        }
     }
 
+    private URL getWsdlUrl(ServiceReferenceInfo ref) {
+        if (ref.wsdlFile == null) return null;
+
+        URL wsdlUrl = null;
+        try {
+            wsdlUrl = new URL(ref.wsdlFile);
+        } catch (MalformedURLException e) {
+        }
+
+        if (wsdlUrl == null) {
+            wsdlUrl = standardContext.getLoader().getClassLoader().getResource(ref.wsdlFile);
+        }
+
+        if (wsdlUrl == null) {
+            try {
+                wsdlUrl = standardContext.getServletContext().getResource("/" + ref.wsdlFile);
+            } catch (MalformedURLException e) {
+            }
+        }
+
+        if (wsdlUrl == null ) {
+            throw new IllegalArgumentException("WSDL file " + ref.wsdlFile + " for web service-ref " + ref.referenceName + " not found");
+        }
+
+        return wsdlUrl;
+    }
 }

@@ -17,12 +17,16 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
@@ -35,26 +39,28 @@ import org.apache.openejb.jee.oejb2.TssLinkType;
 import org.apache.openejb.jee.oejb2.WebServiceBindingType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-/**
- * @version $Rev$ $Date$
- */
 public class ReadDescriptors implements DynamicDeployer {
+    @SuppressWarnings({"unchecked"})
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -343,6 +349,71 @@ public class ReadDescriptors implements DynamicDeployer {
             throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: " + url.toExternalForm(), e);
         }
         return ejbJar;
+    }
+
+    public static Webservices readWebservices(URL url) throws OpenEJBException {
+        Webservices webservices = null;
+        try {
+            webservices = (Webservices) JaxbJavaee.unmarshal(Webservices.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the webservices.xml file: " + url.toExternalForm(), e);
+        }
+        return webservices;
+    }
+
+    public static HandlerChains readHandlerChains(URL url) throws OpenEJBException {
+        HandlerChains handlerChains = null;
+        try {
+            handlerChains = (HandlerChains) JaxbJavaee.unmarshal(HandlerChains.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the webservices.xml file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the webservices.xml file: " + url.toExternalForm(), e);
+        }
+        return handlerChains;
+    }
+
+    public static JavaWsdlMapping readJaxrpcMapping(URL url) throws OpenEJBException {
+        JavaWsdlMapping wsdlMapping = null;
+        try {
+            wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshal(JavaWsdlMapping.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the JaxRPC mapping file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the JaxRPC mapping file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the JaxRPC mapping file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the JaxRPC mapping file: " + url.toExternalForm(), e);
+        }
+        return wsdlMapping;
+    }
+
+    public static Definition readWsdl(URL url) throws OpenEJBException {
+        Definition definition = null;
+        try {
+            WSDLFactory factory = WSDLFactory.newInstance();
+            WSDLReader reader = factory.newWSDLReader();
+            reader.setFeature("javax.wsdl.verbose", true);
+            reader.setFeature("javax.wsdl.importDocuments", true);
+            WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(url.openStream()));
+            definition = reader.readWSDL(wsdlResolver);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the wsdl file: " + url.toExternalForm(), e);
+        }
+        return definition;
     }
 
     public static Connector readConnector(URL url) throws OpenEJBException {

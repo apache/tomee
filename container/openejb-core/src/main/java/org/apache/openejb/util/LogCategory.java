@@ -42,11 +42,15 @@ public final class LogCategory {
 	public static final LogCategory OPENEJB_CONNECTOR = OPENEJB.createChild("connector");
 	public static final LogCategory OPENEJB_DEPLOY = OPENEJB.createChild("deploy");
 	public static final LogCategory OPENEJB_HSQL = OPENEJB.createChild("hsql");
+	public static final LogCategory OPENEJB_WS = OPENEJB.createChild("ws");
 	public static final LogCategory TRANSACTION = new LogCategory( "Transaction");
 	public static final LogCategory ACTIVEMQ = new LogCategory( "org.apache.activemq");
 	public static final LogCategory GERONIMO = new LogCategory( "org.apache.geronimo");
 	public static final LogCategory OPENJPA = new LogCategory( "openjpa");
 	public static final LogCategory CORBA_ADAPTER = new LogCategory( "CORBA-Adapter");
+	public static final LogCategory AXIS = new LogCategory( "axis");
+	public static final LogCategory AXIS2 = new LogCategory( "axis");
+	public static final LogCategory CXF = new LogCategory( "cxf");
 	public static final LogCategory TIMER = new LogCategory( "Timer");
 	public static final LogCategory HTTPSERVER = new LogCategory( "HttpServer");
 	public static final LogCategory SERVICEPOOL = new LogCategory( "ServicePool");

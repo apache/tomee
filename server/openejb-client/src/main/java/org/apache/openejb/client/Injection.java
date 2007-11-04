@@ -16,18 +16,24 @@
  */
 package org.apache.openejb.client;
 
+import java.io.Serializable;
+
 /**
  * @version $Rev$ $Date$
  */
-public class Injection {
+public class Injection implements Serializable {
+    private static final long serialVersionUID = 4009121701163822665L;
     private final String targetClass;
     private final String name;
     private final String jndiName;
 
     public Injection(String targetClass, String name, String jndiName) {
-        this.jndiName = jndiName;
-        this.name = name;
+        if (targetClass == null) throw new NullPointerException("targetClass is null");
+        if (name == null) throw new NullPointerException("name is null");
+        if (jndiName == null) throw new NullPointerException("jndiName is null");
         this.targetClass = targetClass;
+        this.name = name;
+        this.jndiName = jndiName;
     }
 
     public String getJndiName() {
@@ -40,5 +46,25 @@ public class Injection {
 
     public String getTargetClass() {
         return targetClass;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Injection injection = (Injection) o;
+
+        return name.equals(injection.name) && targetClass.equals(injection.targetClass);
+    }
+
+    public int hashCode() {
+        int result;
+        result = targetClass.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    public String toString() {
+        return targetClass + "." + name + " -> " + jndiName;
     }
 }

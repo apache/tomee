@@ -22,9 +22,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -79,6 +76,7 @@ public class Main {
         }
 
         InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:comp/injections");
+        ClientInstance.get().setComponent(InjectionMetaData.class, injectionMetaData);
         for (Injection injection : injectionMetaData.getInjections()) {
             try {
                 Object value = initialContext.lookup("java:comp/env/" + injection.getJndiName());

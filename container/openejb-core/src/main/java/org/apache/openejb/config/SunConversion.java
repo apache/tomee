@@ -36,6 +36,10 @@ import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.PortComponentRef;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -77,6 +81,8 @@ import org.apache.openejb.jee.sun.ResourceEnvRef;
 import org.apache.openejb.jee.sun.MessageDestinationRef;
 import org.apache.openejb.jee.sun.ResourceRef;
 import org.apache.openejb.jee.sun.SunWebApp;
+import org.apache.openejb.jee.sun.PortInfo;
+import org.apache.openejb.jee.sun.StubProperty;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -253,6 +259,35 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
         }
+
+        Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
+        for (org.apache.openejb.jee.sun.ServiceRef ref : sunApplicationClient.getServiceRef()) {
+            String refName = ref.getServiceRefName();
+            ServiceRef serviceRef = serviceRefMap.get(refName);
+            if (serviceRef != null) {
+                Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                    ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
+                }
+
+                for (PortInfo portInfo : ref.getPortInfo()) {
+                    PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                    if (portComponentRef != null) {
+                        for (StubProperty stubProperty : portInfo.getStubProperty()) {
+                            String name = stubProperty.getName();
+                            String value = stubProperty.getValue();
+                            portComponentRef.getProperties().setProperty(name, value);
+                        }
+                    }
+                }
+
+                String wsdlOverride = ref.getWsdlOverride();
+                if (wsdlOverride != null && wsdlOverride.length() > 0) {
+                    String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
+                    serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                }
+            }
+        }
     }
 
     public void convertModule(WebModule webModule) {
@@ -322,6 +357,80 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
         }
+
+        Map<String, ServiceRef> serviceRefMap = webApp.getServiceRefMap();
+        for (org.apache.openejb.jee.sun.ServiceRef ref : sunWebApp.getServiceRef()) {
+            String refName = ref.getServiceRefName();
+            ServiceRef serviceRef = serviceRefMap.get(refName);
+            if (serviceRef != null) {
+                Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                    ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
+                }
+
+                for (PortInfo portInfo : ref.getPortInfo()) {
+                    PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                    if (portComponentRef != null) {
+                        for (StubProperty stubProperty : portInfo.getStubProperty()) {
+                            String name = stubProperty.getName();
+                            String value = stubProperty.getValue();
+                            portComponentRef.getProperties().setProperty(name, value);
+                        }
+                    }
+                }
+
+                String wsdlOverride = ref.getWsdlOverride();
+                if (wsdlOverride != null && wsdlOverride.length() > 0) {
+                    String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
+                    serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                }
+            }
+        }
+
+        // map wsdl locations
+        if (webModule.getWebservices() != null) {
+            Map<String, WebserviceDescription> descriptions = webModule.getWebservices().getWebserviceDescriptionMap();
+            for (org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunWebApp.getWebserviceDescription()) {
+                WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
+                if (description == null) continue;
+
+                String location = processWsdlPublishLocation(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                if (location != null) {
+                    for (PortComponent portComponent : description.getPortComponent()) {
+                        portComponent.setWsdlPublishLocation(location);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public static String processWsdlPublishLocation(String location) {
+        return processWsdlPublishLocation(location, null);
+    }
+
+    public static String processWsdlPublishLocation(String location, String wsdlFile) {
+        if (location == null) return null;
+
+        if (location.startsWith("file:")) {
+            // location format = file:{repository}/{location}.wsdl
+            location = location.replaceFirst("file:[^/]*/", "");
+
+            // append wsdl name without leading META-INF/wsdl or WEB-INF/wsdl or ending .wsdl
+            if (wsdlFile != null) {
+                wsdlFile = wsdlFile.replaceFirst("META-INF/wsdl/", "");
+                wsdlFile = wsdlFile.replaceFirst("WEB-INF/wsdl/", "");
+                location = location + "/" + wsdlFile;
+            }
+            location = location.replaceFirst("\\.wsdl$", "");
+        } else if (location.startsWith("http:") || location.startsWith("https:")) {
+            // location format = https://{server}:{port}/{location}?WSDL
+            location = location.replaceFirst("http[s]?://[^/]*/", "");
+            location = location.replaceFirst("\\?.*$", "");
+        }
+
+        if (location.length() == 0) location = null;
+        return location;
     }
 
     public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
@@ -332,7 +441,7 @@ public class SunConversion implements DynamicDeployer {
 
         // merge data from sun-ejb-jar.xml file
         SunEjbJar sunEjbJar = getSunEjbJar(ejbModule);
-        mergeEjbConfig(ejbModule.getOpenejbJar(), sunEjbJar);
+        mergeEjbConfig(ejbModule, sunEjbJar);
         mergeEntityMappings(entities, ejbModule.getModuleId(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), sunEjbJar);
 
         // merge data from sun-cmp-mappings.xml file
@@ -344,7 +453,10 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    private void mergeEjbConfig(OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
+    private void mergeEjbConfig(EjbModule ejbModule, SunEjbJar sunEjbJar) {
+        EjbJar ejbJar = ejbModule.getEjbJar();
+        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+
         if (openejbJar == null) return;
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
@@ -420,10 +532,60 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
+            EnterpriseBean bean = ejbJar.getEnterpriseBeansByEjbName().get(ejb.getEjbName());
+            if (bean != null) {
+                Map<String, ServiceRef> serviceRefMap = bean.getServiceRefMap();
+                for (org.apache.openejb.jee.sun.ServiceRef ref : ejb.getServiceRef()) {
+                    String refName = ref.getServiceRefName();
+                    ServiceRef serviceRef = serviceRefMap.get(refName);
+                    if (serviceRef != null) {
+                        Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                            ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
+                        }
+
+                        for (PortInfo portInfo : ref.getPortInfo()) {
+                            PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                            if (portComponentRef != null) {
+                                for (StubProperty stubProperty : portInfo.getStubProperty()) {
+                                    String name = stubProperty.getName();
+                                    String value = stubProperty.getValue();
+                                    portComponentRef.getProperties().setProperty(name, value);
+                                }
+                            }
+                        }
+
+                        String wsdlOverride = ref.getWsdlOverride();
+                        if (wsdlOverride != null && wsdlOverride.length() > 0) {
+                            String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
+                            serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                        }
+                    }
+                }
+            }
+
             if (ejb.getMdbResourceAdapter() != null) {
                 // resource adapter id is the MDB container ID
                 String resourceAdapterId = ejb.getMdbResourceAdapter().getResourceAdapterMid();
                 deployment.setContainerId(resourceAdapterId);
+            }
+
+
+            // map wsdl locations
+            if (ejbModule.getWebservices() != null) {
+                Map<String, WebserviceDescription> descriptions = ejbModule.getWebservices().getWebserviceDescriptionMap();
+                for (org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunEjbJar.getEnterpriseBeans().getWebserviceDescription()) {
+                    WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
+                    if (description == null) continue;
+
+                    String location = processWsdlPublishLocation(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                    if (location != null) {
+                        for (PortComponent portComponent : description.getPortComponent()) {
+                            // this could be a problem multiple port components used at runtime
+                            portComponent.setWsdlPublishLocation(location);
+                        }
+                    }
+                }
             }
         }
     }

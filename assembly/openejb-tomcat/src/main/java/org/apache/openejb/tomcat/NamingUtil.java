@@ -39,6 +39,10 @@ public class NamingUtil {
     public static final String PROPERTIES = "properties";
     public static final String RESOURCE_ID = "resourceid";
     public static final String COMPONENT_TYPE = "componenttype";
+    public static final String WEB_SERVICE_CLASS = "webserviceclass";
+    public static final String WEB_SERVICE_QNAME = "webserviceqname";
+    public static final String WSDL_URL = "wsdlurl";
+    public static final String WSDL_REPO_URI = "wsdlrepouri";
 
     private static final AtomicInteger id = new AtomicInteger(31);
     private static final Map<String,Object> registry = new HashMap<String,Object>();
@@ -58,17 +62,46 @@ public class NamingUtil {
     }
 
     public static void setStaticValue(ContextResource resource, Object value) {
-        String token = "" + id.incrementAndGet();
-        registry.put(token, value);
-        resource.setProperty("static-token", token);
+        setStaticValue(resource, null, value);
     }
 
-    public static Object getStaticValue(Reference ref) {
-        String token = getProperty(ref, "static-token");
+    public static void setStaticValue(ContextResource resource, String name, Object value) {
+        name = name != null ? "-" + name : "";
+        String token = "" + id.incrementAndGet();
+        registry.put(token, value);
+        resource.setProperty("static-token" + name, token);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static<T> T getStaticValue(Reference ref) {
+        return (T) getStaticValue(ref, null);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static <T> T getStaticValue(Reference ref, String name) {
+        name = name != null ? "-" + name : "";
+        String token = getProperty(ref, "static-token" + name);
         if (token == null) {
             return null;
         }
-        Object object = registry.get(token);
+        T object = (T) registry.get(token);
         return object;
+    }
+
+    public static Class<?> loadClass(String className) {
+        if (className == null) return null;
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader != null) {
+                try {
+                    Class clazz = classLoader.loadClass(className);
+                    return clazz;
+                } catch(ClassNotFoundException e) {
+                }
+            }
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 }

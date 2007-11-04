@@ -54,9 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-/**
- * @version $Rev$ $Date$
- */
 public class EjbContainerProvider extends RPCProvider {
 
     private final DeploymentInfo ejbDeployment;
@@ -64,7 +61,7 @@ public class EjbContainerProvider extends RPCProvider {
 
     public EjbContainerProvider(DeploymentInfo ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
-        this.handlerInfos = new ArrayList();
+        this.handlerInfos = new ArrayList<HandlerInfo>();
     }
 
     public EjbContainerProvider(DeploymentInfo ejbDeployment, List<HandlerInfo> handlerInfos) {

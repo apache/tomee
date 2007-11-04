@@ -44,5 +44,6 @@ public class ResponseCodes {
     public static final int JNDI_DATA_SOURCE = 22;
     public static final int JNDI_INJECTIONS = 23;
     public static final int JNDI_RESOURCE = 24;
+    public static final int JNDI_WEBSERVICE = 25;
 }
 

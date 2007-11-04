@@ -30,6 +30,9 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Taglib;
 import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -265,6 +268,9 @@ public class DeploymentLoader {
                             ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
                         }
 
+                        // load webservices descriptor
+                        addWebservices(ejbModule);
+
                         appModule.getEjbModules().add(ejbModule);
                     } catch (OpenEJBException e) {
                         logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
@@ -355,6 +361,9 @@ public class DeploymentLoader {
             if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
                 ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
             }
+
+            // load webservices descriptor
+            addWebservices(ejbModule);
 
             // wrap the EJB Module with an Application Module
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
@@ -451,7 +460,63 @@ public class DeploymentLoader {
         // find all tag libs
         addTagLibraries(webModule);
 
+        // load webservices descriptor
+        addWebservices(webModule);
+
         return webModule;
+    }
+
+    private void addWebservices(WsModule wsModule) throws OpenEJBException {
+        // get location of webservices.xml file
+        Object webservicesObject = wsModule.getAltDDs().get("webservices.xml");
+        if (!(webservicesObject instanceof URL)) {
+            return;
+        }
+        URL webservicesUrl = (URL) webservicesObject;
+
+        // determine the base url for this module (either file: or jar:)
+        URL moduleUrl = null;
+        try {
+            File jarFile = new File(wsModule.getJarLocation());
+            moduleUrl = jarFile.toURL();
+            if (jarFile.isFile()) {
+                moduleUrl = new URL("jar", "", -1, moduleUrl + "!/");
+            }
+        } catch (MalformedURLException e) {
+            logger.warning("Invalid module location " + wsModule.getJarLocation());
+            return;
+        }
+
+        // parse the webservices.xml file
+        Map<URL,JavaWsdlMapping> jaxrpcMappingCache = new HashMap<URL,JavaWsdlMapping>();
+        Webservices webservices = ReadDescriptors.readWebservices(webservicesUrl);
+        wsModule.setWebservices(webservices);
+        if (webservicesUrl != null && "file".equals(webservicesUrl.getProtocol())) {
+            wsModule.getWatchedResources().add(webservicesUrl.getPath());
+        }
+
+        // parse any jaxrpc-mapping-files mentioned in the webservices.xml file
+        for (WebserviceDescription webserviceDescription : webservices.getWebserviceDescription()) {
+            String jaxrpcMappingFile = webserviceDescription.getJaxrpcMappingFile();
+            if (jaxrpcMappingFile != null) {
+                URL jaxrpcMappingUrl = null;
+                try {
+                    jaxrpcMappingUrl = new URL(moduleUrl, jaxrpcMappingFile);
+                    JavaWsdlMapping jaxrpcMapping = jaxrpcMappingCache.get(jaxrpcMappingUrl);
+                    if (jaxrpcMapping == null) {
+                        jaxrpcMapping = ReadDescriptors.readJaxrpcMapping(jaxrpcMappingUrl);
+                        jaxrpcMappingCache.put(jaxrpcMappingUrl, jaxrpcMapping);
+                    }
+                    webserviceDescription.setJaxrpcMapping(jaxrpcMapping);
+                    if (jaxrpcMappingUrl != null && "file".equals(jaxrpcMappingUrl.getProtocol())) {
+                        wsModule.getWatchedResources().add(jaxrpcMappingUrl.getPath());
+                    }
+                } catch (MalformedURLException e) {
+                    logger.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
+                }
+            }
+        }
+
     }
 
     private void addTagLibraries(WebModule webModule) throws OpenEJBException {

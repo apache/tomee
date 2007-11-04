@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.io.File;
@@ -31,7 +32,7 @@ import java.util.TreeSet;
  * Class is intentionally not an interface as that would encourage "smart" implementations
  * @version $Revision$ $Date$
  */
-public class EjbModule implements DeploymentModule {
+public class EjbModule implements WsModule {
 
     private final ValidationContext validation;
 
@@ -39,6 +40,7 @@ public class EjbModule implements DeploymentModule {
     private String jarLocation;
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
+    private Webservices webservices;
     private String moduleId;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
@@ -128,6 +130,14 @@ public class EjbModule implements DeploymentModule {
 
     public void setOpenejbJar(OpenejbJar openejbJar) {
         this.openejbJar = openejbJar;
+    }
+
+    public Webservices getWebservices() {
+        return webservices;
+    }
+
+    public void setWebservices(Webservices webservices) {
+        this.webservices = webservices;
     }
 
     public Set<String> getWatchedResources() {

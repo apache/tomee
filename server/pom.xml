@@ -35,12 +35,14 @@
     <module>openejb-client</module>
     <module>openejb-http</module>
     <module>openejb-telnet</module>
-    <module>openejb-xfire</module>
-    <module>openejb-axis</module>
     <module>openejb-activemq</module>
     <module>openejb-corba</module>
     <module>openejb-derbynet</module>
     <module>openejb-hsql</module>
+    <module>openejb-webservices</module>
+    <module>openejb-axis</module>
+    <module>openejb-axis2</module>
+    <module>openejb-cxf</module>
   </modules>
   <dependencies>
     <!--

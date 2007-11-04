@@ -81,6 +81,10 @@ public class JNDIResponse implements Response {
                 imd.readExternal(in);
                 result = imd;
                 break;
+            case ResponseCodes.JNDI_WEBSERVICE:
+                WsMetaData ws = (WsMetaData) in.readObject();
+                result = ws;
+                break;
         }
     }
 
@@ -113,6 +117,10 @@ public class JNDIResponse implements Response {
             case ResponseCodes.JNDI_INJECTIONS:
                 InjectionMetaData imd = (InjectionMetaData) result;
                 imd.writeExternal(out);
+                break;
+            case ResponseCodes.JNDI_WEBSERVICE:
+                WsMetaData ws = (WsMetaData) result;
+                out.writeObject(ws);
                 break;
         }
     }
