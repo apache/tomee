@@ -1477,10 +1477,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // service qname
             if (serviceRef.getServiceQname() == null && refType != null) {
-                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType).toString());
+                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType));
             }
             if (serviceRef.getServiceQname() == null && serviceInterface != null) {
-                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(serviceInterface).toString());
+                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(serviceInterface));
             }
 
             // handlers

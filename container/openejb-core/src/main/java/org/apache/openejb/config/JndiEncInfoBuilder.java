@@ -58,7 +58,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
-import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -233,9 +232,7 @@ public class JndiEncInfoBuilder {
         for (ServiceRef ref : jndiConsumer.getServiceRef()) {
             ServiceReferenceInfo info = new ServiceReferenceInfo();
             info.referenceName = ref.getName();
-            if (ref.getServiceQname() != null && ref.getServiceQname().length() != 0) {
-                info.serviceQName = QName.valueOf(ref.getServiceQname());
-            }
+            info.serviceQName = ref.getServiceQname();
             info.wsdlFile = ref.getWsdlFile();
             info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
             info.referenceType = ref.getServiceRefType();

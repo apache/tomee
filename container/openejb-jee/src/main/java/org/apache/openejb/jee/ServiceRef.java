@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class ServiceRef implements JndiReference {
     @XmlElement(name = "jaxrpc-mapping-file")
     protected String jaxrpcMappingFile;
     @XmlElement(name = "service-qname")
-    protected String serviceQname;
+    protected QName serviceQname;
     @XmlElement(name = "port-component-ref", required = true)
     protected List<PortComponentRef> portComponentRef;
     @XmlElement(required = true)
@@ -174,14 +175,14 @@ public class ServiceRef implements JndiReference {
     /**
      * Gets the value of the serviceQname property.
      */
-    public String getServiceQname() {
+    public QName getServiceQname() {
         return serviceQname;
     }
 
     /**
      * Sets the value of the serviceQname property.
      */
-    public void setServiceQname(String value) {
+    public void setServiceQname(QName value) {
         this.serviceQname = value;
     }
 

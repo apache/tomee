@@ -106,7 +106,7 @@ public class WsDeployer implements DynamicDeployer {
                     Set serviceQNames = definition.getServices().keySet();
                     if (serviceQNames.size() == 1) {
                         QName serviceQName = (QName) serviceQNames.iterator().next();
-                        serviceRef.setServiceQname(serviceQName.toString());
+                        serviceRef.setServiceQname(serviceQName);
                     } else if (serviceQNames.isEmpty()) {
                         logger.error("The service-ref " + serviceRef.getName() + " must define service-qname because the wsdl-file " + serviceRef.getWsdlFile() + " does not constain any service definitions ");
                     } else {
