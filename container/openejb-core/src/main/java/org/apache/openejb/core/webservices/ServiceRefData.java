@@ -39,12 +39,12 @@ public class ServiceRefData {
     private final Class<?> referenceClass;
     private final URL wsdlURL;
     private final QName serviceQName;
-    private final String wsdlRepoUri;
+    private final String portId;
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public ServiceRefData(Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlURL, QName serviceQName, String wsdlRepoUri, List<HandlerChainData> handlerChains, List<PortRefData> portRefs) {
-        this.wsdlRepoUri = wsdlRepoUri;
+    public ServiceRefData(String portId, Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlURL, QName serviceQName, List<HandlerChainData> handlerChains, List<PortRefData> portRefs) {
+        this.portId = portId;
         this.serviceClass = serviceClass;
         this.referenceClass = referenceClass;
         this.serviceQName = serviceQName;
@@ -55,6 +55,10 @@ public class ServiceRefData {
         if (portRefs != null) {
             this.portRefs.addAll(portRefs);
         }
+    }
+
+    public String getPortId() {
+        return portId;
     }
 
     public Class<? extends Service> getServiceClass() {
@@ -71,10 +75,6 @@ public class ServiceRefData {
 
     public QName getServiceQName() {
         return serviceQName;
-    }
-
-    public String getWsdlRepoUri() {
-        return wsdlRepoUri;
     }
 
     public List<HandlerChainData> getHandlerChains() {

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PortInfo extends InfoObject {
+    public String portId;
     public String serviceName;
     public String portName;
     public String seiInterfaceName;
@@ -33,5 +34,4 @@ public class PortInfo extends InfoObject {
     public QName wsdlPort;
     public QName wsdlService;
     public String location;
-    public String wsdlPublishLocation;
 }

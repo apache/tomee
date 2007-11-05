@@ -240,10 +240,7 @@ public class JndiEncInfoBuilder {
             info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
             info.referenceType = ref.getServiceRefType();
             info.serviceType = ref.getServiceInterface();
-            String mappedName = ref.getMappedName();
-            if (mappedName != null && mappedName.startsWith("wsdlrepo:")) {
-                info.wsdlRepoUri = mappedName.substring("wsdlrepo:".length());
-            }
+            info.portId = ref.getMappedName();
             info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getHandlerChains()));
             for (PortComponentRef portComponentRef : ref.getPortComponentRef()) {
                 PortRefInfo portRefInfo = new PortRefInfo();

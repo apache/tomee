@@ -26,12 +26,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class WsdlRepoImpl implements WsdlRepo {
-    private Map<String, Set<String>> addressesByWsdlUri = new TreeMap<String, Set<String>>();
+    private Map<String, Set<String>> addressesByPortId = new TreeMap<String, Set<String>>();
     private Map<QName, Set<String>> addressesByQNames = new HashMap<QName, Set<String>>();
     private Map<String, Set<String>> addressesByInterface = new TreeMap<String, Set<String>>();
 
-    public synchronized void addWsdl(String wsdlRepoUri, QName qname, String intf, String address) {
-        addAddress(addressesByWsdlUri, wsdlRepoUri, address);
+    public synchronized void addWsdl(String portId, QName qname, String intf, String address) {
+        addAddress(addressesByPortId, portId, address);
         addAddress(addressesByQNames, qname, address);
         addAddress(addressesByInterface, intf, address);
     }
@@ -47,8 +47,8 @@ public class WsdlRepoImpl implements WsdlRepo {
         strings.add(address);
     }
 
-    public synchronized void removeWsdl(String wsdlRepoUri, QName qname, String intf, String address) {
-        removeAddress(addressesByWsdlUri, wsdlRepoUri, address);
+    public synchronized void removeWsdl(String portId, QName qname, String intf, String address) {
+        removeAddress(addressesByPortId, portId, address);
         removeAddress(addressesByQNames, qname, address);
         removeAddress(addressesByInterface, intf, address);
     }
@@ -65,24 +65,47 @@ public class WsdlRepoImpl implements WsdlRepo {
         }
     }
 
-    public synchronized String getWsdl(String wsdlRepoUri, QName qname, String intf) {
+    public synchronized String getWsdl(String portId, QName qname, String intf) {
+        String address = null;
+
+        // PortId
+        Set<String> portIdAddresses = null;
+        if (portId != null) {
+            portIdAddresses = addressesByPortId.get(portId);
+            address = getSingleAddress(portIdAddresses);
+            if (address != null) {
+                return address;
+            }
+        }
+
         // ServiceInterface
-        Set<String> intfAddresses = addressesByInterface.get(intf);
-        String address = getSingleAddress(intfAddresses);
-        if (address != null) {
-            return address;
+        Set<String> intfAddresses = null;
+        if (intf != null) {
+            intfAddresses = addressesByInterface.get(intf);
+            address = getSingleAddress(intfAddresses);
+            if (address != null) {
+                return address;
+            }
         }
 
         // ServiceQName
-        Set<String> qnameAddresses = addressesByQNames.get(qname);
-        address = getSingleAddress(qnameAddresses);
+        Set<String> qnameAddresses = null;
+        if (qname != null) {
+            qnameAddresses = addressesByQNames.get(qname);
+            address = getSingleAddress(qnameAddresses);
+            if (address != null) {
+                return address;
+            }
+        }
+
+        // PortId + ServiceInterface
+        address = getUniqueAddress(portIdAddresses, intfAddresses);
         if (address != null) {
             return address;
         }
 
-        // WsdlUri
-        Set<String> wsdlUriAddresses = addressesByWsdlUri.get(wsdlRepoUri);
-        address = getSingleAddress(wsdlUriAddresses);
+        // PortId + ServiceQName
+        address = getUniqueAddress(portIdAddresses, qnameAddresses);
         if (address != null) {
             return address;
         }
@@ -93,20 +116,8 @@ public class WsdlRepoImpl implements WsdlRepo {
             return address;
         }
 
-        // WsdlUri + ServiceInterface
-        address = getUniqueAddress(wsdlUriAddresses, intfAddresses);
-        if (address != null) {
-            return address;
-        }
-
-        // WsdlUri + ServiceQName
-        address = getUniqueAddress(wsdlUriAddresses, qnameAddresses);
-        if (address != null) {
-            return address;
-        }
-
-        // WsdlUri + ServiceInterface + ServiceQName
-        address = getUniqueAddress(wsdlUriAddresses, intfAddresses, qnameAddresses);
+        // PortId + ServiceInterface + ServiceQName
+        address = getUniqueAddress(portIdAddresses, intfAddresses, qnameAddresses);
         if (address != null) {
             return address;
         }

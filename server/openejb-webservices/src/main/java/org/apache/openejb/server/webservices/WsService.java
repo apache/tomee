@@ -239,8 +239,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 String address = selectSingleAddress(addresses);
 
                                 // register wsdl location
-                                wsdlRepo.addWsdl(portInfo.wsdlPublishLocation, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
-                                logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(deployment-id=" + bean.ejbDeploymentId + ")");
+                                wsdlRepo.addWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
+                                logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
                                 ejbAddresses.put(bean.ejbDeploymentId, address);
                             }
                         } catch (Throwable e) {
@@ -287,8 +287,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                             String address = selectSingleAddress(addresses);
 
                             // add address to global registry
-                            wsdlRepo.addWsdl(portInfo.wsdlPublishLocation, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
-                            logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ")");
+                            wsdlRepo.addWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
+                            logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                             servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                         }
                     } catch (Throwable e) {
@@ -317,7 +317,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                         // remove wsdl addresses from global registry
                         String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
                         if (address != null) {
-                            wsdlRepo.removeWsdl(portInfo.wsdlPublishLocation, portInfo.wsdlService, portInfo.seiInterfaceName, address);
+                            wsdlRepo.removeWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address);
                         }
 
                         // remove container from web server
@@ -344,7 +344,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                     // remove wsdl addresses from global registry
                     String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
                     if (address != null) {
-                        wsdlRepo.removeWsdl(portInfo.wsdlPublishLocation, portInfo.wsdlService, portInfo.seiInterfaceName, address);
+                        wsdlRepo.removeWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address);
                     }
 
                     // clear servlet's reference to the webservice container

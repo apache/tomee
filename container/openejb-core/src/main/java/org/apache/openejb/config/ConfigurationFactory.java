@@ -640,6 +640,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 PortInfo portInfo = new PortInfo();
 
                 ServiceImplBean serviceImplBean = port.getServiceImplBean();
+                portInfo.portId = port.getId();
                 portInfo.serviceLink = serviceImplBean.getEjbLink();
                 if (portInfo.serviceLink == null) {
                     portInfo.serviceLink = serviceImplBean.getServletLink();
@@ -654,7 +655,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 portInfo.wsdlPort = port.getWsdlPort();
                 portInfo.wsdlService = port.getWsdlService();
                 portInfo.location = port.getLocation();
-                portInfo.wsdlPublishLocation = port.getWsdlPublishLocation();
 
                 List<HandlerChainInfo> handlerChains = toHandlerChainInfo(port.getHandlerChains());
                 portInfo.handlerChains.addAll(handlerChains);

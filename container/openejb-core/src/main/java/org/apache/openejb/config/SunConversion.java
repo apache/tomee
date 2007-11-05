@@ -283,8 +283,8 @@ public class SunConversion implements DynamicDeployer {
 
                 String wsdlOverride = ref.getWsdlOverride();
                 if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                    String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
-                    serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                    String portId = extractPortId(wsdlOverride);
+                    serviceRef.setMappedName(portId);
                 }
             }
         }
@@ -381,8 +381,8 @@ public class SunConversion implements DynamicDeployer {
 
                 String wsdlOverride = ref.getWsdlOverride();
                 if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                    String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
-                    serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                    String portId = extractPortId(wsdlOverride);
+                    serviceRef.setMappedName(portId);
                 }
             }
         }
@@ -394,10 +394,10 @@ public class SunConversion implements DynamicDeployer {
                 WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
                 if (description == null) continue;
 
-                String location = processWsdlPublishLocation(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
-                if (location != null) {
+                String portId = extractPortId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                if (portId != null) {
                     for (PortComponent portComponent : description.getPortComponent()) {
-                        portComponent.setWsdlPublishLocation(location);
+                        portComponent.setId(portId);
                     }
                 }
             }
@@ -405,11 +405,11 @@ public class SunConversion implements DynamicDeployer {
     }
 
 
-    public static String processWsdlPublishLocation(String location) {
-        return processWsdlPublishLocation(location, null);
+    public static String extractPortId(String location) {
+        return extractPortId(location, null);
     }
 
-    public static String processWsdlPublishLocation(String location, String wsdlFile) {
+    public static String extractPortId(String location, String wsdlFile) {
         if (location == null) return null;
 
         if (location.startsWith("file:")) {
@@ -557,8 +557,8 @@ public class SunConversion implements DynamicDeployer {
 
                         String wsdlOverride = ref.getWsdlOverride();
                         if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                            String wsdlRepoUri = processWsdlPublishLocation(wsdlOverride);
-                            serviceRef.setMappedName("wsdlrepo:" + wsdlRepoUri);
+                            String portId = extractPortId(wsdlOverride);
+                            serviceRef.setMappedName(portId);
                         }
                     }
                 }
@@ -578,11 +578,11 @@ public class SunConversion implements DynamicDeployer {
                     WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
                     if (description == null) continue;
 
-                    String location = processWsdlPublishLocation(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
-                    if (location != null) {
+                    String portId = extractPortId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                    if (portId != null) {
                         for (PortComponent portComponent : description.getPortComponent()) {
                             // this could be a problem multiple port components used at runtime
-                            portComponent.setWsdlPublishLocation(location);
+                            portComponent.setId(portId);
                         }
                     }
                 }

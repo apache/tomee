@@ -77,8 +77,6 @@ public class PortComponent {
     protected HandlerChains handlerChains;
     @XmlTransient
     protected String location;
-    @XmlTransient
-    protected String wsdlPublishLocation;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -188,14 +186,6 @@ public class PortComponent {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getWsdlPublishLocation() {
-        return wsdlPublishLocation;
-    }
-
-    public void setWsdlPublishLocation(String wsdlPublishLocation) {
-        this.wsdlPublishLocation = wsdlPublishLocation;
     }
 
     public String getId() {

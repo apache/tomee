@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class JaxWsServiceReference extends Reference {
+    private String portId;
     private final Class<? extends Service> serviceClass;
     private final Class<?> referenceClass;
     private final URL wsdlUrl;
@@ -45,9 +46,9 @@ public class JaxWsServiceReference extends Reference {
     private final List<Injection> injections;
     private WsdlRepo wsdlRepo;
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
-    private String wsdlRepoUri;
 
-    public JaxWsServiceReference(Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlUrl, QName serviceQName, String wsdlRepoUri, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, List<Injection> injections) {
+    public JaxWsServiceReference(String portId, Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlUrl, QName serviceQName, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, List<Injection> injections) {
+        this.portId = portId;
         if (portRefs != null) {
             this.portRefs.addAll(portRefs);
         }
@@ -55,7 +56,6 @@ public class JaxWsServiceReference extends Reference {
         this.referenceClass = referenceClass;
         this.wsdlUrl = wsdlUrl;
         this.serviceQName = serviceQName;
-        this.wsdlRepoUri = wsdlRepoUri;
         if (handlerChains != null) {
             this.handlerChains.addAll(handlerChains);
         }
@@ -97,7 +97,7 @@ public class JaxWsServiceReference extends Reference {
         }
 
         // register the service data so it can be fetched when the service is passed over the EJBd protocol
-        ServiceRefData serviceRefData = new ServiceRefData(serviceClass, referenceClass, wsdlUrl, serviceQName, null, handlerChains, portRefs);
+        ServiceRefData serviceRefData = new ServiceRefData(portId, serviceClass, referenceClass, wsdlUrl, serviceQName, handlerChains, portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
 
         return port;
@@ -106,7 +106,7 @@ public class JaxWsServiceReference extends Reference {
     private URL getWsdlUrl() {
         WsdlRepo wsdlRepo = getWsdlRepo();
         if (wsdlRepo != null) {
-            String wsdlLocation = wsdlRepo.getWsdl(wsdlRepoUri, serviceQName, referenceClass.getName());
+            String wsdlLocation = wsdlRepo.getWsdl(portId, serviceQName, referenceClass.getName());
             if (wsdlLocation != null) {
                 try {
                     URL wsdlUrl = new URL(wsdlLocation);

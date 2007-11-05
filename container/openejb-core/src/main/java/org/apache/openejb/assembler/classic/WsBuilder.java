@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 public class WsBuilder {
     public static PortData toPortData(PortInfo port, Collection<Injection> injections, URL baseUrl, ClassLoader classLoader) throws OpenEJBException {
         PortData portData = new PortData();
+        portData.setPortId(port.portId);
         if (port.serviceName != null && port.serviceName.length() != 0) {
             portData.setServiceName(QName.valueOf(port.serviceName));
         }
@@ -47,7 +48,6 @@ public class WsBuilder {
         portData.setWsdlPort(port.wsdlPort);
         portData.setWsdlService(port.wsdlService);
         portData.setLocation(port.location);
-        portData.setWsdlPublishLocation(port.wsdlPublishLocation);
         return portData;
     }
 

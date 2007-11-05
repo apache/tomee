@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.tomcat;
 
-import static org.apache.openejb.tomcat.NamingUtil.WSDL_REPO_URI;
+import static org.apache.openejb.tomcat.NamingUtil.PORT_ID;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.ContextEjb;
@@ -439,8 +439,8 @@ public class TomcatJndiBuilder {
                 resource.setProperty(WSDL_URL, wsdlURL.toString());
             }
 
-            if (ref.wsdlRepoUri != null) {
-                resource.setProperty(WSDL_REPO_URI, ref.wsdlRepoUri);
+            if (ref.portId != null) {
+                resource.setProperty(PORT_ID, ref.portId);
             }
 
             // add port refs

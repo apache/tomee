@@ -31,6 +31,7 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -181,6 +182,11 @@ public class WsDeployer implements DynamicDeployer {
                         webserviceDescription.getPortComponent().add(portComponent);
                     }
 
+                    // default portId == moduleId.servletName
+                    if (portComponent.getId() == null) {
+                        portComponent.setId(webModule.getModuleId() + "." + servlet.getServletName());
+                    }
+
                     // set port values from annotations if not already set
                     if (portComponent.getServiceEndpointInterface() == null) {
                         portComponent.setServiceEndpointInterface(JaxWsUtils.getServiceInterface(clazz));
@@ -219,6 +225,8 @@ public class WsDeployer implements DynamicDeployer {
             }
         }
 
+        Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+
         WebserviceDescription webserviceDescription = null;
         for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
@@ -226,6 +234,9 @@ public class WsDeployer implements DynamicDeployer {
             SessionBean sessionBean = (SessionBean) enterpriseBean;
             if (sessionBean.getSessionType() != SessionType.STATELESS) continue;
             if (sessionBean.getServiceEndpoint() == null) continue;
+
+            EjbDeployment deployment = deploymentsByEjbName.get(sessionBean.getEjbName());
+            if (deployment == null) continue;
 
             Class<?> ejbClass = null;
             try {
@@ -258,6 +269,11 @@ public class WsDeployer implements DynamicDeployer {
                 ServiceImplBean serviceImplBean = new ServiceImplBean();
                 serviceImplBean.setEjbLink(sessionBean.getEjbName());
                 portComponent.setServiceImplBean(serviceImplBean);
+            }
+
+            // default portId == deploymentId
+            if (portComponent.getId() == null) {
+                portComponent.setId(deployment.getDeploymentId());
             }
 
             // set service endpoint interface

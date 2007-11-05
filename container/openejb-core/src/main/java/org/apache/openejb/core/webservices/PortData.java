@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.net.URL;
 
 public class PortData implements PortInfo {
+    private String portId;
     private QName serviceName;
     private QName portName;
     private String bindingId;
@@ -37,8 +38,14 @@ public class PortData implements PortInfo {
     private QName wsdlPort;
     private QName wsdlService;
     private String location;
-    private String wsdlPublishLocation;
 
+    public String getPortId() {
+        return portId;
+    }
+
+    public void setPortId(String portId) {
+        this.portId = portId;
+    }
 
     public QName getServiceName() {
         return serviceName;
@@ -110,13 +117,5 @@ public class PortData implements PortInfo {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getWsdlPublishLocation() {
-        return wsdlPublishLocation;
-    }
-
-    public void setWsdlPublishLocation(String wsdlPublishLocation) {
-        this.wsdlPublishLocation = wsdlPublishLocation;
     }
 }

@@ -42,7 +42,7 @@ public class NamingUtil {
     public static final String WEB_SERVICE_CLASS = "webserviceclass";
     public static final String WEB_SERVICE_QNAME = "webserviceqname";
     public static final String WSDL_URL = "wsdlurl";
-    public static final String WSDL_REPO_URI = "wsdlrepouri";
+    public static final String PORT_ID = "portid";
 
     private static final AtomicInteger id = new AtomicInteger(31);
     private static final Map<String,Object> registry = new HashMap<String,Object>();

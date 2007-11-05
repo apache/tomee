@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.tomcat;
 
-import static org.apache.openejb.tomcat.NamingUtil.WSDL_REPO_URI;
+import static org.apache.openejb.tomcat.NamingUtil.PORT_ID;
 import org.apache.naming.ResourceRef;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
@@ -86,10 +86,10 @@ public class WsFactory extends AbstractObjectFactory {
                 wsdlUrl = new URL(getProperty(ref, WSDL_URL));
             }
 
-            // WSDL URI
-            String wsdlRepoUri = null;
-            if (wsdlRepoUri == null) {
-                wsdlRepoUri = getProperty(ref, WSDL_REPO_URI);
+            // PORT ID
+            String portId = null;
+            if (portId == null) {
+                portId = getProperty(ref, PORT_ID);
             }
 
             // port refs
@@ -102,7 +102,7 @@ public class WsFactory extends AbstractObjectFactory {
             List<Injection> injections = getStaticValue(ref, "injections");
             if (injections == null) injections = Collections.emptyList();
 
-            JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceClass, referenceClass, wsdlUrl, serviceQName, wsdlRepoUri, portRefs, handlerChains, injections);
+            JaxWsServiceReference serviceReference = new JaxWsServiceReference(portId, serviceClass, referenceClass, wsdlUrl, serviceQName, portRefs, handlerChains, injections);
             value = serviceReference.getObject();
         }
 

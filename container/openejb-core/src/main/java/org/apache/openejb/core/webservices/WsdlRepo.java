@@ -20,7 +20,7 @@ package org.apache.openejb.core.webservices;
 import javax.xml.namespace.QName;
 
 public interface WsdlRepo {
-    void addWsdl(String wsdlRepoUri, QName serviceQname, String serviceInterface, String address);
-    void removeWsdl(String wsdlRepoUri, QName serviceQname, String serviceInterface, String address);
-    String getWsdl(String wsdlRepoUri, QName serviceQname, String serviceInterface);
+    void addWsdl(String portId, QName serviceQname, String serviceInterface, String address);
+    void removeWsdl(String portId, QName serviceQname, String serviceInterface, String address);
+    String getWsdl(String portId, QName serviceQname, String serviceInterface);
 }

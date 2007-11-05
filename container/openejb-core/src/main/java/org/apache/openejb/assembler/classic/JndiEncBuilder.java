@@ -413,10 +413,10 @@ public class JndiEncBuilder {
             }
 
             if (!client) {
-                Reference reference = new JaxWsServiceReference(serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, referenceInfo.wsdlRepoUri, portRefs, handlerChains, injections);
+                Reference reference = new JaxWsServiceReference(referenceInfo.portId, serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, portRefs, handlerChains, injections);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
-                ServiceRefData serviceRefData = new ServiceRefData(serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, referenceInfo.wsdlRepoUri, handlerChains, portRefs);
+                ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.portId, serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, handlerChains, portRefs);
                 bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
             }
         }

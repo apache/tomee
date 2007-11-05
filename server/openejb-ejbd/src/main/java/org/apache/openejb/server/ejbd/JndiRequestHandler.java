@@ -191,7 +191,7 @@ class JndiRequestHandler {
                     }
                     WsdlRepo wsdlRepo = SystemInstance.get().getComponent(WsdlRepo.class);
                     if (wsdlRepo != null) {
-                        String wsdlLocation = wsdlRepo.getWsdl(serviceRef.getWsdlRepoUri(), serviceRef.getServiceQName(), referenceClassName);
+                        String wsdlLocation = wsdlRepo.getWsdl(serviceRef.getPortId(), serviceRef.getServiceQName(), referenceClassName);
                         if (wsdlLocation != null) {
                             try {
                                 wsdlUrl = new URL(wsdlLocation).toExternalForm();
