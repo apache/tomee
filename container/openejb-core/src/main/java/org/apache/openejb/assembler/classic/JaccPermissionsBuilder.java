@@ -84,6 +84,7 @@ public class JaccPermissionsBuilder {
                     addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), interfce);
                 }
             }
+            addPossibleEjbMethodPermissions(permissions, ejbName, null, deployment.getBeanClass());
 
             addDeclaredEjbPermissions(ejbJar, enterpriseBean, null, permissions, policyContext);
 
