@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
@@ -61,6 +61,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public String containerId;
     public String serviceEndpoint;
+
+    public List<JndiNameInfo> jndiNamess = new ArrayList<JndiNameInfo>();
 
     public List<String> jndiNames = new ArrayList<String>();
 }

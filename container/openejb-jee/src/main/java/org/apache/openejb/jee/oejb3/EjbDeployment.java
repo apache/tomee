@@ -32,9 +32,12 @@ import java.util.LinkedHashMap;
 import java.util.Iterator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"ejbLink", "resourceLink", "query"})
+@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query"})
 @XmlRootElement(name = "ejb-deployment")
 public class EjbDeployment {
+
+    @XmlElement(name = "jndi", required = true)
+    protected List<Jndi> jndi;
 
     @XmlElement(name = "ejb-link", required = true)
     protected List<EjbLink> ejbLink;
@@ -70,6 +73,13 @@ public class EjbDeployment {
             ejbLink = new ArrayList<EjbLink>();
         }
         return this.ejbLink;
+    }
+
+    public List<Jndi> getJndi() {
+        if (jndi == null){
+            jndi = new ArrayList<Jndi>();
+        }
+        return jndi;
     }
 
     public List<ResourceLink> getResourceLink() {
