@@ -774,6 +774,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ContainerInfo containerInfo = iterator.next();
             if (containerInfo.id.equals(containerId)) {
                 iterator.remove();
+                try {
+                    this.containerSystem.getJNDIContext().unbind("java:openejb/" + containerInfo.service + "/" + containerInfo.id);
+                } catch (Exception e) {
+                    logger.error("Failed to unbind " + containerId);
+                }
             }
         }
     }
